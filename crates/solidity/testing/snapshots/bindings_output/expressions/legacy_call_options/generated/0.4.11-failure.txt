@@ -1,43 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Definitions (4):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["test" @ input.sol:2:14] (function, type: function (address, bytes memory) returns void)
-- Def: #3 ["rcpt" @ input.sol:2:27] (parameter, type: address)
-- Def: #4 ["data" @ input.sol:2:46] (parameter, type: bytes memory)
-
-------------------------------------------------------------------------
-
-References (21):
-- Ref: ["rcpt" @ input.sol:4:9] -> #3
-- Ref: ["call" @ input.sol:4:14] -> built-in
-- Ref: ["value" @ input.sol:4:19] -> unresolved
-- Ref: ["data" @ input.sol:4:28] -> #4
-- Ref: ["rcpt" @ input.sol:5:9] -> #3
-- Ref: ["call" @ input.sol:5:14] -> built-in
-- Ref: ["gas" @ input.sol:5:19] -> unresolved
-- Ref: ["data" @ input.sol:5:26] -> #4
-- Ref: ["rcpt" @ input.sol:6:9] -> #3
-- Ref: ["call" @ input.sol:6:14] -> built-in
-- Ref: ["value" @ input.sol:6:19] -> unresolved
-- Ref: ["gas" @ input.sol:6:28] -> unresolved
-- Ref: ["data" @ input.sol:6:35] -> #4
-- Ref: ["rcpt" @ input.sol:8:9] -> #3
-- Ref: ["staticcall" @ input.sol:8:14] -> built-in
-- Ref: ["gas" @ input.sol:8:25] -> unresolved
-- Ref: ["data" @ input.sol:8:32] -> #4
-- Ref: ["rcpt" @ input.sol:9:9] -> #3
-- Ref: ["delegatecall" @ input.sol:9:14] -> built-in
-- Ref: ["gas" @ input.sol:9:27] -> unresolved
-- Ref: ["data" @ input.sol:9:34] -> #4
-
-------------------------------------------------------------------------
-
-Unbound identifiers (0):
-
-------------------------------------------------------------------------
-
-Bindings: 
+References and definitions: 
    ╭─[input.sol:1:1]
    │
  1 │ contract Test {
@@ -55,29 +18,29 @@ Bindings:
    │         ──┬─ ──┬─ ──┬──    ──┬─  
    │           ╰────────────────────── ref: 3
    │                │    │        │   
-   │                ╰───────────────── built-in
+   │                ╰───────────────── ref: built-in
    │                     │        │   
-   │                     ╰──────────── unresolved
+   │                     ╰──────────── ref: built-in
    │                              │   
    │                              ╰─── ref: 4
  5 │         rcpt.call.gas(1)(data);
    │         ──┬─ ──┬─ ─┬─    ──┬─  
    │           ╰──────────────────── ref: 3
    │                │   │       │   
-   │                ╰─────────────── built-in
+   │                ╰─────────────── ref: built-in
    │                    │       │   
-   │                    ╰─────────── unresolved
+   │                    ╰─────────── ref: built-in
    │                            │   
    │                            ╰─── ref: 4
  6 │         rcpt.call.value(1).gas(1)(data);
    │         ──┬─ ──┬─ ──┬──    ─┬─    ──┬─  
    │           ╰───────────────────────────── ref: 3
    │                │    │       │       │   
-   │                ╰──────────────────────── built-in
+   │                ╰──────────────────────── ref: built-in
    │                     │       │       │   
-   │                     ╰─────────────────── unresolved
+   │                     ╰─────────────────── ref: built-in
    │                             │       │   
-   │                             ╰─────────── unresolved
+   │                             ╰─────────── ref: built-in
    │                                     │   
    │                                     ╰─── ref: 4
    │ 
@@ -85,7 +48,7 @@ Bindings:
    │         ──┬─ ─────┬──── ─┬─    ──┬─  
    │           ╰────────────────────────── ref: 3
    │                   │      │       │   
-   │                   ╰────────────────── built-in
+   │                   ╰────────────────── unresolved
    │                          │       │   
    │                          ╰─────────── unresolved
    │                                  │   
@@ -94,9 +57,26 @@ Bindings:
    │         ──┬─ ──────┬───── ─┬─    ──┬─  
    │           ╰──────────────────────────── ref: 3
    │                    │       │       │   
-   │                    ╰─────────────────── built-in
+   │                    ╰─────────────────── ref: built-in
    │                            │       │   
-   │                            ╰─────────── unresolved
+   │                            ╰─────────── ref: built-in
    │                                    │   
    │                                    ╰─── ref: 4
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test(address rcpt, bytes memory data) public {
+    │ │ │                     ──────┬───── ─────────┬────────  
+    │ │ │                           ╰────────────────────────── definiens: 3
+    │ │ │                                           │          
+    │ │ │                                           ╰────────── definiens: 4
+    ┆ ┆ ┆   
+ 10 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 11 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

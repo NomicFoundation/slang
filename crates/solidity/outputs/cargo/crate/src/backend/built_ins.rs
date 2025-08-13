@@ -47,8 +47,8 @@ pub enum BuiltIn {
     ErrorOrPanic,
     Gasleft,
     Keccak256,
-    LegacyCallOptionGas(Option<TypeId>),
-    LegacyCallOptionValue(Option<TypeId>),
+    LegacyCallOptionGas(LegacyCall),
+    LegacyCallOptionValue(LegacyCall),
     LegacyCallOptionValueNew(TypeId),
     Length,
     Log(u8),
@@ -169,6 +169,14 @@ pub enum BuiltIn {
     YulTload,
     YulTstore,
     YulXor,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LegacyCall {
+    Call,
+    Delegatecall,
+    Staticcall,
+    User(TypeId),
 }
 
 const VERSION_0_4_12: Version = Version::new(0, 4, 12);
@@ -419,8 +427,16 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             BuiltIn::AddressCall if self.language_version < VERSION_0_7_0 => match symbol {
-                "gas" => Some(BuiltIn::LegacyCallOptionGas(None)),
-                "value" => Some(BuiltIn::LegacyCallOptionValue(None)),
+                "gas" => Some(BuiltIn::LegacyCallOptionGas(LegacyCall::Call)),
+                "value" => Some(BuiltIn::LegacyCallOptionValue(LegacyCall::Call)),
+                _ => None,
+            },
+            BuiltIn::AddressDelegatecall if self.language_version < VERSION_0_7_0 => match symbol {
+                "gas" => Some(BuiltIn::LegacyCallOptionGas(LegacyCall::Delegatecall)),
+                _ => None,
+            },
+            BuiltIn::AddressStaticcall if self.language_version < VERSION_0_7_0 => match symbol {
+                "gas" => Some(BuiltIn::LegacyCallOptionGas(LegacyCall::Staticcall)),
                 _ => None,
             },
             _ => None,
@@ -542,10 +558,10 @@ impl<'a> BuiltInsResolver<'a> {
                             Some(BuiltIn::Selector)
                         }
                         "gas" if self.language_version < VERSION_0_7_0 => {
-                            Some(BuiltIn::LegacyCallOptionGas(Some(type_id)))
+                            Some(BuiltIn::LegacyCallOptionGas(LegacyCall::User(type_id)))
                         }
                         "value" if self.language_version < VERSION_0_7_0 => {
-                            Some(BuiltIn::LegacyCallOptionValue(Some(type_id)))
+                            Some(BuiltIn::LegacyCallOptionValue(LegacyCall::User(type_id)))
                         }
                         _ => None,
                     }
@@ -772,13 +788,12 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::LegacyCallOptionGas(type_id) | BuiltIn::LegacyCallOptionValue(type_id) => {
-                if let Some(type_id) = type_id {
-                    Typing::Resolved(*type_id)
-                } else if self.language_version < VERSION_0_7_0 {
-                    Typing::BuiltIn(BuiltIn::AddressCall)
-                } else {
-                    Typing::Unresolved
+            BuiltIn::LegacyCallOptionGas(call_type) | BuiltIn::LegacyCallOptionValue(call_type) => {
+                match call_type {
+                    LegacyCall::Call => Typing::BuiltIn(BuiltIn::AddressCall),
+                    LegacyCall::Delegatecall => Typing::BuiltIn(BuiltIn::AddressDelegatecall),
+                    LegacyCall::Staticcall => Typing::BuiltIn(BuiltIn::AddressStaticcall),
+                    LegacyCall::User(type_id) => Typing::Resolved(*type_id),
                 }
             }
             BuiltIn::LegacyCallOptionValueNew(type_id) => Typing::NewExpression(*type_id),

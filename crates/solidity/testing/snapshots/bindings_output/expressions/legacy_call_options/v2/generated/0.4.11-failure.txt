@@ -11,24 +11,24 @@ Definitions (4):
 References (21):
 - Ref: ["rcpt" @ input.sol:4:9] -> #3
 - Ref: ["call" @ input.sol:4:14] -> built-in
-- Ref: ["value" @ input.sol:4:19] -> unresolved
+- Ref: ["value" @ input.sol:4:19] -> built-in
 - Ref: ["data" @ input.sol:4:28] -> #4
 - Ref: ["rcpt" @ input.sol:5:9] -> #3
 - Ref: ["call" @ input.sol:5:14] -> built-in
-- Ref: ["gas" @ input.sol:5:19] -> unresolved
+- Ref: ["gas" @ input.sol:5:19] -> built-in
 - Ref: ["data" @ input.sol:5:26] -> #4
 - Ref: ["rcpt" @ input.sol:6:9] -> #3
 - Ref: ["call" @ input.sol:6:14] -> built-in
-- Ref: ["value" @ input.sol:6:19] -> unresolved
-- Ref: ["gas" @ input.sol:6:28] -> unresolved
+- Ref: ["value" @ input.sol:6:19] -> built-in
+- Ref: ["gas" @ input.sol:6:28] -> built-in
 - Ref: ["data" @ input.sol:6:35] -> #4
 - Ref: ["rcpt" @ input.sol:8:9] -> #3
-- Ref: ["staticcall" @ input.sol:8:14] -> built-in
+- Ref: ["staticcall" @ input.sol:8:14] -> unresolved
 - Ref: ["gas" @ input.sol:8:25] -> unresolved
 - Ref: ["data" @ input.sol:8:32] -> #4
 - Ref: ["rcpt" @ input.sol:9:9] -> #3
 - Ref: ["delegatecall" @ input.sol:9:14] -> built-in
-- Ref: ["gas" @ input.sol:9:27] -> unresolved
+- Ref: ["gas" @ input.sol:9:27] -> built-in
 - Ref: ["data" @ input.sol:9:34] -> #4
 
 ------------------------------------------------------------------------
@@ -57,7 +57,7 @@ Bindings:
    │                │    │        │   
    │                ╰───────────────── built-in
    │                     │        │   
-   │                     ╰──────────── unresolved
+   │                     ╰──────────── built-in
    │                              │   
    │                              ╰─── ref: 4
  5 │         rcpt.call.gas(1)(data);
@@ -66,7 +66,7 @@ Bindings:
    │                │   │       │   
    │                ╰─────────────── built-in
    │                    │       │   
-   │                    ╰─────────── unresolved
+   │                    ╰─────────── built-in
    │                            │   
    │                            ╰─── ref: 4
  6 │         rcpt.call.value(1).gas(1)(data);
@@ -75,9 +75,9 @@ Bindings:
    │                │    │       │       │   
    │                ╰──────────────────────── built-in
    │                     │       │       │   
-   │                     ╰─────────────────── unresolved
+   │                     ╰─────────────────── built-in
    │                             │       │   
-   │                             ╰─────────── unresolved
+   │                             ╰─────────── built-in
    │                                     │   
    │                                     ╰─── ref: 4
    │ 
@@ -85,7 +85,7 @@ Bindings:
    │         ──┬─ ─────┬──── ─┬─    ──┬─  
    │           ╰────────────────────────── ref: 3
    │                   │      │       │   
-   │                   ╰────────────────── built-in
+   │                   ╰────────────────── unresolved
    │                          │       │   
    │                          ╰─────────── unresolved
    │                                  │   
@@ -96,7 +96,7 @@ Bindings:
    │                    │       │       │   
    │                    ╰─────────────────── built-in
    │                            │       │   
-   │                            ╰─────────── unresolved
+   │                            ╰─────────── built-in
    │                                    │   
    │                                    ╰─── ref: 4
 ───╯

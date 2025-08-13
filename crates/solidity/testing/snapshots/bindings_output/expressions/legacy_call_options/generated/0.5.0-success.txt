@@ -43,21 +43,40 @@ References and definitions:
    │                             ╰─────────── ref: built-in
    │                                     │   
    │                                     ╰─── ref: 4
+   │ 
+ 8 │         rcpt.staticcall.gas(1)(data); // staticcall is valid >= 0.5.0
+   │         ──┬─ ─────┬──── ─┬─    ──┬─  
+   │           ╰────────────────────────── ref: 3
+   │                   │      │       │   
+   │                   ╰────────────────── ref: built-in
+   │                          │       │   
+   │                          ╰─────────── ref: built-in
+   │                                  │   
+   │                                  ╰─── ref: 4
+ 9 │         rcpt.delegatecall.gas(1)(data);
+   │         ──┬─ ──────┬───── ─┬─    ──┬─  
+   │           ╰──────────────────────────── ref: 3
+   │                    │       │       │   
+   │                    ╰─────────────────── ref: built-in
+   │                            │       │   
+   │                            ╰─────────── ref: built-in
+   │                                    │   
+   │                                    ╰─── ref: 4
 ───╯
 Definiens: 
-   ╭─[input.sol:1:1]
-   │
- 1 │ ╭─│ ▶ contract Test {
- 2 │ │ ╭─▶     function test(address rcpt, bytes memory data) public {
-   │ │ │                     ──────┬───── ─────────┬────────  
-   │ │ │                           ╰────────────────────────── definiens: 3
-   │ │ │                                           │          
-   │ │ │                                           ╰────────── definiens: 4
-   ┆ ┆ ┆   
- 7 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 2
- 8 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 1
-───╯
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test(address rcpt, bytes memory data) public {
+    │ │ │                     ──────┬───── ─────────┬────────  
+    │ │ │                           ╰────────────────────────── definiens: 3
+    │ │ │                                           │          
+    │ │ │                                           ╰────────── definiens: 4
+    ┆ ┆ ┆   
+ 10 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 11 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯
