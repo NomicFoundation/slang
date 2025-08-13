@@ -108,15 +108,26 @@ impl Pass {
                 let first_id = definition_ids.first().copied().unwrap();
                 let first_definition = self.binder.find_definition_by_id(first_id).unwrap();
 
-                if let Definition::StateVariable(_) = first_definition {
-                    // TODO(validation): the state variable should have the
-                    // `override` attribute and the rest of the definitions
-                    // should be functions with the correct signature
-                    Resolution::Definition(first_id)
-                } else {
-                    // TODO(validation): check that the returned definitions are
-                    // all functions (or maybe modifiers?)
-                    resolution
+                match first_definition {
+                    Definition::StateVariable(_) => {
+                        // TODO(validation): the state variable should have the
+                        // `override` attribute and the rest of the definitions
+                        // should be either functions with the correct
+                        // signature, state variables or private variables or
+                        // constants
+                        Resolution::Definition(first_id)
+                    }
+                    Definition::Constant(_) => {
+                        // TODO(validation): if there are other definitions in
+                        // base contracts, they should be marked private and
+                        // they should be constants or state variables
+                        Resolution::Definition(first_id)
+                    }
+                    _ => {
+                        // TODO(validation): check that the returned definitions are
+                        // all functions (or maybe modifiers?)
+                        resolution
+                    }
                 }
             }
             Resolution::Definition(_) | Resolution::BuiltIn(_) => resolution,
