@@ -62,6 +62,11 @@ fn inheritance_with_arguments() -> Result<()> {
 }
 
 #[test]
+fn inherited_legacy_constructor() -> Result<()> {
+    run(T, "inherited_legacy_constructor")
+}
+
+#[test]
 fn inherited_state_vars() -> Result<()> {
     run(T, "inherited_state_vars")
 }

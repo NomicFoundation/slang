@@ -272,19 +272,32 @@ impl Visitor for Pass {
                 .collect();
             let definition =
                 Definition::new_function(node.node_id, name, parameters_scope_id, parameter_names);
-            self.insert_definition_in_current_scope(definition);
 
-            // For Solidity < 0.5.0, check if we need to register the
-            // constructor parameters scope
-            if self.language_version < VERSION_0_5_0 {
-                let current_scope_node_id = self.current_scope().node_id();
-                let current_definition = self.binder.find_definition_by_id(current_scope_node_id);
-                if let Some(Definition::Contract(contract_definition)) = current_definition {
-                    let contract_name = contract_definition.identifier.unparse();
-                    if contract_name == name.unparse() {
-                        self.register_constructor_parameters(parameters_scope_id);
-                    }
+            let current_scope_node_id = self.current_scope().node_id();
+            let enclosing_definition = self.binder.find_definition_by_id(current_scope_node_id);
+            let enclosing_contract_name =
+                if let Some(Definition::Contract(contract_definition)) = enclosing_definition {
+                    Some(contract_definition.identifier.unparse())
+                } else {
+                    None
+                };
+
+            if enclosing_contract_name.is_some_and(|contract_name| contract_name == name.unparse())
+            {
+                // TODO(validation): for Solidity >= 0.5.0 there cannot be a
+                // function with the same name as the enclosing contract. In any
+                // case, if the names match we don't register the definition in
+                // the current scope.
+                self.binder.insert_definition_no_scope(definition);
+
+                // For Solidity < 0.5.0, a function with the same name as the
+                // enclosing contract is a constructor, and we need to register the
+                // constructor parameters scope.
+                if self.language_version < VERSION_0_5_0 {
+                    self.register_constructor_parameters(parameters_scope_id);
                 }
+            } else {
+                self.insert_definition_in_current_scope(definition);
             }
         }
 
