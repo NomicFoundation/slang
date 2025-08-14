@@ -187,6 +187,57 @@ impl TypeRegistry {
         };
         self.find_type(&canonical_type)
     }
+
+    fn register_type_id_with_data_location(
+        &mut self,
+        type_id: TypeId,
+        location: DataLocation,
+    ) -> TypeId {
+        let type_ = self.get_type_by_id(type_id).clone();
+        self.register_type_with_data_location(type_, location)
+    }
+
+    pub fn register_type_with_data_location(
+        &mut self,
+        type_: Type,
+        location: DataLocation,
+    ) -> TypeId {
+        let type_with_location = match type_ {
+            Type::Array { element_type, .. } => Type::Array {
+                element_type: self.register_type_id_with_data_location(element_type, location),
+                location,
+            },
+            Type::Bytes { .. } => Type::Bytes { location },
+            Type::String { .. } => Type::String { location },
+            Type::Struct { definition_id, .. } => Type::Struct {
+                definition_id,
+                location,
+            },
+            Type::Tuple { types } => {
+                let types_with_location = types
+                    .iter()
+                    .map(|id| self.register_type_id_with_data_location(*id, location))
+                    .collect();
+                Type::Tuple {
+                    types: types_with_location,
+                }
+            }
+            Type::Address { .. }
+            | Type::Boolean
+            | Type::ByteArray { .. }
+            | Type::Contract { .. }
+            | Type::Enum { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Function(_)
+            | Type::Integer { .. }
+            | Type::Interface { .. }
+            | Type::Mapping { .. }
+            | Type::Rational
+            | Type::UserDefinedValue { .. }
+            | Type::Void => type_,
+        };
+        self.register_type(type_with_location)
+    }
 }
 
 impl TypeRegistry {
@@ -338,31 +389,9 @@ impl Type {
         }
     }
 
-    #[must_use]
-    pub fn with_data_location(&self, data_location: Option<DataLocation>) -> Self {
-        match self {
-            Self::Array {
-                element_type,
-                location,
-            } => Self::Array {
-                element_type: *element_type,
-                location: data_location.unwrap_or(*location),
-            },
-            Self::Bytes { location } => Self::Bytes {
-                location: data_location.unwrap_or(*location),
-            },
-            Self::String { location } => Self::String {
-                location: data_location.unwrap_or(*location),
-            },
-            Self::Struct {
-                definition_id,
-                location,
-            } => Self::Struct {
-                definition_id: *definition_id,
-                location: data_location.unwrap_or(*location),
-            },
-            _ => self.clone(),
-        }
+    pub fn is_inherited_location(&self) -> bool {
+        self.data_location()
+            .is_some_and(|location| location == DataLocation::Inherited)
     }
 }
 

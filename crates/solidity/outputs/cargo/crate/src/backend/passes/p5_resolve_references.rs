@@ -711,6 +711,34 @@ impl Pass {
         }
     }
 
+    fn typing_of_cast(&mut self, argument_typing: &Typing, target_type: Type) -> Typing {
+        // TODO(validation): this is a cast to the given type, but we
+        // need to verify that the (single) argument is convertible
+        match argument_typing {
+            Typing::Resolved(argument_type_id) => {
+                // the resulting cast type inherits the data location of the argument
+                let type_id = if let Some(data_location) =
+                    self.types.get_type_by_id(*argument_type_id).data_location()
+                {
+                    self.types
+                        .register_type_with_data_location(target_type, data_location)
+                } else {
+                    self.types.register_type(target_type)
+                };
+                Typing::Resolved(type_id)
+            }
+            Typing::This => {
+                // special case: "this" can be cast to an address
+                if let Type::Address { .. } = target_type {
+                    Typing::Resolved(self.types.address())
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            _ => Typing::Unresolved,
+        }
+    }
+
     fn typing_of_function_call_with_positional_arguments(
         &mut self,
         node: &input_ir::FunctionCallExpression,
@@ -763,27 +791,8 @@ impl Pass {
                 }
             }
             Typing::MetaType(type_) => {
-                // TODO(validation): this is a cast to the given type, but we
-                // need to verify that the (single) argument is convertible
-                if let Some(typing_of_first_argument) = argument_typings.first().cloned() {
-                    match typing_of_first_argument {
-                        Typing::Resolved(type_id) => {
-                            let data_location = self.types.get_type_by_id(type_id).data_location();
-                            let type_id = self
-                                .types
-                                .register_type(type_.with_data_location(data_location));
-                            Typing::Resolved(type_id)
-                        }
-                        Typing::This => {
-                            // special case: "this" can be cast to an address
-                            if let Type::Address { .. } = type_ {
-                                Typing::Resolved(self.types.address())
-                            } else {
-                                Typing::Unresolved
-                            }
-                        }
-                        _ => Typing::Unresolved,
-                    }
+                if argument_typings.len() == 1 {
+                    self.typing_of_cast(&argument_typings[0], type_)
                 } else {
                     Typing::Unresolved
                 }
@@ -1382,11 +1391,30 @@ impl Visitor for Pass {
 
         // Special case: if the operand is either `this` or a contract/interface
         // reference type, then try to type the member as a getter
-        let typing = if self.typing_is_contract_reference(&operand_typing) {
+        let mut typing = if self.typing_is_contract_reference(&operand_typing) {
             self.typing_of_resolution_as_getter(&resolution)
         } else {
             self.typing_of_resolution(&resolution)
         };
+
+        // Special case: If the type is a reference type with location
+        // "inherited", we use the operand's location for the resulting typing
+        if let Some(type_id) = typing.as_type_id() {
+            let type_ = self.types.get_type_by_id(type_id);
+            if type_.is_inherited_location() {
+                if let Some(operand_location) = operand_typing
+                    .as_type_id()
+                    .and_then(|type_id| self.types.get_type_by_id(type_id).data_location())
+                {
+                    let type_id_with_location = self
+                        .types
+                        .register_type_with_data_location(type_.clone(), operand_location);
+                    typing = Typing::Resolved(type_id_with_location);
+                }
+            }
+        }
+
+        // store the typing
         self.binder.set_node_typing(node.node_id, typing);
 
         let reference = Reference::new(Rc::clone(&node.member), resolution);

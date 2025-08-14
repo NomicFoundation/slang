@@ -112,6 +112,11 @@ fn literal_integers() -> Result<()> {
 }
 
 #[test]
+fn member_inherits_data_location() -> Result<()> {
+    run(T, "member_inherits_data_location")
+}
+
+#[test]
 fn new_output() -> Result<()> {
     run(T, "new_output")
 }
