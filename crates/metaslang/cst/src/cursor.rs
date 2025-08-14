@@ -92,9 +92,8 @@ impl<T: KindTypes> Cursor<T> {
         self.is_completed = true;
     }
 
-    /// Unlike `clone`, this re-roots at the current node.
-    /// It does preserve the correct text offset however,
-    /// even though the path is reset.
+    /// Unlike [`clone`][`Self::clone`] this re-roots at the current node; however,
+    /// it does preserve the correct text offset even though the path is reset.
     #[must_use]
     pub fn spawn(&self) -> Self {
         let label = self.label();
@@ -117,6 +116,7 @@ impl<T: KindTypes> Cursor<T> {
         self.node.clone()
     }
 
+    /// Returns a label that describes the relationship between the current node and its parent.
     pub fn label(&self) -> T::EdgeLabel {
         match &self.parent {
             Parent::Connected(parent) => {
@@ -126,10 +126,6 @@ impl<T: KindTypes> Cursor<T> {
             Parent::Disconnected(label) => *label,
             Parent::None => T::EdgeLabel::default(),
         }
-    }
-
-    pub fn has_default_label(&self) -> bool {
-        self.label() == T::EdgeLabel::default()
     }
 
     /// Returns the text offset that corresponds to the beginning of the currently pointed to node.
@@ -429,6 +425,7 @@ impl<T: KindTypes> Cursor<T> {
     }
 }
 
+/// Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
 pub struct CursorIterator<T: KindTypes> {
     cursor: Cursor<T>,
 }
@@ -436,6 +433,7 @@ pub struct CursorIterator<T: KindTypes> {
 impl<T: KindTypes> Iterator for CursorIterator<T> {
     type Item = Edge<T>;
 
+    /// Returns the next edge in the iteration, or `None` if there are no more edges.
     fn next(&mut self) -> Option<Self::Item> {
         if self.cursor.is_completed() {
             return None;
@@ -452,6 +450,7 @@ impl<T: KindTypes> Iterator for CursorIterator<T> {
     }
 }
 
+/// Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
 pub struct AncestorsIterator<T: KindTypes> {
     current: Parent<T>,
 }
@@ -459,6 +458,7 @@ pub struct AncestorsIterator<T: KindTypes> {
 impl<T: KindTypes> Iterator for AncestorsIterator<T> {
     type Item = Rc<NonterminalNode<T>>;
 
+    /// Returns the next nonterminal node in the iteration, or `None` if there are no more nodes.
     fn next(&mut self) -> Option<Self::Item> {
         if let Parent::Connected(current) = self.current.clone() {
             self.current = current.parent.clone();

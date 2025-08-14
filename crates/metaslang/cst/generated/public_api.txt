@@ -30,7 +30,6 @@ pub fn metaslang_cst::cursor::Cursor<T>::go_to_nth_child(&mut self, child_index:
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_parent(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous_sibling(&mut self) -> bool
-pub fn metaslang_cst::cursor::Cursor<T>::has_default_label(&self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::is_completed(&self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::label(&self) -> <T as metaslang_cst::kinds::KindTypes>::EdgeLabel
 pub fn metaslang_cst::cursor::Cursor<T>::node(&self) -> metaslang_cst::nodes::Node<T>
