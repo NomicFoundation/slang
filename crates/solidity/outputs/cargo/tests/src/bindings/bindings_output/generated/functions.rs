@@ -15,3 +15,8 @@ fn definition_of_parameters() -> Result<()> {
 fn external_calls_implicit_conversions() -> Result<()> {
     run(T, "external_calls_implicit_conversions")
 }
+
+#[test]
+fn implicit_location_conversion() -> Result<()> {
+    run(T, "implicit_location_conversion")
+}

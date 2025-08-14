@@ -133,6 +133,51 @@ impl TypeRegistry {
 
             (Type::Integer { .. }, Type::Rational) => false,
 
+            (
+                Type::Array {
+                    element_type: from_element_type,
+                    location: from_location,
+                },
+                Type::Array {
+                    element_type: to_element_type,
+                    location: to_location,
+                },
+            ) => {
+                from_location.implicitly_convertible_to(*to_location)
+                    && self.implicitly_convertible_to(*from_element_type, *to_element_type)
+            }
+
+            (
+                Type::Struct {
+                    definition_id: from_definition,
+                    location: from_location,
+                },
+                Type::Struct {
+                    definition_id: to_definition,
+                    location: to_location,
+                },
+            ) => {
+                from_location.implicitly_convertible_to(*to_location)
+                    && from_definition == to_definition
+            }
+
+            (
+                Type::Bytes {
+                    location: from_location,
+                },
+                Type::Bytes {
+                    location: to_location,
+                },
+            )
+            | (
+                Type::String {
+                    location: from_location,
+                },
+                Type::String {
+                    location: to_location,
+                },
+            ) => from_location.implicitly_convertible_to(*to_location),
+
             // TODO: add more implicit conversion rules
             _ => false,
         }
@@ -177,8 +222,8 @@ impl TypeRegistry {
                 },
             ) => from_definition == to_definition,
 
-            (Type::Bytes { .. }, Type::Bytes { .. }) => true,
-            (Type::String { .. }, Type::String { .. }) => true,
+            (Type::Bytes { .. }, Type::Bytes { .. })
+            | (Type::String { .. }, Type::String { .. }) => true,
 
             _ => self.implicitly_convertible_to(from_type_id, to_type_id),
         }
@@ -414,6 +459,16 @@ pub enum DataLocation {
 
     // This applies to struct fields of reference types, where the data location is the struct's.
     Inherited,
+}
+
+impl DataLocation {
+    pub fn implicitly_convertible_to(&self, target: Self) -> bool {
+        match (self, target) {
+            (from, to) if *from == to => true,
+            (DataLocation::Storage | DataLocation::Calldata, DataLocation::Memory) => true,
+            _ => false,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
