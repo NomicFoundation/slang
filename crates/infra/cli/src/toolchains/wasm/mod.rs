@@ -12,7 +12,6 @@ pub const WASM_TARGET: &str = "wasm32-wasip1";
 
 #[derive(Clone, Copy, EnumIter)]
 pub enum WasmPackage {
-    Codegen,
     Solidity,
 }
 
@@ -142,7 +141,6 @@ impl WasmPackage {
                 other => panic!("Unexpected file extension: {other}"),
             }
         }
-
         Ok(())
     }
 
@@ -167,33 +165,32 @@ impl WasmPackage {
             std::fs::remove_dir_all(&output_dir)?;
         }
 
+        println!("About to walk");
         for temp_path in FileWalker::from_directory(&temp_dir).find_all()? {
+            println!("Walking...");
             let output_path = temp_path.replace_prefix(&temp_dir, &output_dir);
 
             std::fs::create_dir_all(output_path.unwrap_parent())?;
             std::fs::copy(&temp_path, &output_path)?;
         }
-
+        println!("Walked");
         Ok(())
     }
 
     pub fn wasm_crate(self) -> &'static str {
         match self {
-            Self::Codegen => "codegen_runtime_cargo_wasm",
             Self::Solidity => "solidity_cargo_wasm",
         }
     }
 
     pub fn npm_crate(self) -> &'static str {
         match self {
-            Self::Codegen => "codegen_runtime_npm_package",
             Self::Solidity => "solidity_npm_package",
         }
     }
 
     fn runtime_dir(self) -> &'static str {
         match self {
-            Self::Codegen => "src/runtime",
             Self::Solidity => "src/generated",
         }
     }

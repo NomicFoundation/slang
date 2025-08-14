@@ -494,10 +494,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen_runtime_npm_package"
-version = "1.2.1"
-
-[[package]]
 name = "codegen_spec"
 version = "1.2.1"
 dependencies = [
@@ -2464,10 +2460,6 @@ dependencies = [
  "codegen_language_macros",
  "semver",
 ]
-
-[[package]]
-name = "solidity_npm_package"
-version = "1.2.1"
 
 [[package]]
 name = "solidity_spec"

@@ -1,0 +1,267 @@
+import * as wasm from "../../../wasm/index.mjs";
+import { NonterminalKind, NonterminalNode, TerminalNode } from "../../cst/index.mjs";
+
+// 
+// Sequences:
+// 
+
+{% for sequence in model.ast.sequences %}
+  /**
+    * This node represents a `{{ sequence.parent_type }}` nonterminal, with the following structure:
+    *
+    * ```ebnf
+      {%- for line in sequence.ebnf | split(pat="\n") %}
+    * {{ line }}
+      {%- endfor %}
+    * ```
+    */
+  export class {{ sequence.parent_type }} {
+    private readonly fetch = once(() => {
+      const [
+        {%- for field in sequence.fields %}
+          ${{ field.label | camel_case }},
+        {%- endfor %}
+      ] = wasm.ast.Selectors.sequence(this.cst);
+
+      return {
+        {%- for field in sequence.fields %}
+          {{ field.label | camel_case }}:
+          {%- if field.is_optional -%}
+            ${{ field.label | camel_case }} === undefined ? undefined :
+          {%- endif -%}
+          {%- if field.type -%}
+            new {{ field.type }}(${{ field.label | camel_case }} as NonterminalNode),
+          {%- else -%}
+            ${{ field.label | camel_case }} as TerminalNode,
+          {%- endif -%}
+        {% endfor -%}
+      };
+    });
+
+    /**
+    * Constructs a new AST node of type `{{ sequence.parent_type }}`, given a nonterminal CST node of the same kind.
+    */
+    public constructor(
+      /**
+        * The underlying nonterminal CST node of kind `{{ sequence.parent_type }}`.
+        */
+      public readonly cst: NonterminalNode
+    ) {
+      assertKind(this.cst.kind, NonterminalKind.{{ sequence.parent_type }});
+    }
+
+    {% for field in sequence.fields %}
+      /**
+        * Returns the child node that has the label `{{ field.label | snake_case }}`.
+        */
+      public get {{ field.label | camel_case }}() :
+        {%- if field.type -%}
+          {{ field.type }}
+        {%- else -%}
+          TerminalNode
+        {%- endif -%}
+        {%- if field.is_optional -%}
+          | undefined
+        {%- endif -%}
+      {
+        return this.fetch().{{ field.label | camel_case }};
+      }
+    {% endfor %}
+  }
+{% endfor %}
+
+// 
+// Choices:
+// 
+
+{% for choice in model.ast.choices %}
+  /**
+    * This node represents a `{{ choice.parent_type }}` nonterminal, with the following structure:
+    *
+    * ```ebnf
+      {%- for line in choice.ebnf | split(pat="\n") %}
+    * {{ line }}
+      {%- endfor %}
+    * ```
+    */
+  export class {{ choice.parent_type }} {
+    {%- set variant_types = choice.nonterminal_types -%}
+    {%- if choice.includes_terminals -%}
+      {%- set variant_types = variant_types | concat(with = "TerminalNode") -%}
+    {%- endif -%}
+    {%- set variant_types = variant_types | join(sep = " | ") -%}
+
+    private readonly fetch: () => {{ variant_types }} = once(() => {
+      const variant = wasm.ast.Selectors.choice(this.cst);
+
+      {% if choice.nonterminal_types | length == 0 -%}
+        return variant as TerminalNode;
+      {%- else -%}
+        {% if choice.includes_terminals -%}
+          if (variant.isTerminalNode()) {
+              return variant;
+          }
+        {%- endif %}
+
+        switch (variant.kind) {
+          {%- for nonterminal in choice.nonterminal_types %}
+            case NonterminalKind.{{ nonterminal }}:
+              return new {{ nonterminal }}(variant as NonterminalNode);
+          {%- endfor %}
+
+          default:
+            throw new Error(`Unexpected variant: '${variant.kind}'.`);
+        }
+      {%- endif %}
+    });
+
+    /**
+    * Constructs a new AST node of type `{{ choice.parent_type }}`, given a nonterminal CST node of the same kind.
+    */
+    public constructor(
+      /**
+        * The underlying nonterminal CST node of kind `{{ choice.parent_type }}`.
+        */
+      public readonly cst: NonterminalNode
+    ) {
+      assertKind(this.cst.kind, NonterminalKind.{{ choice.parent_type }});
+    }
+
+    /**
+      * Returns the child node that has the label `variant`.
+      */
+    public get variant(): {{ variant_types }} {
+      return this.fetch();
+    }
+  }
+{% endfor %}
+
+// 
+// Repeated:
+// 
+
+{% for repeated in model.ast.repeated %}
+  /**
+    * This node represents a `{{ repeated.parent_type }}` nonterminal, with the following structure:
+    *
+    * ```ebnf
+      {%- for line in repeated.ebnf | split(pat="\n") %}
+    * {{ line }}
+      {%- endfor %}
+    * ```
+    */
+  export class {{ repeated.parent_type }} {
+    private readonly fetch = once(() => {
+      const items = wasm.ast.Selectors.repeated(this.cst);
+
+      {%- if repeated.item_type -%}
+        return items.map((item) => new {{ repeated.item_type }}(item as NonterminalNode));
+      {%- else -%}
+        return items as TerminalNode[];
+      {%- endif -%}
+    });
+      
+    /**
+    * Constructs a new AST node of type `{{ repeated.parent_type }}`, given a nonterminal CST node of the same kind.
+    */
+    public constructor(
+      /**
+        * The underlying nonterminal CST node of kind `{{ repeated.parent_type }}`.
+        */
+      public readonly cst: NonterminalNode
+    ) {
+      assertKind(this.cst.kind, NonterminalKind.{{ repeated.parent_type }});
+    }
+
+    /**
+      * Returns an array of the child nodes that have the label `item`. 
+      */
+    public get items():
+      {%- if repeated.item_type -%}
+        readonly {{ repeated.item_type }}[]
+      {%- else -%}
+        readonly TerminalNode[]
+      {%- endif -%}
+    {
+      return this.fetch();
+    }
+  }
+{% endfor %}
+
+// 
+// Separated:
+// 
+
+{% for separated in model.ast.separated %}
+  /**
+    * This node represents a `{{ separated.parent_type }}` nonterminal, with the following structure:
+    *
+    * ```ebnf
+      {%- for line in separated.ebnf | split(pat="\n") %}
+    * {{ line }}
+      {%- endfor %}
+    * ```
+    */
+  export class {{ separated.parent_type }} {
+    private readonly fetch = once(() => {
+      const [items, separators] = wasm.ast.Selectors.separated(this.cst);
+
+      return {
+        {%- if separated.item_type -%}
+          items: items!.map((item) => new {{ separated.item_type }}(item as NonterminalNode)),
+        {%- else -%}
+          items: items as TerminalNode[],
+        {%- endif -%}
+        separators: separators as TerminalNode[],
+      };
+    });
+
+    /**
+    * Constructs a new AST node of type `{{ separated.parent_type }}`, given a nonterminal CST node of the same kind.
+    */
+    public constructor(
+      /**
+        * The underlying nonterminal CST node of kind `{{ separated.parent_type }}`.
+        */
+      public readonly cst: NonterminalNode
+    ) {
+      assertKind(this.cst.kind, NonterminalKind.{{ separated.parent_type }});
+    }
+
+    /**
+      * Returns an array of the child nodes that have the label `item`. 
+      */
+    public get items():
+      {%- if separated.item_type -%}
+        readonly {{ separated.item_type }}[]
+      {%- else -%}
+        readonly TerminalNode[]
+      {%- endif -%}
+    {
+      return this.fetch().items;
+    }
+
+    /**
+      * Returns an array of the child nodes that have the label `separator`. 
+      */
+    public get separators(): readonly TerminalNode[] {
+      return this.fetch().separators;
+    }
+  }
+{% endfor %}
+
+function once<T>(factory: () => T): () => T {
+  let value: T | undefined;
+  return () => {
+    if (value === undefined) {
+      value = factory();
+    }
+    return value;
+  };
+}
+
+function assertKind(actual: NonterminalKind, expected: NonterminalKind): void {
+  if (actual !== expected) {
+    throw new Error(`AST node '${expected}' can only be initialized with a CST node of the same kind. Received '${actual}' instead.`);
+  }
+}

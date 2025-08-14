@@ -1,9 +1,7 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 import { Cursor } from "../cst/index.mjs";
 import { CompilationUnit } from "./index.mjs";
 
-import * as wasm from "../../../wasm/index.mjs";
+import * as wasm from "../../wasm/index.mjs";
 
 /**
  * User-provided options and callbacks necessary for the `CompilationBuilder` class to perform its job.

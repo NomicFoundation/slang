@@ -16,7 +16,6 @@ members = [
     "crates/codegen/runtime/cargo/crate",
     "crates/codegen/runtime/cargo/wasm",
     "crates/codegen/runtime/generator",
-    "crates/codegen/runtime/npm/package",
     "crates/codegen/spec",
     "crates/codegen/testing",
 
@@ -32,7 +31,6 @@ members = [
     "crates/solidity/outputs/cargo/crate",
     "crates/solidity/outputs/cargo/tests",
     "crates/solidity/outputs/cargo/wasm",
-    "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/perf",
     "crates/solidity/testing/perf/npm",
@@ -54,7 +52,6 @@ codegen_runner = { path = "crates/codegen/runner", version = "1.2.1" }
 codegen_runtime_cargo_crate = { path = "crates/codegen/runtime/cargo/crate", version = "1.2.1" }
 codegen_runtime_cargo_wasm = { path = "crates/codegen/runtime/cargo/wasm", version = "1.2.1" }
 codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "1.2.1" }
-codegen_runtime_npm_package = { path = "crates/codegen/runtime/npm/package", version = "1.2.1" }
 codegen_spec = { path = "crates/codegen/spec", version = "1.2.1" }
 codegen_testing = { path = "crates/codegen/testing", version = "1.2.1" }
 

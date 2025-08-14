@@ -1,6 +1,4 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-import * as wasm from "../../../wasm/index.mjs";
+import * as wasm from "../../wasm/index.mjs";
 
 export { CompilationBuilder, CompilationBuilderConfig } from "./builder.mjs";
 
