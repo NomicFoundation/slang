@@ -653,7 +653,11 @@ impl Pass {
             let parameter_types = &function_type.parameter_types;
             if parameter_types.len() == argument_typings.len() {
                 // argument count matches, check that all types are implicitly convertible
-                self.matches_positional_arguments(parameter_types, argument_typings)
+                self.matches_positional_arguments(
+                    parameter_types,
+                    argument_typings,
+                    function_type.external,
+                )
             } else if let Some(receiver_type_id) = receiver_type_id {
                 // we have a receiver type, so check the first parameter type
                 // against it and then the rest, if the counts match
@@ -663,7 +667,11 @@ impl Pass {
                             .implicitly_convertible_to(receiver_type_id, *type_id)
                     })
                 {
-                    self.matches_positional_arguments(&parameter_types[1..], argument_typings)
+                    self.matches_positional_arguments(
+                        &parameter_types[1..],
+                        argument_typings,
+                        function_type.external,
+                    )
                 } else {
                     false
                 }
@@ -677,12 +685,17 @@ impl Pass {
         &self,
         parameter_types: &[TypeId],
         argument_typings: &[Typing],
+        external_call: bool,
     ) -> bool {
         parameter_types
             .iter()
             .zip(argument_typings)
             .all(|(parameter_type, argument_typing)| {
-                self.parameter_type_matches_argument_typing(*parameter_type, argument_typing)
+                self.parameter_type_matches_argument_typing(
+                    *parameter_type,
+                    argument_typing,
+                    external_call,
+                )
             })
     }
 
@@ -690,11 +703,18 @@ impl Pass {
         &self,
         parameter_type: TypeId,
         argument_typing: &Typing,
+        external_call: bool,
     ) -> bool {
         match argument_typing {
-            Typing::Resolved(type_id) => self
-                .types
-                .implicitly_convertible_to(*type_id, parameter_type),
+            Typing::Resolved(type_id) => {
+                if external_call {
+                    self.types
+                        .implicitly_convertible_to_for_external_call(*type_id, parameter_type)
+                } else {
+                    self.types
+                        .implicitly_convertible_to(*type_id, parameter_type)
+                }
+            }
             Typing::This => self
                 .types
                 .implicitly_convertible_to(self.types.address(), parameter_type),
@@ -878,7 +898,12 @@ impl Pass {
 
             if parameter_types.len() == argument_typings.len() {
                 // argument count matches, check that all types are implicitly convertible
-                self.matches_named_arguments(parameter_names, parameter_types, argument_typings)
+                self.matches_named_arguments(
+                    parameter_names,
+                    parameter_types,
+                    argument_typings,
+                    function_type.external,
+                )
             } else if let Some(receiver_type_id) = receiver_type_id {
                 // we have a receiver type, so check the first parameter type
                 // against it and then the rest, if the counts match
@@ -892,6 +917,7 @@ impl Pass {
                         &parameter_names[1..],
                         &parameter_types[1..],
                         argument_typings,
+                        function_type.external,
                     )
                 } else {
                     false
@@ -907,6 +933,7 @@ impl Pass {
         parameter_names: &[Option<String>],
         parameter_types: &[TypeId],
         argument_typings: &[(String, Typing)],
+        external_call: bool,
     ) -> bool {
         argument_typings
             .iter()
@@ -918,7 +945,11 @@ impl Pass {
                     return false;
                 };
                 let parameter_type = parameter_types[index];
-                self.parameter_type_matches_argument_typing(parameter_type, argument_typing)
+                self.parameter_type_matches_argument_typing(
+                    parameter_type,
+                    argument_typing,
+                    external_call,
+                )
             })
     }
 

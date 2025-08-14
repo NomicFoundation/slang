@@ -10,3 +10,8 @@ const T: &str = "functions";
 fn definition_of_parameters() -> Result<()> {
     run(T, "definition_of_parameters")
 }
+
+#[test]
+fn external_calls_implicit_conversions() -> Result<()> {
+    run(T, "external_calls_implicit_conversions")
+}

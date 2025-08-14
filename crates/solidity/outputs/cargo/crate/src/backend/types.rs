@@ -138,6 +138,52 @@ impl TypeRegistry {
         }
     }
 
+    pub fn implicitly_convertible_to_for_external_call(
+        &self,
+        from_type_id: TypeId,
+        to_type_id: TypeId,
+    ) -> bool {
+        if from_type_id == to_type_id {
+            return true;
+        }
+        let from_type = self.get_type_by_id(from_type_id);
+        let to_type = self.get_type_by_id(to_type_id);
+
+        // TODO(validation): we're assuming here that for external calls every
+        // location is implicitly convertible to any other (although
+        // reallistically the targets can be memory and calldata only). Verify
+        // this assumption.
+        match (from_type, to_type) {
+            (
+                Type::Array {
+                    element_type: from_element_type,
+                    ..
+                },
+                Type::Array {
+                    element_type: to_element_type,
+                    ..
+                },
+            ) => self
+                .implicitly_convertible_to_for_external_call(*from_element_type, *to_element_type),
+
+            (
+                Type::Struct {
+                    definition_id: from_definition,
+                    ..
+                },
+                Type::Struct {
+                    definition_id: to_definition,
+                    ..
+                },
+            ) => from_definition == to_definition,
+
+            (Type::Bytes { .. }, Type::Bytes { .. }) => true,
+            (Type::String { .. }, Type::String { .. }) => true,
+
+            _ => self.implicitly_convertible_to(from_type_id, to_type_id),
+        }
+    }
+
     pub fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
         let canonical_type = match self.get_type_by_id(type_id) {
             Type::Array { element_type, .. } => {
