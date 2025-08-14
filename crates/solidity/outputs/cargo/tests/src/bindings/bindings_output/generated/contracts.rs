@@ -92,6 +92,11 @@ fn multi_inheritance() -> Result<()> {
 }
 
 #[test]
+fn overload_disambiguation_with_this() -> Result<()> {
+    run(T, "overload_disambiguation_with_this")
+}
+
+#[test]
 fn public_array_getters() -> Result<()> {
     run(T, "public_array_getters")
 }

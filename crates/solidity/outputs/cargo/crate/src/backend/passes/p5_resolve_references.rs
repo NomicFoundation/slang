@@ -682,11 +682,24 @@ impl Pass {
             .iter()
             .zip(argument_typings)
             .all(|(parameter_type, argument_typing)| {
-                argument_typing.as_type_id().is_some_and(|type_id| {
-                    self.types
-                        .implicitly_convertible_to(type_id, *parameter_type)
-                })
+                self.parameter_type_matches_argument_typing(*parameter_type, argument_typing)
             })
+    }
+
+    fn parameter_type_matches_argument_typing(
+        &self,
+        parameter_type: TypeId,
+        argument_typing: &Typing,
+    ) -> bool {
+        match argument_typing {
+            Typing::Resolved(type_id) => self
+                .types
+                .implicitly_convertible_to(*type_id, parameter_type),
+            Typing::This => self
+                .types
+                .implicitly_convertible_to(self.types.address(), parameter_type),
+            _ => false,
+        }
     }
 
     fn type_id_of_receiver(&self, operand: &input_ir::Expression) -> Option<TypeId> {
@@ -889,9 +902,6 @@ impl Pass {
         argument_typings
             .iter()
             .all(|(argument_name, argument_typing)| {
-                let Some(type_id) = argument_typing.as_type_id() else {
-                    return false;
-                };
                 let Some(index) = parameter_names
                     .iter()
                     .position(|name| name.as_ref().is_some_and(|name| name == argument_name))
@@ -899,8 +909,7 @@ impl Pass {
                     return false;
                 };
                 let parameter_type = parameter_types[index];
-                self.types
-                    .implicitly_convertible_to(type_id, parameter_type)
+                self.parameter_type_matches_argument_typing(parameter_type, argument_typing)
             })
     }
 
