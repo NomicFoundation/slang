@@ -111,15 +111,6 @@ fn check_bindings_coverage<'a>(
             continue;
         }
 
-        if matches!(
-            cursor.ancestors().next(),
-            Some(ancestor)
-            // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
-            if ancestor.kind == NonterminalKind::ExperimentalFeature
-        ) {
-            continue;
-        }
-
         if binding_graph.definition_at(&cursor).is_none()
             && binding_graph.reference_at(&cursor).is_none()
         {

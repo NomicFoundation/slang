@@ -571,15 +571,6 @@ fn collect_all_definitions_and_references(
             if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
                 continue;
             }
-            if matches!(
-                cursor.ancestors().next(),
-                Some(ancestor)
-                    if ancestor.kind == NonterminalKind::ExperimentalFeature
-            ) {
-                // ignore identifiers in `pragma experimental` directives,
-                // as they are unbound feature names:
-                continue;
-            }
 
             let mut bound = false;
             let node_id = cursor.node().id();
