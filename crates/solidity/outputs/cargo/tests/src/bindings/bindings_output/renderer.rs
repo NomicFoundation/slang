@@ -5,7 +5,7 @@ use std::rc::Rc;
 use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity::bindings::{BindingGraph, Definition, Reference};
-use slang_solidity::cst::{NodeKind, NonterminalKind, TerminalKindExtensions};
+use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 use slang_solidity::diagnostic;
 
 use super::runner::ParsedPart;
