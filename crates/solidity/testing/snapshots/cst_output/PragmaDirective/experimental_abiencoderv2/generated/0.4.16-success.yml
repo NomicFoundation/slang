@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma experimental SMTChecker;                                                  │ 0..31
+
+Errors: []
+
+Tree:
+  - (root꞉ PragmaDirective): # "pragma experimental SMTChecker;\n" (0..32)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (pragma꞉ Pragma) ► (variant꞉ ExperimentalPragma): # " experimental SMTChecker" (6..30)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (7..19)
+          - (feature꞉ ExperimentalFeature): # " SMTChecker" (19..30)
+              - (leading_trivia꞉ Whitespace): " " # (19..20)
+              - (variant꞉ SMTCheckerKeyword): "SMTChecker" # (20..30)
+      - (semicolon꞉ Semicolon): ";" # (30..31)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (31..32)

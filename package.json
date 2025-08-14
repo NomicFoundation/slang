@@ -7,6 +7,10 @@
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/npm/tests",
     "crates/solidity/testing/perf",
+    "crates/solidity/testing/perf/npm",
     "documentation/public/user-guide"
-  ]
+  ],
+  "devDependencies": {
+    "tsx": "^4.19.4"
+  }
 }

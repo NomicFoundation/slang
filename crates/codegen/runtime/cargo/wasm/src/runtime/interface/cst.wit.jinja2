@@ -11,7 +11,7 @@ interface cst {
             stub3,
         {%- else %}
             {%- for variant in model.kinds.nonterminal_kinds %}
-                /// Represents a node with kind `{{ variant.id | pascal_case }}`, having the following structure:
+                /// Represents a node with kind `{{ variant.id }}`, having the following structure:
                 ///
                 /// ```ebnf
                 {%- for line in variant.documentation | split(pat="\n") %}
@@ -29,7 +29,7 @@ interface cst {
         /// This terminal is created when the parser encounters an unexpected part of the input,
         /// and it cannot recognize it as any valid syntax in this position in the grammar.
         unrecognized,
-        /// This terminal is created when the parser is expecting a certain terminal, but it cannot find it.
+        /// This terminal is created when the parser is expecting a certain terminal but does not find it.
         /// Adding the missing input in this position may allow the parser to produce a valid tree there.
         missing,
 
@@ -42,7 +42,7 @@ interface cst {
             stub3,
         {%- else %}
             {%- for variant in model.kinds.terminal_kinds %}
-                /// Represents a node with kind `{{ variant.id | pascal_case }}`, having the following structure:
+                /// Represents a node with kind `{{ variant.id }}`, having the following structure:
                 ///
                 /// ```ebnf
                 {%- for line in variant.documentation | split(pat="\n") %}

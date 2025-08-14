@@ -1,5 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+//! Source code parsing utilities. See [`parser::Parser`] for more info on parsing
+//! source code.
+
 mod lexer;
 mod parse_error;
 mod parse_output;

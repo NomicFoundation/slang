@@ -1,4 +1,4 @@
-name: "benchmark"
+name: "benchmark_cargo"
 
 on:
   # Run using manual triggers from GitHub UI:
@@ -10,6 +10,10 @@ on:
         type: "boolean"
         required: true
         default: true
+
+      bencherProject:
+        description: "Bencher project:"
+        type: "string"
 
   # Run on pushes to 'main' branch:
   push:
@@ -35,11 +39,16 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
+      - name: "Set bencher project"
+        run: |
+          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
+        if: "${{ inputs.bencherProject }}"
+
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
 
-      - name: "infra perf benchmark"
-        run: "./scripts/bin/infra perf benchmark ${{ inputs.dryRun == true && '--dry-run' || '' }}"
+      - name: "infra perf cargo"
+        run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
 

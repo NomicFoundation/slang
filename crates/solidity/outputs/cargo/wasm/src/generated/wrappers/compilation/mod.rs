@@ -39,11 +39,11 @@ impl ffi::Guest for crate::wasm_crate::World {
 
 define_refcell_wrapper! { InternalCompilationBuilder {
     fn create(language_version: String) -> Result<ffi::InternalCompilationBuilder, String> {
-      let language_version = Version::parse(&language_version).map_err(|e| e.to_string())?;
+        let language_version = Version::parse(&language_version).map_err(|e| e.to_string())?;
 
-          rust::InternalCompilationBuilder::create(language_version)
-              .map(IntoFFI::_into_ffi)
-              .map_err(|e| e.to_string())
+        rust::InternalCompilationBuilder::create(language_version)
+            .map(IntoFFI::_into_ffi)
+            .map_err(|e| e.to_string())
     }
 
     fn add_file(&self, id: String, contents: String) -> ffi::AddFileResponse {

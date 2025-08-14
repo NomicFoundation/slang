@@ -7,9 +7,11 @@ use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use infra_utils::terminal::Terminal;
+use strum::IntoEnumIterator;
 
 use crate::toolchains::mkdocs::Mkdocs;
 use crate::toolchains::pipenv::PipEnv;
+use crate::toolchains::public_api::UserFacingCrate;
 use crate::utils::{ClapExtensions, OrderedCommand};
 
 #[derive(Clone, Debug, Default, Parser)]
@@ -30,6 +32,8 @@ enum LintCommand {
     Clippy,
     /// Run `cargo doc` to generate Rustdoc documentation and check for any broken links.
     Rustdoc,
+    /// Run `cargo test --doc` to ensure code in rustdoc comments is valid.
+    RustdocTest,
     /// Check mkdocs documentation for any build issues or broken links.
     Mkdocs,
     /// Check for spelling issues in Markdown files.
@@ -59,6 +63,7 @@ impl OrderedCommand for LintCommand {
         match self {
             LintCommand::Clippy => run_clippy(),
             LintCommand::Rustdoc => run_rustdoc(),
+            LintCommand::RustdocTest => run_rustdoc_test(),
             LintCommand::Mkdocs => run_mkdocs(),
             LintCommand::Cspell => run_cspell(),
             LintCommand::Prettier => run_prettier(),
@@ -95,6 +100,18 @@ fn run_rustdoc() {
         .flag("--document-private-items")
         .add_build_rustflags()
         .run();
+}
+
+fn run_rustdoc_test() {
+    let mut command = Command::new("cargo")
+        .arg("test")
+        .flag("--doc")
+        .flag("--all-features");
+
+    for crate_name in UserFacingCrate::iter() {
+        command = command.property("--package", crate_name.to_string());
+    }
+    command.run();
 }
 
 fn run_mkdocs() {

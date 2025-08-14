@@ -9,6 +9,7 @@ use super::{BindingGraph, BindingLocation, Definition};
 use crate::builder::{FileDescriptor, GraphHandle};
 use crate::graph::DisplayCursor;
 
+/// Represents a reference to a node in the binding graph.
 #[derive(Clone)]
 pub struct Reference<KT: KindTypes + 'static> {
     pub(crate) owner: Rc<BindingGraph<KT>>,
@@ -16,35 +17,55 @@ pub struct Reference<KT: KindTypes + 'static> {
 }
 
 impl<KT: KindTypes + 'static> Reference<KT> {
+    /// Returns a unique numerical identifier of the reference.
+    /// It is only valid for the lifetime of the binding graph.
+    /// It can change between multiple graphs, even for the same source code input.
     pub fn id(&self) -> NodeId {
-        self.get_cursor().node().id()
+        self.internal_get_cursor().node().id()
     }
 
+    /// Returns the location of the reference.
+    /// For `new X()`, that is the location of the `X` `Identifier` node.
     pub fn location(&self) -> BindingLocation<KT> {
-        match self.get_file() {
+        match self.internal_get_file() {
             FileDescriptor::BuiltIns(_) => BindingLocation::built_in(),
             FileDescriptor::User(file_id) => {
-                BindingLocation::user_file(file_id, self.get_cursor().to_owned())
+                BindingLocation::user_file(file_id, self.internal_get_cursor().to_owned())
             }
         }
     }
 
-    pub fn get_cursor(&self) -> &Cursor<KT> {
+    /// Returns a list of all definitions related to this reference.
+    /// Most references have a single definition, but some have multiple, such as when a symbol
+    /// is imported from another file, and renamed (re-defined) in the current file.
+    pub fn definitions(&self) -> Vec<Definition<KT>> {
+        self.owner.resolve_reference(self.handle)
+    }
+
+    fn internal_get_cursor(&self) -> &Cursor<KT> {
         self.owner
             .graph
             .get_cursor(self.handle)
             .expect("Reference handle is valid")
     }
 
-    pub fn get_file(&self) -> FileDescriptor {
+    fn internal_get_file(&self) -> FileDescriptor {
         self.owner
             .graph
             .get_file_descriptor(self.handle)
             .expect("Reference to have a valid file descriptor")
     }
+}
 
-    pub fn definitions(&self) -> Vec<Definition<KT>> {
-        self.owner.resolve_reference(self.handle)
+#[cfg(feature = "__private_testing_utils")]
+#[allow(missing_docs)]
+impl<KT: KindTypes + 'static> Reference<KT> {
+    pub fn get_cursor(&self) -> &Cursor<KT> {
+        self.internal_get_cursor()
+    }
+
+    pub fn get_file(&self) -> FileDescriptor {
+        self.internal_get_file()
     }
 }
 
@@ -54,8 +75,8 @@ impl<KT: KindTypes + 'static> Display for Reference<KT> {
             f,
             "reference {}",
             DisplayCursor {
-                cursor: self.get_cursor(),
-                file: self.get_file()
+                cursor: self.internal_get_cursor(),
+                file: self.internal_get_file()
             }
         )
     }
