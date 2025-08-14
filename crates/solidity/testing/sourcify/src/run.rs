@@ -1,7 +1,7 @@
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
-use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
+use slang_solidity::cst::{Cursor, NodeKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::utils::LanguageFacts;
 
@@ -194,17 +194,6 @@ fn run_bindings_check(
         let mut cursor = file.create_tree_cursor();
         while cursor.go_to_next_terminal() {
             if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
-                continue;
-            }
-
-            if matches!(
-                cursor.ancestors().next(),
-                Some(ancestor)
-                // Ignore identifiers in certain pragma contexts
-                // `pragma experimental`: they are unbound feature names
-                // `pragma abicoder`: they are unbound abi version names
-                if ancestor.kind == NonterminalKind::ExperimentalFeature || ancestor.kind == NonterminalKind::AbicoderPragma
-            ) {
                 continue;
             }
 

@@ -71,6 +71,7 @@ pub struct Parser {
     pub(crate) version_is_at_least_0_7_0: bool,
     pub(crate) version_is_at_least_0_7_1: bool,
     pub(crate) version_is_at_least_0_7_4: bool,
+    pub(crate) version_is_at_least_0_7_5: bool,
     pub(crate) version_is_at_least_0_8_0: bool,
     pub(crate) version_is_at_least_0_8_4: bool,
     pub(crate) version_is_at_least_0_8_8: bool,
@@ -123,6 +124,7 @@ impl Parser {
                 version_is_at_least_0_7_0: Version::new(0, 7, 0) <= language_version,
                 version_is_at_least_0_7_1: Version::new(0, 7, 1) <= language_version,
                 version_is_at_least_0_7_4: Version::new(0, 7, 4) <= language_version,
+                version_is_at_least_0_7_5: Version::new(0, 7, 5) <= language_version,
                 version_is_at_least_0_8_0: Version::new(0, 8, 0) <= language_version,
                 version_is_at_least_0_8_4: Version::new(0, 8, 4) <= language_version,
                 version_is_at_least_0_8_8: Version::new(0, 8, 8) <= language_version,
@@ -154,6 +156,7 @@ impl Parser {
     pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         match kind {
             NonterminalKind::AbicoderPragma => Self::abicoder_pragma.parse(self, input, kind),
+            NonterminalKind::AbicoderVersion => Self::abicoder_version.parse(self, input, kind),
             NonterminalKind::AdditiveExpression => {
                 Self::additive_expression.parse(self, input, kind)
             }
@@ -573,24 +576,45 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn abicoder_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(
-                EdgeLabel::AbicoderKeyword,
-                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::AbicoderKeyword,
-                ),
-            )?;
-            seq.elem_labeled(
-                EdgeLabel::Version,
-                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::Identifier,
-                ),
-            )?;
-            seq.finish()
-        })
+        if self.version_is_at_least_0_7_5 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::AbicoderKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                        input,
+                        TerminalKind::AbicoderKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Version, self.abicoder_version(input))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::no_match(vec![])
+        }
         .with_kind(NonterminalKind::AbicoderPragma)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn abicoder_version(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if self.version_is_at_least_0_7_5 {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::AbicoderV1Keyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::AbicoderV2Keyword,
+                );
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_label(EdgeLabel::Variant)
+        } else {
+            ParserResult::no_match(vec![])
+        }
+        .with_kind(NonterminalKind::AbicoderVersion)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1950,33 +1974,46 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn experimental_feature(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                input,
-                TerminalKind::Identifier,
-            );
-            choice.consider(input, result)?;
-            let result = self.string_literal(input);
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
+        if self.version_is_at_least_0_4_16 {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::ABIEncoderV2Keyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::SMTCheckerKeyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.string_literal(input);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_label(EdgeLabel::Variant)
+        } else {
+            ParserResult::no_match(vec![])
+        }
         .with_kind(NonterminalKind::ExperimentalFeature)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn experimental_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(
-                EdgeLabel::ExperimentalKeyword,
-                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::ExperimentalKeyword,
-                ),
-            )?;
-            seq.elem_labeled(EdgeLabel::Feature, self.experimental_feature(input))?;
-            seq.finish()
-        })
+        if self.version_is_at_least_0_4_16 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::ExperimentalKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                        input,
+                        TerminalKind::ExperimentalKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Feature, self.experimental_feature(input))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::no_match(vec![])
+        }
         .with_kind(NonterminalKind::ExperimentalPragma)
     }
 
@@ -4411,12 +4448,16 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.abicoder_pragma(input);
-            choice.consider(input, result)?;
-            let result = self.experimental_pragma(input);
-            choice.consider(input, result)?;
             let result = self.version_pragma(input);
             choice.consider(input, result)?;
+            if self.version_is_at_least_0_7_5 {
+                let result = self.abicoder_pragma(input);
+                choice.consider(input, result)?;
+            }
+            if self.version_is_at_least_0_4_16 {
+                let result = self.experimental_pragma(input);
+                choice.consider(input, result)?;
+            }
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)
@@ -9379,14 +9420,56 @@ impl Lexer for Parser {
                     longest_terminal.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
-                        Some('a') => match input.next() {
-                            Some('b') => {
-                                if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
-                                    KeywordScan::Reserved(TerminalKind::AbstractKeyword)
+                        Some('A') => {
+                            if scan_chars!(
+                                input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
+                            ) {
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::ABIEncoderV2Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
+                            } else {
+                                KeywordScan::Absent
                             }
+                        }
+                        Some('S') => {
+                            if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::SMTCheckerKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some('a') => match input.next() {
+                            Some('b') => match input.next() {
+                                Some('i') => {
+                                    if scan_chars!(input, 'c', 'o', 'd', 'e', 'r') {
+                                        if self.version_is_at_least_0_7_5 {
+                                            KeywordScan::Present(TerminalKind::AbicoderKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('s') => {
+                                    if scan_chars!(input, 't', 'r', 'a', 'c', 't') {
+                                        KeywordScan::Reserved(TerminalKind::AbstractKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
                             Some('d') => {
                                 if scan_chars!(input, 'd', 'r', 'e', 's', 's') {
                                     KeywordScan::Present(TerminalKind::AddressKeyword)
@@ -9727,13 +9810,33 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('x') => {
-                                if scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l') {
-                                    KeywordScan::Reserved(TerminalKind::ExternalKeyword)
-                                } else {
+                            Some('x') => match input.next() {
+                                Some('p') => {
+                                    if scan_chars!(
+                                        input, 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
+                                    ) {
+                                        if self.version_is_at_least_0_4_16 {
+                                            KeywordScan::Present(TerminalKind::ExperimentalKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'e', 'r', 'n', 'a', 'l') {
+                                        KeywordScan::Reserved(TerminalKind::ExternalKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
                                     KeywordScan::Absent
                                 }
-                            }
+                                None => KeywordScan::Absent,
+                            },
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -10340,6 +10443,13 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
+                            Some('o') => {
+                                if scan_chars!(input, 'l', 'i', 'd', 'i', 't', 'y') {
+                                    KeywordScan::Present(TerminalKind::SolidityKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('t') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 't', 'i', 'c') {
@@ -10564,6 +10674,20 @@ impl Lexer for Parser {
                             None => KeywordScan::Absent,
                         },
                         Some('v') => match input.next() {
+                            Some('1') => {
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::AbicoderV1Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('2') => {
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::AbicoderV2Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('a') => {
                                 if scan_chars!(input, 'r') {
                                     KeywordScan::Reserved(TerminalKind::VarKeyword)
@@ -10737,9 +10861,37 @@ impl Lexer for Parser {
                     longest_terminal.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
+                        Some('A') => {
+                            if scan_chars!(
+                                input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
+                            ) {
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::ABIEncoderV2Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some('S') => {
+                            if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::SMTCheckerKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
                         Some('a') => {
                             if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
-                                KeywordScan::Present(TerminalKind::AbicoderKeyword)
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::AbicoderKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10748,7 +10900,11 @@ impl Lexer for Parser {
                             if scan_chars!(
                                 input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
                             ) {
-                                KeywordScan::Present(TerminalKind::ExperimentalKeyword)
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::ExperimentalKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10767,6 +10923,27 @@ impl Lexer for Parser {
                                 KeywordScan::Absent
                             }
                         }
+                        Some('v') => match input.next() {
+                            Some('1') => {
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::AbicoderV1Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('2') => {
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::AbicoderV2Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
                         Some(_) => {
                             input.undo();
                             KeywordScan::Absent

@@ -8,7 +8,7 @@ use slang_solidity::backend::binder::{Definition, Resolution, Typing};
 use slang_solidity::backend::passes::p4_resolve_references::Output;
 use slang_solidity::backend::types::{DataLocation, Type, TypeId};
 use slang_solidity::compilation::File;
-use slang_solidity::cst::{Cursor, NodeId, NodeKind, NonterminalKind, TerminalKindExtensions};
+use slang_solidity::cst::{Cursor, NodeId, NodeKind, TerminalKindExtensions};
 
 const SEPARATOR: &str =
     "\n------------------------------------------------------------------------\n";
@@ -569,15 +569,6 @@ fn collect_all_definitions_and_references(
         let mut cursor = file.create_tree_cursor();
         while cursor.go_to_next_terminal() {
             if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
-                continue;
-            }
-            if matches!(
-                cursor.ancestors().next(),
-                Some(ancestor)
-                    if ancestor.kind == NonterminalKind::ExperimentalFeature
-            ) {
-                // ignore identifiers in `pragma experimental` directives,
-                // as they are unbound feature names:
                 continue;
             }
 

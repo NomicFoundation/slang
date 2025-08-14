@@ -29,13 +29,38 @@ pub enum TerminalKind {
     /// Adding the missing input in this position may allow the parser to produce a valid tree there.
     MISSING,
 
+    /// Represents a node with kind `ABIEncoderV2Keyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
+    /// (* Never reserved *)
+    /// ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
+    /// ```
+    ABIEncoderV2Keyword,
     /// Represents a node with kind `AbicoderKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.7.5 *)
     /// (* Never reserved *)
     /// ABICODER_KEYWORD = "abicoder";
     /// ```
     AbicoderKeyword,
+    /// Represents a node with kind `AbicoderV1Keyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.7.5 *)
+    /// (* Never reserved *)
+    /// ABICODER_V1_KEYWORD = "v1";
+    /// ```
+    AbicoderV1Keyword,
+    /// Represents a node with kind `AbicoderV2Keyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.7.5 *)
+    /// (* Never reserved *)
+    /// ABICODER_V2_KEYWORD = "v2";
+    /// ```
+    AbicoderV2Keyword,
     /// Represents a node with kind `AbstractKeyword`, having the following structure:
     ///
     /// ```ebnf
@@ -449,6 +474,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `ExperimentalKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
     /// (* Never reserved *)
     /// EXPERIMENTAL_KEYWORD = "experimental";
     /// ```
@@ -964,6 +990,14 @@ pub enum TerminalKind {
     /// REVERT_KEYWORD = "revert";
     /// ```
     RevertKeyword,
+    /// Represents a node with kind `SMTCheckerKeyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
+    /// (* Never reserved *)
+    /// SMT_CHECKER_KEYWORD = "SMTChecker";
+    /// ```
+    SMTCheckerKeyword,
     /// Represents a node with kind `SealedKeyword`, having the following structure:
     ///
     /// ```ebnf

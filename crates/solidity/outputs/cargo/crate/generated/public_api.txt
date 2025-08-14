@@ -234,6 +234,7 @@ impl serde::ser::Serialize for slang_solidity::cst::KindTypes
 pub fn slang_solidity::cst::KindTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 #[repr(u8)] pub enum slang_solidity::cst::NonterminalKind
 pub slang_solidity::cst::NonterminalKind::AbicoderPragma
+pub slang_solidity::cst::NonterminalKind::AbicoderVersion
 pub slang_solidity::cst::NonterminalKind::AdditiveExpression
 pub slang_solidity::cst::NonterminalKind::AddressType
 pub slang_solidity::cst::NonterminalKind::AndExpression
@@ -485,7 +486,10 @@ pub fn slang_solidity::cst::NonterminalKind::serialize<__S>(&self, __serializer:
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::NonterminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::NonterminalKind) -> &'static str
 #[repr(u16)] pub enum slang_solidity::cst::TerminalKind
+pub slang_solidity::cst::TerminalKind::ABIEncoderV2Keyword
 pub slang_solidity::cst::TerminalKind::AbicoderKeyword
+pub slang_solidity::cst::TerminalKind::AbicoderV1Keyword
+pub slang_solidity::cst::TerminalKind::AbicoderV2Keyword
 pub slang_solidity::cst::TerminalKind::AbstractKeyword
 pub slang_solidity::cst::TerminalKind::AddressKeyword
 pub slang_solidity::cst::TerminalKind::AfterKeyword
@@ -629,6 +633,7 @@ pub slang_solidity::cst::TerminalKind::RelocatableKeyword
 pub slang_solidity::cst::TerminalKind::ReturnKeyword
 pub slang_solidity::cst::TerminalKind::ReturnsKeyword
 pub slang_solidity::cst::TerminalKind::RevertKeyword
+pub slang_solidity::cst::TerminalKind::SMTCheckerKeyword
 pub slang_solidity::cst::TerminalKind::SealedKeyword
 pub slang_solidity::cst::TerminalKind::SecondsKeyword
 pub slang_solidity::cst::TerminalKind::Semicolon

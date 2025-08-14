@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use infra_utils::paths::PathExtensions;
 use slang_solidity::bindings::BindingGraph;
-use slang_solidity::cst::{NodeKind, NonterminalKind, TerminalKindExtensions};
+use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 
 use crate::tests::parser::ParsedFile;
 
@@ -32,15 +32,6 @@ pub fn run(dependencies: BuiltBindingGraph) {
 
         while cursor.go_to_next_terminal() {
             if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
-                continue;
-            }
-
-            if matches!(
-                cursor.ancestors().next(),
-                Some(ancestor)
-                // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
-                if ancestor.kind == NonterminalKind::ExperimentalFeature
-            ) {
                 continue;
             }
 

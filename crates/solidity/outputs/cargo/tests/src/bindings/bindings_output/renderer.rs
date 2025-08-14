@@ -5,7 +5,7 @@ use std::rc::Rc;
 use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity::bindings::{BindingGraph, Definition, Reference};
-use slang_solidity::cst::{NodeKind, NonterminalKind, TerminalKindExtensions};
+use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 use slang_solidity::diagnostic;
 
 use super::runner::ParsedPart;
@@ -108,15 +108,6 @@ fn check_bindings_coverage<'a>(
 
     while cursor.go_to_next_terminal() {
         if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
-            continue;
-        }
-
-        if matches!(
-            cursor.ancestors().next(),
-            Some(ancestor)
-            // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
-            if ancestor.kind == NonterminalKind::ExperimentalFeature
-        ) {
             continue;
         }
 

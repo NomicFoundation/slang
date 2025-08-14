@@ -24,10 +24,19 @@ pub enum NonterminalKind {
     /// Represents a node with kind `AbicoderPragma`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.7.5 *)
     /// AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
-    ///                  (* version: *) IDENTIFIER;
+    ///                  (* version: *) AbicoderVersion;
     /// ```
     AbicoderPragma,
+    /// Represents a node with kind `AbicoderVersion`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.7.5 *)
+    /// AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+    ///                 | (* variant: *) ABICODER_V2_KEYWORD;
+    /// ```
+    AbicoderVersion,
     /// Represents a node with kind `AdditiveExpression`, having the following structure:
     ///
     /// ```ebnf
@@ -519,13 +528,16 @@ pub enum NonterminalKind {
     /// Represents a node with kind `ExperimentalFeature`, having the following structure:
     ///
     /// ```ebnf
-    /// ExperimentalFeature = (* variant: *) IDENTIFIER
+    /// (* Introduced in 0.4.16 *)
+    /// ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+    ///                     | (* variant: *) SMT_CHECKER_KEYWORD
     ///                     | (* variant: *) StringLiteral;
     /// ```
     ExperimentalFeature,
     /// Represents a node with kind `ExperimentalPragma`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
     /// ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
     ///                      (* feature: *) ExperimentalFeature;
     /// ```
@@ -1156,9 +1168,9 @@ pub enum NonterminalKind {
     /// Represents a node with kind `Pragma`, having the following structure:
     ///
     /// ```ebnf
-    /// Pragma = (* variant: *) AbicoderPragma
-    ///        | (* variant: *) ExperimentalPragma
-    ///        | (* variant: *) VersionPragma;
+    /// Pragma = (* variant: *) VersionPragma
+    ///        | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+    ///        | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
     /// ```
     Pragma,
     /// Represents a node with kind `PragmaDirective`, having the following structure:
