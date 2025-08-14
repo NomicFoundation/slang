@@ -30,7 +30,6 @@ fn generate_public_api(crate_name: UserFacingCrate) -> Result<()> {
 
     let rustdoc_json = rustdoc_json::Builder::default()
         .manifest_path(crate_dir.join("Cargo.toml"))
-        .all_features(true)
         .toolchain(env!("RUST_NIGHTLY_VERSION"))
         .build()?;
 

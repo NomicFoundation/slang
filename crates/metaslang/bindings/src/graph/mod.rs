@@ -11,12 +11,14 @@ pub use definition::Definition;
 pub use location::{BindingLocation, BuiltInLocation, UserFileLocation};
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
+#[cfg(feature = "__private_testing_utils")]
 use metaslang_cst::nodes::NodeId;
 pub use reference::Reference;
 use resolver::Resolver;
 
 use crate::builder::{ExtendedStackGraph, FileDescriptor, GraphHandle};
 
+/// Represents the binding graph for Slang.
 pub struct BindingGraph<KT: KindTypes + 'static> {
     graph: ExtendedStackGraph<KT>,
     resolver: Rc<RefCell<Resolver>>,
@@ -32,20 +34,10 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         })
     }
 
-    pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition<KT>> + '_ {
-        self.graph.iter_definitions().map(|handle| Definition {
-            owner: Rc::clone(self),
-            handle,
-        })
-    }
-
-    pub fn all_references(self: &Rc<Self>) -> impl Iterator<Item = Reference<KT>> + '_ {
-        self.graph.iter_references().map(|handle| Reference {
-            owner: Rc::clone(self),
-            handle,
-        })
-    }
-
+    /// Tries to resolve the identifier terminal pointed at by the provided cursor to a definition.
+    /// If successful, returns the definition. Otherwise, returns `None`.
+    ///
+    /// For more information on identifier terminals, see [`TerminalKindExtensions::is_identifier`](`metaslang_cst::kinds::TerminalKindExtensions::is_identifier`).
     pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
         self.graph
             .definition_by_node_id(cursor.node().id())
@@ -55,27 +47,13 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             })
     }
 
-    pub fn definition_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Definition<KT>> {
-        self.graph
-            .definition_by_node_id(node_id)
-            .map(|handle| Definition {
-                owner: Rc::clone(self),
-                handle,
-            })
-    }
-
+    /// Tries to resolve the identifier terminal pointed at by the provided cursor to a reference.
+    /// If successful, returns the reference. Otherwise, returns `None`.
+    ///
+    /// For more information on identifier terminals, see [`TerminalKindExtensions::is_identifier`](`metaslang_cst::kinds::TerminalKindExtensions::is_identifier`).
     pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
         self.graph
             .reference_by_node_id(cursor.node().id())
-            .map(|handle| Reference {
-                owner: Rc::clone(self),
-                handle,
-            })
-    }
-
-    pub fn reference_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Reference<KT>> {
-        self.graph
-            .reference_by_node_id(node_id)
             .map(|handle| Reference {
                 owner: Rc::clone(self),
                 handle,
@@ -105,6 +83,42 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
                 handle: *handle,
             })
             .collect()
+    }
+}
+
+#[cfg(feature = "__private_testing_utils")]
+#[allow(missing_docs)]
+impl<KT: KindTypes + 'static> BindingGraph<KT> {
+    pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition<KT>> + '_ {
+        self.graph.iter_definitions().map(|handle| Definition {
+            owner: Rc::clone(self),
+            handle,
+        })
+    }
+
+    pub fn all_references(self: &Rc<Self>) -> impl Iterator<Item = Reference<KT>> + '_ {
+        self.graph.iter_references().map(|handle| Reference {
+            owner: Rc::clone(self),
+            handle,
+        })
+    }
+
+    pub fn definition_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Definition<KT>> {
+        self.graph
+            .definition_by_node_id(node_id)
+            .map(|handle| Definition {
+                owner: Rc::clone(self),
+                handle,
+            })
+    }
+
+    pub fn reference_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Reference<KT>> {
+        self.graph
+            .reference_by_node_id(node_id)
+            .map(|handle| Reference {
+                owner: Rc::clone(self),
+                handle,
+            })
     }
 }
 

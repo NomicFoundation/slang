@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-#[allow(clippy::doc_markdown)]
-#[allow(clippy::doc_link_with_quotes)]
+/// Represents different kinds of nonterminal nodes in the syntax tree.
+/// These are nodes that can have child nodes and represent higher-level language constructs.
 #[repr(u8)]
 #[derive(
     Debug,
@@ -18,6 +18,8 @@
     Clone,
     Copy,
 )]
+#[allow(clippy::doc_markdown)]
+#[allow(clippy::doc_link_with_quotes)]
 pub enum NonterminalKind {
     /// Represents a node with kind `AbicoderPragma`, having the following structure:
     ///

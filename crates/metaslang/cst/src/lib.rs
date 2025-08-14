@@ -1,3 +1,7 @@
+#![deny(missing_docs)]
+
+//! `metaslang` contains the core utilites that make Slang.
+
 pub mod cursor;
 pub mod kinds;
 pub mod nodes;

@@ -2,16 +2,15 @@ use std::fs;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
-use anyhow::{bail, Error, Result};
+use anyhow::{anyhow, bail, Error, Result};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::PathExtensions;
 use reqwest::blocking::Client;
 use semver::{BuildMetadata, Prerelease, Version};
-use slang_solidity::compilation::CompilationUnit;
+use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use tar::Archive;
 
 use crate::command::{ChainId, ShardingOptions};
-use crate::compilation_builder::CompilationBuilder;
 use crate::import_resolver::ImportResolver;
 
 pub struct Manifest {
@@ -306,18 +305,59 @@ impl Contract {
     /// imports, accounting for file remapping/renaming. The resulting `CompilationUnit` is ready to check for
     /// errors.
     pub fn create_compilation_unit(&self) -> Result<CompilationUnit> {
-        CompilationBuilder::new(self)?.build()
+        let name = self.name.clone();
+        let entrypoint = self.entrypoint().ok_or(Error::msg(format!(
+            "Entrypoint not found in contract {name}"
+        )))?;
+
+        let mut builder =
+            CompilationBuilder::new(self.version.clone(), ContractConfig { contract: self })?;
+
+        builder.add_file(&entrypoint).map_err(|e| anyhow!(e))?;
+        Ok(builder.build())
     }
 
     pub fn entrypoint(&self) -> Option<String> {
         self.import_resolver.get_source_id(&self.target)
     }
 
-    pub fn read_file(&self, name: &str) -> Result<String> {
-        self.sources_path.join(name).read_to_string()
-    }
-
     pub fn sources_count(&self) -> usize {
         self.import_resolver.sources_count()
+    }
+
+    pub fn read_file(&self, file_id: &str) -> Result<String> {
+        let source = self.sources_path.join(file_id).read_to_string()?;
+        Ok(source)
+    }
+}
+
+struct ContractConfig<'a> {
+    contract: &'a Contract,
+}
+
+impl CompilationBuilderConfig for ContractConfig<'_> {
+    type Error = anyhow::Error;
+
+    fn read_file(&mut self, file_id: &str) -> Result<Option<String>> {
+        self.contract.read_file(file_id).map(Some)
+    }
+
+    fn resolve_import(
+        &mut self,
+        source_file_id: &str,
+        import_path_cursor: &slang_solidity::cst::Cursor,
+    ) -> Result<Option<String>> {
+        let import_path = import_path_cursor.node().unparse();
+        let import_path = import_path
+            .strip_prefix(|c| matches!(c, '"' | '\''))
+            .unwrap()
+            .strip_suffix(|c| matches!(c, '"' | '\''))
+            .unwrap()
+            .trim();
+
+        Ok(self
+            .contract
+            .import_resolver
+            .resolve_import(source_file_id, import_path))
     }
 }
