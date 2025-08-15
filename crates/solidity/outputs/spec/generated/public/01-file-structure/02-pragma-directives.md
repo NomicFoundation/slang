@@ -36,7 +36,7 @@
 
 ```
 
-<pre ebnf-snippet="ExperimentalFeature" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../06-keywords#ABIEncoderV2Keyword"><span class="k">ABI_ENCODER_V2_KEYWORD</span></a><br /><span class="o">                    | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../06-keywords#SMTCheckerKeyword"><span class="k">SMT_CHECKER_KEYWORD</span></a><br /><span class="o">                    | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ExperimentalFeature" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../06-keywords#AbiencoderV2Keyword"><span class="k">ABIENCODER_V2_KEYWORD</span></a><br /><span class="o">                    | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../06-keywords#SmtcheckerKeyword"><span class="k">SMTCHECKER_KEYWORD</span></a><br /><span class="o">                    | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionPragma }
 

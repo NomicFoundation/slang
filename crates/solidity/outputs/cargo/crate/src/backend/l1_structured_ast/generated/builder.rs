@@ -2671,11 +2671,11 @@ pub fn build_experimental_feature(node: &Rc<NonterminalNode>) -> Option<Experime
         NodeKind::Nonterminal(NonterminalKind::StringLiteral) => {
             ExperimentalFeature::StringLiteral(build_string_literal(nonterminal_node(variant))?)
         }
-        NodeKind::Terminal(TerminalKind::ABIEncoderV2Keyword) => {
-            ExperimentalFeature::ABIEncoderV2Keyword
+        NodeKind::Terminal(TerminalKind::AbiencoderV2Keyword) => {
+            ExperimentalFeature::AbiencoderV2Keyword
         }
-        NodeKind::Terminal(TerminalKind::SMTCheckerKeyword) => {
-            ExperimentalFeature::SMTCheckerKeyword
+        NodeKind::Terminal(TerminalKind::SmtcheckerKeyword) => {
+            ExperimentalFeature::SmtcheckerKeyword
         }
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             unreachable!(

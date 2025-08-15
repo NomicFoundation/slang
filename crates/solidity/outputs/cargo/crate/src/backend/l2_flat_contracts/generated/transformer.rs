@@ -1942,11 +1942,11 @@ pub trait Transformer {
                     self.transform_string_literal(string_literal),
                 )
             }
-            input::ExperimentalFeature::ABIEncoderV2Keyword => {
-                output::ExperimentalFeature::ABIEncoderV2Keyword
+            input::ExperimentalFeature::AbiencoderV2Keyword => {
+                output::ExperimentalFeature::AbiencoderV2Keyword
             }
-            input::ExperimentalFeature::SMTCheckerKeyword => {
-                output::ExperimentalFeature::SMTCheckerKeyword
+            input::ExperimentalFeature::SmtcheckerKeyword => {
+                output::ExperimentalFeature::SmtcheckerKeyword
             }
         }
     }

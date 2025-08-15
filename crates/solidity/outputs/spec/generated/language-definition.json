@@ -226,8 +226,8 @@
                   "name": "ExperimentalFeature",
                   "enabled": { "From": { "from": "0.4.16" } },
                   "variants": [
-                    { "reference": "ABIEncoderV2Keyword" },
-                    { "reference": "SMTCheckerKeyword" },
+                    { "reference": "AbiencoderV2Keyword" },
+                    { "reference": "SmtcheckerKeyword" },
                     { "reference": "StringLiteral" }
                   ]
                 }
@@ -831,7 +831,7 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "ABIEncoderV2Keyword",
+                  "name": "AbiencoderV2Keyword",
                   "identifier": "Identifier",
                   "definitions": [
                     {
@@ -2223,7 +2223,7 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "SMTCheckerKeyword",
+                  "name": "SmtcheckerKeyword",
                   "identifier": "Identifier",
                   "definitions": [
                     {

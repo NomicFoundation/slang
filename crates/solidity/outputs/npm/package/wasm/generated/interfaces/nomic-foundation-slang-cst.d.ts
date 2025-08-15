@@ -630,8 +630,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * (* Introduced in 0.4.16 *)
-   * ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
-   *                     | (* variant: *) SMT_CHECKER_KEYWORD
+   * ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
+   *                     | (* variant: *) SMTCHECKER_KEYWORD
    *                     | (* variant: *) StringLiteral;
    * ```
    */
@@ -2510,16 +2510,6 @@ export declare enum TerminalKind {
    */
   Missing = "Missing",
   /**
-   * Represents a node with kind `ABIEncoderV2Keyword`, having the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.16 *)
-   * (* Never reserved *)
-   * ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
-   * ```
-   */
-  AbiencoderV2Keyword = "AbiencoderV2Keyword",
-  /**
    * Represents a node with kind `AbicoderKeyword`, having the following structure:
    *
    * ```ebnf
@@ -2549,6 +2539,16 @@ export declare enum TerminalKind {
    * ```
    */
   AbicoderV2Keyword = "AbicoderV2Keyword",
+  /**
+   * Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.4.16 *)
+   * (* Never reserved *)
+   * ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+   * ```
+   */
+  AbiencoderV2Keyword = "AbiencoderV2Keyword",
   /**
    * Represents a node with kind `AbstractKeyword`, having the following structure:
    *
@@ -3763,16 +3763,6 @@ export declare enum TerminalKind {
    */
   RevertKeyword = "RevertKeyword",
   /**
-   * Represents a node with kind `SMTCheckerKeyword`, having the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.16 *)
-   * (* Never reserved *)
-   * SMT_CHECKER_KEYWORD = "SMTChecker";
-   * ```
-   */
-  SmtcheckerKeyword = "SmtcheckerKeyword",
-  /**
    * Represents a node with kind `SealedKeyword`, having the following structure:
    *
    * ```ebnf
@@ -3877,6 +3867,16 @@ export declare enum TerminalKind {
    * ```
    */
   SlashEqual = "SlashEqual",
+  /**
+   * Represents a node with kind `SmtcheckerKeyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.4.16 *)
+   * (* Never reserved *)
+   * SMTCHECKER_KEYWORD = "SMTChecker";
+   * ```
+   */
+  SmtcheckerKeyword = "SmtcheckerKeyword",
   /**
    * Represents a node with kind `SolidityKeyword`, having the following structure:
    *

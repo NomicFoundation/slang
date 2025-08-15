@@ -529,8 +529,8 @@ pub enum NonterminalKind {
     ///
     /// ```ebnf
     /// (* Introduced in 0.4.16 *)
-    /// ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
-    ///                     | (* variant: *) SMT_CHECKER_KEYWORD
+    /// ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
+    ///                     | (* variant: *) SMTCHECKER_KEYWORD
     ///                     | (* variant: *) StringLiteral;
     /// ```
     ExperimentalFeature,
