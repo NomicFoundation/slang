@@ -13,6 +13,6 @@ Tree:
           - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (7..19)
           - (feature꞉ ExperimentalFeature): # " ABIEncoderV2" (19..32)
               - (leading_trivia꞉ Whitespace): " " # (19..20)
-              - (variant꞉ ABIEncoderV2Keyword): "ABIEncoderV2" # (20..32)
+              - (variant꞉ AbiencoderV2Keyword): "ABIEncoderV2" # (20..32)
       - (semicolon꞉ Semicolon): ";" # (32..33)
       - (trailing_trivia꞉ EndOfLine): "\n" # (33..34)
