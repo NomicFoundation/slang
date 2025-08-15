@@ -53,24 +53,28 @@ impl Pass {
     }
 
     fn visit_file_collect_bases(&mut self, source_unit: &input_ir::SourceUnit) {
+        let scope_id = self
+            .binder
+            .scope_id_for_node_id(source_unit.node_id)
+            .expect("source unit should have a defined scope");
         for member in &source_unit.members {
             match member {
                 input_ir::SourceUnitMember::ContractDefinition(contract_definition) => {
-                    self.visit_contract_definition(contract_definition);
+                    self.visit_contract_definition(contract_definition, scope_id);
                 }
                 input_ir::SourceUnitMember::InterfaceDefinition(interface_definition) => {
-                    self.visit_interface_definition(interface_definition);
+                    self.visit_interface_definition(interface_definition, scope_id);
                 }
                 _ => {}
             }
         }
     }
 
-    fn visit_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
-        let scope_id = self
-            .binder
-            .scope_id_for_node_id(node.node_id)
-            .expect("contract should have a defined scope");
+    fn visit_contract_definition(
+        &mut self,
+        node: &input_ir::ContractDefinition,
+        scope_id: ScopeId,
+    ) {
         let resolved_bases = self.resolve_inheritance_types(&node.inheritance_types, scope_id);
 
         let Definition::Contract(definition) = self.binder.get_definition_mut(node.node_id) else {
@@ -79,13 +83,13 @@ impl Pass {
         definition.bases = Some(resolved_bases);
     }
 
-    fn visit_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) {
+    fn visit_interface_definition(
+        &mut self,
+        node: &input_ir::InterfaceDefinition,
+        scope_id: ScopeId,
+    ) {
         let mut resolved_bases = vec![];
         if let Some(inheritance) = &node.inheritance {
-            let scope_id = self
-                .binder
-                .scope_id_for_node_id(node.node_id)
-                .expect("interface should have a defined scope");
             resolved_bases = self.resolve_inheritance_types(&inheritance.types, scope_id);
         }
 
@@ -107,6 +111,13 @@ impl Pass {
             .filter_map(|inheritance_type| {
                 self.resolve_identifier_path_in_scope(&inheritance_type.type_name, scope_id)
                     .as_definition_id()
+                    .filter(|definition_id| {
+                        // bases are either contracts or interfaces, discard anything else
+                        matches!(
+                            self.binder.find_definition_by_id(*definition_id).unwrap(),
+                            Definition::Contract(_) | Definition::Interface(_)
+                        )
+                    })
             })
             .collect()
     }
