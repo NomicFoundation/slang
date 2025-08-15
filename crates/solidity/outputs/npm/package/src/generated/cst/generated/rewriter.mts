@@ -21,6 +21,9 @@ export abstract class BaseRewriter {
       case NonterminalKind.AbicoderPragma:
         return this.rewriteAbicoderPragma(node);
 
+      case NonterminalKind.AbicoderVersion:
+        return this.rewriteAbicoderVersion(node);
+
       case NonterminalKind.AdditiveExpression:
         return this.rewriteAdditiveExpression(node);
 
@@ -680,8 +683,17 @@ export abstract class BaseRewriter {
   /** Rewrites a terminal node. Typically called from `rewriteNode`. */
   public rewriteTerminalNode(node: TerminalNode): Node | undefined {
     switch (node.kind) {
+      case TerminalKind.ABIEncoderV2Keyword:
+        return this.rewriteABIEncoderV2Keyword(node);
+
       case TerminalKind.AbicoderKeyword:
         return this.rewriteAbicoderKeyword(node);
+
+      case TerminalKind.AbicoderV1Keyword:
+        return this.rewriteAbicoderV1Keyword(node);
+
+      case TerminalKind.AbicoderV2Keyword:
+        return this.rewriteAbicoderV2Keyword(node);
 
       case TerminalKind.AbstractKeyword:
         return this.rewriteAbstractKeyword(node);
@@ -1108,6 +1120,9 @@ export abstract class BaseRewriter {
 
       case TerminalKind.RevertKeyword:
         return this.rewriteRevertKeyword(node);
+
+      case TerminalKind.SMTCheckerKeyword:
+        return this.rewriteSMTCheckerKeyword(node);
 
       case TerminalKind.SealedKeyword:
         return this.rewriteSealedKeyword(node);
@@ -1571,6 +1586,11 @@ export abstract class BaseRewriter {
 
   /** @virtual Rewrites a `AbicoderPragma` node, recursively traversing the children (unless overriden). */
   public rewriteAbicoderPragma(node: NonterminalNode): Node | undefined {
+    return this.rewriteChildren(node);
+  }
+
+  /** @virtual Rewrites a `AbicoderVersion` node, recursively traversing the children (unless overriden). */
+  public rewriteAbicoderVersion(node: NonterminalNode): Node | undefined {
     return this.rewriteChildren(node);
   }
 
@@ -2664,8 +2684,23 @@ export abstract class BaseRewriter {
     return this.rewriteChildren(node);
   }
 
+  /** @virtual Rewrites a `ABIEncoderV2Keyword` node. */
+  public rewriteABIEncoderV2Keyword(node: TerminalNode): Node | undefined {
+    return node;
+  }
+
   /** @virtual Rewrites a `AbicoderKeyword` node. */
   public rewriteAbicoderKeyword(node: TerminalNode): Node | undefined {
+    return node;
+  }
+
+  /** @virtual Rewrites a `AbicoderV1Keyword` node. */
+  public rewriteAbicoderV1Keyword(node: TerminalNode): Node | undefined {
+    return node;
+  }
+
+  /** @virtual Rewrites a `AbicoderV2Keyword` node. */
+  public rewriteAbicoderV2Keyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
@@ -3376,6 +3411,11 @@ export abstract class BaseRewriter {
 
   /** @virtual Rewrites a `RevertKeyword` node. */
   public rewriteRevertKeyword(node: TerminalNode): Node | undefined {
+    return node;
+  }
+
+  /** @virtual Rewrites a `SMTCheckerKeyword` node. */
+  public rewriteSMTCheckerKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
@@ -4146,48 +4186,38 @@ export abstract class BaseRewriter {
 
   /** Rewrites all the children of a given non-terminal node. */
   protected rewriteChildren(node: NonterminalNode): NonterminalNode {
-    let newChildren: Map<number, Edge | "delete"> | undefined = undefined;
+    let newChildren: Array<Edge> | undefined = undefined;
     const children = node.children();
+
     children.forEach((child, index) => {
       const newChild = this.rewriteNode(child.node);
       if (newChild == undefined) {
-        // node was removed, mark the removal
-        newChildren = newChildren || new Map<number, Edge | "delete">();
-        newChildren.set(index, "delete");
-      } else {
-        let edge;
-        if (newChild.id == child.node.id) {
-          edge = child;
-        } else {
-          // node has changed, produce new edge
-          switch (newChild.type) {
-            case NodeType.TerminalNode:
-              edge = Edge.createWithTerminal(child.label, newChild);
-              break;
-            case NodeType.NonterminalNode:
-              edge = Edge.createWithNonterminal(child.label, newChild);
-              break;
-          }
+        // node was removed. if `newChildren` is set, just skip this one
+        // otheriwse, copy the first ones from `children` (but the last)
+        if (newChildren == undefined) {
+          newChildren = children.slice(0, index);
         }
-        newChildren = newChildren || new Map<number, Edge | "delete">();
-        newChildren.set(index, edge);
+      } else if (newChild.id != child.node.id) {
+        // node has changed, produce new edge
+        let edge;
+        switch (newChild.type) {
+          case NodeType.TerminalNode:
+            edge = Edge.createWithTerminal(child.label, newChild);
+            break;
+          case NodeType.NonterminalNode:
+            edge = Edge.createWithNonterminal(child.label, newChild);
+            break;
+        }
+
+        if (newChildren == undefined) {
+          newChildren = children.slice(0, index);
+        }
+        newChildren.push(edge);
       }
     });
 
     if (newChildren != undefined) {
-      let deleted = 0;
-      const map = newChildren as Map<number, Edge | "delete">;
-      for (const [index, edge] of map) {
-        if (edge == "delete") {
-          children.splice(index - deleted, 1);
-          deleted += 1;
-        } else {
-          children[index + deleted] = edge;
-        }
-      }
-
-      const newNode = NonterminalNode.create(node.kind, children);
-      return newNode;
+      return NonterminalNode.create(node.kind, children);
     } else {
       return node;
     }

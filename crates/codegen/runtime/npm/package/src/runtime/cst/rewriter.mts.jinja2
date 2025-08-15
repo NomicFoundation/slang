@@ -68,48 +68,38 @@
   
     /** Rewrites all the children of a given non-terminal node. */
     protected rewriteChildren(node: NonterminalNode): NonterminalNode {
-      let newChildren: Map<number, Edge | "delete"> | undefined = undefined;
+      let newChildren: Array<Edge> | undefined = undefined;
       const children = node.children();
+
       children.forEach((child, index) => {
         const newChild = this.rewriteNode(child.node);
         if (newChild == undefined) {
-          // node was removed, mark the removal
-          newChildren = newChildren || new Map<number, Edge | "delete">();
-          newChildren.set(index, "delete");
-        } else {
-          let edge;
-          if (newChild.id == child.node.id) {
-            edge = child;
-          } else {
-            // node has changed, produce new edge
-            switch (newChild.type) {
-              case NodeType.TerminalNode:
-                edge = Edge.createWithTerminal(child.label, newChild);
-                break;
-              case NodeType.NonterminalNode:
-                edge = Edge.createWithNonterminal(child.label, newChild);
-                break;
-            }
+          // node was removed. if `newChildren` is set, just skip this one
+          // otheriwse, copy the first ones from `children` (but the last)
+          if (newChildren == undefined) {
+            newChildren = children.slice(0, index);
           }
-          newChildren = newChildren || new Map<number, Edge | "delete">();
-          newChildren.set(index, edge);
+        } else if (newChild.id != child.node.id) {
+          // node has changed, produce new edge
+          let edge;
+          switch (newChild.type) {
+            case NodeType.TerminalNode:
+              edge = Edge.createWithTerminal(child.label, newChild);
+              break;
+            case NodeType.NonterminalNode:
+              edge = Edge.createWithNonterminal(child.label, newChild);
+              break;
+          }
+
+          if (newChildren == undefined) {
+            newChildren = children.slice(0, index);
+          }
+          newChildren.push(edge);
         }
       });
 
       if (newChildren != undefined) {
-        let deleted = 0;
-        const map = newChildren as Map<number, Edge | "delete">;
-        for (const [index, edge] of map) {
-          if (edge == "delete") {
-            children.splice(index - deleted, 1);
-            deleted += 1;
-          } else {
-            children[index + deleted] = edge;
-          }
-        }
-
-        const newNode = NonterminalNode.create(node.kind, children);
-        return newNode;
+        return NonterminalNode.create(node.kind, children);
       } else {
         return node;
       }
