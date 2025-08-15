@@ -7,6 +7,11 @@ use crate::bindings::bindings_output::runner::run;
 const T: &str = "built_ins";
 
 #[test]
+fn abi_decode() -> Result<()> {
+    run(T, "abi_decode")
+}
+
+#[test]
 fn address() -> Result<()> {
     run(T, "address")
 }

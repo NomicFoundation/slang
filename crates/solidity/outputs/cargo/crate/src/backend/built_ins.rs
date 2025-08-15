@@ -739,8 +739,8 @@ impl<'a> BuiltInsResolver<'a> {
     ) -> Typing {
         match built_in {
             BuiltIn::AbiDecode => {
-                // TODO: the return type is a tuple of the types given in the
-                // arguments
+                // Special case: this is handled in the resolution pass because
+                // we need to register the types given as parameters
                 Typing::Unresolved
             }
             BuiltIn::AbiEncode => Typing::Resolved(self.types.bytes()),

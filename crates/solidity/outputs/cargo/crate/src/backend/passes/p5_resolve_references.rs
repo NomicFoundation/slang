@@ -8,7 +8,7 @@ use crate::backend::binder::{
     Binder, Definition, EitherIter, Reference, Resolution, ResolveOptions, Scope, ScopeId, Typing,
     UsingDirective,
 };
-use crate::backend::built_ins::BuiltInsResolver;
+use crate::backend::built_ins::{BuiltIn, BuiltInsResolver};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, Type, TypeId, TypeRegistry};
@@ -498,6 +498,21 @@ impl Pass {
         }
     }
 
+    fn type_of_definition(&mut self, definition_id: NodeId) -> Option<Type> {
+        let definition = self.binder.find_definition_by_id(definition_id)?;
+        match definition {
+            Definition::Contract(_) => Some(Type::Contract { definition_id }),
+            Definition::Enum(_) => Some(Type::Enum { definition_id }),
+            Definition::Interface(_) => Some(Type::Interface { definition_id }),
+            Definition::Struct(_) => Some(Type::Struct {
+                definition_id,
+                location: DataLocation::Memory,
+            }),
+            Definition::UserDefinedValueType(_) => Some(Type::UserDefinedValue { definition_id }),
+            _ => None,
+        }
+    }
+
     fn typing_of_identifier(&self, identifier: &Rc<TerminalNode>) -> Typing {
         let resolution = self
             .binder
@@ -888,9 +903,34 @@ impl Pass {
                     _ => Typing::Unresolved,
                 }
             }
+            // Special case: for `abi.decode` we need to register the types
+            // given as the second argument and we need a mutable `TypeRegistry`
+            // for that.
+            Typing::BuiltIn(BuiltIn::AbiDecode) => self.typing_of_abi_decode(&argument_typings),
             Typing::BuiltIn(built_in) => self
                 .built_ins_resolver()
                 .typing_of_function_call(&built_in, &argument_typings),
+        }
+    }
+
+    fn typing_of_abi_decode(&mut self, argument_typings: &[Typing]) -> Typing {
+        if argument_typings.len() != 2 {
+            return Typing::Unresolved;
+        }
+        match &argument_typings[1] {
+            Typing::Resolved(type_id) => {
+                // TODO(validation): this only makes sense if type_id is a tuple
+                Typing::Resolved(*type_id)
+            }
+            Typing::UserMetaType(definition_id) => {
+                if let Some(type_) = self.type_of_definition(*definition_id) {
+                    Typing::Resolved(self.types.register_type(type_))
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            Typing::MetaType(type_) => Typing::Resolved(self.types.register_type(type_.clone())),
+            _ => Typing::Unresolved,
         }
     }
 
@@ -1486,9 +1526,9 @@ impl Visitor for Pass {
     }
 
     fn leave_index_access_expression(&mut self, node: &input_ir::IndexAccessExpression) {
-        let range_access = node.end.is_some();
-        let typing =
-            if let Some(operand_type_id) = self.typing_of_expression(&node.operand).as_type_id() {
+        let typing = match self.typing_of_expression(&node.operand) {
+            Typing::Resolved(operand_type_id) => {
+                let range_access = node.end.is_some();
                 let operand_type = self.types.get_type_by_id(operand_type_id);
                 match operand_type {
                     Type::Array { element_type, .. } => {
@@ -1524,9 +1564,29 @@ impl Visitor for Pass {
                         Typing::Unresolved
                     }
                 }
-            } else {
-                Typing::Unresolved
-            };
+            }
+            Typing::MetaType(operand_type) => {
+                // indexing a meta-type creates a new meta-type of the array
+                let operand_type_id = self.types.register_type(operand_type);
+                Typing::MetaType(Type::Array {
+                    element_type: operand_type_id,
+                    location: DataLocation::Memory,
+                })
+            }
+            Typing::UserMetaType(definition_id) => {
+                // indexing a user meta-type creates a new meta-type of the array
+                if let Some(operand_type) = self.type_of_definition(definition_id) {
+                    let operand_type_id = self.types.register_type(operand_type);
+                    Typing::MetaType(Type::Array {
+                        element_type: operand_type_id,
+                        location: DataLocation::Memory,
+                    })
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            _ => Typing::Unresolved,
+        };
         self.binder.set_node_typing(node.node_id, typing);
     }
 
