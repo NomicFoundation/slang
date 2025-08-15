@@ -17,6 +17,11 @@ fn bytes_as_arrays() -> Result<()> {
 }
 
 #[test]
+fn bytes_index_access() -> Result<()> {
+    run(T, "bytes_index_access")
+}
+
+#[test]
 fn fixed_arrays() -> Result<()> {
     run(T, "fixed_arrays")
 }

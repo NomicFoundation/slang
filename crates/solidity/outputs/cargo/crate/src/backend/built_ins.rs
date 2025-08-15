@@ -1,7 +1,7 @@
 use semver::Version;
 
 use super::binder::{Binder, Definition, Typing};
-use super::types::{FunctionType, Type, TypeId, TypeRegistry};
+use super::types::{DataLocation, FunctionType, Type, TypeId, TypeRegistry};
 use crate::cst::NodeId;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -533,10 +533,17 @@ impl<'a> BuiltInsResolver<'a> {
                 "length" => Some(BuiltIn::Length),
                 _ => None,
             },
-            Type::Bytes { .. } => match symbol {
+            Type::Bytes { location } => match symbol {
                 "length" => Some(BuiltIn::Length),
-                "pop" if self.language_version >= VERSION_0_5_0 => Some(BuiltIn::ArrayPop),
-                "push" => Some(BuiltIn::ArrayPush(self.types.uint8())),
+                "pop"
+                    if self.language_version >= VERSION_0_5_0
+                        && *location == DataLocation::Storage =>
+                {
+                    Some(BuiltIn::ArrayPop)
+                }
+                "push" if *location == DataLocation::Storage => {
+                    Some(BuiltIn::ArrayPush(self.types.uint8()))
+                }
                 _ => None,
             },
             Type::Contract { .. } | Type::Interface { .. } => {

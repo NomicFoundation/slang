@@ -476,8 +476,7 @@ impl Pass {
                 payable: address_type.payable_keyword.is_some(),
             },
             input_ir::ElementaryType::BytesKeyword(terminal) => {
-                Type::from_bytes_keyword(&terminal.unparse(), Some(DataLocation::Inherited))
-                    .unwrap()
+                Type::from_bytes_keyword(&terminal.unparse(), Some(DataLocation::Memory)).unwrap()
             }
             input_ir::ElementaryType::IntKeyword(terminal) => {
                 Type::from_int_keyword(&terminal.unparse())
@@ -494,7 +493,7 @@ impl Pass {
             input_ir::ElementaryType::BoolKeyword => Type::Boolean,
             input_ir::ElementaryType::ByteKeyword => Type::ByteArray { width: 1 },
             input_ir::ElementaryType::StringKeyword => Type::String {
-                location: DataLocation::Inherited,
+                location: DataLocation::Memory,
             },
         }
     }
@@ -1487,12 +1486,32 @@ impl Visitor for Pass {
     }
 
     fn leave_index_access_expression(&mut self, node: &input_ir::IndexAccessExpression) {
+        let range_access = node.end.is_some();
         let typing =
             if let Some(operand_type_id) = self.typing_of_expression(&node.operand).as_type_id() {
                 let operand_type = self.types.get_type_by_id(operand_type_id);
                 match operand_type {
-                    Type::Array { element_type, .. } => Typing::Resolved(*element_type),
-                    Type::Mapping { value_type_id, .. } => Typing::Resolved(*value_type_id),
+                    Type::Array { element_type, .. } => {
+                        if range_access {
+                            Typing::Resolved(operand_type_id)
+                        } else {
+                            Typing::Resolved(*element_type)
+                        }
+                    }
+                    Type::Bytes { .. } => {
+                        if range_access {
+                            Typing::Resolved(operand_type_id)
+                        } else {
+                            Typing::Resolved(self.types.bytes1())
+                        }
+                    }
+                    Type::Mapping { value_type_id, .. } => {
+                        if range_access {
+                            Typing::Unresolved
+                        } else {
+                            Typing::Resolved(*value_type_id)
+                        }
+                    }
                     _ => {
                         // TODO(validation): the operand is not indexable
                         Typing::Unresolved
