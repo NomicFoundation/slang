@@ -317,14 +317,14 @@ impl Pass {
                     .binder
                     .resolve_in_scope_as_namespace(scope_id, symbol)
                     .get_definition_ids();
-                // TODO: filter the resolved definitions to only include
-                // functions whose first parameter is of our type (or
-                // implicitly convertible to it)
                 for id in &ids {
                     // Avoid returning duplicate definition IDs. That may happen
                     // if equivalent `using` directives are active at some point
                     // (eg. inherited through a base in older Solidity)
-                    if seen_ids.insert(*id) {
+                    // Filter the resolved definitions to only include
+                    // functions whose first parameter is of our type (or
+                    // implicitly convertible to it)
+                    if seen_ids.insert(*id) && self.is_function_with_receiver_type(*id, type_id) {
                         definition_ids.push(*id);
                     }
                 }
@@ -336,6 +336,38 @@ impl Pass {
                 .lookup_member_of_type_id(type_id, symbol)
                 .into()
         })
+    }
+
+    fn is_function_with_receiver_type(
+        &self,
+        definition_id: NodeId,
+        receiver_type_id: TypeId,
+    ) -> bool {
+        if !self
+            .binder
+            .find_definition_by_id(definition_id)
+            .is_some_and(|definition| matches!(definition, Definition::Function(_)))
+        {
+            // definition is not a function
+            return false;
+        }
+
+        let Typing::Resolved(definition_type_id) = self.binder.node_typing(definition_id) else {
+            // definition type cannot be resolved
+            return false;
+        };
+        let Type::Function(function_type) = self.types.get_type_by_id(definition_type_id) else {
+            // the definition is not a function
+            return false;
+        };
+        // receiver needs to be convertible to the first parameter type
+        function_type
+            .parameter_types
+            .first()
+            .is_some_and(|type_id| {
+                self.types
+                    .implicitly_convertible_to(receiver_type_id, *type_id)
+            })
     }
 
     fn typing_of_expression(&self, node: &input_ir::Expression) -> Typing {

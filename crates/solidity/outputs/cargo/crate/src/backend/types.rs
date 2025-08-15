@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use indexmap::IndexSet;
 
 use crate::cst::NodeId;
@@ -12,6 +14,7 @@ pub struct TypeId(usize);
 /// some kinds of expressions (eg. the boolean type).
 pub struct TypeRegistry {
     types: IndexSet<Type>,
+    super_types: HashMap<TypeId, Vec<TypeId>>,
 
     // Pre-defined core types
     address_type_id: TypeId,
@@ -62,6 +65,7 @@ impl TypeRegistry {
 
         Self {
             types,
+            super_types: HashMap::new(),
 
             address_type_id: TypeId(address_type),
             address_payable_type_id: TypeId(address_payable_type),
@@ -86,6 +90,10 @@ impl TypeRegistry {
     pub fn register_type(&mut self, type_: Type) -> TypeId {
         let (index, _) = self.types.insert_full(type_);
         TypeId(index)
+    }
+
+    pub fn register_super_types(&mut self, type_id: TypeId, super_types: Vec<TypeId>) {
+        self.super_types.insert(type_id, super_types);
     }
 
     pub fn get_type_by_id(&self, type_id: TypeId) -> &Type {
@@ -177,6 +185,22 @@ impl TypeRegistry {
                     location: to_location,
                 },
             ) => from_location.implicitly_convertible_to(*to_location),
+
+            (Type::Function(from_function_type), Type::Function(to_function_type)) => {
+                // This is full equality except for definition_id which can differ
+                from_function_type.external == to_function_type.external
+                    && from_function_type
+                        .kind
+                        .implicitly_convertible_to(to_function_type.kind)
+                    && from_function_type.parameter_types == to_function_type.parameter_types
+                    && from_function_type.return_type == to_function_type.return_type
+            }
+
+            (Type::Contract { .. }, Type::Contract { .. } | Type::Interface { .. })
+            | (Type::Interface { .. }, Type::Interface { .. }) => self
+                .super_types
+                .get(&from_type_id)
+                .is_some_and(|super_types| super_types.contains(&to_type_id)),
 
             // TODO: add more implicit conversion rules
             _ => false,
@@ -447,6 +471,8 @@ pub struct FunctionType {
     pub definition_id: Option<NodeId>, // this may point to a FunctionDefinition
     pub parameter_types: Vec<TypeId>,
     pub return_type: TypeId,
+    // TODO: a bool is not sufficient in some corner cases and we need to
+    // distinguish between public and external
     pub external: bool,
     pub kind: FunctionTypeKind,
 }
@@ -475,7 +501,33 @@ impl DataLocation {
 pub enum FunctionTypeKind {
     Pure,
     View,
+    NonPayable,
     Payable,
+}
+
+impl FunctionTypeKind {
+    pub fn implicitly_convertible_to(&self, target: Self) -> bool {
+        matches!(
+            (self, target),
+            // pure converts to view or non-payable
+            (
+                FunctionTypeKind::Pure,
+                FunctionTypeKind::Pure | FunctionTypeKind::View | FunctionTypeKind::NonPayable,
+            )
+                // view converts to non-payable
+                | (
+                FunctionTypeKind::View,
+                FunctionTypeKind::View | FunctionTypeKind::NonPayable
+            )
+                // non-payable does not implicitly convert to any other kind
+                | (FunctionTypeKind::NonPayable, FunctionTypeKind::NonPayable)
+                // payable converts to non-payable
+                | (
+                    FunctionTypeKind::Payable,
+                    FunctionTypeKind::Payable | FunctionTypeKind::NonPayable,
+                )
+        )
+    }
 }
 
 impl Type {

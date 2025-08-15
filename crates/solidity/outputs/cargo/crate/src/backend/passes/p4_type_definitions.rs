@@ -213,7 +213,7 @@ impl Pass {
                 } else {
                     self.types.void()
                 };
-                let mut kind = FunctionTypeKind::Pure;
+                let mut kind = FunctionTypeKind::NonPayable;
                 let mut external = false;
                 for attribute in &function_type.attributes {
                     match attribute {
@@ -396,7 +396,7 @@ impl Pass {
         } else {
             self.types.void()
         };
-        let mut kind = FunctionTypeKind::Pure;
+        let mut kind = FunctionTypeKind::NonPayable;
         let mut external = false;
         for attribute in &function_definition.attributes {
             match attribute {
@@ -579,6 +579,29 @@ impl Pass {
             self.binder.set_node_type(parameter.node_id, type_id);
         }
     }
+
+    fn register_super_types(&mut self, type_id: TypeId, bases: &[NodeId]) {
+        // register super types in the type registry
+        let super_types = bases
+            .iter()
+            .filter_map(|base_id| {
+                let Some(base) = self.binder.find_definition_by_id(*base_id) else {
+                    unreachable!("base for {base_id:?} does not exist");
+                };
+                let base_type = match base {
+                    Definition::Contract(_) => Type::Contract {
+                        definition_id: *base_id,
+                    },
+                    Definition::Interface(_) => Type::Interface {
+                        definition_id: *base_id,
+                    },
+                    _ => return None,
+                };
+                Some(self.types.register_type(base_type))
+            })
+            .collect();
+        self.types.register_super_types(type_id, super_types);
+    }
 }
 
 impl Visitor for Pass {
@@ -594,6 +617,15 @@ impl Visitor for Pass {
     fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
         self.enter_scope_for_node_id(node.node_id);
 
+        if let Some(bases) = self.binder.get_linearised_bases(node.node_id) {
+            if !bases.is_empty() {
+                let type_id = self.types.register_type(Type::Contract {
+                    definition_id: node.node_id,
+                });
+                self.register_super_types(type_id, &bases.clone());
+            }
+        }
+
         true
     }
 
@@ -605,6 +637,15 @@ impl Visitor for Pass {
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
         self.enter_scope_for_node_id(node.node_id);
+
+        if let Some(bases) = self.binder.get_linearised_bases(node.node_id) {
+            if !bases.is_empty() {
+                let type_id = self.types.register_type(Type::Interface {
+                    definition_id: node.node_id,
+                });
+                self.register_super_types(type_id, &bases.clone());
+            }
+        }
 
         true
     }

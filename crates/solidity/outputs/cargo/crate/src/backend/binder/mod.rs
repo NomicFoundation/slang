@@ -213,6 +213,11 @@ impl Binder {
     }
 
     #[cfg(feature = "__private_testing_utils")]
+    pub(crate) fn get_linearised_bases(&self, node_id: NodeId) -> Option<&Vec<NodeId>> {
+        self.linearisations.get(&node_id)
+    }
+
+    #[cfg(feature = "__private_testing_utils")]
     pub fn linearisations(&self) -> &HashMap<NodeId, Vec<NodeId>> {
         &self.linearisations
     }

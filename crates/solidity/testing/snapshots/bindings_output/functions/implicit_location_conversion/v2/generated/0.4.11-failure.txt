@@ -38,9 +38,9 @@ References (16):
 - Ref: ["Utils" @ input.sol:16:9] -> #1
 - Ref: ["Point" @ input.sol:16:15] -> #2
 - Ref: ["p" @ input.sol:17:9] -> #10
-- Ref: ["add" @ input.sol:17:11] -> refs: [5, 6]
+- Ref: ["add" @ input.sol:17:11] -> #5
 - Ref: ["x" @ input.sol:17:15] -> unresolved
-- Ref: ["add" @ input.sol:17:18] -> unresolved
+- Ref: ["add" @ input.sol:17:18] -> #5
 - Ref: ["x" @ input.sol:17:22] -> unresolved
 
 ------------------------------------------------------------------------
@@ -112,11 +112,11 @@ Bindings:
     │         ┬ ─┬─ ┬  ─┬─ ┬  
     │         ╰─────────────── ref: 10
     │            │  │   │  │  
-    │            ╰──────────── refs: [5, 6]
+    │            ╰──────────── ref: 5
     │               │   │  │  
     │               ╰───────── unresolved
     │                   │  │  
-    │                   ╰───── unresolved
+    │                   ╰───── ref: 5
     │                      │  
     │                      ╰── unresolved
 ────╯
