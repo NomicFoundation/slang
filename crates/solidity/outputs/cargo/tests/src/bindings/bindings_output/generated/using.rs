@@ -27,6 +27,11 @@ fn built_ins_results() -> Result<()> {
 }
 
 #[test]
+fn can_override_built_ins() -> Result<()> {
+    run(T, "can_override_built_ins")
+}
+
+#[test]
 fn casting() -> Result<()> {
     run(T, "casting")
 }

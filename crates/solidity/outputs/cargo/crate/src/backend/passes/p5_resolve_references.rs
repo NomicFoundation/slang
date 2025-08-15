@@ -304,10 +304,7 @@ impl Pass {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
             }
-            _ => self
-                .built_ins_resolver()
-                .lookup_member_of_type_id(type_id, symbol)
-                .into(),
+            _ => Resolution::Unresolved,
         }
         .or_else(|| {
             // Consider active `using` directives in the current context
@@ -333,6 +330,11 @@ impl Pass {
                 }
             }
             Resolution::from(definition_ids)
+        })
+        .or_else(|| {
+            self.built_ins_resolver()
+                .lookup_member_of_type_id(type_id, symbol)
+                .into()
         })
     }
 
