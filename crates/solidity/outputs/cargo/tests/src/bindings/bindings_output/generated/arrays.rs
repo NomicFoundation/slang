@@ -7,6 +7,11 @@ use crate::bindings::bindings_output::runner::run;
 const T: &str = "arrays";
 
 #[test]
+fn byte_array_indexing() -> Result<()> {
+    run(T, "byte_array_indexing")
+}
+
+#[test]
 fn byte_length() -> Result<()> {
     run(T, "byte_length")
 }

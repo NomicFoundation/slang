@@ -1498,6 +1498,13 @@ impl Visitor for Pass {
                             Typing::Resolved(*element_type)
                         }
                     }
+                    Type::ByteArray { .. } => {
+                        if range_access {
+                            Typing::Unresolved
+                        } else {
+                            Typing::Resolved(self.types.bytes1())
+                        }
+                    }
                     Type::Bytes { .. } => {
                         if range_access {
                             Typing::Resolved(operand_type_id)
