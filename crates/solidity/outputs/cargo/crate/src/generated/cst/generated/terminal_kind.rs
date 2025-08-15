@@ -29,14 +29,6 @@ pub enum TerminalKind {
     /// Adding the missing input in this position may allow the parser to produce a valid tree there.
     MISSING,
 
-    /// Represents a node with kind `ABIEncoderV2Keyword`, having the following structure:
-    ///
-    /// ```ebnf
-    /// (* Introduced in 0.4.16 *)
-    /// (* Never reserved *)
-    /// ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
-    /// ```
-    ABIEncoderV2Keyword,
     /// Represents a node with kind `AbicoderKeyword`, having the following structure:
     ///
     /// ```ebnf
@@ -61,6 +53,14 @@ pub enum TerminalKind {
     /// ABICODER_V2_KEYWORD = "v2";
     /// ```
     AbicoderV2Keyword,
+    /// Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
+    /// (* Never reserved *)
+    /// ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+    /// ```
+    AbiencoderV2Keyword,
     /// Represents a node with kind `AbstractKeyword`, having the following structure:
     ///
     /// ```ebnf
@@ -990,14 +990,6 @@ pub enum TerminalKind {
     /// REVERT_KEYWORD = "revert";
     /// ```
     RevertKeyword,
-    /// Represents a node with kind `SMTCheckerKeyword`, having the following structure:
-    ///
-    /// ```ebnf
-    /// (* Introduced in 0.4.16 *)
-    /// (* Never reserved *)
-    /// SMT_CHECKER_KEYWORD = "SMTChecker";
-    /// ```
-    SMTCheckerKeyword,
     /// Represents a node with kind `SealedKeyword`, having the following structure:
     ///
     /// ```ebnf
@@ -1079,6 +1071,14 @@ pub enum TerminalKind {
     /// SLASH_EQUAL = "/=";
     /// ```
     SlashEqual,
+    /// Represents a node with kind `SmtcheckerKeyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
+    /// (* Never reserved *)
+    /// SMTCHECKER_KEYWORD = "SMTChecker";
+    /// ```
+    SmtcheckerKeyword,
     /// Represents a node with kind `SolidityKeyword`, having the following structure:
     ///
     /// ```ebnf

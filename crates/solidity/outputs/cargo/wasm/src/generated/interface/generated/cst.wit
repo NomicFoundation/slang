@@ -512,8 +512,8 @@ interface cst {
                 ///
                 /// ```ebnf
                 /// (* Introduced in 0.4.16 *)
-                /// ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
-                ///                     | (* variant: *) SMT_CHECKER_KEYWORD
+                /// ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
+                ///                     | (* variant: *) SMTCHECKER_KEYWORD
                 ///                     | (* variant: *) StringLiteral;
                 /// ```
                 %experimental-feature,
@@ -2047,14 +2047,6 @@ interface cst {
         /// This terminal is created when the parser is expecting a certain terminal but does not find it.
         /// Adding the missing input in this position may allow the parser to produce a valid tree there.
         missing,
-                /// Represents a node with kind `ABIEncoderV2Keyword`, having the following structure:
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.16 *)
-                /// (* Never reserved *)
-                /// ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
-                /// ```
-                %abiencoder-v2-keyword,
                 /// Represents a node with kind `AbicoderKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -2079,6 +2071,14 @@ interface cst {
                 /// ABICODER_V2_KEYWORD = "v2";
                 /// ```
                 %abicoder-v2-keyword,
+                /// Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
+                ///
+                /// ```ebnf
+                /// (* Introduced in 0.4.16 *)
+                /// (* Never reserved *)
+                /// ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+                /// ```
+                %abiencoder-v2-keyword,
                 /// Represents a node with kind `AbstractKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -3008,14 +3008,6 @@ interface cst {
                 /// REVERT_KEYWORD = "revert";
                 /// ```
                 %revert-keyword,
-                /// Represents a node with kind `SMTCheckerKeyword`, having the following structure:
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.16 *)
-                /// (* Never reserved *)
-                /// SMT_CHECKER_KEYWORD = "SMTChecker";
-                /// ```
-                %smtchecker-keyword,
                 /// Represents a node with kind `SealedKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -3097,6 +3089,14 @@ interface cst {
                 /// SLASH_EQUAL = "/=";
                 /// ```
                 %slash-equal,
+                /// Represents a node with kind `SmtcheckerKeyword`, having the following structure:
+                ///
+                /// ```ebnf
+                /// (* Introduced in 0.4.16 *)
+                /// (* Never reserved *)
+                /// SMTCHECKER_KEYWORD = "SMTChecker";
+                /// ```
+                %smtchecker-keyword,
                 /// Represents a node with kind `SolidityKeyword`, having the following structure:
                 ///
                 /// ```ebnf

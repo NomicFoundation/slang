@@ -1206,8 +1206,8 @@ pub enum AbicoderVersion {
 #[derive(Debug)]
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
-    ABIEncoderV2Keyword,
-    SMTCheckerKeyword,
+    AbiencoderV2Keyword,
+    SmtcheckerKeyword,
 }
 
 #[derive(Debug)]

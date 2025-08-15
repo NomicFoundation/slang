@@ -1978,12 +1978,12 @@ impl Parser {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TerminalKind::ABIEncoderV2Keyword,
+                    TerminalKind::AbiencoderV2Keyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TerminalKind::SMTCheckerKeyword,
+                    TerminalKind::SmtcheckerKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.string_literal(input);
@@ -9425,7 +9425,7 @@ impl Lexer for Parser {
                                 input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
                             ) {
                                 if self.version_is_at_least_0_4_16 {
-                                    KeywordScan::Present(TerminalKind::ABIEncoderV2Keyword)
+                                    KeywordScan::Present(TerminalKind::AbiencoderV2Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9436,7 +9436,7 @@ impl Lexer for Parser {
                         Some('S') => {
                             if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
                                 if self.version_is_at_least_0_4_16 {
-                                    KeywordScan::Present(TerminalKind::SMTCheckerKeyword)
+                                    KeywordScan::Present(TerminalKind::SmtcheckerKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10866,7 +10866,7 @@ impl Lexer for Parser {
                                 input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
                             ) {
                                 if self.version_is_at_least_0_4_16 {
-                                    KeywordScan::Present(TerminalKind::ABIEncoderV2Keyword)
+                                    KeywordScan::Present(TerminalKind::AbiencoderV2Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10877,7 +10877,7 @@ impl Lexer for Parser {
                         Some('S') => {
                             if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
                                 if self.version_is_at_least_0_4_16 {
-                                    KeywordScan::Present(TerminalKind::SMTCheckerKeyword)
+                                    KeywordScan::Present(TerminalKind::SmtcheckerKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }

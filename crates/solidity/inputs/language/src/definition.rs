@@ -126,8 +126,8 @@ codegen_language_macros::compile!(Language(
                             name = ExperimentalFeature,
                             enabled = From("0.4.16"),
                             variants = [
-                                EnumVariant(reference = ABIEncoderV2Keyword),
-                                EnumVariant(reference = SMTCheckerKeyword),
+                                EnumVariant(reference = AbiencoderV2Keyword),
+                                EnumVariant(reference = SmtcheckerKeyword),
                                 EnumVariant(reference = StringLiteral)
                             ]
                         ),
@@ -489,7 +489,7 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
-                            name = ABIEncoderV2Keyword,
+                            name = AbiencoderV2Keyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.4.16"),
@@ -1421,7 +1421,7 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
-                            name = SMTCheckerKeyword,
+                            name = SmtcheckerKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.4.16"),

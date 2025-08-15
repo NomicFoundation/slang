@@ -486,10 +486,10 @@ pub fn slang_solidity::cst::NonterminalKind::serialize<__S>(&self, __serializer:
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::NonterminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::NonterminalKind) -> &'static str
 #[repr(u16)] pub enum slang_solidity::cst::TerminalKind
-pub slang_solidity::cst::TerminalKind::ABIEncoderV2Keyword
 pub slang_solidity::cst::TerminalKind::AbicoderKeyword
 pub slang_solidity::cst::TerminalKind::AbicoderV1Keyword
 pub slang_solidity::cst::TerminalKind::AbicoderV2Keyword
+pub slang_solidity::cst::TerminalKind::AbiencoderV2Keyword
 pub slang_solidity::cst::TerminalKind::AbstractKeyword
 pub slang_solidity::cst::TerminalKind::AddressKeyword
 pub slang_solidity::cst::TerminalKind::AfterKeyword
@@ -633,7 +633,6 @@ pub slang_solidity::cst::TerminalKind::RelocatableKeyword
 pub slang_solidity::cst::TerminalKind::ReturnKeyword
 pub slang_solidity::cst::TerminalKind::ReturnsKeyword
 pub slang_solidity::cst::TerminalKind::RevertKeyword
-pub slang_solidity::cst::TerminalKind::SMTCheckerKeyword
 pub slang_solidity::cst::TerminalKind::SealedKeyword
 pub slang_solidity::cst::TerminalKind::SecondsKeyword
 pub slang_solidity::cst::TerminalKind::Semicolon
@@ -646,6 +645,7 @@ pub slang_solidity::cst::TerminalKind::SingleQuotedVersionLiteral
 pub slang_solidity::cst::TerminalKind::SizeOfKeyword
 pub slang_solidity::cst::TerminalKind::Slash
 pub slang_solidity::cst::TerminalKind::SlashEqual
+pub slang_solidity::cst::TerminalKind::SmtcheckerKeyword
 pub slang_solidity::cst::TerminalKind::SolidityKeyword
 pub slang_solidity::cst::TerminalKind::StaticKeyword
 pub slang_solidity::cst::TerminalKind::StorageKeyword
