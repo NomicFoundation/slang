@@ -807,16 +807,23 @@ impl Pass {
         }
     }
 
+    fn collect_positional_argument_typings(
+        &self,
+        arguments: &[input_ir::Expression],
+    ) -> Vec<Typing> {
+        arguments
+            .iter()
+            .map(|argument| self.typing_of_expression(argument))
+            .collect::<Vec<_>>()
+    }
+
     fn typing_of_function_call_with_positional_arguments(
         &mut self,
         node: &input_ir::FunctionCallExpression,
         arguments: &[input_ir::Expression],
     ) -> Typing {
         let operand_typing = self.typing_of_expression(&node.operand);
-        let argument_typings = arguments
-            .iter()
-            .map(|argument| self.typing_of_expression(argument))
-            .collect::<Vec<_>>();
+        let argument_typings = self.collect_positional_argument_typings(arguments);
 
         match operand_typing {
             Typing::Unresolved | Typing::This | Typing::Super => {
@@ -1026,6 +1033,21 @@ impl Pass {
             })
     }
 
+    fn collect_named_argument_typings(
+        &self,
+        arguments: &[input_ir::NamedArgument],
+    ) -> Vec<(String, Typing)> {
+        arguments
+            .iter()
+            .map(|argument| {
+                (
+                    argument.name.unparse(),
+                    self.typing_of_expression(&argument.value),
+                )
+            })
+            .collect::<Vec<_>>()
+    }
+
     fn typing_of_function_call_with_named_arguments(
         &mut self,
         node: &input_ir::FunctionCallExpression,
@@ -1056,15 +1078,7 @@ impl Pass {
                 // TODO: maybe update the typing of the operand?
                 // TODO: return the definition_id used to later resolve named arguments
                 let receiver_type_id = self.type_id_of_receiver(&node.operand);
-                let argument_typings = arguments
-                    .iter()
-                    .map(|argument| {
-                        (
-                            argument.name.unparse(),
-                            self.typing_of_expression(&argument.value),
-                        )
-                    })
-                    .collect::<Vec<_>>();
+                let argument_typings = self.collect_named_argument_typings(arguments);
                 let candidate = self.lookup_function_matching_named_arguments(
                     &type_ids,
                     &argument_typings,
@@ -1125,6 +1139,68 @@ impl Pass {
         self.resolve_named_arguments(arguments, definition_id);
 
         typing
+    }
+
+    fn lookup_event_matching_positional_arguments(
+        &self,
+        definition_ids: &[NodeId],
+        argument_typings: &[Typing],
+    ) -> Option<NodeId> {
+        for definition_id in definition_ids {
+            let Some(Definition::Event(event_definition)) =
+                self.binder.find_definition_by_id(*definition_id)
+            else {
+                continue;
+            };
+
+            let parameter_types = &event_definition.parameter_types;
+            if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                if self.matches_positional_arguments(parameter_types, argument_typings, false) {
+                    return Some(*definition_id);
+                }
+            }
+        }
+        None
+    }
+
+    fn lookup_event_matching_named_arguments(
+        &self,
+        definition_ids: &[NodeId],
+        argument_typings: &[(String, Typing)],
+    ) -> Option<NodeId> {
+        for definition_id in definition_ids {
+            let Some(Definition::Event(event_definition)) =
+                self.binder.find_definition_by_id(*definition_id)
+            else {
+                continue;
+            };
+
+            let parameter_types = &event_definition.parameter_types;
+            let parameter_names = &event_definition.parameter_names;
+            assert_eq!(
+                parameter_types.len(),
+                parameter_names.len(),
+                "length of types and names of parameters should match"
+            );
+            if parameter_names.iter().any(|name| name.is_none()) {
+                // cannot match if any parameter is unnamed
+                continue;
+            }
+
+            if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                if self.matches_named_arguments(
+                    parameter_names,
+                    parameter_types,
+                    argument_typings,
+                    false,
+                ) {
+                    return Some(*definition_id);
+                }
+            }
+        }
+        None
     }
 }
 
@@ -1769,16 +1845,63 @@ impl Visitor for Pass {
     }
 
     fn leave_emit_statement(&mut self, node: &input_ir::EmitStatement) {
-        if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
-            named_arguments_declaration,
-        ) = &node.arguments
-        {
-            if let Some(named_arguments) = &named_arguments_declaration.arguments {
-                let definition_id = self
-                    .binder
-                    .find_reference_by_identifier_node_id(node.event.last().unwrap().id())
-                    .and_then(|reference| reference.resolution.as_definition_id());
-                self.resolve_named_arguments(&named_arguments.arguments, definition_id);
+        let event_reference_id = node.event.last().unwrap().id();
+        let event_resolution = self
+            .binder
+            .find_reference_by_identifier_node_id(event_reference_id)
+            .map(|reference| &reference.resolution);
+        match &node.arguments {
+            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
+                positional_arguments,
+            ) => {
+                // For positional arguments, resolve ambiguity of overloads only
+                if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
+                    let argument_typings =
+                        self.collect_positional_argument_typings(&positional_arguments.arguments);
+                    if let Some(candidate) = self.lookup_event_matching_positional_arguments(
+                        definition_ids,
+                        &argument_typings,
+                    ) {
+                        // update resolved definition
+                        self.binder
+                            .fixup_reference(event_reference_id, Resolution::Definition(candidate));
+                    }
+                }
+            }
+            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments) => {
+                // For named arguments, we need to resolve ambiguity and the named arguments
+                if let Some(named_arguments) = &named_arguments.arguments {
+                    let definition_id = match event_resolution {
+                        Some(Resolution::Ambiguous(definition_ids)) => {
+                            let argument_typings =
+                                self.collect_named_argument_typings(&named_arguments.arguments);
+                            let candidate = self.lookup_event_matching_named_arguments(
+                                definition_ids,
+                                &argument_typings,
+                            );
+                            if let Some(candidate) = candidate {
+                                // update resolved definition
+                                self.binder.fixup_reference(
+                                    event_reference_id,
+                                    Resolution::Definition(candidate),
+                                );
+                            }
+                            candidate
+                        }
+                        Some(Resolution::Definition(definition_id)) => Some(*definition_id),
+                        _ => None,
+                    };
+                    // resolve names in named arguments
+                    self.resolve_named_arguments(&named_arguments.arguments, definition_id);
+                } else if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
+                    if let Some(candidate) =
+                        self.lookup_event_matching_positional_arguments(definition_ids, &[])
+                    {
+                        // update resolved definition
+                        self.binder
+                            .fixup_reference(event_reference_id, Resolution::Definition(candidate));
+                    }
+                }
             }
         }
     }

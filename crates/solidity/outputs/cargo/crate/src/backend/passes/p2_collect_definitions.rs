@@ -478,15 +478,24 @@ impl Visitor for Pass {
     fn enter_event_definition(&mut self, node: &input_ir::EventDefinition) -> bool {
         let parameters_scope = Scope::new_parameters(node.parameters.node_id);
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+        let mut parameter_names = Vec::new();
         for parameter in &node.parameters.parameters {
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_parameter(parameter.node_id, name);
                 self.binder
                     .insert_definition_in_scope(definition, parameters_scope_id);
+                parameter_names.push(Some(name.unparse()));
+            } else {
+                parameter_names.push(None);
             }
         }
 
-        let definition = Definition::new_event(node.node_id, &node.name, parameters_scope_id);
+        let definition = Definition::new_event(
+            node.node_id,
+            &node.name,
+            parameters_scope_id,
+            parameter_names,
+        );
         self.insert_definition_in_current_scope(definition);
 
         false

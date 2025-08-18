@@ -72,6 +72,8 @@ pub struct EventDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
     pub parameters_scope_id: ScopeId,
+    pub parameter_names: Vec<Option<String>>,
+    pub parameter_types: Vec<TypeId>,
 }
 
 #[derive(Debug)]
@@ -287,11 +289,14 @@ impl Definition {
         node_id: NodeId,
         identifier: &Rc<TerminalNode>,
         parameters_scope_id: ScopeId,
+        parameter_names: Vec<Option<String>>,
     ) -> Self {
         Self::Event(EventDefinition {
             node_id,
             identifier: Rc::clone(identifier),
             parameters_scope_id,
+            parameter_names,
+            parameter_types: Vec::new(),
         })
     }
 

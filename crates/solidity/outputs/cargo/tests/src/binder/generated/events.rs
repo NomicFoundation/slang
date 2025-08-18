@@ -27,6 +27,11 @@ fn named_args() -> Result<()> {
 }
 
 #[test]
+fn overload_selection() -> Result<()> {
+    run(T, "overload_selection")
+}
+
+#[test]
 fn selector() -> Result<()> {
     run(T, "selector")
 }

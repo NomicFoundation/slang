@@ -807,6 +807,20 @@ impl Visitor for Pass {
 
     fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
         self.binder.mark_user_meta_type_node(node.node_id);
+
+        let parameter_types: Vec<_> = node
+            .parameters
+            .parameters
+            .iter()
+            .filter_map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
+            .collect();
+        if parameter_types.len() == node.parameters.parameters.len() {
+            let Definition::Event(event_definition) = self.binder.get_definition_mut(node.node_id)
+            else {
+                unreachable!("definition in EventDefinition node is not an event");
+            };
+            event_definition.parameter_types = parameter_types;
+        }
     }
 
     fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {
