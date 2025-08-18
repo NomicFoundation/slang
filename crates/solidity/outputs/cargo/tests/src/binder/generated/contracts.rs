@@ -112,6 +112,11 @@ fn public_getter_members() -> Result<()> {
 }
 
 #[test]
+fn public_getter_selector() -> Result<()> {
+    run(T, "public_getter_selector")
+}
+
+#[test]
 fn public_getters() -> Result<()> {
     run(T, "public_getters")
 }

@@ -491,6 +491,12 @@ pub struct FunctionType {
     pub kind: FunctionTypeKind,
 }
 
+impl FunctionType {
+    pub(crate) fn overrides(&self, other: &Self) -> bool {
+        self.parameter_types == other.parameter_types && self.return_type == other.return_type
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum DataLocation {
     Memory,

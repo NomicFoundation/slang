@@ -174,6 +174,48 @@ impl Pass {
             .filter(move |directive| directive.applies_to(type_id))
     }
 
+    fn filter_overriden_definitions(&self, resolution: Resolution) -> Resolution {
+        let Resolution::Ambiguous(definition_ids) = resolution else {
+            return resolution;
+        };
+        let mut seen_function_types: Vec<&FunctionType> = Vec::new();
+        let mut filtered_definitions = Vec::new();
+        for definition_id in definition_ids {
+            match self.binder.find_definition_by_id(definition_id).unwrap() {
+                Definition::Function(_) => {
+                    if let Typing::Resolved(type_id) = self.binder.node_typing(definition_id) {
+                        let Type::Function(function_type) = self.types.get_type_by_id(type_id)
+                        else {
+                            unreachable!("type of function definition is not a function");
+                        };
+                        if seen_function_types
+                            .iter()
+                            .any(|seen_function_type| seen_function_type.overrides(function_type))
+                        {
+                            // the function type is overriden by some other previously seen definition
+                            continue;
+                        }
+                        seen_function_types.push(function_type);
+                    }
+                }
+                Definition::StateVariable(state_variable) => {
+                    // remember the getter type if present to override functions
+                    // in bases
+                    if let Some(getter_type_id) = state_variable.getter_type_id {
+                        let Type::Function(getter_type) = self.types.get_type_by_id(getter_type_id)
+                        else {
+                            unreachable!("getter function type is not a function")
+                        };
+                        seen_function_types.push(getter_type);
+                    }
+                }
+                _ => {}
+            }
+            filtered_definitions.push(definition_id);
+        }
+        Resolution::from(filtered_definitions)
+    }
+
     fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
         match typing {
             Typing::Unresolved => Resolution::Unresolved,
@@ -1418,7 +1460,9 @@ impl Visitor for Pass {
     fn enter_expression(&mut self, node: &input_ir::Expression) -> bool {
         if let input_ir::Expression::Identifier(identifier) = node {
             let scope_id = self.current_scope_id();
-            let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+            let resolution = self.filter_overriden_definitions(
+                self.resolve_symbol_in_scope(scope_id, &identifier.unparse()),
+            );
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
@@ -1567,7 +1611,9 @@ impl Visitor for Pass {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
         let operand_typing = self.typing_of_expression(&node.operand);
-        let resolution = self.resolve_symbol_in_typing(&operand_typing, &node.member.unparse());
+        let resolution = self.filter_overriden_definitions(
+            self.resolve_symbol_in_typing(&operand_typing, &node.member.unparse()),
+        );
 
         // Special case: if the operand is either `this` or a contract/interface
         // reference type, then try to type the member as a getter
@@ -1834,7 +1880,9 @@ impl Visitor for Pass {
                 input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
                     let identifier = &untyped_tuple_member.name;
                     let scope_id = self.current_scope_id();
-                    let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+                    let resolution = self.filter_overriden_definitions(
+                        self.resolve_symbol_in_scope(scope_id, &identifier.unparse()),
+                    );
                     let reference = Reference::new(Rc::clone(identifier), resolution);
                     self.binder.insert_reference(reference);
                 }
