@@ -118,8 +118,8 @@ fn generate_product(
 
 fn generate_npm_package(fs: &mut CodegenFileSystem, language: &Language) -> Result<()> {
     let npm_package_crate = CargoWorkspace::locate_source_crate("solidity_npm_package")?;
-    let input_dir = npm_package_crate.join("src/ast/");
-    let output_dir = npm_package_crate.join("src/ast/");
+    let input_dir = npm_package_crate.join("src/");
+    let output_dir = npm_package_crate.join("src/");
 
     RuntimeGenerator::generate_templates(language, fs, &input_dir, &output_dir)
 }
