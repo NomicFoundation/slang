@@ -157,23 +157,20 @@ impl WasmPackage {
             .property("--noEmit", "false")
             .run();
 
-        let temp_dir = temp_dir.join(self.runtime_dir());
-        let output_dir = project_dir.join("target/generated");
+        let temp_dir = temp_dir.join("src");
+        let output_dir = project_dir.join("target");
 
         // remove any old generated files
         if output_dir.exists() {
             std::fs::remove_dir_all(&output_dir)?;
         }
 
-        println!("About to walk");
         for temp_path in FileWalker::from_directory(&temp_dir).find_all()? {
-            println!("Walking...");
             let output_path = temp_path.replace_prefix(&temp_dir, &output_dir);
 
             std::fs::create_dir_all(output_path.unwrap_parent())?;
             std::fs::copy(&temp_path, &output_path)?;
         }
-        println!("Walked");
         Ok(())
     }
 
