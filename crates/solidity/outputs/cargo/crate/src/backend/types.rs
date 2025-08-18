@@ -21,7 +21,8 @@ pub struct TypeRegistry {
     address_payable_type_id: TypeId,
     boolean_type_id: TypeId,
     boolean_bytes_tuple_type_id: TypeId,
-    bytes_type_id: TypeId,
+    bytes_calldata_type_id: TypeId,
+    bytes_memory_type_id: TypeId,
     bytes1_type_id: TypeId,
     bytes20_type_id: TypeId,
     bytes32_type_id: TypeId,
@@ -40,7 +41,10 @@ impl TypeRegistry {
         let (address_type, _) = types.insert_full(Type::Address { payable: false });
         let (address_payable_type, _) = types.insert_full(Type::Address { payable: true });
         let (boolean_type, _) = types.insert_full(Type::Boolean);
-        let (bytes_type, _) = types.insert_full(Type::Bytes {
+        let (bytes_calldata_type, _) = types.insert_full(Type::Bytes {
+            location: DataLocation::Calldata,
+        });
+        let (bytes_memory_type, _) = types.insert_full(Type::Bytes {
             location: DataLocation::Memory,
         });
         let (bytes1_type, _) = types.insert_full(Type::ByteArray { width: 1 });
@@ -62,7 +66,7 @@ impl TypeRegistry {
         let (void_type, _) = types.insert_full(Type::Void);
 
         let (boolean_bytes_tuple_type, _) = types.insert_full(Type::Tuple {
-            types: vec![TypeId(boolean_type), TypeId(bytes_type)],
+            types: vec![TypeId(boolean_type), TypeId(bytes_memory_type)],
         });
 
         Self {
@@ -73,7 +77,8 @@ impl TypeRegistry {
             address_payable_type_id: TypeId(address_payable_type),
             boolean_type_id: TypeId(boolean_type),
             boolean_bytes_tuple_type_id: TypeId(boolean_bytes_tuple_type),
-            bytes_type_id: TypeId(bytes_type),
+            bytes_calldata_type_id: TypeId(bytes_calldata_type),
+            bytes_memory_type_id: TypeId(bytes_memory_type),
             bytes1_type_id: TypeId(bytes1_type),
             bytes20_type_id: TypeId(bytes20_type),
             bytes32_type_id: TypeId(bytes32_type),
@@ -371,8 +376,11 @@ impl TypeRegistry {
     pub fn boolean_bytes_tuple(&self) -> TypeId {
         self.boolean_bytes_tuple_type_id
     }
-    pub fn bytes(&self) -> TypeId {
-        self.bytes_type_id
+    pub fn bytes_calldata(&self) -> TypeId {
+        self.bytes_calldata_type_id
+    }
+    pub fn bytes_memory(&self) -> TypeId {
+        self.bytes_memory_type_id
     }
     pub fn bytes1(&self) -> TypeId {
         self.bytes1_type_id

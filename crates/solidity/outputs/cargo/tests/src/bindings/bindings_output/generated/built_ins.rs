@@ -57,6 +57,11 @@ fn instance_as_address() -> Result<()> {
 }
 
 #[test]
+fn msg_data() -> Result<()> {
+    run(T, "msg_data")
+}
+
+#[test]
 fn msg_sender() -> Result<()> {
     run(T, "msg_sender")
 }

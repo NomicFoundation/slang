@@ -642,7 +642,7 @@ impl<'a> BuiltInsResolver<'a> {
             // variables and members
             BuiltIn::Address => Typing::Resolved(self.types.address()),
             BuiltIn::AddressBalance => Typing::Resolved(self.types.uint256()),
-            BuiltIn::AddressCode => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AddressCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::AddressCodehash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::BlockBasefee => Typing::Resolved(self.types.uint256()),
             BuiltIn::BlockBlobbasefee => Typing::Resolved(self.types.uint256()),
@@ -655,7 +655,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::BlockTimestamp => Typing::Resolved(self.types.uint256()),
             BuiltIn::Length => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgGas => Typing::Resolved(self.types.uint256()),
-            BuiltIn::MsgData => Typing::Resolved(self.types.bytes()),
+            BuiltIn::MsgData => Typing::Resolved(self.types.bytes_calldata()),
             BuiltIn::MsgSender => {
                 if self.language_version >= VERSION_0_5_0 && self.language_version < VERSION_0_8_0 {
                     Typing::Resolved(self.types.address_payable())
@@ -676,8 +676,8 @@ impl<'a> BuiltInsResolver<'a> {
                 }
             }
             BuiltIn::TypeName => Typing::Resolved(self.types.string()),
-            BuiltIn::TypeCreationCode => Typing::Resolved(self.types.bytes()),
-            BuiltIn::TypeRuntimeCode => Typing::Resolved(self.types.bytes()),
+            BuiltIn::TypeCreationCode => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::TypeRuntimeCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::TypeInterfaceId => Typing::Resolved(self.types.bytes4()),
             BuiltIn::TypeMin(type_id) => Typing::Resolved(*type_id),
             BuiltIn::TypeMax(type_id) => Typing::Resolved(*type_id),
@@ -743,11 +743,11 @@ impl<'a> BuiltInsResolver<'a> {
                 // we need to register the types given as parameters
                 Typing::Unresolved
             }
-            BuiltIn::AbiEncode => Typing::Resolved(self.types.bytes()),
-            BuiltIn::AbiEncodeCall => Typing::Resolved(self.types.bytes()),
-            BuiltIn::AbiEncodePacked => Typing::Resolved(self.types.bytes()),
-            BuiltIn::AbiEncodeWithSelector => Typing::Resolved(self.types.bytes()),
-            BuiltIn::AbiEncodeWithSignature => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AbiEncode => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::AbiEncodeCall => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::AbiEncodePacked => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::AbiEncodeWithSelector => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::AbiEncodeWithSignature => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::Addmod => Typing::Resolved(self.types.uint256()),
             BuiltIn::AddressCall => {
                 if self.language_version >= VERSION_0_5_0 {
@@ -792,7 +792,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Assert => Typing::Resolved(self.types.void()),
             BuiltIn::Blobhash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::Blockhash => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::BytesConcat => Typing::Resolved(self.types.bytes()),
+            BuiltIn::BytesConcat => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
