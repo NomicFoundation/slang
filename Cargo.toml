@@ -31,6 +31,7 @@ members = [
     "crates/solidity/outputs/cargo/crate",
     "crates/solidity/outputs/cargo/tests",
     "crates/solidity/outputs/cargo/wasm",
+    "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/perf",
     "crates/solidity/testing/perf/npm",

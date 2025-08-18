@@ -2462,6 +2462,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "solidity_npm_package"
+version = "1.2.1"
+
+[[package]]
 name = "solidity_spec"
 version = "1.2.1"
 
