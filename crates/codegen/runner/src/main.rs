@@ -54,9 +54,10 @@ fn main() {
             )
         },
         || {
-            generate_npm_package(
+            generate_in_place(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
+                "solidity_npm_package",
             )
         },
     ]
@@ -116,12 +117,15 @@ fn generate_product(
     RuntimeGenerator::generate_product(language, fs, &input_dir, &output_dir)
 }
 
-fn generate_npm_package(fs: &mut CodegenFileSystem, language: &Language) -> Result<()> {
-    let npm_package_crate = CargoWorkspace::locate_source_crate("solidity_npm_package")?;
-    let input_dir = npm_package_crate.join("src/");
-    let output_dir = npm_package_crate.join("src/");
+fn generate_in_place(
+    fs: &mut CodegenFileSystem,
+    language: &Language,
+    the_crate: &str,
+) -> Result<()> {
+    let the_crate = CargoWorkspace::locate_source_crate(the_crate)?;
+    let src_dir = the_crate.join("src/");
 
-    RuntimeGenerator::generate_templates(language, fs, &input_dir, &output_dir)
+    RuntimeGenerator::generate_templates(language, fs, &src_dir, &src_dir)
 }
 
 fn generate_builtins(
