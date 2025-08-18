@@ -152,6 +152,11 @@ fn qualified_type() -> Result<()> {
 }
 
 #[test]
+fn receiver_implicit_conversion() -> Result<()> {
+    run(T, "receiver_implicit_conversion")
+}
+
+#[test]
 fn star() -> Result<()> {
     run(T, "star")
 }

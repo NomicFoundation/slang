@@ -402,13 +402,15 @@ impl Pass {
             // the definition is not a function
             return false;
         };
-        // receiver needs to be convertible to the first parameter type
+        // receiver needs to be convertible to the first parameter type; we use
+        // the external call rules because the conversion rules with different
+        // locations are more relaxed
         function_type
             .parameter_types
             .first()
             .is_some_and(|type_id| {
                 self.types
-                    .implicitly_convertible_to(receiver_type_id, *type_id)
+                    .implicitly_convertible_to_for_external_call(receiver_type_id, *type_id)
             })
     }
 
