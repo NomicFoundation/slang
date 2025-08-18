@@ -11,7 +11,7 @@ use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
 use crate::toolchains::npm::Npm;
-use crate::toolchains::wasm::WasmPackage;
+use crate::toolchains::wasm::NPM_CRATE;
 
 #[derive(Clone, Debug, Parser)]
 pub struct ChangesetsController {}
@@ -19,8 +19,7 @@ pub struct ChangesetsController {}
 impl ChangesetsController {
     #[allow(clippy::unused_self)] // for compatibility with other controllers:
     pub fn execute(&self) -> Result<()> {
-        let package = WasmPackage::Solidity;
-        let package_dir = CargoWorkspace::locate_source_crate(package.npm_crate())?;
+        let package_dir = CargoWorkspace::locate_source_crate(NPM_CRATE)?;
 
         let package_version = Npm::local_version(&package_dir)?;
         println!("Package version: {package_version}");
