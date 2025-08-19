@@ -1,1 +1,1 @@
-export * from "./generated/nodes.mjs";
+export * from "./nodes.generated.mjs";
