@@ -51,6 +51,19 @@ impl RuntimeGenerator {
         CodegenRuntime::render_templates(fs, input_dir, output_dir, model)
     }
 
+    pub fn generate_templates_in_place(
+        language: &Language,
+        fs: &mut CodegenFileSystem,
+        dir: &Path,
+    ) -> Result<()> {
+        let model = ModelWrapper {
+            rendering_in_stubs: false,
+            model: RuntimeModel::from_language(language)?,
+        };
+
+        CodegenRuntime::render_templates_in_place(fs, dir, model)
+    }
+
     pub fn generate_stubs(fs: &mut CodegenFileSystem, source_dir: &Path) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: true,

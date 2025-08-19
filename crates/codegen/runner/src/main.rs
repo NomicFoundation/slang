@@ -124,7 +124,7 @@ fn generate_in_place(
 ) -> Result<()> {
     let the_crate = CargoWorkspace::locate_source_crate(the_crate)?;
 
-    RuntimeGenerator::generate_templates(language, fs, &the_crate, &the_crate)
+    RuntimeGenerator::generate_templates_in_place(language, fs, &the_crate)
 }
 
 fn generate_builtins(

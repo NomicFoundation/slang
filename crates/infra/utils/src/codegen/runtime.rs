@@ -52,6 +52,25 @@ impl CodegenRuntime {
         Ok(())
     }
 
+    pub fn render_templates_in_place(
+        fs: &mut CodegenFileSystem,
+        dir: impl Into<PathBuf>,
+        model: impl Serialize,
+    ) -> Result<()> {
+        let tera = TeraWrapper::new(dir)?;
+        let context = tera::Context::from_serialize(model)?;
+
+        for template_path in tera.find_all_templates()? {
+            let generated_path = Self::get_in_place_path(&template_path);
+            println!("{generated_path:?}");
+            let rendered = tera.render(&template_path, &context)?;
+
+            fs.write_file_formatted(&generated_path, rendered)?;
+        }
+
+        Ok(())
+    }
+
     pub fn render_product(
         fs: &mut CodegenFileSystem,
         input_dir: impl Into<PathBuf>,
@@ -102,5 +121,14 @@ impl CodegenRuntime {
             .unwrap_parent()
             .join("generated")
             .join(base_name)
+    }
+
+    fn get_in_place_path(template_path: &Path) -> PathBuf {
+        let template_path = template_path.with_extension("");
+        let (base_name, extension) = template_path.unwrap_name().rsplit_once('.').unwrap();
+
+        template_path
+            .unwrap_parent()
+            .join(base_name.to_owned() + ".generated." + extension)
     }
 }
