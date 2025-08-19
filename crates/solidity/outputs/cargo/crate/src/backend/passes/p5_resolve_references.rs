@@ -1494,11 +1494,33 @@ impl Visitor for Pass {
     }
 
     fn leave_conditional_expression(&mut self, node: &input_ir::ConditionalExpression) {
-        let type_id = self
+        let true_type_id = self
             .typing_of_expression(&node.true_expression)
             .as_type_id();
+        let false_type_id = self
+            .typing_of_expression(&node.false_expression)
+            .as_type_id();
+
         // TODO(validation): both true_expression and false_expression should
-        // have the same type
+        // have the compatible types
+        let type_id = match (true_type_id, false_type_id) {
+            (Some(true_type_id), Some(false_type_id)) => {
+                if self
+                    .types
+                    .implicitly_convertible_to(false_type_id, true_type_id)
+                {
+                    Some(true_type_id)
+                } else if self
+                    .types
+                    .implicitly_convertible_to(true_type_id, false_type_id)
+                {
+                    Some(false_type_id)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        };
         self.binder.set_node_type(node.node_id, type_id);
     }
 

@@ -22,6 +22,11 @@ fn call_options() -> Result<()> {
 }
 
 #[test]
+fn conditional() -> Result<()> {
+    run(T, "conditional")
+}
+
+#[test]
 fn elementary_casting() -> Result<()> {
     run(T, "elementary_casting")
 }
