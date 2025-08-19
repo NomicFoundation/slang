@@ -123,9 +123,8 @@ fn generate_in_place(
     the_crate: &str,
 ) -> Result<()> {
     let the_crate = CargoWorkspace::locate_source_crate(the_crate)?;
-    let src_dir = the_crate.join("src/");
 
-    RuntimeGenerator::generate_templates(language, fs, &src_dir, &src_dir)
+    RuntimeGenerator::generate_templates(language, fs, &the_crate, &the_crate)
 }
 
 fn generate_builtins(
