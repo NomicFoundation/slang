@@ -566,6 +566,30 @@ impl Type {
         self.data_location()
             .is_some_and(|location| location == DataLocation::Inherited)
     }
+
+    pub fn can_return_from_getter(&self) -> bool {
+        match self {
+            Type::Address { .. }
+            | Type::Boolean
+            | Type::ByteArray { .. }
+            | Type::Bytes { .. }
+            | Type::Contract { .. }
+            | Type::Enum { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Integer { .. }
+            | Type::Interface { .. }
+            | Type::String { .. }
+            | Type::UserDefinedValue { .. } => true,
+
+            Type::Array { .. }
+            | Type::Function(_)
+            | Type::Mapping { .. }
+            | Type::Rational
+            | Type::Struct { .. }
+            | Type::Tuple { .. }
+            | Type::Void => false,
+        }
+    }
 }
 
 impl Type {

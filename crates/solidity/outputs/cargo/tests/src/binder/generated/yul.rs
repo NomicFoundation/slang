@@ -107,6 +107,11 @@ fn nested_functions() -> Result<()> {
 }
 
 #[test]
+fn slot_of_public_var_override() -> Result<()> {
+    run(T, "slot_of_public_var_override")
+}
+
+#[test]
 fn slot_of_return_params() -> Result<()> {
     run(T, "slot_of_return_params")
 }

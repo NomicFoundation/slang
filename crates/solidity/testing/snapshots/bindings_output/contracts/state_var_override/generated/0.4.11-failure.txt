@@ -13,7 +13,7 @@ Error: Expected CloseBrace or OpenBrace or ReturnsKeyword or Semicolon.
     │
  12 │ ╭─▶     function test() internal view {
     ┆ ┆   
- 14 │ ├─▶     }
+ 16 │ ├─▶     }
     │ │           
     │ ╰─────────── Error occurred here.
 ────╯
@@ -74,7 +74,7 @@ Definiens:
     │ │       ──────────────┬──────────────  
     │ │                     ╰──────────────── definiens: 7
     ┆ ┆       
- 15 │ ├─────▶ }
+ 17 │ ├─────▶ }
     │ │           
     │ ╰─────────── definiens: 3
 ────╯

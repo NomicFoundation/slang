@@ -23,11 +23,13 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (4):
+References (6):
 - Ref: ["IFoo" @ input.sol:5:18] -> #1
 - Ref: ["Bar" @ input.sol:10:5] -> #4
 - Ref: ["foo" @ input.sol:13:9] -> #2
 - Ref: ["x" @ input.sol:13:13] -> unresolved
+- Ref: ["foo" @ input.sol:14:14] -> #2
+- Ref: ["foo" @ input.sol:15:14] -> #2
 
 ------------------------------------------------------------------------
 
@@ -74,4 +76,10 @@ Bindings:
     │          ╰───── ref: 2
     │             │  
     │             ╰── unresolved
+ 14 │         this.foo;
+    │              ─┬─  
+    │               ╰─── ref: 2
+ 15 │         this.foo();
+    │              ─┬─  
+    │               ╰─── ref: 2
 ────╯

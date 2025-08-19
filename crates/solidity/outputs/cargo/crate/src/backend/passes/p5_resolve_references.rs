@@ -692,7 +692,8 @@ impl Pass {
 
     // This is a "top-level" resolution method for symbols in s Yul context
     fn resolve_symbol_in_yul_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
-        let resolution = self.binder.resolve_in_scope(scope_id, symbol);
+        let resolution =
+            self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
         if resolution == Resolution::Unresolved {
             self.built_ins_resolver().lookup_yul_global(symbol).into()
         } else {

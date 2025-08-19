@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["x" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["x" @ input.sol:6:26] (state var, type: uint256)
+- Def: #5 ["test" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #6 ["a" @ input.sol:10:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Base" @ input.sol:5:18] -> #1
+- Ref: ["x" @ input.sol:10:22] -> #4
+- Ref: ["slot" @ input.sol:10:24] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function x() external view virtual returns (uint) {}
+    │              ┬  
+    │              ╰── name: 2
+    │ 
+  5 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 3
+    │                    │   
+    │                    ╰─── ref: 1
+  6 │     uint public override x;
+    │                          ┬  
+    │                          ╰── name: 4
+    │ 
+  8 │     function test() internal pure {
+    │              ──┬─  
+    │                ╰─── name: 5
+    │ 
+ 10 │             let a := x.slot
+    │                 ┬    ┬ ──┬─  
+    │                 ╰──────────── name: 6
+    │                      │   │   
+    │                      ╰─────── ref: 4
+    │                          │   
+    │                          ╰─── built-in
+────╯

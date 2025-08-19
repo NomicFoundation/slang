@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function x() external view virtual returns (uint) {}
+    │              ┬  
+    │              ╰── name: 2
+    │ 
+  5 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 3
+    │                    │   
+    │                    ╰─── ref: 1
+  6 │     uint public override x;
+    │                          ┬  
+    │                          ╰── name: 4
+    │ 
+  8 │     function test() internal pure {
+    │              ──┬─  
+    │                ╰─── name: 5
+    │ 
+ 10 │             let a := x.slot
+    │                 ┬    ───┬──  
+    │                 ╰──────────── name: 6
+    │                         │    
+    │                         ╰──── unresolved
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ contract Base {
+  2 │     │       function x() external view virtual returns (uint) {}
+    │     │   ────────────────────────────┬────────────────────────────  
+    │     │                               ╰────────────────────────────── definiens: 2
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  6 │ │ │         uint public override x;
+    │ │ │     ──────────────┬─────────────  
+    │ │ │                   ╰─────────────── definiens: 4
+  7 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+ 10 │ │ │                 let a := x.slot
+    │ │ │                     ┬  
+    │ │ │                     ╰── definiens: 6
+    ┆ ┆ ┆     
+ 12 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 13 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 3
+────╯

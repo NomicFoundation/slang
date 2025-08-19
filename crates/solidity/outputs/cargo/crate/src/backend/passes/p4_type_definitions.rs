@@ -504,12 +504,11 @@ impl Pass {
                 | Type::UserDefinedValue { .. } => break,
 
                 Type::Struct { definition_id, .. } => {
-                    // For structs there is a special case: if it has a single
-                    // member, the getter will return the value of that field.
-                    // This special case is the reason why we cannot type
-                    // getters concurrently with the state variables.
+                    // For structs the getter will return a tuple with all value
+                    // type and string/bytes fields. It won't return nested
+                    // structs or arrays.
 
-                    // To retrieve that field we need to go through the
+                    // To retrieve the fields we need to go through the
                     // scope associated to the struct...
                     let scope_id = self
                         .binder
@@ -518,17 +517,26 @@ impl Pass {
                     let Scope::Struct(struct_scope) = self.binder.get_scope_by_id(scope_id) else {
                         unreachable!("definition in struct type has no invalid scope");
                     };
-                    if struct_scope.definitions.len() == 1 {
-                        let member_definition_id =
-                            struct_scope.definitions.values().next().unwrap();
-                        if let Some(member_type_id) =
-                            self.binder.node_typing(*member_definition_id).as_type_id()
-                        {
-                            return_type = member_type_id;
-                        } else {
+                    let mut types = Vec::new();
+                    for member_id in struct_scope.definitions.values() {
+                        let Some(member_type_id) = self.binder.node_typing(*member_id).as_type_id()
+                        else {
+                            // member type cannot be resolved
                             return None;
+                        };
+                        if self
+                            .types
+                            .get_type_by_id(member_type_id)
+                            .can_return_from_getter()
+                        {
+                            types.push(member_type_id);
                         }
                     }
+                    return_type = match types.len() {
+                        0 => return None,
+                        1 => types[0],
+                        _ => self.types.register_type(Type::Tuple { types }),
+                    };
                     break;
                 }
 
