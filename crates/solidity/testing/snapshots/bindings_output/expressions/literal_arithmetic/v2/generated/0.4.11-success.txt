@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["to160" @ input.sol:2:14] (function, type: function (uint256) returns uint160)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #5 ["ratio" @ input.sol:9:17] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Lib" @ input.sol:6:11] -> #1
+- Ref: ["ratio" @ input.sol:10:11] -> #5
+- Ref: ["ratio" @ input.sol:10:27] -> #5
+- Ref: ["to160" @ input.sol:10:60] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function to160(uint256) internal returns (uint160) {}
+    │              ──┬──  
+    │                ╰──── name: 2
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  6 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  8 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 4
+  9 │         uint256 ratio;
+    │                 ──┬──  
+    │                   ╰──── name: 5
+ 10 │         ((ratio >> 32) + (ratio % (1 << 32) == 0 ? 0 : 1)).to160();
+    │           ──┬──           ──┬──                            ──┬──  
+    │             ╰───────────────────────────────────────────────────── ref: 5
+    │                             │                                │    
+    │                             ╰───────────────────────────────────── ref: 5
+    │                                                              │    
+    │                                                              ╰──── ref: 2
+────╯

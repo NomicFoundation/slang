@@ -144,6 +144,10 @@ impl TypeRegistry {
                 Type::Literal(
                     LiteralKind::Zero
                     | LiteralKind::DecimalInteger
+                    // TODO: rationals cannot be always converted to integers,
+                    // unless their fractional part is zero. But for now and
+                    // without further information about the literal number
+                    // itself, assume it can.
                     | LiteralKind::Rational
                     | LiteralKind::HexInteger { .. },
                 ),
@@ -152,6 +156,31 @@ impl TypeRegistry {
                 // TODO(validation): check that the rational can fit in the given integer type
                 true
             }
+
+            (
+                Type::Literal(
+                    LiteralKind::Zero
+                    | LiteralKind::DecimalInteger
+                    | LiteralKind::Rational
+                    | LiteralKind::HexInteger { .. },
+                ),
+                Type::Literal(LiteralKind::Rational),
+            ) |
+            (
+                Type::Literal(
+                    LiteralKind::Zero
+                    | LiteralKind::DecimalInteger
+                    | LiteralKind::HexInteger { .. },
+                ),
+                Type::Literal(LiteralKind::DecimalInteger),
+            ) |
+            (
+                Type::Literal(
+                    LiteralKind::Zero
+                    | LiteralKind::HexInteger { .. },
+                ),
+                Type::Literal(LiteralKind::HexInteger { .. }),
+            ) => true,
 
             (Type::Integer { .. }, Type::Literal(_)) => false,
 
