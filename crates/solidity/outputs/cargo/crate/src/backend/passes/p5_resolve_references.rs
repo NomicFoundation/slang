@@ -413,8 +413,7 @@ impl Pass {
             return false;
         };
         let Type::Function(function_type) = self.types.get_type_by_id(definition_type_id) else {
-            // the definition is not a function
-            return false;
+            unreachable!("type of function definition is not a function");
         };
         // receiver needs to be convertible to the first parameter type; we use
         // the external call rules because the conversion rules with different
@@ -987,7 +986,6 @@ impl Pass {
                 }
             }
             Typing::Undetermined(type_ids) => {
-                // TODO: maybe update the typing of the operand as well?
                 let receiver_type_id = self.type_id_of_receiver(&node.operand);
                 let candidate = self.lookup_function_matching_positional_arguments(
                     &type_ids,
@@ -1002,6 +1000,7 @@ impl Pass {
                     let definition_id = candidate.definition_id;
                     if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
                     {
+                        // TODO: maybe update the typing of the operand as well?
                         self.binder
                             .fixup_reference(node_id, Resolution::Definition(definition_id));
                     }
@@ -1220,9 +1219,6 @@ impl Pass {
                 }
             }
             Typing::Undetermined(type_ids) => {
-                // TODO: resolve argument types and match best overload
-                // TODO: maybe update the typing of the operand?
-                // TODO: return the definition_id used to later resolve named arguments
                 let receiver_type_id = self.type_id_of_receiver(&node.operand);
                 let argument_typings = self.collect_named_argument_typings(arguments);
                 let candidate = self.lookup_function_matching_named_arguments(
@@ -1238,6 +1234,7 @@ impl Pass {
                     let definition_id = candidate.definition_id;
                     if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
                     {
+                        // TODO: maybe update the typing of the operand as well?
                         self.binder
                             .fixup_reference(node_id, Resolution::Definition(definition_id));
                     }
