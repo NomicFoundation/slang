@@ -12,7 +12,8 @@
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.readonlyInclude": {
-    "**/generated/**": true
+    "**/generated/**": true,
+    "**/*.generated.*/**": true
   },
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.command": "clippy",
