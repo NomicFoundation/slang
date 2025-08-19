@@ -3,7 +3,7 @@
 
 # Generated Sources
 **/generated/** linguist-generated=true
-**/*.generated.*/** linguist-generated=true
+**/*.generated.* linguist-generated=true
 
 # Lock Files
 **/Cargo.lock linguist-generated=true
