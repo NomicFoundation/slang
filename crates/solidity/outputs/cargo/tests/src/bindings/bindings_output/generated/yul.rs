@@ -107,6 +107,11 @@ fn nested_functions() -> Result<()> {
 }
 
 #[test]
+fn non_functional_notation() -> Result<()> {
+    run(T, "non_functional_notation")
+}
+
+#[test]
 fn slot_of_public_var_override() -> Result<()> {
     run(T, "slot_of_public_var_override")
 }

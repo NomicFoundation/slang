@@ -110,6 +110,7 @@ pub enum BuiltIn {
     YulDelegatecall,
     YulDifficulty,
     YulDiv,
+    YulDup(u8),
     YulEq,
     YulExp,
     YulExtcodecopy,
@@ -165,6 +166,7 @@ pub enum BuiltIn {
     YulStop,
     YulSub,
     YulSuicide,
+    YulSwap(u8),
     YulTimestamp,
     YulTload,
     YulTstore,
@@ -249,6 +251,7 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     pub(crate) fn lookup_yul_global(&self, symbol: &str) -> Option<BuiltIn> {
         match symbol {
             "add" => Some(BuiltIn::YulAdd),
@@ -279,6 +282,13 @@ impl<'a> BuiltInsResolver<'a> {
             "delegatecall" => Some(BuiltIn::YulDelegatecall),
             "difficulty" if self.language_version < VERSION_0_8_18 => Some(BuiltIn::YulDifficulty),
             "div" => Some(BuiltIn::YulDiv),
+            "dup1" | "dup2" | "dup3" | "dup4" | "dup5" | "dup6" | "dup7" | "dup8" | "dup9"
+            | "dup10" | "dup11" | "dup12" | "dup13" | "dup14" | "dup15" | "dup16"
+                if self.language_version < VERSION_0_5_0 =>
+            {
+                let arity = symbol[3..].parse::<u8>().unwrap();
+                Some(BuiltIn::YulDup(arity))
+            }
             "eq" => Some(BuiltIn::YulEq),
             "exp" => Some(BuiltIn::YulExp),
             "extcodecopy" => Some(BuiltIn::YulExtcodecopy),
@@ -335,6 +345,14 @@ impl<'a> BuiltInsResolver<'a> {
             "stop" => Some(BuiltIn::YulStop),
             "sub" => Some(BuiltIn::YulSub),
             "suicide" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::YulSuicide),
+            "swap1" | "swap2" | "swap3" | "swap4" | "swap5" | "swap6" | "swap7" | "swap8"
+            | "swap9" | "swap10" | "swap11" | "swap12" | "swap13" | "swap14" | "swap15"
+            | "swap16"
+                if self.language_version < VERSION_0_5_0 =>
+            {
+                let arity = symbol[4..].parse::<u8>().unwrap();
+                Some(BuiltIn::YulSwap(arity))
+            }
             "timestamp" => Some(BuiltIn::YulTimestamp),
             "tload" if self.language_version >= VERSION_0_8_24 => Some(BuiltIn::YulTload),
             "tstore" if self.language_version >= VERSION_0_8_24 => Some(BuiltIn::YulTstore),
