@@ -5,7 +5,7 @@ Definitions (5):
 - Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
 - Def: #3 ["x" @ input.sol:3:13] (variable, type: address)
 - Def: #4 ["a" @ input.sol:6:14] (variable, type: address)
-- Def: #5 ["b" @ input.sol:6:17] (variable, type: rational)
+- Def: #5 ["b" @ input.sol:6:17] (variable, type: uint256)
 
 ------------------------------------------------------------------------
 

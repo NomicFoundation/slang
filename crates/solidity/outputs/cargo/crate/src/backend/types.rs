@@ -27,7 +27,6 @@ pub struct TypeRegistry {
     bytes20_type_id: TypeId,
     bytes32_type_id: TypeId,
     bytes4_type_id: TypeId,
-    rational_type_id: TypeId,
     string_type_id: TypeId,
     uint256_type_id: TypeId,
     uint8_type_id: TypeId,
@@ -51,7 +50,6 @@ impl TypeRegistry {
         let (bytes20_type, _) = types.insert_full(Type::ByteArray { width: 20 });
         let (bytes32_type, _) = types.insert_full(Type::ByteArray { width: 32 });
         let (bytes4_type, _) = types.insert_full(Type::ByteArray { width: 4 });
-        let (rational_type, _) = types.insert_full(Type::Rational);
         let (string_type, _) = types.insert_full(Type::String {
             location: DataLocation::Memory,
         });
@@ -83,7 +81,6 @@ impl TypeRegistry {
             bytes20_type_id: TypeId(bytes20_type),
             bytes32_type_id: TypeId(bytes32_type),
             bytes4_type_id: TypeId(bytes4_type),
-            rational_type_id: TypeId(rational_type),
             string_type_id: TypeId(string_type),
             uint256_type_id: TypeId(uint256_type),
             uint8_type_id: TypeId(uint8_type),
@@ -108,6 +105,7 @@ impl TypeRegistry {
         self.types.get_index(type_id.0).unwrap()
     }
 
+    #[allow(clippy::too_many_lines)]
     pub fn implicitly_convertible_to(&self, from_type_id: TypeId, to_type_id: TypeId) -> bool {
         if from_type_id == to_type_id {
             return true;
@@ -142,12 +140,35 @@ impl TypeRegistry {
                 }
             }
 
-            (Type::Rational, Type::Integer { .. }) => {
+            (
+                Type::Literal(
+                    LiteralKind::Zero
+                    | LiteralKind::DecimalInteger
+                    | LiteralKind::Rational
+                    | LiteralKind::HexInteger { .. },
+                ),
+                Type::Integer { .. },
+            ) => {
                 // TODO(validation): check that the rational can fit in the given integer type
                 true
             }
 
-            (Type::Integer { .. }, Type::Rational) => false,
+            (Type::Integer { .. }, Type::Literal(_)) => false,
+
+            (
+                Type::Literal(LiteralKind::HexString { .. } | LiteralKind::String { .. }),
+                Type::String { location } | Type::Bytes { location },
+            ) if *location == DataLocation::Memory || *location == DataLocation::Calldata => true,
+
+            (Type::Literal(LiteralKind::Zero), Type::ByteArray { .. }) => true,
+            (
+                Type::Literal(
+                    LiteralKind::HexInteger { bytes }
+                    | LiteralKind::HexString { bytes }
+                    | LiteralKind::String { bytes },
+                ),
+                Type::ByteArray { width },
+            ) if *bytes == *width => true,
 
             (
                 Type::Array {
@@ -302,8 +323,8 @@ impl TypeRegistry {
             | Type::FixedPointNumber { .. }
             | Type::Integer { .. }
             | Type::Interface { .. }
+            | Type::Literal(_)
             | Type::Mapping { .. }
-            | Type::Rational
             | Type::Tuple { .. }
             | Type::UserDefinedValue { .. }
             | Type::Void => return Some(type_id),
@@ -354,12 +375,31 @@ impl TypeRegistry {
             | Type::Function(_)
             | Type::Integer { .. }
             | Type::Interface { .. }
+            | Type::Literal(_)
             | Type::Mapping { .. }
-            | Type::Rational
             | Type::UserDefinedValue { .. }
             | Type::Void => type_,
         };
         self.register_type(type_with_location)
+    }
+
+    // Return a type that can be stored in the EVM. In short, convert literal
+    // types into the appropriate "real" type
+    pub fn reified_type(&mut self, type_id: TypeId) -> TypeId {
+        let Type::Literal(kind) = self.get_type_by_id(type_id) else {
+            return type_id;
+        };
+        match kind {
+            // TODO: implementing these cases requires access to the value
+            // itself, to fit the number in the smallest possible type. Eg. solc
+            // will convert 1, 2, 3, etc into uint8 and 1.2 into ufixed8x1
+            LiteralKind::Zero
+            | LiteralKind::Rational
+            | LiteralKind::DecimalInteger
+            | LiteralKind::HexInteger { .. } => self.uint256(),
+            LiteralKind::HexString { .. } | LiteralKind::String { .. } => self.string(),
+            LiteralKind::Address => self.address(),
+        }
     }
 }
 
@@ -393,9 +433,6 @@ impl TypeRegistry {
     }
     pub fn bytes4(&self) -> TypeId {
         self.bytes4_type_id
-    }
-    pub fn rational(&self) -> TypeId {
-        self.rational_type_id
     }
     pub fn string(&self) -> TypeId {
         self.string_type_id
@@ -459,11 +496,11 @@ pub enum Type {
     Interface {
         definition_id: NodeId,
     },
+    Literal(LiteralKind),
     Mapping {
         key_type_id: TypeId,
         value_type_id: TypeId,
     },
-    Rational,
     String {
         location: DataLocation,
     },
@@ -478,6 +515,18 @@ pub enum Type {
         definition_id: NodeId,
     },
     Void,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub enum LiteralKind {
+    Zero,
+    // TODO: collect and store more information about literal numbers
+    Rational,
+    DecimalInteger,
+    HexInteger { bytes: u32 },
+    HexString { bytes: u32 },
+    String { bytes: u32 },
+    Address,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -584,11 +633,23 @@ impl Type {
             Type::Array { .. }
             | Type::Function(_)
             | Type::Mapping { .. }
-            | Type::Rational
+            | Type::Literal(_)
             | Type::Struct { .. }
             | Type::Tuple { .. }
             | Type::Void => false,
         }
+    }
+
+    pub fn is_literal_number(&self) -> bool {
+        matches!(
+            self,
+            Type::Literal(
+                LiteralKind::Zero
+                    | LiteralKind::DecimalInteger
+                    | LiteralKind::HexInteger { .. }
+                    | LiteralKind::Rational
+            )
+        )
     }
 }
 

@@ -1,7 +1,7 @@
 use semver::Version;
 
 use super::binder::{Binder, Definition, Typing};
-use super::types::{DataLocation, FunctionType, Type, TypeId, TypeRegistry};
+use super::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId, TypeRegistry};
 use crate::cst::NodeId;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -578,8 +578,9 @@ impl<'a> BuiltInsResolver<'a> {
                 }
             }
             Type::Integer { .. } => None,
+            Type::Literal(LiteralKind::Address) => self.lookup_member_of_address(symbol, false),
+            Type::Literal(_) => None,
             Type::Mapping { .. } => None,
-            Type::Rational => None,
             Type::String { .. } => match symbol {
                 "length" => Some(BuiltIn::Length),
                 _ => None,

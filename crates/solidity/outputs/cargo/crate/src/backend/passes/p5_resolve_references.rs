@@ -11,7 +11,7 @@ use crate::backend::binder::{
 use crate::backend::built_ins::{BuiltIn, BuiltInsResolver};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::types::{DataLocation, FunctionType, Type, TypeId, TypeRegistry};
+use crate::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -494,16 +494,14 @@ impl Pass {
                 self.binder.node_typing(array_expression.node_id)
             }
             input_ir::Expression::HexNumberExpression(hex_number_expression) => {
-                if Self::hex_number_is_address_literal(hex_number_expression) {
-                    Typing::Resolved(self.types.address())
-                } else {
-                    Typing::Resolved(self.types.rational())
-                }
+                self.binder.node_typing(hex_number_expression.node_id)
             }
-            input_ir::Expression::DecimalNumberExpression(_) => {
-                Typing::Resolved(self.types.rational())
+            input_ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
+                self.binder.node_typing(decimal_number_expression.node_id)
             }
-            input_ir::Expression::StringExpression(_) => Typing::Resolved(self.types.string()),
+            input_ir::Expression::StringExpression(string_expression) => self
+                .binder
+                .node_typing(Self::string_expression_node_id(string_expression)),
             input_ir::Expression::ElementaryType(elementary_type) => {
                 Typing::MetaType(Self::type_of_elementary_type(elementary_type))
             }
@@ -516,16 +514,105 @@ impl Pass {
         }
     }
 
-    fn hex_number_is_address_literal(
+    fn string_literal_node_id(string_literal: &input_ir::StringLiteral) -> NodeId {
+        match string_literal {
+            input_ir::StringLiteral::SingleQuotedStringLiteral(terminal_node)
+            | input_ir::StringLiteral::DoubleQuotedStringLiteral(terminal_node) => {
+                terminal_node.id()
+            }
+        }
+    }
+
+    fn string_literal_size(string_literal: &input_ir::StringLiteral) -> usize {
+        match string_literal {
+            input_ir::StringLiteral::SingleQuotedStringLiteral(terminal_node)
+            | input_ir::StringLiteral::DoubleQuotedStringLiteral(terminal_node) => {
+                // TODO: consider escaped characters
+                terminal_node.unparse().len() - 2
+            }
+        }
+    }
+
+    fn hex_string_literal_node_id(hex_string_literal: &input_ir::HexStringLiteral) -> NodeId {
+        match hex_string_literal {
+            input_ir::HexStringLiteral::SingleQuotedHexStringLiteral(terminal_node)
+            | input_ir::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal_node) => {
+                terminal_node.id()
+            }
+        }
+    }
+
+    fn hex_string_literal_bytes_size(hex_string_literal: &input_ir::HexStringLiteral) -> usize {
+        match hex_string_literal {
+            input_ir::HexStringLiteral::SingleQuotedHexStringLiteral(terminal_node)
+            | input_ir::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal_node) => {
+                // 5 is the length of the `hex` prefix plus the quotes
+                (terminal_node.unparse().len() - 5) / 2
+            }
+        }
+    }
+
+    fn unicode_string_literal_node_id(
+        unicode_string_literal: &input_ir::UnicodeStringLiteral,
+    ) -> NodeId {
+        match unicode_string_literal {
+            input_ir::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal_node)
+            | input_ir::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal_node) => {
+                terminal_node.id()
+            }
+        }
+    }
+
+    fn unicode_string_literal_size(string_literal: &input_ir::UnicodeStringLiteral) -> usize {
+        match string_literal {
+            input_ir::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal_node)
+            | input_ir::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal_node) => {
+                // TODO: actually parse the string
+                // 9 is the length of the `unicode` prefix plus quotes
+                terminal_node.unparse().len() - 9
+            }
+        }
+    }
+
+    fn string_expression_node_id(string_expression: &input_ir::StringExpression) -> NodeId {
+        match string_expression {
+            input_ir::StringExpression::StringLiteral(string_literal) => {
+                Self::string_literal_node_id(string_literal)
+            }
+            input_ir::StringExpression::StringLiterals(string_literals) => {
+                Self::string_literal_node_id(&string_literals[0])
+            }
+            input_ir::StringExpression::HexStringLiteral(hex_string_literal) => {
+                Self::hex_string_literal_node_id(hex_string_literal)
+            }
+            input_ir::StringExpression::HexStringLiterals(hex_string_literals) => {
+                Self::hex_string_literal_node_id(&hex_string_literals[0])
+            }
+            input_ir::StringExpression::UnicodeStringLiterals(unicode_string_literals) => {
+                Self::unicode_string_literal_node_id(&unicode_string_literals[0])
+            }
+        }
+    }
+
+    fn hex_number_literal_kind(
         hex_number_expression: &input_ir::HexNumberExpression,
-    ) -> bool {
+    ) -> LiteralKind {
         if hex_number_expression.unit.is_some() {
-            return false;
+            // this is deprecated in Solidity >= 0.5.0 anyway
+            return LiteralKind::DecimalInteger;
         }
         let hex_number = hex_number_expression.literal.unparse();
-        // TODO(validation): verify the address is valid (ie. has a valid checksum)
-        // We need at least an implementation of SHA3 to compute the checksum
-        hex_number.len() == 42
+        if hex_number.len() == 42 {
+            // TODO(validation): verify the address is valid (ie. has a valid checksum)
+            // We need at least an implementation of SHA3 to compute the checksum
+            LiteralKind::Address
+        } else if hex_number == "0x0" {
+            LiteralKind::Zero
+        } else {
+            LiteralKind::HexInteger {
+                bytes: u32::try_from((hex_number.len() - 3) / 2 + 1).unwrap(),
+            }
+        }
     }
 
     fn type_of_elementary_type(elementary_type: &input_ir::ElementaryType) -> Type {
@@ -1486,6 +1573,66 @@ impl Visitor for Pass {
         true
     }
 
+    fn leave_hex_number_expression(&mut self, node: &input_ir::HexNumberExpression) {
+        let kind = Self::hex_number_literal_kind(node);
+        let type_id = self.types.register_type(Type::Literal(kind));
+        self.binder.set_node_type(node.node_id, Some(type_id));
+    }
+
+    fn leave_decimal_number_expression(&mut self, node: &input_ir::DecimalNumberExpression) {
+        let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
+            Type::Literal(LiteralKind::Zero)
+        } else {
+            Type::Literal(LiteralKind::DecimalInteger)
+        };
+        let type_id = self.types.register_type(type_);
+        self.binder.set_node_type(node.node_id, Some(type_id));
+    }
+
+    fn leave_string_expression(&mut self, node: &input_ir::StringExpression) {
+        let kind = match node {
+            input_ir::StringExpression::StringLiteral(string_literal) => {
+                let size = Self::string_literal_size(string_literal);
+                LiteralKind::String {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+            input_ir::StringExpression::StringLiterals(literals) => {
+                let size = literals.iter().fold(0usize, |acc, literal| {
+                    acc + Self::string_literal_size(literal)
+                });
+                LiteralKind::String {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+            input_ir::StringExpression::HexStringLiteral(hex_string_literal) => {
+                let size = Self::hex_string_literal_bytes_size(hex_string_literal);
+                LiteralKind::HexString {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+            input_ir::StringExpression::HexStringLiterals(literals) => {
+                let size = literals.iter().fold(0usize, |acc, literal| {
+                    acc + Self::hex_string_literal_bytes_size(literal)
+                });
+                LiteralKind::HexString {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+            input_ir::StringExpression::UnicodeStringLiterals(literals) => {
+                let size = literals.iter().fold(0usize, |acc, literal| {
+                    acc + Self::unicode_string_literal_size(literal)
+                });
+                LiteralKind::String {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+        };
+        let type_id = self.types.register_type(Type::Literal(kind));
+        let node_id = Self::string_expression_node_id(node);
+        self.binder.set_node_type(node_id, Some(type_id));
+    }
+
     fn leave_assignment_expression(&mut self, node: &input_ir::AssignmentExpression) {
         let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the type of right_operand can be applied
@@ -1581,12 +1728,14 @@ impl Visitor for Pass {
         let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
-        if type_id.is_some_and(|type_id| type_id == self.types.rational()) {
+        if type_id.is_some_and(|type_id| self.types.get_type_by_id(type_id).is_literal_number()) {
             // if the base is a rational but the exponent is not, then the result is uint256
             if self
                 .typing_of_expression(&node.right_operand)
                 .as_type_id()
-                .is_none_or(|exponent_type| exponent_type != self.types.rational())
+                .is_none_or(|exponent_type| {
+                    !self.types.get_type_by_id(exponent_type).is_literal_number()
+                })
             {
                 type_id = Some(self.types.uint256());
             }
@@ -1761,6 +1910,7 @@ impl Visitor for Pass {
                 .typing_of_expression(node.items.first().unwrap())
                 .as_type_id()
             {
+                let element_type = self.types.reified_type(element_type);
                 let type_id = self.types.register_type(Type::Array {
                     element_type,
                     location: DataLocation::Memory,
@@ -2029,7 +2179,12 @@ impl Visitor for Pass {
         ) {
             // update the type of the variable with the type of the expression (if available)
             if let Some(value) = &node.value {
-                let typing = self.typing_of_expression(&value.expression);
+                let typing = self
+                    .typing_of_expression(&value.expression)
+                    .as_type_id()
+                    .map_or(Typing::Unresolved, |type_id| {
+                        Typing::Resolved(self.types.reified_type(type_id))
+                    });
                 self.binder.fixup_node_typing(node.node_id, typing);
             }
         }
@@ -2056,10 +2211,10 @@ impl Visitor for Pass {
             return;
         };
         let types = if let Type::Tuple { types } = self.types.get_type_by_id(tuple_type_id) {
-            types.as_slice()
+            types.clone()
         } else {
             // the resolved type is not a tuple
-            &[tuple_type_id]
+            vec![tuple_type_id]
         };
 
         // fixup typing of `var` declarations
@@ -2068,7 +2223,7 @@ impl Visitor for Pass {
                 continue;
             };
             if let input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) = member {
-                let typing = Typing::Resolved(*element_type_id);
+                let typing = Typing::Resolved(self.types.reified_type(element_type_id));
                 self.binder
                     .fixup_node_typing(untyped_tuple_member.node_id, typing);
             }

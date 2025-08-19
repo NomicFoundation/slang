@@ -112,6 +112,11 @@ fn literal_booleans() -> Result<()> {
 }
 
 #[test]
+fn literal_implicit_conversion() -> Result<()> {
+    run(T, "literal_implicit_conversion")
+}
+
+#[test]
 fn literal_integers() -> Result<()> {
     run(T, "literal_integers")
 }

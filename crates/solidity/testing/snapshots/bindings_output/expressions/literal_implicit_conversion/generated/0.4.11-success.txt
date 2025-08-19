@@ -1,0 +1,77 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function sig(uint, bytes4) internal returns (uint) {}
+    │              ─┬─  
+    │               ╰─── name: 2
+  3 │     function sig(uint, string memory) internal returns (uint) {}
+    │              ─┬─  
+    │               ╰─── name: 3
+    │ 
+  6 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 4
+  7 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  8 │     function test(uint x) internal {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 5
+    │                        │  
+    │                        ╰── name: 6
+  9 │         string memory s;
+    │                       ┬  
+    │                       ╰── name: 7
+ 10 │         x.sig(0x10203040).sig(s);
+    │         ┬ ─┬─             ─┬─ ┬  
+    │         ╰──────────────────────── ref: 6
+    │            │               │  │  
+    │            ╰───────────────────── refs: 2, 3
+    │                            │  │  
+    │                            ╰───── refs: 2, 3
+    │                               │  
+    │                               ╰── ref: 7
+ 11 │         x.sig(s).sig(0x10203040);
+    │         ┬ ─┬─ ┬  ─┬─  
+    │         ╰───────────── ref: 6
+    │            │  │   │   
+    │            ╰────────── refs: 2, 3
+    │               │   │   
+    │               ╰─────── ref: 7
+    │                   │   
+    │                   ╰─── refs: 2, 3
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭───▶ library Lib {
+  2 │   │         function sig(uint, bytes4) internal returns (uint) {}
+    │   │     ─────────────────────────────┬────────────────────────────  
+    │   │                                  ╰────────────────────────────── definiens: 2
+  3 │   │         function sig(uint, string memory) internal returns (uint) {}
+    │   │     ────────────────────────────────┬────────────────────────────────  
+    │   │                                     ╰────────────────────────────────── definiens: 3
+  4 │ │ ├───▶ }
+    │ │ │         
+    │ │ ╰───────── definiens: 1
+  5 │ ╭─────▶ 
+    ┆ ┆       
+  8 │ │   ╭─▶     function test(uint x) internal {
+    │ │   │                     ───┬──  
+    │ │   │                        ╰──── definiens: 6
+  9 │ │   │           string memory s;
+    │ │   │   ────────────┬────────────  
+    │ │   │               ╰────────────── definiens: 7
+    ┆ ┆   ┆   
+ 12 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 5
+ 13 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 4
+────╯
