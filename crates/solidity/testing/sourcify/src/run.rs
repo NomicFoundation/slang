@@ -101,7 +101,7 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                     e.backtrace()
                 ));
 
-                TestOutcome::Unresolved
+                TestOutcome::Failed
             }
         }
     };
