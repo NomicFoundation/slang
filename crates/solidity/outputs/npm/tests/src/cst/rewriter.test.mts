@@ -8,6 +8,8 @@ import {
   EdgeLabel,
   Edge,
   Node,
+  assertTerminalNode,
+  assertNonterminalNode,
 } from "@nomicfoundation/slang/cst";
 import { Parser } from "@nomicfoundation/slang/parser";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
@@ -22,12 +24,7 @@ test("Rewrite TerminalNode", () => {
   const terminalNode = TerminalNode.create(TerminalKind.Identifier, "test");
   const rewriter = new IdRewriter();
   const result = rewriter.rewriteNode(terminalNode);
-  assert.ok(result);
-  if (result instanceof TerminalNode) {
-    assert.equal(result.unparse(), "testNew");
-  } else {
-    assert.fail(`result's type is expected to be TerminalNode, but it's ${typeof result}`);
-  }
+  assertTerminalNode(result, TerminalKind.Identifier, "testNew");
 });
 
 test("Rewrite NonterminalNode", () => {
@@ -47,12 +44,7 @@ test("Rewrite NonterminalNode", () => {
   const node = parse(NonterminalKind.ContractDefinition, "contract AContract {}");
   const rewriter = new ContractNameRewriter();
   const result = rewriter.rewriteNode(node);
-  assert.ok(result);
-  if (result instanceof NonterminalNode) {
-    assert.equal(result.unparse(), "contract NewName {}");
-  } else {
-    assert.fail(`result's type is expected to be TerminalNode, but it's ${typeof result}`);
-  }
+  assertNonterminalNode(result, NonterminalKind.ContractDefinition, "contract NewName {}");
 });
 
 test("Rewrite NonterminalNode Deep", () => {
@@ -78,12 +70,7 @@ test("Rewrite NonterminalNode Deep", () => {
   const node = parse(NonterminalKind.SourceUnit, "contract AContract {\n  function aFun() public {}\n}");
   const rewriter = new BasicRewriter();
   const result = rewriter.rewriteNode(node);
-  assert.ok(result);
-  if (result instanceof NonterminalNode) {
-    assert.equal(result.unparse(), "contract AContractNew {\n  function aFun() public {}\n}");
-  } else {
-    assert.fail(`result's type is expected to be TerminalNode, but it's ${typeof result}`);
-  }
+  assertNonterminalNode(result, NonterminalKind.SourceUnit, "contract AContractNew {\n  function aFun() public {}\n}");
 });
 
 test("Remove NonterminalNode", () => {
@@ -106,12 +93,7 @@ test("Remove NonterminalNode", () => {
   const node = parse(NonterminalKind.ContractDefinition, contract);
   const rewriter = new RemovalRewriter();
   const result = rewriter.rewriteNode(node);
-  assert.ok(result);
-  if (result instanceof NonterminalNode) {
-    assert.equal(result.unparse(), expected);
-  } else {
-    assert.fail(`result's type is expected to be TerminalNode, but it's ${typeof result}`);
-  }
+  assertNonterminalNode(result, NonterminalKind.ContractDefinition, expected);
 });
 
 function parse(kind: NonterminalKind, input: string): Node {
