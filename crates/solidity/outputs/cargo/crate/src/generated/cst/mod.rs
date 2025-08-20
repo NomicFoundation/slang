@@ -10,6 +10,8 @@ mod edge_label;
 mod lexical_context;
 #[path = "generated/nonterminal_kind.rs"]
 mod nonterminal_kind;
+#[path = "generated/rewriter.rs"]
+mod rewriter;
 #[path = "generated/terminal_kind.rs"]
 mod terminal_kind;
 
@@ -18,6 +20,7 @@ pub(crate) use lexical_context::{IsLexicalContext, LexicalContext, LexicalContex
 pub use metaslang_cst::kinds::TerminalKindExtensions;
 pub(crate) use metaslang_cst::kinds::{EdgeLabelExtensions, NonterminalKindExtensions};
 pub use nonterminal_kind::NonterminalKind;
+pub use rewriter::BaseRewriter;
 pub use terminal_kind::TerminalKind;
 
 // These derives are because default #[derive(...)] on a generic type implements only the trait
