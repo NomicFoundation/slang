@@ -2054,7 +2054,7 @@ interface cst {
                 /// (* Never reserved *)
                 /// ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
                 /// ```
-                %abiencoder-v2-keyword,
+                %a-b-i-encoder-v2-keyword,
                 /// Represents a node with kind `AbicoderKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -3015,7 +3015,7 @@ interface cst {
                 /// (* Never reserved *)
                 /// SMT_CHECKER_KEYWORD = "SMTChecker";
                 /// ```
-                %smtchecker-keyword,
+                %s-m-t-checker-keyword,
                 /// Represents a node with kind `SealedKeyword`, having the following structure:
                 ///
                 /// ```ebnf
