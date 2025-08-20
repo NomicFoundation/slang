@@ -4193,7 +4193,7 @@ export abstract class BaseRewriter {
       const newChild = this.rewriteNode(child.node);
       if (newChild == undefined) {
         // node was removed. if `newChildren` is set, just skip this one
-        // otheriwse, copy the first ones from `children` (but the last)
+        // otherwise, copy the first ones from `children` (but the last)
         if (newChildren == undefined) {
           newChildren = children.slice(0, index);
         }
@@ -4213,11 +4213,12 @@ export abstract class BaseRewriter {
           newChildren = children.slice(0, index);
         }
         newChildren.push(edge);
+      } else if (newChildren != undefined) {
+        newChildren.push(child);
       }
     });
-
     if (newChildren != undefined) {
-      return NonterminalNode.create(node.kind, children);
+      return NonterminalNode.create(node.kind, newChildren);
     } else {
       return node;
     }
