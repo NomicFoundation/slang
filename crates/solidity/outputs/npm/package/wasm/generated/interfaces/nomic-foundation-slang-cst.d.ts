@@ -2518,7 +2518,7 @@ export declare enum TerminalKind {
    * ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
    * ```
    */
-  AbiencoderV2Keyword = "AbiencoderV2Keyword",
+  ABIEncoderV2Keyword = "ABIEncoderV2Keyword",
   /**
    * Represents a node with kind `AbicoderKeyword`, having the following structure:
    *
@@ -3771,7 +3771,7 @@ export declare enum TerminalKind {
    * SMT_CHECKER_KEYWORD = "SMTChecker";
    * ```
    */
-  SmtcheckerKeyword = "SmtcheckerKeyword",
+  SMTCheckerKeyword = "SMTCheckerKeyword",
   /**
    * Represents a node with kind `SealedKeyword`, having the following structure:
    *

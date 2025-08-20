@@ -172,21 +172,17 @@ fn wit_case_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result
     let mut result = String::new();
     result.push('%');
 
-    let mut last_was_upper = true;
-    for c in input.chars() {
+    for (i, c) in input.chars().enumerate() {
         if c.is_uppercase() {
-            if !last_was_upper {
+            if i > 0 {
                 result.push('-');
             }
-            last_was_upper = true;
             for c in c.to_lowercase() {
                 result.push(c);
             }
         } else if c.is_alphanumeric() {
-            last_was_upper = false;
             result.push(c);
         } else {
-            last_was_upper = false;
             result.push('-');
         }
     }
