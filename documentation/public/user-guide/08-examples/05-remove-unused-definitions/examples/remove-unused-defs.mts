@@ -1,12 +1,12 @@
 import { Definition } from "@nomicfoundation/slang/bindings";
 import { BaseRewriter, Node, NonterminalNode } from "@nomicfoundation/slang/cst";
 
-export class Cleaner extends BaseRewriter {
+export class RemoveUnusedDefs extends BaseRewriter {
   constructor(private readonly unusedDefinitions: Definition[]) {
     super();
   }
 
-  removeUnused(node: NonterminalNode): Node | undefined {
+  private removeUnused(node: NonterminalNode): Node | undefined {
     const foundUnused = this.unusedDefinitions.find((definition) => definition.id == node.id);
     if (foundUnused) {
       // returning `undefined` signals that the node must be deleted

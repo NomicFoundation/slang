@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { findUnusedDefinitions } from "../../04-find-unused-definitions/examples/find-unused-definitions.mjs";
 import { CONTRACT_VFS } from "../../04-find-unused-definitions/examples/test-find-unused-definitions.test.mjs";
 import { buildCompilationUnit } from "../../common/compilation-builder.mjs";
-import { Cleaner } from "./cleaner.mjs";
+import { RemoveUnusedDefs } from "./remove-unused-defs.mjs";
 
 const EXPECTED_VFS = new Map<string, string>([
   [
@@ -41,9 +41,9 @@ test("remove unused definitions", async () => {
   const unit = await buildCompilationUnit(CONTRACT_VFS, "0.8.0", "contract.sol");
 
   const unused = findUnusedDefinitions(unit, "Counter");
-  const cleaner = new Cleaner(unused);
+  const removeUnused = new RemoveUnusedDefs(unused);
   for (const file of unit.files()) {
-    const newNode = cleaner.rewriteNode(file.tree);
+    const newNode = removeUnused.rewriteNode(file.tree);
     assert.strictEqual(newNode?.unparse(), EXPECTED_VFS.get(file.id));
   }
 });
