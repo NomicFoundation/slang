@@ -3,8 +3,6 @@ use clap::{Parser, ValueEnum};
 use infra_utils::cargo::CargoWorkspaceCommands;
 use infra_utils::commands::Command;
 use infra_utils::terminal::Terminal;
-use rayon::iter::{ParallelBridge, ParallelIterator};
-use strum::IntoEnumIterator;
 
 use crate::toolchains::wasm::WasmPackage;
 use crate::utils::{ClapExtensions, OrderedCommand};
@@ -66,9 +64,7 @@ fn check_cargo() {
 }
 
 fn check_npm() {
-    WasmPackage::iter()
-        .par_bridge()
-        .for_each(|package| package.build().unwrap());
+    WasmPackage::build().unwrap();
 }
 
 fn check_public_api() {

@@ -36,13 +36,13 @@
   ],
   "__exports_comment__": "__SLANG_NPM_PACKAGE_EXPORTS__ (keep in sync)",
   "exports": {
-    ".": "./target/generated/index.mjs",
-    "./ast": "./target/generated/ast/index.mjs",
-    "./bindings": "./target/generated/bindings/index.mjs",
-    "./compilation": "./target/generated/compilation/index.mjs",
-    "./cst": "./target/generated/cst/index.mjs",
-    "./parser": "./target/generated/parser/index.mjs",
-    "./utils": "./target/generated/utils/index.mjs"
+    ".": "./target/index.mjs",
+    "./ast": "./target/ast/index.mjs",
+    "./bindings": "./target/bindings/index.mjs",
+    "./compilation": "./target/compilation/index.mjs",
+    "./cst": "./target/cst/index.mjs",
+    "./parser": "./target/parser/index.mjs",
+    "./utils": "./target/utils/index.mjs"
   },
   "__dependencies_comment__": "__SLANG_NPM_PACKAGE_DEPENDENCIES__ (keep in sync)",
   "dependencies": {

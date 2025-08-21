@@ -2,7 +2,7 @@
 **/**
 
 # Except:
-!target/generated/**
+!target/**
 !wasm/**
 !CHANGELOG.md
 !LICENSE

@@ -2,7 +2,6 @@
   "name": "@slang-private/workspace",
   "private": true,
   "workspaces": [
-    "crates/codegen/runtime/npm/package",
     "crates/infra/cli",
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/npm/tests",

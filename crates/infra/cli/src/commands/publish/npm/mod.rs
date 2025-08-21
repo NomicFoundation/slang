@@ -5,7 +5,7 @@ use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
 use crate::toolchains::npm::Npm;
-use crate::toolchains::wasm::WasmPackage;
+use crate::toolchains::wasm::{WasmPackage, NPM_CRATE};
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
@@ -16,10 +16,9 @@ pub struct NpmController {
 
 impl NpmController {
     pub fn execute(&self) -> Result<()> {
-        let package = WasmPackage::Solidity;
-        let package_dir = CargoWorkspace::locate_source_crate(package.npm_crate())?;
+        let package_dir = CargoWorkspace::locate_source_crate(NPM_CRATE)?;
 
-        package.build()?;
+        WasmPackage::build()?;
 
         println!("Publishing: {package_dir:?}");
 

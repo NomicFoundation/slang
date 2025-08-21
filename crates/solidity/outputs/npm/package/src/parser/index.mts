@@ -1,4 +1,4 @@
-import * as wasm from "../../../wasm/index.mjs";
+import * as wasm from "../../wasm/index.mjs";
 
 /** {@inheritDoc wasm.parser.Parser} */
 export const Parser = wasm.parser.Parser;
