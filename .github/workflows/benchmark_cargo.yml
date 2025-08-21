@@ -48,9 +48,6 @@ jobs:
       - name: "infra setup cargo"
         run: "./scripts/bin/infra setup cargo"
 
-      - name: "infra check cargo"
-        run: "./scripts/bin/infra check cargo"
-
       - name: "infra perf cargo"
         run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
