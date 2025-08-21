@@ -16,7 +16,7 @@ pub fn run(project: &'static SolidityProject) -> Rc<CompilationUnit> {
     let unit = builder.build().unwrap();
     assert_ne!(unit.files().len(), 0);
     for file in unit.files() {
-        debug_assert_eq!(file.errors(), &Vec::<ParseError>::new());
+        assert_eq!(file.errors(), &Vec::<ParseError>::new());
     }
     unit.into()
 }
