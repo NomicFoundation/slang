@@ -30,17 +30,25 @@ PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
                   (* pragma: *) Pragma
                   (* semicolon: *) SEMICOLON;
 
-Pragma = (* variant: *) AbicoderPragma
-       | (* variant: *) ExperimentalPragma
-       | (* variant: *) VersionPragma;
+Pragma = (* variant: *) VersionPragma
+       | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+       | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
 
+(* Introduced in 0.7.5 *)
 AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
-                 (* version: *) IDENTIFIER;
+                 (* version: *) AbicoderVersion;
 
+(* Introduced in 0.4.16 *)
 ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
                      (* feature: *) ExperimentalFeature;
 
-ExperimentalFeature = (* variant: *) IDENTIFIER
+(* Introduced in 0.7.5 *)
+AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+                | (* variant: *) ABICODER_V2_KEYWORD;
+
+(* Introduced in 0.4.16 *)
+ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+                    | (* variant: *) SMT_CHECKER_KEYWORD
                     | (* variant: *) StringLiteral;
 
 VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
@@ -81,15 +89,6 @@ SINGLE_QUOTED_VERSION_LITERAL = "'" «VERSION_SPECIFIER_FRAGMENT» ("." «VERSIO
 DOUBLE_QUOTED_VERSION_LITERAL = '"' «VERSION_SPECIFIER_FRAGMENT» ("." «VERSION_SPECIFIER_FRAGMENT»)* '"';
 
 «VERSION_SPECIFIER_FRAGMENT» = ("0"…"9" | "x" | "X" | "*")+;
-
-(* Never reserved *)
-ABICODER_KEYWORD = "abicoder";
-
-(* Never reserved *)
-EXPERIMENTAL_KEYWORD = "experimental";
-
-(* Never reserved *)
-SOLIDITY_KEYWORD = "solidity";
 
 (* 1.3. Import Directives: *)
 
@@ -187,6 +186,22 @@ MULTI_LINE_NAT_SPEC_COMMENT = "/**" (?!"/") (!"*" | ("*" (?!"/")))* "*/";
 
 (* 1.6. Keywords: *)
 
+(* Introduced in 0.7.5 *)
+(* Never reserved *)
+ABICODER_KEYWORD = "abicoder";
+
+(* Introduced in 0.7.5 *)
+(* Never reserved *)
+ABICODER_V1_KEYWORD = "v1";
+
+(* Introduced in 0.7.5 *)
+(* Never reserved *)
+ABICODER_V2_KEYWORD = "v2";
+
+(* Introduced in 0.4.16 *)
+(* Never reserved *)
+ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
+
 (* Introduced in 0.6.0 *)
 ABSTRACT_KEYWORD = "abstract";
 
@@ -271,6 +286,10 @@ ERROR_KEYWORD = "error";
 ETHER_KEYWORD = "ether";
 
 EVENT_KEYWORD = "event";
+
+(* Introduced in 0.4.16 *)
+(* Never reserved *)
+EXPERIMENTAL_KEYWORD = "experimental";
 
 EXTERNAL_KEYWORD = "external";
 
@@ -415,6 +434,13 @@ SECONDS_KEYWORD = "seconds";
 
 (* Reserved in 0.5.0 *)
 SIZE_OF_KEYWORD = "sizeof";
+
+(* Introduced in 0.4.16 *)
+(* Never reserved *)
+SMT_CHECKER_KEYWORD = "SMTChecker";
+
+(* Never reserved *)
+SOLIDITY_KEYWORD = "solidity";
 
 STATIC_KEYWORD = "static";
 

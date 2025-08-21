@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma abicoder foo;                                                             │ 0..20
+
+Errors: # 1 total
+  - >
+    Error: Expected AbicoderV1Keyword or AbicoderV2Keyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/PragmaDirective/abi_coder_unkown_identifier/input.sol:1:17]
+       │
+     1 │ pragma abicoder foo;
+       │                 ─┬─  
+       │                  ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ PragmaDirective): # "pragma abicoder foo;" (0..20)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (pragma꞉ Pragma) ► (variant꞉ AbicoderPragma): # " abicoder" (6..15)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (abicoder_keyword꞉ AbicoderKeyword): "abicoder" # (7..15)
+      - (leading_trivia꞉ Whitespace): " " # (15..16)
+      - (unrecognized꞉ UNRECOGNIZED): "foo" # (16..19)
+      - (semicolon꞉ Semicolon): ";" # (19..20)

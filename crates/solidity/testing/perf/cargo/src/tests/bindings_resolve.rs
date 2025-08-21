@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
-use slang_solidity::bindings::{BindingGraph, Reference};
+use slang_solidity::bindings::BindingGraph;
 use slang_solidity::compilation::CompilationUnit;
-use slang_solidity::cst::{NodeKind, NonterminalKind, TerminalKindExtensions};
+use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 
 pub struct BuiltBindingGraph {
     unit: Rc<CompilationUnit>,
@@ -36,18 +36,10 @@ pub fn run(dependencies: BuiltBindingGraph) {
             }
 
             ids += 1;
-
-            if matches!(
-                cursor.ancestors().next(),
-                Some(ancestor)
-                // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
-                if ancestor.kind == NonterminalKind::ExperimentalFeature
-            ) {
-                continue;
-            }
-
             if binding_graph.definition_at(&cursor).is_none()
-                && none_or_empty(binding_graph.reference_at(&cursor))
+                && binding_graph
+                    .reference_at(&cursor)
+                    .is_none_or(|reference| reference.definitions().is_empty())
             {
                 panic!(
                     "Unbound identifier: '{value}' in '{file_path}:{line}:{column}'.",
@@ -60,9 +52,4 @@ pub fn run(dependencies: BuiltBindingGraph) {
         }
     }
     assert_ne!(ids, 0);
-}
-
-fn none_or_empty(maybe_reference: Option<Reference>) -> bool {
-    maybe_reference.is_none()
-        || maybe_reference.is_some_and(|reference| reference.definitions().is_empty())
 }

@@ -699,6 +699,11 @@ pub trait Visitor {
     }
     fn leave_pragma(&mut self, _node: &Pragma) {}
 
+    fn enter_abicoder_version(&mut self, _node: &AbicoderVersion) -> bool {
+        true
+    }
+    fn leave_abicoder_version(&mut self, _node: &AbicoderVersion) {}
+
     fn enter_experimental_feature(&mut self, _node: &ExperimentalFeature) -> bool {
         true
     }
@@ -1160,6 +1165,7 @@ pub fn accept_abicoder_pragma(node: &AbicoderPragma, visitor: &mut impl Visitor)
     if !visitor.enter_abicoder_pragma(node) {
         return;
     }
+    accept_abicoder_version(&node.version, visitor);
     visitor.leave_abicoder_pragma(node);
 }
 
@@ -2469,18 +2475,20 @@ pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
         return;
     }
     match node {
+        Pragma::VersionPragma(ref version_pragma) => {
+            accept_version_pragma(version_pragma, visitor);
+        }
         Pragma::AbicoderPragma(ref abicoder_pragma) => {
             accept_abicoder_pragma(abicoder_pragma, visitor);
         }
         Pragma::ExperimentalPragma(ref experimental_pragma) => {
             accept_experimental_pragma(experimental_pragma, visitor);
         }
-        Pragma::VersionPragma(ref version_pragma) => {
-            accept_version_pragma(version_pragma, visitor);
-        }
     }
     visitor.leave_pragma(node);
 }
+
+pub fn accept_abicoder_version(_node: &AbicoderVersion, _visitor: &mut impl Visitor) {}
 
 pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut impl Visitor) {
     if !visitor.enter_experimental_feature(node) {
@@ -2490,7 +2498,7 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         ExperimentalFeature::StringLiteral(ref string_literal) => {
             accept_string_literal(string_literal, visitor);
         }
-        ExperimentalFeature::Identifier(_) => {}
+        ExperimentalFeature::ABIEncoderV2Keyword | ExperimentalFeature::SMTCheckerKeyword => {}
     }
     visitor.leave_experimental_feature(node);
 }

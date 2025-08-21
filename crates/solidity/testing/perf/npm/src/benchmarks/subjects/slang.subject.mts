@@ -1,5 +1,5 @@
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
-import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
+import { TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
 import { Subject, SolidityProject, Timings } from "../common.mjs";
 
@@ -61,11 +61,7 @@ export class SlangSubject implements Subject {
         }
 
         if (!(definition || reference)) {
-          const ancestor = cursor.ancestors().next();
-          // Ignore experimental pragma's identifiers
-          if (!ancestor || ancestor.kind != NonterminalKind.ExperimentalFeature) {
-            neitherDefNorRefs.push(cursor.node.unparse());
-          }
+          neitherDefNorRefs.push(cursor.node.unparse());
         }
       }
 

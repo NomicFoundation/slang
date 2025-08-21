@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma abicoder foo;                                                             │ 0..20
+
+Errors: # 1 total
+  - >
+    Error: Expected ExperimentalKeyword or SolidityKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/PragmaDirective/abi_coder_unkown_identifier/input.sol:1:8]
+       │
+     1 │ pragma abicoder foo;
+       │        ──────┬─────  
+       │              ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ PragmaDirective): # "pragma abicoder foo;" (0..20)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (leading_trivia꞉ Whitespace): " " # (6..7)
+      - (unrecognized꞉ UNRECOGNIZED): "abicoder foo" # (7..19)
+      - (semicolon꞉ Semicolon): ";" # (19..20)

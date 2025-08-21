@@ -6,13 +6,26 @@ use crate::kinds::{BaseKind, KindTypes, NodeKind};
 use crate::query::{CaptureQuantifier, QueryError};
 use crate::text_index::TextIndex;
 
+/// The declarative `Query` API is a convenient alternative to the [`Cursor`][`crate::cursor::Cursor`]
+/// API for navigating the CST.
+///
+/// The query engine performs pattern matching, and the execution semantics are closer to
+/// unification than to regular expression matching. A query returns all possible matches,
+/// not just the longest/shortest/first/last match.
+///
+/// Please refer to [our documentation](https://nomicfoundation.github.io/slang/latest/user-guide/06-query-language/01-query-syntax/)
+/// for detailed information about the query syntax and how to use queries to find matches.
 #[derive(Clone, Debug)]
 pub struct Query<T: KindTypes> {
+    /// The abstract syntax tree (AST) representation of the query.
     pub ast_node: ASTNode<T>,
+    /// A map of capture names to their quantifiers, used to define how many times a capture can occur.
     pub capture_quantifiers: BTreeMap<String, CaptureQuantifier>,
 }
 
 impl<T: KindTypes> Query<T> {
+    /// Parses a query string into a query object. It will return a [`QueryError`]
+    /// if the query syntax is invalid.
     pub fn create(text: &str) -> Result<Self, QueryError> {
         fn collect_capture_quantifiers<T: KindTypes>(
             ast_node: &ASTNode<T>,

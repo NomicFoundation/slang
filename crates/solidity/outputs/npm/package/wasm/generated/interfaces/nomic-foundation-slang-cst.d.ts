@@ -25,11 +25,22 @@ export declare enum NonterminalKind {
    * Represents a node with kind `AbicoderPragma`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
-   *                  (* version: *) IDENTIFIER;
+   *                  (* version: *) AbicoderVersion;
    * ```
    */
   AbicoderPragma = "AbicoderPragma",
+  /**
+   * Represents a node with kind `AbicoderVersion`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.7.5 *)
+   * AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+   *                 | (* variant: *) ABICODER_V2_KEYWORD;
+   * ```
+   */
+  AbicoderVersion = "AbicoderVersion",
   /**
    * Represents a node with kind `AdditiveExpression`, having the following structure:
    *
@@ -618,7 +629,9 @@ export declare enum NonterminalKind {
    * Represents a node with kind `ExperimentalFeature`, having the following structure:
    *
    * ```ebnf
-   * ExperimentalFeature = (* variant: *) IDENTIFIER
+   * (* Introduced in 0.4.16 *)
+   * ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+   *                     | (* variant: *) SMT_CHECKER_KEYWORD
    *                     | (* variant: *) StringLiteral;
    * ```
    */
@@ -627,6 +640,7 @@ export declare enum NonterminalKind {
    * Represents a node with kind `ExperimentalPragma`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
    *                      (* feature: *) ExperimentalFeature;
    * ```
@@ -1393,9 +1407,9 @@ export declare enum NonterminalKind {
    * Represents a node with kind `Pragma`, having the following structure:
    *
    * ```ebnf
-   * Pragma = (* variant: *) AbicoderPragma
-   *        | (* variant: *) ExperimentalPragma
-   *        | (* variant: *) VersionPragma;
+   * Pragma = (* variant: *) VersionPragma
+   *        | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+   *        | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
    * ```
    */
   Pragma = "Pragma",
@@ -2491,19 +2505,50 @@ export declare enum TerminalKind {
    */
   Unrecognized = "Unrecognized",
   /**
-   * This terminal is created when the parser is expecting a certain terminal, but it cannot find it.
+   * This terminal is created when the parser is expecting a certain terminal but does not find it.
    * Adding the missing input in this position may allow the parser to produce a valid tree there.
    */
   Missing = "Missing",
   /**
+   * Represents a node with kind `ABIEncoderV2Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.4.16 *)
+   * (* Never reserved *)
+   * ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
+   * ```
+   */
+  ABIEncoderV2Keyword = "ABIEncoderV2Keyword",
+  /**
    * Represents a node with kind `AbicoderKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * (* Never reserved *)
    * ABICODER_KEYWORD = "abicoder";
    * ```
    */
   AbicoderKeyword = "AbicoderKeyword",
+  /**
+   * Represents a node with kind `AbicoderV1Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.7.5 *)
+   * (* Never reserved *)
+   * ABICODER_V1_KEYWORD = "v1";
+   * ```
+   */
+  AbicoderV1Keyword = "AbicoderV1Keyword",
+  /**
+   * Represents a node with kind `AbicoderV2Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.7.5 *)
+   * (* Never reserved *)
+   * ABICODER_V2_KEYWORD = "v2";
+   * ```
+   */
+  AbicoderV2Keyword = "AbicoderV2Keyword",
   /**
    * Represents a node with kind `AbstractKeyword`, having the following structure:
    *
@@ -3042,6 +3087,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `ExperimentalKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * (* Never reserved *)
    * EXPERIMENTAL_KEYWORD = "experimental";
    * ```
@@ -3716,6 +3762,16 @@ export declare enum TerminalKind {
    * ```
    */
   RevertKeyword = "RevertKeyword",
+  /**
+   * Represents a node with kind `SMTCheckerKeyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.4.16 *)
+   * (* Never reserved *)
+   * SMT_CHECKER_KEYWORD = "SMTChecker";
+   * ```
+   */
+  SMTCheckerKeyword = "SMTCheckerKeyword",
   /**
    * Represents a node with kind `SealedKeyword`, having the following structure:
    *

@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma abicoder v2;                                                              │ 0..19
+
+Errors: []
+
+Tree:
+  - (root꞉ PragmaDirective): # "pragma abicoder v2;\n" (0..20)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (pragma꞉ Pragma) ► (variant꞉ AbicoderPragma): # " abicoder v2" (6..18)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (abicoder_keyword꞉ AbicoderKeyword): "abicoder" # (7..15)
+          - (version꞉ AbicoderVersion): # " v2" (15..18)
+              - (leading_trivia꞉ Whitespace): " " # (15..16)
+              - (variant꞉ AbicoderV2Keyword): "v2" # (16..18)
+      - (semicolon꞉ Semicolon): ";" # (18..19)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
