@@ -5,7 +5,6 @@ import {
   EdgeLabel,
   Node,
   NonterminalNode,
-  TerminalKind,
 } from "@nomicfoundation/slang/cst";
 import { Parser } from "@nomicfoundation/slang/parser";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
