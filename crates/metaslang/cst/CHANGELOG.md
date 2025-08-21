@@ -1,5 +1,28 @@
 # changelog
 
+## 1.3.0
+
+### Minor Changes
+
+- [#1390](https://github.com/NomicFoundation/slang/pull/1390) [`6a0f598`](https://github.com/NomicFoundation/slang/commit/6a0f598fc93a85e125f48869f8d882d52392fdb7) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Add new TypeScript APIs for creating nodes and edges:
+
+    - `NonterminalNode.create(kind: NonterminalKind, children: Edge[]): NonterminalNode`
+    - `TerminalNode.create(kind: TerminalKind, text: string): TerminalNode`
+    - `createEdge(label: EdgeLabel, node: Node): Edge`
+    - `Edge.createWithNonterminal(label: EdgeLabel, node: NonterminalNode): Edge`
+    - `Edge.createWithTerminal(label: EdgeLabel, node: TerminalNode): Edge`
+
+### Patch Changes
+
+- [#1388](https://github.com/NomicFoundation/slang/pull/1388) [`4607e6a`](https://github.com/NomicFoundation/slang/commit/4607e6a548b5454718202374cddfc8d0ccfdb661) Thanks [@beta-ziliani](https://github.com/beta-ziliani)! - Fixed the pragma grammar and CST nodes:
+
+    - `pragma abicoder <version>`:
+        - Only enabled starting Solidity `0.7.5`.
+        - `<version>` is restricted to new keywords (`v1` and `v2`).
+    - `pragma experimental <flag>`:
+        - Only enabled starting Solidity `0.4.16`.
+        - `<flag>` is restricted to be a string, or new keywords representing `ABIEncoderV2` and `SMTChecker`.
+
 ## 1.2.1
 
 ### Patch Changes
