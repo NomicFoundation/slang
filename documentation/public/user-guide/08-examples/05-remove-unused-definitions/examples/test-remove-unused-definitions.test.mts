@@ -1,9 +1,10 @@
 import assert from "node:assert";
-import { assertUserFileLocation } from "@nomicfoundation/slang/bindings";
-import { findUnusedDefinitions } from "./find-unused-definitions.mjs";
+import { findUnusedDefinitions } from "../../04-find-unused-definitions/examples/find-unused-definitions.mjs";
+import { CONTRACT_VFS } from "../../04-find-unused-definitions/examples/test-find-unused-definitions.test.mjs";
 import { buildCompilationUnit } from "../../common/compilation-builder.mjs";
+import { RemoveUnusedDefs } from "./remove-unused-defs.mjs";
 
-export const CONTRACT_VFS = new Map<string, string>([
+const EXPECTED_VFS = new Map<string, string>([
   [
     "contract.sol",
     `
@@ -16,14 +17,10 @@ abstract contract Ownable {
     require(_owner == msg.sender);
     _;
   }
-  function checkOwner(address addr) internal returns (bool) {
-    return _owner == addr;
-  }
 }
 
 contract Counter is Ownable {
   uint _count;
-  uint _unused;
   constructor(uint initialCount) {
     _count = initialCount;
   }
@@ -35,29 +32,18 @@ contract Counter is Ownable {
     _count += delta;
     return _count;
   }
-  function unusedDecrement() private {
-    require(checkOwner(msg.sender));
-    _count -= 1;
-  }
 }
     `,
   ],
 ]);
 
-test("find unused definitions", async () => {
+test("remove unused definitions", async () => {
   const unit = await buildCompilationUnit(CONTRACT_VFS, "0.8.0", "contract.sol");
 
   const unused = findUnusedDefinitions(unit, "Counter");
-  const expected = unused.map((definition) => {
-    const location = definition.nameLocation;
-    assertUserFileLocation(location);
-    const name = location.cursor.node.unparse();
-    return [name, location.cursor.textOffset.line];
-  });
-  assert.deepEqual(expected, [
-    ["checkOwner", 10],
-    ["_unused", 17],
-    ["multiplier", 24],
-    ["unusedDecrement", 29],
-  ]);
+  const removeUnused = new RemoveUnusedDefs(unused);
+  for (const file of unit.files()) {
+    const newNode = removeUnused.rewriteNode(file.tree);
+    assert.strictEqual(newNode?.unparse(), EXPECTED_VFS.get(file.id));
+  }
 });
