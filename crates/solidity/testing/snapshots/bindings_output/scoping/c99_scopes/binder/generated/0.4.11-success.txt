@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Foo" @ input.sol:1:10] (contract)
+- Def: #2 ["x" @ input.sol:2:10] (state var, type: uint256)
+- Def: #3 ["a_func" @ input.sol:4:14] (function, type: function (uint256) returns uint256)
+- Def: #4 ["x" @ input.sol:4:26] (parameter, type: uint256)
+- Def: #5 ["y" @ input.sol:6:14] (variable, type: uint256)
+- Def: #6 ["x" @ input.sol:8:18] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["x" @ input.sol:6:18] -> #6
+- Ref: ["x" @ input.sol:9:20] -> #6
+- Ref: ["y" @ input.sol:9:24] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Foo {
+   │          ─┬─  
+   │           ╰─── name: 1
+ 2 │     uint x = 10;
+   │          ┬  
+   │          ╰── name: 2
+   │ 
+ 4 │     function a_func(uint x) returns (uint) {
+   │              ───┬──      ┬  
+   │                 ╰─────────── name: 3
+   │                          │  
+   │                          ╰── name: 4
+   │ 
+ 6 │         uint y = x + 1;
+   │              ┬   ┬  
+   │              ╰────── name: 5
+   │                  │  
+   │                  ╰── ref: 6
+   │ 
+ 8 │             uint x = 20;
+   │                  ┬  
+   │                  ╰── name: 6
+ 9 │             return x + y;
+   │                    ┬   ┬  
+   │                    ╰────── ref: 6
+   │                        │  
+   │                        ╰── ref: 5
+───╯

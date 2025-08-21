@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function (address) returns void)
+- Def: #3 ["a" @ input.sol:4:27] (parameter, type: address)
+- Def: #4 ["Lib" @ input.sol:11:9] (library)
+- Def: #5 ["noop" @ input.sol:12:14] (function, type: function (uint256) returns uint256)
+- Def: #6 ["x" @ input.sol:12:24] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Lib" @ input.sol:2:11] -> #4
+- Ref: ["balance" @ input.sol:5:23] -> built-in
+- Ref: ["a" @ input.sol:6:17] -> #3
+- Ref: ["call" @ input.sol:6:20] -> built-in
+- Ref: ["noop" @ input.sol:7:18] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 4
+    │ 
+  4 │     function test(address a) public {
+    │              ──┬─         ┬  
+    │                ╰───────────── name: 2
+    │                           │  
+    │                           ╰── name: 3
+  5 │         address(this).balance;
+    │                       ───┬───  
+    │                          ╰───── built-in
+  6 │         payable(a).call("");
+    │                 ┬  ──┬─  
+    │                 ╰──────── ref: 3
+    │                      │   
+    │                      ╰─── built-in
+  7 │         uint(10).noop();
+    │                  ──┬─  
+    │                    ╰─── ref: 5
+    │ 
+ 11 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 4
+ 12 │     function noop(uint x) public returns (uint) {}
+    │              ──┬─      ┬  
+    │                ╰────────── name: 5
+    │                        │  
+    │                        ╰── name: 6
+────╯

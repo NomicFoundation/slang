@@ -1,0 +1,87 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["MemoryPointer" @ input.sol:4:6] (udvt, type: meta-type)
+- Def: #2 ["FreeMemoryPPtr" @ input.sol:8:24] (constant, type: MemoryPointer)
+- Def: #3 ["getFreeMemoryPointer" @ input.sol:10:10] (function, type: function () returns MemoryPointer)
+- Def: #4 ["mPtr" @ input.sol:10:61] (parameter, type: MemoryPointer)
+- Def: #5 ["MemoryReaders" @ input.sol:15:9] (library)
+- Def: #6 ["readMemoryPointer" @ input.sol:16:14] (function, type: function (MemoryPointer) returns MemoryPointer)
+- Def: #7 ["mPtr" @ input.sol:16:46] (parameter, type: MemoryPointer)
+- Def: #8 ["value" @ input.sol:16:89] (parameter, type: MemoryPointer)
+
+------------------------------------------------------------------------
+
+References (11):
+- Ref: ["MemoryReaders" @ input.sol:6:7] -> #5
+- Ref: ["MemoryPointer" @ input.sol:6:25] -> #1
+- Ref: ["MemoryPointer" @ input.sol:8:1] -> #1
+- Ref: ["MemoryPointer" @ input.sol:8:41] -> #1
+- Ref: ["wrap" @ input.sol:8:55] -> built-in
+- Ref: ["MemoryPointer" @ input.sol:10:47] -> #1
+- Ref: ["mPtr" @ input.sol:12:5] -> #4
+- Ref: ["FreeMemoryPPtr" @ input.sol:12:12] -> #2
+- Ref: ["readMemoryPointer" @ input.sol:12:27] -> #6
+- Ref: ["MemoryPointer" @ input.sol:16:32] -> #1
+- Ref: ["MemoryPointer" @ input.sol:16:75] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ type MemoryPointer is uint256;
+    │      ──────┬──────  
+    │            ╰──────── name: 1
+    │ 
+  6 │ using MemoryReaders for MemoryPointer;
+    │       ──────┬──────     ──────┬──────  
+    │             ╰────────────────────────── ref: 5
+    │                               │        
+    │                               ╰──────── ref: 1
+    │ 
+  8 │ MemoryPointer constant FreeMemoryPPtr = MemoryPointer.wrap(0x40);
+    │ ──────┬──────          ───────┬──────   ──────┬────── ──┬─  
+    │       ╰───────────────────────────────────────────────────── ref: 1
+    │                               │               │         │   
+    │                               ╰───────────────────────────── name: 2
+    │                                               │         │   
+    │                                               ╰───────────── ref: 1
+    │                                                         │   
+    │                                                         ╰─── built-in
+    │ 
+ 10 │ function getFreeMemoryPointer() pure returns (MemoryPointer mPtr) {
+    │          ──────────┬─────────                 ──────┬────── ──┬─  
+    │                    ╰────────────────────────────────────────────── name: 3
+    │                                                     │         │   
+    │                                                     ╰───────────── ref: 1
+    │                                                               │   
+    │                                                               ╰─── name: 4
+    │ 
+ 12 │     mPtr = FreeMemoryPPtr.readMemoryPointer();
+    │     ──┬─   ───────┬────── ────────┬────────  
+    │       ╰────────────────────────────────────── ref: 4
+    │                   │               │          
+    │                   ╰────────────────────────── ref: 2
+    │                                   │          
+    │                                   ╰────────── ref: 6
+    │ 
+ 15 │ library MemoryReaders {
+    │         ──────┬──────  
+    │               ╰──────── name: 5
+ 16 │     function readMemoryPointer(MemoryPointer mPtr) internal pure returns (MemoryPointer value) {
+    │              ────────┬──────── ──────┬────── ──┬─                         ──────┬────── ──┬──  
+    │                      ╰───────────────────────────────────────────────────────────────────────── name: 6
+    │                                      │         │                                │         │    
+    │                                      ╰───────────────────────────────────────────────────────── ref: 1
+    │                                                │                                │         │    
+    │                                                ╰─────────────────────────────────────────────── name: 7
+    │                                                                                 │         │    
+    │                                                                                 ╰────────────── ref: 1
+    │                                                                                           │    
+    │                                                                                           ╰──── name: 8
+────╯

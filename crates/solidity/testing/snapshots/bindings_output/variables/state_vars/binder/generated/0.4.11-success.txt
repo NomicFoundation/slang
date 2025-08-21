@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["Foo" @ input.sol:1:10] (contract)
+- Def: #2 ["x" @ input.sol:2:10] (state var, type: uint256)
+- Def: #3 ["bar" @ input.sol:4:14] (function, type: function () returns uint256)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["x" @ input.sol:5:16] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Foo {
+   │          ─┬─  
+   │           ╰─── name: 1
+ 2 │     uint x;
+   │          ┬  
+   │          ╰── name: 2
+   │ 
+ 4 │     function bar() returns (uint) {
+   │              ─┬─  
+   │               ╰─── name: 3
+ 5 │         return x;
+   │                ┬  
+   │                ╰── ref: 2
+───╯

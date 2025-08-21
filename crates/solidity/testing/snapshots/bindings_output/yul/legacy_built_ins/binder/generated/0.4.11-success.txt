@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["difficulty" @ input.sol:4:13] -> built-in
+- Ref: ["jump" @ input.sol:5:13] -> built-in
+- Ref: ["jumpi" @ input.sol:6:13] -> built-in
+- Ref: ["sha3" @ input.sol:7:13] -> built-in
+- Ref: ["suicide" @ input.sol:8:13] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+   │ 
+ 4 │             difficulty()
+   │             ─────┬────  
+   │                  ╰────── built-in
+ 5 │             jump()
+   │             ──┬─  
+   │               ╰─── built-in
+ 6 │             jumpi()
+   │             ──┬──  
+   │               ╰──── built-in
+ 7 │             sha3()
+   │             ──┬─  
+   │               ╰─── built-in
+ 8 │             suicide()
+   │             ───┬───  
+   │                ╰───── built-in
+───╯

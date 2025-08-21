@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["A" @ input.sol:4:10] (contract)
+- Def: #2 ["B" @ input.sol:10:10] (contract)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["A" @ input.sol:10:15] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (2):
+- ???: ["foo" @ input.sol:5:14]
+- ???: ["foo" @ input.sol:12:14]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     function foo() public pure virtual returns (string memory) {
+    │              ─┬─  
+    │               ╰─── ???
+    │ 
+ 10 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 2
+    │               │  
+    │               ╰── ref: 1
+    │ 
+ 12 │     function foo() public pure virtual override(A) returns (string memory) {
+    │              ─┬─  
+    │               ╰─── ???
+────╯

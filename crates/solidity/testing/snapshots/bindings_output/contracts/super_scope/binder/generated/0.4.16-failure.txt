@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["A" @ input.sol:4:10] (contract)
+- Def: #2 ["foo" @ input.sol:5:14] (function, type: function () returns string memory)
+- Def: #3 ["B" @ input.sol:10:10] (contract)
+- Def: #4 ["foo" @ input.sol:12:14] (function, type: function () returns string memory)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["virtual" @ input.sol:5:32] -> unresolved
+- Ref: ["A" @ input.sol:10:15] -> #1
+- Ref: ["virtual" @ input.sol:12:32] -> unresolved
+- Ref: ["override" @ input.sol:12:40] -> unresolved
+- Ref: ["A" @ input.sol:12:49] -> #1
+- Ref: ["foo" @ input.sol:13:22] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     function foo() public pure virtual returns (string memory) {
+    │              ─┬─               ───┬───  
+    │               ╰───────────────────────── name: 2
+    │                                   │     
+    │                                   ╰───── unresolved
+    │ 
+ 10 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 3
+    │               │  
+    │               ╰── ref: 1
+    │ 
+ 12 │     function foo() public pure virtual override(A) returns (string memory) {
+    │              ─┬─               ───┬─── ────┬─── ┬  
+    │               ╰──────────────────────────────────── name: 4
+    │                                   │        │    │  
+    │                                   ╰──────────────── unresolved
+    │                                            │    │  
+    │                                            ╰─────── unresolved
+    │                                                 │  
+    │                                                 ╰── ref: 1
+ 13 │         return super.foo();
+    │                      ─┬─  
+    │                       ╰─── ref: 2
+────╯

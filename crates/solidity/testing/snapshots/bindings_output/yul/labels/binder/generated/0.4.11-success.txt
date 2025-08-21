@@ -1,0 +1,94 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["n" @ input.sol:4:17] (yul variable)
+- Def: #4 ["a" @ input.sol:5:17] (yul variable)
+- Def: #5 ["b" @ input.sol:6:17] (yul variable)
+- Def: #6 ["loop" @ input.sol:7:9] (yul label)
+- Def: #7 ["loopend" @ input.sol:11:9] (yul label)
+
+------------------------------------------------------------------------
+
+References (14):
+- Ref: ["calldataload" @ input.sol:4:22] -> built-in
+- Ref: ["a" @ input.sol:6:22] -> #4
+- Ref: ["jumpi" @ input.sol:8:13] -> built-in
+- Ref: ["loopend" @ input.sol:8:19] -> #7
+- Ref: ["eq" @ input.sol:8:28] -> built-in
+- Ref: ["n" @ input.sol:8:31] -> #3
+- Ref: ["n" @ input.sol:9:13] -> #3
+- Ref: ["sub" @ input.sol:9:18] -> built-in
+- Ref: ["n" @ input.sol:9:22] -> #3
+- Ref: ["jump" @ input.sol:10:13] -> built-in
+- Ref: ["loop" @ input.sol:10:18] -> #6
+- Ref: ["mstore" @ input.sol:12:13] -> built-in
+- Ref: ["a" @ input.sol:12:23] -> #4
+- Ref: ["return" @ input.sol:13:13] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+    │ 
+  4 │             let n := calldataload(4)
+    │                 ┬    ──────┬─────  
+    │                 ╰────────────────── name: 3
+    │                            │       
+    │                            ╰─────── built-in
+  5 │             let a := 1
+    │                 ┬  
+    │                 ╰── name: 4
+  6 │             let b := a
+    │                 ┬    ┬  
+    │                 ╰─────── name: 5
+    │                      │  
+    │                      ╰── ref: 4
+  7 │         loop:
+    │         ──┬─  
+    │           ╰─── name: 6
+  8 │             jumpi(loopend, eq(n, 0))
+    │             ──┬── ───┬───  ─┬ ┬  
+    │               ╰────────────────── built-in
+    │                      │      │ │  
+    │                      ╰─────────── ref: 7
+    │                             │ │  
+    │                             ╰──── built-in
+    │                               │  
+    │                               ╰── ref: 3
+  9 │             n := sub(n, 1)
+    │             ┬    ─┬─ ┬  
+    │             ╰─────────── ref: 3
+    │                   │  │  
+    │                   ╰───── built-in
+    │                      │  
+    │                      ╰── ref: 3
+ 10 │             jump(loop)
+    │             ──┬─ ──┬─  
+    │               ╰──────── built-in
+    │                    │   
+    │                    ╰─── ref: 6
+ 11 │         loopend:
+    │         ───┬───  
+    │            ╰───── name: 7
+ 12 │             mstore(0, a)
+    │             ───┬──    ┬  
+    │                ╰───────── built-in
+    │                       │  
+    │                       ╰── ref: 4
+ 13 │             return(0, 0x20)
+    │             ───┬──  
+    │                ╰──── built-in
+────╯

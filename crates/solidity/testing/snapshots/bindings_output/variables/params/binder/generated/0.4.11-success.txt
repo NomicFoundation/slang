@@ -1,0 +1,75 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (10):
+- Def: #1 ["Foo" @ input.sol:1:10] (contract)
+- Def: #2 ["bar" @ input.sol:2:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["z" @ input.sol:2:23] (parameter, type: uint256)
+- Def: #4 ["baz" @ input.sol:6:14] (function, type: function (int256, int256) returns int256)
+- Def: #5 ["x" @ input.sol:6:22] (parameter, type: int256)
+- Def: #6 ["y" @ input.sol:6:29] (parameter, type: int256)
+- Def: #7 ["quux" @ input.sol:10:14] (function, type: function (int256, int256) returns int256)
+- Def: #8 ["x" @ input.sol:10:23] (parameter, type: int256)
+- Def: #9 ["y" @ input.sol:10:30] (parameter, type: int256)
+- Def: #10 ["z" @ input.sol:10:46] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["z" @ input.sol:3:16] -> #3
+- Ref: ["x" @ input.sol:7:16] -> #5
+- Ref: ["y" @ input.sol:7:20] -> #6
+- Ref: ["z" @ input.sol:11:9] -> #10
+- Ref: ["x" @ input.sol:11:13] -> #8
+- Ref: ["y" @ input.sol:11:17] -> #9
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── name: 1
+  2 │     function bar(uint z) returns (uint) {
+    │              ─┬─      ┬  
+    │               ╰────────── name: 2
+    │                       │  
+    │                       ╰── name: 3
+  3 │         return z + 1;
+    │                ┬  
+    │                ╰── ref: 3
+    │ 
+  6 │     function baz(int x, int y) returns (int) {
+    │              ─┬─     ┬      ┬  
+    │               ╰──────────────── name: 4
+    │                      │      │  
+    │                      ╰───────── name: 5
+    │                             │  
+    │                             ╰── name: 6
+  7 │         return x + y;
+    │                ┬   ┬  
+    │                ╰────── ref: 5
+    │                    │  
+    │                    ╰── ref: 6
+    │ 
+ 10 │     function quux(int x, int y) returns (int z) {
+    │              ──┬─     ┬      ┬               ┬  
+    │                ╰──────────────────────────────── name: 7
+    │                       │      │               │  
+    │                       ╰───────────────────────── name: 8
+    │                              │               │  
+    │                              ╰────────────────── name: 9
+    │                                              │  
+    │                                              ╰── name: 10
+ 11 │         z = x + y;
+    │         ┬   ┬   ┬  
+    │         ╰────────── ref: 10
+    │             │   │  
+    │             ╰────── ref: 8
+    │                 │  
+    │                 ╰── ref: 9
+────╯

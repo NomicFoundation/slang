@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["YulStackAssignment" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["x" @ input.sol:4:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["sload" @ input.sol:5:13] -> built-in
+- Ref: ["x" @ input.sol:6:16] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract YulStackAssignment {
+   │          ─────────┬────────  
+   │                   ╰────────── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+   │ 
+ 4 │             let x := 0
+   │                 ┬  
+   │                 ╰── name: 3
+ 5 │             sload(10)
+   │             ──┬──  
+   │               ╰──── built-in
+ 6 │             =: x
+   │                ┬  
+   │                ╰── ref: 3
+───╯

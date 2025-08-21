@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["IFoo" @ input.sol:1:11] (interface)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function () returns (uint256, uint256))
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["Bar" @ input.sol:6:12] (struct)
+- Def: #5 ["x" @ input.sol:7:14] (struct member, type: uint256)
+- Def: #6 ["y" @ input.sol:8:14] (struct member, type: uint256)
+- Def: #7 ["override" @ input.sol:10:16] (state var, type: Bar storage)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["IFoo" @ input.sol:5:18] -> #1
+- Ref: ["Bar" @ input.sol:10:5] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IFoo {
+    │           ──┬─  
+    │             ╰─── name: 1
+  2 │     function foo() external returns (uint, uint);
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract Test is IFoo {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 3
+    │                    │   
+    │                    ╰─── ref: 1
+  6 │     struct Bar {
+    │            ─┬─  
+    │             ╰─── name: 4
+  7 │         uint x;
+    │              ┬  
+    │              ╰── name: 5
+  8 │         uint y;
+    │              ┬  
+    │              ╰── name: 6
+    │ 
+ 10 │     Bar public override foo;
+    │     ─┬─        ────┬───  
+    │      ╰─────────────────── ref: 4
+    │                    │     
+    │                    ╰───── name: 7
+────╯

@@ -17,7 +17,14 @@ pub(crate) fn collect_snapshot_tests(
     for file in FileWalker::from_directory(data_dir).find_all()? {
         if let Ok(generated_dir) = file.generated_dir() {
             assert!(
-                generated_dir.unwrap_parent().join("input.sol").exists(),
+                generated_dir.unwrap_parent().join("input.sol").exists()
+                    // handle binder outputs which are placed inside a `binder`
+                    // dir of the snapshot
+                    || generated_dir
+                        .unwrap_parent()
+                        .unwrap_parent()
+                        .join("input.sol")
+                        .exists(),
                 "Each snapshot should have a matching input.sol test file: {file:?}",
             );
 

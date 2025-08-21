@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (1):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["fallback" @ input.sol:2:5]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     fallback(bytes calldata input) external payable returns (bytes memory output) {
+   │     ────┬───  
+   │         ╰───── ???
+───╯

@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Severity" @ input.sol:2:10] (enum)
+- Def: #3 ["Info" @ input.sol:2:21] (enum member of Severity)
+- Def: #4 ["Error" @ input.sol:2:27] (enum member of Severity)
+- Def: #5 ["Log" @ input.sol:4:11] (event)
+- Def: #6 ["level" @ input.sol:5:18] (parameter, type: Severity)
+- Def: #7 ["message" @ input.sol:6:16] (parameter, type: string memory)
+- Def: #8 ["test" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #9 ["Log" @ input.sol:10:14] (variable, type: unresolved)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["Severity" @ input.sol:5:9] -> #2
+- Ref: ["emit" @ input.sol:10:9] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     enum Severity { Info, Error }
+    │          ────┬───   ──┬─  ──┬──  
+    │              ╰─────────────────── name: 2
+    │                       │     │    
+    │                       ╰────────── name: 3
+    │                             │    
+    │                             ╰──── name: 4
+    │ 
+  4 │     event Log (
+    │           ─┬─  
+    │            ╰─── name: 5
+  5 │         Severity level,
+    │         ────┬─── ──┬──  
+    │             ╰─────────── ref: 2
+    │                    │    
+    │                    ╰──── name: 6
+  6 │         string message
+    │                ───┬───  
+    │                   ╰───── name: 7
+    │ 
+  9 │     function test() {
+    │              ──┬─  
+    │                ╰─── name: 8
+ 10 │         emit Log({message: "testing", level: Severity.Info});
+    │         ──┬─ ─┬─  
+    │           ╰─────── unresolved
+    │               │   
+    │               ╰─── name: 9
+────╯

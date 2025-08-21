@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["Constants" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (10):
+- Ref: ["assert" @ input.sol:3:9] -> built-in
+- Ref: ["MY_DIRECTION" @ input.sol:3:16] -> unresolved
+- Ref: ["Direction" @ input.sol:3:32] -> unresolved
+- Ref: ["NORTH" @ input.sol:3:42] -> unresolved
+- Ref: ["assert" @ input.sol:4:9] -> built-in
+- Ref: ["MY_UINT" @ input.sol:4:16] -> unresolved
+- Ref: ["require" @ input.sol:5:9] -> built-in
+- Ref: ["msg" @ input.sol:5:17] -> built-in
+- Ref: ["sender" @ input.sol:5:21] -> built-in
+- Ref: ["MY_ADDRESS" @ input.sol:5:31] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Constants {
+   │          ────┬────  
+   │              ╰────── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         assert(MY_DIRECTION != Direction.NORTH);
+   │         ───┬── ──────┬─────    ────┬──── ──┬──  
+   │            ╰──────────────────────────────────── built-in
+   │                      │             │       │    
+   │                      ╰────────────────────────── unresolved
+   │                                    │       │    
+   │                                    ╰──────────── unresolved
+   │                                            │    
+   │                                            ╰──── unresolved
+ 4 │         assert(MY_UINT > 100);
+   │         ───┬── ───┬───  
+   │            ╰──────────── built-in
+   │                   │     
+   │                   ╰───── unresolved
+ 5 │         require(msg.sender == MY_ADDRESS);
+   │         ───┬─── ─┬─ ───┬──    ─────┬────  
+   │            ╰────────────────────────────── built-in
+   │                  │     │           │      
+   │                  ╰──────────────────────── built-in
+   │                        │           │      
+   │                        ╰────────────────── built-in
+   │                                    │      
+   │                                    ╰────── unresolved
+───╯

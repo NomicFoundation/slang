@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["Owner" @ input.sol:2:12] (struct)
+- Def: #3 ["owner" @ input.sol:2:28] (struct member, type: address)
+- Def: #4 ["owner" @ input.sol:3:18] (state var, type: Owner storage)
+- Def: #5 ["Test" @ input.sol:5:10] (contract)
+- Def: #6 ["test" @ input.sol:6:14] (function, type: function (Base) returns void)
+- Def: #7 ["base" @ input.sol:6:24] (parameter, type: Base)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Owner" @ input.sol:3:5] -> #2
+- Ref: ["Base" @ input.sol:6:19] -> #1
+- Ref: ["base" @ input.sol:7:9] -> #7
+- Ref: ["owner" @ input.sol:7:14] -> #4
+- Ref: ["balance" @ input.sol:7:22] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     struct Owner { address owner; }
+   │            ──┬──           ──┬──  
+   │              ╰──────────────────── name: 2
+   │                              │    
+   │                              ╰──── name: 3
+ 3 │     Owner public owner;
+   │     ──┬──        ──┬──  
+   │       ╰───────────────── ref: 2
+   │                    │    
+   │                    ╰──── name: 4
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 5
+ 6 │     function test(Base base) public {
+   │              ──┬─ ──┬─ ──┬─  
+   │                ╰───────────── name: 6
+   │                     │    │   
+   │                     ╰──────── ref: 1
+   │                          │   
+   │                          ╰─── name: 7
+ 7 │         base.owner().balance;
+   │         ──┬─ ──┬──   ───┬───  
+   │           ╰─────────────────── ref: 7
+   │                │        │     
+   │                ╰────────────── ref: 4
+   │                         │     
+   │                         ╰───── built-in
+───╯

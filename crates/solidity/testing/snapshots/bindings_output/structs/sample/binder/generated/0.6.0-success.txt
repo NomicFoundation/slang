@@ -1,0 +1,264 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (25):
+- Def: #1 ["Funder" @ input.sol:1:8] (struct)
+- Def: #2 ["addr" @ input.sol:2:13] (struct member, type: address)
+- Def: #3 ["amount" @ input.sol:3:10] (struct member, type: uint256)
+- Def: #4 ["CrowdFunding" @ input.sol:6:10] (contract)
+- Def: #5 ["Campaign" @ input.sol:7:12] (struct)
+- Def: #6 ["beneficiary" @ input.sol:8:25] (struct member, type: address payable)
+- Def: #7 ["fundingGoal" @ input.sol:9:14] (struct member, type: uint256)
+- Def: #8 ["numFunders" @ input.sol:10:14] (struct member, type: uint256)
+- Def: #9 ["amount" @ input.sol:11:14] (struct member, type: uint256)
+- Def: #10 ["funders" @ input.sol:12:33] (struct member, type: uint256 => Funder storage)
+- Def: #11 ["numCampaigns" @ input.sol:15:10] (state var, type: uint256)
+- Def: #12 ["campaigns" @ input.sol:16:31] (state var, type: uint256 => Campaign storage)
+- Def: #13 ["newCampaign" @ input.sol:18:14] (function, type: function (address payable, uint256) returns uint256)
+- Def: #14 ["beneficiary" @ input.sol:18:42] (parameter, type: address payable)
+- Def: #15 ["goal" @ input.sol:18:60] (parameter, type: uint256)
+- Def: #16 ["campaignID" @ input.sol:18:87] (parameter, type: uint256)
+- Def: #17 ["c" @ input.sol:20:26] (variable, type: Campaign storage)
+- Def: #18 ["contribute" @ input.sol:25:14] (function, type: function (uint256) returns void)
+- Def: #19 ["campaignID" @ input.sol:25:30] (parameter, type: uint256)
+- Def: #20 ["c" @ input.sol:26:26] (variable, type: Campaign storage)
+- Def: #21 ["checkGoalReached" @ input.sol:31:14] (function, type: function (uint256) returns bool)
+- Def: #22 ["campaignID" @ input.sol:31:36] (parameter, type: uint256)
+- Def: #23 ["reached" @ input.sol:31:69] (parameter, type: bool)
+- Def: #24 ["c" @ input.sol:32:26] (variable, type: Campaign storage)
+- Def: #25 ["amount" @ input.sol:35:14] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (46):
+- Ref: ["Funder" @ input.sol:12:25] -> #1
+- Ref: ["Campaign" @ input.sol:16:21] -> #5
+- Ref: ["campaignID" @ input.sol:19:9] -> #16
+- Ref: ["numCampaigns" @ input.sol:19:22] -> #11
+- Ref: ["Campaign" @ input.sol:20:9] -> #5
+- Ref: ["campaigns" @ input.sol:20:30] -> #12
+- Ref: ["campaignID" @ input.sol:20:40] -> #16
+- Ref: ["c" @ input.sol:21:9] -> #17
+- Ref: ["beneficiary" @ input.sol:21:11] -> #6
+- Ref: ["beneficiary" @ input.sol:21:25] -> #14
+- Ref: ["c" @ input.sol:22:9] -> #17
+- Ref: ["fundingGoal" @ input.sol:22:11] -> #7
+- Ref: ["goal" @ input.sol:22:25] -> #15
+- Ref: ["Campaign" @ input.sol:26:9] -> #5
+- Ref: ["campaigns" @ input.sol:26:30] -> #12
+- Ref: ["campaignID" @ input.sol:26:40] -> #19
+- Ref: ["c" @ input.sol:27:9] -> #20
+- Ref: ["funders" @ input.sol:27:11] -> #10
+- Ref: ["c" @ input.sol:27:19] -> #20
+- Ref: ["numFunders" @ input.sol:27:21] -> #8
+- Ref: ["Funder" @ input.sol:27:37] -> #1
+- Ref: ["addr" @ input.sol:27:45] -> #2
+- Ref: ["msg" @ input.sol:27:51] -> built-in
+- Ref: ["sender" @ input.sol:27:55] -> built-in
+- Ref: ["amount" @ input.sol:27:63] -> #3
+- Ref: ["msg" @ input.sol:27:71] -> built-in
+- Ref: ["value" @ input.sol:27:75] -> built-in
+- Ref: ["c" @ input.sol:28:9] -> #20
+- Ref: ["amount" @ input.sol:28:11] -> #9
+- Ref: ["msg" @ input.sol:28:21] -> built-in
+- Ref: ["value" @ input.sol:28:25] -> built-in
+- Ref: ["Campaign" @ input.sol:32:9] -> #5
+- Ref: ["campaigns" @ input.sol:32:30] -> #12
+- Ref: ["campaignID" @ input.sol:32:40] -> #22
+- Ref: ["c" @ input.sol:33:13] -> #24
+- Ref: ["amount" @ input.sol:33:15] -> #9
+- Ref: ["c" @ input.sol:33:24] -> #24
+- Ref: ["fundingGoal" @ input.sol:33:26] -> #7
+- Ref: ["c" @ input.sol:35:23] -> #24
+- Ref: ["amount" @ input.sol:35:25] -> #9
+- Ref: ["c" @ input.sol:36:9] -> #24
+- Ref: ["amount" @ input.sol:36:11] -> #9
+- Ref: ["c" @ input.sol:37:9] -> #24
+- Ref: ["beneficiary" @ input.sol:37:11] -> #6
+- Ref: ["transfer" @ input.sol:37:23] -> built-in
+- Ref: ["amount" @ input.sol:37:32] -> #25
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ struct Funder {
+    │        ───┬──  
+    │           ╰──── name: 1
+  2 │     address addr;
+    │             ──┬─  
+    │               ╰─── name: 2
+  3 │     uint amount;
+    │          ───┬──  
+    │             ╰──── name: 3
+    │ 
+  6 │ contract CrowdFunding {
+    │          ──────┬─────  
+    │                ╰─────── name: 4
+  7 │     struct Campaign {
+    │            ────┬───  
+    │                ╰───── name: 5
+  8 │         address payable beneficiary;
+    │                         ─────┬─────  
+    │                              ╰─────── name: 6
+  9 │         uint fundingGoal;
+    │              ─────┬─────  
+    │                   ╰─────── name: 7
+ 10 │         uint numFunders;
+    │              ─────┬────  
+    │                   ╰────── name: 8
+ 11 │         uint amount;
+    │              ───┬──  
+    │                 ╰──── name: 9
+ 12 │         mapping(uint => Funder) funders;
+    │                         ───┬──  ───┬───  
+    │                            ╰───────────── ref: 1
+    │                                    │     
+    │                                    ╰───── name: 10
+    │ 
+ 15 │     uint numCampaigns;
+    │          ──────┬─────  
+    │                ╰─────── name: 11
+ 16 │     mapping(uint => Campaign) campaigns;
+    │                     ────┬───  ────┬────  
+    │                         ╰──────────────── ref: 5
+    │                                   │      
+    │                                   ╰────── name: 12
+    │ 
+ 18 │     function newCampaign(address payable beneficiary, uint goal) public returns (uint campaignID) {
+    │              ─────┬─────                 ─────┬─────       ──┬─                       ─────┬────  
+    │                   ╰─────────────────────────────────────────────────────────────────────────────── name: 13
+    │                                               │              │                             │      
+    │                                               ╰─────────────────────────────────────────────────── name: 14
+    │                                                              │                             │      
+    │                                                              ╰──────────────────────────────────── name: 15
+    │                                                                                            │      
+    │                                                                                            ╰────── name: 16
+ 19 │         campaignID = numCampaigns++;
+    │         ─────┬────   ──────┬─────  
+    │              ╰───────────────────── ref: 16
+    │                            │       
+    │                            ╰─────── ref: 11
+ 20 │         Campaign storage c = campaigns[campaignID];
+    │         ────┬───         ┬   ────┬──── ─────┬────  
+    │             ╰────────────────────────────────────── ref: 5
+    │                          │       │          │      
+    │                          ╰───────────────────────── name: 17
+    │                                  │          │      
+    │                                  ╰───────────────── ref: 12
+    │                                             │      
+    │                                             ╰────── ref: 16
+ 21 │         c.beneficiary = beneficiary;
+    │         ┬ ─────┬─────   ─────┬─────  
+    │         ╰──────────────────────────── ref: 17
+    │                │             │       
+    │                ╰───────────────────── ref: 6
+    │                              │       
+    │                              ╰─────── ref: 14
+ 22 │         c.fundingGoal = goal;
+    │         ┬ ─────┬─────   ──┬─  
+    │         ╰───────────────────── ref: 17
+    │                │          │   
+    │                ╰────────────── ref: 7
+    │                           │   
+    │                           ╰─── ref: 15
+    │ 
+ 25 │     function contribute(uint campaignID) public payable {
+    │              ─────┬────      ─────┬────  
+    │                   ╰────────────────────── name: 18
+    │                                   │      
+    │                                   ╰────── name: 19
+ 26 │         Campaign storage c = campaigns[campaignID];
+    │         ────┬───         ┬   ────┬──── ─────┬────  
+    │             ╰────────────────────────────────────── ref: 5
+    │                          │       │          │      
+    │                          ╰───────────────────────── name: 20
+    │                                  │          │      
+    │                                  ╰───────────────── ref: 12
+    │                                             │      
+    │                                             ╰────── ref: 19
+ 27 │         c.funders[c.numFunders++] = Funder({addr: msg.sender, amount: msg.value});
+    │         ┬ ───┬─── ┬ ─────┬────      ───┬──  ──┬─  ─┬─ ───┬──  ───┬──  ─┬─ ──┬──  
+    │         ╰──────────────────────────────────────────────────────────────────────── ref: 20
+    │              │    │      │             │      │    │     │       │     │    │    
+    │              ╰─────────────────────────────────────────────────────────────────── ref: 10
+    │                   │      │             │      │    │     │       │     │    │    
+    │                   ╰────────────────────────────────────────────────────────────── ref: 20
+    │                          │             │      │    │     │       │     │    │    
+    │                          ╰─────────────────────────────────────────────────────── ref: 8
+    │                                        │      │    │     │       │     │    │    
+    │                                        ╰───────────────────────────────────────── ref: 1
+    │                                               │    │     │       │     │    │    
+    │                                               ╰────────────────────────────────── ref: 2
+    │                                                    │     │       │     │    │    
+    │                                                    ╰───────────────────────────── built-in
+    │                                                          │       │     │    │    
+    │                                                          ╰─────────────────────── built-in
+    │                                                                  │     │    │    
+    │                                                                  ╰─────────────── ref: 3
+    │                                                                        │    │    
+    │                                                                        ╰───────── built-in
+    │                                                                             │    
+    │                                                                             ╰──── built-in
+ 28 │         c.amount += msg.value;
+    │         ┬ ───┬──    ─┬─ ──┬──  
+    │         ╰────────────────────── ref: 20
+    │              │       │    │    
+    │              ╰───────────────── ref: 9
+    │                      │    │    
+    │                      ╰───────── built-in
+    │                           │    
+    │                           ╰──── built-in
+    │ 
+ 31 │     function checkGoalReached(uint campaignID) public returns (bool reached) {
+    │              ────────┬───────      ─────┬────                       ───┬───  
+    │                      ╰─────────────────────────────────────────────────────── name: 21
+    │                                         │                              │     
+    │                                         ╰──────────────────────────────────── name: 22
+    │                                                                        │     
+    │                                                                        ╰───── name: 23
+ 32 │         Campaign storage c = campaigns[campaignID];
+    │         ────┬───         ┬   ────┬──── ─────┬────  
+    │             ╰────────────────────────────────────── ref: 5
+    │                          │       │          │      
+    │                          ╰───────────────────────── name: 24
+    │                                  │          │      
+    │                                  ╰───────────────── ref: 12
+    │                                             │      
+    │                                             ╰────── ref: 22
+ 33 │         if (c.amount < c.fundingGoal)
+    │             ┬ ───┬──   ┬ ─────┬─────  
+    │             ╰───────────────────────── ref: 24
+    │                  │     │      │       
+    │                  ╰──────────────────── ref: 9
+    │                        │      │       
+    │                        ╰────────────── ref: 24
+    │                               │       
+    │                               ╰─────── ref: 7
+    │ 
+ 35 │         uint amount = c.amount;
+    │              ───┬──   ┬ ───┬──  
+    │                 ╰─────────────── name: 25
+    │                       │    │    
+    │                       ╰───────── ref: 24
+    │                            │    
+    │                            ╰──── ref: 9
+ 36 │         c.amount = 0;
+    │         ┬ ───┬──  
+    │         ╰───────── ref: 24
+    │              │    
+    │              ╰──── ref: 9
+ 37 │         c.beneficiary.transfer(amount);
+    │         ┬ ─────┬───── ────┬─── ───┬──  
+    │         ╰────────────────────────────── ref: 24
+    │                │          │       │    
+    │                ╰─────────────────────── ref: 6
+    │                           │       │    
+    │                           ╰──────────── built-in
+    │                                   │    
+    │                                   ╰──── ref: 25
+────╯

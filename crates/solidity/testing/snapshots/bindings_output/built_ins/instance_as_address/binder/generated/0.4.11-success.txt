@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["foo" @ input.sol:4:13] (variable, type: Foo)
+- Def: #4 ["bar" @ input.sol:7:13] (variable, type: Bar)
+- Def: #5 ["Foo" @ input.sol:12:10] (contract)
+- Def: #6 ["Bar" @ input.sol:13:11] (interface)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["Foo" @ input.sol:4:9] -> #5
+- Ref: ["foo" @ input.sol:5:9] -> #3
+- Ref: ["balance" @ input.sol:5:13] -> built-in
+- Ref: ["Bar" @ input.sol:7:9] -> #6
+- Ref: ["bar" @ input.sol:8:9] -> #4
+- Ref: ["balance" @ input.sol:8:13] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+    │ 
+  4 │         Foo foo;
+    │         ─┬─ ─┬─  
+    │          ╰─────── ref: 5
+    │              │   
+    │              ╰─── name: 3
+  5 │         foo.balance;
+    │         ─┬─ ───┬───  
+    │          ╰─────────── ref: 3
+    │                │     
+    │                ╰───── built-in
+    │ 
+  7 │         Bar bar;
+    │         ─┬─ ─┬─  
+    │          ╰─────── ref: 6
+    │              │   
+    │              ╰─── name: 4
+  8 │         bar.balance;
+    │         ─┬─ ───┬───  
+    │          ╰─────────── ref: 4
+    │                │     
+    │                ╰───── built-in
+    │ 
+ 12 │ contract Foo {}
+    │          ─┬─  
+    │           ╰─── name: 5
+ 13 │ interface Bar {}
+    │           ─┬─  
+    │            ╰─── name: 6
+────╯

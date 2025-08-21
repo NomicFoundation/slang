@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["CustomArrays" @ input.sol:1:10] (contract)
+- Def: #2 ["Value" @ input.sol:2:12] (struct)
+- Def: #3 ["value" @ input.sol:3:14] (struct member, type: uint256)
+- Def: #4 ["values" @ input.sol:6:13] (state var, type: Value storage[] storage)
+- Def: #5 ["matrix" @ input.sol:7:16] (state var, type: Value storage[] storage[] storage)
+- Def: #6 ["test" @ input.sol:9:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["Value" @ input.sol:6:5] -> #2
+- Ref: ["Value" @ input.sol:7:5] -> #2
+- Ref: ["matrix" @ input.sol:10:9] -> #5
+- Ref: ["value" @ input.sol:10:22] -> #3
+- Ref: ["values" @ input.sol:10:31] -> #4
+- Ref: ["value" @ input.sol:10:41] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract CustomArrays {
+    │          ──────┬─────  
+    │                ╰─────── name: 1
+  2 │     struct Value {
+    │            ──┬──  
+    │              ╰──── name: 2
+  3 │         uint value;
+    │              ──┬──  
+    │                ╰──── name: 3
+    │ 
+  6 │     Value[] values;
+    │     ──┬──   ───┬──  
+    │       ╰───────────── ref: 2
+    │                │    
+    │                ╰──── name: 4
+  7 │     Value[][5] matrix;
+    │     ──┬──      ───┬──  
+    │       ╰──────────────── ref: 2
+    │                   │    
+    │                   ╰──── name: 5
+    │ 
+  9 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 6
+ 10 │         matrix[0][1].value += values[1].value;
+    │         ───┬──       ──┬──    ───┬──    ──┬──  
+    │            ╰─────────────────────────────────── ref: 5
+    │                        │         │        │    
+    │                        ╰─────────────────────── ref: 3
+    │                                  │        │    
+    │                                  ╰───────────── ref: 4
+    │                                           │    
+    │                                           ╰──── ref: 3
+────╯

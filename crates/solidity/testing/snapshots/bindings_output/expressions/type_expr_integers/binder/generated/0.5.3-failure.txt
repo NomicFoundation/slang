@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #3 ["Utils" @ input.sol:10:9] (library)
+- Def: #4 ["nop" @ input.sol:11:14] (function, type: function (uint256) returns void)
+- Def: #5 ["x" @ input.sol:11:23] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["Utils" @ input.sol:2:11] -> #3
+- Ref: ["min" @ input.sol:5:20] -> unresolved
+- Ref: ["nop" @ input.sol:5:24] -> unresolved
+- Ref: ["max" @ input.sol:6:20] -> unresolved
+- Ref: ["nop" @ input.sol:6:24] -> unresolved
+- Ref: ["x" @ input.sol:12:16] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     using Utils for uint;
+    │           ──┬──  
+    │             ╰──── ref: 3
+    │ 
+  4 │     function test() {
+    │              ──┬─  
+    │                ╰─── name: 2
+  5 │         type(uint).min.nop();
+    │                    ─┬─ ─┬─  
+    │                     ╰─────── unresolved
+    │                         │   
+    │                         ╰─── unresolved
+  6 │         type(uint).max.nop();
+    │                    ─┬─ ─┬─  
+    │                     ╰─────── unresolved
+    │                         │   
+    │                         ╰─── unresolved
+    │ 
+ 10 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 3
+ 11 │     function nop(uint x) internal {
+    │              ─┬─      ┬  
+    │               ╰────────── name: 4
+    │                       │  
+    │                       ╰── name: 5
+ 12 │         return x;
+    │                ┬  
+    │                ╰── ref: 5
+────╯

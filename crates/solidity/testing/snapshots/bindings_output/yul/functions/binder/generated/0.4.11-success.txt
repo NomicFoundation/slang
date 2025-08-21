@@ -1,0 +1,144 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (16):
+- Def: #1 ["AssemblyFunctions" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["x" @ input.sol:2:27] (parameter, type: uint256)
+- Def: #4 ["r" @ input.sol:2:54] (parameter, type: uint256)
+- Def: #5 ["outer1" @ input.sol:4:22] (yul function)
+- Def: #6 ["a" @ input.sol:4:29] (yul parameter)
+- Def: #7 ["b" @ input.sol:4:35] (yul variable)
+- Def: #8 ["inner" @ input.sol:10:26] (yul function)
+- Def: #9 ["f" @ input.sol:10:32] (yul parameter)
+- Def: #10 ["g" @ input.sol:10:38] (yul variable)
+- Def: #11 ["outer2" @ input.sol:15:22] (yul function)
+- Def: #12 ["c" @ input.sol:15:29] (yul parameter)
+- Def: #13 ["d" @ input.sol:15:35] (yul variable)
+- Def: #14 ["outer2_inner" @ input.sol:18:26] (yul function)
+- Def: #15 ["e" @ input.sol:18:39] (yul parameter)
+- Def: #16 ["f" @ input.sol:18:45] (yul variable)
+
+------------------------------------------------------------------------
+
+References (21):
+- Ref: ["b" @ input.sol:5:17] -> #7
+- Ref: ["add" @ input.sol:5:22] -> built-in
+- Ref: ["a" @ input.sol:5:26] -> #6
+- Ref: ["r" @ input.sol:9:17] -> #4
+- Ref: ["add" @ input.sol:9:22] -> built-in
+- Ref: ["outer1" @ input.sol:9:26] -> #5
+- Ref: ["x" @ input.sol:9:33] -> #3
+- Ref: ["inner" @ input.sol:9:37] -> #8
+- Ref: ["x" @ input.sol:9:43] -> #3
+- Ref: ["g" @ input.sol:11:21] -> #10
+- Ref: ["mul" @ input.sol:11:25] -> built-in
+- Ref: ["f" @ input.sol:11:29] -> #9
+- Ref: ["outer2" @ input.sol:11:32] -> #11
+- Ref: ["f" @ input.sol:11:39] -> #9
+- Ref: ["d" @ input.sol:16:17] -> #13
+- Ref: ["mul" @ input.sol:16:22] -> built-in
+- Ref: ["c" @ input.sol:16:26] -> #12
+- Ref: ["outer2_inner" @ input.sol:16:29] -> #14
+- Ref: ["c" @ input.sol:16:42] -> #12
+- Ref: ["f" @ input.sol:19:21] -> #16
+- Ref: ["e" @ input.sol:19:26] -> #15
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract AssemblyFunctions {
+    │          ────────┬────────  
+    │                  ╰────────── name: 1
+  2 │     function test(uint256 x) public returns (uint256 r) {
+    │              ──┬─         ┬                          ┬  
+    │                ╰──────────────────────────────────────── name: 2
+    │                           │                          │  
+    │                           ╰───────────────────────────── name: 3
+    │                                                      │  
+    │                                                      ╰── name: 4
+    │ 
+  4 │             function outer1(a) -> b {
+    │                      ───┬── ┬     ┬  
+    │                         ╰──────────── name: 5
+    │                             │     │  
+    │                             ╰──────── name: 6
+    │                                   │  
+    │                                   ╰── name: 7
+  5 │                 b := add(a, 1)
+    │                 ┬    ─┬─ ┬  
+    │                 ╰─────────── ref: 7
+    │                       │  │  
+    │                       ╰───── built-in
+    │                          │  
+    │                          ╰── ref: 6
+    │ 
+  9 │                 r := add(outer1(x), inner(x))
+    │                 ┬    ─┬─ ───┬── ┬   ──┬── ┬  
+    │                 ╰──────────────────────────── ref: 4
+    │                       │     │   │     │   │  
+    │                       ╰────────────────────── built-in
+    │                             │   │     │   │  
+    │                             ╰──────────────── ref: 5
+    │                                 │     │   │  
+    │                                 ╰──────────── ref: 3
+    │                                       │   │  
+    │                                       ╰────── ref: 8
+    │                                           │  
+    │                                           ╰── ref: 3
+ 10 │                 function inner(f) -> g {
+    │                          ──┬── ┬     ┬  
+    │                            ╰──────────── name: 8
+    │                                │     │  
+    │                                ╰──────── name: 9
+    │                                      │  
+    │                                      ╰── name: 10
+ 11 │                     g:= mul(f, outer2(f))
+    │                     ┬   ─┬─ ┬  ───┬── ┬  
+    │                     ╰──────────────────── ref: 10
+    │                          │  │     │   │  
+    │                          ╰─────────────── built-in
+    │                             │     │   │  
+    │                             ╰──────────── ref: 9
+    │                                   │   │  
+    │                                   ╰────── ref: 11
+    │                                       │  
+    │                                       ╰── ref: 9
+    │ 
+ 15 │             function outer2(c) -> d {
+    │                      ───┬── ┬     ┬  
+    │                         ╰──────────── name: 11
+    │                             │     │  
+    │                             ╰──────── name: 12
+    │                                   │  
+    │                                   ╰── name: 13
+ 16 │                 d := mul(c, outer2_inner(c))
+    │                 ┬    ─┬─ ┬  ──────┬───── ┬  
+    │                 ╰─────────────────────────── ref: 13
+    │                       │  │        │      │  
+    │                       ╰───────────────────── built-in
+    │                          │        │      │  
+    │                          ╰────────────────── ref: 12
+    │                                   │      │  
+    │                                   ╰───────── ref: 14
+    │                                          │  
+    │                                          ╰── ref: 12
+    │ 
+ 18 │                 function outer2_inner(e) -> f {
+    │                          ──────┬───── ┬     ┬  
+    │                                ╰─────────────── name: 14
+    │                                       │     │  
+    │                                       ╰──────── name: 15
+    │                                             │  
+    │                                             ╰── name: 16
+ 19 │                     f := e
+    │                     ┬    ┬  
+    │                     ╰─────── ref: 16
+    │                          │  
+    │                          ╰── ref: 15
+────╯

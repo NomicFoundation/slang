@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["input" @ input.sol:2:29] (parameter, type: bytes calldata)
+- Def: #3 ["output" @ input.sol:2:75] (parameter, type: bytes memory)
+- Def: #4 ["x" @ input.sol:4:17] (yul variable)
+- Def: #5 ["y" @ input.sol:5:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["add" @ input.sol:4:22] -> built-in
+- Ref: ["input.length" @ input.sol:4:26] -> unresolved
+- Ref: ["add" @ input.sol:5:22] -> built-in
+- Ref: ["output" @ input.sol:5:26] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     fallback(bytes calldata input) external payable returns (bytes memory output) {
+   │                             ──┬──                                         ───┬──  
+   │                               ╰─────────────────────────────────────────────────── name: 2
+   │                                                                              │    
+   │                                                                              ╰──── name: 3
+   │ 
+ 4 │             let x := add(input.length, 1)
+   │                 ┬    ─┬─ ──────┬─────  
+   │                 ╰────────────────────── name: 4
+   │                       │        │       
+   │                       ╰──────────────── built-in
+   │                                │       
+   │                                ╰─────── unresolved
+ 5 │             let y := add(output, 1)
+   │                 ┬    ─┬─ ───┬──  
+   │                 ╰──────────────── name: 5
+   │                       │     │    
+   │                       ╰────────── built-in
+   │                             │    
+   │                             ╰──── ref: 3
+───╯

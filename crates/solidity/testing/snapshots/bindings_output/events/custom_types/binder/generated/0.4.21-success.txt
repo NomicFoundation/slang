@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Severity" @ input.sol:2:10] (enum)
+- Def: #3 ["INFO" @ input.sol:3:9] (enum member of Severity)
+- Def: #4 ["ERROR" @ input.sol:4:9] (enum member of Severity)
+- Def: #5 ["Log" @ input.sol:7:11] (event)
+- Def: #6 ["level" @ input.sol:8:18] (parameter, type: Severity)
+- Def: #7 ["name" @ input.sol:9:16] (parameter, type: string memory)
+- Def: #8 ["test" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Severity" @ input.sol:8:9] -> #2
+- Ref: ["Log" @ input.sol:13:14] -> #5
+- Ref: ["Severity" @ input.sol:13:18] -> #2
+- Ref: ["INFO" @ input.sol:13:27] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     enum Severity {
+    │          ────┬───  
+    │              ╰───── name: 2
+  3 │         INFO,
+    │         ──┬─  
+    │           ╰─── name: 3
+  4 │         ERROR
+    │         ──┬──  
+    │           ╰──── name: 4
+    │ 
+  7 │     event Log(
+    │           ─┬─  
+    │            ╰─── name: 5
+  8 │         Severity level,
+    │         ────┬─── ──┬──  
+    │             ╰─────────── ref: 2
+    │                    │    
+    │                    ╰──── name: 6
+  9 │         string name
+    │                ──┬─  
+    │                  ╰─── name: 7
+    │ 
+ 12 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 8
+ 13 │         emit Log(Severity.INFO, "Testing");
+    │              ─┬─ ────┬─── ──┬─  
+    │               ╰───────────────── ref: 5
+    │                      │      │   
+    │                      ╰────────── ref: 2
+    │                             │   
+    │                             ╰─── ref: 3
+────╯

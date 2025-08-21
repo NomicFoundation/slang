@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Data" @ input.sol:2:12] (struct)
+- Def: #3 ["value" @ input.sol:2:24] (struct member, type: uint256)
+- Def: #4 ["values" @ input.sol:3:12] (state var, type: Data storage[] storage)
+- Def: #5 ["test" @ input.sol:4:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Data" @ input.sol:3:5] -> #2
+- Ref: ["values" @ input.sol:5:9] -> #4
+- Ref: ["push" @ input.sol:5:16] -> built-in
+- Ref: ["value" @ input.sol:5:23] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     struct Data { uint value; }
+   │            ──┬─        ──┬──  
+   │              ╰──────────────── name: 2
+   │                          │    
+   │                          ╰──── name: 3
+ 3 │     Data[] values;
+   │     ──┬─   ───┬──  
+   │       ╰──────────── ref: 2
+   │               │    
+   │               ╰──── name: 4
+ 4 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 5
+ 5 │         values.push().value = 1;
+   │         ───┬── ──┬─   ──┬──  
+   │            ╰───────────────── ref: 4
+   │                  │      │    
+   │                  ╰─────────── built-in
+   │                         │    
+   │                         ╰──── unresolved
+───╯

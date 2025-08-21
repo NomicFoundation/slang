@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IFoo {
+    │           ──┬─  
+    │             ╰─── name: 1
+  2 │     function foo() external returns (uint, uint);
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract Test is IFoo {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 3
+    │                    │   
+    │                    ╰─── ref: 1
+  6 │     struct Bar {
+    │            ─┬─  
+    │             ╰─── name: 4
+  7 │         uint x;
+    │              ┬  
+    │              ╰── name: 5
+  8 │         uint y;
+    │              ┬  
+    │              ╰── name: 6
+    │ 
+ 10 │     Bar public override foo;
+    │     ─┬─                 ─┬─  
+    │      ╰─────────────────────── ref: 4
+    │                          │   
+    │                          ╰─── name: 7
+    │ 
+ 12 │     function test() internal view {
+    │              ──┬─  
+    │                ╰─── name: 8
+ 13 │         foo.x;
+    │         ─┬─ ┬  
+    │          ╰───── refs: 7, 2
+    │             │  
+    │             ╰── ref: 5
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─────▶ interface IFoo {
+  2 │   │           function foo() external returns (uint, uint);
+    │   │       ─────────────────────────┬────────────────────────  
+    │   │                                ╰────────────────────────── definiens: 2
+  3 │ │ ├─────▶ }
+    │ │ │           
+    │ │ ╰─────────── definiens: 1
+  4 │ ╭───────▶ 
+    ┆ ┆     ┆   
+  6 │ │     ╭─▶     struct Bar {
+  7 │ │     │           uint x;
+    │ │     │   ────────┬───────  
+    │ │     │           ╰───────── definiens: 5
+  8 │ │     │           uint y;
+    │ │     │   ────────┬───────  
+    │ │     │           ╰───────── definiens: 6
+  9 │ │     ├─▶     }
+    │ │     │           
+    │ │     ╰─────────── definiens: 4
+ 10 │ │   │         Bar public override foo;
+    │ │   │     ──────────────┬──────────────  
+    │ │   │                   ╰──────────────── definiens: 7
+ 11 │ │   ╭───▶ 
+    ┆ ┆   ┆     
+ 14 │ │   ├───▶     }
+    │ │   │             
+    │ │   ╰───────────── definiens: 8
+ 15 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 3
+────╯

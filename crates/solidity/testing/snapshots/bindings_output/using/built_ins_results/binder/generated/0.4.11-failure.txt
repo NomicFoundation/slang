@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Utils" @ input.sol:8:9] (library)
+- Def: #3 ["post" @ input.sol:9:14] (function, type: function (bytes32) returns bytes32)
+- Def: #4 ["x" @ input.sol:9:27] (parameter, type: bytes32)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["Utils" @ input.sol:2:11] -> #2
+- Ref: ["x" @ input.sol:10:16] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     using Utils for bytes32;
+    │           ──┬──  
+    │             ╰──── ref: 2
+    │ 
+  8 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 2
+  9 │     function post(bytes32 x) public returns (bytes32) {
+    │              ──┬─         ┬  
+    │                ╰───────────── name: 3
+    │                           │  
+    │                           ╰── name: 4
+ 10 │         return x;
+    │                ┬  
+    │                ╰── ref: 4
+────╯
