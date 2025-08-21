@@ -40,12 +40,13 @@ jobs:
         uses: "./.github/actions/cache/restore"
 
       - name: "Set bencher project"
+
         run: |
           echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
         if: "${{ inputs.bencherProject }}"
 
-      - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+      - name: "infra setup cargo"
+        run: "./scripts/bin/infra setup cargo"
 
       - name: "infra perf cargo"
         run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }}"
