@@ -11,6 +11,8 @@ pub fn run(project: &SolidityProject) {
 
     for source in project.sources.values() {
         let tree = parser.parse(source, None).unwrap();
-        assert!(!tree.root_node().has_error());
+        let root_node = tree.root_node();
+        assert!(!root_node.has_error());
+        assert_eq!(root_node.kind(), "source_file");
     }
 }
