@@ -6,7 +6,7 @@ edition.workspace = true
 publish = false
 
 [dependencies]
-slang_solidity = { workspace = true }
+slang_solidity = { workspace = true, features = ["__private_wasm_apis"] }
 solidity_testing_perf_utils = { workspace = true }
 anyhow = { workspace = true }
 infra_utils = { workspace = true }
