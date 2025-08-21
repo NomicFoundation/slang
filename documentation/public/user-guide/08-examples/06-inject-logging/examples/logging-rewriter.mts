@@ -1,11 +1,4 @@
-import {
-  BaseRewriter,
-  Edge,
-  NonterminalKind,
-  EdgeLabel,
-  Node,
-  NonterminalNode,
-} from "@nomicfoundation/slang/cst";
+import { BaseRewriter, Edge, NonterminalKind, EdgeLabel, Node, NonterminalNode } from "@nomicfoundation/slang/cst";
 import { Parser } from "@nomicfoundation/slang/parser";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
