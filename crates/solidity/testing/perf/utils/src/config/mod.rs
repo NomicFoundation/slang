@@ -16,10 +16,19 @@ pub struct Configuration {
     pub files: Vec<File>,
 }
 
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum Library {
+    Slang,
+    Solar,
+    TreeSitter,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
     pub hash: String,
     pub name: String,
+    pub exclude: Option<Vec<Library>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

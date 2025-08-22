@@ -51,11 +51,13 @@ mod unit_tests {
     }
 
     mod solar {
+        use solidity_testing_perf_utils::config::Library;
+
         macro_rules! solar_define_tests {
             ($prj:ident) => {
                 #[test]
                 fn $prj() {
-                    let payload = crate::tests::setup::setup(stringify!($prj));
+                    let payload = crate::tests::setup::setup(stringify!($prj), Library::Solar);
                     let contract_count = crate::tests::solar_parser::run(payload, true);
                     assert_eq!(contract_count, 25);
                 }
@@ -66,11 +68,13 @@ mod unit_tests {
     }
 
     mod tree_sitter {
+        use solidity_testing_perf_utils::config::Library;
+
         macro_rules! tree_sitter_define_tests {
             ($prj:ident) => {
                 #[test]
                 fn $prj() {
-                    let payload = crate::tests::setup::setup(stringify!($prj));
+                    let payload = crate::tests::setup::setup(stringify!($prj), Library::TreeSitter);
                     let contract_count = crate::tests::tree_sitter_parser::run(payload, true);
                     assert_eq!(contract_count, 25);
                 }

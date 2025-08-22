@@ -13,6 +13,7 @@ use slang_solidity::compilation::CompilationUnit;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
+use solidity_testing_perf_utils::config::Library;
 
 mod __dependencies_used_in_lib__ {
     use {
@@ -27,7 +28,7 @@ mod __dependencies_used_in_lib__ {
 // every benchmark for every library.
 
 //
-// Slang benchmarks
+// Slang only benchmarks
 //
 macro_rules! slang_define_payload_benchmark {
     ($section_name:ident, $prj: ident, $prj_name: expr, $payload:ty) => {
@@ -41,7 +42,7 @@ macro_rules! slang_define_payload_benchmark {
     };
 }
 
-macro_rules! slang_define_payload_full_tests {
+macro_rules! slang_define_full_tests {
     ($prj:ident, $prj_name:tt) => {
         /*
          * WARNING:
@@ -50,10 +51,8 @@ macro_rules! slang_define_payload_full_tests {
          *
          * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
          */
-        paste! {
-        // HACK: we use a different name for parsing, so it doesn't clash with the tests defined below
-        slang_define_payload_benchmark!(parser, [< $prj _files >], $prj_name, &'static SolidityProject);
-        }
+
+        //NOTE: parsing is tested for the comparisons, so there's no need to add it here
         slang_define_payload_benchmark!(cursor, $prj, $prj_name, Rc<CompilationUnit>);
         slang_define_payload_benchmark!(query, $prj, $prj_name, Rc<CompilationUnit>);
         slang_define_payload_benchmark!(bindings_build, $prj, $prj_name, Rc<CompilationUnit>);
@@ -61,11 +60,10 @@ macro_rules! slang_define_payload_full_tests {
 
         paste! {
         library_benchmark_group!(
-            name = [< slang_ $prj _group>];
+            name = [< slang_ $prj _full>];
 
             // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
             benchmarks =
-              [< $prj _parser>],
               [< $prj _cursor>],
               [< $prj _query>],
               [< $prj _bindings_build>],
@@ -77,17 +75,17 @@ macro_rules! slang_define_payload_full_tests {
 
 // We test a few projects in full for slang-only benchmarks
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-slang_define_payload_full_tests!(
+slang_define_full_tests!(
     circular_imports_weighted_pool,
     "circular_imports_weighted_pool"
 );
-slang_define_payload_full_tests!(
+slang_define_full_tests!(
     three_quarters_file_merkle_proof,
     "three_quarters_file_merkle_proof"
 );
 
-// For comparing with other libraries, we only test what can be compared
-macro_rules! slang_define_payload_tests {
+// Slang comparison: we only test what can be compared: at the moment, just the parsing
+macro_rules! slang_comparison_tests {
     ($prj:ident, $prj_name:tt) => {
         /*
          * WARNING:
@@ -98,7 +96,7 @@ macro_rules! slang_define_payload_tests {
 
         paste! {
         library_benchmark_group!(
-            name = [< slang_ $prj >];
+            name = [< slang_ $prj _group >];
 
             benchmarks = [< $prj _parser>],
           );
@@ -106,51 +104,67 @@ macro_rules! slang_define_payload_tests {
     };
 }
 
-include!("../../src/slang_benches_list.rs");
-
 //
 // Solar benchmarks
 //
-macro_rules! solar_define_payload_test {
+macro_rules! solar_comparison_tests {
     ($prj: ident, $prj_name: expr) => {
         paste! {
           #[library_benchmark(setup = tests::setup::setup)]
-          #[bench::first($prj_name)]
-          pub fn [< solar_ $prj >](project: &SolidityProject) {
-              black_box(tests::solar_parser::run(project));
+          #[bench::first($prj_name, Library::Solar)]
+          pub fn [< solar_ $prj >](project: Option<&SolidityProject>) {
+              black_box(tests::solar_parser::run(project, false));
           }
 
           library_benchmark_group!(
-            name = [< solar_ $prj _group>];
+            name = [< solar_ $prj _group >];
             benchmarks = [< solar_ $prj >]
           );
         }
     };
 }
 
-include!("../../src/solar_benches_list.rs");
-
 //
 // Tree-sitter benchmarks
 //
-macro_rules! tree_sitter_define_payload_test {
+macro_rules! tree_sitter_comparison_tests {
     ($prj: ident, $prj_name: expr) => {
         paste! {
           #[library_benchmark(setup = tests::setup::setup)]
-          #[bench::first($prj_name)]
-          pub fn [< tree_sitter_ $prj >](project: &SolidityProject) {
-              black_box(tests::tree_sitter_parser::run(project));
+          #[bench::first(stringify!($prj), Library::TreeSitter)]
+          pub fn [< tree_sitter_ $prj >](project: Option<&SolidityProject>) {
+              black_box(tests::tree_sitter_parser::run(project, false));
           }
 
           library_benchmark_group!(
-            name = [< tree_sitter_ $prj _group>];
+            name = [< tree_sitter_ $prj _group >];
             benchmarks = [< tree_sitter_ $prj >]
           );
         }
     };
 }
 
-include!("../../src/tree_sitter_benches_list.rs");
+// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
+macro_rules! build_comparison_tests_for {
+  ($library: ident) => {
+    paste! {
+      [< $library _comparison_tests>]!(flat_imports_mooniswap, "flat_imports_mooniswap");
+      [< $library _comparison_tests>]!(circular_imports_weighted_pool, "circular_imports_weighted_pool");
+      [< $library _comparison_tests>]!(protocol_uniswap, "protocol_uniswap");
+      [< $library _comparison_tests>]!(protocol_multicall3, "protocol_multicall3");
+      [< $library _comparison_tests>]!(protocol_create_x, "protocol_create_x");
+      [< $library _comparison_tests>]!(protocol_ui_pool_data_provider_v3, "protocol_ui_pool_data_provider_v3");
+      [< $library _comparison_tests>]!(deep_nesting_cooldogs, "deep_nesting_cooldogs");
+      [< $library _comparison_tests>]!(largest_file_trivia_oslf, "largest_file_trivia_oslf");
+      [< $library _comparison_tests>]!(median_file_safe_math, "median_file_safe_math");
+      [< $library _comparison_tests>]!(three_quarters_file_merkle_proof, "three_quarters_file_merkle_proof");
+    }
+  };
+}
+
+build_comparison_tests_for!(slang);
+build_comparison_tests_for!(solar);
+build_comparison_tests_for!(tree_sitter);
 
 main!(
     config = LibraryBenchmarkConfig::default()
@@ -187,5 +201,5 @@ main!(
 
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups = slang_circular_imports_weighted_pool_group,slang_three_quarters_file_merkle_proof_group,slang_flat_imports_mooniswap,slang_circular_imports_weighted_pool,slang_protocol_uniswap,slang_protocol_multicall3,slang_protocol_create_x,slang_protocol_ui_pool_data_provider_v3,slang_deep_nesting_cooldogs,slang_largest_file_trivia_oslf,slang_median_file_safe_math,slang_three_quarters_file_merkle_proof,solar_circular_imports_weighted_pool_group,solar_protocol_uniswap_group,solar_protocol_multicall3_group,solar_protocol_create_x_group,solar_protocol_ui_pool_data_provider_v3_group,solar_deep_nesting_cooldogs_group,solar_largest_file_trivia_oslf_group,solar_median_file_safe_math_group,solar_three_quarters_file_merkle_proof_group,tree_sitter_flat_imports_mooniswap_group,tree_sitter_circular_imports_weighted_pool_group,tree_sitter_protocol_uniswap_group,tree_sitter_protocol_multicall3_group,tree_sitter_protocol_ui_pool_data_provider_v3_group,tree_sitter_deep_nesting_cooldogs_group,tree_sitter_largest_file_trivia_oslf_group,tree_sitter_median_file_safe_math_group,tree_sitter_three_quarters_file_merkle_proof_group,
+    library_benchmark_groups = slang_circular_imports_weighted_pool_group,slang_three_quarters_file_merkle_proof_group,//slang_flat_imports_mooniswap,slang_circular_imports_weighted_pool,slang_protocol_uniswap,slang_protocol_multicall3,slang_protocol_create_x,slang_protocol_ui_pool_data_provider_v3,slang_deep_nesting_cooldogs,slang_largest_file_trivia_oslf,slang_median_file_safe_math,slang_three_quarters_file_merkle_proof,//solar_circular_imports_weighted_pool_group,solar_protocol_uniswap_group,solar_protocol_multicall3_group,solar_protocol_create_x_group,solar_protocol_ui_pool_data_provider_v3_group,solar_deep_nesting_cooldogs_group,solar_largest_file_trivia_oslf_group,solar_median_file_safe_math_group,solar_three_quarters_file_merkle_proof_group,tree_sitter_flat_imports_mooniswap_group,tree_sitter_circular_imports_weighted_pool_group,tree_sitter_protocol_uniswap_group,tree_sitter_protocol_multicall3_group,tree_sitter_protocol_ui_pool_data_provider_v3_group,tree_sitter_deep_nesting_cooldogs_group,tree_sitter_largest_file_trivia_oslf_group,tree_sitter_median_file_safe_math_group,tree_sitter_three_quarters_file_merkle_proof_group,
 );

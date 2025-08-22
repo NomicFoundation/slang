@@ -3,7 +3,10 @@
   "projects": [
     {
       "hash": "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b",
-      "name": "flat_imports_mooniswap"
+      "name": "flat_imports_mooniswap",
+      "exclude": [
+        "solar"
+      ]
     },
     {
       "hash": "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163",

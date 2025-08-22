@@ -2,9 +2,10 @@ use std::rc::Rc;
 
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::Query;
+use solidity_testing_perf_utils::config::Library;
 
 pub fn setup(project: &str) -> Rc<CompilationUnit> {
-    super::parser::run(super::setup::setup(project))
+    super::parser::run(super::setup::setup(project, Library::Slang).unwrap())
 }
 
 pub fn run(unit: Rc<CompilationUnit>) -> usize {
