@@ -13,56 +13,57 @@ mod __dependencies_used_in_benches__ {
 mod unit_tests {
     mod slang {
         macro_rules! slang_define_payload_test {
-            ($name:ident, $prj:expr) => {
+            ($test_phase:ident, $prj: ident) => {
                 #[test]
-                fn $name() {
-                    let payload = crate::tests::$name::setup($prj);
-                    crate::tests::$name::run(payload);
+                fn $test_phase() {
+                    let payload = crate::tests::$test_phase::setup(stringify!($prj));
+                    crate::tests::$test_phase::run(payload);
                 }
             };
         }
         /*
          * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
          */
-        macro_rules! slang_define_payload_tests {
-            ($prj:ident, $name:tt) => {
+        macro_rules! slang_define_tests {
+            ($prj:ident) => {
                 mod $prj {
-                    slang_define_payload_test!(parser, $name);
-                    slang_define_payload_test!(cursor, $name);
-                    slang_define_payload_test!(query, $name);
-                    slang_define_payload_test!(bindings_build, $name);
-                    slang_define_payload_test!(bindings_resolve, $name);
+                    slang_define_payload_test!(parser, $prj);
+                    slang_define_payload_test!(cursor, $prj);
+                    slang_define_payload_test!(query, $prj);
+                    slang_define_payload_test!(bindings_build, $prj);
+                    slang_define_payload_test!(bindings_resolve, $prj);
                 }
             };
         }
 
-        include!("slang_benches_list.rs");
+        slang_define_tests!(protocol_multicall3);
     }
+
     mod solar {
-        macro_rules! solar_define_payload_test {
-            ($name:ident, $prj:expr) => {
+        macro_rules! solar_define_tests {
+            ($prj:ident) => {
                 #[test]
-                fn $name() {
-                    let payload = crate::tests::setup::setup($prj);
+                fn $prj() {
+                    let payload = crate::tests::setup::setup(stringify!($prj));
                     crate::tests::solar_parser::run(payload);
                 }
             };
         }
 
-        include!("solar_benches_list.rs");
+        solar_define_tests!(protocol_multicall3);
     }
 
     mod tree_sitter {
-        macro_rules! tree_sitter_define_payload_test {
-            ($name:ident, $prj:expr) => {
+        macro_rules! tree_sitter_define_tests {
+            ($prj:ident) => {
                 #[test]
-                fn $name() {
-                    let payload = crate::tests::setup::setup($prj);
+                fn $prj() {
+                    let payload = crate::tests::setup::setup(stringify!($prj));
                     crate::tests::tree_sitter_parser::run(payload);
                 }
             };
         }
 
-        include!("tree_sitter_benches_list.rs");
+        tree_sitter_define_tests!(protocol_multicall3);
     }
 }
