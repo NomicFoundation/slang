@@ -16,6 +16,7 @@ serde_json = { workspace = true }
 iai-callgrind = { workspace = true }
 paste = { workspace = true }
 solar = { workspace = true }
+streaming-iterator = { workspace = true }
 tree-sitter-solidity = { workspace = true }
 tree-sitter = { workspace = true }
 

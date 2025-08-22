@@ -13,11 +13,22 @@ mod __dependencies_used_in_benches__ {
 mod unit_tests {
     mod slang {
         macro_rules! slang_define_payload_test {
-            ($test_phase:ident, $prj: ident) => {
+            ($test_phase:ident, $prj:ident) => {
                 #[test]
                 fn $test_phase() {
                     let payload = crate::tests::$test_phase::setup(stringify!($prj));
                     crate::tests::$test_phase::run(payload);
+                }
+            };
+        }
+
+        macro_rules! slang_define_payload_test_and_assert {
+            ($test_phase:ident, $prj:ident, $value:expr) => {
+                #[test]
+                fn $test_phase() {
+                    let payload = crate::tests::$test_phase::setup(stringify!($prj));
+                    let value = crate::tests::$test_phase::run(payload);
+                    assert_eq!(value, $value);
                 }
             };
         }
@@ -28,15 +39,15 @@ mod unit_tests {
             ($prj:ident) => {
                 mod $prj {
                     slang_define_payload_test!(parser, $prj);
-                    slang_define_payload_test!(cursor, $prj);
-                    slang_define_payload_test!(query, $prj);
+                    slang_define_payload_test_and_assert!(cursor, $prj, 25);
+                    slang_define_payload_test_and_assert!(query, $prj, 25);
                     slang_define_payload_test!(bindings_build, $prj);
-                    slang_define_payload_test!(bindings_resolve, $prj);
+                    slang_define_payload_test_and_assert!(bindings_resolve, $prj, 2829);
                 }
             };
         }
 
-        slang_define_tests!(protocol_multicall3);
+        slang_define_tests!(protocol_ui_pool_data_provider_v3);
     }
 
     mod solar {
@@ -45,12 +56,13 @@ mod unit_tests {
                 #[test]
                 fn $prj() {
                     let payload = crate::tests::setup::setup(stringify!($prj));
-                    crate::tests::solar_parser::run(payload);
+                    let contract_count = crate::tests::solar_parser::run(payload, true);
+                    assert_eq!(contract_count, 25);
                 }
             };
         }
 
-        solar_define_tests!(protocol_multicall3);
+        solar_define_tests!(protocol_ui_pool_data_provider_v3);
     }
 
     mod tree_sitter {
@@ -59,11 +71,12 @@ mod unit_tests {
                 #[test]
                 fn $prj() {
                     let payload = crate::tests::setup::setup(stringify!($prj));
-                    crate::tests::tree_sitter_parser::run(payload);
+                    let contract_count = crate::tests::tree_sitter_parser::run(payload, true);
+                    assert_eq!(contract_count, 25);
                 }
             };
         }
 
-        tree_sitter_define_tests!(protocol_multicall3);
+        tree_sitter_define_tests!(protocol_ui_pool_data_provider_v3);
     }
 }

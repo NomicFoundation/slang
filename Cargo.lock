@@ -3761,6 +3761,7 @@ dependencies = [
  "slang_solidity",
  "solar-compiler",
  "solidity_testing_perf_utils",
+ "streaming-iterator",
  "tree-sitter",
  "tree-sitter-solidity",
 ]

@@ -7,15 +7,14 @@ pub fn setup(project: &str) -> Rc<CompilationUnit> {
     super::parser::run(super::setup::setup(project))
 }
 
-pub fn run(unit: Rc<CompilationUnit>) {
-    let mut functions_count = 0;
+pub fn run(unit: Rc<CompilationUnit>) -> usize {
+    let mut contract_count = 0;
 
-    let queries = vec![Query::create(
-        "[FunctionDefinition
-            @name name: [_]
-        ]",
-    )
-    .unwrap()];
+    let queries = vec![
+        Query::create("[ContractDefinition @name name: [_]]").unwrap(),
+        Query::create("[InterfaceDefinition @name name: [_]]").unwrap(),
+        Query::create("[LibraryDefinition @name name: [_]]").unwrap(),
+    ];
 
     for file in &unit.files() {
         let cursor = file.create_tree_cursor();
@@ -23,13 +22,9 @@ pub fn run(unit: Rc<CompilationUnit>) {
         for query_match in cursor.query(queries.clone()) {
             assert_eq!(query_match.captures.len(), 1);
 
-            functions_count += 1;
+            contract_count += 1;
         }
     }
 
-    // Sanity check: at least there's a function.
-    assert_ne!(
-        functions_count, 0,
-        "Failed to fetch all function definitions"
-    );
+    contract_count
 }

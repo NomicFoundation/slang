@@ -6,7 +6,7 @@ use solar::parse::Parser;
 
 use crate::dataset::SolidityProject;
 
-pub fn run(project: &SolidityProject) {
+pub fn run(project: &SolidityProject, count_contracts: bool) -> usize {
     // From Solar's docs: Create a new session with a buffer emitter.
     // This is required to capture the emitted diagnostics and to return them at the end.
     let sess = Session::builder()
@@ -21,6 +21,7 @@ pub fn run(project: &SolidityProject) {
             .unwrap();
     }
 
+    let mut contract_count = 0;
     // Enter the context and parse the file.
     let _ = sess.enter(|| -> solar::interface::Result<()> {
         // Use one arena for the entire parsing
@@ -29,7 +30,10 @@ pub fn run(project: &SolidityProject) {
         for fname in project.sources.keys() {
             let mut parser = Parser::from_file(&sess, &arena, &PathBuf::from(fname))?;
 
-            let _ast = parser.parse_file().map_err(|e| e.emit())?;
+            let unit = parser.parse_file().map_err(|e| e.emit())?;
+            if count_contracts {
+                contract_count += unit.count_contracts();
+            }
         }
 
         Ok(())
@@ -37,4 +41,5 @@ pub fn run(project: &SolidityProject) {
 
     // There shouldn't be any error (or panic)
     sess.emitted_errors().unwrap().unwrap();
+    contract_count
 }

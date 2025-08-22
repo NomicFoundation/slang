@@ -19,7 +19,7 @@ pub fn setup(project: &str) -> BuiltBindingGraph {
     }
 }
 
-pub fn run(dependencies: BuiltBindingGraph) {
+pub fn run(dependencies: BuiltBindingGraph) -> usize {
     let BuiltBindingGraph {
         unit,
         binding_graph,
@@ -51,5 +51,5 @@ pub fn run(dependencies: BuiltBindingGraph) {
             }
         }
     }
-    assert_ne!(ids, 0);
+    ids
 }

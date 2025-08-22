@@ -7,20 +7,19 @@ pub fn setup(project: &str) -> Rc<CompilationUnit> {
     super::parser::run(super::setup::setup(project))
 }
 
-pub fn run(unit: Rc<CompilationUnit>) {
-    let mut functions_count = 0;
+pub fn run(unit: Rc<CompilationUnit>) -> usize {
+    let mut contract_count = 0;
 
     for file in &unit.files() {
         let mut cursor = file.create_tree_cursor();
 
-        while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::FunctionDefinition) {
-            functions_count += 1;
+        while cursor.go_to_next_nonterminal_with_kinds(&[
+            NonterminalKind::ContractDefinition,
+            NonterminalKind::InterfaceDefinition,
+            NonterminalKind::LibraryDefinition,
+        ]) {
+            contract_count += 1;
         }
     }
-
-    // Sanity check: at least there's a function.
-    assert_ne!(
-        functions_count, 0,
-        "Failed to fetch all function definitions"
-    );
+    contract_count
 }
