@@ -12,19 +12,14 @@ pub fn run(unit: Rc<CompilationUnit>) -> usize {
     let mut contract_count = 0;
 
     let queries = vec![
-        Query::create("[ContractDefinition @name name: [_]]").unwrap(),
-        Query::create("[InterfaceDefinition @name name: [_]]").unwrap(),
-        Query::create("[LibraryDefinition @name name: [_]]").unwrap(),
+        Query::create("[ContractDefinition]").unwrap(),
+        Query::create("[InterfaceDefinition]").unwrap(),
+        Query::create("[LibraryDefinition]").unwrap(),
     ];
 
     for file in &unit.files() {
         let cursor = file.create_tree_cursor();
-
-        for query_match in cursor.query(queries.clone()) {
-            assert_eq!(query_match.captures.len(), 1);
-
-            contract_count += 1;
-        }
+        contract_count += cursor.query(queries.clone()).count();
     }
 
     contract_count

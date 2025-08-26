@@ -7,7 +7,7 @@ pub fn setup(project: &str, lib: Library) -> Option<&'static SolidityProject> {
     if project_with_exclusion
         .exclude
         .as_ref()
-        .is_none_or(|exclude| !exclude.contains(&lib))
+        .is_some_and(|exclude| !exclude.contains(&lib))
     {
         None
     } else {

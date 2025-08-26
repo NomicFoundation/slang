@@ -24,9 +24,9 @@ impl ProjectWithExclusion {
     }
 }
 
-impl Into<ProjectWithExclusion> for SolidityProject {
-    fn into(self) -> ProjectWithExclusion {
-        ProjectWithExclusion::from_project(self)
+impl From<SolidityProject> for ProjectWithExclusion {
+    fn from(val: SolidityProject) -> Self {
+        ProjectWithExclusion::from_project(val)
     }
 }
 
