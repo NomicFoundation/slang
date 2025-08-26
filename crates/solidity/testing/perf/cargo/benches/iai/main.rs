@@ -13,7 +13,6 @@ use slang_solidity::compilation::CompilationUnit;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
-use solidity_testing_perf_utils::config::Library;
 
 mod __dependencies_used_in_lib__ {
     use {
@@ -111,8 +110,8 @@ macro_rules! solar_comparison_tests {
     ($prj: ident, $prj_name: expr) => {
         paste! {
           #[library_benchmark(setup = tests::setup::setup)]
-          #[bench::first($prj_name, Library::Solar)]
-          pub fn [< solar_ $prj >](project: Option<&SolidityProject>) {
+          #[bench::first($prj_name)]
+          pub fn [< solar_ $prj >](project: &SolidityProject) {
               black_box(tests::solar_parser::run(project, false));
           }
 
@@ -131,8 +130,8 @@ macro_rules! tree_sitter_comparison_tests {
     ($prj: ident, $prj_name: expr) => {
         paste! {
           #[library_benchmark(setup = tests::setup::setup)]
-          #[bench::first(stringify!($prj), Library::TreeSitter)]
-          pub fn [< tree_sitter_ $prj >](project: Option<&SolidityProject>) {
+          #[bench::first(stringify!($prj))]
+          pub fn [< tree_sitter_ $prj >](project: &SolidityProject) {
               black_box(tests::tree_sitter_parser::run(project, false));
           }
 

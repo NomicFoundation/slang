@@ -5,30 +5,9 @@ use std::sync::OnceLock;
 
 use anyhow::{anyhow, Result};
 use serde::Deserialize;
-use solidity_testing_perf_utils::config::Library;
 use solidity_testing_perf_utils::{config, fetch};
 
-type ProjectMap = HashMap<String, ProjectWithExclusion>;
-
-pub struct ProjectWithExclusion {
-    pub project: SolidityProject,
-    pub exclude: Option<Vec<Library>>,
-}
-
-impl ProjectWithExclusion {
-    pub(crate) fn from_project(project: SolidityProject) -> Self {
-        ProjectWithExclusion {
-            project,
-            exclude: None,
-        }
-    }
-}
-
-impl From<SolidityProject> for ProjectWithExclusion {
-    fn from(val: SolidityProject) -> Self {
-        ProjectWithExclusion::from_project(val)
-    }
-}
+type ProjectMap = HashMap<String, SolidityProject>;
 
 pub fn load_projects() -> &'static ProjectMap {
     static CACHE: OnceLock<ProjectMap> = OnceLock::new();
@@ -51,7 +30,7 @@ fn load_projects_internal() -> Result<ProjectMap> {
         // Solar doesn't support easy crawling of imports like Slang does, so we remove all the files
         // that are not the entrypoint. That means that the files must be self-contained.
         project.sources.retain(|k, _| k == &file.file);
-        map.insert(file.name, project.into());
+        map.insert(file.name, project);
     }
 
     for project in config.projects {
@@ -59,13 +38,7 @@ fn load_projects_internal() -> Result<ProjectMap> {
 
         let sol_project =
             SolidityProject::build(&working_directory_path.join(format!("{}.json", project.hash)))?;
-        map.insert(
-            project.name,
-            ProjectWithExclusion {
-                project: sol_project,
-                exclude: project.exclude,
-            },
-        );
+        map.insert(project.name, sol_project);
     }
     Ok(map)
 }

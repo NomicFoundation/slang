@@ -6,13 +6,7 @@ use solar::parse::Parser;
 
 use crate::dataset::SolidityProject;
 
-pub fn run(project: Option<&SolidityProject>, count_contracts: bool) -> usize {
-    if project.is_none() {
-        return 0;
-    }
-
-    let project = project.unwrap();
-
+pub fn run(project: &SolidityProject, count_contracts: bool) -> usize {
     // From Solar's docs: Create a new session with a buffer emitter.
     // This is required to capture the emitted diagnostics and to return them at the end.
     let sess = Session::builder()

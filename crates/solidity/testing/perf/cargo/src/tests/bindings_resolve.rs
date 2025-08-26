@@ -3,7 +3,6 @@ use std::rc::Rc;
 use slang_solidity::bindings::BindingGraph;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
-use solidity_testing_perf_utils::config::Library;
 
 pub struct BuiltBindingGraph {
     unit: Rc<CompilationUnit>,
@@ -11,7 +10,7 @@ pub struct BuiltBindingGraph {
 }
 
 pub fn setup(project: &str) -> BuiltBindingGraph {
-    let unit = super::parser::run(super::setup::setup(project, Library::Slang).unwrap());
+    let unit = super::parser::run(super::setup::setup(project));
     let binding_graph = super::bindings_build::run(Rc::clone(&unit));
 
     BuiltBindingGraph {
