@@ -1,5 +1,4 @@
 use std::fs::{self, File};
-use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime};
 
@@ -73,14 +72,15 @@ impl Manifest {
             res.copy_to(&mut writer)?;
         }
 
-        Ok(serde_json::from_reader(File::open(manifest_path)?)?)
+        let manifest_contents = fs::read_to_string(manifest_path)?;
+        Ok(serde_json::from_str(&manifest_contents)?)
     }
 
     /// Search for a specific contract and return it if found. Returns `None` if the contract can not
     /// be fetched for any reason (including if the `contract_id` is not parseable).
     pub fn fetch_contract(&self, contract_id: &str) -> Option<Contract> {
         let options = ArchiveOptions {
-            offline: true,
+            offline: false,
             save: true,
         };
         u8::from_str_radix(contract_id.get(2..4).unwrap(), 16)
@@ -296,10 +296,8 @@ impl Contract {
             .to_str()
             .ok_or(Error::msg("Could not get contract directory name"))?;
 
-        let metadata_file = fs::File::open(contract_path.join("metadata.json"))?;
-        let reader = BufReader::new(metadata_file);
-
-        let metadata_val: serde_json::Value = serde_json::from_reader(reader)?;
+        let metadata_contents = fs::read_to_string(contract_path.join("metadata.json"))?;
+        let metadata_val: serde_json::Value = serde_json::from_str(&metadata_contents)?;
 
         let version = metadata_val
             .get("compiler")
