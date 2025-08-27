@@ -21,7 +21,11 @@ tree-sitter-solidity = { workspace = true }
 tree-sitter = { workspace = true }
 
 [[bench]]
-name = "iai"
+name = "slang"
+harness = false
+
+[[bench]]
+name = "comparison"
 harness = false
 
 [lints]

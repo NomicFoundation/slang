@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use anyhow::Result;
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
@@ -14,8 +14,18 @@ const DEFAULT_BENCHER_PROJECT: &str = "slang-dashboard-cargo";
 
 #[derive(Clone, Debug, Parser)]
 pub struct CargoController {
+    #[command(subcommand)]
+    bench: Benches,
     #[command(flatten)]
     dry_run: DryRun,
+}
+
+#[derive(Clone, Debug, Subcommand)]
+enum Benches {
+    /// Performs the slang-specific benchmarks
+    Slang,
+    /// Performs a comparison with different crates for solidity parsing
+    Comparison,
 }
 
 impl CargoController {
@@ -26,8 +36,10 @@ impl CargoController {
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
         // We currently only have one benchmark suite (Rust/iai), but we can add more here in the future.
-        self.run_iai_bench("solidity_testing_perf_cargo", "iai");
-
+        match self.bench {
+            Benches::Slang => self.run_iai_bench("solidity_testing_perf_cargo", "slang"),
+            Benches::Comparison => self.run_iai_bench("solidity_testing_perf_cargo", "comparison"),
+        }
         Ok(())
     }
 
