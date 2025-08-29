@@ -9,16 +9,16 @@ mod __dependencies_used_in_benches__ {
     use {iai_callgrind as _, infra_utils as _, paste as _};
 }
 
-const PROJECT_TO_TEST: &str = "protocol_ui_pool_data_provider_v3";
-
 #[cfg(test)]
 mod unit_tests {
+    const PROJECT_TO_TEST: &str = "protocol_ui_pool_data_provider_v3";
+
     mod slang {
         macro_rules! slang_define_payload_test {
             ($test_phase:ident) => {
                 #[test]
                 fn $test_phase() {
-                    let payload = crate::tests::$test_phase::setup(crate::PROJECT_TO_TEST);
+                    let payload = crate::tests::$test_phase::setup(super::PROJECT_TO_TEST);
                     crate::tests::$test_phase::test(payload);
                 }
             };
@@ -28,7 +28,7 @@ mod unit_tests {
             ($test_phase:ident, $value:expr) => {
                 #[test]
                 fn $test_phase() {
-                    let payload = crate::tests::$test_phase::setup(crate::PROJECT_TO_TEST);
+                    let payload = crate::tests::$test_phase::setup(super::PROJECT_TO_TEST);
                     let value = crate::tests::$test_phase::test(payload);
                     assert_eq!(value, $value);
                 }
@@ -47,7 +47,7 @@ mod unit_tests {
     mod solar {
         #[test]
         fn parser() {
-            let payload = crate::tests::setup::setup(crate::PROJECT_TO_TEST);
+            let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
             let contract_count = crate::tests::solar_parser::test(payload, true);
             assert_eq!(contract_count, 25);
         }
@@ -56,7 +56,7 @@ mod unit_tests {
     mod tree_sitter {
         #[test]
         fn parser() {
-            let payload = crate::tests::setup::setup(crate::PROJECT_TO_TEST);
+            let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
             let contract_count = crate::tests::tree_sitter_parser::test(payload, true);
             assert_eq!(contract_count, 25);
         }
