@@ -7,6 +7,10 @@ use solar::parse::Parser;
 use crate::dataset::SolidityProject;
 
 pub fn run(project: &SolidityProject, count_contracts: bool) -> usize {
+    test(project, count_contracts)
+}
+
+pub fn test(project: &SolidityProject, count_contracts: bool) -> usize {
     // From Solar's docs: Create a new session with a buffer emitter.
     // This is required to capture the emitted diagnostics and to return them at the end.
     let sess = Session::builder()

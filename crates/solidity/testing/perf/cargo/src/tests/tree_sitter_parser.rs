@@ -4,6 +4,10 @@ use tree_sitter::{Language, Parser, Query, QueryCursor};
 use crate::dataset::SolidityProject;
 
 pub fn run(project: &SolidityProject, count_contracts: bool) -> usize {
+    test(project, count_contracts)
+}
+
+pub fn test(project: &SolidityProject, count_contracts: bool) -> usize {
     let mut parser = Parser::new();
     let language = &tree_sitter_solidity::LANGUAGE.into();
     parser

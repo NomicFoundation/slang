@@ -8,6 +8,10 @@ pub fn setup(project: &str) -> Rc<CompilationUnit> {
 }
 
 pub fn run(unit: Rc<CompilationUnit>) -> usize {
+    test(unit)
+}
+
+pub fn test(unit: Rc<CompilationUnit>) -> usize {
     let mut contract_count = 0;
 
     let queries = vec![

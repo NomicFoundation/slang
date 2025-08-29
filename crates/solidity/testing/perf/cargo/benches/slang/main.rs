@@ -22,21 +22,6 @@ mod __dependencies_used_in_lib__ {
     };
 }
 
-//
-// Slang only benchmarks
-//
-macro_rules! slang_define_payload_benchmark {
-    ($section_name:ident, $prj: ident, $payload:ty) => {
-        paste! {
-          #[library_benchmark(setup = tests::$section_name::setup)]
-          #[bench::first(stringify!($prj))]
-          pub fn [<$prj _ $section_name>](payload: $payload) {
-              black_box(tests::$section_name::run(payload));
-          }
-        }
-    };
-}
-
 macro_rules! slang_define_full_tests {
     ($prj:ident) => {
         /*
@@ -47,24 +32,67 @@ macro_rules! slang_define_full_tests {
          * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
          */
 
-        slang_define_payload_benchmark!(parser, $prj, &'static SolidityProject);
-        slang_define_payload_benchmark!(cursor, $prj, Rc<CompilationUnit>);
-        slang_define_payload_benchmark!(query, $prj, Rc<CompilationUnit>);
-        slang_define_payload_benchmark!(bindings_build, $prj, Rc<CompilationUnit>);
-        slang_define_payload_benchmark!(bindings_resolve, $prj, BuiltBindingGraph);
-
         paste! {
-        library_benchmark_group!(
-            name = [< slang_ $prj _full>];
+          #[library_benchmark(setup = tests::parser::setup)]
+          #[bench::first(stringify!($prj))]
+          pub fn [< $prj _parser >](project: &'static SolidityProject) -> Rc<CompilationUnit> {
+              black_box(tests::parser::run(project))
+          }
 
-            // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
-            benchmarks =
-              [< $prj _parser>],
-              [< $prj _cursor>],
-              [< $prj _query>],
-              [< $prj _bindings_build>],
-              [< $prj _bindings_resolve>],
-          );
+          #[library_benchmark(setup = tests::cursor::setup)]
+          #[bench::first(stringify!($prj))]
+          pub fn [<$prj _cursor >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
+              black_box(tests::cursor::run(Rc::clone(&unit)));
+              black_box(unit)
+          }
+
+          #[library_benchmark(setup = tests::query::setup)]
+          #[bench::first(stringify!($prj))]
+          pub fn [<$prj _query >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
+              black_box(tests::query::run(Rc::clone(&unit)));
+              black_box(unit)
+          }
+
+          #[library_benchmark(setup = tests::bindings_build::setup)]
+          #[bench::first(stringify!($prj))]
+          pub fn [<$prj _bindings_build >](unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
+              fn run(unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
+                let binding_graph = tests::bindings_build::run(Rc::clone(&unit));
+                BuiltBindingGraph {
+                    unit,
+                    binding_graph,
+                }
+              }
+
+              black_box(run(unit))
+          }
+
+          #[library_benchmark(setup = tests::bindings_resolve::setup)]
+          #[bench::first(stringify!($prj))]
+          pub fn [<$prj _bindings_resolve >](unit: BuiltBindingGraph) -> BuiltBindingGraph {
+              black_box(tests::bindings_resolve::run(unit.clone()));
+              black_box(unit)
+          }
+
+          // We add a cleanup phase to measure the destruction of the AST and the binding structures
+          #[library_benchmark(setup = tests::bindings_build::setup)]
+          #[bench::first(stringify!($prj))]
+          pub fn [< $prj _cleanup >](unit: Rc<CompilationUnit>) {
+              black_box(unit);
+          }
+
+          library_benchmark_group!(
+              name = [< slang_ $prj _full>];
+
+              // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+              benchmarks =
+                [< $prj _parser>],
+                [< $prj _cursor>],
+                [< $prj _query>],
+                [< $prj _bindings_build>],
+                [< $prj _bindings_resolve>],
+                [< $prj _cleanup>],
+            );
         }
     };
 }

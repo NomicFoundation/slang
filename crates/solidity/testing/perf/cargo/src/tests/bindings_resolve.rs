@@ -4,9 +4,10 @@ use slang_solidity::bindings::BindingGraph;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 
+#[derive(Clone)]
 pub struct BuiltBindingGraph {
-    unit: Rc<CompilationUnit>,
-    binding_graph: Rc<BindingGraph>,
+    pub unit: Rc<CompilationUnit>,
+    pub binding_graph: Rc<BindingGraph>,
 }
 
 pub fn setup(project: &str) -> BuiltBindingGraph {
@@ -20,6 +21,10 @@ pub fn setup(project: &str) -> BuiltBindingGraph {
 }
 
 pub fn run(dependencies: BuiltBindingGraph) -> usize {
+    test(dependencies)
+}
+
+pub fn test(dependencies: BuiltBindingGraph) -> usize {
     let BuiltBindingGraph {
         unit,
         binding_graph,

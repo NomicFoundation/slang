@@ -17,7 +17,7 @@ mod unit_tests {
                 #[test]
                 fn $test_phase() {
                     let payload = crate::tests::$test_phase::setup(stringify!($prj));
-                    crate::tests::$test_phase::run(payload);
+                    crate::tests::$test_phase::test(payload);
                 }
             };
         }
@@ -27,7 +27,7 @@ mod unit_tests {
                 #[test]
                 fn $test_phase() {
                     let payload = crate::tests::$test_phase::setup(stringify!($prj));
-                    let value = crate::tests::$test_phase::run(payload);
+                    let value = crate::tests::$test_phase::test(payload);
                     assert_eq!(value, $value);
                 }
             };
@@ -56,7 +56,7 @@ mod unit_tests {
                 #[test]
                 fn $prj() {
                     let payload = crate::tests::setup::setup(stringify!($prj));
-                    let contract_count = crate::tests::solar_parser::run(payload, true);
+                    let contract_count = crate::tests::solar_parser::test(payload, true);
                     assert_eq!(contract_count, 25);
                 }
             };
@@ -71,7 +71,7 @@ mod unit_tests {
                 #[test]
                 fn $prj() {
                     let payload = crate::tests::setup::setup(stringify!($prj));
-                    let contract_count = crate::tests::tree_sitter_parser::run(payload, true);
+                    let contract_count = crate::tests::tree_sitter_parser::test(payload, true);
                     assert_eq!(contract_count, 25);
                 }
             };

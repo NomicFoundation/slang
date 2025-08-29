@@ -10,6 +10,10 @@ pub fn setup(project: &str) -> &'static SolidityProject {
 }
 
 pub fn run(project: &'static SolidityProject) -> Rc<CompilationUnit> {
+    test(project)
+}
+
+pub fn test(project: &'static SolidityProject) -> Rc<CompilationUnit> {
     let unit = create_compilation_unit(project).unwrap();
 
     assert_ne!(unit.files().len(), 0);
