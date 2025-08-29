@@ -75,9 +75,9 @@ macro_rules! slang_define_full_tests {
           }
 
           // We add a cleanup phase to measure the destruction of the AST and the binding structures
-          #[library_benchmark(setup = tests::bindings_build::setup)]
+          #[library_benchmark(setup = tests::bindings_resolve::setup)]
           #[bench::first(stringify!($prj))]
-          pub fn [< $prj _cleanup >](unit: Rc<CompilationUnit>) {
+          pub fn [< $prj _cleanup >](unit: BuiltBindingGraph) {
               black_box(unit);
           }
 
