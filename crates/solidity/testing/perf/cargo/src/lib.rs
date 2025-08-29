@@ -48,7 +48,7 @@ mod unit_tests {
         #[test]
         fn parser() {
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            let contract_count = crate::tests::solar_parser::test(payload, true);
+            let contract_count = crate::tests::solar_parser::test(payload);
             assert_eq!(contract_count, 25);
         }
     }
@@ -57,7 +57,7 @@ mod unit_tests {
         #[test]
         fn parser() {
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            let contract_count = crate::tests::tree_sitter_parser::test(payload, true);
+            let contract_count = crate::tests::tree_sitter_parser::test(payload);
             assert_eq!(contract_count, 25);
         }
     }

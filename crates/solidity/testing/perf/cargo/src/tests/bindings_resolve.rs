@@ -20,8 +20,9 @@ pub fn setup(project: &str) -> BuiltBindingGraph {
     }
 }
 
-pub fn run(dependencies: BuiltBindingGraph) -> usize {
-    test(dependencies)
+pub fn run(dependencies: BuiltBindingGraph) -> BuiltBindingGraph {
+    let _ = test(dependencies.clone());
+    dependencies
 }
 
 pub fn test(dependencies: BuiltBindingGraph) -> usize {

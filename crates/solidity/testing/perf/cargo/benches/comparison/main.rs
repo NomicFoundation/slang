@@ -37,13 +37,13 @@ macro_rules! comparison_tests {
           #[library_benchmark(setup = tests::setup::setup)]
           #[bench::first(stringify!($prj))]
           pub fn [< solar_ $prj >](project: &SolidityProject) {
-              black_box(tests::solar_parser::run(project, false));
+              black_box(tests::solar_parser::run(project));
           }
 
           #[library_benchmark(setup = tests::setup::setup)]
           #[bench::first(stringify!($prj))]
           pub fn [< tree_sitter_ $prj >](project: &SolidityProject) {
-              black_box(tests::tree_sitter_parser::run(project, false));
+              black_box(tests::tree_sitter_parser::run(project));
           }
 
           library_benchmark_group!(

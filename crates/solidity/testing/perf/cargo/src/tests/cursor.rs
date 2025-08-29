@@ -7,8 +7,9 @@ pub fn setup(project: &str) -> Rc<CompilationUnit> {
     super::parser::run(super::setup::setup(project))
 }
 
-pub fn run(unit: Rc<CompilationUnit>) -> usize {
-    test(unit)
+pub fn run(unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
+    let _ = test(Rc::clone(&unit));
+    unit
 }
 
 pub fn test(unit: Rc<CompilationUnit>) -> usize {

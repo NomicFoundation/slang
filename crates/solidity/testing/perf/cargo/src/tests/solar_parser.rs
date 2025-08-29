@@ -1,16 +1,25 @@
 use std::path::PathBuf;
 
-use solar::ast;
+use solar::ast::{self, SourceUnit};
 use solar::interface::Session;
 use solar::parse::Parser;
 
 use crate::dataset::SolidityProject;
 
-pub fn run(project: &SolidityProject, count_contracts: bool) -> usize {
-    test(project, count_contracts)
+pub fn run(project: &SolidityProject) {
+    go(project, (), |_: &SourceUnit<'_>, (): ()| ());
 }
 
-pub fn test(project: &SolidityProject, count_contracts: bool) -> usize {
+pub fn test(project: &SolidityProject) -> usize {
+    go(project, 0, |unit: &SourceUnit<'_>, prev: usize| {
+        prev + unit.count_contracts()
+    })
+}
+
+fn go<T: Copy, F>(project: &SolidityProject, initial: T, fold: F) -> T
+where
+    F: Fn(&SourceUnit<'_>, T) -> T,
+{
     // From Solar's docs: Create a new session with a buffer emitter.
     // This is required to capture the emitted diagnostics and to return them at the end.
     let sess = Session::builder()
@@ -25,7 +34,7 @@ pub fn test(project: &SolidityProject, count_contracts: bool) -> usize {
             .unwrap();
     }
 
-    let mut contract_count = 0;
+    let mut result = initial;
     // Enter the context and parse the file.
     let _ = sess.enter(|| -> solar::interface::Result<()> {
         // Use one arena for the entire parsing
@@ -35,9 +44,7 @@ pub fn test(project: &SolidityProject, count_contracts: bool) -> usize {
             let mut parser = Parser::from_file(&sess, &arena, &PathBuf::from(fname))?;
 
             let unit = parser.parse_file().map_err(|e| e.emit())?;
-            if count_contracts {
-                contract_count += unit.count_contracts();
-            }
+            result = fold(&unit, result);
         }
 
         Ok(())
@@ -45,5 +52,5 @@ pub fn test(project: &SolidityProject, count_contracts: bool) -> usize {
 
     // There shouldn't be any error (or panic)
     sess.emitted_errors().unwrap().unwrap();
-    contract_count
+    result
 }
