@@ -18,6 +18,8 @@ pub struct CargoController {
     bench: Benches,
     #[command(flatten)]
     dry_run: DryRun,
+    #[arg(long)]
+    no_deps: bool,
 }
 
 #[derive(Clone, Debug, Subcommand)]
@@ -30,9 +32,11 @@ enum Benches {
 
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
-        Self::install_valgrind();
-        CargoWorkspace::install_binary("iai-callgrind-runner")?;
-        CargoWorkspace::install_binary("bencher_cli")?;
+        if !self.no_deps {
+            Self::install_valgrind();
+            CargoWorkspace::install_binary("iai-callgrind-runner")?;
+            CargoWorkspace::install_binary("bencher_cli")?;
+        }
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
         // We currently only have one benchmark suite (Rust/iai), but we can add more here in the future.
