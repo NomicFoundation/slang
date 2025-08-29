@@ -102,11 +102,11 @@ main!(
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
     library_benchmark_groups =
-        flat_imports_mooniswap_group,
+        // flat_imports_mooniswap_group, (version incompatible with solar)
         circular_imports_weighted_pool_group,
         protocol_uniswap_group,
         protocol_multicall3_group,
-        protocol_create_x_group,
+        // protocol_create_x_group, (incompatible in tree-sitter)
         protocol_ui_pool_data_provider_v3_group,
         deep_nesting_cooldogs_group,
         largest_file_trivia_oslf_group,
