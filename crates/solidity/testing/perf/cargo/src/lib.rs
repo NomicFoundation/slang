@@ -1,4 +1,3 @@
-#![allow(clippy::exit)]
 #![allow(clippy::needless_pass_by_value)]
 
 mod compilation_builder;

@@ -16,7 +16,7 @@ pub fn run(project: &SolidityProject) -> Rc<CompilationUnit> {
 pub fn test(project: &SolidityProject) -> Rc<CompilationUnit> {
     let unit = create_compilation_unit(project).unwrap();
 
-    assert_ne!(unit.files().len(), 0);
+    assert!(!unit.files().is_empty());
     for file in unit.files() {
         assert!(file.errors().is_empty());
     }
