@@ -66,10 +66,20 @@ test("Rewrite NonterminalNode Deep", () => {
     }
   }
 
-  const node = parse(NonterminalKind.SourceUnit, "contract AContract {\n  function aFun() public {}\n}");
+  const source = `contract AContract {
+    function aFun() public {}
+  }
+  library ALib {}`;
+
+  const expected = `contract AContractNew {
+    function aFun() public {}
+  }
+  library ALib {}`;
+
+  const node = parse(NonterminalKind.SourceUnit, source);
   const rewriter = new BasicRewriter();
   const result = rewriter.rewriteNode(node);
-  assertNonterminalNode(result, NonterminalKind.SourceUnit, "contract AContractNew {\n  function aFun() public {}\n}");
+  assertNonterminalNode(result, NonterminalKind.SourceUnit, expected);
 });
 
 test("Remove NonterminalNode", () => {
@@ -93,6 +103,46 @@ test("Remove NonterminalNode", () => {
   const rewriter = new RemovalRewriter();
   const result = rewriter.rewriteNode(node);
   assertNonterminalNode(result, NonterminalKind.ContractDefinition, expected);
+});
+
+test("Adding NonterminalNode", () => {
+  class AdderRewriter extends BaseRewriter {
+    public override rewriteContractMembers(node: NonterminalNode): Node | undefined {
+      const newFun = parse(NonterminalKind.ContractMember, "      function newFun() {}\n") as NonterminalNode;
+      const children = node.children();
+      children.push(Edge.createWithNonterminal(EdgeLabel.Item, newFun));
+      return NonterminalNode.create(NonterminalKind.ContractMember, children);
+    }
+  }
+
+  const contract = `
+    contract AContract {
+    }
+  `;
+  const expected = `
+    contract AContract {
+      function newFun() {}
+    }
+  `;
+  const node = parse(NonterminalKind.ContractDefinition, contract);
+  const rewriter = new AdderRewriter();
+  const result = rewriter.rewriteNode(node);
+  assertNonterminalNode(result, NonterminalKind.ContractDefinition, expected);
+});
+
+test("NOOP", () => {
+  class NoopRewriter extends BaseRewriter {}
+
+  const source = `
+    contract AContract {
+    }
+  `;
+
+  const node = parse(NonterminalKind.ContractDefinition, source);
+  const rewriter = new NoopRewriter();
+  const result = rewriter.rewriteNode(node);
+  assertNonterminalNode(result, NonterminalKind.ContractDefinition, source);
+  expect(node.id).toEqual(result.id);
 });
 
 function parse(kind: NonterminalKind, input: string): Node {
