@@ -11,9 +11,9 @@ pipenv = "==2025.0.4"
 mike = "==2.1.3"
 mkdocs = "==1.6.1"
 mkdocs-literate-nav = "==0.6.2"
-mkdocs-material = "==9.6.11"
+mkdocs-material = "==9.6.18"
 mkdocs-minify-plugin = "==0.8.0"
 mkdocs-pymdownx-material-extras = "==2.8"
 
 # Used by 'infra lint':
-yamllint = "==1.37.0"
+yamllint = "==1.37.1"
