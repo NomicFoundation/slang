@@ -1,5 +1,4 @@
 #![allow(clippy::exit)]
-#![allow(clippy::needless_pass_by_value)]
 
 use std::hint::black_box;
 
@@ -30,7 +29,7 @@ macro_rules! comparison_tests {
         paste! {
           #[library_benchmark(setup = tests::setup::setup)]
           #[bench::first(stringify!($prj))]
-          pub fn [<slang_ $prj>](project: &'static SolidityProject) {
+          pub fn [<slang_ $prj>](project: &SolidityProject) {
               black_box(tests::parser::run(project));
           }
 
@@ -55,11 +54,11 @@ macro_rules! comparison_tests {
 }
 
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-comparison_tests!(flat_imports_mooniswap);
+// flat_imports_mooniswap is version incompatible with solar
 comparison_tests!(circular_imports_weighted_pool);
 comparison_tests!(protocol_uniswap);
 comparison_tests!(protocol_multicall3);
-comparison_tests!(protocol_create_x);
+// protocol_create_x is incompatible in tree-sitter
 comparison_tests!(protocol_ui_pool_data_provider_v3);
 comparison_tests!(deep_nesting_cooldogs);
 comparison_tests!(largest_file_trivia_oslf);
@@ -102,11 +101,9 @@ main!(
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
     library_benchmark_groups =
-        // flat_imports_mooniswap_group, (version incompatible with solar)
         circular_imports_weighted_pool_group,
         protocol_uniswap_group,
         protocol_multicall3_group,
-        // protocol_create_x_group, (incompatible in tree-sitter)
         protocol_ui_pool_data_provider_v3_group,
         deep_nesting_cooldogs_group,
         largest_file_trivia_oslf_group,

@@ -9,11 +9,11 @@ pub fn setup(project: &str) -> &'static SolidityProject {
     super::setup::setup(project)
 }
 
-pub fn run(project: &'static SolidityProject) -> Rc<CompilationUnit> {
+pub fn run(project: &SolidityProject) -> Rc<CompilationUnit> {
     test(project)
 }
 
-pub fn test(project: &'static SolidityProject) -> Rc<CompilationUnit> {
+pub fn test(project: &SolidityProject) -> Rc<CompilationUnit> {
     let unit = create_compilation_unit(project).unwrap();
 
     assert_ne!(unit.files().len(), 0);

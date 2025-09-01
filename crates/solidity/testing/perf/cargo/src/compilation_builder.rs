@@ -4,11 +4,11 @@ use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, 
 
 use crate::dataset::SolidityProject;
 
-struct ProjectConfig {
-    project: &'static SolidityProject,
+struct ProjectConfig<'a> {
+    project: &'a SolidityProject,
 }
 
-impl CompilationBuilderConfig for ProjectConfig {
+impl CompilationBuilderConfig for ProjectConfig<'_> {
     type Error = anyhow::Error;
 
     fn read_file(&mut self, file_id: &str) -> Result<Option<String>> {
@@ -36,7 +36,7 @@ impl CompilationBuilderConfig for ProjectConfig {
     }
 }
 
-pub fn create_compilation_unit(project: &'static SolidityProject) -> Result<CompilationUnit> {
+pub fn create_compilation_unit(project: &SolidityProject) -> Result<CompilationUnit> {
     let mut version = semver::Version::parse(&project.compilation.compiler_version).unwrap();
     version.pre = Prerelease::EMPTY;
     version.build = BuildMetadata::EMPTY;
