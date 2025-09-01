@@ -5,7 +5,7 @@ In this example, we use the `BaseRewriter` class to achieve something different:
 In essence, the `LoggingRewriter` class below works as follow:
 
 1. When traversing a function definition, we collect the name and store it in a local variable. Then, we proceed to recurse, using the `rewriteChildren` function of `BaseRewriter`. Before returning, the name is cleared off.
-2. When traversing the list of statements of a function, we prepare the code to inject (if the name is set), by parsing the new statement: the function call to the `log` function. In order to make it properly, we _prepend_ the required trivia, to make sure the spacing is respected (although note: it will also copy newlines and comments!). We then construct the new statements of the function by prepending (note the `unshift`) the injected code into the children of the function statements.
+2. When traversing the list of statements of a function, if the name of the function is set, we start by parsing the new statement to inject: the function call to the `log` function. Then, we construct the new statements of the function by prepending the injected code (note the `unshift`) into the children of the function statements.
 3. Since the `log` function should come from somewhere, we also import it, appending its `import` at the end of the source members of the file.
 
 ```ts title="logging-rewriter.mts"
