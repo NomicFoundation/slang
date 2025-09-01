@@ -6,6 +6,7 @@
   "ignoreWords": [
     // Alphabetically sorted list of "allowed" words to ignore:
     "abicoder",
+    "callgrind",
     "codecopy",
     "codegen",
     "codesize",
