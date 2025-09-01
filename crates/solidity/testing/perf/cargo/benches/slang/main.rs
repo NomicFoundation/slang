@@ -1,5 +1,4 @@
 #![allow(clippy::exit)]
-#![allow(clippy::needless_pass_by_value)]
 
 use std::hint::black_box;
 use std::rc::Rc;
@@ -35,7 +34,7 @@ macro_rules! slang_define_full_tests {
         paste! {
           #[library_benchmark(setup = tests::parser::setup)]
           #[bench::first(stringify!($prj))]
-          pub fn [< $prj _parser >](project: &'static SolidityProject) -> Rc<CompilationUnit> {
+          pub fn [< $prj _parser >](project: &SolidityProject) -> Rc<CompilationUnit> {
               black_box(tests::parser::run(project))
           }
 
