@@ -72,16 +72,19 @@
           let mut new_children: Option<Vec<Edge>> = None;
 
           for (index, child) in node.children.iter().enumerate() {
-              if let Some(new_child) = self.rewrite_node(&child.node) {
-                  if new_child.id() == child.node.id() {
-                      if let Some(ref mut nc) = new_children {
-                          nc.push(child.clone());
+              if let Some(new_child_node) = self.rewrite_node(&child.node) {
+                  if new_child_node.id() == child.node.id() {
+                      if let Some(ref mut new_children) = new_children {
+                          new_children.push(Edge {
+                              label: child.label,
+                              node: new_child_node,
+                          });
                       }
                   } else {
                       // node has changed, produce new edge
                       let edge = Edge {
                           label: child.label,
-                          node: new_child.clone(),
+                          node: new_child_node,
                       };
                       if new_children.is_none() {
                           new_children = Some(node.children[..index].to_vec());
