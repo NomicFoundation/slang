@@ -44,7 +44,6 @@
     "./parser": "./target/parser/index.mjs",
     "./utils": "./target/utils/index.mjs"
   },
-  "__dependencies_comment__": "__SLANG_NPM_PACKAGE_DEPENDENCIES__ (keep in sync)",
   "dependencies": {
     "@bytecodealliance/preview2-shim": "0.17.2"
   }

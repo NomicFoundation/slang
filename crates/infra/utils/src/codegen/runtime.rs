@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
 use anyhow::{ensure, Result};
@@ -29,29 +30,6 @@ impl CodegenRuntime {
         Ok(())
     }
 
-    pub fn render_templates(
-        fs: &mut CodegenFileSystem,
-        input_dir: impl Into<PathBuf>,
-        output_dir: impl AsRef<Path>,
-        model: impl Serialize,
-    ) -> Result<()> {
-        let input_dir = input_dir.into();
-        let output_dir = output_dir.as_ref();
-
-        let tera = TeraWrapper::new(&input_dir)?;
-        let context = tera::Context::from_serialize(model)?;
-
-        for template_path in tera.find_all_templates()? {
-            let stub_path = Self::get_stub_path(&template_path).with_extension("");
-            let rendered_path = stub_path.replace_prefix(&input_dir, output_dir);
-            let rendered = tera.render(&template_path, &context)?;
-
-            fs.write_file_formatted(&rendered_path, rendered)?;
-        }
-
-        Ok(())
-    }
-
     pub fn render_templates_in_place(
         fs: &mut CodegenFileSystem,
         dir: impl Into<PathBuf>,
@@ -62,7 +40,6 @@ impl CodegenRuntime {
 
         for template_path in tera.find_all_templates()? {
             let generated_path = Self::get_in_place_path(&template_path);
-            println!("{generated_path:?}");
             let rendered = tera.render(&template_path, &context)?;
 
             fs.write_file_formatted(&generated_path, rendered)?;
@@ -124,11 +101,13 @@ impl CodegenRuntime {
     }
 
     fn get_in_place_path(template_path: &Path) -> PathBuf {
+        assert_eq!(template_path.extension(), Some(OsStr::new("jinja2")));
+
         let template_path = template_path.with_extension("");
         let (base_name, extension) = template_path.unwrap_name().rsplit_once('.').unwrap();
 
         template_path
             .unwrap_parent()
-            .join(base_name.to_owned() + ".generated." + extension)
+            .join(format!("{base_name}.generated.{extension}"))
     }
 }
