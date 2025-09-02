@@ -10,7 +10,7 @@ To rewrite a tree, the user extends the base class `BaseRewriter` and overrides 
 class MyRewriter extends BaseRewriter {
   public override rewriteContractDefinition(node: NonterminalNode): Node | undefined {
     // Code to either replace (return a new node), remove (return undefined), 
-    // or edit a node (return a modified copy of the given `node`
+    // or edit a node (return a modified copy of the given `node`)
   }
 }
 
