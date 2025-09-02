@@ -96,21 +96,28 @@ fn rewrite_nonterminal_node_deep() {
         }
     }
 
-    let node = parse(
-        NonterminalKind::SourceUnit,
-        "contract AContract {\n  function aFun() public {}\n}",
-    );
+    let source = r#"
+    contract AContract {
+      function aFun() public {}
+    }
+    library ALib {}
+    "#;
+
+    let expected = r#"
+    contract AContractNew {
+      function aFun() public {}
+    }
+    library ALib {}
+    "#;
+
+    let node = parse(NonterminalKind::SourceUnit, source);
     let mut rewriter = ContractNameRewriter {
         inside_contract: false,
     };
     let result = rewriter
         .rewrite_node(&node.into())
         .expect("To return a node");
-    assert_nonterminal_node(
-        &result,
-        NonterminalKind::SourceUnit,
-        "contract AContractNew {\n  function aFun() public {}\n}",
-    );
+    assert_nonterminal_node(&result, NonterminalKind::SourceUnit, expected);
 }
 
 #[test]
@@ -138,6 +145,64 @@ fn remove_nonterminal_node() {
         .rewrite_node(&node.into())
         .expect("To return a node");
     assert_nonterminal_node(&result, NonterminalKind::ContractDefinition, expected);
+}
+
+#[test]
+fn adding_nonterminal_node() {
+    struct AdderRewriter;
+    impl BaseRewriter for AdderRewriter {
+        fn rewrite_contract_members(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
+            // Parse the new function member as a NonterminalNode
+            let new_fun = parse(
+                NonterminalKind::ContractMember,
+                "      function newFun() {}\n",
+            );
+            // Clone the children and push the new member
+            let mut children = node.children.clone();
+            children.push(Edge {
+                label: EdgeLabel::Item,
+                node: Node::Nonterminal(Rc::clone(&new_fun)),
+            });
+            // Return a new ContractMember node with the updated children
+            Some(Node::nonterminal(NonterminalKind::ContractMember, children))
+        }
+    }
+
+    let contract = r#"
+    contract AContract {
+    }
+    "#;
+    let expected = r#"
+    contract AContract {
+      function newFun() {}
+    }
+    "#;
+    let node = parse(NonterminalKind::ContractDefinition, contract);
+    let mut rewriter = AdderRewriter;
+    let result = rewriter
+        .rewrite_node(&node.into())
+        .expect("To return a node");
+    assert_nonterminal_node(&result, NonterminalKind::ContractDefinition, expected);
+}
+
+#[test]
+fn noop() {
+    struct NoopRewriter;
+    impl BaseRewriter for NoopRewriter {}
+
+    let source = r#"
+    contract AContract {
+    }
+    "#;
+
+    let node = parse(NonterminalKind::ContractDefinition, source);
+    let node_id = node.id();
+    let mut rewriter = NoopRewriter;
+    let result = rewriter
+        .rewrite_node(&node.into())
+        .expect("To return a node");
+    let result_node = assert_nonterminal_node(&result, NonterminalKind::ContractDefinition, source);
+    assert_eq!(node_id, result_node.id());
 }
 
 fn assert_nonterminal_node(node: &Node, kind: NonterminalKind, text: &str) -> Rc<NonterminalNode> {
