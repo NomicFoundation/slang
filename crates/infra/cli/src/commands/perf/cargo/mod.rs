@@ -10,7 +10,7 @@ use infra_utils::paths::PathExtensions;
 use crate::toolchains::bencher::run_bench;
 use crate::utils::DryRun;
 
-const DEFAULT_BENCHER_PROJECT_CMP: &str = "slang-dashboard-cargo";
+const DEFAULT_BENCHER_PROJECT_CMP: &str = "slang-dashboard-cargo-cmp";
 const DEFAULT_BENCHER_PROJECT_SLANG: &str = "slang-dashboard-cargo-slang";
 
 #[derive(Clone, Debug, Parser)]
