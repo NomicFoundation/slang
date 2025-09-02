@@ -58,7 +58,7 @@ impl Events {
 
         let definitions = reporter.add_counter("Definitions", Color::White, 0);
         let references = reporter.add_counter("References", Color::White, 0);
-        let unresolved_references = reporter.add_counter("Unresolved references", Color::White, 0);
+        let unresolved_references = reporter.add_counter("Unresolved refs", Color::White, 0);
 
         reporter.add_blank();
 

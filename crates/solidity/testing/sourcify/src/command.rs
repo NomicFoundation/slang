@@ -55,10 +55,6 @@ pub struct TestOptions {
     #[arg(long, default_value_t = false)]
     pub check_bindings: bool,
 
-    /// Run old binder without reporting.
-    #[arg(long, default_value_t = false)]
-    pub check_old_binder: bool,
-
     /// Run new binder tests.
     #[arg(long, default_value_t = false)]
     pub check_new_binder: bool,

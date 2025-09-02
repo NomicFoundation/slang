@@ -1,12 +1,14 @@
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use slang_solidity::backend::binder::Resolution;
 use slang_solidity::backend::passes;
+use slang_solidity::backend::passes::p4_resolve_references::Output;
 use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
 use slang_solidity::cst::{
-    Cursor, NodeKind, TerminalKind, TerminalKindExtensions, TerminalNode, TextRange,
+    Cursor, NodeId, NodeKind, TerminalKind, TerminalKindExtensions, TerminalNode, TextRange,
 };
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::utils::LanguageFacts;
@@ -77,13 +79,10 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
             if test_outcome == TestOutcome::Passed {
                 if opts.check_bindings {
                     test_outcome = run_bindings_check(contract, &unit, events);
-                } else if opts.check_old_binder {
-                    test_outcome = run_old_binder_check(contract, &unit, events);
                 } else if opts.check_new_binder {
                     test_outcome = run_new_binder_check(contract, unit, events);
                 } else if opts.compare_binders {
                     test_outcome = run_compare_binders(contract, unit, events);
-                    assert!(test_outcome != TestOutcome::Failed, "fail-fast");
                 }
             }
 
@@ -173,6 +172,18 @@ fn run_bindings_check(
     let binding_graph = compilation_unit.binding_graph();
 
     let mut test_outcome = TestOutcome::Passed;
+
+    let mut definitions = 0;
+    for definition in binding_graph.all_definitions() {
+        if definition.get_file().is_built_ins() {
+            continue;
+        }
+        definitions += 1;
+    }
+    events.inc_definitions(definitions);
+
+    let mut references = 0;
+    let mut unresolved = 0;
     for reference in binding_graph.all_references() {
         let ref_file = reference.get_file();
 
@@ -180,9 +191,13 @@ fn run_bindings_check(
             // skip built-ins
             continue;
         }
+
+        references += 1;
+
         // We're not interested in the exact definition a reference resolves
         // to, so we lookup all of them and fail if we find none.
         if reference.definitions().is_empty() {
+            unresolved += 1;
             let cursor = reference.get_cursor().to_owned();
 
             let source = contract.read_file(ref_file.get_path()).unwrap();
@@ -203,6 +218,8 @@ fn run_bindings_check(
             test_outcome = TestOutcome::Unresolved;
         }
     }
+    events.inc_references(references);
+    events.inc_unresolved_references(unresolved);
 
     // Check that all identifier nodes are bound to either a definition or a reference:
     for file in compilation_unit.files() {
@@ -234,36 +251,12 @@ fn run_bindings_check(
     test_outcome
 }
 
-fn run_old_binder_check(
-    _contract: &Contract,
-    compilation_unit: &CompilationUnit,
-    events: &Events,
-) -> TestOutcome {
-    let binding_graph = compilation_unit.binding_graph();
-    let mut definitions = 0;
-    for definition in binding_graph.all_definitions() {
-        if definition.get_file().is_built_ins() {
-            continue;
-        }
-        definitions += 1;
-    }
-    events.inc_definitions(definitions);
-    let mut references = 0;
-    let mut unresolved = 0;
-    for reference in binding_graph.all_references() {
-        if reference.get_file().is_built_ins() {
-            // skip built-ins
-            continue;
-        }
-        if reference.definitions().is_empty() {
-            unresolved += 1;
-        }
-        references += 1;
-    }
-    events.inc_references(references);
-    events.inc_unresolved_references(unresolved);
-
-    TestOutcome::Passed
+fn build_new_binder_output(compilation_unit: CompilationUnit) -> Output {
+    let data = passes::p0_build_ast::run(compilation_unit);
+    let data = passes::p1_flatten_contracts::run(data);
+    let data = passes::p2_collect_definitions::run(data);
+    let data = passes::p3_type_definitions::run(data);
+    passes::p4_resolve_references::run(data)
 }
 
 fn run_new_binder_check(
@@ -271,13 +264,10 @@ fn run_new_binder_check(
     compilation_unit: CompilationUnit,
     events: &Events,
 ) -> TestOutcome {
-    let data = passes::p0_build_ast::run(compilation_unit);
-    let data = passes::p1_flatten_contracts::run(data);
-    let data = passes::p2_collect_definitions::run(data);
-    let data = passes::p3_type_definitions::run(data);
-    let data = passes::p4_resolve_references::run(data);
+    let data = build_new_binder_output(compilation_unit);
 
     let mut test_outcome = TestOutcome::Passed;
+    let mut cursor_cache: HashMap<NodeId, (Cursor, String)> = HashMap::new();
 
     events.inc_definitions(data.binder.definitions().len());
     let mut references = 0;
@@ -290,22 +280,22 @@ fn run_new_binder_check(
         unresolved += 1;
         test_outcome = TestOutcome::Unresolved;
 
-        let Some((cursor, ref_file_path)) =
-            find_cursor_for_identifier(&data.compilation_unit, &reference.identifier)
-        else {
-            events.bindings_error(format!(
-                "[{contract_name} {version}] ERROR: cannot find Cursor pointing to {identifier:?}",
-                identifier = reference.identifier,
-                contract_name = contract.name,
-                version = contract.version,
-            ));
-            panic!("this shouldn't happen");
-        };
+        let (cursor, ref_file_id) = find_cursor_for_identifier(
+            &mut cursor_cache,
+            &data.compilation_unit,
+            &reference.identifier,
+        )
+        .unwrap_or_else(|| {
+            unreachable!(
+                "cannot find Cursor pointing to {identifier:?}",
+                identifier = reference.identifier
+            )
+        });
 
-        let source = contract.read_file(&ref_file_path).unwrap_or_default();
+        let source = contract.read_file(&ref_file_id).unwrap_or_default();
 
         let binding_error = BindingError::UnresolvedReference(cursor);
-        let msg = slang_solidity::diagnostic::render(&binding_error, &ref_file_path, &source, true);
+        let msg = slang_solidity::diagnostic::render(&binding_error, &ref_file_id, &source, true);
         events.bindings_error(format!(
             "[{contract_name} {version}] Binding Error: Reference has no definitions\n{msg}",
             contract_name = contract.name,
@@ -319,22 +309,22 @@ fn run_new_binder_check(
 }
 
 fn find_cursor_for_identifier(
+    cursor_cache: &mut HashMap<NodeId, (Cursor, String)>,
     compilation_unit: &CompilationUnit,
     identifier: &Rc<TerminalNode>,
 ) -> Option<(Cursor, String)> {
-    let node_id = identifier.id();
-    for file in &compilation_unit.files() {
-        let mut cursor = file.create_tree_cursor();
-        while cursor.go_to_next_terminal_with_kinds(&[
-            TerminalKind::Identifier,
-            TerminalKind::YulIdentifier,
-        ]) {
-            if cursor.node().id() == node_id {
-                return Some((cursor, file.id().to_string()));
+    if cursor_cache.is_empty() {
+        for file in &compilation_unit.files() {
+            let mut cursor = file.create_tree_cursor();
+            while cursor.go_to_next_terminal_with_kinds(&[
+                TerminalKind::Identifier,
+                TerminalKind::YulIdentifier,
+            ]) {
+                cursor_cache.insert(cursor.node().id(), (cursor.clone(), file.id().to_string()));
             }
         }
     }
-    None
+    cursor_cache.get(&identifier.id()).cloned()
 }
 
 fn run_compare_binders(
@@ -342,11 +332,7 @@ fn run_compare_binders(
     compilation_unit: CompilationUnit,
     events: &Events,
 ) -> TestOutcome {
-    let data = passes::p0_build_ast::run(compilation_unit);
-    let data = passes::p1_flatten_contracts::run(data);
-    let data = passes::p2_collect_definitions::run(data);
-    let data = passes::p3_type_definitions::run(data);
-    let data = passes::p4_resolve_references::run(data);
+    let data = build_new_binder_output(compilation_unit);
     let binder = data.binder;
 
     let binding_graph = data.compilation_unit.binding_graph();
@@ -395,6 +381,7 @@ fn run_compare_binders(
         }
         references += 1;
 
+        // Only check that the reference exists in the new binder
         if binder
             .find_reference_by_identifier_node_id(reference.id())
             .is_none()
