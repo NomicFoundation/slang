@@ -103,9 +103,7 @@ impl TypeRegistry {
             (Type::Rational, Type::Integer { .. }) => true,
 
             // TODO: add more implicit conversion rules
-            _ => unimplemented!(
-                "implicitly converting from {from_type:?} to {to_type:?} not supported"
-            ),
+            _ => false,
         }
     }
 }
