@@ -1,6 +1,4 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-#[path = "generated/selectors.rs"]
+#[path = "selectors.generated.rs"]
 mod selectors;
 
 use crate::wasm_crate::utils::IntoFFI;
