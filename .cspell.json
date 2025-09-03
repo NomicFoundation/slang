@@ -30,6 +30,7 @@
     "nonterminal",
     "nonterminals",
     "rustup",
+    "sourcify",
     "struct",
     "structs",
     "tera",

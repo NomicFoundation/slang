@@ -1,23 +1,12 @@
 use std::rc::Rc;
 
-use slang_solidity::bindings::BindingGraph;
-use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 
-#[derive(Clone)]
-pub struct BuiltBindingGraph {
-    pub unit: Rc<CompilationUnit>,
-    pub binding_graph: Rc<BindingGraph>,
-}
+use crate::tests::bindings_build::BuiltBindingGraph;
 
 pub fn setup(project: &str) -> BuiltBindingGraph {
     let unit = super::parser::run(super::setup::setup(project));
-    let binding_graph = super::bindings_build::run(Rc::clone(&unit));
-
-    BuiltBindingGraph {
-        unit,
-        binding_graph,
-    }
+    super::bindings_build::run(Rc::clone(&unit))
 }
 
 pub fn run(dependencies: BuiltBindingGraph) -> BuiltBindingGraph {
@@ -48,7 +37,7 @@ pub fn test(dependencies: BuiltBindingGraph) -> usize {
                     .is_none_or(|reference| reference.definitions().is_empty())
             {
                 panic!(
-                    "Unbound identifier: '{value}' in '{file_path}:{line}:{column}'.",
+                    "Unbound identifier or unresolved reference: '{value}' in '{file_path}:{line}:{column}'.",
                     value = cursor.node().unparse(),
                     file_path = file.id(),
                     line = cursor.text_range().start.line + 1,

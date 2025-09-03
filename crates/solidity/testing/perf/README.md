@@ -24,7 +24,7 @@ Since we're measuring clock time, we cold-run a couple of times, and take the av
 
 ## Projects
 
-The configuration file [`projects.json`](./projects.json) contains the Solidity projects and files that are tested in the above benchmarks. It's split in two sections:
+The configuration file [`projects.json`](./projects.json) contains the Solidity projects and files that are tested in the above benchmarks. The source for these projects correspond to contracts in Ethereum Mainnet, and they are downloaded from Sourcify (see [`fetch.rs`](./utils/src/fetch.rs)). It's split in two sections:
 
 - `projects`: This key contains full Solidity projects. The intention is to test the main entry point as defined by the project, and follow from there all of the dependencies.
 - `files`: This key contains specific files to be tested, that are intended to be self-contained. Each file might or might not be the entrypoint of the Solidity project referred by the hash; for that reason, the entrypoint it must be specified with the `entrypoint` key.

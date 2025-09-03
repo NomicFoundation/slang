@@ -11,7 +11,7 @@ use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
-use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
+use solidity_testing_perf_cargo::tests::bindings_build::BuiltBindingGraph;
 
 mod __dependencies_used_in_lib__ {
     use {
@@ -41,8 +41,7 @@ macro_rules! slang_define_full_tests {
           #[library_benchmark(setup = tests::cursor::setup)]
           #[bench::first(stringify!($prj))]
           pub fn [<$prj _cursor >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-              black_box(tests::cursor::run(Rc::clone(&unit)));
-              black_box(unit)
+              black_box(tests::cursor::run(unit))
           }
 
           #[library_benchmark(setup = tests::query::setup)]
@@ -55,15 +54,7 @@ macro_rules! slang_define_full_tests {
           #[library_benchmark(setup = tests::bindings_build::setup)]
           #[bench::first(stringify!($prj))]
           pub fn [<$prj _bindings_build >](unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
-              fn run(unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
-                let binding_graph = tests::bindings_build::run(Rc::clone(&unit));
-                BuiltBindingGraph {
-                    unit,
-                    binding_graph,
-                }
-              }
-
-              black_box(run(unit))
+              black_box(tests::bindings_build::run(unit))
           }
 
           #[library_benchmark(setup = tests::bindings_resolve::setup)]

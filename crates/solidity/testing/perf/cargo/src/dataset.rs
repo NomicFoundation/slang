@@ -20,19 +20,6 @@ fn load_projects_internal() -> Result<ProjectMap> {
     let config = config::read_config()?;
     let working_directory_path = config::working_dir_path();
 
-    for file in config.files {
-        fetch::fetch(&file.hash, &working_directory_path)?;
-
-        let mut project =
-            SolidityProject::build(&working_directory_path.join(format!("{}.json", file.hash)))?;
-        // override the entrypoint with the path given
-        project.compilation.set_entrypoint(&file.file);
-        // Solar doesn't support easy crawling of imports like Slang does, so we remove all the files
-        // that are not the entrypoint. That means that the files must be self-contained.
-        project.sources.retain(|k, _| k == &file.file);
-        map.insert(file.name, project);
-    }
-
     for project in config.projects {
         fetch::fetch(&project.hash, &working_directory_path)?;
 
@@ -40,6 +27,20 @@ fn load_projects_internal() -> Result<ProjectMap> {
             SolidityProject::build(&working_directory_path.join(format!("{}.json", project.hash)))?;
         map.insert(project.name, sol_project);
     }
+
+    for file in config.files {
+        fetch::fetch(&file.hash, &working_directory_path)?;
+
+        let mut single_file_project =
+            SolidityProject::build(&working_directory_path.join(format!("{}.json", file.hash)))?;
+        // override the entrypoint with the path given
+        single_file_project.compilation.set_entrypoint(&file.file);
+        // Solar doesn't support easy crawling of imports like Slang does, so we remove all the files
+        // that are not the entrypoint. That means that the files must be self-contained.
+        single_file_project.sources.retain(|k, _| k == &file.file);
+        map.insert(file.name, single_file_project);
+    }
+
     Ok(map)
 }
 
