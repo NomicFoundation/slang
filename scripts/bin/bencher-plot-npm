@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: bencher-plot-npm project branch testbed benchmarks title
+# usage: bencher-plot-npm project branches testbeds benchmarks title
 # Example of usage to build plots in batch:
 # $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bin/bencher-plot-npm slang-dashboard-npm main ci {} "{}"
 
@@ -8,40 +8,28 @@ set -e
 shopt -s inherit_errexit
 
 project=$1
-branch=$2
-testbed=$3
+branches=$2
+testbeds=$3
 benchmarks=$4
 title=$5
+measure="Duration"
 
 if [[ $# -ne 5 ]]
 then
-  echo "Usage: bencher-plot-npm project branch testbed benchmarks title";
+  echo "Usage: bencher-plot-npm project branches testbed benchmarks title";
   exit 1;
 fi
 
-function get_branch() {
-  details=$(bencher branch list "${project}" --name "${branch}")
-  echo "${details}" | jq -r ".[].uuid"
-}
-
-function get_testbed() {
-  details=$(bencher testbed list "${project}" --name "${testbed}")
-  echo "${details}" | jq -r ".[].uuid"
-}
+source "$(dirname "$0")/bencher-common"
 
 function get_benchmarks() {
   details=$(bencher benchmark list --search "${benchmarks}" --per-page 255 "${project}")
   # filter to let only the relevant benchmarks: npm's from slang, antlr, solc, and from slang only parse_all_files and total
-  echo "${details}" | jq -r '. - map(select(.name | contains("iai::"))) - map(select(.name | contains("resolve_all_bindings"))) - map(select(.name | contains("init_bindings"))) | map("--benchmarks " + .uuid) | join(" ")'
+  echo "${details}" | jq -r '. - map(select(.name | contains("resolve_all_bindings"))) - map(select(.name | contains("init_bindings"))) | map("--benchmarks " + .uuid) | join(" ")'
 }
 
-function get_measure() {
-  details=$(bencher measure list "${project}" --name "Duration")
-  echo "${details}" | jq -r ".[].uuid"
-}
-
-branch_uuid=$(get_branch)
-testbed_uuid=$(get_testbed)
+branches_uuid=$(get_branches)
+testbeds_uuid=$(get_testbeds)
 benchmarks_uuid=$(get_benchmarks)
 measure_uuid=$(get_measure)
 
@@ -49,4 +37,4 @@ set -xe
 
 # benchmarks_uuid is a list of options, so it shouldn't be quoted.
 # shellcheck disable=SC2086,SC2250
-bencher plot create --branches "${branch_uuid}" --measures "${measure_uuid}" --testbeds "${testbed_uuid}" --x-axis date_time --window 2419200 $benchmarks_uuid --title "${title}" "${project}"
+bencher plot create ${branches_uuid} --measures "${measure_uuid}" ${testbeds_uuid} --x-axis date_time --window 2419200 $benchmarks_uuid --title "${title}" "${project}"
