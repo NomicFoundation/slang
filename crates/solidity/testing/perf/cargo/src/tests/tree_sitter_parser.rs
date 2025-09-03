@@ -1,46 +1,35 @@
 use streaming_iterator::StreamingIterator;
-use tree_sitter::{Language, Node, Parser, Query, QueryCursor};
+use tree_sitter::{Language, Parser, Query, QueryCursor};
 
 use crate::dataset::SolidityProject;
 
 pub fn run(project: &SolidityProject) {
-    go(
-        project,
-        (),
-        |_: &Language, _: &String, _: Node<'_>, (): ()| (),
-    );
+    go(project, false);
 }
 
 pub fn test(project: &SolidityProject) -> usize {
-    go(
-        project,
-        0,
-        |language: &Language, source: &String, root_node: Node<'_>, prev: usize| {
-            prev + count_definition(language, source, root_node, "contract")
-                + count_definition(language, source, root_node, "library")
-                + count_definition(language, source, root_node, "interface")
-        },
-    )
+    go(project, true)
 }
 
-pub fn go<T: Copy, F>(project: &SolidityProject, initial: T, fold: F) -> T
-where
-    F: Fn(&Language, &String, Node<'_>, T) -> T,
-{
+fn go(project: &SolidityProject, count: bool) -> usize {
     let mut parser = Parser::new();
     let language = &tree_sitter_solidity::LANGUAGE.into();
     parser
         .set_language(language)
         .expect("Error loading Solidity parser");
 
-    let mut result = initial;
+    let mut result = 0;
     for source in project.sources.values() {
         let tree = parser.parse(source, None).unwrap();
         let root_node = tree.root_node();
         assert!(!root_node.has_error());
         assert_eq!(root_node.kind(), "source_file");
 
-        result = fold(language, source, root_node, result);
+        if count {
+            result += count_definition(language, source, root_node, "contract")
+                + count_definition(language, source, root_node, "library")
+                + count_definition(language, source, root_node, "interface");
+        }
     }
 
     result
