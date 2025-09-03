@@ -202,10 +202,10 @@ impl Pass {
                         else {
                             unreachable!("type of function definition is not a function");
                         };
-                        if seen_function_types
-                            .iter()
-                            .any(|seen_function_type| seen_function_type.overrides(function_type))
-                        {
+                        if seen_function_types.iter().any(|seen_function_type| {
+                            self.types
+                                .function_type_overrides(seen_function_type, function_type)
+                        }) {
                             // the function type is overriden by some other previously seen definition
                             continue;
                         }

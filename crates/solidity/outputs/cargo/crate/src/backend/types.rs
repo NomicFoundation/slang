@@ -431,6 +431,84 @@ impl TypeRegistry {
             LiteralKind::Address => self.address(),
         }
     }
+
+    // Returns true if a function type overrides another
+    pub(crate) fn function_type_overrides(
+        &self,
+        ftype: &FunctionType,
+        other: &FunctionType,
+    ) -> bool {
+        if ftype.parameter_types.len() != other.parameter_types.len()
+            || ftype.return_type != other.return_type
+        {
+            return false;
+        }
+        if ftype.parameter_types == other.parameter_types {
+            return true;
+        }
+        // check if all parameter types are equal except maybe in the data
+        // location: memory can override calldata as the location of a parameter
+        ftype
+            .parameter_types
+            .iter()
+            .zip(other.parameter_types.iter())
+            .all(|(ptype_left, ptype_right)| {
+                if ptype_left == ptype_right {
+                    return true;
+                }
+                let type_left = self.get_type_by_id(*ptype_left);
+                let type_right = self.get_type_by_id(*ptype_right);
+                match (type_left, type_right) {
+                    (
+                        Type::Array {
+                            element_type: element_type_left,
+                            location: location_left,
+                        },
+                        Type::Array {
+                            element_type: element_type_right,
+                            location: location_right,
+                        },
+                    ) => {
+                        element_type_left == element_type_right
+                            && location_left.overrides(*location_right)
+                    }
+                    (
+                        Type::Bytes {
+                            location: location_left,
+                        },
+                        Type::Bytes {
+                            location: location_right,
+                        },
+                    )
+                    | (
+                        Type::String {
+                            location: location_left,
+                        },
+                        Type::String {
+                            location: location_right,
+                        },
+                    ) => location_left.overrides(*location_right),
+                    (
+                        Type::Struct {
+                            definition_id: definition_id_left,
+                            location: location_left,
+                        },
+                        Type::Struct {
+                            definition_id: definition_id_right,
+                            location: location_right,
+                        },
+                    ) => {
+                        definition_id_left == definition_id_right
+                            && location_left.overrides(*location_right)
+                    }
+                    _ => {
+                        // anything else is not compatible because it should have
+                        // the same type_id, or is not a valid type for a parameter
+                        false
+                    }
+                }
+            })
+    }
 }
 
 impl TypeRegistry {
@@ -571,12 +649,6 @@ pub struct FunctionType {
     pub kind: FunctionTypeKind,
 }
 
-impl FunctionType {
-    pub(crate) fn overrides(&self, other: &Self) -> bool {
-        self.parameter_types == other.parameter_types && self.return_type == other.return_type
-    }
-}
-
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum DataLocation {
     Memory,
@@ -594,6 +666,10 @@ impl DataLocation {
             (DataLocation::Storage | DataLocation::Calldata, DataLocation::Memory) => true,
             _ => false,
         }
+    }
+
+    pub fn overrides(&self, target: Self) -> bool {
+        *self == target || (*self == Self::Memory && target == Self::Calldata)
     }
 }
 

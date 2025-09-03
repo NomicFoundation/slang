@@ -20,3 +20,8 @@ fn external_calls_implicit_conversions() -> Result<()> {
 fn implicit_location_conversion() -> Result<()> {
     run(T, "implicit_location_conversion")
 }
+
+#[test]
+fn overrides_interface_method() -> Result<()> {
+    run(T, "overrides_interface_method")
+}
