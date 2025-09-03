@@ -3,79 +3,79 @@
 References and definitions: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract TestBase {
-    │          ────┬───  
-    │              ╰───── name: 1
-  2 │   function add(int, int) public returns (int);
-    │            ─┬─  
-    │             ╰─── name: 2
+  1 │ interface TestBase {
+    │           ────┬───  
+    │               ╰───── name: 1
+  2 │     function add(int, int) external returns (int);
+    │              ─┬─  
+    │               ╰─── name: 2
     │ 
-  4 │   function add(int) returns (int);
-    │            ─┬─  
-    │             ╰─── name: 3
+  4 │     function add(int) external returns (int);
+    │              ─┬─  
+    │               ╰─── name: 3
     │ 
   7 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 4
-  8 │   int y;
-    │       ┬  
-    │       ╰── name: 5
+  8 │     int y;
+    │         ┬  
+    │         ╰── name: 5
     │ 
- 10 │   function someFunc(TestBase[] arr, int x) returns (int) {
-    │            ────┬─── ────┬───   ─┬─      ┬  
-    │                ╰─────────────────────────── name: 6
-    │                         │       │       │  
-    │                         ╰────────────────── ref: 1
-    │                                 │       │  
-    │                                 ╰────────── name: 7
-    │                                         │  
-    │                                         ╰── name: 8
- 11 │     arr[0].add(x);
-    │     ─┬─    ─┬─ ┬  
-    │      ╰──────────── ref: 7
-    │             │  │  
-    │             ╰───── refs: 2, 3
-    │                │  
-    │                ╰── ref: 8
- 12 │     arr[0].add(x, y);
-    │     ─┬─    ─┬─ ┬  ┬  
-    │      ╰─────────────── ref: 7
-    │             │  │  │  
-    │             ╰──────── refs: 2, 3
-    │                │  │  
-    │                ╰───── ref: 8
-    │                   │  
-    │                   ╰── ref: 5
+ 10 │     function someFunc(TestBase[] memory arr, int x) internal {
+    │              ────┬─── ────┬───          ─┬─      ┬  
+    │                  ╰────────────────────────────────── name: 6
+    │                           │              │       │  
+    │                           ╰───────────────────────── ref: 1
+    │                                          │       │  
+    │                                          ╰────────── name: 7
+    │                                                  │  
+    │                                                  ╰── name: 8
+ 11 │         arr[0].add(x);
+    │         ─┬─    ─┬─ ┬  
+    │          ╰──────────── ref: 7
+    │                 │  │  
+    │                 ╰───── refs: 2, 3
+    │                    │  
+    │                    ╰── ref: 8
+ 12 │         arr[0].add(x, y);
+    │         ─┬─    ─┬─ ┬  ┬  
+    │          ╰─────────────── ref: 7
+    │                 │  │  │  
+    │                 ╰──────── refs: 2, 3
+    │                    │  │  
+    │                    ╰───── ref: 8
+    │                       │  
+    │                       ╰── ref: 5
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]
     │
-  1 │   ╭─────▶ contract TestBase {
-  2 │   │   │     function add(int, int) public returns (int);
-    │   │   │   ───────────────────────┬───────────────────────  
-    │   │   │                          ╰───────────────────────── definiens: 2
+  1 │   ╭─────▶ interface TestBase {
+  2 │   │   │       function add(int, int) external returns (int);
+    │   │   │   ─────────────────────────┬─────────────────────────  
+    │   │   │                            ╰─────────────────────────── definiens: 2
   3 │   │   ╭─▶ 
-  4 │   │   ├─▶   function add(int) returns (int);
-    │   │   │                                        
-    │   │   ╰──────────────────────────────────────── definiens: 3
+  4 │   │   ├─▶     function add(int) external returns (int);
+    │   │   │                                                   
+    │   │   ╰─────────────────────────────────────────────────── definiens: 3
   5 │ │ ├─────▶ }
     │ │ │           
     │ │ ╰─────────── definiens: 1
   6 │ ╭───────▶ 
     ┆ ┆         
-  8 │ │   │       int y;
-    │ │   │     ────┬────  
-    │ │   │         ╰────── definiens: 5
+  8 │ │   │         int y;
+    │ │   │     ─────┬─────  
+    │ │   │          ╰─────── definiens: 5
   9 │ │   ╭───▶ 
- 10 │ │   │       function someFunc(TestBase[] arr, int x) returns (int) {
-    │ │   │                         ───────┬────── ───┬──  
-    │ │   │                                ╰─────────────── definiens: 7
-    │ │   │                                           │    
-    │ │   │                                           ╰──── definiens: 8
+ 10 │ │   │         function someFunc(TestBase[] memory arr, int x) internal {
+    │ │   │                           ──────────┬────────── ───┬──  
+    │ │   │                                     ╰─────────────────── definiens: 7
+    │ │   │                                                    │    
+    │ │   │                                                    ╰──── definiens: 8
     ┆ ┆   ┆     
- 13 │ │   ├───▶   }
-    │ │   │           
-    │ │   ╰─────────── definiens: 6
+ 13 │ │   ├───▶     }
+    │ │   │             
+    │ │   ╰───────────── definiens: 6
  14 │ ├───────▶ }
     │ │             
     │ ╰───────────── definiens: 4

@@ -338,6 +338,7 @@ impl TypeRegistry {
                 ..
             }) => Type::Function(FunctionType {
                 definition_id: None,
+                implicit_receiver_type: None,
                 parameter_types: parameter_types.clone(),
                 return_type: *return_type,
                 external: *external,
@@ -561,6 +562,7 @@ pub enum LiteralKind {
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct FunctionType {
     pub definition_id: Option<NodeId>, // this may point to a FunctionDefinition
+    pub implicit_receiver_type: Option<TypeId>,
     pub parameter_types: Vec<TypeId>,
     pub return_type: TypeId,
     // TODO: a bool is not sufficient in some corner cases and we need to

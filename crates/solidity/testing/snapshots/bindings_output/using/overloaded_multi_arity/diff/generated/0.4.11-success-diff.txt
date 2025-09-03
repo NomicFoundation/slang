@@ -1,6 +1,5 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-reference `add` at input.sol:11:12 failed to resolve in new binder
-reference `add` at input.sol:12:12 failed to resolve in new binder
+Ref: ["nop" @ input.sol:10:11] -> #5 resolved uniquely but resolved ambiguously in stack graph output
 
 Definitions and/or references from binding graph and new binder DIFFER

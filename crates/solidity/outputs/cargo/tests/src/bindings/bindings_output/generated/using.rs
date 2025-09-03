@@ -147,6 +147,11 @@ fn overloaded_functions_attached() -> Result<()> {
 }
 
 #[test]
+fn overloaded_multi_arity() -> Result<()> {
+    run(T, "overloaded_multi_arity")
+}
+
+#[test]
 fn qualified_type() -> Result<()> {
     run(T, "qualified_type")
 }

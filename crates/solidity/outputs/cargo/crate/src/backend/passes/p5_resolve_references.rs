@@ -844,17 +844,26 @@ impl Pass {
         });
         function_types.find(|function_type| {
             let parameter_types = &function_type.parameter_types;
-            if parameter_types.len() == argument_typings.len() {
-                // argument count matches, check that all types are implicitly convertible
-                self.matches_positional_arguments(
-                    parameter_types,
-                    argument_typings,
-                    function_type.external,
-                )
-            } else if let Some(receiver_type_id) = receiver_type_id {
-                // we have a receiver type, so check the first parameter type
+            if let Some(receiver_type_id) = receiver_type_id {
+                // we have a receiver type, so either check for an implicit
+                // receiver type, or the first parameter type
                 // against it and then the rest, if the counts match
-                if parameter_types.len() == argument_typings.len() + 1
+                if parameter_types.len() == argument_typings.len()
+                    && function_type.implicit_receiver_type.is_some_and(
+                        |implicit_receiver_type_id| {
+                            self.types.implicitly_convertible_to(
+                                receiver_type_id,
+                                implicit_receiver_type_id,
+                            )
+                        },
+                    )
+                {
+                    self.matches_positional_arguments(
+                        parameter_types,
+                        argument_typings,
+                        function_type.external,
+                    )
+                } else if parameter_types.len() == argument_typings.len() + 1
                     && parameter_types.first().is_some_and(|type_id| {
                         self.types
                             .implicitly_convertible_to(receiver_type_id, *type_id)
@@ -868,6 +877,13 @@ impl Pass {
                 } else {
                     false
                 }
+            } else if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                self.matches_positional_arguments(
+                    parameter_types,
+                    argument_typings,
+                    function_type.external,
+                )
             } else {
                 false
             }

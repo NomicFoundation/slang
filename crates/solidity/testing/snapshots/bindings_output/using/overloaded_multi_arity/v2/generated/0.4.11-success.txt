@@ -1,0 +1,81 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (13):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (uint256, uint256) returns void)
+- Def: #3 ["a" @ input.sol:2:26] (parameter, type: uint256)
+- Def: #4 ["b" @ input.sol:2:37] (parameter, type: uint256)
+- Def: #5 ["nop" @ input.sol:3:14] (function, type: function (uint256, uint256, uint256) returns void)
+- Def: #6 ["a" @ input.sol:3:26] (parameter, type: uint256)
+- Def: #7 ["b" @ input.sol:3:37] (parameter, type: uint256)
+- Def: #8 ["c" @ input.sol:3:48] (parameter, type: uint256)
+- Def: #9 ["Test" @ input.sol:6:10] (contract)
+- Def: #10 ["test" @ input.sol:9:14] (function, type: function (uint256, uint256, uint256) returns void)
+- Def: #11 ["x" @ input.sol:9:27] (parameter, type: uint256)
+- Def: #12 ["y" @ input.sol:9:38] (parameter, type: uint256)
+- Def: #13 ["z" @ input.sol:9:49] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Lib" @ input.sol:7:11] -> #1
+- Ref: ["x" @ input.sol:10:9] -> #11
+- Ref: ["nop" @ input.sol:10:11] -> #5
+- Ref: ["y" @ input.sol:10:15] -> #12
+- Ref: ["z" @ input.sol:10:18] -> #13
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function nop(uint256 a, uint256 b) internal {}
+    │              ─┬─         ┬          ┬  
+    │               ╰──────────────────────── name: 2
+    │                          │          │  
+    │                          ╰───────────── name: 3
+    │                                     │  
+    │                                     ╰── name: 4
+  3 │     function nop(uint256 a, uint256 b, uint256 c) internal {}
+    │              ─┬─         ┬          ┬          ┬  
+    │               ╰─────────────────────────────────── name: 5
+    │                          │          │          │  
+    │                          ╰──────────────────────── name: 6
+    │                                     │          │  
+    │                                     ╰───────────── name: 7
+    │                                                │  
+    │                                                ╰── name: 8
+    │ 
+  6 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 9
+  7 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  9 │     function test(uint256 x, uint256 y, uint256 z) internal {
+    │              ──┬─         ┬          ┬          ┬  
+    │                ╰─────────────────────────────────── name: 10
+    │                           │          │          │  
+    │                           ╰──────────────────────── name: 11
+    │                                      │          │  
+    │                                      ╰───────────── name: 12
+    │                                                 │  
+    │                                                 ╰── name: 13
+ 10 │         x.nop(y, z);
+    │         ┬ ─┬─ ┬  ┬  
+    │         ╰─────────── ref: 11
+    │            │  │  │  
+    │            ╰──────── ref: 5
+    │               │  │  
+    │               ╰───── ref: 12
+    │                  │  
+    │                  ╰── ref: 13
+────╯

@@ -1,14 +1,14 @@
-contract TestBase {
-  function add(int, int) public returns (int);
+interface TestBase {
+    function add(int, int) external returns (int);
 
-  function add(int) returns (int);
+    function add(int) external returns (int);
 }
 
 contract Test {
-  int y;
+    int y;
 
-  function someFunc(TestBase[] arr, int x) returns (int) {
-    arr[0].add(x);
-    arr[0].add(x, y);
-  }
+    function someFunc(TestBase[] memory arr, int x) internal {
+        arr[0].add(x);
+        arr[0].add(x, y);
+    }
 }

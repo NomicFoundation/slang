@@ -69,6 +69,7 @@ struct Pass {
     scope_stack: Vec<ScopeId>,
     binder: Binder,
     types: TypeRegistry,
+    current_receiver_type: Option<TypeId>,
 }
 
 impl Pass {
@@ -78,13 +79,16 @@ impl Pass {
             scope_stack: Vec::new(),
             binder,
             types: TypeRegistry::default(),
+            current_receiver_type: None,
         }
     }
 
     fn visit_file(&mut self, source_unit: &input_ir::SourceUnit) {
+        assert!(self.current_receiver_type.is_none());
         assert!(self.scope_stack.is_empty());
         input_ir::visitor::accept_source_unit(source_unit, self);
         assert!(self.scope_stack.is_empty());
+        assert!(self.current_receiver_type.is_none());
     }
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
@@ -233,6 +237,7 @@ impl Pass {
                 }
                 Some(self.types.register_type(Type::Function(FunctionType {
                     definition_id: None,
+                    implicit_receiver_type: None,
                     parameter_types,
                     return_type,
                     external,
@@ -377,6 +382,7 @@ impl Pass {
     fn type_of_function_definition(
         &mut self,
         function_definition: &input_ir::FunctionDefinition,
+        implicit_receiver_type: Option<TypeId>,
     ) -> Option<TypeId> {
         // NOTE: Keep in sync with function types in `resolve_type_name` above
         let parameter_types =
@@ -416,6 +422,7 @@ impl Pass {
         }
         Some(self.types.register_type(Type::Function(FunctionType {
             definition_id: Some(function_definition.node_id),
+            implicit_receiver_type,
             parameter_types,
             return_type,
             external,
@@ -454,6 +461,9 @@ impl Pass {
             else {
                 continue;
             };
+            let receiver_type_id = self.types.register_type(Type::Contract {
+                definition_id: contract_definition.node_id,
+            });
             for contract_member in &contract_definition.members {
                 let input_ir::ContractMember::StateVariableDefinition(state_var_definition) =
                     contract_member
@@ -471,7 +481,9 @@ impl Pass {
                     continue;
                 };
 
-                let Some(getter_type_id) = self.compute_getter_type(node_id, type_id) else {
+                let Some(getter_type_id) =
+                    self.compute_getter_type(receiver_type_id, node_id, type_id)
+                else {
                     continue;
                 };
                 let Definition::StateVariable(definition) = self.binder.get_definition_mut(node_id)
@@ -483,7 +495,12 @@ impl Pass {
         }
     }
 
-    fn compute_getter_type(&mut self, definition_id: NodeId, type_id: TypeId) -> Option<TypeId> {
+    fn compute_getter_type(
+        &mut self,
+        receiver_type_id: TypeId,
+        definition_id: NodeId,
+        type_id: TypeId,
+    ) -> Option<TypeId> {
         let mut return_type = type_id;
         let mut parameter_types = Vec::new();
 
@@ -562,6 +579,7 @@ impl Pass {
 
         let getter_type = Type::Function(FunctionType {
             definition_id: Some(definition_id),
+            implicit_receiver_type: Some(receiver_type_id),
             parameter_types,
             return_type,
             external: true,
@@ -625,11 +643,13 @@ impl Visitor for Pass {
     fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
         self.enter_scope_for_node_id(node.node_id);
 
+        let type_id = self.types.register_type(Type::Contract {
+            definition_id: node.node_id,
+        });
+        self.current_receiver_type = Some(type_id);
+
         if let Some(bases) = self.binder.get_linearised_bases(node.node_id) {
             if !bases.is_empty() {
-                let type_id = self.types.register_type(Type::Contract {
-                    definition_id: node.node_id,
-                });
                 self.register_super_types(type_id, &bases.clone());
             }
         }
@@ -640,17 +660,20 @@ impl Visitor for Pass {
     fn leave_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
+        self.current_receiver_type = None;
         self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
         self.enter_scope_for_node_id(node.node_id);
 
+        let type_id = self.types.register_type(Type::Interface {
+            definition_id: node.node_id,
+        });
+        self.current_receiver_type = Some(type_id);
+
         if let Some(bases) = self.binder.get_linearised_bases(node.node_id) {
             if !bases.is_empty() {
-                let type_id = self.types.register_type(Type::Interface {
-                    definition_id: node.node_id,
-                });
                 self.register_super_types(type_id, &bases.clone());
             }
         }
@@ -661,6 +684,7 @@ impl Visitor for Pass {
     fn leave_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
+        self.current_receiver_type = None;
         self.binder.mark_user_meta_type_node(node.node_id);
     }
 
@@ -727,7 +751,7 @@ impl Visitor for Pass {
         }
 
         // now we can compute the function type
-        let type_id = self.type_of_function_definition(node);
+        let type_id = self.type_of_function_definition(node, self.current_receiver_type);
         self.binder.set_node_type(node.node_id, type_id);
     }
 
