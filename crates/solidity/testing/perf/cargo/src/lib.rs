@@ -42,7 +42,7 @@ mod unit_tests {
         define_payload_test_and_assert_count_eq!(cursor, super::CONTRACT_COUNT);
         define_payload_test_and_assert_count_eq!(query, super::CONTRACT_COUNT);
         define_payload_test!(bindings_build);
-        define_payload_test_and_assert_count_eq!(bindings_resolve, 2829);
+        define_payload_test_and_assert_count_eq!(bindings_resolve, super::IDENTIFIER_COUNT);
     }
 
     mod solar {
@@ -50,7 +50,7 @@ mod unit_tests {
         fn parser() {
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
             let contract_count = crate::tests::solar_parser::test(payload);
-            assert_eq!(contract_count, super::IDENTIFIER_COUNT);
+            assert_eq!(contract_count, super::CONTRACT_COUNT);
         }
     }
 
@@ -59,7 +59,7 @@ mod unit_tests {
         fn parser() {
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
             let contract_count = crate::tests::tree_sitter_parser::test(payload);
-            assert_eq!(contract_count, 25);
+            assert_eq!(contract_count, super::CONTRACT_COUNT);
         }
     }
 }
