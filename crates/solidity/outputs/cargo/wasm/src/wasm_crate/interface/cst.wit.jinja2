@@ -2,25 +2,16 @@ interface cst {
     /// Represents different kinds of nonterminal nodes in the syntax tree.
     /// These are nodes that can have child nodes and represent higher-level language constructs.
     enum nonterminal-kind {
-        {%- if rendering_in_stubs %}
-            /// Generated stub.
-            stub1,
-            /// Generated stub.
-            stub2,
-            /// Generated stub.
-            stub3,
-        {%- else %}
-            {%- for variant in model.kinds.nonterminal_kinds %}
-                /// Represents a node with kind `{{ variant.id }}`, having the following structure:
-                ///
-                /// ```ebnf
-                {%- for line in variant.documentation | split(pat="\n") %}
-                /// {{ line }}
-                {%- endfor %}
-                /// ```
-                {{ variant.id | wit_case }},
+        {%- for variant in model.kinds.nonterminal_kinds %}
+            /// Represents a node with kind `{{ variant.id }}`, having the following structure:
+            ///
+            /// ```ebnf
+            {%- for line in variant.documentation | split(pat="\n") %}
+            /// {{ line }}
             {%- endfor %}
-        {%- endif %}
+            /// ```
+            {{ variant.id | wit_case }},
+        {%- endfor %}
     }
 
     /// Represents different kinds of terminal nodes in the syntax tree.
@@ -33,25 +24,16 @@ interface cst {
         /// Adding the missing input in this position may allow the parser to produce a valid tree there.
         missing,
 
-        {%- if rendering_in_stubs %}
-            /// Generated stub.
-            stub1,
-            /// Generated stub.
-            stub2,
-            /// Generated stub.
-            stub3,
-        {%- else %}
-            {%- for variant in model.kinds.terminal_kinds %}
-                /// Represents a node with kind `{{ variant.id }}`, having the following structure:
-                ///
-                /// ```ebnf
-                {%- for line in variant.documentation | split(pat="\n") %}
-                /// {{ line }}
-                {%- endfor %}
-                /// ```
-                {{ variant.id | wit_case }},
+        {%- for variant in model.kinds.terminal_kinds %}
+            /// Represents a node with kind `{{ variant.id }}`, having the following structure:
+            ///
+            /// ```ebnf
+            {%- for line in variant.documentation | split(pat="\n") %}
+            /// {{ line }}
             {%- endfor %}
-        {%- endif %}
+            /// ```
+            {{ variant.id | wit_case }},
+        {%- endfor %}
     }
 
     //// Useful extension methods for working with terminals and terminal kinds.
@@ -71,19 +53,10 @@ interface cst {
             {{ label | wit_case }},
         {%- endfor %}
 
-        {%- if rendering_in_stubs %}
-            /// Generated stub.
-            stub1,
-            /// Generated stub.
-            stub2,
-            /// Generated stub.
-            stub3,
-        {%- else %}
-            {%- for label in model.kinds.labels %}
-                /// Represents a child node with the label `{{ label | snake_case }}`.
-                {{ label | wit_case }},
-            {%- endfor %}
-        {%- endif %}
+        {%- for label in model.kinds.labels %}
+            /// Represents a child node with the label `{{ label | snake_case }}`.
+            {{ label | wit_case }},
+        {%- endfor %}
     }
 
     /// The super type of all nodes in a tree.

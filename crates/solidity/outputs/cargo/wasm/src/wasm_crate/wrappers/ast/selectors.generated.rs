@@ -203,6 +203,7 @@ pub fn select_sequence(node: &Rc<NonterminalNode>) -> Result<Vec<Option<Node>>> 
     helper.finalize()?;
     Ok(result)
 }
+
 impl Helper {
     fn source_unit_sequence(&mut self) -> Result<Vec<Option<Node>>> {
         Ok(vec![Some(self.select(EdgeLabel::Members)?)])
@@ -1515,6 +1516,7 @@ impl Helper {
         ])
     }
 }
+
 //
 // Choices:
 //
