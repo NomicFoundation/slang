@@ -13,7 +13,7 @@ pub use definitions::{
 };
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
-pub(crate) use scopes::{FileScope, Scope, UsingDirective};
+pub(crate) use scopes::{EitherIter, FileScope, Scope, UsingDirective};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ScopeId(usize);
@@ -200,29 +200,33 @@ impl Binder {
         self.global_using_directives.push(directive);
     }
 
-    pub(crate) fn get_global_using_directives(&self) -> Vec<&UsingDirective> {
-        self.global_using_directives.iter().collect()
+    pub(crate) fn get_global_using_directives(&self) -> impl Iterator<Item = &UsingDirective> {
+        self.global_using_directives.iter()
     }
 
-    pub(crate) fn get_using_directives_in_scope(&self, scope_id: ScopeId) -> Vec<&UsingDirective> {
+    pub(crate) fn get_using_directives_in_scope(
+        &self,
+        scope_id: ScopeId,
+    ) -> impl Iterator<Item = &UsingDirective> {
         self.get_scope_by_id(scope_id).get_using_directives()
     }
 
     pub(crate) fn get_using_directives_in_scope_including_inherited(
         &self,
         scope_id: ScopeId,
-    ) -> Vec<&UsingDirective> {
+    ) -> impl Iterator<Item = &UsingDirective> {
         let scope = self.get_scope_by_id(scope_id);
         if let Scope::Contract(contract_scope) = scope {
             if let Some(linearisations) = self.linearisations.get(&contract_scope.node_id) {
-                return linearisations
-                    .iter()
-                    .filter_map(|node_id| self.scope_id_for_node_id(*node_id))
-                    .flat_map(|scope_id| self.get_scope_by_id(scope_id).get_using_directives())
-                    .collect();
+                return EitherIter::Left(
+                    linearisations
+                        .iter()
+                        .filter_map(|node_id| self.scope_id_for_node_id(*node_id))
+                        .flat_map(|scope_id| self.get_scope_by_id(scope_id).get_using_directives()),
+                );
             }
         }
-        scope.get_using_directives()
+        EitherIter::Right(scope.get_using_directives())
     }
 
     pub fn node_typing(&self, node_id: NodeId) -> Typing {

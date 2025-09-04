@@ -5,7 +5,7 @@ use semver::Version;
 
 use super::p4_type_definitions::Output as Input;
 use crate::backend::binder::{
-    Binder, Definition, Reference, Resolution, ResolveOptions, Scope, ScopeId, Typing,
+    Binder, Definition, EitherIter, Reference, Resolution, ResolveOptions, Scope, ScopeId, Typing,
     UsingDirective,
 };
 use crate::backend::built_ins::BuiltInsResolver;
@@ -118,7 +118,10 @@ impl Pass {
         }
     }
 
-    fn active_using_directives_for_type(&self, type_id: TypeId) -> Vec<&UsingDirective> {
+    fn active_using_directives_for_type(
+        &self,
+        type_id: TypeId,
+    ) -> impl Iterator<Item = &UsingDirective> {
         // Compute the canonical type: this handles cases where the given type
         // is context dependent:
         // - If the type is a reference type, we need to compute the id of the
@@ -133,30 +136,26 @@ impl Pass {
             .find_canonical_type_id(type_id)
             .unwrap_or(type_id);
 
-        let mut directives = Vec::new();
-        for scope_id in self.scope_stack.iter().rev() {
-            let scope_directives = if self.language_version < VERSION_0_7_0 {
-                // In Solidity < 0.7.0 using directives are inherited in contracts,
-                // so we need to pull any `using` directives in a contract hierarchy
-                // if there are linearisations
-                self.binder
-                    .get_using_directives_in_scope_including_inherited(*scope_id)
-            } else {
-                self.binder.get_using_directives_in_scope(*scope_id)
-            };
-            directives.extend(
-                scope_directives
-                    .iter()
-                    .filter(|directive| directive.applies_to(type_id)),
-            );
-        }
-        let global_directives = self.binder.get_global_using_directives();
-        directives.extend(
-            global_directives
-                .iter()
-                .filter(|directive| directive.applies_to(type_id)),
-        );
-        directives
+        // consider using directives in the scope stack
+        self.scope_stack
+            .iter()
+            .rev()
+            .flat_map(|scope_id| {
+                if self.language_version < VERSION_0_7_0 {
+                    // In Solidity < 0.7.0 using directives are inherited in contracts,
+                    // so we need to pull any `using` directives in a contract hierarchy
+                    // if there are linearisations
+                    EitherIter::Left(
+                        self.binder
+                            .get_using_directives_in_scope_including_inherited(*scope_id),
+                    )
+                } else {
+                    EitherIter::Right(self.binder.get_using_directives_in_scope(*scope_id))
+                }
+            })
+            // ... and add the global directives
+            .chain(self.binder.get_global_using_directives())
+            .filter(move |directive| directive.applies_to(type_id))
     }
 
     fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
@@ -299,7 +298,7 @@ impl Pass {
             let active_directives = self.active_using_directives_for_type(type_id);
             let mut definition_ids = Vec::new();
             let mut seen_ids = HashSet::new();
-            for directive in &active_directives {
+            for directive in active_directives {
                 let scope_id = directive.get_scope_id();
                 let ids = self
                     .binder

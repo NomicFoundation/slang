@@ -130,11 +130,13 @@ impl Scope {
         }
     }
 
-    pub(crate) fn get_using_directives(&self) -> Vec<&UsingDirective> {
+    pub(crate) fn get_using_directives(&self) -> impl Iterator<Item = &UsingDirective> {
         match self {
-            Self::Contract(contract_scope) => contract_scope.using_directives.iter().collect(),
-            Self::File(file_scope) => file_scope.using_directives.iter().collect(),
-            _ => Vec::new(),
+            Self::Contract(contract_scope) => {
+                EitherIter::Left(contract_scope.using_directives.iter())
+            }
+            Self::File(file_scope) => EitherIter::Right(file_scope.using_directives.iter()),
+            _ => EitherIter::Empty,
         }
     }
 
@@ -428,6 +430,28 @@ impl UsingDirective {
             UsingDirective::AllTypes { scope_id }
             | UsingDirective::SingleType { scope_id, .. }
             | UsingDirective::SingleTypeOperator { scope_id, .. } => *scope_id,
+        }
+    }
+}
+
+pub(crate) enum EitherIter<L: Iterator, R: Iterator> {
+    Left(L),
+    Right(R),
+    Empty,
+}
+
+impl<L, R> Iterator for EitherIter<L, R>
+where
+    L: Iterator,
+    R: Iterator<Item = L::Item>,
+{
+    type Item = L::Item;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            EitherIter::Left(iter) => iter.next(),
+            EitherIter::Right(iter) => iter.next(),
+            EitherIter::Empty => None,
         }
     }
 }
