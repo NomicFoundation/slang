@@ -58,8 +58,6 @@ pub(crate) fn binder_report(
             .all(|reference| reference.resolution != Resolution::Unresolved);
 
     if compare_with_stack_graphs {
-        writeln!(report, "{SEPARATOR}")?;
-
         report_binding_graph_differences(
             &mut report,
             binder_data,
@@ -217,25 +215,27 @@ fn report_binding_graph_differences(
     all_references: &[CollectedReference],
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<()> {
-    let has_diff =
-        diff_binding_graph_definitions(report, binder_data, all_definitions, definitions_by_id)?
-            || diff_binding_graph_references(
-                report,
-                binder_data,
-                all_references,
-                definitions_by_id,
-            )?;
+    let mut diff_report = String::new();
+    let has_diff = diff_binding_graph_definitions(
+        &mut diff_report,
+        binder_data,
+        all_definitions,
+        definitions_by_id,
+    )? || diff_binding_graph_references(
+        &mut diff_report,
+        binder_data,
+        all_references,
+        definitions_by_id,
+    )?;
 
-    writeln!(report)?;
     if has_diff {
+        writeln!(report, "{SEPARATOR}")?;
+        writeln!(report, "{diff_report}")?;
+        writeln!(report)?;
+
         writeln!(
             report,
             "Definitions and/or references from binding graph and new binder DIFFER"
-        )?;
-    } else {
-        writeln!(
-            report,
-            "No differences found in definitions or references from the binding graph"
         )?;
     }
     Ok(())
