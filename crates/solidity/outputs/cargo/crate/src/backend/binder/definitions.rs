@@ -8,6 +8,33 @@ use crate::cst::{NodeId, TerminalNode};
 // Definitions
 
 #[derive(Debug)]
+pub enum Definition {
+    Constant(ConstantDefinition),
+    Contract(ContractDefinition),
+    Enum(EnumDefinition),
+    EnumMember(EnumMemberDefinition),
+    Error(ErrorDefinition),
+    Event(EventDefinition),
+    Function(FunctionDefinition),
+    Import(ImportDefinition),
+    ImportedSymbol(ImportedSymbolDefinition),
+    Interface(InterfaceDefinition),
+    Library(LibraryDefinition),
+    Modifier(ModifierDefinition),
+    Parameter(ParameterDefinition),
+    StateVariable(StateVariableDefinition),
+    Struct(StructDefinition),
+    StructMember(StructMemberDefinition),
+    TypeParameter(TypeParameterDefinition),
+    UserDefinedValueType(UserDefinedValueTypeDefinition),
+    Variable(VariableDefinition),
+    YulFunction(YulFunctionDefinition),
+    YulLabel(YulLabelDefinition),
+    YulParameter(YulParameterDefinition),
+    YulVariable(YulVariableDefinition),
+}
+
+#[derive(Debug)]
 pub struct ConstantDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
@@ -154,33 +181,6 @@ pub struct YulParameterDefinition {
 pub struct YulVariableDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
-}
-
-#[derive(Debug)]
-pub enum Definition {
-    Constant(ConstantDefinition),
-    Contract(ContractDefinition),
-    Enum(EnumDefinition),
-    EnumMember(EnumMemberDefinition),
-    Error(ErrorDefinition),
-    Event(EventDefinition),
-    Function(FunctionDefinition),
-    Import(ImportDefinition),
-    ImportedSymbol(ImportedSymbolDefinition),
-    Interface(InterfaceDefinition),
-    Library(LibraryDefinition),
-    Modifier(ModifierDefinition),
-    Parameter(ParameterDefinition),
-    StateVariable(StateVariableDefinition),
-    Struct(StructDefinition),
-    StructMember(StructMemberDefinition),
-    TypeParameter(TypeParameterDefinition),
-    UserDefinedValueType(UserDefinedValueTypeDefinition),
-    Variable(VariableDefinition),
-    YulFunction(YulFunctionDefinition),
-    YulLabel(YulLabelDefinition),
-    YulParameter(YulParameterDefinition),
-    YulVariable(YulVariableDefinition),
 }
 
 impl Definition {

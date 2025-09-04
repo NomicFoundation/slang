@@ -6,12 +6,31 @@ use crate::cst::{NodeId, TerminalNode};
 //////////////////////////////////////////////////////////////////////////////
 // References
 
+#[derive(Debug)]
+pub struct Reference {
+    pub identifier: Rc<TerminalNode>,
+    pub resolution: Resolution,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Resolution {
     Unresolved,
     Definition(NodeId),
     Ambiguous(Vec<NodeId>),
     BuiltIn(BuiltIn),
+}
+
+impl Reference {
+    pub(crate) fn node_id(&self) -> NodeId {
+        self.identifier.id()
+    }
+
+    pub(crate) fn new(identifier: Rc<TerminalNode>, resolution: Resolution) -> Self {
+        Self {
+            identifier,
+            resolution,
+        }
+    }
 }
 
 impl Resolution {
@@ -89,25 +108,6 @@ impl From<Option<BuiltIn>> for Resolution {
             Self::BuiltIn(built_in)
         } else {
             Self::Unresolved
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct Reference {
-    pub identifier: Rc<TerminalNode>,
-    pub resolution: Resolution,
-}
-
-impl Reference {
-    pub(crate) fn node_id(&self) -> NodeId {
-        self.identifier.id()
-    }
-
-    pub(crate) fn new(identifier: Rc<TerminalNode>, resolution: Resolution) -> Self {
-        Self {
-            identifier,
-            resolution,
         }
     }
 }
