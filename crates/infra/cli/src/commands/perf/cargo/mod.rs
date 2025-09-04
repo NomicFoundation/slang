@@ -94,7 +94,9 @@ impl CargoController {
     }
 
     fn run_iai_bench(&self, package_name: &str, bench_name: &str, bencher_project: &str) {
-        let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
+        let test_runner = format!(
+            "cargo bench --package {package_name} --bench {bench_name} --message-format json"
+        );
 
         run_bench(
             self.dry_run.get(),
