@@ -1,5 +1,24 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected OpenBrace or Semicolon.
+   ╭─[input.sol:2:18]
+   │
+ 2 │     modifier foo virtual { _; }
+   │                  ───────┬───────  
+   │                         ╰───────── Error occurred here.
+───╯
+Error: Expected OpenBrace or Semicolon.
+   ╭─[input.sol:6:18]
+   │
+ 6 │ ╭─▶     modifier foo override(Base) { _; }
+ 7 │ ├─▶     function test() public foo {}
+   │ │                                       
+   │ ╰─────────────────────────────────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (2):
 - Def: #1 ["Base" @ input.sol:1:10] (contract)
 - Def: #2 ["Test" @ input.sol:5:10] (contract)

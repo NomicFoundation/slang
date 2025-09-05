@@ -8,6 +8,7 @@ use slang_solidity::backend::binder::Resolution;
 use slang_solidity::backend::passes::p5_resolve_references::Output;
 use slang_solidity::compilation::File;
 use slang_solidity::cst::{Cursor, NodeId};
+use slang_solidity::diagnostic;
 
 use super::report_data::{CollectedDefinition, CollectedReference, ReportData, UnboundIdentifier};
 
@@ -27,6 +28,12 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
         unbound_identifiers,
         definitions_by_id,
     } = report_data;
+
+    if report_data.has_parse_errors() {
+        report_parse_errors(&mut report, binder_data)?;
+
+        writeln!(report, "{SEPARATOR}")?;
+    }
 
     report_all_definitions(&mut report, binder_data, all_definitions)?;
 
@@ -52,6 +59,22 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     }
 
     Ok(report)
+}
+
+fn report_parse_errors(report: &mut String, binder_data: &Output) -> Result<()> {
+    writeln!(report, "Parse errors:")?;
+    for file in &binder_data.compilation_unit.files() {
+        let source_id = file.id();
+        let source = file.tree().unparse();
+        for error in file.errors() {
+            writeln!(
+                report,
+                "{}",
+                diagnostic::render(error, source_id, &source, false)
+            )?;
+        }
+    }
+    Ok(())
 }
 
 fn report_all_definitions(

@@ -1,5 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+    ╭─[input.sol:9:1]
+    │
+  9 │ ╭─▶ enum Direction { NORTH, SOUTH, EAST, WEST }
+    ┆ ┆   
+ 13 │ ├─▶ Direction constant MY_DIRECTION = Direction.EAST;
+    │ │                                                       
+    │ ╰─────────────────────────────────────────────────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (2):
 - Def: #1 ["Constants" @ input.sol:1:10] (contract)
 - Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)

@@ -61,6 +61,14 @@ impl<'a> ReportData<'a> {
                 .iter()
                 .all(|reference| reference.resolution != Resolution::Unresolved)
     }
+
+    pub(crate) fn has_parse_errors(&self) -> bool {
+        self.binder_data
+            .compilation_unit
+            .files()
+            .iter()
+            .any(|file| !file.errors().is_empty())
+    }
 }
 
 fn collect_all_definitions_and_references(

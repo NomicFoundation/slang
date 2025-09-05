@@ -1,5 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+   ╭─[counter.sol:5:1]
+   │
+ 5 │ ╭─▶ function increment(Counter memory _counter) public {}
+   ┆ ┆   
+ 8 │ ├─▶ 
+   │ │      
+   │ ╰────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (6):
 - Def: #1 ["Counter" @ counter.sol:1:8] (struct)
 - Def: #2 ["value" @ counter.sol:2:10] (struct member, type: uint256)

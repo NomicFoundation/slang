@@ -1,5 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or ThrowKeyword or TrueKeyword or UfixedKeyword or UintKeyword or VarKeyword or WhileKeyword.
+   ╭─[input.sol:5:9]
+   │
+ 5 │ ╭─▶         type(uint).min.nop();
+   ┆ ┆   
+ 7 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (5):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)

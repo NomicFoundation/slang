@@ -1,5 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[counter.sol:1:1]
+   │
+ 1 │ ╭─▶ struct Counter {
+   ┆ ┆   
+ 8 │ ├─▶ 
+   │ │      
+   │ ╰────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (4):
 - Def: #1 ["Counter" @ main.sol:1:9] (imported symbol)
 - Def: #2 ["Test" @ main.sol:3:10] (contract)

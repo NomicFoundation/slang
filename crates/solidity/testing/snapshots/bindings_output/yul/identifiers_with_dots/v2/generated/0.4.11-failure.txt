@@ -1,5 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or Equal or EqualColon or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulBreakKeyword or YulContinueKeyword or YulDecimalLiteral or YulForKeyword or YulFunctionKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulLetKeyword or YulSwitchKeyword.
+   ╭─[input.sol:4:18]
+   │
+ 4 │ ╭─▶             let x.y.z := 0
+   ┆ ┆   
+ 6 │ ├─▶         }
+   │ │               
+   │ ╰─────────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (3):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)

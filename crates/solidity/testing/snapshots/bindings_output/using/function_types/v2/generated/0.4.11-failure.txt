@@ -1,5 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─▶ using {invoke} for function(uint);
+    ┆ ┆   
+ 14 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (0):
 
 ------------------------------------------------------------------------

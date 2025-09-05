@@ -1,5 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected IsKeyword or OpenBrace.
+   ╭─[input.sol:1:12]
+   │
+ 1 │ ╭─▶ contract X2 layout at C2 { // should not bind to a constant defined in the contract
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (0):
 
 ------------------------------------------------------------------------

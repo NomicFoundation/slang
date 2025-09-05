@@ -1,5 +1,27 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+    ╭─[lib.sol:1:1]
+    │
+  1 │ ╭─▶ type Amount is uint64;
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+Error: Expected CloseBrace or OpenBrace or ReturnsKeyword or Semicolon.
+    ╭─[main.sol:6:5]
+    │
+  6 │ ╭─▶     function test() public pure {
+    ┆ ┆   
+ 10 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (1):
 - Def: #1 ["Test" @ main.sol:3:10] (contract)
 

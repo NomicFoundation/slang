@@ -1,5 +1,36 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
+    ╭─[input.sol:11:40]
+    │
+ 11 │ ╭─▶     function foo() public pure virtual override(A) returns (string memory) {
+    ┆ ┆   
+ 13 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
+    ╭─[input.sol:17:40]
+    │
+ 17 │ ╭─▶     function foo() public pure virtual override returns (string memory) {
+    ┆ ┆   
+ 19 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
+    ╭─[input.sol:24:32]
+    │
+ 24 │ ╭─▶     function foo() public pure override(B, C) returns (string memory) {
+    ┆ ┆   
+ 26 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (5):
 - Def: #1 ["A" @ input.sol:4:10] (contract)
 - Def: #2 ["foo" @ input.sol:5:14] (function, type: function () returns string memory)

@@ -1,5 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[constants.sol:1:1]
+   │
+ 1 │ uint256 constant FOO = 1;
+   │ ─────────────┬────────────  
+   │              ╰────────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (4):
 - Def: #1 ["FOO" @ main.sol:1:9] (imported symbol)
 - Def: #2 ["Test" @ main.sol:3:10] (contract)

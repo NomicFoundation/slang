@@ -1,5 +1,93 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:11:28]
+    │
+ 11 │         string memory v1 = type(Sample).name;
+    │                            ────────┬────────  
+    │                                    ╰────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:12:27]
+    │
+ 12 │         bytes memory v2 = type(Sample).creationCode;
+    │                           ────────────┬────────────  
+    │                                       ╰────────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:13:27]
+    │
+ 13 │         bytes memory v3 = type(Sample).runtimeCode;
+    │                           ────────────┬───────────  
+    │                                       ╰───────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:15:28]
+    │
+ 15 │         string memory v4 = type(ISample).name;
+    │                            ─────────┬────────  
+    │                                     ╰────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:16:21]
+    │
+ 16 │         bytes4 v5 = type(ISample).interfaceId;
+    │                     ────────────┬────────────  
+    │                                 ╰────────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:18:24]
+    │
+ 18 │         Direction v6 = type(Direction).min;
+    │                        ─────────┬─────────  
+    │                                 ╰─────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:19:24]
+    │
+ 19 │         Direction v7 = type(Direction).max;
+    │                        ─────────┬─────────  
+    │                                 ╰─────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:21:19]
+    │
+ 21 │         uint v8 = type(uint).min;
+    │                   ───────┬──────  
+    │                          ╰──────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:22:19]
+    │
+ 22 │         uint v9 = type(uint).max;
+    │                   ───────┬──────  
+    │                          ╰──────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:24:29]
+    │
+ 24 │         string memory v10 = type(Utils).name;
+    │                             ────────┬───────  
+    │                                     ╰───────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:25:28]
+    │
+ 25 │         bytes memory v11 = type(Utils).creationCode;
+    │                            ────────────┬───────────  
+    │                                        ╰───────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:26:28]
+    │
+ 26 │         bytes memory v12 = type(Utils).runtimeCode;
+    │                            ───────────┬───────────  
+    │                                       ╰───────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (22):
 - Def: #1 ["Sample" @ input.sol:1:10] (contract)
 - Def: #2 ["ISample" @ input.sol:3:11] (interface)

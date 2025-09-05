@@ -1,5 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or FunctionKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ ╭─▶ using {first} for uint[];
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (2):
 - Def: #1 ["first" @ input.sol:1:10] (function, type: function (uint256[] memory) returns uint256)
 - Def: #2 ["values" @ input.sol:1:30] (parameter, type: uint256[] memory)

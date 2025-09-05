@@ -39,7 +39,10 @@ pub(crate) fn binding_graph_diff_report(report_data: &'_ ReportData<'_>) -> Resu
             "Definitions and/or references from binding graph and new binder DIFFER"
         )?;
     } else {
-        writeln!(report, "No differences between binding graph and new binder definitions or references")?;
+        writeln!(
+            report,
+            "No differences between binding graph and new binder definitions or references"
+        )?;
     }
 
     Ok((report, has_diff))

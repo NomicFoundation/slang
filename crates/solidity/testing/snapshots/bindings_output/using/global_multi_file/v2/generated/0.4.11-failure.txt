@@ -1,5 +1,27 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+    ╭─[main.sol:7:1]
+    │
+  7 │ ╭─▶ using Lib for uint;
+    ┆ ┆   
+ 20 │ ├─▶ 
+    │ │      
+    │ ╰────── Error occurred here.
+────╯
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[other.sol:1:1]
+   │
+ 1 │ ╭─▶ function foo(uint a) pure returns (uint) {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (4):
 - Def: #1 ["foo" @ main.sol:1:9] (imported symbol)
 - Def: #2 ["Lib" @ main.sol:3:9] (library)
