@@ -47,8 +47,7 @@ macro_rules! slang_define_full_tests {
           #[library_benchmark(setup = tests::query::setup)]
           #[bench::first(stringify!($prj))]
           pub fn [<$prj _query >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-              black_box(tests::query::run(Rc::clone(&unit)));
-              black_box(unit)
+              black_box(tests::query::run(unit))
           }
 
           #[library_benchmark(setup = tests::bindings_build::setup)]
@@ -60,8 +59,7 @@ macro_rules! slang_define_full_tests {
           #[library_benchmark(setup = tests::bindings_resolve::setup)]
           #[bench::first(stringify!($prj))]
           pub fn [<$prj _bindings_resolve >](unit: BuiltBindingGraph) -> BuiltBindingGraph {
-              black_box(tests::bindings_resolve::run(unit.clone()));
-              black_box(unit)
+              black_box(tests::bindings_resolve::run(unit))
           }
 
           // We add a cleanup phase to measure the destruction of the AST and the binding structures

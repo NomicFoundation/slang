@@ -1,5 +1,5 @@
 use streaming_iterator::StreamingIterator;
-use tree_sitter::{Language, Parser, Query, QueryCursor};
+use tree_sitter::{Parser, Query, QueryCursor};
 
 use crate::dataset::SolidityProject;
 
@@ -26,28 +26,20 @@ fn go(project: &SolidityProject, count: bool) -> usize {
         assert_eq!(root_node.kind(), "source_file");
 
         if count {
-            result += count_definition(language, source, root_node, "contract")
-                + count_definition(language, source, root_node, "library")
-                + count_definition(language, source, root_node, "interface");
+            result += count_definitions(source, tree);
         }
     }
 
     result
 }
 
-fn count_definition(
-    language: &Language,
-    source: &String,
-    root_node: tree_sitter::Node<'_>,
-    definition: &str,
-) -> usize {
-    let mut contract_count = 0;
-    let contracts = Query::new(language, &format!("({definition}_declaration)")).unwrap();
+fn count_definitions(source: &String, tree: tree_sitter::Tree) -> usize {
+    let contracts = Query::new(
+        &tree.language(),
+        "[(contract_declaration) (library_declaration) (interface_declaration)]",
+    )
+    .unwrap();
     let mut cursor = QueryCursor::new();
-    let mut matches = cursor.matches(&contracts, root_node, source.as_bytes());
-
-    while matches.next().is_some() {
-        contract_count += 1;
-    }
-    contract_count
+    let matches = cursor.matches(&contracts, tree.root_node(), source.as_bytes());
+    matches.count()
 }

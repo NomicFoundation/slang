@@ -1,7 +1,13 @@
 #!/bin/bash
 
+# bencher-plot-npm: creates a plot in the given bencher project for comparing with npm libraries.
+#
+# In essence, it helps to pick the right benchmarks, and solves the internal uuids use by bencher from the slug name
+# of every part of it.
+#
 # usage: bencher-plot-npm project branches testbeds benchmarks title
-# Example of usage to build plots in batch:
+#
+# Example of usage to build plots in batch using the projects.json file:
 # $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bin/bencher-plot-npm slang-dashboard-npm main ci {} "{}"
 
 set -e
@@ -24,7 +30,7 @@ source "$(dirname "$0")/bencher-common"
 
 function get_benchmarks() {
   details=$(bencher benchmark list --search "${benchmarks}" --per-page 255 "${project}")
-  # filter to let only the relevant benchmarks: npm's from slang, antlr, solc, and from slang only parse_all_files and total
+  # filter to let only the relevant benchmarks, leaving slang's parse_all_files and total
   echo "${details}" | jq -r '. - map(select(.name | contains("resolve_all_bindings"))) - map(select(.name | contains("init_bindings"))) | map("--benchmarks " + .uuid) | join(" ")'
 }
 

@@ -18,8 +18,9 @@ pub fn run(unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
 }
 
 pub fn test(unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
+    let binding_graph = unit.binding_graph().to_owned();
     BuiltBindingGraph {
-        unit: Rc::clone(&unit),
-        binding_graph: unit.binding_graph().to_owned(),
+        unit,
+        binding_graph,
     }
 }

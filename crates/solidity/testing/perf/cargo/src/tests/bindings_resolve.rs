@@ -1,12 +1,10 @@
-use std::rc::Rc;
-
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 
 use crate::tests::bindings_build::BuiltBindingGraph;
 
 pub fn setup(project: &str) -> BuiltBindingGraph {
     let unit = super::parser::run(super::setup::setup(project));
-    super::bindings_build::run(Rc::clone(&unit))
+    super::bindings_build::run(unit)
 }
 
 pub fn run(dependencies: BuiltBindingGraph) -> BuiltBindingGraph {

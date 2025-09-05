@@ -1,8 +1,14 @@
 #!/bin/bash
 
-# usage: bencher-plot-cargo project branch testbed benchmarks title
-# Example of usage to build plots in batch:
-# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bin/bencher-plot-cargo slang-dashboard-cargo main ci {} "{}"
+# bencher-plot-cargo: creates a plot in the given bencher project for the comparison of libraries.
+#
+# In essence, it helps to pick the right benchmarks, and solves the internal uuids use by bencher from the slug name
+# of every part of it.
+#
+# usage: bencher-plot-cargo project branches testbeds benchmarks title
+#
+# Example of usage to build plots in batch based on the project.json file:
+# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bin/bencher-plot-cargo slang-dashboard-cargo-cmp main ci {} "{}"
 
 set -e
 shopt -s inherit_errexit
