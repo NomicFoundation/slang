@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-#[path = "../../generated/extensions/built_ins.rs"]
+#[path = "built_ins.generated.rs"]
 mod built_ins;
 
 use built_ins::define_built_ins;

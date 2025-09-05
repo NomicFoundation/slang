@@ -114,7 +114,7 @@ fn generate_builtins(
     output_crate: &str,
 ) -> Result<()> {
     let file_path = CargoWorkspace::locate_source_crate(output_crate)?
-        .join("src/generated/extensions/built_ins.rs");
+        .join("src/extensions/bindings/built_ins.generated.rs");
 
     let contents = solidity_language::render_built_ins(language)?;
 
