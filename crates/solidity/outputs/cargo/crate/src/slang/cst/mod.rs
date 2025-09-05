@@ -1,18 +1,16 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 //! This module defines the types that represent a concrete syntax tree (CST), such as [`Node`] and
 //! [`Edge`]. It also defines utilities that are used for navigating and searching a CST, [`Cursor`] and
 //! [`Query`].
 
-#[path = "generated/edge_label.rs"]
+#[path = "edge_label.generated.rs"]
 mod edge_label;
-#[path = "generated/lexical_context.rs"]
+#[path = "lexical_context.generated.rs"]
 mod lexical_context;
-#[path = "generated/nonterminal_kind.rs"]
+#[path = "nonterminal_kind.generated.rs"]
 mod nonterminal_kind;
-#[path = "generated/rewriter.rs"]
+#[path = "rewriter.generated.rs"]
 mod rewriter;
-#[path = "generated/terminal_kind.rs"]
+#[path = "terminal_kind.generated.rs"]
 mod terminal_kind;
 
 pub use edge_label::EdgeLabel;

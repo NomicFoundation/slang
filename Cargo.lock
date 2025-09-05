@@ -453,16 +453,6 @@ dependencies = [
 [[package]]
 name = "codegen_runtime_cargo_crate"
 version = "1.2.1"
-dependencies = [
- "ariadne",
- "metaslang_bindings",
- "metaslang_cst",
- "semver",
- "serde",
- "strum",
- "strum_macros",
- "thiserror 2.0.12",
-]
 
 [[package]]
 name = "codegen_runtime_generator"

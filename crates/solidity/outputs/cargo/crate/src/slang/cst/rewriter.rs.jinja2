@@ -1,0 +1,105 @@
+use std::rc::Rc;
+use crate::cst::{Edge, Node, NonterminalKind, NonterminalNode, TerminalKind, TerminalNode};
+
+/// Trait to rewrite a CST.
+pub trait BaseRewriter {
+    /// Replaces the `node` with a new node. If the result is `None`, the node is removed from the tree.
+    /// This function is typically the entry point of the rewrite operation.
+    fn rewrite_node(&mut self, node: &Node) -> Option<Node> {
+        match node {
+            Node::Terminal(node) => self.rewrite_terminal_node(node),
+            Node::Nonterminal(node) => self.rewrite_nonterminal_node(node),
+        }
+    }
+
+    /// Rewrites a non-terminal node. Typically called from `rewrite_node`.
+    #[allow(clippy::too_many_lines)]
+    fn rewrite_nonterminal_node(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
+      match node.kind {
+        {% for nonterminal in model.kinds.nonterminal_kinds %}
+        NonterminalKind::{{ nonterminal.id }} =>
+          self.rewrite_{{- nonterminal.id | snake_case -}}(node),
+        {% endfor %}
+      }
+    }
+
+    /// Rewrites a terminal node. Typically called from `rewrite_node`.
+    #[allow(clippy::too_many_lines)]
+    fn rewrite_terminal_node(&mut self, node: &Rc<TerminalNode>) -> Option<Node> {
+      match node.kind {
+        {% for terminal in model.kinds.terminal_kinds %}
+        TerminalKind::{{ terminal.id }} =>
+          self.rewrite_{{- terminal.id | snake_case -}}(node),
+        {% endfor %}
+        TerminalKind::UNRECOGNIZED =>
+          self.rewrite_unrecognized(node),
+
+        TerminalKind::MISSING =>
+          self.rewrite_missing(node),
+      }
+    }
+
+    {% for nonterminal in model.kinds.nonterminal_kinds %}     
+    /// Rewrites a `{{- nonterminal.id -}}` node, recursively traversing the children (unless overriden).
+    fn rewrite_{{- nonterminal.id | snake_case -}}(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
+      Some(self.rewrite_children(node))
+    }
+    {% endfor %}
+
+    {% for terminal in model.kinds.terminal_kinds %}     
+      /// Rewrites a `{{- terminal.id -}}` node.
+      fn rewrite_{{- terminal.id | snake_case -}}(&mut self, node: &Rc<TerminalNode>) -> Option<Node> {
+        Some(Node::Terminal(Rc::clone(node)))
+      }
+    {% endfor %}
+    
+    /// Rewrites an `Unrecognized` node.
+    fn rewrite_unrecognized(&mut self, node: &Rc<TerminalNode>) -> Option<Node> {
+      Some(Node::Terminal(Rc::clone(node)))
+    }
+  
+    /// Rewrites a `Missing` node.
+    fn rewrite_missing(&mut self, node: &Rc<TerminalNode>) -> Option<Node> {
+      Some(Node::Terminal(Rc::clone(node)))
+    }
+
+    /// Rewrites all the children of a given non-terminal node.
+    fn rewrite_children(&mut self, node: &Rc<NonterminalNode>) -> Node {
+        let mut new_children: Option<Vec<Edge>> = None;
+
+        for (index, child) in node.children.iter().enumerate() {
+            if let Some(new_child_node) = self.rewrite_node(&child.node) {
+                if new_child_node.id() == child.node.id() {
+                    if let Some(ref mut new_children) = new_children {
+                        new_children.push(Edge {
+                            label: child.label,
+                            node: new_child_node,
+                        });
+                    }
+                } else {
+                    // node has changed, produce new edge
+                    let edge = Edge {
+                        label: child.label,
+                        node: new_child_node,
+                    };
+                    if new_children.is_none() {
+                        new_children = Some(node.children[..index].to_vec());
+                    }
+                    new_children.as_mut().unwrap().push(edge);
+                }
+            } else {
+                // node was removed. if `new_children` is set, just skip this one
+                // otherwise, copy the first ones from `children` (but not the last)
+                if new_children.is_none() {
+                    new_children = Some(node.children[..index].to_vec());
+                }
+            }
+        }
+
+        if let Some(nc) = new_children {
+            Node::nonterminal(node.kind, nc)
+        } else {
+            Node::Nonterminal(Rc::clone(node))
+        }
+    }
+}

@@ -26,12 +26,7 @@ fn main() {
             let mut fs = CodegenFileSystem::default();
             let language = SolidityDefinition::create();
 
-            generate_product(
-                &mut fs,
-                &language,
-                "codegen_runtime_cargo_crate",
-                "slang_solidity",
-            )?;
+            generate_in_place(&mut fs, &language, "slang_solidity")?;
 
             generate_builtins(&mut fs, &language, "slang_solidity")?;
 
@@ -101,18 +96,6 @@ fn generate_stubs(crate_name: &str) -> Result<()> {
     let source_dir = CargoWorkspace::locate_source_crate(crate_name)?;
 
     RuntimeGenerator::generate_stubs(&mut fs, &source_dir)
-}
-
-fn generate_product(
-    fs: &mut CodegenFileSystem,
-    language: &Language,
-    input_crate: &str,
-    output_crate: &str,
-) -> Result<()> {
-    let input_dir = CargoWorkspace::locate_source_crate(input_crate)?.join("src/runtime");
-    let output_dir = CargoWorkspace::locate_source_crate(output_crate)?.join("src/generated");
-
-    RuntimeGenerator::generate_product(language, fs, &input_dir, &output_dir)
 }
 
 fn generate_in_place(

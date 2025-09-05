@@ -1,6 +1,6 @@
 //! This module contains APIs used to resolve symbol bindings in source code. These APIs can be used
 //! for code analysis features such as "Go to Definition" or "Find References".
-#[path = "generated/binding_rules.rs"]
+#[path = "binding_rules.generated.rs"]
 mod binding_rules;
 
 use std::rc::Rc;
