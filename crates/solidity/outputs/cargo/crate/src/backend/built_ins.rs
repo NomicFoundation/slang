@@ -768,7 +768,7 @@ impl<'a> BuiltInsResolver<'a> {
                     Typing::Unresolved
                 }
             }
-            BuiltIn::LegacyCallOptionValueNew(type_id) => Typing::New(*type_id),
+            BuiltIn::LegacyCallOptionValueNew(type_id) => Typing::NewExpression(*type_id),
             BuiltIn::Log(_) => Typing::Resolved(self.types.void()),
             BuiltIn::Mulmod => Typing::Resolved(self.types.uint256()),
             BuiltIn::Require => Typing::Resolved(self.types.void()),

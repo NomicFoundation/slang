@@ -1045,7 +1045,7 @@ impl Visitor for Pass {
 
     fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        let typing = type_id.map_or(Typing::Unresolved, Typing::New);
+        let typing = type_id.map_or(Typing::Unresolved, Typing::NewExpression);
         self.binder.set_node_typing(node.node_id, typing);
     }
 

@@ -206,7 +206,7 @@ impl Pass {
                     Resolution::Unresolved
                 }
             }
-            Typing::New(type_id) => {
+            Typing::NewExpression(type_id) => {
                 // Special case: resolve legacy constructor call options (ie.
                 // `(new Lock).value(1)()`)
                 if self.language_version < VERSION_0_7_0 {
@@ -1107,7 +1107,7 @@ impl Visitor for Pass {
                     (Typing::Unresolved, None)
                 }
             }
-            Typing::New(type_id) => {
+            Typing::NewExpression(type_id) => {
                 // TODO(validation): check that the given type is actually constructible
                 let type_ = self.types.get_type_by_id(type_id);
                 let definition_id = match type_ {
