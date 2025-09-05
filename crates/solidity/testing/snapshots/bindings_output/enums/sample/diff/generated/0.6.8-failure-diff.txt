@@ -1,0 +1,6 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+reference `max` at input.sol:26:36 failed to resolve in new binder
+reference `min` at input.sol:30:36 failed to resolve in new binder
+
+Definitions and/or references from binding graph and new binder DIFFER
