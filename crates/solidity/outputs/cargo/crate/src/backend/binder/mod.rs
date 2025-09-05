@@ -169,7 +169,7 @@ impl Binder {
         }
     }
 
-    #[cfg(feature = "__private_backend_api")]
+    #[cfg(feature = "__private_testing_utils")]
     pub fn linearisations(&self) -> &HashMap<NodeId, Vec<NodeId>> {
         &self.linearisations
     }
