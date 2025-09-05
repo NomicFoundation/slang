@@ -1,29 +1,42 @@
 use anyhow::{Ok, Result};
 use slang_solidity::backend::passes;
-use slang_solidity::compilation::{CompilationUnit, InternalCompilationBuilder};
+use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use slang_solidity::utils::LanguageFacts;
 
-const CONTENTS: &str = r#"
+fn build_compilation_unit() -> Result<CompilationUnit> {
+    const CONTENTS: &str = r#"
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.29;
 
-contract D is A, B {
-}
-
-interface C {
-}
-
-abstract contract B is C {
-}
-
-interface A is C {
-}
+contract D is A, B {}
+interface C {}
+abstract contract B is C {}
+interface A is C {}
 "#;
 
-fn build_compilation_unit() -> Result<CompilationUnit> {
-    let mut internal_builder = InternalCompilationBuilder::create(LanguageFacts::LATEST_VERSION)?;
-    _ = internal_builder.add_file("main.sol".into(), CONTENTS);
-    let compilation_unit = internal_builder.build();
+    struct Config {}
+    impl CompilationBuilderConfig for Config {
+        type Error = anyhow::Error;
+
+        fn read_file(
+            &mut self,
+            _file_id: &str,
+        ) -> std::result::Result<Option<String>, Self::Error> {
+            Ok(Some(CONTENTS.to_owned()))
+        }
+
+        fn resolve_import(
+            &mut self,
+            _source_file_id: &str,
+            _import_path_cursor: &slang_solidity::cst::Cursor,
+        ) -> std::result::Result<Option<String>, Self::Error> {
+            panic!("No requires to solve");
+        }
+    }
+
+    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config {})?;
+    assert!(builder.add_file("main.sol").is_ok());
+    let compilation_unit = builder.build();
     Ok(compilation_unit)
 }
 

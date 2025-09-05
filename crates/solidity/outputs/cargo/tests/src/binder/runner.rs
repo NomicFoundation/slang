@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
@@ -6,7 +6,7 @@ use metaslang_bindings::PathResolver;
 use semver::Version;
 use slang_solidity::backend::passes;
 use slang_solidity::backend::passes::p5_resolve_references::Output;
-use slang_solidity::compilation::{CompilationUnit, InternalCompilationBuilder};
+use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 
 use super::renderer::binder_report;
 use crate::bindings::multi_part_file::{split_multi_file, MultiPart};
@@ -60,31 +60,55 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     Ok(())
 }
 
+struct MultiPartBuildConfig<'a> {
+    resolver: TestsPathResolver,
+    multi_part: &'a MultiPart<'a>,
+}
+
+impl<'a> MultiPartBuildConfig<'a> {
+    fn new(multi_part: &'a MultiPart<'a>) -> Self {
+        Self {
+            resolver: TestsPathResolver {},
+            multi_part,
+        }
+    }
+}
+
+impl CompilationBuilderConfig for MultiPartBuildConfig<'_> {
+    type Error = anyhow::Error;
+
+    fn read_file(&mut self, file_id: &str) -> std::result::Result<Option<String>, Self::Error> {
+        Ok(self
+            .multi_part
+            .parts
+            .iter()
+            .find(|part| part.name == file_id)
+            .map(|part| part.contents.to_owned()))
+    }
+
+    fn resolve_import(
+        &mut self,
+        source_file_id: &str,
+        import_path_cursor: &slang_solidity::cst::Cursor,
+    ) -> std::result::Result<Option<String>, Self::Error> {
+        Ok(self
+            .resolver
+            .resolve_path(source_file_id, import_path_cursor))
+    }
+}
+
 fn build_compilation_unit(
     version: &Version,
     multi_part: &MultiPart<'_>,
 ) -> Result<CompilationUnit> {
-    let mut internal_builder = InternalCompilationBuilder::create(version.clone())?;
-    let resolver = TestsPathResolver {};
+    let mut builder =
+        CompilationBuilder::new(version.clone(), MultiPartBuildConfig::new(multi_part))?;
 
     for part in &multi_part.parts {
-        let add_file_response = internal_builder.add_file(part.name.to_string(), part.contents);
-        for import_path in &add_file_response.import_paths {
-            if let Some(resolved_path) = resolver.resolve_path(part.name, import_path) {
-                internal_builder
-                    .resolve_import(part.name, import_path, resolved_path)
-                    .unwrap(); // this can only fail if `part.name` is not a valid file ID
-            } else {
-                return Err(anyhow!(
-                    "Failed to resolve {import_path} in the context of {context_path}",
-                    import_path = import_path.node().unparse(),
-                    context_path = part.name
-                ));
-            }
-        }
+        builder.add_file(part.name)?;
     }
 
-    Ok(internal_builder.build())
+    Ok(builder.build())
 }
 
 fn build_binder(compilation_unit: CompilationUnit) -> Output {
