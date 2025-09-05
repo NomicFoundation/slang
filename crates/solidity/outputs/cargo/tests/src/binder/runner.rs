@@ -2,15 +2,12 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use metaslang_bindings::PathResolver;
-use semver::Version;
 use slang_solidity::backend::passes;
 use slang_solidity::backend::passes::p5_resolve_references::Output;
-use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
+use slang_solidity::compilation::CompilationUnit;
 
 use super::renderer::binder_report;
-use crate::bindings::multi_part_file::{split_multi_file, MultiPart};
-use crate::compilation::resolver::TestsPathResolver;
+use crate::compilation::compilation_unit::build_compilation_unit_from_multi_part_file;
 use crate::cst::generated::VERSION_BREAKS;
 
 pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
@@ -28,9 +25,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let mut last_report = None;
 
     for version in &VERSION_BREAKS {
-        let multi_part = split_multi_file(&contents);
-
-        let compilation_unit = build_compilation_unit(version, &multi_part)?;
+        let compilation_unit = build_compilation_unit_from_multi_part_file(version, &contents)?;
         let has_parse_errors = compilation_unit
             .files()
             .iter()
@@ -58,57 +53,6 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     }
 
     Ok(())
-}
-
-struct MultiPartBuildConfig<'a> {
-    resolver: TestsPathResolver,
-    multi_part: &'a MultiPart<'a>,
-}
-
-impl<'a> MultiPartBuildConfig<'a> {
-    fn new(multi_part: &'a MultiPart<'a>) -> Self {
-        Self {
-            resolver: TestsPathResolver {},
-            multi_part,
-        }
-    }
-}
-
-impl CompilationBuilderConfig for MultiPartBuildConfig<'_> {
-    type Error = anyhow::Error;
-
-    fn read_file(&mut self, file_id: &str) -> std::result::Result<Option<String>, Self::Error> {
-        Ok(self
-            .multi_part
-            .parts
-            .iter()
-            .find(|part| part.name == file_id)
-            .map(|part| part.contents.to_owned()))
-    }
-
-    fn resolve_import(
-        &mut self,
-        source_file_id: &str,
-        import_path_cursor: &slang_solidity::cst::Cursor,
-    ) -> std::result::Result<Option<String>, Self::Error> {
-        Ok(self
-            .resolver
-            .resolve_path(source_file_id, import_path_cursor))
-    }
-}
-
-fn build_compilation_unit(
-    version: &Version,
-    multi_part: &MultiPart<'_>,
-) -> Result<CompilationUnit> {
-    let mut builder =
-        CompilationBuilder::new(version.clone(), MultiPartBuildConfig::new(multi_part))?;
-
-    for part in &multi_part.parts {
-        builder.add_file(part.name)?;
-    }
-
-    Ok(builder.build())
 }
 
 fn build_binder(compilation_unit: CompilationUnit) -> Output {
