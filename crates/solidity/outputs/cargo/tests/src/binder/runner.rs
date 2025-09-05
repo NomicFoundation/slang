@@ -43,7 +43,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         match last_report {
             Some(ref last) if last == &report => (),
             _ => {
-                let snapshot_path = test_dir.join("binder/generated").join(format!(
+                let snapshot_path = test_dir.join("v2/generated").join(format!(
                     "{version}-{status}.txt",
                     status = if has_parse_errors || !all_resolved {
                         "failure"
