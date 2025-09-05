@@ -6,10 +6,11 @@ use crate::backend::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
     LibraryDefinition, Reference, Resolution, ScopeId,
 };
-use crate::backend::c3;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;
+
+mod c3;
 
 pub struct Output {
     pub compilation_unit: CompilationUnit,
