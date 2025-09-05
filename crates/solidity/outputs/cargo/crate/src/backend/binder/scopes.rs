@@ -270,8 +270,11 @@ impl FileScope {
         self.imported_files.insert(file_id);
     }
 
-    pub(super) fn lookup_symbol(&self, symbol: &str) -> Vec<NodeId> {
-        self.definitions.get(symbol).cloned().unwrap_or(Vec::new())
+    pub(super) fn lookup_symbol<'a>(&'a self, symbol: &str) -> impl Iterator<Item = NodeId> + 'a {
+        match self.definitions.get(symbol) {
+            Some(defs) => OptionIter::Some(defs.iter().copied()),
+            None => OptionIter::Empty,
+        }
     }
 }
 
@@ -430,6 +433,25 @@ impl UsingDirective {
             UsingDirective::AllTypes { scope_id }
             | UsingDirective::SingleType { scope_id, .. }
             | UsingDirective::SingleTypeOperator { scope_id, .. } => *scope_id,
+        }
+    }
+}
+
+pub(crate) enum OptionIter<T: Iterator> {
+    Some(T),
+    Empty,
+}
+
+impl<T> Iterator for OptionIter<T>
+where
+    T: Iterator,
+{
+    type Item = T::Item;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            OptionIter::Some(iter) => iter.next(),
+            OptionIter::Empty => None,
         }
     }
 }

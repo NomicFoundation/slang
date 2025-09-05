@@ -418,7 +418,9 @@ impl Binder {
     // This will attempt to lexically resolve `symbol` starting from the given
     // scope. This means that scopes can delegate to their "parent" scopes if
     // the symbol is not found there, and also that imported symbols are
-    // followed recursively.
+    // followed recursively. This function handles the latter (following
+    // imported symbols recursively), while `resolve_in_scope_internal`
+    // delegates to parent or otherwise linked scopes.
     pub(crate) fn resolve_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let mut found_ids = Vec::new();
         let mut working_set = Vec::new();
