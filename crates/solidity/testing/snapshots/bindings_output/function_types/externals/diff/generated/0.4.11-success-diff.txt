@@ -1,6 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Ref: ["selector" @ input.sol:4:12] -> built-in does not resolve to a built-in in the stack graph output
-Ref: ["address" @ input.sol:5:12] -> built-in does not resolve to a built-in in the stack graph output
-
-Definitions and/or references from binding graph and new binder DIFFER

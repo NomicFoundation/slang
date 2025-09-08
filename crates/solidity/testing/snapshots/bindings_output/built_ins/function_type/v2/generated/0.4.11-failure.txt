@@ -1,0 +1,126 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (13):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["v1" @ input.sol:3:16] (variable, type: bytes4)
+- Def: #4 ["v2" @ input.sol:4:17] (variable, type: address)
+- Def: #5 ["v3" @ input.sol:6:16] (variable, type: bytes4)
+- Def: #6 ["f1" @ input.sol:8:13] (variable, type: Foo)
+- Def: #7 ["v4" @ input.sol:9:16] (variable, type: bytes4)
+- Def: #8 ["v5" @ input.sol:10:17] (variable, type: address)
+- Def: #9 ["v6" @ input.sol:12:16] (variable, type: bytes4)
+- Def: #10 ["Foo" @ input.sol:16:11] (interface)
+- Def: #11 ["bar" @ input.sol:17:14] (function, type: function () returns void)
+- Def: #12 ["Baz" @ input.sol:20:9] (library)
+- Def: #13 ["quux" @ input.sol:21:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (17):
+- Ref: ["test" @ input.sol:3:26] -> #2
+- Ref: ["selector" @ input.sol:3:31] -> unresolved
+- Ref: ["test" @ input.sol:4:27] -> #2
+- Ref: ["address" @ input.sol:4:32] -> built-in
+- Ref: ["Foo" @ input.sol:6:21] -> #10
+- Ref: ["bar" @ input.sol:6:25] -> #11
+- Ref: ["selector" @ input.sol:6:29] -> unresolved
+- Ref: ["Foo" @ input.sol:8:9] -> #10
+- Ref: ["f1" @ input.sol:9:21] -> #6
+- Ref: ["bar" @ input.sol:9:24] -> #11
+- Ref: ["selector" @ input.sol:9:28] -> unresolved
+- Ref: ["f1" @ input.sol:10:22] -> #6
+- Ref: ["bar" @ input.sol:10:25] -> #11
+- Ref: ["address" @ input.sol:10:29] -> built-in
+- Ref: ["Baz" @ input.sol:12:21] -> #12
+- Ref: ["quux" @ input.sol:12:25] -> #13
+- Ref: ["selector" @ input.sol:12:30] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+  3 │         bytes4 v1 = this.test.selector;
+    │                ─┬        ──┬─ ────┬───  
+    │                 ╰─────────────────────── name: 3
+    │                            │      │     
+    │                            ╰──────────── ref: 2
+    │                                   │     
+    │                                   ╰───── unresolved
+  4 │         address v2 = this.test.address;
+    │                 ─┬        ──┬─ ───┬───  
+    │                  ╰────────────────────── name: 4
+    │                             │     │     
+    │                             ╰─────────── ref: 2
+    │                                   │     
+    │                                   ╰───── built-in
+    │ 
+  6 │         bytes4 v3 = Foo.bar.selector;
+    │                ─┬   ─┬─ ─┬─ ────┬───  
+    │                 ╰───────────────────── name: 5
+    │                      │   │      │     
+    │                      ╰──────────────── ref: 10
+    │                          │      │     
+    │                          ╰──────────── ref: 11
+    │                                 │     
+    │                                 ╰───── unresolved
+    │ 
+  8 │         Foo f1;
+    │         ─┬─ ─┬  
+    │          ╰────── ref: 10
+    │              │  
+    │              ╰── name: 6
+  9 │         bytes4 v4 = f1.bar.selector;
+    │                ─┬   ─┬ ─┬─ ────┬───  
+    │                 ╰──────────────────── name: 7
+    │                      │  │      │     
+    │                      ╰─────────────── ref: 6
+    │                         │      │     
+    │                         ╰──────────── ref: 11
+    │                                │     
+    │                                ╰───── unresolved
+ 10 │         address v5 = f1.bar.address;
+    │                 ─┬   ─┬ ─┬─ ───┬───  
+    │                  ╰─────────────────── name: 8
+    │                       │  │     │     
+    │                       ╰────────────── ref: 6
+    │                          │     │     
+    │                          ╰─────────── ref: 11
+    │                                │     
+    │                                ╰───── built-in
+    │ 
+ 12 │         bytes4 v6 = Baz.quux.selector;
+    │                ─┬   ─┬─ ──┬─ ────┬───  
+    │                 ╰────────────────────── name: 9
+    │                      │    │      │     
+    │                      ╰───────────────── ref: 12
+    │                           │      │     
+    │                           ╰──────────── ref: 13
+    │                                  │     
+    │                                  ╰───── unresolved
+    │ 
+ 16 │ interface Foo {
+    │           ─┬─  
+    │            ╰─── name: 10
+ 17 │     function bar() external payable;
+    │              ─┬─  
+    │               ╰─── name: 11
+    │ 
+ 20 │ library Baz {
+    │         ─┬─  
+    │          ╰─── name: 12
+ 21 │     function quux() public {}
+    │              ──┬─  
+    │                ╰─── name: 13
+────╯

@@ -40,7 +40,7 @@ References (37):
 - Ref: ["v2" @ input.sol:20:32] -> #8
 - Ref: ["v2" @ input.sol:20:39] -> #8
 - Ref: ["v2" @ input.sol:20:43] -> #8
-- Ref: ["gasleft" @ input.sol:21:22] -> unresolved
+- Ref: ["gasleft" @ input.sol:21:22] -> built-in
 - Ref: ["keccak256" @ input.sol:22:22] -> built-in
 - Ref: ["x1" @ input.sol:22:32] -> #6
 - Ref: ["mulmod" @ input.sol:23:19] -> built-in
@@ -63,7 +63,7 @@ References (37):
 - Ref: ["abi" @ input.sol:38:27] -> built-in
 - Ref: ["encodeWithSelector" @ input.sol:38:31] -> unresolved
 - Ref: ["testMath" @ input.sol:38:55] -> #5
-- Ref: ["selector" @ input.sol:38:64] -> unresolved
+- Ref: ["selector" @ input.sol:38:64] -> built-in
 - Ref: ["abi" @ input.sol:40:27] -> built-in
 - Ref: ["encodeWithSignature" @ input.sol:40:31] -> unresolved
 - Ref: ["x2" @ input.sol:40:51] -> #24
@@ -138,7 +138,7 @@ Bindings:
     │                 ─┬   ───┬───  
     │                  ╰──────────── name: 11
     │                         │     
-    │                         ╰───── unresolved
+    │                         ╰───── built-in
  22 │         bytes32 v6 = keccak256(x1);
     │                 ─┬   ────┬──── ─┬  
     │                  ╰───────────────── name: 12
@@ -223,7 +223,7 @@ Bindings:
     │                                                           │        │     
     │                                                           ╰────────────── ref: 5
     │                                                                    │     
-    │                                                                    ╰───── unresolved
+    │                                                                    ╰───── built-in
  39 │         string memory x2;
     │                       ─┬  
     │                        ╰── name: 24

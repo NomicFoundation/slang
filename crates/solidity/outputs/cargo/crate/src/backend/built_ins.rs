@@ -172,6 +172,8 @@ pub enum BuiltIn {
 }
 
 const VERSION_0_4_12: Version = Version::new(0, 4, 12);
+const VERSION_0_4_17: Version = Version::new(0, 4, 17);
+const VERSION_0_4_21: Version = Version::new(0, 4, 21);
 const VERSION_0_4_22: Version = Version::new(0, 4, 22);
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 const VERSION_0_5_3: Version = Version::new(0, 5, 3);
@@ -217,7 +219,7 @@ impl<'a> BuiltInsResolver<'a> {
             "block" => Some(BuiltIn::Block),
             "blockhash" if self.language_version >= VERSION_0_4_22 => Some(BuiltIn::Blockhash),
             "ecrecover" => Some(BuiltIn::Ecrecover),
-            "gasleft" => Some(BuiltIn::Gasleft),
+            "gasleft" if self.language_version >= VERSION_0_4_21 => Some(BuiltIn::Gasleft),
             "keccak256" => Some(BuiltIn::Keccak256),
             "log0" | "log1" | "log2" | "log3" | "log4" if self.language_version < VERSION_0_8_0 => {
                 let arity = symbol.as_bytes()[3] - b'0';
@@ -533,7 +535,9 @@ impl<'a> BuiltInsResolver<'a> {
                 if *external {
                     match symbol {
                         "address" => Some(BuiltIn::Address),
-                        "selector" => Some(BuiltIn::Selector),
+                        "selector" if self.language_version >= VERSION_0_4_17 => {
+                            Some(BuiltIn::Selector)
+                        }
                         "gas" if self.language_version < VERSION_0_7_0 => {
                             Some(BuiltIn::LegacyCallOptionGas(Some(type_id)))
                         }

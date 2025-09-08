@@ -6171,7 +6171,7 @@ codegen_language_macros::compile!(Language(
                     name = "gasleft",
                     parameters = [],
                     return_type = "uint256",
-                    enabled = From("0.4.22")
+                    enabled = From("0.4.21")
                 ),
                 BuiltInFunction(
                     name = "keccak256",
