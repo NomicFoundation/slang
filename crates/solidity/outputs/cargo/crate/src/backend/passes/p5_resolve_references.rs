@@ -712,6 +712,7 @@ impl Visitor for Pass {
     }
 
     fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
+        // TODO(validation): modifiers are not allowed inside interfaces since 0.8.8
         self.enter_scope_for_node_id(node.node_id);
         true
     }
