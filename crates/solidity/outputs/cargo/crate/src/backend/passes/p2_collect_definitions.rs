@@ -44,7 +44,9 @@ const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 struct Pass {
     language_version: Version,
     current_file: Option<Rc<File>>, // needed to resolve imports on the file
-    scope_stack: Vec<ScopeId>,
+    // We keep a structural and lexical scope in the stack, to be able to
+    // replace the lexical one after declaration statements
+    scope_stack: Vec<(ScopeId, ScopeId)>,
     binder: Binder,
 }
 
@@ -70,27 +72,37 @@ impl Pass {
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = self.binder.insert_scope(scope);
-        self.scope_stack.push(scope_id);
+        self.scope_stack.push((scope_id, scope_id));
+        scope_id
+    }
+
+    fn replace_scope(&mut self, scope: Scope) -> ScopeId {
+        let Some((structural_scope_id, _)) = self.scope_stack.pop() else {
+            unreachable!("scope stack cannot be empty");
+        };
+
+        let scope_id = self.binder.insert_scope(scope);
+        self.scope_stack.push((structural_scope_id, scope_id));
         scope_id
     }
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(scope_id);
+        self.scope_stack.push((scope_id, scope_id));
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(current_scope_id) = self.scope_stack.pop() else {
+        let Some((structural_scope_id, _)) = self.scope_stack.pop() else {
             unreachable!("attempt to pop an empty scope stack");
         };
         assert_eq!(
-            current_scope_id,
+            structural_scope_id,
             self.binder.scope_id_for_node_id(node_id).unwrap()
         );
     }
 
     fn current_scope_id(&self) -> ScopeId {
-        let Some(scope_id) = self.scope_stack.last() else {
+        let Some((_, scope_id)) = self.scope_stack.last() else {
             unreachable!("empty scope stack");
         };
         *scope_id
@@ -543,24 +555,34 @@ impl Visitor for Pass {
         false
     }
 
-    fn enter_variable_declaration_statement(
+    fn leave_variable_declaration_statement(
         &mut self,
         node: &input_ir::VariableDeclarationStatement,
-    ) -> bool {
-        // TODO(validation): for Solidity >= 0.5.0 this definition should only
-        // be available for statements after this one
+    ) {
+        if self.language_version >= VERSION_0_5_0 {
+            // In Solidity >= 0.5.0 this definition should only be available for
+            // statements after this one. So we open a new scope that replaces
+            // but is linked to the current one
+            let scope = Scope::new_block(node.node_id, self.current_scope_id());
+            self.replace_scope(scope);
+        }
+
         let definition = Definition::new_variable(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
-
-        true
     }
 
-    fn enter_tuple_deconstruction_statement(
+    fn leave_tuple_deconstruction_statement(
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
-    ) -> bool {
-        // TODO(validation): for Solidity >= 0.5.0 this definition should only
-        // be available for statements after this one
+    ) {
+        if self.language_version >= VERSION_0_5_0 {
+            // In Solidity >= 0.5.0 the definitions should only be available for
+            // statements after this one. So we open a new scope that replaces
+            // but is linked to the current one
+            let scope = Scope::new_block(node.node_id, self.current_scope_id());
+            self.replace_scope(scope);
+        }
+
         let is_untyped_declaration = node.var_keyword.is_some();
         for element in &node.elements {
             let Some(tuple_member) = &element.member else {
@@ -582,8 +604,6 @@ impl Visitor for Pass {
             };
             self.insert_definition_in_current_scope(definition);
         }
-
-        true
     }
 
     fn enter_block(&mut self, node: &input_ir::Block) -> bool {

@@ -54,7 +54,9 @@ const VERSION_0_7_0: Version = Version::new(0, 7, 0);
 
 struct Pass {
     language_version: Version,
-    scope_stack: Vec<ScopeId>,
+    // We keep a structural and lexical scope in the stack, to be able to
+    // replace the lexical one after declaration statements
+    scope_stack: Vec<(ScopeId, ScopeId)>,
     binder: Binder,
     types: TypeRegistry,
 }
@@ -81,21 +83,33 @@ impl Pass {
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(scope_id);
+        self.scope_stack.push((scope_id, scope_id));
+    }
+
+    fn enter_replace_scope_for_node_id(&mut self, node_id: NodeId) {
+        let Some((structural_scope_id, _)) = self.scope_stack.pop() else {
+            unreachable!("scope stack cannot be empty");
+        };
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.push((structural_scope_id, scope_id));
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(current_scope_id) = self.scope_stack.pop() else {
+        let Some((structural_scope_id, _)) = self.scope_stack.pop() else {
             unreachable!("attempt to pop an empty scope stack");
         };
         assert_eq!(
-            current_scope_id,
+            structural_scope_id,
             self.binder.scope_id_for_node_id(node_id).unwrap()
         );
     }
 
     fn current_scope_id(&self) -> ScopeId {
-        self.scope_stack.last().copied().unwrap()
+        self.scope_stack
+            .last()
+            .map(|(_, scope_id)| scope_id)
+            .copied()
+            .unwrap()
     }
 
     // This is a "top-level" (ie. not a member access) resolution method
@@ -156,7 +170,7 @@ impl Pass {
         self.scope_stack
             .iter()
             .rev()
-            .flat_map(|scope_id| {
+            .flat_map(|(_, scope_id)| {
                 if self.language_version < VERSION_0_7_0 {
                     // In Solidity < 0.7.0 using directives are inherited in contracts,
                     // so we need to pull any `using` directives in a contract hierarchy
@@ -614,7 +628,7 @@ impl Pass {
     }
 
     fn current_contract_scope_id(&self) -> Option<ScopeId> {
-        for scope_id in self.scope_stack.iter().rev() {
+        for (_, scope_id) in self.scope_stack.iter().rev() {
             let scope = self.binder.get_scope_by_id(*scope_id);
             if matches!(scope, Scope::Contract(_)) {
                 return Some(*scope_id);
@@ -1979,6 +1993,13 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::VariableDeclarationStatement,
     ) {
+        if self.language_version >= VERSION_0_5_0 {
+            // in Solidity >= 0.5.0 we need to update the scope so further
+            // resolutions can access this variable definition
+            self.enter_replace_scope_for_node_id(node.node_id);
+            // NOTE: ensure following code does not need to perform resolution
+        }
+
         if matches!(
             node.variable_type,
             input_ir::VariableDeclarationType::VarKeyword
@@ -1995,6 +2016,13 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
     ) {
+        if self.language_version >= VERSION_0_5_0 {
+            // in Solidity >= 0.5.0 we need to update the scope so further
+            // resolutions can access these variable definitions
+            self.enter_replace_scope_for_node_id(node.node_id);
+            // NOTE: ensure following code does not need to perform resolution
+        }
+
         if node.var_keyword.is_none() {
             return;
         }

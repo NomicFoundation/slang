@@ -30,3 +30,8 @@ fn private_variables() -> Result<()> {
 fn shadowing() -> Result<()> {
     run(T, "shadowing")
 }
+
+#[test]
+fn statement_scope() -> Result<()> {
+    run(T, "statement_scope")
+}
