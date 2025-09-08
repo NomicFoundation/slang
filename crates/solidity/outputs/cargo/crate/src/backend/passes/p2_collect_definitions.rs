@@ -16,6 +16,12 @@ pub struct Output {
     pub binder: Binder,
 }
 
+/// In this pass all definitions are collected with their naming identifiers.
+/// Also lexical (and other kinds of) scopes are identified and linked together,
+/// and definitions are registered into them for later lookup. The pass
+/// instantiates a `Binder` object which will store all this information as well
+/// as references and typing information for the nodes, to be resolved in later
+/// passes.
 pub fn run(input: Input) -> Output {
     let files = input.files;
     let compilation_unit = input.compilation_unit;

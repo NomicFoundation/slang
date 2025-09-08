@@ -22,6 +22,15 @@ pub struct Output {
     pub types: TypeRegistry,
 }
 
+/// This pass will determine and assign typing information to all the
+/// definitions collected in the earlier pass and as a result register most
+/// types used in the compilation unit, by instantiating a `TypeRegistry`
+/// object. Another important milestone that happens in this pass is collecting
+/// active `using` directives and associating them to the relevant scopes (or
+/// registering them gloablly).
+/// Finally, public state variables will be assigned an equivalent getter
+/// function type. This happens after the main typing pass to ensure all types
+/// are already registered.
 pub fn run(input: Input) -> Output {
     let files = input.files;
     let compilation_unit = input.compilation_unit;

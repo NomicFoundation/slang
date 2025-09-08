@@ -22,6 +22,11 @@ pub struct Output {
     pub types: TypeRegistry,
 }
 
+/// This pass will find identifiers used as references, resolve them to the
+/// appropriate definitions, and compute typing information for AST nodes
+/// containing expressions and statements. Both these actions are co-dependant
+/// and happen concurrently for each node, and their results are store in the
+/// `Binder` instance.
 pub fn run(input: Input) -> Output {
     let files = input.files;
     let compilation_unit = input.compilation_unit;

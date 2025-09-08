@@ -21,19 +21,54 @@ pub struct ScopeId(usize);
 //////////////////////////////////////////////////////////////////////////////
 // Binder
 
-// TODO: do we want to move tuples (which are not a real Solidity type) into
-// here, as a typing variant? That has the additional benefit of not requiring
-// us to register every tuple combination.
+// TODO: do we want to move tuples (which are not a real Solidity type) as a
+// typing variant? That has the additional benefit of not requiring us to
+// register every tuple combination.
+
+/// `Typing` represents typing information related to an AST node. If the node
+/// happens to be a reference identifier, there is a direct relationship between
+/// its `Resolution` and the `Typing`. Otherwise the typing is computed from the
+/// node kind and its contents.
+
 #[derive(Clone, Debug)]
 pub enum Typing {
+    /// The type of the node cannot be resolved at this time (this normally
+    /// propagates upwards).
     Unresolved,
+    /// Resolved with a corresponding `TypeId` valid in the `TypeRegistry`.
     Resolved(TypeId),
+    /// There are multiple possible types that result from the typing of an
+    /// `Ambiguous` resolution. Function call overload resolution will select
+    /// the appropriate type by matching the types of the arguments and work
+    /// backwards to the reference (if any) and fixup the selected definition.
     Undetermined(Vec<TypeId>),
+    /// A node which refers to a user defined type by name, eg. the identifier
+    /// of a contract. This is not a type that can be translated to the EVM, and
+    /// as such is a way to suspend the typing until more information on how
+    /// it's used is gathered. Eg. to create a new contract via the new
+    /// operator, or construct a struct by using the struct's name in a function
+    /// call.
     UserMetaType(NodeId),
+    /// Similar to `UserMetaType` above, but refers to the meta type of an
+    /// elementary type. A typical use case is explicit casting, which parses as
+    /// a function call.
     MetaType(Type),
+    /// Used to type the `BuiltIn` resolution when the result is not yet an
+    /// actual type representable in the EVM. Eg. the built-in function `addmod`
+    /// resolves to `Resolution::BuiltIn(Addmod)` and will type to
+    /// `Typing::BuiltIn(Addmod)` which in turn will type to the `uint256` type
+    /// when evaluated in the context of a function call.
     BuiltIn(BuiltIn),
+    /// A special typing that's used as the result of applying the `new`
+    /// operator, and will type to a contract reference when evaluated as a
+    /// function call.
     NewExpression(TypeId),
+    /// Typing of the `this` keyword. Resolving a member of `this` requires
+    /// special lookup rules and it can also type to an address-type equivalent
+    /// if used as a value.
     This,
+    /// Typing of the `super` keyword. Resolving members requires special lookup
+    /// rules.
     Super,
 }
 
@@ -46,22 +81,29 @@ impl Typing {
     }
 }
 
+/// The `Binder` contains binding information for all definitions and references
+/// in the `CompilationUnit`, typing information for relevant AST nodes, as well
+/// as other semantic information (such as scopes and linearisations).
 pub struct Binder {
+    /// Index of `Scope` objects. The `ScopeId` is an opaque index into this vector
     scopes: Vec<Scope>,
+    /// Scopes (set of definitions contained and relationship to other scopes), indexed by `NodeId`
     scopes_by_node_id: HashMap<NodeId, ScopeId>,
+    /// Index of root `FileScope`s for all files in the `CompilationUnit`
     scopes_by_file_id: HashMap<String, ScopeId>,
+    /// `UsingDirective` objects registered globally (contract level directives
+    /// are stored in the corresponding `ContractScope`)
     global_using_directives: Vec<UsingDirective>,
-
-    // definitions indexed by definiens node
+    /// `Definition` objects (identifier + definiens node), indexed by definiens `NodeId`
     definitions: HashMap<NodeId, Definition>,
-    // mapping from definition identifier to definiens
+    /// Definitions indexed by the `NodeId` of the identifier that names them
     definitions_by_identifier: HashMap<NodeId, NodeId>,
-    // references indexed by identifier node
+    /// `Reference` objects (identifier + `Resolution`), indexed by identifier `NodeId`
     references: HashMap<NodeId, Reference>,
-
+    /// `Typing` information for each relevant `NodeId` of the AST
     node_typing: HashMap<NodeId, Typing>,
-
-    // linearised bases of each contract or interface
+    /// Linearisations, as a vector of definitions, indexed by the
+    /// contract/interface definition's `NodeId`
     linearisations: HashMap<NodeId, Vec<NodeId>>,
 }
 

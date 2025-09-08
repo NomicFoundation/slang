@@ -5,6 +5,11 @@ use crate::cst::NodeId;
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct TypeId(usize);
 
+/// The `TypeRegistry` stores an index of registered types, both elementary
+/// types and user defined types. Each type is given a `TypeId` for efficient
+/// storage, lookup and comparison. The registry also provides direct access to
+/// some common elementary types required to type most built-ins functions and
+/// some kinds of expressions (eg. the boolean type).
 pub struct TypeRegistry {
     types: IndexSet<Type>,
 

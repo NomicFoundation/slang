@@ -18,6 +18,8 @@ pub struct Output {
     pub binder: Binder,
 }
 
+/// In this pass we collect all bases of contracts and interfaces and then
+/// compute the linearisation for each of them.
 pub fn run(input: Input) -> Output {
     let files = input.files;
     let mut pass = Pass::new(input.compilation_unit, input.binder);
