@@ -1,6 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-reference `min` at input.sol:16:22 failed to resolve in new binder
-reference `max` at input.sol:17:22 failed to resolve in new binder
-
-Definitions and/or references from binding graph and new binder DIFFER
