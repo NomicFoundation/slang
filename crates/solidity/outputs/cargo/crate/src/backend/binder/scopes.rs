@@ -23,36 +23,36 @@ pub(crate) enum Scope {
 }
 
 pub(crate) struct BlockScope {
-    pub node_id: NodeId,
-    pub parent_scope_id: ScopeId,
-    pub definitions: HashMap<String, NodeId>,
+    pub(crate) node_id: NodeId,
+    pub(crate) parent_scope_id: ScopeId,
+    pub(crate) definitions: HashMap<String, NodeId>,
 }
 
 pub(crate) struct ContractScope {
-    pub node_id: NodeId,
-    pub file_scope_id: ScopeId,
-    pub definitions: HashMap<String, Vec<NodeId>>,
-    pub using_directives: Vec<UsingDirective>,
+    pub(crate) node_id: NodeId,
+    pub(crate) file_scope_id: ScopeId,
+    pub(crate) definitions: HashMap<String, Vec<NodeId>>,
+    pub(crate) using_directives: Vec<UsingDirective>,
 }
 
 pub(crate) struct EnumScope {
-    pub node_id: NodeId,
-    pub definitions: HashMap<String, NodeId>,
+    pub(crate) node_id: NodeId,
+    pub(crate) definitions: HashMap<String, NodeId>,
 }
 
 pub(crate) struct FileScope {
-    pub node_id: NodeId,
-    pub file_id: String,
-    pub definitions: HashMap<String, Vec<NodeId>>,
-    pub imported_files: HashSet<String>,
-    pub using_directives: Vec<UsingDirective>,
+    pub(crate) node_id: NodeId,
+    pub(crate) file_id: String,
+    pub(crate) definitions: HashMap<String, Vec<NodeId>>,
+    pub(crate) imported_files: HashSet<String>,
+    pub(crate) using_directives: Vec<UsingDirective>,
 }
 
 pub(crate) struct FunctionScope {
-    pub node_id: NodeId,
-    pub parent_scope_id: ScopeId,
-    pub parameters_scope_id: ScopeId,
-    pub definitions: HashMap<String, NodeId>,
+    pub(crate) node_id: NodeId,
+    pub(crate) parent_scope_id: ScopeId,
+    pub(crate) parameters_scope_id: ScopeId,
+    pub(crate) definitions: HashMap<String, NodeId>,
 }
 
 // TODO: this is similar to a function scope, but it doesn't have a separate
@@ -62,36 +62,36 @@ pub(crate) struct FunctionScope {
 // refactor? Or remove this and make the parameters optional in FunctionScope?
 // Probably the latter as we can control resolution in the relevant pass.
 pub(crate) struct ModifierScope {
-    pub node_id: NodeId,
-    pub parent_scope_id: ScopeId,
-    pub definitions: HashMap<String, NodeId>,
+    pub(crate) node_id: NodeId,
+    pub(crate) parent_scope_id: ScopeId,
+    pub(crate) definitions: HashMap<String, NodeId>,
 }
 
 pub(crate) struct ParametersScope {
-    pub node_id: NodeId,
-    pub definitions: HashMap<String, NodeId>,
+    pub(crate) node_id: NodeId,
+    pub(crate) definitions: HashMap<String, NodeId>,
 }
 
 pub(crate) struct StructScope {
-    pub node_id: NodeId,
-    pub definitions: HashMap<String, NodeId>,
+    pub(crate) node_id: NodeId,
+    pub(crate) definitions: HashMap<String, NodeId>,
 }
 
 pub(crate) struct UsingScope {
-    pub node_id: NodeId,
-    pub symbols: HashMap<String, Vec<NodeId>>,
+    pub(crate) node_id: NodeId,
+    pub(crate) symbols: HashMap<String, Vec<NodeId>>,
 }
 
 pub(crate) struct YulBlockScope {
-    pub node_id: NodeId,
-    pub parent_scope_id: ScopeId,
-    pub definitions: HashMap<String, NodeId>,
+    pub(crate) node_id: NodeId,
+    pub(crate) parent_scope_id: ScopeId,
+    pub(crate) definitions: HashMap<String, NodeId>,
 }
 
 pub(crate) struct YulFunctionScope {
-    pub node_id: NodeId,
-    pub parent_scope_id: ScopeId,
-    pub definitions: HashMap<String, NodeId>,
+    pub(crate) node_id: NodeId,
+    pub(crate) parent_scope_id: ScopeId,
+    pub(crate) definitions: HashMap<String, NodeId>,
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -419,7 +419,7 @@ impl UsingDirective {
         }
     }
 
-    pub fn applies_to(&self, filter_type_id: TypeId) -> bool {
+    pub(crate) fn applies_to(&self, filter_type_id: TypeId) -> bool {
         match self {
             Self::AllTypes { .. } => true,
             Self::SingleType { type_id, .. } | Self::SingleTypeOperator { type_id, .. } => {
@@ -428,7 +428,7 @@ impl UsingDirective {
         }
     }
 
-    pub fn get_scope_id(&self) -> ScopeId {
+    pub(crate) fn get_scope_id(&self) -> ScopeId {
         match self {
             UsingDirective::AllTypes { scope_id }
             | UsingDirective::SingleType { scope_id, .. }

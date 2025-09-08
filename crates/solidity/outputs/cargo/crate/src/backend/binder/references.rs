@@ -34,7 +34,7 @@ pub enum Resolution {
 }
 
 impl Reference {
-    pub(crate) fn node_id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.identifier.id()
     }
 

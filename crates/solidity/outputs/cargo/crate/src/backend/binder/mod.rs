@@ -8,8 +8,9 @@ mod definitions;
 mod references;
 mod scopes;
 
-pub use definitions::{
-    ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, LibraryDefinition,
+pub use definitions::Definition;
+pub(crate) use definitions::{
+    ContractDefinition, ImportDefinition, InterfaceDefinition, LibraryDefinition,
 };
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
