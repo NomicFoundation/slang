@@ -19,6 +19,10 @@ impl CodegenFileSystem {
         file_path: impl AsRef<Path>,
         contents: impl AsRef<str>,
     ) -> Result<()> {
+        if contents.as_ref().trim().is_empty() {
+            return Ok(());
+        }
+
         let contents = format_source_file(file_path.as_ref(), contents.as_ref())?;
 
         self.write_file_raw(file_path, contents)

@@ -7,11 +7,11 @@ use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 pub fn generate_passes(
     fs: &mut CodegenFileSystem,
     language: &Language,
-    input_crate: &str,
-    output_crate: &str,
+    the_crate: &str,
 ) -> Result<()> {
-    let ir_input_dir = CargoWorkspace::locate_source_crate(input_crate)?.join("src/ir");
-    let ir_output_dir = CargoWorkspace::locate_source_crate(output_crate)?.join("src/backend");
+    let create_path = CargoWorkspace::locate_source_crate(the_crate)?;
+    let ir_input_dir = create_path.join("src/ir");
+    let ir_output_dir = create_path.join("src/backend");
 
     // L0: CST:
     let cst_model = IrModel::from_language("cst", language);

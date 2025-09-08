@@ -1,5 +1,5 @@
-{%- if rendering_in_stubs -%}
-  // No Intermediate Representation transformer functions in stubs...
+{%- if not target -%}
+{# Not meant to be rendered without an IR model #}
 {%- elif not transformer -%}
   // Not rendering transformer for first Intermediate Language
 {%- else -%}
