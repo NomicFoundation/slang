@@ -183,6 +183,7 @@ const VERSION_0_6_7: Version = Version::new(0, 6, 7);
 const VERSION_0_6_8: Version = Version::new(0, 6, 8);
 const VERSION_0_7_0: Version = Version::new(0, 7, 0);
 const VERSION_0_8_0: Version = Version::new(0, 8, 0);
+const VERSION_0_8_2: Version = Version::new(0, 8, 2);
 const VERSION_0_8_4: Version = Version::new(0, 8, 4);
 const VERSION_0_8_7: Version = Version::new(0, 8, 7);
 const VERSION_0_8_8: Version = Version::new(0, 8, 8);
@@ -534,7 +535,9 @@ impl<'a> BuiltInsResolver<'a> {
             Type::Function { external, .. } => {
                 if *external {
                     match symbol {
-                        "address" => Some(BuiltIn::Address),
+                        "address" if self.language_version >= VERSION_0_8_2 => {
+                            Some(BuiltIn::Address)
+                        }
                         "selector" if self.language_version >= VERSION_0_4_17 => {
                             Some(BuiltIn::Selector)
                         }
