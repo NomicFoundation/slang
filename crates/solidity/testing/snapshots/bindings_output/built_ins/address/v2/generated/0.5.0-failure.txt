@@ -27,7 +27,7 @@ References (12):
 - Ref: ["staticcall" @ input.sol:6:48] -> built-in
 - Ref: ["x1" @ input.sol:6:59] -> #4
 - Ref: ["recipient" @ input.sol:8:19] -> #3
-- Ref: ["send" @ input.sol:8:29] -> built-in
+- Ref: ["send" @ input.sol:8:29] -> unresolved
 - Ref: ["balance" @ input.sol:9:37] -> built-in
 
 ------------------------------------------------------------------------
@@ -90,7 +90,7 @@ Bindings:
    │                       │       │   
    │                       ╰─────────── ref: 3
    │                               │   
-   │                               ╰─── built-in
+   │                               ╰─── unresolved
  9 │         uint256 v10 = address(this).balance;
    │                 ─┬─                 ───┬───  
    │                  ╰─────────────────────────── name: 12

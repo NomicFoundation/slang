@@ -1,5 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Ref: ["staticcall" @ input.sol:6:48] -> built-in does not resolve to a built-in in the stack graph output
-
-Definitions and/or references from binding graph and new binder DIFFER

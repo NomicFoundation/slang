@@ -479,9 +479,15 @@ impl<'a> BuiltInsResolver<'a> {
                 "call" => Some(BuiltIn::AddressCall),
                 "callcode" if !payable => Some(BuiltIn::AddressCallcode),
                 "delegatecall" => Some(BuiltIn::AddressDelegatecall),
-                "send" => Some(BuiltIn::AddressSend),
-                "staticcall" => Some(BuiltIn::AddressStaticcall),
-                "transfer" => Some(BuiltIn::AddressTransfer),
+                "send" if payable || self.language_version < VERSION_0_5_0 => {
+                    Some(BuiltIn::AddressSend)
+                }
+                "staticcall" if self.language_version >= VERSION_0_5_0 => {
+                    Some(BuiltIn::AddressStaticcall)
+                }
+                "transfer" if payable || self.language_version < VERSION_0_8_0 => {
+                    Some(BuiltIn::AddressTransfer)
+                }
                 _ => None,
             }
         } else {

@@ -1,6 +1,42 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
+Definitions (12):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["testAddress" @ input.sol:2:14] (function, type: function (address) returns void)
+- Def: #3 ["recipient" @ input.sol:2:34] (parameter, type: address)
+- Def: #4 ["x1" @ input.sol:3:22] (variable, type: bytes memory)
+- Def: #5 ["v1" @ input.sol:4:15] (variable, type: bool)
+- Def: #6 ["v2" @ input.sol:4:32] (variable, type: bytes memory)
+- Def: #7 ["v5" @ input.sol:5:15] (variable, type: bool)
+- Def: #8 ["v6" @ input.sol:5:32] (variable, type: bytes memory)
+- Def: #9 ["v7" @ input.sol:6:15] (variable, type: bool)
+- Def: #10 ["v8" @ input.sol:6:32] (variable, type: bytes memory)
+- Def: #11 ["v9" @ input.sol:8:14] (variable, type: bool)
+- Def: #12 ["v10" @ input.sol:9:17] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (12):
+- Ref: ["recipient" @ input.sol:4:38] -> #3
+- Ref: ["call" @ input.sol:4:48] -> built-in
+- Ref: ["x1" @ input.sol:4:53] -> #4
+- Ref: ["recipient" @ input.sol:5:38] -> #3
+- Ref: ["delegatecall" @ input.sol:5:48] -> built-in
+- Ref: ["x1" @ input.sol:5:61] -> #4
+- Ref: ["recipient" @ input.sol:6:38] -> #3
+- Ref: ["staticcall" @ input.sol:6:48] -> unresolved
+- Ref: ["x1" @ input.sol:6:59] -> #4
+- Ref: ["recipient" @ input.sol:8:19] -> #3
+- Ref: ["send" @ input.sol:8:29] -> built-in
+- Ref: ["balance" @ input.sol:9:37] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
    ╭─[input.sol:1:1]
    │
  1 │ contract Test {
@@ -22,7 +58,7 @@ References and definitions:
    │                                          │       │   │  
    │                                          ╰────────────── ref: 3
    │                                                  │   │  
-   │                                                  ╰────── ref: built-in
+   │                                                  ╰────── built-in
    │                                                      │  
    │                                                      ╰── ref: 4
  5 │         (bool v5, bytes memory v6) = recipient.delegatecall(x1);
@@ -33,7 +69,7 @@ References and definitions:
    │                                          │           │       │  
    │                                          ╰────────────────────── ref: 3
    │                                                      │       │  
-   │                                                      ╰────────── ref: built-in
+   │                                                      ╰────────── built-in
    │                                                              │  
    │                                                              ╰── ref: 4
  6 │         (bool v7, bytes memory v8) = recipient.staticcall(x1);
@@ -44,7 +80,7 @@ References and definitions:
    │                                          │          │      │  
    │                                          ╰──────────────────── ref: 3
    │                                                     │      │  
-   │                                                     ╰───────── ref: built-in
+   │                                                     ╰───────── unresolved
    │                                                            │  
    │                                                            ╰── ref: 4
    │ 
@@ -54,49 +90,10 @@ References and definitions:
    │                       │       │   
    │                       ╰─────────── ref: 3
    │                               │   
-   │                               ╰─── ref: built-in
+   │                               ╰─── built-in
  9 │         uint256 v10 = address(this).balance;
    │                 ─┬─                 ───┬───  
    │                  ╰─────────────────────────── name: 12
    │                                        │     
-   │                                        ╰───── ref: built-in
+   │                                        ╰───── built-in
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
-    │
-  1 │ ╭─│ ──▶ contract Test {
-  2 │ │ ╭───▶     function testAddress(address recipient) public {
-    │ │ │                              ────────┬────────  
-    │ │ │                                      ╰────────── definiens: 3
-  3 │ │ │             bytes memory x1;
-    │ │ │     ────────────┬────────────  
-    │ │ │                 ╰────────────── definiens: 4
-  4 │ │ │             (bool v1, bytes memory v2) = recipient.call(x1);
-    │ │ │              ───┬─── ────────┬───────  
-    │ │ │                 ╰────────────────────── definiens: 5
-    │ │ │                              │         
-    │ │ │                              ╰───────── definiens: 6
-  5 │ │ │             (bool v5, bytes memory v6) = recipient.delegatecall(x1);
-    │ │ │              ───┬─── ────────┬───────  
-    │ │ │                 ╰────────────────────── definiens: 7
-    │ │ │                              │         
-    │ │ │                              ╰───────── definiens: 8
-  6 │ │ │ │           (bool v7, bytes memory v8) = recipient.staticcall(x1);
-    │ │ │ │            ───┬─── ────────┬───────  
-    │ │ │ │               ╰────────────────────── definiens: 9
-    │ │ │ │                            │         
-    │ │ │ │                            ╰───────── definiens: 10
-  7 │ │ │ ╭─▶         // valid until 0.8.0
-  8 │ │ │ ├─▶         bool v9 = recipient.send(1);
-    │ │ │ │                                          
-    │ │ │ ╰────────────────────────────────────────── definiens: 11
-  9 │ │ │             uint256 v10 = address(this).balance;
-    │ │ │     ──────────────────────┬──────────────────────  
-    │ │ │                           ╰──────────────────────── definiens: 12
- 10 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 2
- 11 │ ├─────▶ }
-    │ │           
-    │ ╰─────────── definiens: 1
-────╯

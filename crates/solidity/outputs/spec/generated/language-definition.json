@@ -8865,7 +8865,7 @@
                   "name": "send",
                   "parameters": ["uint256 amount"],
                   "return_type": "bool",
-                  "enabled": { "Till": { "till": "0.8.0" } }
+                  "enabled": { "Till": { "till": "0.5.0" } }
                 },
                 {
                   "name": "staticcall",

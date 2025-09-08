@@ -1,6 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Ref: ["transfer" @ input.sol:4:20] -> built-in does not resolve to a built-in in the stack graph output
-Ref: ["send" @ input.sol:5:28] -> built-in does not resolve to a built-in in the stack graph output
-
-Definitions and/or references from binding graph and new binder DIFFER

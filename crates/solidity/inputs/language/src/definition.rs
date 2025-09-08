@@ -6337,7 +6337,7 @@ codegen_language_macros::compile!(Language(
                             name = "send",
                             parameters = ["uint256 amount"],
                             return_type = "bool",
-                            enabled = Till("0.8.0")
+                            enabled = Till("0.5.0")
                         ),
                         BuiltInFunction(
                             name = "staticcall",
