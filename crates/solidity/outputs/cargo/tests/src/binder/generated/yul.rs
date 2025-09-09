@@ -77,6 +77,11 @@ fn imported_deconstructed_constants() -> Result<()> {
 }
 
 #[test]
+fn imported_undefined_symbol() -> Result<()> {
+    run(T, "imported_undefined_symbol")
+}
+
+#[test]
 fn inherited_constant() -> Result<()> {
     run(T, "inherited_constant")
 }
