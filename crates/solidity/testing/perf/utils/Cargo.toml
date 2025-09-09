@@ -11,6 +11,7 @@ serde_json = { workspace = true }
 infra_utils = { workspace = true }
 anyhow = { workspace = true }
 reqwest = { workspace = true, features = ["json"] }
+url = { workspace = true }
 
 [lints]
 workspace = true

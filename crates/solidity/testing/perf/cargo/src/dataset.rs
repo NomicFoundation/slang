@@ -1,10 +1,11 @@
 use std::collections::HashMap;
 use std::fs;
-use std::path::{Component, Path, PathBuf};
+use std::path::Path;
 use std::sync::OnceLock;
 
 use anyhow::{anyhow, Result};
 use serde::Deserialize;
+use solidity_testing_perf_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
 use solidity_testing_perf_utils::{config, fetch};
 
 type ProjectMap = HashMap<String, SolidityProject>;
@@ -69,11 +70,10 @@ impl SolidityCompilation {
     }
 }
 
-#[derive(Deserialize)]
 pub struct SolidityProject {
-    #[serde(deserialize_with = "sources_map_deserializer")]
     pub sources: HashMap<String, String>,
     pub compilation: SolidityCompilation,
+    pub import_resolver: ImportResolver,
 }
 
 fn sources_map_deserializer<'de, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
@@ -94,10 +94,64 @@ where
     Ok(result)
 }
 
+impl TryFrom<&serde_json::Value> for SolidityProject {
+    type Error = anyhow::Error;
+
+    fn try_from(value: &serde_json::Value) -> std::result::Result<Self, Self::Error> {
+        let sources =
+            sources_map_deserializer(value.get("sources").expect("json must have 'sources' key"))?;
+        let compilation: SolidityCompilation = serde_json::from_value(
+            value
+                .get("compilation")
+                .expect("json must have 'compilation' key")
+                .to_owned(),
+        )?;
+        let import_resolver = import_resolver_from(value, sources.keys());
+        Ok(SolidityProject {
+            sources,
+            compilation,
+            import_resolver,
+        })
+    }
+}
+
+fn import_resolver_from<'a, T: Iterator<Item = &'a String>>(
+    value: &serde_json::Value,
+    sources: T,
+) -> ImportResolver {
+    let import_remaps: Vec<ImportRemap> = value
+        .get("compilation")
+        .expect("json must have a 'compiler' key")
+        .get("compilerSettings")
+        .and_then(|settings| settings.get("remappings"))
+        .and_then(|remappings| remappings.as_array())
+        .map_or(vec![], |mappings| {
+            mappings
+                .iter()
+                .filter_map(|mapping| mapping.as_str())
+                .filter_map(|m| ImportRemap::new(m).ok())
+                .filter(|remap| !remap.has_known_bug())
+                .collect()
+        });
+
+    let source_maps: Vec<SourceMap> = sources
+        .map(|path| SourceMap {
+            source_id: path.clone(),
+            virtual_path: path.clone(),
+        })
+        .collect();
+
+    ImportResolver {
+        import_remaps,
+        source_maps,
+    }
+}
+
 impl SolidityProject {
     pub fn build(json_file: &Path) -> Result<Self> {
         let json_str = fs::read_to_string(json_file)?;
-        let sself: Self = serde_json::from_str(&json_str)?;
+        let json_value: serde_json::Value = serde_json::from_str(&json_str)?;
+        let sself: Self = Self::try_from(&json_value)?;
         Ok(sself)
     }
 
@@ -114,38 +168,14 @@ impl SolidityProject {
     ///
     /// Returns the relative path of the imported file.
     pub fn resolve_import(&self, source_file: &str, import_string: &str) -> Result<String> {
-        let source_file_dir = Path::new(source_file).parent().unwrap();
-        let file = Self::normalize_path(source_file_dir.join(import_string));
-
-        if self.sources.contains_key(&file) {
-            Ok(file)
-        } else if self.sources.contains_key(import_string) {
-            Ok(import_string.to_string())
-        } else {
-            Err(anyhow!(
-                "Can't resolve import {} ({} in the context of {:?})",
-                file,
-                import_string,
-                source_file_dir
-            ))
-        }
-    }
-
-    fn normalize_path<P: AsRef<Path>>(path: P) -> String {
-        let mut components = Vec::new();
-        for comp in path.as_ref().components() {
-            match comp {
-                Component::ParentDir => {
-                    components.pop();
-                }
-                Component::CurDir => {}
-                other => components.push(other.as_os_str()),
-            }
-        }
-        let mut normalized = PathBuf::new();
-        for c in &components {
-            normalized = normalized.join(c);
-        }
-        normalized.to_string_lossy().into_owned()
+        self.import_resolver
+            .resolve_import(source_file, import_string)
+            .ok_or_else(|| {
+                anyhow!(
+                    "Can't resolve import '{}' from '{}'",
+                    import_string,
+                    source_file
+                )
+            })
     }
 }

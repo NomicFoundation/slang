@@ -3789,6 +3789,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "url",
 ]
 
 [[package]]
@@ -3833,8 +3834,8 @@ dependencies = [
  "serde",
  "serde_json",
  "slang_solidity",
+ "solidity_testing_perf_utils",
  "tar",
- "url",
 ]
 
 [[package]]

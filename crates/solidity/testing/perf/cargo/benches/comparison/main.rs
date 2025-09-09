@@ -56,13 +56,13 @@ macro_rules! comparison_tests {
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 // flat_imports_mooniswap is version incompatible with solar
 comparison_tests!(circular_imports_weighted_pool);
-comparison_tests!(protocol_uniswap);
+// protocol_uniswap is incompatible in tree-sitter
 comparison_tests!(protocol_multicall3);
 // protocol_create_x is incompatible in tree-sitter
 comparison_tests!(protocol_ui_pool_data_provider_v3);
 comparison_tests!(deep_nesting_cooldogs);
 comparison_tests!(largest_file_trivia_oslf);
-comparison_tests!(median_file_safe_math);
+comparison_tests!(largest_file_pointer_libraries);
 comparison_tests!(three_quarters_file_merkle_proof);
 
 main!(
@@ -102,11 +102,10 @@ main!(
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
     library_benchmark_groups =
         circular_imports_weighted_pool_group,
-        protocol_uniswap_group,
         protocol_multicall3_group,
         protocol_ui_pool_data_provider_v3_group,
         deep_nesting_cooldogs_group,
         largest_file_trivia_oslf_group,
-        median_file_safe_math_group,
+        largest_file_pointer_libraries_group,
         three_quarters_file_merkle_proof_group,
 );
