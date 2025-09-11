@@ -132,6 +132,11 @@ fn member_inherits_data_location() -> Result<()> {
 }
 
 #[test]
+fn new_array() -> Result<()> {
+    run(T, "new_array")
+}
+
+#[test]
 fn new_output() -> Result<()> {
     run(T, "new_output")
 }

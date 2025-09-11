@@ -1061,11 +1061,12 @@ impl Pass {
                 }
             }
             Typing::NewExpression(type_id) => {
-                if let Type::Contract { .. } = self.types.get_type_by_id(type_id) {
-                    Typing::Resolved(type_id)
-                } else {
-                    // only contracts can be created with `new`
-                    Typing::Unresolved
+                match self.types.get_type_by_id(type_id) {
+                    Type::Array { .. } | Type::Contract { .. } => Typing::Resolved(type_id),
+                    _ => {
+                        // only contracts can be created with `new`
+                        Typing::Unresolved
+                    }
                 }
             }
             Typing::UserMetaType(node_id) => {
