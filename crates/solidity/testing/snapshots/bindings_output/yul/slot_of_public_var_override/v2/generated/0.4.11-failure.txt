@@ -2,11 +2,11 @@
 
 Parse errors:
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-   ╭─[input.sol:2:27]
+   ╭─[input.sol:2:25]
    │
- 2 │     function x() external view virtual returns (uint) {}
-   │                           ───────────────┬───────────────  
-   │                                          ╰───────────────── Error occurred here.
+ 2 │     function x() public view virtual returns (uint) {}
+   │                         ───────────────┬───────────────  
+   │                                        ╰───────────────── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
    ╭─[input.sol:6:26]
@@ -50,7 +50,7 @@ Bindings:
  1 │ contract Base {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     function x() external view virtual returns (uint) {}
+ 2 │     function x() public view virtual returns (uint) {}
    │              ┬  
    │              ╰── ???
    │ 

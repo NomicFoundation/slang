@@ -14,11 +14,11 @@ References and definitions:
   1 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     function x() external view virtual returns (uint) {}
-    │              ┬                 ───┬───  
-    │              ╰────────────────────────── name: 2
-    │                                   │     
-    │                                   ╰───── unresolved
+  2 │     function x() public view virtual returns (uint) {}
+    │              ┬               ───┬───  
+    │              ╰──────────────────────── name: 2
+    │                                 │     
+    │                                 ╰───── unresolved
     │ 
   5 │ contract Test is Base {
     │          ──┬─    ──┬─  
@@ -40,9 +40,9 @@ Definiens:
     ╭─[input.sol:1:1]
     │
   1 │     ╭─▶ contract Base {
-  2 │     │       function x() external view virtual returns (uint) {}
-    │     │   ────────────────────────────┬────────────────────────────  
-    │     │                               ╰────────────────────────────── definiens: 2
+  2 │     │       function x() public view virtual returns (uint) {}
+    │     │   ───────────────────────────┬───────────────────────────  
+    │     │                              ╰───────────────────────────── definiens: 2
   3 │ │   ├─▶ }
     │ │   │       
     │ │   ╰─────── definiens: 1

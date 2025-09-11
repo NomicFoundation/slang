@@ -1,5 +1,5 @@
 contract Base {
-    function x() external view virtual returns (uint) {}
+    function x() public view virtual returns (uint) {}
 }
 
 contract Test is Base {

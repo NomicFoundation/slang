@@ -21,7 +21,7 @@ Definitions (5):
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["virtual" @ input.sol:2:32] -> unresolved
+- Ref: ["virtual" @ input.sol:2:30] -> unresolved
 - Ref: ["Base" @ input.sol:5:18] -> #1
 - Ref: ["x.slot" @ input.sol:10:22] -> unresolved
 
@@ -37,11 +37,11 @@ Bindings:
   1 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     function x() external view virtual returns (uint) {}
-    │              ┬                 ───┬───  
-    │              ╰────────────────────────── name: 2
-    │                                   │     
-    │                                   ╰───── unresolved
+  2 │     function x() public view virtual returns (uint) {}
+    │              ┬               ───┬───  
+    │              ╰──────────────────────── name: 2
+    │                                 │     
+    │                                 ╰───── unresolved
     │ 
   5 │ contract Test is Base {
     │          ──┬─    ──┬─  

@@ -27,7 +27,7 @@ References and definitions:
     │                           │  
     │                           ╰── name: 3
     │ 
-  6 │   function overloaded() payable returns (uint) {
+  6 │   function overloaded() public payable returns (uint) {
     │            ─────┬────  
     │                 ╰────── name: 4
     │ 

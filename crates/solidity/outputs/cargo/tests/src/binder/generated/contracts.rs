@@ -97,6 +97,11 @@ fn overload_disambiguation_with_this() -> Result<()> {
 }
 
 #[test]
+fn private_member_not_visible() -> Result<()> {
+    run(T, "private_member_not_visible")
+}
+
+#[test]
 fn public_array_getters() -> Result<()> {
     run(T, "public_array_getters")
 }

@@ -346,10 +346,9 @@ impl Pass {
         let type_ = self.types.get_type_by_id(type_id);
         match type_ {
             Type::Contract { definition_id, .. } | Type::Interface { definition_id, .. } => {
-                // TODO(validation): check that the found definitions are public
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder
-                    .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::Normal)
+                    .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::External)
                     .or_else(|| {
                         self.built_ins_resolver()
                             .lookup_member_of_type_id(type_id, symbol)

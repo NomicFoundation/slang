@@ -4,7 +4,9 @@ use std::rc::Rc;
 use semver::Version;
 
 use super::p1_flatten_contracts::Output as Input;
-use crate::backend::binder::{Binder, Definition, FileScope, Scope, ScopeId};
+use crate::backend::binder::{
+    Binder, Definition, FileScope, FunctionVisibility, Scope, ScopeId, StateVariableVisibility,
+};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::compilation::{CompilationUnit, File};
@@ -282,8 +284,39 @@ impl Visitor for Pass {
                 .iter()
                 .map(|parameter| parameter.name.as_ref().map(|name| name.unparse()))
                 .collect();
-            let definition =
-                Definition::new_function(node.node_id, name, parameters_scope_id, parameter_names);
+            // TODO(validation): only a single visibility keyword can be provided
+            // TODO(validation): free functions are always internal, but
+            // otherwise a visibility *must* be set explicitly (>= 0.5.0)
+            let visibility = node
+                .attributes
+                .iter()
+                .fold(None, |previous, attribute| match attribute {
+                    input_ir::FunctionAttribute::ExternalKeyword => {
+                        Some(FunctionVisibility::External)
+                    }
+                    input_ir::FunctionAttribute::InternalKeyword => {
+                        Some(FunctionVisibility::Internal)
+                    }
+                    input_ir::FunctionAttribute::PrivateKeyword => {
+                        Some(FunctionVisibility::Private)
+                    }
+                    input_ir::FunctionAttribute::PublicKeyword => Some(FunctionVisibility::Public),
+                    _ => previous,
+                })
+                .unwrap_or(if self.language_version < VERSION_0_5_0 {
+                    // in Solidity < 0.5.0 free functions are not valid and the
+                    // default visibility for contract functions is public
+                    FunctionVisibility::Public
+                } else {
+                    FunctionVisibility::Internal
+                });
+            let definition = Definition::new_function(
+                node.node_id,
+                name,
+                parameters_scope_id,
+                parameter_names,
+                visibility,
+            );
 
             let current_scope_node_id = self.current_scope().node_id();
             let enclosing_definition = self.binder.find_definition_by_id(current_scope_node_id);
@@ -529,7 +562,23 @@ impl Visitor for Pass {
         let definition = if is_constant && !is_public {
             Definition::new_constant(node.node_id, &node.name)
         } else {
-            Definition::new_state_variable(node.node_id, &node.name)
+            // TODO(validation): only one visibility keyword is allowed
+            let visibility = node.attributes.iter().fold(
+                StateVariableVisibility::Internal,
+                |previous, attribute| match attribute {
+                    input_ir::StateVariableAttribute::InternalKeyword => {
+                        StateVariableVisibility::Internal
+                    }
+                    input_ir::StateVariableAttribute::PrivateKeyword => {
+                        StateVariableVisibility::Private
+                    }
+                    input_ir::StateVariableAttribute::PublicKeyword => {
+                        StateVariableVisibility::Public
+                    }
+                    _ => previous,
+                },
+            );
+            Definition::new_state_variable(node.node_id, &node.name, visibility)
         };
         self.insert_definition_in_current_scope(definition);
 

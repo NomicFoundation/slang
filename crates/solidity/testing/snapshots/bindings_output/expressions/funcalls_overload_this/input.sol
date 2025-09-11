@@ -1,13 +1,13 @@
 contract TestBase {
-  function add(int, int) returns (int);
+  function add(int, int) public returns (int);
 
-  function add(int) returns (int);
+  function add(int) public returns (int);
 }
 
 contract Test is TestBase {
   int y;
 
-  function someFunc(int x) returns (int) {
+  function someFunc(int x) public returns (int) {
     int farg = this.add(x);
     int literal = super.add(3);
     int farg_2 = super.add(x, y);

@@ -3,7 +3,7 @@ contract Other {
     return 42;
   }
 
-  function overloaded() payable returns (uint) {
+  function overloaded() public payable returns (uint) {
     return 0;
   }
 }

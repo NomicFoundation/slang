@@ -27,7 +27,7 @@ Bindings:
   1 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     function x() external view virtual returns (uint) {}
+  2 │     function x() public view virtual returns (uint) {}
     │              ┬  
     │              ╰── name: 2
     │ 
