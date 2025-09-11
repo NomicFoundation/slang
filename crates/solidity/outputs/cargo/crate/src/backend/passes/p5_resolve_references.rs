@@ -344,7 +344,9 @@ impl Pass {
 
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
         let type_ = self.types.get_type_by_id(type_id);
-        match type_ {
+
+        // Resolve direct members of the type first
+        let mut definition_ids = match type_ {
             Type::Contract { definition_id, .. } | Type::Interface { definition_id, .. } => {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder
@@ -361,32 +363,32 @@ impl Pass {
             }
             _ => Resolution::Unresolved,
         }
-        .or_else(|| {
-            // Consider active `using` directives in the current context
-            let active_directives = self.active_using_directives_for_type(type_id);
-            let mut definition_ids = Vec::new();
-            let mut seen_ids = HashSet::new();
-            for directive in active_directives {
-                let scope_id = directive.get_scope_id();
-                let ids = self
-                    .binder
-                    .resolve_in_scope_as_namespace(scope_id, symbol)
-                    .get_definition_ids();
-                for id in &ids {
-                    // Avoid returning duplicate definition IDs. That may happen
-                    // if equivalent `using` directives are active at some point
-                    // (eg. inherited through a base in older Solidity)
-                    // Filter the resolved definitions to only include
-                    // functions whose first parameter is of our type (or
-                    // implicitly convertible to it)
-                    if seen_ids.insert(*id) && self.is_function_with_receiver_type(*id, type_id) {
-                        definition_ids.push(*id);
-                    }
+        .get_definition_ids();
+
+        // Next, consider active `using` directives in the current context
+        let active_directives = self.active_using_directives_for_type(type_id);
+        let mut seen_ids = HashSet::new();
+        for directive in active_directives {
+            let scope_id = directive.get_scope_id();
+            let ids = self
+                .binder
+                .resolve_in_scope_as_namespace(scope_id, symbol)
+                .get_definition_ids();
+            for id in &ids {
+                // Avoid returning duplicate definition IDs. That may happen
+                // if equivalent `using` directives are active at some point
+                // (eg. inherited through a base in older Solidity)
+                // Filter the resolved definitions to only include
+                // functions whose first parameter is of our type (or
+                // implicitly convertible to it)
+                if seen_ids.insert(*id) && self.is_function_with_receiver_type(*id, type_id) {
+                    definition_ids.push(*id);
                 }
             }
-            Resolution::from(definition_ids)
-        })
-        .or_else(|| {
+        }
+
+        Resolution::from(definition_ids).or_else(|| {
+            // If still unresolved, try with a built-in
             self.built_ins_resolver()
                 .lookup_member_of_type_id(type_id, symbol)
                 .into()

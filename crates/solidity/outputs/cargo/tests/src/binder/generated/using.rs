@@ -47,6 +47,11 @@ fn deconstruction() -> Result<()> {
 }
 
 #[test]
+fn disambiguate_with_interface_function() -> Result<()> {
+    run(T, "disambiguate_with_interface_function")
+}
+
+#[test]
 fn duplicate_directives() -> Result<()> {
     run(T, "duplicate_directives")
 }
