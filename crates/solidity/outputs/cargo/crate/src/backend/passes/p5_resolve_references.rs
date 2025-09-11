@@ -724,11 +724,29 @@ impl Pass {
         None
     }
 
+    fn resolve_first_modifier(&self, resolution: &Resolution) -> Resolution {
+        let definition_ids = resolution.get_definition_ids();
+        if definition_ids.is_empty() {
+            return Resolution::Unresolved;
+        }
+        // Find the first definition that is either a modifier or a contract
+        // type, as that's how bases in constructors are parsed
+        definition_ids
+            .into_iter()
+            .find(|definition_id| {
+                matches!(
+                    self.binder.find_definition_by_id(*definition_id),
+                    Some(Definition::Modifier(_) | Definition::Contract(_))
+                )
+            })
+            .into()
+    }
+
     fn resolve_modifier_invocation(&mut self, modifier_invocation: &input_ir::ModifierInvocation) {
         let identifier_path = &modifier_invocation.name;
         let mut scope_id = self.current_contract_scope_id();
         let mut use_contract_lookup = true;
-        for identifier in identifier_path {
+        for (index, identifier) in identifier_path.iter().enumerate() {
             let resolution = if let Some(scope_id) = scope_id {
                 let symbol = identifier.unparse();
                 if use_contract_lookup {
@@ -740,11 +758,19 @@ impl Pass {
             } else {
                 Resolution::Unresolved
             };
+
             // TODO(validation): the found definition(s) must be modifiers
             // and be in the current contract hierarchy. We could potentially
             // verify that the initial symbol lookup is reachable from the
             // contract only (ie. it's a contract modifier, a modifier in a
             // base, or it's the identifier of a base of the current contract)
+            let resolution = if index == identifier_path.len() - 1 {
+                // The last element should be a modifier and for valid Solidity
+                // it overrides all previous definitions in the hierarchy
+                self.resolve_first_modifier(&resolution)
+            } else {
+                resolution
+            };
 
             scope_id = resolution
                 .as_definition_id()
