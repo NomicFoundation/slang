@@ -165,3 +165,8 @@ fn type_expr_integers() -> Result<()> {
 fn type_expr_minmax() -> Result<()> {
     run(T, "type_expr_minmax")
 }
+
+#[test]
+fn uint160_address_casting() -> Result<()> {
+    run(T, "uint160_address_casting")
+}

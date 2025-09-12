@@ -51,6 +51,7 @@ pub fn run(input: Input) -> Output {
 
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 const VERSION_0_7_0: Version = Version::new(0, 7, 0);
+const VERSION_0_8_0: Version = Version::new(0, 8, 0);
 
 struct Pass {
     language_version: Version,
@@ -973,11 +974,23 @@ impl Pass {
         match argument_typing {
             Typing::Resolved(argument_type_id) => {
                 // the resulting cast type inherits the data location of the argument
-                let type_id = if let Some(data_location) =
-                    self.types.get_type_by_id(*argument_type_id).data_location()
-                {
+                let argument_type = self.types.get_type_by_id(*argument_type_id);
+                let type_id = if let Some(data_location) = argument_type.data_location() {
                     self.types
                         .register_type_with_data_location(target_type, data_location)
+                // special case: address(uint160(_)) should type to `address payable` in <0.8.0
+                } else if self.language_version < VERSION_0_8_0
+                    && self.language_version >= VERSION_0_5_0
+                    && matches!(
+                        argument_type,
+                        Type::Integer {
+                            signed: false,
+                            bits: 160
+                        }
+                    )
+                    && matches!(target_type, Type::Address { .. })
+                {
+                    self.types.address_payable()
                 } else {
                     self.types.register_type(target_type)
                 };
