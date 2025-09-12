@@ -2,6 +2,7 @@ import * as wasm from "../../../wasm/index.mjs";
 
 export * from "./assertions.mjs";
 export * from "./extensions.mjs";
+export * from "./generated/rewriter.mjs";
 
 /** {@inheritDoc wasm.cst.NonterminalKind} */
 export const NonterminalKind = wasm.cst.NonterminalKind;
