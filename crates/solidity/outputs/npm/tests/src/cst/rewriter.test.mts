@@ -50,14 +50,19 @@ test("Rewrite NonterminalNode Deep", () => {
   class BasicRewriter extends BaseRewriter {
     insideContract = false;
 
-    public override rewriteIdentifier(terminalNode: TerminalNode): Node | undefined {
-      if (this.insideContract) {
-        const newNode = TerminalNode.create(terminalNode.kind, terminalNode.unparse() + "New");
+    public override rewriteFunctionDefinition(node: NonterminalNode): Node | undefined {
+      if (!this.insideContract) return node;
+
+      const children = node.children();
+      const nameIndex = children.findIndex((edge) => edge.label === EdgeLabel.Name);
+      if (nameIndex !== -1) {
+        const nameEdge = children[nameIndex];
+        const newNode = TerminalNode.create(TerminalKind.Identifier, nameEdge.node.unparse() + "New");
+        children[nameIndex] = Edge.createWithTerminal(EdgeLabel.Name, newNode);
         this.insideContract = false;
-        return newNode;
-      } else {
-        return terminalNode;
+        return NonterminalNode.create(NonterminalKind.FunctionDefinition, children);
       }
+      return node;
     }
 
     public override rewriteContractDefinition(node: NonterminalNode): Node | undefined {
@@ -69,12 +74,16 @@ test("Rewrite NonterminalNode Deep", () => {
   const source = `contract AContract {
     function aFun() public {}
   }
-  library ALib {}`;
+  library ALib {
+    function anotherFun() public {}
+  }`;
 
-  const expected = `contract AContractNew {
-    function aFun() public {}
+  const expected = `contract AContract {
+    function aFunNew() public {}
   }
-  library ALib {}`;
+  library ALib {
+    function anotherFun() public {}
+  }`;
 
   const node = parse(NonterminalKind.SourceUnit, source);
   const rewriter = new BasicRewriter();
