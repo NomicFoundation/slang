@@ -910,17 +910,22 @@ impl Pass {
                         },
                     )
                 {
+                    // matches "method" functions of a compatible receiver type
                     self.matches_positional_arguments(
                         parameter_types,
                         argument_typings,
                         function_type.external,
                     )
                 } else if parameter_types.len() == argument_typings.len() + 1
+                    && function_type.implicit_receiver_type.is_none()
                     && parameter_types.first().is_some_and(|type_id| {
                         self.types
                             .implicitly_convertible_to(receiver_type_id, *type_id)
                     })
                 {
+                    // matches attached functions (these can only be
+                    // free-functions or library functions) with a compatible
+                    // first argument
                     self.matches_positional_arguments(
                         &parameter_types[1..],
                         argument_typings,

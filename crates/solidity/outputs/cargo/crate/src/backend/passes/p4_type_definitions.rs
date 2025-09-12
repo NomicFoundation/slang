@@ -78,7 +78,7 @@ impl Pass {
             language_version: language_version.clone(),
             scope_stack: Vec::new(),
             binder,
-            types: TypeRegistry::default(),
+            types: TypeRegistry::new(language_version.clone()),
             current_receiver_type: None,
         }
     }

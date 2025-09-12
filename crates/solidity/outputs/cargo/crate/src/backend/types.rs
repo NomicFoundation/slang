@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
+use semver::Version;
 
 use crate::cst::NodeId;
 
@@ -15,6 +16,8 @@ pub struct TypeId(usize);
 pub struct TypeRegistry {
     types: IndexSet<Type>,
     super_types: HashMap<TypeId, Vec<TypeId>>,
+    // implicit conversion rules are version dependant
+    language_version: Version,
 
     // Pre-defined core types
     address_type_id: TypeId,
@@ -33,9 +36,11 @@ pub struct TypeRegistry {
     void_type_id: TypeId,
 }
 
+const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+
 impl TypeRegistry {
     #[allow(clippy::similar_names)]
-    fn new() -> Self {
+    pub fn new(language_version: Version) -> Self {
         let mut types = IndexSet::new();
         let (address_type, _) = types.insert_full(Type::Address { payable: false });
         let (address_payable_type, _) = types.insert_full(Type::Address { payable: true });
@@ -70,6 +75,7 @@ impl TypeRegistry {
         Self {
             types,
             super_types: HashMap::new(),
+            language_version,
 
             address_type_id: TypeId(address_type),
             address_payable_type_id: TypeId(address_payable_type),
@@ -259,6 +265,11 @@ impl TypeRegistry {
                 .super_types
                 .get(&from_type_id)
                 .is_some_and(|super_types| super_types.contains(&to_type_id)),
+
+            (Type::Contract { .. } | Type::Interface { .. }, Type::Address { payable: false }) => {
+                // Contract references are implicitly convertible to `address`
+                self.language_version < VERSION_0_5_0
+            },
 
             // TODO: add more implicit conversion rules
             _ => false,
@@ -559,12 +570,6 @@ impl TypeRegistry {
 impl TypeRegistry {
     pub fn iter_types(&self) -> impl Iterator<Item = (TypeId, &Type)> {
         (0usize..).map(TypeId).zip(self.types.iter())
-    }
-}
-
-impl Default for TypeRegistry {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

@@ -42,6 +42,11 @@ fn fallback_receive() -> Result<()> {
 }
 
 #[test]
+fn implicit_conversion_to_address() -> Result<()> {
+    run(T, "implicit_conversion_to_address")
+}
+
+#[test]
 fn inheritance() -> Result<()> {
     run(T, "inheritance")
 }
