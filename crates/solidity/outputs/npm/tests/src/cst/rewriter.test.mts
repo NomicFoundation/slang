@@ -59,7 +59,6 @@ test("Rewrite NonterminalNode Deep", () => {
         const nameEdge = children[nameIndex];
         const newNode = TerminalNode.create(TerminalKind.Identifier, nameEdge.node.unparse() + "New");
         children[nameIndex] = Edge.createWithTerminal(EdgeLabel.Name, newNode);
-        this.insideContract = false;
         return NonterminalNode.create(NonterminalKind.FunctionDefinition, children);
       }
       return node;
@@ -67,22 +66,26 @@ test("Rewrite NonterminalNode Deep", () => {
 
     public override rewriteContractDefinition(node: NonterminalNode): Node | undefined {
       this.insideContract = true;
-      return this.rewriteChildren(node);
+      const newNode = this.rewriteChildren(node);
+      this.insideContract = false;
+      return newNode;
     }
   }
 
   const source = `contract AContract {
-    function aFun() public {}
+    function foo() public {}
+    function bar() public {}
   }
   library ALib {
-    function anotherFun() public {}
+    function baz() public {}
   }`;
 
   const expected = `contract AContract {
-    function aFunNew() public {}
+    function fooNew() public {}
+    function barNew() public {}
   }
   library ALib {
-    function anotherFun() public {}
+    function baz() public {}
   }`;
 
   const node = parse(NonterminalKind.SourceUnit, source);
