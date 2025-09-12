@@ -34,7 +34,7 @@ pub fn working_dir_path() -> PathBuf {
 }
 
 pub fn read_config() -> Result<Configuration> {
-    let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf_utils")?;
+    let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf_cargo")?;
     let config_path = config_path.join("../projects.json");
     let config_content = fs::read_to_string(config_path)?;
     let config: Configuration = serde_json::from_str(&config_content)?;

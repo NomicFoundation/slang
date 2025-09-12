@@ -1,5 +1,5 @@
 [package]
-name = "solidity_testing_perf_utils"
+name = "solidity_testing_utils"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

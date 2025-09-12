@@ -8,7 +8,7 @@ use infra_utils::paths::PathExtensions;
 use reqwest::blocking::Client;
 use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
-use solidity_testing_perf_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
+use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
 use tar::Archive;
 
 use crate::command::{ChainId, ShardingOptions};

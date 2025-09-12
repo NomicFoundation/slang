@@ -20,7 +20,7 @@ slang_solidity = { workspace = true, features = [
   "__private_ariadne_errors",
   "__private_testing_utils",
 ] }
-solidity_testing_perf_utils = { workspace = true }
+solidity_testing_utils = { workspace = true }
 tar = { workspace = true }
 
 [lints]

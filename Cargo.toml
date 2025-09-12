@@ -36,10 +36,10 @@ members = [
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/perf/cargo",
     "crates/solidity/testing/perf/npm",
-    "crates/solidity/testing/perf/utils",
     "crates/solidity/testing/snapshots",
     "crates/solidity/testing/solc",
     "crates/solidity/testing/sourcify",
+    "crates/solidity/testing/utils",
 ]
 
 [workspace.dependencies]
@@ -75,10 +75,10 @@ solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version =
 solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.2.1" }
 solidity_testing_perf_cargo = { path = "crates/solidity/testing/perf/cargo", version = "1.2.1" }
 solidity_testing_perf_npm = { path = "crates/solidity/testing/perf/npm", version = "1.2.1" }
-solidity_testing_perf_utils = { path = "crates/solidity/testing/perf/utils", version = "1.2.1" }
 solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.2.1" }
 solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.2.1" }
 solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.2.1" }
+solidity_testing_utils = { path = "crates/solidity/testing/utils", version = "1.2.1" }
 
 #
 # External

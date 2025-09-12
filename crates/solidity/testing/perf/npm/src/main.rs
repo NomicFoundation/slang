@@ -7,8 +7,8 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 use serde_json::json;
-use solidity_testing_perf_utils::config::{self, File, Project};
-use solidity_testing_perf_utils::fetch::fetch;
+use solidity_testing_utils::config::{self, File, Project};
+use solidity_testing_utils::fetch::fetch;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
 

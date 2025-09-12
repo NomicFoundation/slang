@@ -3760,7 +3760,7 @@ dependencies = [
  "serde_json",
  "slang_solidity",
  "solar-compiler",
- "solidity_testing_perf_utils",
+ "solidity_testing_utils",
  "streaming-iterator",
  "tree-sitter",
  "tree-sitter-solidity",
@@ -3775,21 +3775,9 @@ dependencies = [
  "infra_utils",
  "regex",
  "serde_json",
- "solidity_testing_perf_utils",
+ "solidity_testing_utils",
  "strum 0.26.3",
  "strum_macros 0.26.4",
-]
-
-[[package]]
-name = "solidity_testing_perf_utils"
-version = "1.2.1"
-dependencies = [
- "anyhow",
- "infra_utils",
- "reqwest",
- "serde",
- "serde_json",
- "url",
 ]
 
 [[package]]
@@ -3834,8 +3822,20 @@ dependencies = [
  "serde",
  "serde_json",
  "slang_solidity",
- "solidity_testing_perf_utils",
+ "solidity_testing_utils",
  "tar",
+]
+
+[[package]]
+name = "solidity_testing_utils"
+version = "1.2.1"
+dependencies = [
+ "anyhow",
+ "infra_utils",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "url",
 ]
 
 [[package]]

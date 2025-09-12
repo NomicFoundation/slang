@@ -7,8 +7,8 @@ use anyhow::{anyhow, Result};
 use semver::{BuildMetadata, Prerelease};
 use serde::Deserialize;
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
-use solidity_testing_perf_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
-use solidity_testing_perf_utils::{config, fetch};
+use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
+use solidity_testing_utils::{config, fetch};
 
 type ProjectMap = HashMap<String, SolidityProject>;
 
