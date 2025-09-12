@@ -4,7 +4,9 @@ use std::path::Path;
 use std::sync::OnceLock;
 
 use anyhow::{anyhow, Result};
+use semver::{BuildMetadata, Prerelease};
 use serde::Deserialize;
+use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use solidity_testing_perf_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
 use solidity_testing_perf_utils::{config, fetch};
 
@@ -155,11 +157,27 @@ impl SolidityProject {
         Ok(sself)
     }
 
-    pub fn file_contents(&self, file: &str) -> Result<&str> {
+    pub fn build_compilation_unit(&self) -> Result<CompilationUnit> {
+        let mut version = semver::Version::parse(&self.compilation.compiler_version).unwrap();
+        version.pre = Prerelease::EMPTY;
+        version.build = BuildMetadata::EMPTY;
+
+        let mut builder = CompilationBuilder::new(version, self)?;
+
+        builder.add_file(&self.compilation.get_entrypoint())?;
+
+        Ok(builder.build())
+    }
+}
+
+impl CompilationBuilderConfig for &SolidityProject {
+    type Error = anyhow::Error;
+
+    fn read_file(&mut self, file_id: &str) -> Result<Option<String>> {
         self.sources
-            .get(file)
-            .map(|s| s.as_str())
-            .ok_or(anyhow!("Can't find {}", file))
+            .get(file_id)
+            .map(|s| Some(s.to_owned()))
+            .ok_or(anyhow!("Can't find {}", file_id))
     }
 
     /// Resolves an import of a solidity file.
@@ -167,15 +185,28 @@ impl SolidityProject {
     /// - `import_string`: the import string as parsed from the source file.
     ///
     /// Returns the relative path of the imported file.
-    pub fn resolve_import(&self, source_file: &str, import_string: &str) -> Result<String> {
+    fn resolve_import(
+        &mut self,
+        source_file_id: &str,
+        import_path_cursor: &slang_solidity::cst::Cursor,
+    ) -> Result<Option<String>> {
+        let import_path = import_path_cursor.node().unparse();
+        let import_path = import_path
+            .strip_prefix(|c| matches!(c, '"' | '\''))
+            .unwrap()
+            .strip_suffix(|c| matches!(c, '"' | '\''))
+            .unwrap()
+            .trim();
+
         self.import_resolver
-            .resolve_import(source_file, import_string)
+            .resolve_import(source_file_id, import_path)
             .ok_or_else(|| {
                 anyhow!(
                     "Can't resolve import '{}' from '{}'",
-                    import_string,
-                    source_file
+                    import_path,
+                    source_file_id
                 )
             })
+            .map(Some)
     }
 }
