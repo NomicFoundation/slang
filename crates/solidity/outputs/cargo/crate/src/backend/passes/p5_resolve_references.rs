@@ -1350,6 +1350,10 @@ impl Pass {
                         });
                         (Typing::Resolved(type_id), Some(node_id))
                     }
+                    Some(Definition::Event(_)) => {
+                        // this is an event called as a function, which is valid in <0.5.0
+                        (Typing::Resolved(self.types.void()), Some(node_id))
+                    }
                     _ => (Typing::Unresolved, None),
                 }
             }

@@ -7,6 +7,11 @@ use crate::bindings::bindings_output::runner::run;
 const T: &str = "events";
 
 #[test]
+fn called_as_functions() -> Result<()> {
+    run(T, "called_as_functions")
+}
+
+#[test]
 fn custom_types() -> Result<()> {
     run(T, "custom_types")
 }
