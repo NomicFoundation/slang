@@ -261,19 +261,32 @@ impl Pass {
                     // TODO(validation): for `this` resolutions we need to check
                     // that the returned definitions are externally available
                     // (ie. either `external` or `public`)
-                    let resolution = self
+                    let mut definition_ids = self
                         .binder
-                        .resolve_in_contract_scope(scope_id, symbol, options);
+                        .resolve_in_contract_scope(scope_id, symbol, options)
+                        .get_definition_ids();
 
-                    if self.language_version < VERSION_0_5_0 && resolution == Resolution::Unresolved
-                    {
+                    if matches!(typing, Typing::This) {
+                        // Consider active `using` directives for `this`
+                        if let Some(receiver_type_id) = self.types.find_type(&Type::Contract {
+                            definition_id: node_id,
+                        }) {
+                            self.add_attached_functions_for_type(
+                                receiver_type_id,
+                                symbol,
+                                &mut definition_ids,
+                            );
+                        }
+                    }
+
+                    if self.language_version < VERSION_0_5_0 && definition_ids.is_empty() {
                         // In Solidity < 0.5.0, `this` can be used as an address
                         Resolution::from(
                             self.built_ins_resolver()
                                 .lookup_member_of_type_id(self.types.address(), symbol),
                         )
                     } else {
-                        resolution
+                        Resolution::from(definition_ids)
                     }
                 } else {
                     Resolution::Unresolved
@@ -367,7 +380,23 @@ impl Pass {
         .get_definition_ids();
 
         // Next, consider active `using` directives in the current context
-        let active_directives = self.active_using_directives_for_type(type_id);
+        self.add_attached_functions_for_type(type_id, symbol, &mut definition_ids);
+
+        Resolution::from(definition_ids).or_else(|| {
+            // If still unresolved, try with a built-in
+            self.built_ins_resolver()
+                .lookup_member_of_type_id(type_id, symbol)
+                .into()
+        })
+    }
+
+    fn add_attached_functions_for_type(
+        &self,
+        receiver_type_id: TypeId,
+        symbol: &str,
+        definition_ids: &mut Vec<NodeId>,
+    ) {
+        let active_directives = self.active_using_directives_for_type(receiver_type_id);
         let mut seen_ids = HashSet::new();
         for directive in active_directives {
             let scope_id = directive.get_scope_id();
@@ -382,18 +411,13 @@ impl Pass {
                 // Filter the resolved definitions to only include
                 // functions whose first parameter is of our type (or
                 // implicitly convertible to it)
-                if seen_ids.insert(*id) && self.is_function_with_receiver_type(*id, type_id) {
+                if seen_ids.insert(*id)
+                    && self.is_function_with_receiver_type(*id, receiver_type_id)
+                {
                     definition_ids.push(*id);
                 }
             }
         }
-
-        Resolution::from(definition_ids).or_else(|| {
-            // If still unresolved, try with a built-in
-            self.built_ins_resolver()
-                .lookup_member_of_type_id(type_id, symbol)
-                .into()
-        })
     }
 
     fn is_function_with_receiver_type(

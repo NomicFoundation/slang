@@ -12,6 +12,11 @@ fn address() -> Result<()> {
 }
 
 #[test]
+fn attached_to_this() -> Result<()> {
+    run(T, "attached_to_this")
+}
+
+#[test]
 fn binding_enum() -> Result<()> {
     run(T, "binding_enum")
 }
