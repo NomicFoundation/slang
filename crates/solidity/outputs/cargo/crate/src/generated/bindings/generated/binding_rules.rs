@@ -1584,7 +1584,7 @@ inherit .star_extension
   ;; Function parameters should also be able inside Yul assembly blocks via a guarded path
   edge @function.yul_locals -> @params.defs
 
-  ;; Connect to paramaters for named argument resolution
+  ;; Connect to parameters for named argument resolution
   edge @function.def -> @params.names
 }
 
@@ -1696,7 +1696,7 @@ inherit .star_extension
   ;; ... and shadow other declarations
   attr (@constructor.lexical_scope -> @params.defs) precedence = 1
 
-  ;; Connect to paramaters for named argument resolution
+  ;; Connect to parameters for named argument resolution
   edge @constructor.def -> @params.names
 
   ;; Parameters should be accessible to assembly blocks
@@ -1734,7 +1734,7 @@ inherit .star_extension
 ] {
   if (version-matches "< 0.5.0") {
     if (eq (source-text @contract_name) (source-text @function_name)) {
-      ; Connect to paramaters for named argument resolution
+      ; Connect to parameters for named argument resolution
       edge @contract.def -> @params.names
     }
   }
