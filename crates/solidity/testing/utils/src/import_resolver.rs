@@ -165,11 +165,7 @@ impl ImportRemap {
     pub fn has_known_bug(&self) -> bool {
         // Ex Contract: 0x56D47372A66b3f640Bff83E745dE7D10f4B29075
         // Remapping list includes ":./=remappings.txt/"
-        if self.target.contains("remappings.txt") {
-            return true;
-        }
-
-        false
+        self.target.contains("remappings.txt")
     }
 }
 
