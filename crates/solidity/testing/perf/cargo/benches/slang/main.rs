@@ -87,8 +87,8 @@ macro_rules! slang_define_full_tests {
 
 // We test a few projects in full for slang-only benchmarks
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-slang_define_full_tests!(circular_imports_weighted_pool);
-slang_define_full_tests!(three_quarters_file_merkle_proof);
+slang_define_full_tests!(weighted_pool);
+slang_define_full_tests!(merkle_proof);
 
 main!(
     config = LibraryBenchmarkConfig::default()
@@ -125,5 +125,5 @@ main!(
 
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups = circular_imports_weighted_pool_full,three_quarters_file_merkle_proof_full,
+    library_benchmark_groups = weighted_pool_full,merkle_proof_full,
 );

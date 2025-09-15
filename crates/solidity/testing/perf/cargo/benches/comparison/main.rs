@@ -55,15 +55,15 @@ macro_rules! comparison_tests {
 
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 // flat_imports_mooniswap is version incompatible with solar
-comparison_tests!(circular_imports_weighted_pool);
-// protocol_uniswap is incompatible in tree-sitter
-comparison_tests!(protocol_multicall3);
-// protocol_create_x is incompatible in tree-sitter
-comparison_tests!(protocol_ui_pool_data_provider_v3);
-comparison_tests!(deep_nesting_cooldogs);
-comparison_tests!(largest_file_trivia_oslf);
-comparison_tests!(largest_file_pointer_libraries);
-comparison_tests!(three_quarters_file_merkle_proof);
+comparison_tests!(weighted_pool);
+// uniswap is incompatible in tree-sitter
+comparison_tests!(multicall3);
+// create_x is incompatible in tree-sitter
+comparison_tests!(ui_pool_data_provider_v3);
+comparison_tests!(cooldogs);
+comparison_tests!(one_step_leverage_f);
+comparison_tests!(pointer_libraries);
+comparison_tests!(merkle_proof);
 
 main!(
     config = LibraryBenchmarkConfig::default()
@@ -101,11 +101,11 @@ main!(
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
     library_benchmark_groups =
-        circular_imports_weighted_pool_group,
-        protocol_multicall3_group,
-        protocol_ui_pool_data_provider_v3_group,
-        deep_nesting_cooldogs_group,
-        largest_file_trivia_oslf_group,
-        largest_file_pointer_libraries_group,
-        three_quarters_file_merkle_proof_group,
+        weighted_pool_group,
+        multicall3_group,
+        ui_pool_data_provider_v3_group,
+        cooldogs_group,
+        one_step_leverage_f_group,
+        pointer_libraries_group,
+        merkle_proof_group,
 );

@@ -9,7 +9,7 @@ mod __dependencies_used_in_benches__ {
 
 #[cfg(test)]
 mod unit_tests {
-    const PROJECT_TO_TEST: &str = "protocol_ui_pool_data_provider_v3";
+    const PROJECT_TO_TEST: &str = "ui_pool_data_provider_v3";
     const CONTRACT_COUNT: usize = 25;
     const IDENTIFIER_COUNT: usize = 2829;
 
