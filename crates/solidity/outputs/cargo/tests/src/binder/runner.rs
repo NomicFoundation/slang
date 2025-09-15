@@ -57,6 +57,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         }
 
         if !skip_diff_report {
+            // TODO: we need to review all the generated diff reports and double
+            // check what changed wrt the stack graph binder
             let (diff_report, has_diff) = binding_graph_diff_report(&report_data)?;
             match last_diff_report {
                 Some(ref last) if last == &diff_report => (),

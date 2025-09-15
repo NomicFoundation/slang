@@ -465,6 +465,10 @@ impl Binder {
     // imported symbols recursively), while `resolve_in_scope_internal`
     // delegates to parent or otherwise linked scopes.
     pub(crate) fn resolve_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+        // TODO: since this function uses the results from other resolution
+        // functions, we making more allocations than necessary; it may be worth
+        // it to try and avoid them by returning iterators from the delegated
+        // resolution functions
         let mut found_ids = Vec::new();
         let mut working_set = Vec::new();
         let mut seen_ids = HashSet::new();
