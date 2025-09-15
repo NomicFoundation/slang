@@ -1,0 +1,72 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["foo" @ input.sol:1:10] (function, type: function () returns void)
+- Def: #2 ["bar" @ input.sol:2:10] (function, type: function () returns void)
+- Def: #3 ["Base" @ input.sol:4:10] (contract)
+- Def: #4 ["bar" @ input.sol:5:14] (function, type: function () returns void)
+- Def: #5 ["Test" @ input.sol:8:10] (contract)
+- Def: #6 ["x" @ input.sol:9:9] (state var, type: int256)
+- Def: #7 ["test" @ input.sol:11:14] (function, type: function (int256) returns void)
+- Def: #8 ["x" @ input.sol:11:23] (parameter, type: int256)
+- Def: #9 ["foo" @ input.sol:17:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Base" @ input.sol:8:18] -> #3
+- Ref: ["foo" @ input.sol:12:9] -> #9
+- Ref: ["bar" @ input.sol:13:9] -> #4
+- Ref: ["x" @ input.sol:14:9] -> #8
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ function foo() {}
+    │          ─┬─  
+    │           ╰─── name: 1
+  2 │ function bar() {}
+    │          ─┬─  
+    │           ╰─── name: 2
+    │ 
+  4 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 3
+  5 │     function bar() public {}
+    │              ─┬─  
+    │               ╰─── name: 4
+    │ 
+  8 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 5
+    │                    │   
+    │                    ╰─── ref: 3
+  9 │     int x;
+    │         ┬  
+    │         ╰── name: 6
+    │ 
+ 11 │     function test(int x) public {
+    │              ──┬─     ┬  
+    │                ╰───────── name: 7
+    │                       │  
+    │                       ╰── name: 8
+ 12 │         foo();
+    │         ─┬─  
+    │          ╰─── ref: 9
+ 13 │         bar();
+    │         ─┬─  
+    │          ╰─── ref: 4
+ 14 │         x;
+    │         ┬  
+    │         ╰── ref: 8
+    │ 
+ 17 │     function foo() internal {}
+    │              ─┬─  
+    │               ╰─── name: 9
+────╯

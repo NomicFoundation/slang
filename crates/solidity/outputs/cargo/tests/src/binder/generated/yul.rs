@@ -107,6 +107,11 @@ fn nested_functions() -> Result<()> {
 }
 
 #[test]
+fn slot_of_return_params() -> Result<()> {
+    run(T, "slot_of_return_params")
+}
+
+#[test]
 fn slot_offset_members() -> Result<()> {
     run(T, "slot_offset_members")
 }

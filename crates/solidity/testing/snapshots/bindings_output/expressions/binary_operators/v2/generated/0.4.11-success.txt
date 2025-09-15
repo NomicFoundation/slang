@@ -1,0 +1,150 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["nop_uint" @ input.sol:2:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["x" @ input.sol:2:28] (parameter, type: uint256)
+- Def: #4 ["nop_bool" @ input.sol:3:14] (function, type: function (bool) returns bool)
+- Def: #5 ["x" @ input.sol:3:28] (parameter, type: bool)
+- Def: #6 ["Test" @ input.sol:6:10] (contract)
+- Def: #7 ["test" @ input.sol:9:14] (function, type: function (uint256, uint256) returns void)
+- Def: #8 ["a" @ input.sol:9:24] (parameter, type: uint256)
+- Def: #9 ["b" @ input.sol:9:32] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (29):
+- Ref: ["Lib" @ input.sol:7:11] -> #1
+- Ref: ["Lib" @ input.sol:8:11] -> #1
+- Ref: ["a" @ input.sol:10:10] -> #8
+- Ref: ["b" @ input.sol:10:15] -> #9
+- Ref: ["nop_uint" @ input.sol:10:18] -> #2
+- Ref: ["a" @ input.sol:11:17] -> #8
+- Ref: ["b" @ input.sol:11:21] -> #9
+- Ref: ["nop_uint" @ input.sol:11:24] -> #2
+- Ref: ["a" @ input.sol:12:10] -> #8
+- Ref: ["b" @ input.sol:12:15] -> #9
+- Ref: ["nop_bool" @ input.sol:12:18] -> #4
+- Ref: ["a" @ input.sol:13:10] -> #8
+- Ref: ["b" @ input.sol:13:14] -> #9
+- Ref: ["nop_bool" @ input.sol:13:17] -> #4
+- Ref: ["a" @ input.sol:14:10] -> #8
+- Ref: ["b" @ input.sol:14:14] -> #9
+- Ref: ["nop_uint" @ input.sol:14:17] -> #2
+- Ref: ["a" @ input.sol:15:10] -> #8
+- Ref: ["nop_uint" @ input.sol:15:18] -> #2
+- Ref: ["a" @ input.sol:16:10] -> #8
+- Ref: ["b" @ input.sol:16:14] -> #9
+- Ref: ["nop_uint" @ input.sol:16:17] -> #2
+- Ref: ["a" @ input.sol:17:10] -> #8
+- Ref: ["b" @ input.sol:17:14] -> #9
+- Ref: ["nop_uint" @ input.sol:17:17] -> #2
+- Ref: ["a" @ input.sol:18:10] -> #8
+- Ref: ["nop_uint" @ input.sol:18:15] -> #2
+- Ref: ["a" @ input.sol:19:12] -> #8
+- Ref: ["nop_uint" @ input.sol:19:15] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function nop_uint(uint x) public returns (uint) {}
+    │              ────┬───      ┬  
+    │                  ╰──────────── name: 2
+    │                            │  
+    │                            ╰── name: 3
+  3 │     function nop_bool(bool x) public returns (bool) {}
+    │              ────┬───      ┬  
+    │                  ╰──────────── name: 4
+    │                            │  
+    │                            ╰── name: 5
+    │ 
+  6 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 6
+  7 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  8 │     using Lib for bool;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  9 │     function test(uint a, uint b) public {
+    │              ──┬─      ┬       ┬  
+    │                ╰────────────────── name: 7
+    │                        │       │  
+    │                        ╰────────── name: 8
+    │                                │  
+    │                                ╰── name: 9
+ 10 │         (a += b).nop_uint();
+    │          ┬    ┬  ────┬───  
+    │          ╰───────────────── ref: 8
+    │               │      │     
+    │               ╰──────────── ref: 9
+    │                      │     
+    │                      ╰───── ref: 2
+ 11 │         (true ? a : b).nop_uint();
+    │                 ┬   ┬  ────┬───  
+    │                 ╰──────────────── ref: 8
+    │                     │      │     
+    │                     ╰──────────── ref: 9
+    │                            │     
+    │                            ╰───── ref: 2
+ 12 │         (a == b).nop_bool();
+    │          ┬    ┬  ────┬───  
+    │          ╰───────────────── ref: 8
+    │               │      │     
+    │               ╰──────────── ref: 9
+    │                      │     
+    │                      ╰───── ref: 4
+ 13 │         (a > b).nop_bool();
+    │          ┬   ┬  ────┬───  
+    │          ╰──────────────── ref: 8
+    │              │      │     
+    │              ╰──────────── ref: 9
+    │                     │     
+    │                     ╰───── ref: 4
+ 14 │         (a | b).nop_uint();
+    │          ┬   ┬  ────┬───  
+    │          ╰──────────────── ref: 8
+    │              │      │     
+    │              ╰──────────── ref: 9
+    │                     │     
+    │                     ╰───── ref: 2
+ 15 │         (a << 1).nop_uint();
+    │          ┬       ────┬───  
+    │          ╰───────────────── ref: 8
+    │                      │     
+    │                      ╰───── ref: 2
+ 16 │         (a + b).nop_uint();
+    │          ┬   ┬  ────┬───  
+    │          ╰──────────────── ref: 8
+    │              │      │     
+    │              ╰──────────── ref: 9
+    │                     │     
+    │                     ╰───── ref: 2
+ 17 │         (a * b).nop_uint();
+    │          ┬   ┬  ────┬───  
+    │          ╰──────────────── ref: 8
+    │              │      │     
+    │              ╰──────────── ref: 9
+    │                     │     
+    │                     ╰───── ref: 2
+ 18 │         (a++).nop_uint();
+    │          ┬    ────┬───  
+    │          ╰────────────── ref: 8
+    │                   │     
+    │                   ╰───── ref: 2
+ 19 │         (++a).nop_uint();
+    │            ┬  ────┬───  
+    │            ╰──────────── ref: 8
+    │                   │     
+    │                   ╰───── ref: 2
+────╯

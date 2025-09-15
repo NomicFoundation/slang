@@ -1,0 +1,79 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function (TokenState) returns void)
+- Def: #3 ["tokenState" @ input.sol:2:30] (parameter, type: TokenState)
+- Def: #4 ["TokenState" @ input.sol:8:10] (contract)
+- Def: #5 ["nested_maps" @ input.sol:9:54] (state var, type: uint256 => uint256 => address)
+- Def: #6 ["array_in_map" @ input.sol:10:39] (state var, type: uint256 => address[] storage)
+- Def: #7 ["map_in_array" @ input.sol:11:39] (state var, type: uint256 => address[] storage)
+
+------------------------------------------------------------------------
+
+References (10):
+- Ref: ["TokenState" @ input.sol:2:19] -> #4
+- Ref: ["tokenState" @ input.sol:3:9] -> #3
+- Ref: ["nested_maps" @ input.sol:3:20] -> #5
+- Ref: ["balance" @ input.sol:3:38] -> built-in
+- Ref: ["tokenState" @ input.sol:4:9] -> #3
+- Ref: ["array_in_map" @ input.sol:4:20] -> #6
+- Ref: ["balance" @ input.sol:4:39] -> built-in
+- Ref: ["tokenState" @ input.sol:5:9] -> #3
+- Ref: ["map_in_array" @ input.sol:5:20] -> #7
+- Ref: ["balance" @ input.sol:5:39] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test(TokenState tokenState) public {
+    │              ──┬─ ─────┬──── ─────┬────  
+    │                ╰───────────────────────── name: 2
+    │                        │          │      
+    │                        ╰───────────────── ref: 4
+    │                                   │      
+    │                                   ╰────── name: 3
+  3 │         tokenState.nested_maps(1, 1).balance;
+    │         ─────┬──── ─────┬─────       ───┬───  
+    │              ╰──────────────────────────────── ref: 3
+    │                         │               │     
+    │                         ╰───────────────────── ref: 5
+    │                                         │     
+    │                                         ╰───── built-in
+  4 │         tokenState.array_in_map(1, 1).balance;
+    │         ─────┬──── ──────┬─────       ───┬───  
+    │              ╰───────────────────────────────── ref: 3
+    │                          │               │     
+    │                          ╰───────────────────── ref: 6
+    │                                          │     
+    │                                          ╰───── built-in
+  5 │         tokenState.map_in_array(1, 1).balance;
+    │         ─────┬──── ──────┬─────       ───┬───  
+    │              ╰───────────────────────────────── ref: 3
+    │                          │               │     
+    │                          ╰───────────────────── ref: 7
+    │                                          │     
+    │                                          ╰───── built-in
+    │ 
+  8 │ contract TokenState {
+    │          ─────┬────  
+    │               ╰────── name: 4
+  9 │     mapping(uint => mapping(uint => address)) public nested_maps;
+    │                                                      ─────┬─────  
+    │                                                           ╰─────── name: 5
+ 10 │     mapping(uint => address[]) public array_in_map;
+    │                                       ──────┬─────  
+    │                                             ╰─────── name: 6
+ 11 │     mapping(uint => address)[] public map_in_array;
+    │                                       ──────┬─────  
+    │                                             ╰─────── name: 7
+────╯

@@ -18,7 +18,7 @@ References and definitions:
     │                ╰────────── name: 4
     │                        │  
     │                        ╰── name: 5
-  6 │     function bar(uint x) public returns (Bar) {}
+  6 │     function bar(uint x) public returns (Bar memory) {}
     │              ─┬─      ┬                  ─┬─  
     │               ╰─────────────────────────────── name: 6
     │                       │                   │   
@@ -92,11 +92,11 @@ Definiens:
     │     │                          ╰─────────────────────────────── definiens: 5
     │     │                              │                           
     │     │                              ╰─────────────────────────── definiens: 4
-  6 │     │         function bar(uint x) public returns (Bar) {}
-    │     │     ────────────────────┬───┬────────────────────────  
-    │     │                         ╰────────────────────────────── definiens: 7
-    │     │                             │                          
-    │     │                             ╰────────────────────────── definiens: 6
+  6 │     │         function bar(uint x) public returns (Bar memory) {}
+    │     │     ────────────────────┬───────┬───────────────────────────  
+    │     │                         ╰───────────────────────────────────── definiens: 7
+    │     │                                 │                             
+    │     │                                 ╰───────────────────────────── definiens: 6
   7 │ │   ├───▶ }
     │ │   │         
     │ │   ╰───────── definiens: 1

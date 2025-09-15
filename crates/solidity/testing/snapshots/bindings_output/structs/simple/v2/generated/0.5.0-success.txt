@@ -1,0 +1,72 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["CrowdFunding" @ input.sol:1:10] (contract)
+- Def: #2 ["Campaign" @ input.sol:2:12] (struct)
+- Def: #3 ["beneficiary" @ input.sol:3:25] (struct member, type: address payable)
+- Def: #4 ["fundingGoal" @ input.sol:4:14] (struct member, type: uint256)
+- Def: #5 ["newCampaign" @ input.sol:7:14] (function, type: function (address payable, uint256) returns void)
+- Def: #6 ["beneficiary" @ input.sol:7:42] (parameter, type: address payable)
+- Def: #7 ["goal" @ input.sol:7:60] (parameter, type: uint256)
+- Def: #8 ["c" @ input.sol:8:26] (variable, type: Campaign storage)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["Campaign" @ input.sol:8:9] -> #2
+- Ref: ["c" @ input.sol:9:9] -> #8
+- Ref: ["beneficiary" @ input.sol:9:11] -> #3
+- Ref: ["beneficiary" @ input.sol:9:25] -> #6
+- Ref: ["c" @ input.sol:10:9] -> #8
+- Ref: ["fundingGoal" @ input.sol:10:11] -> #4
+- Ref: ["goal" @ input.sol:10:25] -> #7
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract CrowdFunding {
+    │          ──────┬─────  
+    │                ╰─────── name: 1
+  2 │     struct Campaign {
+    │            ────┬───  
+    │                ╰───── name: 2
+  3 │         address payable beneficiary;
+    │                         ─────┬─────  
+    │                              ╰─────── name: 3
+  4 │         uint fundingGoal;
+    │              ─────┬─────  
+    │                   ╰─────── name: 4
+    │ 
+  7 │     function newCampaign(address payable beneficiary, uint goal) public {
+    │              ─────┬─────                 ─────┬─────       ──┬─  
+    │                   ╰────────────────────────────────────────────── name: 5
+    │                                               │              │   
+    │                                               ╰────────────────── name: 6
+    │                                                              │   
+    │                                                              ╰─── name: 7
+  8 │         Campaign storage c;
+    │         ────┬───         ┬  
+    │             ╰─────────────── ref: 2
+    │                          │  
+    │                          ╰── name: 8
+  9 │         c.beneficiary = beneficiary;
+    │         ┬ ─────┬─────   ─────┬─────  
+    │         ╰──────────────────────────── ref: 8
+    │                │             │       
+    │                ╰───────────────────── ref: 3
+    │                              │       
+    │                              ╰─────── ref: 6
+ 10 │         c.fundingGoal = goal;
+    │         ┬ ─────┬─────   ──┬─  
+    │         ╰───────────────────── ref: 8
+    │                │          │   
+    │                ╰────────────── ref: 4
+    │                           │   
+    │                           ╰─── ref: 7
+────╯

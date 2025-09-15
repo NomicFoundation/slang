@@ -142,6 +142,11 @@ fn qualified_self() -> Result<()> {
 }
 
 #[test]
+fn state_var_override() -> Result<()> {
+    run(T, "state_var_override")
+}
+
+#[test]
 fn storage_layout_constant() -> Result<()> {
     run(T, "storage_layout_constant")
 }

@@ -1,0 +1,182 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (23):
+- Def: #1 ["Mappings" @ input.sol:1:10] (contract)
+- Def: #2 ["Direction" @ input.sol:2:10] (enum)
+- Def: #3 ["North" @ input.sol:2:22] (enum member of Direction)
+- Def: #4 ["East" @ input.sol:2:29] (enum member of Direction)
+- Def: #5 ["South" @ input.sol:2:35] (enum member of Direction)
+- Def: #6 ["West" @ input.sol:2:42] (enum member of Direction)
+- Def: #7 ["Kind" @ input.sol:3:10] (enum)
+- Def: #8 ["Zombie" @ input.sol:3:17] (enum member of Kind)
+- Def: #9 ["Bat" @ input.sol:3:25] (enum member of Kind)
+- Def: #10 ["Skeleton" @ input.sol:3:30] (enum member of Kind)
+- Def: #11 ["Dragon" @ input.sol:3:40] (enum member of Kind)
+- Def: #12 ["Monster" @ input.sol:4:12] (struct)
+- Def: #13 ["kind" @ input.sol:5:14] (struct member, type: Kind)
+- Def: #14 ["life" @ input.sol:6:14] (struct member, type: uint256)
+- Def: #15 ["monsters" @ input.sol:9:35] (state var, type: Direction => Monster storage)
+- Def: #16 ["spawn" @ input.sol:11:14] (function, type: function (Direction, Kind) returns void)
+- Def: #17 ["_dir" @ input.sol:11:30] (parameter, type: Direction)
+- Def: #18 ["_kind" @ input.sol:11:41] (parameter, type: Kind)
+- Def: #19 ["attack" @ input.sol:15:14] (function, type: function (Direction, uint256) returns void)
+- Def: #20 ["_dir" @ input.sol:15:31] (parameter, type: Direction)
+- Def: #21 ["_power" @ input.sol:15:42] (parameter, type: uint256)
+- Def: #22 ["get_type" @ input.sol:23:14] (function, type: function (Direction) returns Kind)
+- Def: #23 ["_dir" @ input.sol:23:33] (parameter, type: Direction)
+
+------------------------------------------------------------------------
+
+References (25):
+- Ref: ["Kind" @ input.sol:5:9] -> #7
+- Ref: ["Direction" @ input.sol:9:13] -> #2
+- Ref: ["Monster" @ input.sol:9:26] -> #12
+- Ref: ["Direction" @ input.sol:11:20] -> #2
+- Ref: ["Kind" @ input.sol:11:36] -> #7
+- Ref: ["monsters" @ input.sol:12:9] -> #15
+- Ref: ["_dir" @ input.sol:12:18] -> #17
+- Ref: ["Monster" @ input.sol:12:26] -> #12
+- Ref: ["_kind" @ input.sol:12:34] -> #18
+- Ref: ["Direction" @ input.sol:15:21] -> #2
+- Ref: ["monsters" @ input.sol:16:13] -> #15
+- Ref: ["_dir" @ input.sol:16:22] -> #20
+- Ref: ["life" @ input.sol:16:28] -> #14
+- Ref: ["_power" @ input.sol:16:35] -> #21
+- Ref: ["monsters" @ input.sol:17:13] -> #15
+- Ref: ["_dir" @ input.sol:17:22] -> #20
+- Ref: ["life" @ input.sol:17:28] -> #14
+- Ref: ["_power" @ input.sol:17:36] -> #21
+- Ref: ["monsters" @ input.sol:19:20] -> #15
+- Ref: ["_dir" @ input.sol:19:29] -> #20
+- Ref: ["Direction" @ input.sol:23:23] -> #2
+- Ref: ["Kind" @ input.sol:23:55] -> #7
+- Ref: ["monsters" @ input.sol:24:16] -> #15
+- Ref: ["_dir" @ input.sol:24:25] -> #23
+- Ref: ["kind" @ input.sol:24:31] -> #13
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Mappings {
+    │          ────┬───  
+    │              ╰───── name: 1
+  2 │     enum Direction { North, East, South, West }
+    │          ────┬────   ──┬──  ──┬─  ──┬──  ──┬─  
+    │              ╰───────────────────────────────── name: 2
+    │                        │      │     │      │   
+    │                        ╰─────────────────────── name: 3
+    │                               │     │      │   
+    │                               ╰──────────────── name: 4
+    │                                     │      │   
+    │                                     ╰────────── name: 5
+    │                                            │   
+    │                                            ╰─── name: 6
+  3 │     enum Kind { Zombie, Bat, Skeleton, Dragon }
+    │          ──┬─   ───┬──  ─┬─  ────┬───  ───┬──  
+    │            ╰─────────────────────────────────── name: 7
+    │                    │     │       │        │    
+    │                    ╰─────────────────────────── name: 8
+    │                          │       │        │    
+    │                          ╰───────────────────── name: 9
+    │                                  │        │    
+    │                                  ╰───────────── name: 10
+    │                                           │    
+    │                                           ╰──── name: 11
+  4 │     struct Monster {
+    │            ───┬───  
+    │               ╰───── name: 12
+  5 │         Kind kind;
+    │         ──┬─ ──┬─  
+    │           ╰──────── ref: 7
+    │                │   
+    │                ╰─── name: 13
+  6 │         uint life;
+    │              ──┬─  
+    │                ╰─── name: 14
+    │ 
+  9 │     mapping(Direction => Monster) monsters;
+    │             ────┬────    ───┬───  ────┬───  
+    │                 ╰─────────────────────────── ref: 2
+    │                             │         │     
+    │                             ╰─────────────── ref: 12
+    │                                       │     
+    │                                       ╰───── name: 15
+    │ 
+ 11 │     function spawn(Direction _dir, Kind _kind) public {
+    │              ──┬── ────┬──── ──┬─  ──┬─ ──┬──  
+    │                ╰─────────────────────────────── name: 16
+    │                        │       │     │    │    
+    │                        ╰─────────────────────── ref: 2
+    │                                │     │    │    
+    │                                ╰─────────────── name: 17
+    │                                      │    │    
+    │                                      ╰───────── ref: 7
+    │                                           │    
+    │                                           ╰──── name: 18
+ 12 │         monsters[_dir] = Monster(_kind, 100);
+    │         ────┬─── ──┬─    ───┬─── ──┬──  
+    │             ╰─────────────────────────── ref: 15
+    │                    │        │      │    
+    │                    ╰──────────────────── ref: 17
+    │                             │      │    
+    │                             ╰─────────── ref: 12
+    │                                    │    
+    │                                    ╰──── ref: 18
+    │ 
+ 15 │     function attack(Direction _dir, uint _power) public {
+    │              ───┬── ────┬──── ──┬─       ───┬──  
+    │                 ╰──────────────────────────────── name: 19
+    │                         │       │           │    
+    │                         ╰──────────────────────── ref: 2
+    │                                 │           │    
+    │                                 ╰──────────────── name: 20
+    │                                             │    
+    │                                             ╰──── name: 21
+ 16 │         if (monsters[_dir].life > _power) {
+    │             ────┬─── ──┬─  ──┬─   ───┬──  
+    │                 ╰───────────────────────── ref: 15
+    │                        │     │       │    
+    │                        ╰────────────────── ref: 20
+    │                              │       │    
+    │                              ╰──────────── ref: 14
+    │                                      │    
+    │                                      ╰──── ref: 21
+ 17 │             monsters[_dir].life -= _power;
+    │             ────┬─── ──┬─  ──┬─    ───┬──  
+    │                 ╰────────────────────────── ref: 15
+    │                        │     │        │    
+    │                        ╰─────────────────── ref: 20
+    │                              │        │    
+    │                              ╰───────────── ref: 14
+    │                                       │    
+    │                                       ╰──── ref: 21
+    │ 
+ 19 │             delete monsters[_dir];
+    │                    ────┬─── ──┬─  
+    │                        ╰────────── ref: 15
+    │                               │   
+    │                               ╰─── ref: 20
+    │ 
+ 23 │     function get_type(Direction _dir) public returns (Kind) {
+    │              ────┬─── ────┬──── ──┬─                  ──┬─  
+    │                  ╰────────────────────────────────────────── name: 22
+    │                           │       │                     │   
+    │                           ╰───────────────────────────────── ref: 2
+    │                                   │                     │   
+    │                                   ╰───────────────────────── name: 23
+    │                                                         │   
+    │                                                         ╰─── ref: 7
+ 24 │         return monsters[_dir].kind;
+    │                ────┬─── ──┬─  ──┬─  
+    │                    ╰──────────────── ref: 15
+    │                           │     │   
+    │                           ╰───────── ref: 23
+    │                                 │   
+    │                                 ╰─── ref: 13
+────╯

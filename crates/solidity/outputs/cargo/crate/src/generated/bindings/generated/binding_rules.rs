@@ -2301,6 +2301,7 @@ inherit .star_extension
 @state_var [StateVariableDefinition] {
   node @state_var.lexical_scope
   node @state_var.def
+  node @state_var.typeof
 }
 
 @state_var [StateVariableDefinition
@@ -2312,7 +2313,6 @@ inherit .star_extension
 
   edge @type_name.type_ref -> @state_var.lexical_scope
 
-  node @state_var.typeof
   attr (@state_var.typeof) push_symbol = "@typeof"
 
   edge @state_var.def -> @state_var.typeof
@@ -2372,15 +2372,6 @@ inherit .star_extension
   edge @enum.def -> member
   edge member -> @enum.members
 
-  ; Path to resolve the built-in type for enums (which is the same as for integer types)
-  node type
-  attr (type) pop_symbol = "@type"
-  node type_enum_type
-  attr (type_enum_type) push_symbol = "%IntTypeType"
-  edge @enum.def -> type
-  edge type -> type_enum_type
-  edge type_enum_type -> @enum.lexical_scope
-
   ; value_ref_typeof allows for an enum value to access the
   ; functions associated to this type
   node @enum.value_ref_typeof
@@ -2393,6 +2384,8 @@ inherit .star_extension
   ; Path to link min and max to the enum's scope (#1158)
   ; It resolves paths of the form `type(<enum>).min.<something>`
   if (version-matches ">= 0.8.8") {
+    node type
+    attr (type) pop_symbol = "@type"
     node typeof
     attr (typeof) pop_symbol = "@typeof"
 
@@ -2403,12 +2396,19 @@ inherit .star_extension
     node max_built_in
     attr (max_built_in) pop_symbol = "max"
 
+    edge @enum.def -> type
     edge type -> typeof
     edge typeof -> built_in_member
     edge built_in_member -> min_built_in
     edge built_in_member -> max_built_in
     edge min_built_in -> @enum.value_ref_typeof
     edge max_built_in -> @enum.value_ref_typeof
+
+    ; Path to resolve the built-in members min and max
+    node type_enum_type
+    attr (type_enum_type) push_symbol = "%IntTypeType"
+    edge type -> type_enum_type
+    edge type_enum_type -> @enum.lexical_scope
   }
 }
 

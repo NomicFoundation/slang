@@ -1,0 +1,82 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
+    ╭─[lib.sol:3:1]
+    │
+  3 │ ╭─▶ using {min} for Amount global;
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (4):
+- Def: #1 ["Amount" @ lib.sol:1:6] (udvt, type: meta-type)
+- Def: #2 ["Test" @ main.sol:3:10] (contract)
+- Def: #3 ["test" @ main.sol:6:14] (function, type: function () returns void)
+- Def: #4 ["x" @ main.sol:7:16] (variable, type: Amount)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["AmountLib" @ main.sol:4:11] -> unresolved
+- Ref: ["Amount" @ main.sol:4:25] -> #1
+- Ref: ["Amount" @ main.sol:7:9] -> #1
+- Ref: ["x" @ main.sol:8:9] -> #4
+- Ref: ["nop" @ main.sol:8:11] -> unresolved
+- Ref: ["min" @ main.sol:8:17] -> unresolved
+- Ref: ["x" @ main.sol:9:9] -> #4
+- Ref: ["min" @ main.sol:9:11] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[lib.sol:1:1]
+   │
+ 1 │ type Amount is uint64;
+   │      ───┬──  
+   │         ╰──── name: 1
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 2
+ 4 │     using AmountLib for Amount;
+   │           ────┬────     ───┬──  
+   │               ╰───────────────── unresolved
+   │                            │    
+   │                            ╰──── ref: 1
+   │ 
+ 6 │     function test() public pure {
+   │              ──┬─  
+   │                ╰─── name: 3
+ 7 │         Amount x;
+   │         ───┬── ┬  
+   │            ╰────── ref: 1
+   │                │  
+   │                ╰── name: 4
+ 8 │         x.nop().min();
+   │         ┬ ─┬─   ─┬─  
+   │         ╰──────────── ref: 4
+   │            │     │   
+   │            ╰───────── unresolved
+   │                  │   
+   │                  ╰─── unresolved
+ 9 │         x.min();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 4
+   │            │   
+   │            ╰─── unresolved
+───╯

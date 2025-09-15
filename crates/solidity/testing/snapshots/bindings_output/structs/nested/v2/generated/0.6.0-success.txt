@@ -1,0 +1,229 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (23):
+- Def: #1 ["Base" @ input.sol:1:8] (struct)
+- Def: #2 ["x" @ input.sol:2:7] (struct member, type: int256)
+- Def: #3 ["MyLib" @ input.sol:5:9] (library)
+- Def: #4 ["Direction" @ input.sol:6:8] (enum)
+- Def: #5 ["North" @ input.sol:6:20] (enum member of Direction)
+- Def: #6 ["South" @ input.sol:6:27] (enum member of Direction)
+- Def: #7 ["West" @ input.sol:6:34] (enum member of Direction)
+- Def: #8 ["East" @ input.sol:6:40] (enum member of Direction)
+- Def: #9 ["LibStruct" @ input.sol:8:10] (struct)
+- Def: #10 ["base" @ input.sol:9:10] (struct member, type: Base (inherited))
+- Def: #11 ["y" @ input.sol:10:9] (struct member, type: int256)
+- Def: #12 ["OneInterface" @ input.sol:14:11] (interface)
+- Def: #13 ["IfaceStruct" @ input.sol:15:10] (struct)
+- Def: #14 ["lib_struct" @ input.sol:16:21] (struct member, type: LibStruct (inherited))
+- Def: #15 ["z" @ input.sol:17:9] (struct member, type: int256)
+- Def: #16 ["Sample" @ input.sol:21:10] (contract)
+- Def: #17 ["SampleStruct" @ input.sol:22:10] (struct)
+- Def: #18 ["iface_struct" @ input.sol:23:30] (struct member, type: IfaceStruct (inherited))
+- Def: #19 ["direction" @ input.sol:24:21] (struct member, type: Direction)
+- Def: #20 ["w" @ input.sol:25:9] (struct member, type: int256)
+- Def: #21 ["hello" @ input.sol:28:12] (function, type: function () returns void)
+- Def: #22 ["s" @ input.sol:29:25] (variable, type: SampleStruct memory)
+- Def: #23 ["ls" @ input.sol:36:28] (variable, type: LibStruct memory)
+
+------------------------------------------------------------------------
+
+References (37):
+- Ref: ["Base" @ input.sol:9:5] -> #1
+- Ref: ["MyLib" @ input.sol:16:5] -> #3
+- Ref: ["LibStruct" @ input.sol:16:11] -> #9
+- Ref: ["OneInterface" @ input.sol:23:5] -> #12
+- Ref: ["IfaceStruct" @ input.sol:23:18] -> #13
+- Ref: ["MyLib" @ input.sol:24:5] -> #3
+- Ref: ["Direction" @ input.sol:24:11] -> #4
+- Ref: ["SampleStruct" @ input.sol:29:5] -> #17
+- Ref: ["s" @ input.sol:30:5] -> #22
+- Ref: ["iface_struct" @ input.sol:30:7] -> #18
+- Ref: ["lib_struct" @ input.sol:30:20] -> #14
+- Ref: ["base" @ input.sol:30:31] -> #10
+- Ref: ["x" @ input.sol:30:36] -> #2
+- Ref: ["s" @ input.sol:31:5] -> #22
+- Ref: ["iface_struct" @ input.sol:31:7] -> #18
+- Ref: ["lib_struct" @ input.sol:31:20] -> #14
+- Ref: ["y" @ input.sol:31:31] -> #11
+- Ref: ["s" @ input.sol:32:5] -> #22
+- Ref: ["iface_struct" @ input.sol:32:7] -> #18
+- Ref: ["z" @ input.sol:32:20] -> #15
+- Ref: ["s" @ input.sol:33:5] -> #22
+- Ref: ["w" @ input.sol:33:7] -> #20
+- Ref: ["s" @ input.sol:34:5] -> #22
+- Ref: ["direction" @ input.sol:34:7] -> #19
+- Ref: ["MyLib" @ input.sol:34:19] -> #3
+- Ref: ["Direction" @ input.sol:34:25] -> #4
+- Ref: ["North" @ input.sol:34:35] -> #5
+- Ref: ["MyLib" @ input.sol:36:5] -> #3
+- Ref: ["LibStruct" @ input.sol:36:11] -> #9
+- Ref: ["ls" @ input.sol:37:5] -> #23
+- Ref: ["base" @ input.sol:37:8] -> #10
+- Ref: ["x" @ input.sol:37:13] -> #2
+- Ref: ["s" @ input.sol:37:17] -> #22
+- Ref: ["iface_struct" @ input.sol:37:19] -> #18
+- Ref: ["lib_struct" @ input.sol:37:32] -> #14
+- Ref: ["base" @ input.sol:37:43] -> #10
+- Ref: ["x" @ input.sol:37:48] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ struct Base {
+    │        ──┬─  
+    │          ╰─── name: 1
+  2 │   int x;
+    │       ┬  
+    │       ╰── name: 2
+    │ 
+  5 │ library MyLib {
+    │         ──┬──  
+    │           ╰──── name: 3
+  6 │   enum Direction { North, South, West, East }
+    │        ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │            ╰───────────────────────────────── name: 4
+    │                      │      │      │     │   
+    │                      ╰─────────────────────── name: 5
+    │                             │      │     │   
+    │                             ╰──────────────── name: 6
+    │                                    │     │   
+    │                                    ╰───────── name: 7
+    │                                          │   
+    │                                          ╰─── name: 8
+    │ 
+  8 │   struct LibStruct {
+    │          ────┬────  
+    │              ╰────── name: 9
+  9 │     Base base;
+    │     ──┬─ ──┬─  
+    │       ╰──────── ref: 1
+    │            │   
+    │            ╰─── name: 10
+ 10 │     int y;
+    │         ┬  
+    │         ╰── name: 11
+    │ 
+ 14 │ interface OneInterface {
+    │           ──────┬─────  
+    │                 ╰─────── name: 12
+ 15 │   struct IfaceStruct {
+    │          ─────┬─────  
+    │               ╰─────── name: 13
+ 16 │     MyLib.LibStruct lib_struct;
+    │     ──┬── ────┬──── ─────┬────  
+    │       ╰───────────────────────── ref: 3
+    │               │          │      
+    │               ╰───────────────── ref: 9
+    │                          │      
+    │                          ╰────── name: 14
+ 17 │     int z;
+    │         ┬  
+    │         ╰── name: 15
+    │ 
+ 21 │ contract Sample {
+    │          ───┬──  
+    │             ╰──── name: 16
+ 22 │   struct SampleStruct {
+    │          ──────┬─────  
+    │                ╰─────── name: 17
+ 23 │     OneInterface.IfaceStruct iface_struct;
+    │     ──────┬───── ─────┬───── ──────┬─────  
+    │           ╰──────────────────────────────── ref: 12
+    │                       │            │       
+    │                       ╰──────────────────── ref: 13
+    │                                    │       
+    │                                    ╰─────── name: 18
+ 24 │     MyLib.Direction direction;
+    │     ──┬── ────┬──── ────┬────  
+    │       ╰──────────────────────── ref: 3
+    │               │         │      
+    │               ╰──────────────── ref: 4
+    │                         │      
+    │                         ╰────── name: 19
+ 25 │     int w;
+    │         ┬  
+    │         ╰── name: 20
+    │ 
+ 28 │   function hello() {
+    │            ──┬──  
+    │              ╰──── name: 21
+ 29 │     SampleStruct memory s;
+    │     ──────┬─────        ┬  
+    │           ╰──────────────── ref: 17
+    │                         │  
+    │                         ╰── name: 22
+ 30 │     s.iface_struct.lib_struct.base.x = 1;
+    │     ┬ ──────┬───── ─────┬──── ──┬─ ┬  
+    │     ╰───────────────────────────────── ref: 22
+    │             │           │       │  │  
+    │             ╰───────────────────────── ref: 18
+    │                         │       │  │  
+    │                         ╰───────────── ref: 14
+    │                                 │  │  
+    │                                 ╰───── ref: 10
+    │                                    │  
+    │                                    ╰── ref: 2
+ 31 │     s.iface_struct.lib_struct.y = 2;
+    │     ┬ ──────┬───── ─────┬──── ┬  
+    │     ╰──────────────────────────── ref: 22
+    │             │           │     │  
+    │             ╰──────────────────── ref: 18
+    │                         │     │  
+    │                         ╰──────── ref: 14
+    │                               │  
+    │                               ╰── ref: 11
+ 32 │     s.iface_struct.z = 3;
+    │     ┬ ──────┬───── ┬  
+    │     ╰───────────────── ref: 22
+    │             │      │  
+    │             ╰───────── ref: 18
+    │                    │  
+    │                    ╰── ref: 15
+ 33 │     s.w = 4;
+    │     ┬ ┬  
+    │     ╰──── ref: 22
+    │       │  
+    │       ╰── ref: 20
+ 34 │     s.direction = MyLib.Direction.North;
+    │     ┬ ────┬────   ──┬── ────┬──── ──┬──  
+    │     ╰──────────────────────────────────── ref: 22
+    │           │         │       │       │    
+    │           ╰────────────────────────────── ref: 19
+    │                     │       │       │    
+    │                     ╰──────────────────── ref: 3
+    │                             │       │    
+    │                             ╰──────────── ref: 4
+    │                                     │    
+    │                                     ╰──── ref: 5
+    │ 
+ 36 │     MyLib.LibStruct memory ls;
+    │     ──┬── ────┬────        ─┬  
+    │       ╰──────────────────────── ref: 3
+    │               │             │  
+    │               ╰──────────────── ref: 9
+    │                             │  
+    │                             ╰── name: 23
+ 37 │     ls.base.x = s.iface_struct.lib_struct.base.x;
+    │     ─┬ ──┬─ ┬   ┬ ──────┬───── ─────┬──── ──┬─ ┬  
+    │      ╰──────────────────────────────────────────── ref: 23
+    │          │  │   │       │           │       │  │  
+    │          ╰──────────────────────────────────────── ref: 10
+    │             │   │       │           │       │  │  
+    │             ╰───────────────────────────────────── ref: 2
+    │                 │       │           │       │  │  
+    │                 ╰───────────────────────────────── ref: 22
+    │                         │           │       │  │  
+    │                         ╰───────────────────────── ref: 18
+    │                                     │       │  │  
+    │                                     ╰───────────── ref: 14
+    │                                             │  │  
+    │                                             ╰───── ref: 10
+    │                                                │  
+    │                                                ╰── ref: 2
+────╯

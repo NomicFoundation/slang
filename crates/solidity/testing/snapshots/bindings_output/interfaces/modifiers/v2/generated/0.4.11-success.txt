@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["IOwnable" @ input.sol:1:11] (interface)
+- Def: #2 ["owner" @ input.sol:2:14] (function, type: function () returns address)
+- Def: #3 ["onlyOwner" @ input.sol:5:14] (modifier)
+- Def: #4 ["Test" @ input.sol:11:10] (contract)
+- Def: #5 ["test" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["require" @ input.sol:6:9] -> built-in
+- Ref: ["owner" @ input.sol:6:22] -> #2
+- Ref: ["msg" @ input.sol:6:33] -> built-in
+- Ref: ["sender" @ input.sol:6:37] -> built-in
+- Ref: ["_" @ input.sol:7:9] -> built-in
+- Ref: ["IOwnable" @ input.sol:11:18] -> #1
+- Ref: ["onlyOwner" @ input.sol:12:28] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IOwnable {
+    │           ────┬───  
+    │               ╰───── name: 1
+  2 │     function owner() external returns (address);
+    │              ──┬──  
+    │                ╰──── name: 2
+    │ 
+  5 │     modifier onlyOwner() {
+    │              ────┬────  
+    │                  ╰────── name: 3
+  6 │         require(this.owner() == msg.sender, "not owner");
+    │         ───┬───      ──┬──      ─┬─ ───┬──  
+    │            ╰──────────────────────────────── built-in
+    │                        │         │     │    
+    │                        ╰──────────────────── ref: 2
+    │                                  │     │    
+    │                                  ╰────────── built-in
+    │                                        │    
+    │                                        ╰──── built-in
+  7 │         _;
+    │         ┬  
+    │         ╰── built-in
+    │ 
+ 11 │ contract Test is IOwnable {
+    │          ──┬─    ────┬───  
+    │            ╰─────────────── name: 4
+    │                      │     
+    │                      ╰───── ref: 1
+ 12 │     function test() public onlyOwner {}
+    │              ──┬─          ────┬────  
+    │                ╰────────────────────── name: 5
+    │                                │      
+    │                                ╰────── ref: 3
+────╯

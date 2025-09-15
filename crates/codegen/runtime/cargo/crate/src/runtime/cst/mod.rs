@@ -45,8 +45,7 @@ impl metaslang_cst::kinds::KindTypes for KindTypes {
 /// The super type of terminal and nonterminal kinds.
 pub type NodeKind = metaslang_cst::kinds::NodeKind<KindTypes>;
 
-/// The identifier of a node in a tree.
-pub type NodeId = metaslang_cst::nodes::NodeId;
+pub use metaslang_cst::nodes::NodeId;
 
 /// The super type of all nodes in a tree.
 pub type Node = metaslang_cst::nodes::Node<KindTypes>;

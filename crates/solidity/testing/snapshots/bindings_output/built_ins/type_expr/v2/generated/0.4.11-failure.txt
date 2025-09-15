@@ -1,0 +1,204 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:11:28]
+    │
+ 11 │         string memory v1 = type(Sample).name;
+    │                            ────────┬────────  
+    │                                    ╰────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:12:27]
+    │
+ 12 │         bytes memory v2 = type(Sample).creationCode;
+    │                           ────────────┬────────────  
+    │                                       ╰────────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:13:27]
+    │
+ 13 │         bytes memory v3 = type(Sample).runtimeCode;
+    │                           ────────────┬───────────  
+    │                                       ╰───────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:15:28]
+    │
+ 15 │         string memory v4 = type(ISample).name;
+    │                            ─────────┬────────  
+    │                                     ╰────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:16:21]
+    │
+ 16 │         bytes4 v5 = type(ISample).interfaceId;
+    │                     ────────────┬────────────  
+    │                                 ╰────────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:18:24]
+    │
+ 18 │         Direction v6 = type(Direction).min;
+    │                        ─────────┬─────────  
+    │                                 ╰─────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:19:24]
+    │
+ 19 │         Direction v7 = type(Direction).max;
+    │                        ─────────┬─────────  
+    │                                 ╰─────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:21:19]
+    │
+ 21 │         uint v8 = type(uint).min;
+    │                   ───────┬──────  
+    │                          ╰──────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:22:19]
+    │
+ 22 │         uint v9 = type(uint).max;
+    │                   ───────┬──────  
+    │                          ╰──────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:24:29]
+    │
+ 24 │         string memory v10 = type(Utils).name;
+    │                             ────────┬───────  
+    │                                     ╰───────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:25:28]
+    │
+ 25 │         bytes memory v11 = type(Utils).creationCode;
+    │                            ────────────┬───────────  
+    │                                        ╰───────────── Error occurred here.
+────╯
+Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
+    ╭─[input.sol:26:28]
+    │
+ 26 │         bytes memory v12 = type(Utils).runtimeCode;
+    │                            ───────────┬───────────  
+    │                                       ╰───────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (22):
+- Def: #1 ["Sample" @ input.sol:1:10] (contract)
+- Def: #2 ["ISample" @ input.sol:3:11] (interface)
+- Def: #3 ["Utils" @ input.sol:5:9] (library)
+- Def: #4 ["Test" @ input.sol:7:10] (contract)
+- Def: #5 ["Direction" @ input.sol:8:10] (enum)
+- Def: #6 ["North" @ input.sol:8:22] (enum member of Direction)
+- Def: #7 ["South" @ input.sol:8:29] (enum member of Direction)
+- Def: #8 ["West" @ input.sol:8:36] (enum member of Direction)
+- Def: #9 ["East" @ input.sol:8:42] (enum member of Direction)
+- Def: #10 ["test" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #11 ["v1" @ input.sol:11:23] (variable, type: string memory)
+- Def: #12 ["v2" @ input.sol:12:22] (variable, type: bytes memory)
+- Def: #13 ["v3" @ input.sol:13:22] (variable, type: bytes memory)
+- Def: #14 ["v4" @ input.sol:15:23] (variable, type: string memory)
+- Def: #15 ["v5" @ input.sol:16:16] (variable, type: bytes4)
+- Def: #16 ["v6" @ input.sol:18:19] (variable, type: Direction)
+- Def: #17 ["v7" @ input.sol:19:19] (variable, type: Direction)
+- Def: #18 ["v8" @ input.sol:21:14] (variable, type: uint256)
+- Def: #19 ["v9" @ input.sol:22:14] (variable, type: uint256)
+- Def: #20 ["v10" @ input.sol:24:23] (variable, type: string memory)
+- Def: #21 ["v11" @ input.sol:25:22] (variable, type: bytes memory)
+- Def: #22 ["v12" @ input.sol:26:22] (variable, type: bytes memory)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["Direction" @ input.sol:18:9] -> #5
+- Ref: ["Direction" @ input.sol:19:9] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Sample {}
+    │          ───┬──  
+    │             ╰──── name: 1
+    │ 
+  3 │ interface ISample {}
+    │           ───┬───  
+    │              ╰───── name: 2
+    │ 
+  5 │ library Utils {}
+    │         ──┬──  
+    │           ╰──── name: 3
+    │ 
+  7 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 4
+  8 │     enum Direction { North, South, West, East }
+    │          ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │              ╰───────────────────────────────── name: 5
+    │                        │      │      │     │   
+    │                        ╰─────────────────────── name: 6
+    │                               │      │     │   
+    │                               ╰──────────────── name: 7
+    │                                      │     │   
+    │                                      ╰───────── name: 8
+    │                                            │   
+    │                                            ╰─── name: 9
+    │ 
+ 10 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 10
+ 11 │         string memory v1 = type(Sample).name;
+    │                       ─┬  
+    │                        ╰── name: 11
+ 12 │         bytes memory v2 = type(Sample).creationCode;
+    │                      ─┬  
+    │                       ╰── name: 12
+ 13 │         bytes memory v3 = type(Sample).runtimeCode;
+    │                      ─┬  
+    │                       ╰── name: 13
+    │ 
+ 15 │         string memory v4 = type(ISample).name;
+    │                       ─┬  
+    │                        ╰── name: 14
+ 16 │         bytes4 v5 = type(ISample).interfaceId;
+    │                ─┬  
+    │                 ╰── name: 15
+    │ 
+ 18 │         Direction v6 = type(Direction).min;
+    │         ────┬──── ─┬  
+    │             ╰───────── ref: 5
+    │                    │  
+    │                    ╰── name: 16
+ 19 │         Direction v7 = type(Direction).max;
+    │         ────┬──── ─┬  
+    │             ╰───────── ref: 5
+    │                    │  
+    │                    ╰── name: 17
+    │ 
+ 21 │         uint v8 = type(uint).min;
+    │              ─┬  
+    │               ╰── name: 18
+ 22 │         uint v9 = type(uint).max;
+    │              ─┬  
+    │               ╰── name: 19
+    │ 
+ 24 │         string memory v10 = type(Utils).name;
+    │                       ─┬─  
+    │                        ╰─── name: 20
+ 25 │         bytes memory v11 = type(Utils).creationCode;
+    │                      ─┬─  
+    │                       ╰─── name: 21
+ 26 │         bytes memory v12 = type(Utils).runtimeCode;
+    │                      ─┬─  
+    │                       ╰─── name: 22
+────╯

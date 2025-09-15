@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #3 ["x" @ input.sol:2:26] (parameter, type: uint256)
+- Def: #4 ["Test" @ input.sol:4:10] (contract)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Lib" @ input.sol:5:11] -> #1
+- Ref: ["nop" @ input.sol:7:28] -> #2
+- Ref: ["nop" @ input.sol:8:26] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     function nop(uint256 x) internal {}
+   │              ─┬─         ┬  
+   │               ╰───────────── name: 2
+   │                          │  
+   │                          ╰── name: 3
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 5 │     using Lib for uint256;
+   │           ─┬─  
+   │            ╰─── ref: 1
+ 6 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 5
+ 7 │         (50 * 10**uint(4)).nop();
+   │                            ─┬─  
+   │                             ╰─── ref: 2
+ 8 │         (10 ** uint8(2)).nop();
+   │                          ─┬─  
+   │                           ╰─── ref: 2
+───╯
