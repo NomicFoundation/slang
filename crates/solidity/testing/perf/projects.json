@@ -3,48 +3,58 @@
   "projects": [
     {
       "hash": "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b",
-      "name": "flat_imports_mooniswap"
+      "name": "mooniswap",
+      "comment": "Large structure of flat imports"
     },
     {
       "hash": "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163",
-      "name": "circular_imports_weighted_pool"
+      "name": "weighted_pool",
+      "comment": "Large structure of imports, including a circular path"
     },
     {
       "hash": "0x000000000004444c5dc75cB358380D2e3dE08A90",
-      "name": "protocol_uniswap"
+      "name": "uniswap",
+      "comment": "Used protocol"
     },
     {
       "hash": "0xcA11bde05977b3631167028862bE2a173976CA11",
-      "name": "protocol_multicall3"
+      "name": "multicall3",
+      "comment": "Used protocol"
     },
     {
       "hash": "0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed",
-      "name": "protocol_create_x"
+      "name": "create_x",
+      "comment": "Used protocol"
     },
     {
       "hash": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
-      "name": "protocol_ui_pool_data_provider_v3"
+      "name": "ui_pool_data_provider_v3",
+      "comment": "Used protocol"
     },
     {
       "hash": "0x56681458E00CafE1206313D2D033946f458FDEfD",
-      "name": "deep_nesting_cooldogs"
+      "name": "cooldogs",
+      "comment": "Deep CST structure"
     }
   ],
   "files": [
     {
-      "name": "largest_file_trivia_oslf",
+      "name": "one_step_leverage_f",
       "hash": "0x00aB290CC289F818a9E80eBaF18685E353DF16F0",
-      "file": "contracts/OneStepLeverage.f.sol"
+      "file": "contracts/OneStepLeverage.f.sol",
+      "comment": "Largest file with trivia in mainnet shard 00"
     },
     {
-      "name": "largest_file_pointer_libraries",
+      "name": "pointer_libraries",
       "hash": "0x0000000000d6A44FaCfBe05Faaee691aFaCC0f81",
-      "file": "lib/seaport-types/src/helpers/PointerLibraries.sol"
+      "file": "lib/seaport-types/src/helpers/PointerLibraries.sol",
+      "comment": "Largest file in mainnet shard 00"
     },
     {
-      "name": "three_quarters_file_merkle_proof",
+      "name": "merkle_proof",
       "hash": "0x01665987bC6725070e56d160d75AA19d8B73273e",
-      "file": "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol"
+      "file": "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol",
+      "comment": "File in the 75% of LOCs in mainnet shard 01"
     }
   ]
 }
