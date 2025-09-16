@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["other" @ main.sol:1:25] (import)
+- Def: #2 ["foo" @ main.sol:3:10] (function, type: function () returns int256)
+- Def: #3 ["bar" @ other.sol:1:10] (function, type: function () returns int256)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["other" @ main.sol:4:12] -> #1
+- Ref: ["bar" @ main.sol:4:18] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import "./other.sol" as other;
+   │                         ──┬──  
+   │                           ╰──── name: 1
+   │ 
+ 3 │ function foo() returns (int) {
+   │          ─┬─  
+   │           ╰─── name: 2
+ 4 │     return other.bar();
+   │            ──┬── ─┬─  
+   │              ╰──────── ref: 1
+   │                   │   
+   │                   ╰─── ref: 3
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ function bar() pure returns (int) {
+   │          ─┬─  
+   │           ╰─── name: 3
+───╯

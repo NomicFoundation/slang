@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected EqualGreaterThan.
+   ╭─[input.sol:2:21]
+   │
+ 2 │     mapping(address owner => mapping(uint256 index => uint256)) private _ownedTokens;
+   │                     ─────────────────────┬────────────────────  
+   │                                          ╰────────────────────── Error occurred here.
+───╯
+Error: Expected EqualGreaterThan.
+   ╭─[input.sol:5:25]
+   │
+ 5 │         mapping(uint256 index => uint256) storage _ownedTokensByOwner = _ownedTokens[from];
+   │                         ────────┬───────  
+   │                                 ╰───────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (3):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function (address) returns void)
+- Def: #3 ["from" @ input.sol:4:27] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (4):
+- ???: ["_ownedTokens" @ input.sol:2:73]
+- ???: ["_ownedTokensByOwner" @ input.sol:5:51]
+- ???: ["_ownedTokens" @ input.sol:5:73]
+- ???: ["from" @ input.sol:5:86]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     mapping(address owner => mapping(uint256 index => uint256)) private _ownedTokens;
+   │                                                                         ──────┬─────  
+   │                                                                               ╰─────── ???
+   │ 
+ 4 │     function test(address from) public {
+   │              ──┬─         ──┬─  
+   │                ╰──────────────── name: 2
+   │                             │   
+   │                             ╰─── name: 3
+ 5 │         mapping(uint256 index => uint256) storage _ownedTokensByOwner = _ownedTokens[from];
+   │                                                   ─────────┬─────────   ──────┬───── ──┬─  
+   │                                                            ╰─────────────────────────────── ???
+   │                                                                               │        │   
+   │                                                                               ╰──────────── ???
+   │                                                                                        │   
+   │                                                                                        ╰─── ???
+───╯

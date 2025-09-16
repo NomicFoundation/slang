@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ function test() {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (0):
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 

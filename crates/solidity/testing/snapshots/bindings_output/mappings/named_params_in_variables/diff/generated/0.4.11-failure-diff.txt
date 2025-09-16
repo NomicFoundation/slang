@@ -1,0 +1,6 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+definition `_ownedTokens` at input.sol:2:73 not found in new binder output
+definition `_ownedTokensByOwner` at input.sol:5:51 not found in new binder output
+
+Definitions and/or references from binding graph and new binder DIFFER

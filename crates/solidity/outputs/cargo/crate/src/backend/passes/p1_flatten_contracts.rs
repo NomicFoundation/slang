@@ -13,6 +13,10 @@ pub struct Output {
     pub files: HashMap<String, SourceUnit>,
 }
 
+/// This pass is reserved to make ergonomic changes to the AST in order to make
+/// it easier to use. For now, it will only flatten contract specifiers:
+/// inheritance and storage layout specifiers. In the future, more
+/// transformations will be added.
 pub fn run(input: Input) -> Output {
     let mut pass = Pass {};
     let files = input

@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["in_base" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["Middle" @ input.sol:4:10] (contract)
+- Def: #4 ["Test" @ input.sol:5:10] (contract)
+- Def: #5 ["in_base" @ input.sol:6:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Base" @ input.sol:4:20] -> #1
+- Ref: ["Middle" @ input.sol:5:18] -> #3
+- Ref: ["in_base" @ input.sol:7:15] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function in_base() {}
+   │              ───┬───  
+   │                 ╰───── name: 2
+   │ 
+ 4 │ contract Middle is Base {}
+   │          ───┬──    ──┬─  
+   │             ╰──────────── name: 3
+   │                      │   
+   │                      ╰─── ref: 1
+ 5 │ contract Test is Middle {
+   │          ──┬─    ───┬──  
+   │            ╰───────────── name: 4
+   │                     │    
+   │                     ╰──── ref: 3
+ 6 │     function in_base() {
+   │              ───┬───  
+   │                 ╰───── name: 5
+ 7 │         super.in_base();
+   │               ───┬───  
+   │                  ╰───── ref: 2
+───╯

@@ -1,0 +1,77 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["A" @ input.sol:1:10] (contract)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["B" @ input.sol:4:10] (contract)
+- Def: #4 ["foo" @ input.sol:5:14] (function, type: function () returns void)
+- Def: #5 ["C" @ input.sol:9:10] (contract)
+- Def: #6 ["foo" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #7 ["D" @ input.sol:14:10] (contract)
+- Def: #8 ["foo" @ input.sol:15:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["A" @ input.sol:4:15] -> #1
+- Ref: ["foo" @ input.sol:6:15] -> #2
+- Ref: ["A" @ input.sol:9:15] -> #1
+- Ref: ["foo" @ input.sol:11:15] -> #2
+- Ref: ["B" @ input.sol:14:15] -> #3
+- Ref: ["C" @ input.sol:14:18] -> #5
+- Ref: ["foo" @ input.sol:16:15] -> refs: [6, 4, 2]
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  2 │     function foo() public {}
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  4 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 3
+    │               │  
+    │               ╰── ref: 1
+  5 │     function foo() public {
+    │              ─┬─  
+    │               ╰─── name: 4
+  6 │         super.foo();
+    │               ─┬─  
+    │                ╰─── ref: 2
+    │ 
+  9 │ contract C is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 5
+    │               │  
+    │               ╰── ref: 1
+ 10 │     function foo() public {
+    │              ─┬─  
+    │               ╰─── name: 6
+ 11 │         super.foo();
+    │               ─┬─  
+    │                ╰─── ref: 2
+    │ 
+ 14 │ contract D is B, C {
+    │          ┬    ┬  ┬  
+    │          ╰────────── name: 7
+    │               │  │  
+    │               ╰───── ref: 3
+    │                  │  
+    │                  ╰── ref: 5
+ 15 │     function foo() public {
+    │              ─┬─  
+    │               ╰─── name: 8
+ 16 │         super.foo();
+    │               ─┬─  
+    │                ╰─── refs: [6, 4, 2]
+────╯

@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["square" @ input.sol:1:10] (function, type: function (int256) returns int256)
+- Def: #2 ["value" @ input.sol:1:21] (parameter, type: int256)
+- Def: #3 ["test" @ input.sol:5:10] (function, type: function (int256) returns int256)
+- Def: #4 ["x" @ input.sol:5:19] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["square" @ input.sol:3:8] -> #1
+- Ref: ["x" @ input.sol:6:12] -> #4
+- Ref: ["square" @ input.sol:6:14] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ function square(int value) returns (int) {}
+   │          ───┬──     ──┬──  
+   │             ╰────────────── name: 1
+   │                       │    
+   │                       ╰──── name: 2
+   │ 
+ 3 │ using {square} for int;
+   │        ───┬──  
+   │           ╰──── ref: 1
+   │ 
+ 5 │ function test(int x) returns (int) {
+   │          ──┬─     ┬  
+   │            ╰───────── name: 3
+   │                   │  
+   │                   ╰── name: 4
+ 6 │     return x.square();
+   │            ┬ ───┬──  
+   │            ╰───────── ref: 4
+   │                 │    
+   │                 ╰──── ref: 1
+───╯

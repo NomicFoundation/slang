@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["Test" @ input.sol:1:9] (library)
+- Def: #2 ["withinRange" @ input.sol:2:14] (modifier)
+- Def: #3 ["test" @ input.sol:5:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["_" @ input.sol:3:9] -> built-in
+- Ref: ["withinRange" @ input.sol:5:30] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Test {
+   │         ──┬─  
+   │           ╰─── name: 1
+ 2 │     modifier withinRange() {
+   │              ─────┬─────  
+   │                   ╰─────── name: 2
+ 3 │         _;
+   │         ┬  
+   │         ╰── built-in
+   │ 
+ 5 │     function test() internal withinRange() {}
+   │              ──┬─            ─────┬─────  
+   │                ╰────────────────────────── name: 3
+   │                                   │       
+   │                                   ╰─────── ref: 2
+───╯

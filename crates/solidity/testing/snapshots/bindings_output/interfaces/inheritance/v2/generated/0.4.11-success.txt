@@ -1,0 +1,97 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (12):
+- Def: #1 ["Counter" @ input.sol:1:11] (interface)
+- Def: #2 ["Type" @ input.sol:2:10] (enum)
+- Def: #3 ["up" @ input.sol:2:17] (enum member of Type)
+- Def: #4 ["down" @ input.sol:2:21] (enum member of Type)
+- Def: #5 ["count" @ input.sol:3:14] (function, type: function () returns uint256)
+- Def: #6 ["MutableCounter" @ input.sol:6:11] (interface)
+- Def: #7 ["increment" @ input.sol:7:14] (function, type: function () returns void)
+- Def: #8 ["Test" @ input.sol:10:10] (contract)
+- Def: #9 ["test" @ input.sol:11:14] (function, type: function (address) returns uint256)
+- Def: #10 ["_counter" @ input.sol:11:27] (parameter, type: address)
+- Def: #11 ["m" @ input.sol:12:24] (variable, type: MutableCounter)
+- Def: #12 ["t" @ input.sol:13:29] (variable, type: Type)
+
+------------------------------------------------------------------------
+
+References (10):
+- Ref: ["Counter" @ input.sol:6:29] -> #1
+- Ref: ["MutableCounter" @ input.sol:12:9] -> #6
+- Ref: ["MutableCounter" @ input.sol:12:28] -> #6
+- Ref: ["_counter" @ input.sol:12:43] -> #10
+- Ref: ["MutableCounter" @ input.sol:13:9] -> #6
+- Ref: ["Type" @ input.sol:13:24] -> #2
+- Ref: ["m" @ input.sol:14:9] -> #11
+- Ref: ["increment" @ input.sol:14:11] -> #7
+- Ref: ["m" @ input.sol:15:16] -> #11
+- Ref: ["count" @ input.sol:15:18] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface Counter {
+    │           ───┬───  
+    │              ╰───── name: 1
+  2 │     enum Type { up, down }
+    │          ──┬─   ─┬  ──┬─  
+    │            ╰────────────── name: 2
+    │                  │    │   
+    │                  ╰──────── name: 3
+    │                       │   
+    │                       ╰─── name: 4
+  3 │     function count() external returns (uint);
+    │              ──┬──  
+    │                ╰──── name: 5
+    │ 
+  6 │ interface MutableCounter is Counter {
+    │           ───────┬──────    ───┬───  
+    │                  ╰─────────────────── name: 6
+    │                                │     
+    │                                ╰───── ref: 1
+  7 │     function increment() external;
+    │              ────┬────  
+    │                  ╰────── name: 7
+    │ 
+ 10 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 8
+ 11 │     function test(address _counter) public returns (uint) {
+    │              ──┬─         ────┬───  
+    │                ╰──────────────────── name: 9
+    │                               │     
+    │                               ╰───── name: 10
+ 12 │         MutableCounter m = MutableCounter(_counter);
+    │         ───────┬────── ┬   ───────┬────── ────┬───  
+    │                ╰──────────────────────────────────── ref: 6
+    │                        │          │           │     
+    │                        ╰──────────────────────────── name: 11
+    │                                   │           │     
+    │                                   ╰───────────────── ref: 6
+    │                                               │     
+    │                                               ╰───── ref: 10
+ 13 │         MutableCounter.Type t;
+    │         ───────┬────── ──┬─ ┬  
+    │                ╰─────────────── ref: 6
+    │                          │  │  
+    │                          ╰───── ref: 2
+    │                             │  
+    │                             ╰── name: 12
+ 14 │         m.increment();
+    │         ┬ ────┬────  
+    │         ╰──────────── ref: 11
+    │               │      
+    │               ╰────── ref: 7
+ 15 │         return m.count();
+    │                ┬ ──┬──  
+    │                ╰──────── ref: 11
+    │                    │    
+    │                    ╰──── ref: 5
+────╯

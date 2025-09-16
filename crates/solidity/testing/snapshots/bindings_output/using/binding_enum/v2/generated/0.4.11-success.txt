@@ -1,0 +1,100 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Id" @ input.sol:1:9] (library)
+- Def: #2 ["Answer" @ input.sol:2:8] (enum)
+- Def: #3 ["Yes" @ input.sol:3:5] (enum member of Answer)
+- Def: #4 ["id" @ input.sol:6:12] (function, type: function (Answer) returns Answer)
+- Def: #5 ["ans" @ input.sol:6:22] (parameter, type: Answer)
+- Def: #6 ["Test" @ input.sol:11:10] (contract)
+- Def: #7 ["testFunc" @ input.sol:14:12] (function, type: function () returns Answer)
+- Def: #8 ["value" @ input.sol:15:15] (variable, type: Answer)
+
+------------------------------------------------------------------------
+
+References (15):
+- Ref: ["Answer" @ input.sol:6:15] -> #2
+- Ref: ["Answer" @ input.sol:6:36] -> #2
+- Ref: ["ans" @ input.sol:7:12] -> #5
+- Ref: ["Id" @ input.sol:12:9] -> #1
+- Ref: ["Id" @ input.sol:12:16] -> #1
+- Ref: ["Answer" @ input.sol:12:19] -> #2
+- Ref: ["Id" @ input.sol:14:32] -> #1
+- Ref: ["Answer" @ input.sol:14:35] -> #2
+- Ref: ["Id" @ input.sol:15:5] -> #1
+- Ref: ["Answer" @ input.sol:15:8] -> #2
+- Ref: ["Id" @ input.sol:15:23] -> #1
+- Ref: ["Answer" @ input.sol:15:26] -> #2
+- Ref: ["Yes" @ input.sol:15:33] -> #3
+- Ref: ["value" @ input.sol:16:5] -> #8
+- Ref: ["id" @ input.sol:16:11] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Id {
+    │         ─┬  
+    │          ╰── name: 1
+  2 │   enum Answer {
+    │        ───┬──  
+    │           ╰──── name: 2
+  3 │     Yes
+    │     ─┬─  
+    │      ╰─── name: 3
+    │ 
+  6 │   function id(Answer ans) returns (Answer) {
+    │            ─┬ ───┬── ─┬─           ───┬──  
+    │             ╰────────────────────────────── name: 4
+    │                  │    │               │    
+    │                  ╰───────────────────────── ref: 2
+    │                       │               │    
+    │                       ╰──────────────────── name: 5
+    │                                       │    
+    │                                       ╰──── ref: 2
+  7 │     return ans;
+    │            ─┬─  
+    │             ╰─── ref: 5
+    │ 
+ 11 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 6
+ 12 │   using Id for Id.Answer;
+    │         ─┬     ─┬ ───┬──  
+    │          ╰──────────────── ref: 1
+    │                 │    │    
+    │                 ╰───────── ref: 1
+    │                      │    
+    │                      ╰──── ref: 2
+    │ 
+ 14 │   function testFunc() returns (Id.Answer) {
+    │            ────┬───            ─┬ ───┬──  
+    │                ╰────────────────────────── name: 7
+    │                                 │    │    
+    │                                 ╰───────── ref: 1
+    │                                      │    
+    │                                      ╰──── ref: 2
+ 15 │     Id.Answer value = Id.Answer.Yes;
+    │     ─┬ ───┬── ──┬──   ─┬ ───┬── ─┬─  
+    │      ╰─────────────────────────────── ref: 1
+    │           │     │      │    │    │   
+    │           ╰────────────────────────── ref: 2
+    │                 │      │    │    │   
+    │                 ╰──────────────────── name: 8
+    │                        │    │    │   
+    │                        ╰───────────── ref: 1
+    │                             │    │   
+    │                             ╰──────── ref: 2
+    │                                  │   
+    │                                  ╰─── ref: 3
+ 16 │     value.id();
+    │     ──┬── ─┬  
+    │       ╰─────── ref: 8
+    │            │  
+    │            ╰── ref: 4
+────╯

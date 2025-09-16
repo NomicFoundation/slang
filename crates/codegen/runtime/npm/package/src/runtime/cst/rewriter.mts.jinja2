@@ -1,0 +1,109 @@
+{%- if rendering_in_stubs -%}
+  /** This is a stub. */
+  export abstract class BaseRewriter { }
+{%- else -%} 
+  import { NonterminalKind, NonterminalNode, Node, NodeType, TerminalNode, TerminalKind, Edge } from "../index.mjs";
+
+  /** Abstract class to rewrite a CST. */
+  export abstract class BaseRewriter {
+    
+    /** Replaces the `node` with a new node. If the result is `undefined`, the node is removed from the tree.
+        This function typically the entry point of the rewrite operation. */
+    public rewriteNode(node: Node): Node | undefined {
+      switch (node.type) {
+        case NodeType.TerminalNode:
+          return this.rewriteTerminalNode(node);
+        case NodeType.NonterminalNode:
+          return this.rewriteNonterminalNode(node);
+      }
+    }
+
+    /** Rewrites a non-terminal node. Typically called from `rewriteNode`. */
+    public rewriteNonterminalNode(node: NonterminalNode): Node | undefined {
+      switch (node.kind) {
+        {% for nonterminal in model.kinds.nonterminal_kinds %}
+        case NonterminalKind.{{ nonterminal.id }}:
+          return this.rewrite{{- nonterminal.id -}}(node);
+        {% endfor %}
+      }
+    }
+
+    /** Rewrites a terminal node. Typically called from `rewriteNode`. */
+    public rewriteTerminalNode(node: TerminalNode): Node | undefined {
+      switch (node.kind) {
+        {% for terminal in model.kinds.terminal_kinds %}
+        case TerminalKind.{{ terminal.id }}:
+          return this.rewrite{{- terminal.id -}}(node);
+        {% endfor %}
+        case TerminalKind.Unrecognized:
+          return this.rewriteUnrecognized(node);
+        case TerminalKind.Missing:
+          return this.rewriteMissing(node);
+      }
+    }
+
+    {% for nonterminal in model.kinds.nonterminal_kinds %}     
+      /** @virtual Rewrites a `{{- nonterminal.id -}}` node, recursively traversing the children (unless overriden). */
+      public rewrite{{- nonterminal.id -}}(node: NonterminalNode): Node | undefined {
+        return this.rewriteChildren(node);
+      }
+    {% endfor %}
+    
+    {% for terminal in model.kinds.terminal_kinds %}     
+      /** @virtual Rewrites a `{{- terminal.id -}}` node. */
+      public rewrite{{- terminal.id -}}(node: TerminalNode): Node | undefined {
+        return node;
+      }
+    {% endfor %}
+    
+    /** @virtual Rewrites an `Unrecognized` node. */
+    public rewriteUnrecognized(node: TerminalNode): Node | undefined {
+      return node;
+    }
+  
+    /** @virtual Rewrites a `Missing` node. */
+    public rewriteMissing(node: TerminalNode): Node | undefined {
+      return node;
+    }
+  
+    /** Rewrites all the children of a given non-terminal node. */
+    protected rewriteChildren(node: NonterminalNode): NonterminalNode {
+      let newChildren: Array<Edge> | undefined = undefined;
+      const children = node.children();
+
+      children.forEach((child, index) => {
+        const newChild = this.rewriteNode(child.node);
+        if (newChild == undefined) {
+          // node was removed. if `newChildren` is set, just skip this one
+          // otherwise, copy the first ones from `children` (but the last)
+          if (newChildren == undefined) {
+            newChildren = children.slice(0, index);
+          }
+        } else if (newChild.id != child.node.id) {
+          // node has changed, produce new edge
+          let edge;
+          switch (newChild.type) {
+            case NodeType.TerminalNode:
+              edge = Edge.createWithTerminal(child.label, newChild);
+              break;
+            case NodeType.NonterminalNode:
+              edge = Edge.createWithNonterminal(child.label, newChild);
+              break;
+          }
+
+          if (newChildren == undefined) {
+            newChildren = children.slice(0, index);
+          }
+          newChildren.push(edge);
+        } else if (newChildren != undefined) {
+          newChildren.push(child);
+        }
+      });
+      if (newChildren != undefined) {
+        return NonterminalNode.create(node.kind, newChildren);
+      } else {
+        return node;
+      }
+    }
+  }
+{%- endif -%}

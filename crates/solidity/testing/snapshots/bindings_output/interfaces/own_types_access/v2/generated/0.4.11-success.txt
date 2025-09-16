@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["IFoo" @ input.sol:1:11] (interface)
+- Def: #2 ["Bar" @ input.sol:2:12] (struct)
+- Def: #3 ["value" @ input.sol:3:13] (struct member, type: int256)
+- Def: #4 ["test" @ input.sol:5:14] (function, type: function (Bar memory) returns void)
+- Def: #5 ["bar" @ input.sol:5:30] (parameter, type: Bar memory)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["Bar" @ input.sol:5:19] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface IFoo {
+   │           ──┬─  
+   │             ╰─── name: 1
+ 2 │     struct Bar {
+   │            ─┬─  
+   │             ╰─── name: 2
+ 3 │         int value;
+   │             ──┬──  
+   │               ╰──── name: 3
+   │ 
+ 5 │     function test(Bar memory bar);
+   │              ──┬─ ─┬─        ─┬─  
+   │                ╰────────────────── name: 4
+   │                    │          │   
+   │                    ╰────────────── ref: 2
+   │                               │   
+   │                               ╰─── name: 5
+───╯

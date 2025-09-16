@@ -6171,7 +6171,7 @@ codegen_language_macros::compile!(Language(
                     name = "gasleft",
                     parameters = [],
                     return_type = "uint256",
-                    enabled = From("0.4.22")
+                    enabled = From("0.4.21")
                 ),
                 BuiltInFunction(
                     name = "keccak256",
@@ -6337,7 +6337,7 @@ codegen_language_macros::compile!(Language(
                             name = "send",
                             parameters = ["uint256 amount"],
                             return_type = "bool",
-                            enabled = Till("0.8.0")
+                            enabled = Till("0.5.0")
                         ),
                         BuiltInFunction(
                             name = "staticcall",

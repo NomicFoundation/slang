@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["FunctionModifier" @ input.sol:1:10] (contract)
+- Def: #2 ["owner" @ input.sol:2:20] (state var, type: address)
+- Def: #3 ["validAddress" @ input.sol:4:14] (modifier)
+- Def: #4 ["_addr" @ input.sol:4:35] (parameter, type: address)
+- Def: #5 ["changeOwner" @ input.sol:9:14] (function, type: function (address) returns void)
+- Def: #6 ["_newOwner" @ input.sol:9:34] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["assert" @ input.sol:5:9] -> built-in
+- Ref: ["_addr" @ input.sol:5:16] -> #4
+- Ref: ["_" @ input.sol:6:9] -> built-in
+- Ref: ["validAddress" @ input.sol:11:9] -> #3
+- Ref: ["_newOwner" @ input.sol:11:22] -> #6
+- Ref: ["owner" @ input.sol:13:9] -> #2
+- Ref: ["_newOwner" @ input.sol:13:17] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract FunctionModifier {
+    │          ────────┬───────  
+    │                  ╰───────── name: 1
+  2 │     address public owner;
+    │                    ──┬──  
+    │                      ╰──── name: 2
+    │ 
+  4 │     modifier validAddress(address _addr) {
+    │              ──────┬─────         ──┬──  
+    │                    ╰───────────────────── name: 3
+    │                                     │    
+    │                                     ╰──── name: 4
+  5 │         assert(_addr != address(0));
+    │         ───┬── ──┬──  
+    │            ╰────────── built-in
+    │                  │    
+    │                  ╰──── ref: 4
+  6 │         _;
+    │         ┬  
+    │         ╰── built-in
+    │ 
+  9 │     function changeOwner(address _newOwner)
+    │              ─────┬─────         ────┬────  
+    │                   ╰───────────────────────── name: 5
+    │                                      │      
+    │                                      ╰────── name: 6
+    │ 
+ 11 │         validAddress(_newOwner)
+    │         ──────┬───── ────┬────  
+    │               ╰───────────────── ref: 3
+    │                          │      
+    │                          ╰────── ref: 6
+    │ 
+ 13 │         owner = _newOwner;
+    │         ──┬──   ────┬────  
+    │           ╰──────────────── ref: 2
+    │                     │      
+    │                     ╰────── ref: 6
+────╯
