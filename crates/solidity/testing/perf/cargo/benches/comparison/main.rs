@@ -18,33 +18,77 @@ mod __dependencies_used_in_lib__ {
     };
 }
 
-macro_rules! comparison_tests {
+macro_rules! slang_test {
     ($prj:ident) => {
-        /*
-         * WARNING:
-         * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
-         * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
-         */
-
         paste! {
-          #[library_benchmark(setup = tests::setup::setup)]
-          #[bench::first(stringify!($prj))]
-          pub fn [<slang_ $prj>](project: &SolidityProject) {
-              black_box(tests::parser::run(project));
-          }
+            #[library_benchmark(setup = tests::setup::setup)]
+            #[bench::first(stringify!($prj))]
+            pub fn [<slang_ $prj>](project: &SolidityProject) {
+                black_box(tests::parser::run(project));
+            }
+        }
+    };
+}
 
-          #[library_benchmark(setup = tests::setup::setup)]
-          #[bench::first(stringify!($prj))]
-          pub fn [< solar_ $prj >](project: &SolidityProject) {
-              black_box(tests::solar_parser::run(project));
-          }
+macro_rules! solar_test {
+    ($prj:ident) => {
+        paste! {
+            #[library_benchmark(setup = tests::setup::setup)]
+            #[bench::first(stringify!($prj))]
+            pub fn [<solar_ $prj>](project: &SolidityProject) {
+                black_box(tests::solar_parser::run(project));
+            }
+        }
+    };
+}
 
-          #[library_benchmark(setup = tests::setup::setup)]
-          #[bench::first(stringify!($prj))]
-          pub fn [< tree_sitter_ $prj >](project: &SolidityProject) {
-              black_box(tests::tree_sitter_parser::run(project));
-          }
+macro_rules! tree_sitter_test {
+    ($prj:ident) => {
+        paste! {
+            #[library_benchmark(setup = tests::setup::setup)]
+            #[bench::first(stringify!($prj))]
+            pub fn [<tree_sitter_ $prj>](project: &SolidityProject) {
+                black_box(tests::tree_sitter_parser::run(project));
+            }
+        }
+    };
+}
 
+/*
+ * WARNING:
+ * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
+ * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
+ */
+macro_rules! comparison_tests {
+    (mooniswap) => {
+        slang_test!(mooniswap);
+        tree_sitter_test!(mooniswap);
+        library_benchmark_group!(
+            name = mooniswap_group;
+            benchmarks = slang_mooniswap,tree_sitter_mooniswap,
+        );
+    };
+    (uniswap) => {
+        slang_test!(uniswap);
+        solar_test!(uniswap);
+        library_benchmark_group!(
+            name = uniswap_group;
+            benchmarks = slang_uniswap,solar_uniswap,
+        );
+    };
+    (create_x) => {
+        slang_test!(create_x);
+        solar_test!(create_x);
+        library_benchmark_group!(
+            name = create_x_group;
+            benchmarks = slang_create_x,solar_create_x,
+        );
+    };
+    ($prj:ident) => {
+        slang_test!($prj);
+        solar_test!($prj);
+        tree_sitter_test!($prj);
+        paste! {
           library_benchmark_group!(
               name = [< $prj _group >];
               benchmarks = [< slang_ $prj >],[< solar_ $prj >],[< tree_sitter_ $prj >],
@@ -54,11 +98,11 @@ macro_rules! comparison_tests {
 }
 
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-// flat_imports_mooniswap is version incompatible with solar
+comparison_tests!(mooniswap);
 comparison_tests!(weighted_pool);
-// uniswap is incompatible in tree-sitter
+comparison_tests!(uniswap);
 comparison_tests!(multicall3);
-// create_x is incompatible in tree-sitter
+comparison_tests!(create_x);
 comparison_tests!(ui_pool_data_provider_v3);
 comparison_tests!(cooldogs);
 comparison_tests!(one_step_leverage_f);
@@ -101,8 +145,11 @@ main!(
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
     library_benchmark_groups =
+        mooniswap_group,
         weighted_pool_group,
+        uniswap_group,
         multicall3_group,
+        create_x_group,
         ui_pool_data_provider_v3_group,
         cooldogs_group,
         one_step_leverage_f_group,
