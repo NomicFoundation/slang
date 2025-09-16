@@ -22,7 +22,7 @@ macro_rules! slang_test {
     ($prj:ident) => {
         paste! {
             #[library_benchmark(setup = tests::setup::setup)]
-            #[bench::first(stringify!($prj))]
+            #[bench::test(stringify!($prj))]
             pub fn [<slang_ $prj>](project: &SolidityProject) {
                 black_box(tests::parser::run(project));
             }
@@ -34,7 +34,7 @@ macro_rules! solar_test {
     ($prj:ident) => {
         paste! {
             #[library_benchmark(setup = tests::setup::setup)]
-            #[bench::first(stringify!($prj))]
+            #[bench::test(stringify!($prj))]
             pub fn [<solar_ $prj>](project: &SolidityProject) {
                 black_box(tests::solar_parser::run(project));
             }
@@ -46,7 +46,7 @@ macro_rules! tree_sitter_test {
     ($prj:ident) => {
         paste! {
             #[library_benchmark(setup = tests::setup::setup)]
-            #[bench::first(stringify!($prj))]
+            #[bench::test(stringify!($prj))]
             pub fn [<tree_sitter_ $prj>](project: &SolidityProject) {
                 black_box(tests::tree_sitter_parser::run(project));
             }
