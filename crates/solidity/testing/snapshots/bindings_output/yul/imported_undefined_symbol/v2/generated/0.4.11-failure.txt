@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["slot" @ input.sol:1:10] (imported symbol)
+- Def: #2 ["Foo" @ input.sol:3:10] (contract)
+- Def: #3 ["useSlotInAssembly" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #4 ["value" @ input.sol:5:14] (variable, type: uint256)
+- Def: #5 ["useSlotInSolidity" @ input.sol:11:14] (function, type: function () returns void)
+- Def: #6 ["value" @ input.sol:12:14] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["slot" @ input.sol:1:10] -> unresolved
+- Ref: ["value" @ input.sol:7:13] -> #4
+- Ref: ["sload" @ input.sol:7:22] -> built-in
+- Ref: ["slot" @ input.sol:7:28] -> unresolved
+- Ref: ["slot" @ input.sol:12:22] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
+    │          ──┬─  
+    │            ╰─── name: 1
+    │            │   
+    │            ╰─── unresolved
+    │ 
+  3 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── name: 2
+  4 │     function useSlotInAssembly() public {
+    │              ────────┬────────  
+    │                      ╰────────── name: 3
+  5 │         uint value;
+    │              ──┬──  
+    │                ╰──── name: 4
+    │ 
+  7 │             value := sload(slot)
+    │             ──┬──    ──┬── ──┬─  
+    │               ╰────────────────── ref: 4
+    │                        │     │   
+    │                        ╰───────── built-in
+    │                              │   
+    │                              ╰─── unresolved
+    │ 
+ 11 │     function useSlotInSolidity() public {
+    │              ────────┬────────  
+    │                      ╰────────── name: 5
+ 12 │         uint value = slot;
+    │              ──┬──   ──┬─  
+    │                ╰─────────── name: 6
+    │                        │   
+    │                        ╰─── unresolved
+────╯

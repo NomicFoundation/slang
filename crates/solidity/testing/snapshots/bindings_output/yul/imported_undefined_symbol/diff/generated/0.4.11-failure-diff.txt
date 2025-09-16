@@ -1,0 +1,6 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+reference `slot` at input.sol:7:28 failed to resolve in new binder
+reference `slot` at input.sol:12:22 failed to resolve in new binder
+
+Definitions and/or references from binding graph and new binder DIFFER
