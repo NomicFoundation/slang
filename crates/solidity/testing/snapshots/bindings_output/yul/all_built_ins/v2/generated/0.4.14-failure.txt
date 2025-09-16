@@ -1,0 +1,347 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (80):
+- Ref: ["add" @ input.sol:4:13] -> built-in
+- Ref: ["addmod" @ input.sol:5:13] -> built-in
+- Ref: ["address" @ input.sol:6:13] -> built-in
+- Ref: ["and" @ input.sol:7:13] -> built-in
+- Ref: ["balance" @ input.sol:8:13] -> built-in
+- Ref: ["basefee" @ input.sol:9:13] -> unresolved
+- Ref: ["blobbasefee" @ input.sol:10:13] -> unresolved
+- Ref: ["blobhash" @ input.sol:11:13] -> unresolved
+- Ref: ["blockhash" @ input.sol:12:13] -> built-in
+- Ref: ["byte" @ input.sol:13:13] -> built-in
+- Ref: ["call" @ input.sol:14:13] -> built-in
+- Ref: ["callcode" @ input.sol:15:13] -> built-in
+- Ref: ["calldatacopy" @ input.sol:16:13] -> built-in
+- Ref: ["calldataload" @ input.sol:17:13] -> built-in
+- Ref: ["calldatasize" @ input.sol:18:13] -> built-in
+- Ref: ["caller" @ input.sol:19:13] -> built-in
+- Ref: ["callvalue" @ input.sol:20:13] -> built-in
+- Ref: ["chainid" @ input.sol:21:13] -> built-in
+- Ref: ["codecopy" @ input.sol:22:13] -> built-in
+- Ref: ["codesize" @ input.sol:23:13] -> built-in
+- Ref: ["coinbase" @ input.sol:24:13] -> built-in
+- Ref: ["create" @ input.sol:25:13] -> built-in
+- Ref: ["create2" @ input.sol:26:13] -> built-in
+- Ref: ["delegatecall" @ input.sol:27:13] -> built-in
+- Ref: ["div" @ input.sol:28:13] -> built-in
+- Ref: ["eq" @ input.sol:29:13] -> built-in
+- Ref: ["exp" @ input.sol:30:13] -> built-in
+- Ref: ["extcodecopy" @ input.sol:31:13] -> built-in
+- Ref: ["extcodehash" @ input.sol:32:13] -> unresolved
+- Ref: ["extcodesize" @ input.sol:33:13] -> built-in
+- Ref: ["gas" @ input.sol:34:13] -> built-in
+- Ref: ["gaslimit" @ input.sol:35:13] -> built-in
+- Ref: ["gasprice" @ input.sol:36:13] -> built-in
+- Ref: ["gt" @ input.sol:37:13] -> built-in
+- Ref: ["invalid" @ input.sol:38:13] -> built-in
+- Ref: ["iszero" @ input.sol:39:13] -> built-in
+- Ref: ["keccak256" @ input.sol:40:13] -> built-in
+- Ref: ["log0" @ input.sol:41:13] -> built-in
+- Ref: ["log1" @ input.sol:42:13] -> built-in
+- Ref: ["log2" @ input.sol:43:13] -> built-in
+- Ref: ["log3" @ input.sol:44:13] -> built-in
+- Ref: ["log4" @ input.sol:45:13] -> built-in
+- Ref: ["lt" @ input.sol:46:13] -> built-in
+- Ref: ["mcopy" @ input.sol:47:13] -> unresolved
+- Ref: ["mload" @ input.sol:48:13] -> built-in
+- Ref: ["mod" @ input.sol:49:13] -> built-in
+- Ref: ["msize" @ input.sol:50:13] -> built-in
+- Ref: ["mstore" @ input.sol:51:13] -> built-in
+- Ref: ["mstore8" @ input.sol:52:13] -> built-in
+- Ref: ["mul" @ input.sol:53:13] -> built-in
+- Ref: ["mulmod" @ input.sol:54:13] -> built-in
+- Ref: ["not" @ input.sol:55:13] -> built-in
+- Ref: ["number" @ input.sol:56:13] -> built-in
+- Ref: ["or" @ input.sol:57:13] -> built-in
+- Ref: ["origin" @ input.sol:58:13] -> built-in
+- Ref: ["pop" @ input.sol:59:13] -> built-in
+- Ref: ["prevrandao" @ input.sol:60:13] -> unresolved
+- Ref: ["return" @ input.sol:61:13] -> built-in
+- Ref: ["returndatacopy" @ input.sol:62:13] -> built-in
+- Ref: ["returndatasize" @ input.sol:63:13] -> built-in
+- Ref: ["revert" @ input.sol:64:13] -> built-in
+- Ref: ["sar" @ input.sol:65:13] -> built-in
+- Ref: ["sdiv" @ input.sol:66:13] -> built-in
+- Ref: ["selfbalance" @ input.sol:67:13] -> built-in
+- Ref: ["selfdestruct" @ input.sol:68:13] -> built-in
+- Ref: ["sgt" @ input.sol:69:13] -> built-in
+- Ref: ["shl" @ input.sol:70:13] -> built-in
+- Ref: ["shr" @ input.sol:71:13] -> built-in
+- Ref: ["signextend" @ input.sol:72:13] -> built-in
+- Ref: ["sload" @ input.sol:73:13] -> built-in
+- Ref: ["slt" @ input.sol:74:13] -> built-in
+- Ref: ["smod" @ input.sol:75:13] -> built-in
+- Ref: ["sstore" @ input.sol:76:13] -> built-in
+- Ref: ["staticcall" @ input.sol:77:13] -> built-in
+- Ref: ["stop" @ input.sol:78:13] -> built-in
+- Ref: ["sub" @ input.sol:79:13] -> built-in
+- Ref: ["timestamp" @ input.sol:80:13] -> built-in
+- Ref: ["tload" @ input.sol:81:13] -> unresolved
+- Ref: ["tstore" @ input.sol:82:13] -> unresolved
+- Ref: ["xor" @ input.sol:83:13] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+    │ 
+  4 │             add()
+    │             ─┬─  
+    │              ╰─── built-in
+  5 │             addmod()
+    │             ───┬──  
+    │                ╰──── built-in
+  6 │             address()
+    │             ───┬───  
+    │                ╰───── built-in
+  7 │             and()
+    │             ─┬─  
+    │              ╰─── built-in
+  8 │             balance()
+    │             ───┬───  
+    │                ╰───── built-in
+  9 │             basefee()
+    │             ───┬───  
+    │                ╰───── unresolved
+ 10 │             blobbasefee()
+    │             ─────┬─────  
+    │                  ╰─────── unresolved
+ 11 │             blobhash()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 12 │             blockhash()
+    │             ────┬────  
+    │                 ╰────── built-in
+ 13 │             byte()
+    │             ──┬─  
+    │               ╰─── built-in
+ 14 │             call()
+    │             ──┬─  
+    │               ╰─── built-in
+ 15 │             callcode()
+    │             ────┬───  
+    │                 ╰───── built-in
+ 16 │             calldatacopy()
+    │             ──────┬─────  
+    │                   ╰─────── built-in
+ 17 │             calldataload()
+    │             ──────┬─────  
+    │                   ╰─────── built-in
+ 18 │             calldatasize()
+    │             ──────┬─────  
+    │                   ╰─────── built-in
+ 19 │             caller()
+    │             ───┬──  
+    │                ╰──── built-in
+ 20 │             callvalue()
+    │             ────┬────  
+    │                 ╰────── built-in
+ 21 │             chainid()
+    │             ───┬───  
+    │                ╰───── built-in
+ 22 │             codecopy()
+    │             ────┬───  
+    │                 ╰───── built-in
+ 23 │             codesize()
+    │             ────┬───  
+    │                 ╰───── built-in
+ 24 │             coinbase()
+    │             ────┬───  
+    │                 ╰───── built-in
+ 25 │             create()
+    │             ───┬──  
+    │                ╰──── built-in
+ 26 │             create2()
+    │             ───┬───  
+    │                ╰───── built-in
+ 27 │             delegatecall()
+    │             ──────┬─────  
+    │                   ╰─────── built-in
+ 28 │             div()
+    │             ─┬─  
+    │              ╰─── built-in
+ 29 │             eq()
+    │             ─┬  
+    │              ╰── built-in
+ 30 │             exp()
+    │             ─┬─  
+    │              ╰─── built-in
+ 31 │             extcodecopy()
+    │             ─────┬─────  
+    │                  ╰─────── built-in
+ 32 │             extcodehash()
+    │             ─────┬─────  
+    │                  ╰─────── unresolved
+ 33 │             extcodesize()
+    │             ─────┬─────  
+    │                  ╰─────── built-in
+ 34 │             gas()
+    │             ─┬─  
+    │              ╰─── built-in
+ 35 │             gaslimit()
+    │             ────┬───  
+    │                 ╰───── built-in
+ 36 │             gasprice()
+    │             ────┬───  
+    │                 ╰───── built-in
+ 37 │             gt()
+    │             ─┬  
+    │              ╰── built-in
+ 38 │             invalid()
+    │             ───┬───  
+    │                ╰───── built-in
+ 39 │             iszero()
+    │             ───┬──  
+    │                ╰──── built-in
+ 40 │             keccak256()
+    │             ────┬────  
+    │                 ╰────── built-in
+ 41 │             log0()
+    │             ──┬─  
+    │               ╰─── built-in
+ 42 │             log1()
+    │             ──┬─  
+    │               ╰─── built-in
+ 43 │             log2()
+    │             ──┬─  
+    │               ╰─── built-in
+ 44 │             log3()
+    │             ──┬─  
+    │               ╰─── built-in
+ 45 │             log4()
+    │             ──┬─  
+    │               ╰─── built-in
+ 46 │             lt()
+    │             ─┬  
+    │              ╰── built-in
+ 47 │             mcopy()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 48 │             mload()
+    │             ──┬──  
+    │               ╰──── built-in
+ 49 │             mod()
+    │             ─┬─  
+    │              ╰─── built-in
+ 50 │             msize()
+    │             ──┬──  
+    │               ╰──── built-in
+ 51 │             mstore()
+    │             ───┬──  
+    │                ╰──── built-in
+ 52 │             mstore8()
+    │             ───┬───  
+    │                ╰───── built-in
+ 53 │             mul()
+    │             ─┬─  
+    │              ╰─── built-in
+ 54 │             mulmod()
+    │             ───┬──  
+    │                ╰──── built-in
+ 55 │             not()
+    │             ─┬─  
+    │              ╰─── built-in
+ 56 │             number()
+    │             ───┬──  
+    │                ╰──── built-in
+ 57 │             or()
+    │             ─┬  
+    │              ╰── built-in
+ 58 │             origin()
+    │             ───┬──  
+    │                ╰──── built-in
+ 59 │             pop()
+    │             ─┬─  
+    │              ╰─── built-in
+ 60 │             prevrandao()
+    │             ─────┬────  
+    │                  ╰────── unresolved
+ 61 │             return()
+    │             ───┬──  
+    │                ╰──── built-in
+ 62 │             returndatacopy()
+    │             ───────┬──────  
+    │                    ╰──────── built-in
+ 63 │             returndatasize()
+    │             ───────┬──────  
+    │                    ╰──────── built-in
+ 64 │             revert()
+    │             ───┬──  
+    │                ╰──── built-in
+ 65 │             sar()
+    │             ─┬─  
+    │              ╰─── built-in
+ 66 │             sdiv()
+    │             ──┬─  
+    │               ╰─── built-in
+ 67 │             selfbalance()
+    │             ─────┬─────  
+    │                  ╰─────── built-in
+ 68 │             selfdestruct()
+    │             ──────┬─────  
+    │                   ╰─────── built-in
+ 69 │             sgt()
+    │             ─┬─  
+    │              ╰─── built-in
+ 70 │             shl()
+    │             ─┬─  
+    │              ╰─── built-in
+ 71 │             shr()
+    │             ─┬─  
+    │              ╰─── built-in
+ 72 │             signextend()
+    │             ─────┬────  
+    │                  ╰────── built-in
+ 73 │             sload()
+    │             ──┬──  
+    │               ╰──── built-in
+ 74 │             slt()
+    │             ─┬─  
+    │              ╰─── built-in
+ 75 │             smod()
+    │             ──┬─  
+    │               ╰─── built-in
+ 76 │             sstore()
+    │             ───┬──  
+    │                ╰──── built-in
+ 77 │             staticcall()
+    │             ─────┬────  
+    │                  ╰────── built-in
+ 78 │             stop()
+    │             ──┬─  
+    │               ╰─── built-in
+ 79 │             sub()
+    │             ─┬─  
+    │              ╰─── built-in
+ 80 │             timestamp()
+    │             ────┬────  
+    │                 ╰────── built-in
+ 81 │             tload()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 82 │             tstore()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 83 │             xor()
+    │             ─┬─  
+    │              ╰─── built-in
+────╯

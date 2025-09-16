@@ -1,0 +1,81 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    ╭─[input.sol:9:9]
+    │
+  9 │ ╭─▶         try feed.getData(token) returns (uint v) {
+    ┆ ┆   
+ 20 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (13):
+- Def: #1 ["DataFeed" @ input.sol:1:11] (interface)
+- Def: #2 ["getData" @ input.sol:1:31] (function, type: function (address) returns uint256)
+- Def: #3 ["token" @ input.sol:1:47] (parameter, type: address)
+- Def: #4 ["value" @ input.sol:1:77] (parameter, type: uint256)
+- Def: #5 ["FeedConsumer" @ input.sol:3:10] (contract)
+- Def: #6 ["feed" @ input.sol:4:14] (state var, type: DataFeed)
+- Def: #7 ["errorCount" @ input.sol:5:10] (state var, type: uint256)
+- Def: #8 ["lastValue" @ input.sol:6:10] (state var, type: uint256)
+- Def: #9 ["rate" @ input.sol:7:14] (function, type: function (address) returns (uint256, bool))
+- Def: #10 ["token" @ input.sol:7:27] (parameter, type: address)
+- Def: #11 ["value" @ input.sol:7:55] (parameter, type: uint256)
+- Def: #12 ["success" @ input.sol:7:67] (parameter, type: bool)
+- Def: #13 ["last_reason" @ input.sol:8:23] (variable, type: string memory)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["DataFeed" @ input.sol:4:5] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface DataFeed { function getData(address token) external returns (uint value); }
+   │           ────┬───            ───┬───         ──┬──                         ──┬──  
+   │               ╰──────────────────────────────────────────────────────────────────── name: 1
+   │                                  │              │                             │    
+   │                                  ╰───────────────────────────────────────────────── name: 2
+   │                                                 │                             │    
+   │                                                 ╰────────────────────────────────── name: 3
+   │                                                                               │    
+   │                                                                               ╰──── name: 4
+   │ 
+ 3 │ contract FeedConsumer {
+   │          ──────┬─────  
+   │                ╰─────── name: 5
+ 4 │     DataFeed feed;
+   │     ────┬─── ──┬─  
+   │         ╰────────── ref: 1
+   │                │   
+   │                ╰─── name: 6
+ 5 │     uint errorCount;
+   │          ─────┬────  
+   │               ╰────── name: 7
+ 6 │     uint lastValue;
+   │          ────┬────  
+   │              ╰────── name: 8
+ 7 │     function rate(address token) public returns (uint value, bool success) {
+   │              ──┬─         ──┬──                       ──┬──       ───┬───  
+   │                ╰─────────────────────────────────────────────────────────── name: 9
+   │                             │                           │            │     
+   │                             ╰────────────────────────────────────────────── name: 10
+   │                                                         │            │     
+   │                                                         ╰────────────────── name: 11
+   │                                                                      │     
+   │                                                                      ╰───── name: 12
+ 8 │         string memory last_reason;
+   │                       ─────┬─────  
+   │                            ╰─────── name: 13
+───╯

@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["FunctionModifier" @ input.sol:1:10] (contract)
+- Def: #2 ["locked" @ input.sol:2:17] (state var, type: bool)
+- Def: #3 ["noReentrancy" @ input.sol:4:14] (modifier)
+- Def: #4 ["decrement" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["assert" @ input.sol:5:9] -> built-in
+- Ref: ["locked" @ input.sol:5:17] -> #2
+- Ref: ["locked" @ input.sol:7:9] -> #2
+- Ref: ["_" @ input.sol:8:9] -> built-in
+- Ref: ["locked" @ input.sol:9:9] -> #2
+- Ref: ["noReentrancy" @ input.sol:12:33] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract FunctionModifier {
+    │          ────────┬───────  
+    │                  ╰───────── name: 1
+  2 │     bool public locked;
+    │                 ───┬──  
+    │                    ╰──── name: 2
+    │ 
+  4 │     modifier noReentrancy() {
+    │              ──────┬─────  
+    │                    ╰─────── name: 3
+  5 │         assert(!locked);
+    │         ───┬──  ───┬──  
+    │            ╰──────────── built-in
+    │                    │    
+    │                    ╰──── ref: 2
+    │ 
+  7 │         locked = true;
+    │         ───┬──  
+    │            ╰──── ref: 2
+  8 │         _;
+    │         ┬  
+    │         ╰── built-in
+  9 │         locked = false;
+    │         ───┬──  
+    │            ╰──── ref: 2
+    │ 
+ 12 │     function decrement() public noReentrancy {
+    │              ────┬────          ──────┬─────  
+    │                  ╰──────────────────────────── name: 4
+    │                                       │       
+    │                                       ╰─────── ref: 3
+────╯

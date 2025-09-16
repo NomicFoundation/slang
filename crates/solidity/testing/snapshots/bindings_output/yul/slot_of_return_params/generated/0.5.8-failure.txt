@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     struct Foo {
+   │            ─┬─  
+   │             ╰─── name: 2
+ 3 │         bytes value;
+   │               ──┬──  
+   │                 ╰──── name: 3
+   │ 
+ 6 │     function test(bytes32 slot) internal returns (Foo storage r) {
+   │              ──┬─         ──┬─                    ─┬─         ┬  
+   │                ╰───────────────────────────────────────────────── name: 4
+   │                             │                      │          │  
+   │                             ╰──────────────────────────────────── name: 5
+   │                                                    │          │  
+   │                                                    ╰───────────── ref: 2
+   │                                                               │  
+   │                                                               ╰── name: 6
+   │ 
+ 8 │             r.slot := slot
+   │             ───┬──    ──┬─  
+   │                ╰──────────── unresolved
+   │                         │   
+   │                         ╰─── ref: 5
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ▶ contract Test {
+  2 │ │   ╭─▶     struct Foo {
+  3 │ │   │           bytes value;
+    │ │   │   ──────────┬──────────  
+    │ │   │             ╰──────────── definiens: 3
+  4 │ │ │ ├─▶     }
+    │ │ │ │           
+    │ │ │ ╰─────────── definiens: 2
+  5 │ │ ╭───▶ 
+  6 │ │ │         function test(bytes32 slot) internal returns (Foo storage r) {
+    │ │ │                       ──────┬─────                    ──────┬──────  
+    │ │ │                             ╰──────────────────────────────────────── definiens: 5
+    │ │ │                                                             │        
+    │ │ │                                                             ╰──────── definiens: 6
+    ┆ ┆ ┆     
+ 10 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 4
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

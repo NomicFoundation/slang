@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+   ╭─[input.sol:5:9]
+   │
+ 5 │ ╭─▶         type(uint).min.nop();
+   ┆ ┆   
+ 7 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #3 ["Utils" @ input.sol:10:9] (library)
+- Def: #4 ["nop" @ input.sol:11:14] (function, type: function (uint256) returns void)
+- Def: #5 ["x" @ input.sol:11:23] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["Utils" @ input.sol:2:11] -> #3
+- Ref: ["x" @ input.sol:12:16] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     using Utils for uint;
+    │           ──┬──  
+    │             ╰──── ref: 3
+    │ 
+  4 │     function test() {
+    │              ──┬─  
+    │                ╰─── name: 2
+    │ 
+ 10 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 3
+ 11 │     function nop(uint x) internal {
+    │              ─┬─      ┬  
+    │               ╰────────── name: 4
+    │                       │  
+    │                       ╰── name: 5
+ 12 │         return x;
+    │                ┬  
+    │                ╰── ref: 5
+────╯

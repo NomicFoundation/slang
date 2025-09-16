@@ -1,0 +1,77 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["Mapping" @ input.sol:1:10] (contract)
+- Def: #2 ["myMap" @ input.sol:2:40] (state var, type: address => uint256)
+- Def: #3 ["get" @ input.sol:4:14] (function, type: function (address) returns uint256)
+- Def: #4 ["_addr" @ input.sol:4:26] (parameter, type: address)
+- Def: #5 ["set" @ input.sol:8:14] (function, type: function (address, uint256) returns void)
+- Def: #6 ["_addr" @ input.sol:8:26] (parameter, type: address)
+- Def: #7 ["_i" @ input.sol:8:41] (parameter, type: uint256)
+- Def: #8 ["remove" @ input.sol:12:14] (function, type: function (address) returns void)
+- Def: #9 ["_addr" @ input.sol:12:29] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["myMap" @ input.sol:5:16] -> #2
+- Ref: ["_addr" @ input.sol:5:22] -> #4
+- Ref: ["myMap" @ input.sol:9:9] -> #2
+- Ref: ["_addr" @ input.sol:9:15] -> #6
+- Ref: ["_i" @ input.sol:9:24] -> #7
+- Ref: ["myMap" @ input.sol:13:16] -> #2
+- Ref: ["_addr" @ input.sol:13:22] -> #9
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Mapping {
+    │          ───┬───  
+    │             ╰───── name: 1
+  2 │     mapping(address => uint256) public myMap;
+    │                                        ──┬──  
+    │                                          ╰──── name: 2
+    │ 
+  4 │     function get(address _addr) public view returns (uint256) {
+    │              ─┬─         ──┬──  
+    │               ╰───────────────── name: 3
+    │                            │    
+    │                            ╰──── name: 4
+  5 │         return myMap[_addr];
+    │                ──┬── ──┬──  
+    │                  ╰────────── ref: 2
+    │                        │    
+    │                        ╰──── ref: 4
+    │ 
+  8 │     function set(address _addr, uint256 _i) public {
+    │              ─┬─         ──┬──          ─┬  
+    │               ╰───────────────────────────── name: 5
+    │                            │             │  
+    │                            ╰──────────────── name: 6
+    │                                          │  
+    │                                          ╰── name: 7
+  9 │         myMap[_addr] = _i;
+    │         ──┬── ──┬──    ─┬  
+    │           ╰──────────────── ref: 2
+    │                 │       │  
+    │                 ╰────────── ref: 6
+    │                         │  
+    │                         ╰── ref: 7
+    │ 
+ 12 │     function remove(address _addr) public {
+    │              ───┬──         ──┬──  
+    │                 ╰────────────────── name: 8
+    │                               │    
+    │                               ╰──── name: 9
+ 13 │         delete myMap[_addr];
+    │                ──┬── ──┬──  
+    │                  ╰────────── ref: 2
+    │                        │    
+    │                        ╰──── ref: 9
+────╯

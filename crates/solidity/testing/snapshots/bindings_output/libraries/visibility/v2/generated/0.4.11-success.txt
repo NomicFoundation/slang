@@ -1,0 +1,122 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (13):
+- Def: #1 ["MyLib" @ input.sol:1:9] (library)
+- Def: #2 ["Choice" @ input.sol:2:10] (enum)
+- Def: #3 ["One" @ input.sol:2:19] (enum member of Choice)
+- Def: #4 ["Two" @ input.sol:2:24] (enum member of Choice)
+- Def: #5 ["Book" @ input.sol:3:12] (struct)
+- Def: #6 ["author" @ input.sol:3:26] (struct member, type: string (inherited))
+- Def: #7 ["build_book" @ input.sol:5:14] (function, type: function (string memory) returns Book memory)
+- Def: #8 ["author" @ input.sol:5:39] (parameter, type: string memory)
+- Def: #9 ["favorite_choice" @ input.sol:9:14] (function, type: function () returns Choice)
+- Def: #10 ["UsingLib" @ input.sol:14:10] (contract)
+- Def: #11 ["choice" @ input.sol:15:18] (state var, type: Choice)
+- Def: #12 ["book" @ input.sol:16:16] (state var, type: Book storage)
+- Def: #13 ["test" @ input.sol:18:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (16):
+- Ref: ["Book" @ input.sol:5:63] -> #5
+- Ref: ["Book" @ input.sol:6:16] -> #5
+- Ref: ["author" @ input.sol:6:21] -> #8
+- Ref: ["Choice" @ input.sol:9:48] -> #2
+- Ref: ["Choice" @ input.sol:10:16] -> #2
+- Ref: ["One" @ input.sol:10:23] -> #3
+- Ref: ["MyLib" @ input.sol:15:5] -> #1
+- Ref: ["Choice" @ input.sol:15:11] -> #2
+- Ref: ["MyLib" @ input.sol:16:5] -> #1
+- Ref: ["Book" @ input.sol:16:11] -> #5
+- Ref: ["book" @ input.sol:19:9] -> #12
+- Ref: ["MyLib" @ input.sol:19:16] -> #1
+- Ref: ["build_book" @ input.sol:19:22] -> #7
+- Ref: ["choice" @ input.sol:20:9] -> #11
+- Ref: ["MyLib" @ input.sol:20:18] -> #1
+- Ref: ["favorite_choice" @ input.sol:20:24] -> #9
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library MyLib {
+    │         ──┬──  
+    │           ╰──── name: 1
+  2 │     enum Choice { One, Two }
+    │          ───┬──   ─┬─  ─┬─  
+    │             ╰─────────────── name: 2
+    │                    │    │   
+    │                    ╰──────── name: 3
+    │                         │   
+    │                         ╰─── name: 4
+  3 │     struct Book { string author; }
+    │            ──┬─          ───┬──  
+    │              ╰─────────────────── name: 5
+    │                             │    
+    │                             ╰──── name: 6
+    │ 
+  5 │     function build_book(string memory author) public returns (Book memory) {
+    │              ─────┬────               ───┬──                  ──┬─  
+    │                   ╰───────────────────────────────────────────────── name: 7
+    │                                          │                      │   
+    │                                          ╰────────────────────────── name: 8
+    │                                                                 │   
+    │                                                                 ╰─── ref: 5
+  6 │         return Book(author);
+    │                ──┬─ ───┬──  
+    │                  ╰────────── ref: 5
+    │                        │    
+    │                        ╰──── ref: 8
+    │ 
+  9 │     function favorite_choice() public returns (Choice) {
+    │              ───────┬───────                   ───┬──  
+    │                     ╰────────────────────────────────── name: 9
+    │                                                   │    
+    │                                                   ╰──── ref: 2
+ 10 │         return Choice.One;
+    │                ───┬── ─┬─  
+    │                   ╰──────── ref: 2
+    │                        │   
+    │                        ╰─── ref: 3
+    │ 
+ 14 │ contract UsingLib {
+    │          ────┬───  
+    │              ╰───── name: 10
+ 15 │     MyLib.Choice choice;
+    │     ──┬── ───┬── ───┬──  
+    │       ╰────────────────── ref: 1
+    │              │      │    
+    │              ╰─────────── ref: 2
+    │                     │    
+    │                     ╰──── name: 11
+ 16 │     MyLib.Book book;
+    │     ──┬── ──┬─ ──┬─  
+    │       ╰────────────── ref: 1
+    │             │    │   
+    │             ╰──────── ref: 5
+    │                  │   
+    │                  ╰─── name: 12
+    │ 
+ 18 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 13
+ 19 │         book = MyLib.build_book("John Doe");
+    │         ──┬─   ──┬── ─────┬────  
+    │           ╰────────────────────── ref: 12
+    │                  │        │      
+    │                  ╰─────────────── ref: 1
+    │                           │      
+    │                           ╰────── ref: 7
+ 20 │         choice = MyLib.favorite_choice();
+    │         ───┬──   ──┬── ───────┬───────  
+    │            ╰──────────────────────────── ref: 11
+    │                    │          │         
+    │                    ╰──────────────────── ref: 1
+    │                               │         
+    │                               ╰───────── ref: 9
+────╯

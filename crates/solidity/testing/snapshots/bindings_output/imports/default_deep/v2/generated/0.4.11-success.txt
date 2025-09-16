@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["Base" @ base.sol:2:10] (contract)
+- Def: #2 ["Test" @ main.sol:2:10] (contract)
+- Def: #3 ["Service" @ service.sol:1:11] (interface)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["Base" @ main.sol:2:18] -> #1
+- Ref: ["Service" @ main.sol:2:24] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[base.sol:1:1]
+   │
+ 2 │ contract Base {}
+   │          ──┬─  
+   │            ╰─── name: 1
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 2 │ contract Test is Base, Service {}
+   │          ──┬─    ──┬─  ───┬───  
+   │            ╰──────────────────── name: 2
+   │                    │      │     
+   │                    ╰──────────── ref: 1
+   │                           │     
+   │                           ╰───── ref: 3
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[service.sol:1:1]
+   │
+ 1 │ interface Service {}
+   │           ───┬───  
+   │              ╰───── name: 3
+───╯

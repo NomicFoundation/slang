@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["AssemblyBlocks" @ input.sol:1:10] (contract)
+- Def: #2 ["yul_let" @ input.sol:2:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["x" @ input.sol:2:30] (parameter, type: uint256)
+- Def: #4 ["z" @ input.sol:2:57] (parameter, type: uint256)
+- Def: #5 ["zero" @ input.sol:4:17] (yul variable)
+- Def: #6 ["v" @ input.sol:5:17] (yul variable)
+- Def: #7 ["y" @ input.sol:7:21] (yul variable)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["zero" @ input.sol:5:22] -> #5
+- Ref: ["x" @ input.sol:7:26] -> #3
+- Ref: ["z" @ input.sol:8:17] -> #4
+- Ref: ["v" @ input.sol:8:22] -> #6
+- Ref: ["v" @ input.sol:9:17] -> #6
+- Ref: ["y" @ input.sol:9:22] -> #7
+- Ref: ["v" @ input.sol:11:13] -> #6
+- Ref: ["zero" @ input.sol:11:18] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract AssemblyBlocks {
+    │          ───────┬──────  
+    │                 ╰──────── name: 1
+  2 │     function yul_let(uint256 x) public returns (uint256 z) {
+    │              ───┬───         ┬                          ┬  
+    │                 ╰────────────────────────────────────────── name: 2
+    │                              │                          │  
+    │                              ╰───────────────────────────── name: 3
+    │                                                         │  
+    │                                                         ╰── name: 4
+    │ 
+  4 │             let zero := 0
+    │                 ──┬─  
+    │                   ╰─── name: 5
+  5 │             let v := zero
+    │                 ┬    ──┬─  
+    │                 ╰────────── name: 6
+    │                        │   
+    │                        ╰─── ref: 5
+    │ 
+  7 │                 let y := x
+    │                     ┬    ┬  
+    │                     ╰─────── name: 7
+    │                          │  
+    │                          ╰── ref: 3
+  8 │                 z := v
+    │                 ┬    ┬  
+    │                 ╰─────── ref: 4
+    │                      │  
+    │                      ╰── ref: 6
+  9 │                 v := y
+    │                 ┬    ┬  
+    │                 ╰─────── ref: 6
+    │                      │  
+    │                      ╰── ref: 7
+    │ 
+ 11 │             v := zero
+    │             ┬    ──┬─  
+    │             ╰────────── ref: 6
+    │                    │   
+    │                    ╰─── ref: 5
+────╯

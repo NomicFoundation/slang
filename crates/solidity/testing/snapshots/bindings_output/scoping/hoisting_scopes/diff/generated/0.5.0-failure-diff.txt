@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["y" @ input.sol:4:9] -> #4 resolved but did not in stack graph output
+
+Definitions and/or references from binding graph and new binder DIFFER

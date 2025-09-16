@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+   ╭─[input.sol:7:9]
+   │
+ 7 │ ╭─▶         payable(_rcpt).sendValue();
+ 8 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (6):
+- Def: #1 ["Address" @ input.sol:1:9] (library)
+- Def: #2 ["sendValue" @ input.sol:2:14] (function, type: function (address payable) returns void)
+- Def: #3 ["recipient" @ input.sol:2:40] (parameter, type: address payable)
+- Def: #4 ["Test" @ input.sol:4:10] (contract)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function (address) returns void)
+- Def: #6 ["_rcpt" @ input.sol:6:27] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["Address" @ input.sol:5:11] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Address {
+   │         ───┬───  
+   │            ╰───── name: 1
+ 2 │     function sendValue(address payable recipient) internal {}
+   │              ────┬────                 ────┬────  
+   │                  ╰──────────────────────────────── name: 2
+   │                                            │      
+   │                                            ╰────── name: 3
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 5 │     using Address for address payable;
+   │           ───┬───  
+   │              ╰───── ref: 1
+ 6 │     function test(address _rcpt) public {
+   │              ──┬─         ──┬──  
+   │                ╰───────────────── name: 5
+   │                             │    
+   │                             ╰──── name: 6
+───╯

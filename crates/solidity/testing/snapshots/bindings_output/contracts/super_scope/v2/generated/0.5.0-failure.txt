@@ -1,0 +1,58 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
+    ╭─[input.sol:12:40]
+    │
+ 12 │ ╭─▶     function foo() public pure virtual override(A) returns (string memory) {
+    ┆ ┆   
+ 14 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (3):
+- Def: #1 ["A" @ input.sol:4:10] (contract)
+- Def: #2 ["foo" @ input.sol:5:14] (function, type: function () returns string memory)
+- Def: #3 ["B" @ input.sol:10:10] (contract)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["virtual" @ input.sol:5:32] -> unresolved
+- Ref: ["A" @ input.sol:10:15] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (2):
+- ???: ["foo" @ input.sol:12:14]
+- ???: ["virtual" @ input.sol:12:32]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     function foo() public pure virtual returns (string memory) {
+    │              ─┬─               ───┬───  
+    │               ╰───────────────────────── name: 2
+    │                                   │     
+    │                                   ╰───── unresolved
+    │ 
+ 10 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 3
+    │               │  
+    │               ╰── ref: 1
+    │ 
+ 12 │     function foo() public pure virtual override(A) returns (string memory) {
+    │              ─┬─               ───┬───  
+    │               ╰───────────────────────── ???
+    │                                   │     
+    │                                   ╰───── ???
+────╯

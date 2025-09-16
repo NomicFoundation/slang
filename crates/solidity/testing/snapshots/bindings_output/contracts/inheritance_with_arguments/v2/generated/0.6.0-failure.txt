@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ uint constant BASE = 42;
+   ┆ ┆   
+ 7 │ ├─▶ contract Derived is Base(BASE) {}
+   │ │                                       
+   │ ╰─────────────────────────────────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (0):
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 

@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["X" @ input.sol:2:27] (constant, type: uint256)
+- Def: #3 ["Y" @ input.sol:3:26] (state var, type: uint256)
+- Def: #4 ["test" @ input.sol:5:14] (function, type: function () returns uint256)
+- Def: #5 ["Test" @ input.sol:10:10] (contract)
+- Def: #6 ["test" @ input.sol:11:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["X" @ input.sol:6:16] -> #2
+- Ref: ["Lib" @ input.sol:12:9] -> #1
+- Ref: ["Y" @ input.sol:12:13] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     uint private constant X = 1;
+    │                           ┬  
+    │                           ╰── name: 2
+  3 │     uint public constant Y = 2;
+    │                          ┬  
+    │                          ╰── name: 3
+    │ 
+  5 │     function test() public returns (uint) {
+    │              ──┬─  
+    │                ╰─── name: 4
+  6 │         return X;
+    │                ┬  
+    │                ╰── ref: 2
+    │ 
+ 10 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 11 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 6
+ 12 │         Lib.Y;
+    │         ─┬─ ┬  
+    │          ╰───── ref: 1
+    │             │  
+    │             ╰── ref: 3
+────╯

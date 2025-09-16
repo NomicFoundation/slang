@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["X2" @ input.sol:1:10] (contract)
+- Def: #2 ["C2" @ input.sol:2:22] (constant, type: uint256)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["C2" @ input.sol:1:23] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract X2 layout at C2 { // should not bind to a constant defined in the contract
+   │          ─┬           ─┬  
+   │           ╰─────────────── name: 1
+   │                        │  
+   │                        ╰── unresolved
+ 2 │     uint256 constant C2 = 0;
+   │                      ─┬  
+   │                       ╰── name: 2
+───╯
