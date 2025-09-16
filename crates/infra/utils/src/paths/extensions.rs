@@ -58,10 +58,9 @@ impl PathExtensions for Path {
         let mut parts = self.iter().collect_vec();
 
         // TODO: once all of the files get generated in-place, we need to replace this logic
-        while parts
-            .last()
-            .is_some_and(|part| !part.to_string_lossy().contains("generated"))
-        {
+        while parts.last().is_some_and(|part| {
+            !(part.to_string_lossy().contains(".generated.") || *part == "generated")
+        }) {
             parts.pop();
         }
 
