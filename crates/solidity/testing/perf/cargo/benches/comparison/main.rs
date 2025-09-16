@@ -54,6 +54,19 @@ macro_rules! tree_sitter_test {
     };
 }
 
+macro_rules! slang_and_solar_tests {
+    ($prj:ident) => {
+        slang_test!($prj);
+        solar_test!($prj);
+        paste! {
+            library_benchmark_group!(
+              name = [< $prj _group >];
+              benchmarks = [< slang_ $prj >],[< solar_ $prj >],
+          );
+        }
+    };
+}
+
 /*
  * WARNING:
  * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
@@ -69,20 +82,13 @@ macro_rules! comparison_tests {
         );
     };
     (uniswap) => {
-        slang_test!(uniswap);
-        solar_test!(uniswap);
-        library_benchmark_group!(
-            name = uniswap_group;
-            benchmarks = slang_uniswap,solar_uniswap,
-        );
+        slang_and_solar_tests!(uniswap);
     };
     (create_x) => {
-        slang_test!(create_x);
-        solar_test!(create_x);
-        library_benchmark_group!(
-            name = create_x_group;
-            benchmarks = slang_create_x,solar_create_x,
-        );
+        slang_and_solar_tests!(create_x);
+    };
+    (pointer_libraries) => {
+        slang_and_solar_tests!(pointer_libraries);
     };
     ($prj:ident) => {
         slang_test!($prj);
