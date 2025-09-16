@@ -57,7 +57,10 @@ impl PathExtensions for Path {
     fn generated_dir(&self) -> Result<PathBuf> {
         let mut parts = self.iter().collect_vec();
 
-        while parts.last().is_some_and(|part| *part != "generated") {
+        // TODO: once all of the files get generated in-place, we need to replace this logic
+        while parts.last().is_some_and(|part| {
+            !(part.to_string_lossy().contains(".generated.") || *part == "generated")
+        }) {
             parts.pop();
         }
 
