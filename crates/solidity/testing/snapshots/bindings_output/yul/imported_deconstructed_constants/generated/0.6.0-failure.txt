@@ -22,7 +22,7 @@ References and definitions:
    │                       │   │   
    │                       ╰─────── ref: built-in
    │                           │   
-   │                           ╰─── unresolved
+   │                           ╰─── ref: 1
 ───╯
 Definiens: 
    ╭─[main.sol:1:1]

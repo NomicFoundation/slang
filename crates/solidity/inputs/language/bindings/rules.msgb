@@ -260,10 +260,8 @@ inherit .star_extension
   node @symbol.import
   edge @symbol.import -> @path.import
 
-  node @symbol.yul_def
-  edge @import.yul_defs -> @symbol.yul_def
-  node @symbol.yul_import
-  edge @symbol.yul_import -> @import.yul_path
+  edge @import.yul_defs -> @symbol.def
+  edge @symbol.import -> @import.yul_path
 }
 
 @symbol [ImportDeconstructionSymbol @name name: [Identifier] .] {
@@ -271,10 +269,6 @@ inherit .star_extension
   attr (@symbol.def) definiens_node = @symbol
   attr (@symbol.import) node_reference = @name
   edge @symbol.def -> @symbol.import
-
-  attr (@symbol.yul_def) pop_symbol = (source-text @name)
-  attr (@symbol.yul_import) push_symbol = (source-text @name)
-  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 @symbol [ImportDeconstructionSymbol
@@ -285,10 +279,6 @@ inherit .star_extension
   attr (@symbol.def) definiens_node = @symbol
   attr (@symbol.import) node_reference = @name
   edge @symbol.def -> @symbol.import
-
-  attr (@symbol.yul_def) pop_symbol = (source-text @alias)
-  attr (@symbol.yul_import) push_symbol = (source-text @name)
-  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 
