@@ -33,6 +33,7 @@
     "structs",
     "tera",
     "ufixed",
+    "unshift",
     "unparse",
     "usize"
   ]

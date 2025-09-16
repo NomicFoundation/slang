@@ -8,6 +8,8 @@ mod edge_label;
 mod lexical_context;
 #[path = "generated/nonterminal_kind.rs"]
 mod nonterminal_kind;
+#[path = "generated/rewriter.rs"]
+mod rewriter;
 #[path = "generated/terminal_kind.rs"]
 mod terminal_kind;
 
@@ -16,6 +18,7 @@ pub(crate) use lexical_context::{IsLexicalContext, LexicalContext, LexicalContex
 pub use metaslang_cst::kinds::TerminalKindExtensions;
 pub(crate) use metaslang_cst::kinds::{EdgeLabelExtensions, NonterminalKindExtensions};
 pub use nonterminal_kind::NonterminalKind;
+pub use rewriter::BaseRewriter;
 pub use terminal_kind::TerminalKind;
 
 // These derives are because default #[derive(...)] on a generic type implements only the trait
@@ -42,8 +45,7 @@ impl metaslang_cst::kinds::KindTypes for KindTypes {
 /// The super type of terminal and nonterminal kinds.
 pub type NodeKind = metaslang_cst::kinds::NodeKind<KindTypes>;
 
-/// The identifier of a node in a tree.
-pub type NodeId = metaslang_cst::nodes::NodeId;
+pub use metaslang_cst::nodes::NodeId;
 
 /// The super type of all nodes in a tree.
 pub type Node = metaslang_cst::nodes::Node<KindTypes>;

@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+   ╭─[input.sol:4:9]
+   │
+ 4 │ ╭─▶         unchecked { return c - b; }
+ 5 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["sub" @ input.sol:2:14] (function, type: function (uint256, uint256) returns uint256)
+- Def: #3 ["a" @ input.sol:2:23] (parameter, type: uint256)
+- Def: #4 ["b" @ input.sol:2:31] (parameter, type: uint256)
+- Def: #5 ["c" @ input.sol:3:14] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["a" @ input.sol:3:18] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function sub(uint a, uint b) public returns (uint) {
+   │              ─┬─      ┬       ┬  
+   │               ╰────────────────── name: 2
+   │                       │       │  
+   │                       ╰────────── name: 3
+   │                               │  
+   │                               ╰── name: 4
+ 3 │         uint c = a;
+   │              ┬   ┬  
+   │              ╰────── name: 5
+   │                  │  
+   │                  ╰── ref: 3
+───╯

@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function (string storage) returns void)
+- Def: #3 ["a" @ input.sol:2:34] (parameter, type: string storage)
+- Def: #4 ["x" @ input.sol:3:23] (variable, type: bytes storage)
+- Def: #5 ["b" @ input.sol:4:16] (variable, type: bytes1)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["a" @ input.sol:3:33] -> #3
+- Ref: ["x" @ input.sol:5:9] -> #4
+- Ref: ["push" @ input.sol:5:11] -> built-in
+- Ref: ["b" @ input.sol:5:16] -> #5
+- Ref: ["x" @ input.sol:6:9] -> #4
+- Ref: ["pop" @ input.sol:6:11] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test(string storage a) internal {
+   │              ──┬─                ┬  
+   │                ╰──────────────────── name: 2
+   │                                  │  
+   │                                  ╰── name: 3
+ 3 │         bytes storage x = bytes(a);
+   │                       ┬         ┬  
+   │                       ╰──────────── name: 4
+   │                                 │  
+   │                                 ╰── ref: 3
+ 4 │         bytes1 b;
+   │                ┬  
+   │                ╰── name: 5
+ 5 │         x.push(b);
+   │         ┬ ──┬─ ┬  
+   │         ╰───────── ref: 4
+   │             │  │  
+   │             ╰───── built-in
+   │                │  
+   │                ╰── ref: 5
+ 6 │         x.pop();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 4
+   │            │   
+   │            ╰─── built-in
+───╯

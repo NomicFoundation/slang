@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["x" @ input.sol:2:26] (parameter, type: uint256)
+- Def: #4 ["Test" @ input.sol:4:10] (contract)
+- Def: #5 ["v1" @ input.sol:6:21] (state var, type: uint256)
+- Def: #6 ["v2" @ input.sol:7:21] (state var, type: uint256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["x" @ input.sol:2:56] -> #3
+- Ref: ["Lib" @ input.sol:5:11] -> #1
+- Ref: ["v1" @ input.sol:7:26] -> #5
+- Ref: ["nop" @ input.sol:7:29] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     function nop(uint256 x) returns (uint256) { return x; }
+   │              ─┬─         ┬                             ┬  
+   │               ╰─────────────────────────────────────────── name: 2
+   │                          │                             │  
+   │                          ╰──────────────────────────────── name: 3
+   │                                                        │  
+   │                                                        ╰── ref: 3
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 5 │     using Lib for uint256;
+   │           ─┬─  
+   │            ╰─── ref: 1
+ 6 │     uint256 private v1 = 1;
+   │                     ─┬  
+   │                      ╰── name: 5
+ 7 │     uint256 private v2 = v1.nop();
+   │                     ─┬   ─┬ ─┬─  
+   │                      ╰─────────── name: 6
+   │                           │  │   
+   │                           ╰────── ref: 5
+   │                              │   
+   │                              ╰─── ref: 2
+───╯

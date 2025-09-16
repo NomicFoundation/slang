@@ -2,6 +2,8 @@ use std::collections::HashSet;
 
 use slang_solidity::utils::LanguageFacts;
 
+pub(crate) mod multi_part_file;
+
 #[test]
 fn list_all_versions() {
     assert_eq!(LanguageFacts::ALL_VERSIONS.len(), 85);

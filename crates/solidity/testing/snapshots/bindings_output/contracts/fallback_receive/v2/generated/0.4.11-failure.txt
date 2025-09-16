@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
+    ╭─[input.sol:5:13]
+    │
+  5 │ ╭─▶     fallback(bytes calldata input) external payable returns (bytes memory output) {
+    ┆ ┆   
+ 12 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["Fallback" @ input.sol:1:10] (contract)
+- Def: #2 ["Log" @ input.sol:2:11] (event)
+- Def: #3 ["func" @ input.sol:2:22] (parameter, type: string memory)
+- Def: #4 ["gas" @ input.sol:2:36] (parameter, type: uint256)
+- Def: #5 ["status" @ input.sol:3:10] (state var, type: uint256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["fallback" @ input.sol:5:5]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Fallback {
+   │          ────┬───  
+   │              ╰───── name: 1
+ 2 │     event Log(string func, uint256 gas);
+   │           ─┬─        ──┬─          ─┬─  
+   │            ╰──────────────────────────── name: 2
+   │                        │            │   
+   │                        ╰──────────────── name: 3
+   │                                     │   
+   │                                     ╰─── name: 4
+ 3 │     uint status;
+   │          ───┬──  
+   │             ╰──── name: 5
+   │ 
+ 5 │     fallback(bytes calldata input) external payable returns (bytes memory output) {
+   │     ────┬───  
+   │         ╰───── ???
+───╯

@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["AssemblyVariable" @ input.sol:1:10] (contract)
+- Def: #2 ["yul_let" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #3 ["z" @ input.sol:2:48] (parameter, type: uint256)
+- Def: #4 ["x" @ input.sol:4:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["z" @ input.sol:5:13] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract AssemblyVariable {
+   │          ────────┬───────  
+   │                  ╰───────── name: 1
+ 2 │     function yul_let() public returns (uint256 z) {
+   │              ───┬───                           ┬  
+   │                 ╰───────────────────────────────── name: 2
+   │                                                │  
+   │                                                ╰── name: 3
+   │ 
+ 4 │             let x := 123
+   │                 ┬  
+   │                 ╰── name: 4
+ 5 │             z := 456
+   │             ┬  
+   │             ╰── ref: 3
+───╯

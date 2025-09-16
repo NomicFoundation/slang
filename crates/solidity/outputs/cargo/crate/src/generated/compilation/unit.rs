@@ -78,7 +78,7 @@ impl metaslang_bindings::PathResolver<KindTypes> for Resolver {
     fn resolve_path(&self, context_path: &str, path_to_resolve: &Cursor) -> Option<String> {
         self.files
             .get(context_path)?
-            .resolved_import(path_to_resolve)
+            .resolved_import_by_node_id(path_to_resolve.node().id())
             .cloned()
     }
 }

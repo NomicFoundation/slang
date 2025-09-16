@@ -1,0 +1,101 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:2:23]
+   │
+ 2 │     error InvalidState();
+   │                       ─┬  
+   │                        ╰── Error occurred here.
+───╯
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:5:28]
+   │
+ 5 │         revert InvalidState();
+   │                            ─┬  
+   │                             ╰── Error occurred here.
+───╯
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:10:21]
+    │
+ 10 │         revert Utils.GenericError(code);
+    │                     ─────────┬─────────  
+    │                              ╰─────────── Error occurred here.
+────╯
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:15:23]
+    │
+ 15 │     error GenericError(int code);
+    │                       ─────┬────  
+    │                            ╰────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (9):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["InvalidState" @ input.sol:2:11] (state var, type: unresolved)
+- Def: #3 ["testRevert" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #4 ["InvalidState" @ input.sol:5:16] (variable, type: unresolved)
+- Def: #5 ["testOtherRevert" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #6 ["code" @ input.sol:9:13] (variable, type: int256)
+- Def: #7 ["Utils" @ input.sol:10:16] (variable, type: unresolved)
+- Def: #8 ["Utils" @ input.sol:14:9] (library)
+- Def: #9 ["GenericError" @ input.sol:15:11] (state var, type: unresolved)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["error" @ input.sol:2:5] -> unresolved
+- Ref: ["revert" @ input.sol:5:9] -> unresolved
+- Ref: ["revert" @ input.sol:10:9] -> unresolved
+- Ref: ["error" @ input.sol:15:5] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     error InvalidState();
+    │     ──┬── ──────┬─────  
+    │       ╰───────────────── unresolved
+    │                 │       
+    │                 ╰─────── name: 2
+    │ 
+  4 │     function testRevert() public {
+    │              ─────┬────  
+    │                   ╰────── name: 3
+  5 │         revert InvalidState();
+    │         ───┬── ──────┬─────  
+    │            ╰───────────────── unresolved
+    │                      │       
+    │                      ╰─────── name: 4
+    │ 
+  8 │     function testOtherRevert() public {
+    │              ───────┬───────  
+    │                     ╰───────── name: 5
+  9 │         int code = 10;
+    │             ──┬─  
+    │               ╰─── name: 6
+ 10 │         revert Utils.GenericError(code);
+    │         ───┬── ──┬──  
+    │            ╰────────── unresolved
+    │                  │    
+    │                  ╰──── name: 7
+    │ 
+ 14 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 8
+ 15 │     error GenericError(int code);
+    │     ──┬── ──────┬─────  
+    │       ╰───────────────── unresolved
+    │                 │       
+    │                 ╰─────── name: 9
+────╯

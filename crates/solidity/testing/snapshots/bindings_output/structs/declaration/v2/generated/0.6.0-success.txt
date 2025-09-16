@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (10):
+- Def: #1 ["TopLevelStruct" @ input.sol:1:8] (struct)
+- Def: #2 ["x" @ input.sol:2:7] (struct member, type: int256)
+- Def: #3 ["SomeLib" @ input.sol:5:9] (library)
+- Def: #4 ["LibStruct" @ input.sol:6:10] (struct)
+- Def: #5 ["y" @ input.sol:7:9] (struct member, type: int256)
+- Def: #6 ["top_level_struct" @ input.sol:8:20] (struct member, type: TopLevelStruct (inherited))
+- Def: #7 ["MyContract" @ input.sol:12:10] (contract)
+- Def: #8 ["ContractStruct" @ input.sol:13:10] (struct)
+- Def: #9 ["z" @ input.sol:14:9] (struct member, type: int256)
+- Def: #10 ["lib_struct" @ input.sol:15:23] (struct member, type: LibStruct (inherited))
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["TopLevelStruct" @ input.sol:8:5] -> #1
+- Ref: ["SomeLib" @ input.sol:15:5] -> #3
+- Ref: ["LibStruct" @ input.sol:15:13] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ struct TopLevelStruct {
+    │        ───────┬──────  
+    │               ╰──────── name: 1
+  2 │   int x;
+    │       ┬  
+    │       ╰── name: 2
+    │ 
+  5 │ library SomeLib {
+    │         ───┬───  
+    │            ╰───── name: 3
+  6 │   struct LibStruct {
+    │          ────┬────  
+    │              ╰────── name: 4
+  7 │     int y;
+    │         ┬  
+    │         ╰── name: 5
+  8 │     TopLevelStruct top_level_struct;
+    │     ───────┬────── ────────┬───────  
+    │            ╰───────────────────────── ref: 1
+    │                            │         
+    │                            ╰───────── name: 6
+    │ 
+ 12 │ contract MyContract {
+    │          ─────┬────  
+    │               ╰────── name: 7
+ 13 │   struct ContractStruct {
+    │          ───────┬──────  
+    │                 ╰──────── name: 8
+ 14 │     int z;
+    │         ┬  
+    │         ╰── name: 9
+ 15 │     SomeLib.LibStruct lib_struct;
+    │     ───┬─── ────┬──── ─────┬────  
+    │        ╰────────────────────────── ref: 3
+    │                 │          │      
+    │                 ╰───────────────── ref: 4
+    │                            │      
+    │                            ╰────── name: 10
+────╯

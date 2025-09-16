@@ -3,7 +3,7 @@ import { assertUserFileLocation } from "@nomicfoundation/slang/bindings";
 import { findUnusedDefinitions } from "./find-unused-definitions.mjs";
 import { buildCompilationUnit } from "../../common/compilation-builder.mjs";
 
-const CONTRACT_VFS = new Map<string, string>([
+export const CONTRACT_VFS = new Map<string, string>([
   [
     "contract.sol",
     `
