@@ -37,104 +37,95 @@ fn load_projects_internal() -> Result<ProjectMap> {
         let mut single_file_project =
             SolidityProject::build(&working_directory_path.join(format!("{}.json", file.hash)))?;
         // override the entrypoint with the path given
-        single_file_project.compilation.set_entrypoint(&file.file);
+        single_file_project.entrypoint = file.file;
         // Solar doesn't support easy crawling of imports like Slang does, so we remove all the files
         // that are not the entrypoint. That means that the files must be self-contained.
-        single_file_project.sources.retain(|k, _| k == &file.file);
+        single_file_project
+            .sources
+            .retain(|k, _| k == &single_file_project.entrypoint);
         map.insert(file.name, single_file_project);
     }
 
     Ok(map)
 }
 
+/// Structure for deserealizing the metadata from a json file.
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SolidityCompilation {
-    pub compiler_version: String,
-    pub fully_qualified_name: String,
+struct Metadata {
+    pub sources: HashMap<String, Source>,
+    pub compilation: Compilation,
 }
 
-impl SolidityCompilation {
-    pub fn get_entrypoint(&self) -> String {
-        let idx = self.fully_qualified_name.rfind(':').unwrap();
-        self.fully_qualified_name[..idx].to_string()
-    }
+#[derive(Deserialize)]
+struct Source {
+    pub content: String,
+}
 
-    pub fn project_name(&self) -> String {
-        let idx = self.fully_qualified_name.rfind(':').unwrap();
-        self.fully_qualified_name[idx + 1..].to_string()
-    }
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Compilation {
+    pub compiler_version: String,
+    pub fully_qualified_name: String,
+    pub compiler_settings: CompilerSettings,
+}
 
-    pub fn set_entrypoint(&mut self, new_entry_point: &str) {
-        let pn = self.project_name();
-
-        self.fully_qualified_name = format!("{new_entry_point}:{pn}");
-    }
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct CompilerSettings {
+    pub remappings: Vec<String>,
 }
 
 pub struct SolidityProject {
+    pub name: String,
     pub sources: HashMap<String, String>,
-    pub compilation: SolidityCompilation,
+    pub entrypoint: String,
+    pub compiler_version: String,
     pub import_resolver: ImportResolver,
 }
 
-fn sources_map_deserializer<'de, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let raw: HashMap<String, serde_json::Value> = HashMap::deserialize(deserializer)?;
-    let mut result = HashMap::new();
-    for (file, value) in raw {
-        let content = value
-            .get("content")
-            .and_then(|v| v.as_str())
-            .ok_or_else(|| {
-                serde::de::Error::custom(format!("Missing or invalid content for file {file}"))
-            })?;
-        result.insert(file, content.to_string());
-    }
-    Ok(result)
-}
-
-impl TryFrom<&serde_json::Value> for SolidityProject {
+impl TryFrom<Metadata> for SolidityProject {
     type Error = anyhow::Error;
 
-    fn try_from(value: &serde_json::Value) -> std::result::Result<Self, Self::Error> {
-        let sources =
-            sources_map_deserializer(value.get("sources").expect("json must have 'sources' key"))?;
-        let compilation: SolidityCompilation = serde_json::from_value(
-            value
-                .get("compilation")
-                .expect("json must have 'compilation' key")
-                .to_owned(),
-        )?;
-        let import_resolver = import_resolver_from(value, sources.keys());
+    fn try_from(value: Metadata) -> std::result::Result<Self, Self::Error> {
+        let sources: HashMap<String, String> = value
+            .sources
+            .into_iter()
+            .map(|(k, v)| (k, v.content))
+            .collect();
+        let import_resolver =
+            import_resolver_from(value.compilation.compiler_settings, sources.keys());
+        let compiler_version = value.compilation.compiler_version;
+        let idx = value
+            .compilation
+            .fully_qualified_name
+            .rfind(':')
+            .ok_or(anyhow!(
+                "Not properly formatted qualified name {fq}",
+                fq = value.compilation.fully_qualified_name
+            ))?;
+        let name = value.compilation.fully_qualified_name[idx + 1..].to_string();
+        let entrypoint = value.compilation.fully_qualified_name[..idx].to_string();
+
         Ok(SolidityProject {
+            name,
             sources,
-            compilation,
+            entrypoint,
+            compiler_version,
             import_resolver,
         })
     }
 }
 
 fn import_resolver_from<'a, T: Iterator<Item = &'a String>>(
-    value: &serde_json::Value,
+    compiler_settings: CompilerSettings,
     sources: T,
 ) -> ImportResolver {
-    let import_remaps: Vec<ImportRemap> = value
-        .get("compilation")
-        .expect("json must have a 'compiler' key")
-        .get("compilerSettings")
-        .and_then(|settings| settings.get("remappings"))
-        .and_then(|remappings| remappings.as_array())
-        .map_or(vec![], |mappings| {
-            mappings
-                .iter()
-                .filter_map(|mapping| mapping.as_str())
-                .filter_map(|m| ImportRemap::new(m).ok())
-                .filter(|remap| !remap.has_known_bug())
-                .collect()
-        });
+    let import_remaps: Vec<ImportRemap> = compiler_settings
+        .remappings
+        .iter()
+        .filter_map(|m| ImportRemap::new(m).ok())
+        .filter(|remap| !remap.has_known_bug())
+        .collect();
 
     let source_maps: Vec<SourceMap> = sources
         .map(|path| SourceMap {
@@ -152,19 +143,19 @@ fn import_resolver_from<'a, T: Iterator<Item = &'a String>>(
 impl SolidityProject {
     pub fn build(json_file: &Path) -> Result<Self> {
         let json_str = fs::read_to_string(json_file)?;
-        let json_value: serde_json::Value = serde_json::from_str(&json_str)?;
-        let sself: Self = Self::try_from(&json_value)?;
+        let metadata: Metadata = serde_json::from_str(&json_str)?;
+        let sself: Self = Self::try_from(metadata)?;
         Ok(sself)
     }
 
     pub fn build_compilation_unit(&self) -> Result<CompilationUnit> {
-        let mut version = semver::Version::parse(&self.compilation.compiler_version).unwrap();
+        let mut version = semver::Version::parse(&self.compiler_version).unwrap();
         version.pre = Prerelease::EMPTY;
         version.build = BuildMetadata::EMPTY;
 
         let mut builder = CompilationBuilder::new(version, self)?;
 
-        builder.add_file(&self.compilation.get_entrypoint())?;
+        builder.add_file(&self.entrypoint)?;
 
         Ok(builder.build())
     }
