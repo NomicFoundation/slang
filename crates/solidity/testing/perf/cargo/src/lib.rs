@@ -9,8 +9,12 @@ mod __dependencies_used_in_benches__ {
 
 #[cfg(test)]
 mod unit_tests {
+    // Whitness project to test that the crates are working properly.
+    // It can be any that can be parsed by all of the libraries being tested.
     const PROJECT_TO_TEST: &str = "ui_pool_data_provider_v3";
+    // Sum of the contracts, interfaces, and libraries in all of the files of the project.
     const CONTRACT_COUNT: usize = 25;
+    // Sum of the identifiers resolved by the binder.
     const IDENTIFIER_COUNT: usize = 2829;
 
     mod slang {
