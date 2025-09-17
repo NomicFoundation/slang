@@ -1,5 +1,3 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 #![allow(clippy::too_many_lines)] // large match statements for all non-terminals
 #![allow(clippy::unnecessary_wraps)] // using `Result` for all functions for error handling
 
@@ -12,13 +10,51 @@ use crate::rust_crate::cst::{Edge, EdgeLabel, Node, NonterminalKind, Nonterminal
 //
 
 pub fn select_sequence(node: &Rc<NonterminalNode>) -> Result<Vec<Option<Node>>> {
-    Err(format!("Invoking AST selectors in stubs: {node:#?}"))
-} //
-  // Choices:
-  //
+    let mut helper = Helper::new(node);
+
+    let result = match node.kind {
+        {%- for sequence in model.ast.sequences -%}
+            NonterminalKind::{{ sequence.parent_type }} => {
+                helper.{{ sequence.parent_type | snake_case }}_sequence()?
+            }
+        {%- endfor -%}
+        _ => {
+            // Should not theoretically happen, since we're only called from our own generated AST types.
+            return Err(format!("Unexpected parent node with NonterminalKind '{0}'.", node.kind));
+        }
+    };
+
+    helper.finalize()?;
+    Ok(result)
+}
+
+{% for sequence in model.ast.sequences %}
+    impl Helper {
+        fn {{ sequence.parent_type | snake_case }}_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+            Ok(vec![
+                {%- for field in sequence.fields -%}
+                    {%- if field.is_optional -%}
+                        self.try_select(EdgeLabel::{{ field.label | pascal_case }}),
+                    {%- else -%}
+                        Some(self.select(EdgeLabel::{{ field.label | pascal_case  }})?),
+                    {%- endif -%}
+                {%- endfor -%}
+            ])
+        }
+    }
+{% endfor %}
+
+//
+// Choices:
+//
 
 pub fn select_choice(node: &Rc<NonterminalNode>) -> Result<Node> {
-    Err(format!("Invoking AST selectors in stubs: {node:#?}"))
+    let mut helper = Helper::new(node);
+
+    let variant = helper.select(EdgeLabel::Variant)?;
+
+    helper.finalize()?;
+    Ok(variant)
 }
 
 //
@@ -26,7 +62,16 @@ pub fn select_choice(node: &Rc<NonterminalNode>) -> Result<Node> {
 //
 
 pub fn select_repeated(node: &Rc<NonterminalNode>) -> Result<Vec<Node>> {
-    Err(format!("Invoking AST selectors in stubs: {node:#?}"))
+    let mut helper = Helper::new(node);
+
+    let mut items = vec![];
+
+    while let Some(item) = helper.try_select(EdgeLabel::Item) {
+        items.push(item);
+    }
+
+    helper.finalize()?;
+    Ok(items)
 }
 
 //
@@ -34,7 +79,23 @@ pub fn select_repeated(node: &Rc<NonterminalNode>) -> Result<Vec<Node>> {
 //
 
 pub fn select_separated(node: &Rc<NonterminalNode>) -> Result<Vec<Vec<Node>>> {
-    Err(format!("Invoking AST selectors in stubs: {node:#?}"))
+    let mut helper = Helper::new(node);
+
+    let mut items = vec![];
+    let mut separators = vec![];
+
+    if let Some(first) = helper.try_select(EdgeLabel::Item) {
+        items.push(first);
+
+        while let Some(separator) = helper.try_select(EdgeLabel::Separator) {
+            separators.push(separator);
+
+            items.push(helper.select(EdgeLabel::Item)?);
+        }
+    }
+
+    helper.finalize()?;
+    Ok(vec![items, separators])
 }
 
 //
@@ -84,7 +145,7 @@ impl Helper {
 
             match edge.label {
                 // Skip trivia:
-                EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia => {
+                | EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia => {
                     self.index += 1;
                     continue;
                 }

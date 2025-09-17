@@ -77,8 +77,8 @@ impl WasmPackage {
         let temp_dir_handle = tempfile::tempdir()?;
         let temp_dir = temp_dir_handle.path();
 
-        let runtime_dir = CargoWorkspace::locate_source_crate(WASM_CRATE)?.join("src/generated");
-        let jco_config = runtime_dir.join("generated/config.json");
+        let runtime_dir = CargoWorkspace::locate_source_crate(WASM_CRATE)?.join("src/wasm_crate");
+        let jco_config = runtime_dir.join("config.json");
 
         {
             Command::new("slang-jco")
@@ -93,7 +93,7 @@ impl WasmPackage {
         }
 
         {
-            let wit_directory = runtime_dir.join("interface/generated");
+            let wit_directory = runtime_dir.join("interface");
             Command::new("slang-jco")
                 .args(["types", wit_directory.unwrap_str()])
                 .property("--name", format!("{WASM_CRATE}.component"))

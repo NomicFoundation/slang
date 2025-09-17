@@ -22,7 +22,6 @@ fn main() {
         || generate_solidity_spec(),
         || generate_solidity_tests(),
         || generate_stubs("codegen_runtime_cargo_crate"),
-        || generate_stubs("codegen_runtime_cargo_wasm"),
         || {
             let mut fs = CodegenFileSystem::default();
             let language = SolidityDefinition::create();
@@ -46,10 +45,9 @@ fn main() {
             Ok(())
         },
         || {
-            generate_product(
+            generate_in_place(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
-                "codegen_runtime_cargo_wasm",
                 "solidity_cargo_wasm",
             )
         },
