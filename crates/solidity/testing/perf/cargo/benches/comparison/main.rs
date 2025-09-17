@@ -54,6 +54,8 @@ macro_rules! tree_sitter_test {
     };
 }
 
+// Some projects can't be parsed by tree-sitter, so we test them only in slang and solar.
+// This macro abstracts that logic.
 macro_rules! slang_and_solar_tests {
     ($prj:ident) => {
         slang_test!($prj);
@@ -74,6 +76,7 @@ macro_rules! slang_and_solar_tests {
  */
 macro_rules! comparison_tests {
     (mooniswap) => {
+        // Incompatible with solar
         slang_test!(mooniswap);
         tree_sitter_test!(mooniswap);
         library_benchmark_group!(
