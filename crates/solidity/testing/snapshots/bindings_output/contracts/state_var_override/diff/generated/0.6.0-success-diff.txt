@@ -1,5 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Ref: ["foo" @ input.sol:13:9] -> #7 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["foo" @ input.sol:14:14] -> #7 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["foo" @ input.sol:15:14] -> #7 resolved uniquely but resolved ambiguously in stack graph output
 
 Definitions and/or references from binding graph and new binder DIFFER

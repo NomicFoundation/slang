@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Overloaded" @ input.sol:1:11] (interface)
+- Def: #2 ["add" @ input.sol:2:14] (function, type: function (int64, int64) returns Overloaded)
+- Def: #3 ["add" @ input.sol:4:14] (function, type: function (int64) returns Overloaded)
+- Def: #4 ["Test" @ input.sol:7:10] (contract)
+- Def: #5 ["someFunc" @ input.sol:8:14] (function, type: function (Overloaded, int64) returns void)
+- Def: #6 ["x" @ input.sol:8:34] (parameter, type: Overloaded)
+- Def: #7 ["y" @ input.sol:8:43] (parameter, type: int64)
+
+------------------------------------------------------------------------
+
+References (9):
+- Ref: ["Overloaded" @ input.sol:2:50] -> #1
+- Ref: ["Overloaded" @ input.sol:4:43] -> #1
+- Ref: ["Overloaded" @ input.sol:8:23] -> #1
+- Ref: ["x" @ input.sol:9:9] -> #6
+- Ref: ["add" @ input.sol:9:11] -> #3
+- Ref: ["y" @ input.sol:9:15] -> #7
+- Ref: ["add" @ input.sol:9:18] -> #2
+- Ref: ["y" @ input.sol:9:22] -> #7
+- Ref: ["y" @ input.sol:9:25] -> #7
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface Overloaded {
+   │           ─────┬────  
+   │                ╰────── name: 1
+ 2 │     function add(int64, int64) external returns (Overloaded);
+   │              ─┬─                                 ─────┬────  
+   │               ╰────────────────────────────────────────────── name: 2
+   │                                                       │      
+   │                                                       ╰────── ref: 1
+   │ 
+ 4 │     function add(int64) external returns (Overloaded);
+   │              ─┬─                          ─────┬────  
+   │               ╰─────────────────────────────────────── name: 3
+   │                                                │      
+   │                                                ╰────── ref: 1
+   │ 
+ 7 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 8 │     function someFunc(Overloaded x, int64 y) internal {
+   │              ────┬─── ─────┬──── ┬        ┬  
+   │                  ╰─────────────────────────── name: 5
+   │                            │     │        │  
+   │                            ╰───────────────── ref: 1
+   │                                  │        │  
+   │                                  ╰─────────── name: 6
+   │                                           │  
+   │                                           ╰── name: 7
+ 9 │         x.add(y).add(y, y);
+   │         ┬ ─┬─ ┬  ─┬─ ┬  ┬  
+   │         ╰────────────────── ref: 6
+   │            │  │   │  │  │  
+   │            ╰─────────────── ref: 3
+   │               │   │  │  │  
+   │               ╰──────────── ref: 7
+   │                   │  │  │  
+   │                   ╰──────── ref: 2
+   │                      │  │  
+   │                      ╰───── ref: 7
+   │                         │  
+   │                         ╰── ref: 7
+───╯

@@ -1,0 +1,139 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CloseParen or Comma.
+   ╭─[input.sol:6:60]
+   │
+ 6 │     function doFoo(AStruct memory aStruct, string calldata witnessString) external;
+   │                                                            ──────┬──────  
+   │                                                                  ╰──────── Error occurred here.
+───╯
+Error: Expected CloseParen or Comma.
+   ╭─[input.sol:7:66]
+   │
+ 7 │     function doFoo(AStruct[] memory someStructs, string calldata witnessString) external;
+   │                                                                  ──────┬──────  
+   │                                                                        ╰──────── Error occurred here.
+───╯
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IFoo {
+    │           ──┬─  
+    │             ╰─── name: 1
+  2 │     struct AStruct {
+    │            ───┬───  
+    │               ╰───── name: 2
+  3 │         address token;
+    │                 ──┬──  
+    │                   ╰──── name: 3
+    │ 
+  6 │     function doFoo(AStruct memory aStruct, string calldata witnessString) external;
+    │              ──┬── ───┬───        ───┬───         ────┬───  
+    │                ╰──────────────────────────────────────────── name: 4
+    │                       │              │                │     
+    │                       ╰───────────────────────────────────── ref: 2
+    │                                      │                │     
+    │                                      ╰────────────────────── name: 5
+    │                                                       │     
+    │                                                       ╰───── name: 6
+  7 │     function doFoo(AStruct[] memory someStructs, string calldata witnessString) external;
+    │              ──┬── ───┬───          ─────┬─────         ────┬───  
+    │                ╰────────────────────────────────────────────────── name: 7
+    │                       │                  │                  │     
+    │                       ╰─────────────────────────────────────────── ref: 2
+    │                                          │                  │     
+    │                                          ╰──────────────────────── name: 8
+    │                                                             │     
+    │                                                             ╰───── name: 9
+    │ 
+ 10 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 10
+ 11 │     IFoo myFoo;
+    │     ──┬─ ──┬──  
+    │       ╰───────── ref: 1
+    │            │    
+    │            ╰──── name: 11
+ 12 │     string myWitness;
+    │            ────┬────  
+    │                ╰────── name: 12
+    │ 
+ 14 │     function test() internal
+    │              ──┬─  
+    │                ╰─── name: 13
+    │ 
+ 16 │         IFoo.AStruct[] memory someStructs;
+    │         ──┬─ ───┬───          ─────┬─────  
+    │           ╰──────────────────────────────── ref: 1
+    │                 │                  │       
+    │                 ╰────────────────────────── ref: 2
+    │                                    │       
+    │                                    ╰─────── name: 14
+    │ 
+ 18 │         myFoo.doFoo({
+    │         ──┬── ──┬──  
+    │           ╰────────── ref: 11
+    │                 │    
+    │                 ╰──── refs: 4, 7
+ 19 │             someStructs: someStructs,
+    │             ─────┬─────  ─────┬─────  
+    │                  ╰──────────────────── ref: 8
+    │                               │       
+    │                               ╰─────── ref: 14
+ 20 │             witnessString: myWitness
+    │             ──────┬──────  ────┬────  
+    │                   ╰─────────────────── unresolved
+    │                                │      
+    │                                ╰────── ref: 12
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─────│ ▶ interface IFoo {
+  2 │   │     ╭─▶     struct AStruct {
+  3 │   │     │           address token;
+    │   │     │   ───────────┬───────────  
+    │   │     │              ╰───────────── definiens: 3
+  4 │   │   │ ├─▶     }
+    │   │   │ │           
+    │   │   │ ╰─────────── definiens: 2
+  5 │   │   ╭───▶ 
+  6 │   │   ├───▶     function doFoo(AStruct memory aStruct, string calldata witnessString) external;
+    │   │   │                        ───────────┬────────── ────────┬───────                            
+    │   │   │                                   ╰─────────────────────────────────────────────────────── definiens: 5
+    │   │   │                                                       │                                   
+    │   │   │                                                       ╰─────────────────────────────────── definiens: 6
+    │   │   │                                                                                           
+    │   │   ╰─────────────────────────────────────────────────────────────────────────────────────────── definiens: 4
+  7 │   │             function doFoo(AStruct[] memory someStructs, string calldata witnessString) external;
+    │   │         ─────────────────────────────────┬───────────┬──────────┬─────────────────────────────────  
+    │   │                                          ╰────────────────────────────────────────────────────────── definiens: 8
+    │   │                                                      │          │                                   
+    │   │                                                      ╰────────────────────────────────────────────── definiens: 7
+    │   │                                                                 │                                   
+    │   │                                                                 ╰─────────────────────────────────── definiens: 9
+  8 │ │ ├───────▶ }
+    │ │ │             
+    │ │ ╰───────────── definiens: 1
+  9 │ ╭─────────▶ 
+    ┆ ┆           
+ 11 │ │               IFoo myFoo;
+    │ │           ────────┬───────  
+    │ │                   ╰───────── definiens: 11
+ 12 │ │   │           string myWitness;
+    │ │   │       ───────────┬──────────  
+    │ │   │                  ╰──────────── definiens: 12
+ 13 │ │   ╭─────▶ 
+    ┆ ┆   ┆       
+ 16 │ │   │               IFoo.AStruct[] memory someStructs;
+    │ │   │       ─────────────────────┬─────────────────────  
+    │ │   │                            ╰─────────────────────── definiens: 14
+    ┆ ┆   ┆       
+ 22 │ │   ├─────▶     }
+    │ │   │               
+    │ │   ╰─────────────── definiens: 13
+ 23 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 10
+────╯

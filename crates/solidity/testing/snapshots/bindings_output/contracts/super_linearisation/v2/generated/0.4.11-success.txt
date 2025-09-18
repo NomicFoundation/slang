@@ -19,7 +19,7 @@ References (7):
 - Ref: ["foo" @ input.sol:11:15] -> #2
 - Ref: ["B" @ input.sol:14:15] -> #3
 - Ref: ["C" @ input.sol:14:18] -> #5
-- Ref: ["foo" @ input.sol:16:15] -> refs: [6, 4, 2]
+- Ref: ["foo" @ input.sol:16:15] -> #6
 
 ------------------------------------------------------------------------
 
@@ -73,5 +73,5 @@ Bindings:
     │               ╰─── name: 8
  16 │         super.foo();
     │               ─┬─  
-    │                ╰─── refs: [6, 4, 2]
+    │                ╰─── ref: 6
 ────╯

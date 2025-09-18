@@ -11,7 +11,7 @@ Definitions (5):
 
 References (3):
 - Ref: ["x" @ input.sol:4:5] -> #3
-- Ref: ["y" @ input.sol:4:9] -> #4
+- Ref: ["y" @ input.sol:4:9] -> unresolved
 - Ref: ["z" @ input.sol:4:13] -> unresolved
 
 ------------------------------------------------------------------------
@@ -36,7 +36,7 @@ Bindings:
    │     ┬   ┬   ┬  
    │     ╰────────── ref: 3
    │         │   │  
-   │         ╰────── ref: 4
+   │         ╰────── unresolved
    │             │  
    │             ╰── unresolved
  5 │     int y = 5;

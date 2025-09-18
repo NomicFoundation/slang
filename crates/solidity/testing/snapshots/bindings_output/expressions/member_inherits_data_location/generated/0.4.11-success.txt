@@ -1,0 +1,138 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Checkpoints {
+    │         ─────┬─────  
+    │              ╰─────── name: 1
+  2 │     struct Trace224 {
+    │            ────┬───  
+    │                ╰───── name: 2
+  3 │         Checkpoint224[] _checkpoints;
+    │         ──────┬──────   ──────┬─────  
+    │               ╰─────────────────────── ref: 4
+    │                               │       
+    │                               ╰─────── name: 3
+    │ 
+  6 │     struct Checkpoint224 {
+    │            ──────┬──────  
+    │                  ╰──────── name: 4
+  7 │         uint32 _key;
+    │                ──┬─  
+    │                  ╰─── name: 5
+  8 │         uint224 _value;
+    │                 ───┬──  
+    │                    ╰──── name: 6
+    │ 
+ 11 │     struct Trace160 {
+    │            ────┬───  
+    │                ╰───── name: 7
+ 12 │         Checkpoint160[] _checkpoints;
+    │         ──────┬──────   ──────┬─────  
+    │               ╰─────────────────────── ref: 9
+    │                               │       
+    │                               ╰─────── name: 8
+    │ 
+ 15 │     struct Checkpoint160 {
+    │            ──────┬──────  
+    │                  ╰──────── name: 9
+ 16 │         uint96 _key;
+    │                ──┬─  
+    │                  ╰─── name: 10
+ 17 │         uint160 _value;
+    │                 ───┬──  
+    │                    ╰──── name: 11
+    │ 
+ 20 │     function _unsafeAccess(Checkpoint224[] storage) private returns (Checkpoint224 storage) {}
+    │              ──────┬────── ──────┬──────                             ──────┬──────  
+    │                    ╰──────────────────────────────────────────────────────────────── name: 12
+    │                                  │                                         │        
+    │                                  ╰────────────────────────────────────────────────── ref: 4
+    │                                                                            │        
+    │                                                                            ╰──────── ref: 4
+ 21 │     function _unsafeAccess(Checkpoint160[] storage) private returns (Checkpoint160 storage) {}
+    │              ──────┬────── ──────┬──────                             ──────┬──────  
+    │                    ╰──────────────────────────────────────────────────────────────── name: 13
+    │                                  │                                         │        
+    │                                  ╰────────────────────────────────────────────────── ref: 9
+    │                                                                            │        
+    │                                                                            ╰──────── ref: 9
+    │ 
+ 23 │     function test(Trace224 storage self) internal returns (uint224) {
+    │              ──┬─ ────┬───         ──┬─  
+    │                ╰───────────────────────── name: 14
+    │                       │              │   
+    │                       ╰────────────────── ref: 2
+    │                                      │   
+    │                                      ╰─── name: 15
+ 24 │         _unsafeAccess(self._checkpoints)._value;
+    │         ──────┬────── ──┬─ ──────┬─────  ───┬──  
+    │               ╰────────────────────────────────── refs: 12, 13
+    │                         │        │          │    
+    │                         ╰──────────────────────── ref: 15
+    │                                  │          │    
+    │                                  ╰─────────────── ref: 3
+    │                                             │    
+    │                                             ╰──── refs: 6, 11
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────────│ ▶ library Checkpoints {
+  2 │ │           ╭─▶     struct Trace224 {
+  3 │ │           │           Checkpoint224[] _checkpoints;
+    │ │           │   ───────────────────┬──────────────────  
+    │ │           │                      ╰──────────────────── definiens: 3
+  4 │ │     │     ├─▶     }
+    │ │     │     │           
+    │ │     │     ╰─────────── definiens: 2
+  5 │ │     ╭───────▶ 
+    ┆ ┆     ┆         
+  7 │ │     │                 uint32 _key;
+    │ │     │         ──────────┬──────────  
+    │ │     │                   ╰──────────── definiens: 5
+  8 │ │     │                 uint224 _value;
+    │ │     │         ────────────┬───────────  
+    │ │     │                     ╰───────────── definiens: 6
+  9 │ │     ├───│ ──▶     }
+    │ │     │   │             
+    │ │     ╰───────────────── definiens: 4
+ 10 │ │         ╭───▶ 
+    ┆ ┆         ┆     
+ 12 │ │         │             Checkpoint160[] _checkpoints;
+    │ │         │     ───────────────────┬──────────────────  
+    │ │         │                        ╰──────────────────── definiens: 8
+ 13 │ │       │ ├───▶     }
+    │ │       │ │             
+    │ │       │ ╰───────────── definiens: 7
+ 14 │ │       ╭─────▶ 
+    ┆ ┆       ┆       
+ 16 │ │       │               uint96 _key;
+    │ │       │       ──────────┬──────────  
+    │ │       │                 ╰──────────── definiens: 10
+ 17 │ │       │               uint160 _value;
+    │ │       │       ────────────┬───────────  
+    │ │       │                   ╰───────────── definiens: 11
+ 18 │ │   │   ├─────▶     }
+    │ │   │   │               
+    │ │   │   ╰─────────────── definiens: 9
+ 19 │ │   ╭─────────▶ 
+ 20 │ │   ├─────────▶     function _unsafeAccess(Checkpoint224[] storage) private returns (Checkpoint224 storage) {}
+    │ │   │                                                                                                            
+    │ │   ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────── definiens: 12
+ 21 │ │ │                 function _unsafeAccess(Checkpoint160[] storage) private returns (Checkpoint160 storage) {}
+    │ │ │             ───────────────────────────────────────────────┬───────────────────────────────────────────────  
+    │ │ │                                                            ╰───────────────────────────────────────────────── definiens: 13
+ 22 │ │ ╭───────────▶ 
+ 23 │ │ │                 function test(Trace224 storage self) internal returns (uint224) {
+    │ │ │                               ──────────┬──────────  
+    │ │ │                                         ╰──────────── definiens: 15
+    ┆ ┆ ┆             
+ 25 │ │ ├───────────▶     }
+    │ │ │                     
+    │ │ ╰───────────────────── definiens: 14
+ 26 │ ├─────────────▶ }
+    │ │                   
+    │ ╰─────────────────── definiens: 1
+────╯

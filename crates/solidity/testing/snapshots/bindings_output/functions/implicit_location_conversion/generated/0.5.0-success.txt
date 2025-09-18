@@ -1,0 +1,114 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 1
+  2 │     struct Point {
+    │            ──┬──  
+    │              ╰──── name: 2
+  3 │         uint x;
+    │              ┬  
+    │              ╰── name: 3
+  4 │         uint y;
+    │              ┬  
+    │              ╰── name: 4
+    │ 
+  7 │     function add(Point memory, Point memory) internal returns (Point memory) {}
+    │              ─┬─ ──┬──         ──┬──                           ──┬──  
+    │               ╰─────────────────────────────────────────────────────── name: 5
+    │                    │             │                               │    
+    │                    ╰────────────────────────────────────────────────── ref: 2
+    │                                  │                               │    
+    │                                  ╰──────────────────────────────────── ref: 2
+    │                                                                  │    
+    │                                                                  ╰──── ref: 2
+  8 │     function add(uint, uint) internal returns (uint) {}
+    │              ─┬─  
+    │               ╰─── name: 6
+    │ 
+ 11 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 7
+ 12 │     using Utils for uint;
+    │           ──┬──  
+    │             ╰──── ref: 1
+ 13 │     using Utils for Utils.Point;
+    │           ──┬──     ──┬── ──┬──  
+    │             ╰──────────────────── ref: 1
+    │                       │     │    
+    │                       ╰────────── ref: 1
+    │                             │    
+    │                             ╰──── ref: 2
+    │ 
+ 15 │     function test(Utils.Point calldata x) public {
+    │              ──┬─ ──┬── ──┬──          ┬  
+    │                ╰────────────────────────── name: 8
+    │                     │     │            │  
+    │                     ╰───────────────────── ref: 1
+    │                           │            │  
+    │                           ╰─────────────── ref: 2
+    │                                        │  
+    │                                        ╰── name: 9
+ 16 │         Utils.Point memory p;
+    │         ──┬── ──┬──        ┬  
+    │           ╰─────────────────── ref: 1
+    │                 │          │  
+    │                 ╰───────────── ref: 2
+    │                            │  
+    │                            ╰── name: 10
+ 17 │         p.add(x).add(x);
+    │         ┬ ─┬─ ┬  ─┬─ ┬  
+    │         ╰─────────────── ref: 10
+    │            │  │   │  │  
+    │            ╰──────────── refs: 5, 6
+    │               │   │  │  
+    │               ╰───────── ref: 9
+    │                   │  │  
+    │                   ╰───── refs: 5, 6
+    │                      │  
+    │                      ╰── ref: 9
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────│ ▶ library Utils {
+  2 │ │       ╭─▶     struct Point {
+  3 │ │       │           uint x;
+    │ │       │   ────────┬───────  
+    │ │       │           ╰───────── definiens: 3
+  4 │ │       │           uint y;
+    │ │       │   ────────┬───────  
+    │ │       │           ╰───────── definiens: 4
+  5 │ │     │ ├─▶     }
+    │ │     │ │           
+    │ │     │ ╰─────────── definiens: 2
+  6 │ │     ╭───▶ 
+  7 │ │     ├───▶     function add(Point memory, Point memory) internal returns (Point memory) {}
+    │ │     │                                                                                       
+    │ │     ╰─────────────────────────────────────────────────────────────────────────────────────── definiens: 5
+  8 │ │               function add(uint, uint) internal returns (uint) {}
+    │ │           ────────────────────────────┬───────────────────────────  
+    │ │                                       ╰───────────────────────────── definiens: 6
+  9 │ ├─│ ──────▶ }
+    │ │ │             
+    │ ╰─────────────── definiens: 1
+ 10 │   ╭───────▶ 
+    ┆   ┆         
+ 14 │   │ ╭─────▶ 
+ 15 │   │ │           function test(Utils.Point calldata x) public {
+    │   │ │                         ───────────┬──────────  
+    │   │ │                                    ╰──────────── definiens: 9
+ 16 │   │ │               Utils.Point memory p;
+    │   │ │       ───────────────┬──────────────  
+    │   │ │                      ╰──────────────── definiens: 10
+    ┆   ┆ ┆       
+ 18 │   │ ├─────▶     }
+    │   │ │               
+    │   │ ╰─────────────── definiens: 8
+ 19 │   ├───────▶ }
+    │   │             
+    │   ╰───────────── definiens: 7
+────╯

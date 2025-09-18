@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["_name" @ input.sol:11:9] -> #2 resolved uniquely but resolved ambiguously in stack graph output
+
+Definitions and/or references from binding graph and new binder DIFFER

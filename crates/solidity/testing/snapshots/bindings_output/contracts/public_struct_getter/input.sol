@@ -1,9 +1,14 @@
 contract Base {
-    struct Owner { address owner; }
-    Owner public owner;
+    struct Single { address a; }
+    Single public single;
+
+    struct Multi { uint x; uint y; }
+    Multi public multi;
 }
+
 contract Test {
     function test(Base base) public {
-        base.owner().balance;
+        base.single().balance;
+        (uint x, uint y) = base.multi();
     }
 }

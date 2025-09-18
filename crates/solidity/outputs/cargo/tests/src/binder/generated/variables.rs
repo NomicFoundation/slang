@@ -40,3 +40,8 @@ fn var_declaration() -> Result<()> {
 fn var_tuple_declaration() -> Result<()> {
     run(T, "var_tuple_declaration")
 }
+
+#[test]
+fn var_type_detection() -> Result<()> {
+    run(T, "var_type_detection")
+}

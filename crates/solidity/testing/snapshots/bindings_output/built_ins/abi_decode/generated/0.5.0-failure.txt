@@ -1,0 +1,121 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function nop(uint256) internal {}
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  6 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  8 │     struct Point {
+    │            ──┬──  
+    │              ╰──── name: 4
+  9 │         uint256 x;
+    │                 ┬  
+    │                 ╰── name: 5
+ 10 │         uint256 y;
+    │                 ┬  
+    │                 ╰── name: 6
+    │ 
+ 13 │     function test(bytes memory input) internal {
+    │              ──┬─              ──┬──  
+    │                ╰────────────────────── name: 7
+    │                                  │    
+    │                                  ╰──── name: 8
+ 14 │         abi.decode(input, (uint256)).nop();
+    │         ─┬─ ───┬── ──┬──             ─┬─  
+    │          ╰──────────────────────────────── ref: built-in
+    │                │     │                │   
+    │                ╰────────────────────────── ref: built-in
+    │                      │                │   
+    │                      ╰──────────────────── ref: 8
+    │                                       │   
+    │                                       ╰─── unresolved
+ 15 │         abi.decode(input, (uint256[]))[0].nop();
+    │         ─┬─ ───┬── ──┬──                  ─┬─  
+    │          ╰───────────────────────────────────── ref: built-in
+    │                │     │                     │   
+    │                ╰─────────────────────────────── ref: built-in
+    │                      │                     │   
+    │                      ╰───────────────────────── ref: 8
+    │                                            │   
+    │                                            ╰─── unresolved
+ 16 │         abi.decode(input, (Point)).x.nop();
+    │         ─┬─ ───┬── ──┬──   ──┬──   ┬ ─┬─  
+    │          ╰──────────────────────────────── ref: built-in
+    │                │     │       │     │  │   
+    │                ╰────────────────────────── ref: built-in
+    │                      │       │     │  │   
+    │                      ╰──────────────────── ref: 8
+    │                              │     │  │   
+    │                              ╰──────────── ref: 4
+    │                                    │  │   
+    │                                    ╰────── unresolved
+    │                                       │   
+    │                                       ╰─── unresolved
+ 17 │         abi.decode(input, (Point[]))[0].x.nop();
+    │         ─┬─ ───┬── ──┬──   ──┬──        ┬ ─┬─  
+    │          ╰───────────────────────────────────── ref: built-in
+    │                │     │       │          │  │   
+    │                ╰─────────────────────────────── ref: built-in
+    │                      │       │          │  │   
+    │                      ╰───────────────────────── ref: 8
+    │                              │          │  │   
+    │                              ╰───────────────── ref: 4
+    │                                         │  │   
+    │                                         ╰────── unresolved
+    │                                            │   
+    │                                            ╰─── unresolved
+ 18 │         abi.decode(input, (uint256, uint256));
+    │         ─┬─ ───┬── ──┬──  
+    │          ╰──────────────── ref: built-in
+    │                │     │    
+    │                ╰────────── ref: built-in
+    │                      │    
+    │                      ╰──── ref: 8
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ library Lib {
+  2 │       │       function nop(uint256) internal {}
+    │       │   ───────────────────┬──────────────────  
+    │       │                      ╰──────────────────── definiens: 2
+  3 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 1
+  4 │ ╭───────▶ 
+    ┆ ┆         
+  7 │ │   ╭───▶ 
+    ┆ ┆   ┆     
+  9 │ │   │             uint256 x;
+    │ │   │     ─────────┬─────────  
+    │ │   │              ╰─────────── definiens: 5
+ 10 │ │   │             uint256 y;
+    │ │   │     ─────────┬─────────  
+    │ │   │              ╰─────────── definiens: 6
+ 11 │ │ │ ├───▶     }
+    │ │ │ │             
+    │ │ │ ╰───────────── definiens: 4
+ 12 │ │ ╭─────▶ 
+ 13 │ │ │           function test(bytes memory input) internal {
+    │ │ │                         ─────────┬────────  
+    │ │ │                                  ╰────────── definiens: 8
+    ┆ ┆ ┆       
+ 19 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 7
+ 20 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 3
+────╯

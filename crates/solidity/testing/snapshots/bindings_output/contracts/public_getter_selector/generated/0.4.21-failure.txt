@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:6:26]
+   │
+ 6 │     uint public override x;
+   │                          ┬  
+   │                          ╰── Error occurred here.
+───╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface Face {
+   │           ──┬─  
+   │             ╰─── name: 1
+ 2 │     function x() external view returns (uint);
+   │              ┬  
+   │              ╰── name: 2
+   │ 
+ 5 │ contract Test is Face {
+   │          ──┬─    ──┬─  
+   │            ╰─────────── name: 3
+   │                    │   
+   │                    ╰─── ref: 1
+ 6 │     uint public override x;
+   │                 ────┬───  
+   │                     ╰───── name: 4
+   │ 
+ 8 │     function test() internal {
+   │              ──┬─  
+   │                ╰─── name: 5
+ 9 │         this.x.selector;
+   │              ┬ ────┬───  
+   │              ╰─────────── ref: 2
+   │                    │     
+   │                    ╰───── ref: built-in
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭───▶ interface Face {
+  2 │   │         function x() external view returns (uint);
+    │   │     ───────────────────────┬───────────────────────  
+    │   │                            ╰───────────────────────── definiens: 2
+  3 │ │ ├───▶ }
+    │ │ │         
+    │ │ ╰───────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  6 │ │   │       uint public override x;
+    │ │   │   ──────────────┬─────────────  
+    │ │   │                 ╰─────────────── definiens: 4
+  7 │ │   ╭─▶ 
+    ┆ ┆   ┆   
+ 10 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 5
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 3
+────╯

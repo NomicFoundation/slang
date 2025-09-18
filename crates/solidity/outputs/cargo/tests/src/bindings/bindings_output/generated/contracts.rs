@@ -42,6 +42,11 @@ fn fallback_receive() -> Result<()> {
 }
 
 #[test]
+fn implicit_conversion_to_address() -> Result<()> {
+    run(T, "implicit_conversion_to_address")
+}
+
+#[test]
 fn inheritance() -> Result<()> {
     run(T, "inheritance")
 }
@@ -59,6 +64,11 @@ fn inheritance_types() -> Result<()> {
 #[test]
 fn inheritance_with_arguments() -> Result<()> {
     run(T, "inheritance_with_arguments")
+}
+
+#[test]
+fn inherited_legacy_constructor() -> Result<()> {
+    run(T, "inherited_legacy_constructor")
 }
 
 #[test]
@@ -87,6 +97,16 @@ fn multi_inheritance() -> Result<()> {
 }
 
 #[test]
+fn overload_disambiguation_with_this() -> Result<()> {
+    run(T, "overload_disambiguation_with_this")
+}
+
+#[test]
+fn private_member_not_visible() -> Result<()> {
+    run(T, "private_member_not_visible")
+}
+
+#[test]
 fn public_array_getters() -> Result<()> {
     run(T, "public_array_getters")
 }
@@ -99,6 +119,11 @@ fn public_getter_functions() -> Result<()> {
 #[test]
 fn public_getter_members() -> Result<()> {
     run(T, "public_getter_members")
+}
+
+#[test]
+fn public_getter_selector() -> Result<()> {
+    run(T, "public_getter_selector")
 }
 
 #[test]

@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ struct Foo {
+   │        ─┬─  
+   │         ╰─── name: 1
+ 2 │     uint x;
+   │          ┬  
+   │          ╰── name: 2
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 3
+ 6 │     function test() internal pure {
+   │              ──┬─  
+   │                ╰─── name: 4
+ 7 │         new Foo[](0).length;
+   │             ─┬─      ───┬──  
+   │              ╰─────────────── ref: 1
+   │                         │    
+   │                         ╰──── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     ╭─▶ struct Foo {
+ 2 │     │       uint x;
+   │     │   ──────┬─────  
+   │     │         ╰─────── definiens: 2
+ 3 │ │   ├─▶ }
+   │ │   │       
+   │ │   ╰─────── definiens: 1
+ 4 │ ╭─────▶ 
+   ┆ ┆ ┆     
+ 6 │ │ ╭───▶     function test() internal pure {
+   ┆ ┆ ┆     
+ 8 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 4
+ 9 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 3
+───╯

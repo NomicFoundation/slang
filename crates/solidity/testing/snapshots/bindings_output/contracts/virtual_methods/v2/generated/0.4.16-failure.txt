@@ -26,7 +26,7 @@ References (14):
 - Ref: ["override" @ input.sol:24:32] -> unresolved
 - Ref: ["B" @ input.sol:24:41] -> #3
 - Ref: ["C" @ input.sol:24:44] -> #5
-- Ref: ["foo" @ input.sol:25:22] -> refs: [6, 4, 2]
+- Ref: ["foo" @ input.sol:25:22] -> #6
 
 ------------------------------------------------------------------------
 
@@ -93,5 +93,5 @@ Bindings:
     │                                            ╰── ref: 5
  25 │         return super.foo();
     │                      ─┬─  
-    │                       ╰─── refs: [6, 4, 2]
+    │                       ╰─── ref: 6
 ────╯

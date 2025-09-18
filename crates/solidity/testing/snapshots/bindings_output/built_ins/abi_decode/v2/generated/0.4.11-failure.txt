@@ -1,0 +1,130 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["Point" @ input.sol:8:12] (struct)
+- Def: #5 ["x" @ input.sol:9:17] (struct member, type: uint256)
+- Def: #6 ["y" @ input.sol:10:17] (struct member, type: uint256)
+- Def: #7 ["test" @ input.sol:13:14] (function, type: function (bytes memory) returns void)
+- Def: #8 ["input" @ input.sol:13:32] (parameter, type: bytes memory)
+
+------------------------------------------------------------------------
+
+References (24):
+- Ref: ["Lib" @ input.sol:6:11] -> #1
+- Ref: ["abi" @ input.sol:14:9] -> built-in
+- Ref: ["decode" @ input.sol:14:13] -> unresolved
+- Ref: ["input" @ input.sol:14:20] -> #8
+- Ref: ["nop" @ input.sol:14:38] -> unresolved
+- Ref: ["abi" @ input.sol:15:9] -> built-in
+- Ref: ["decode" @ input.sol:15:13] -> unresolved
+- Ref: ["input" @ input.sol:15:20] -> #8
+- Ref: ["nop" @ input.sol:15:43] -> unresolved
+- Ref: ["abi" @ input.sol:16:9] -> built-in
+- Ref: ["decode" @ input.sol:16:13] -> unresolved
+- Ref: ["input" @ input.sol:16:20] -> #8
+- Ref: ["Point" @ input.sol:16:28] -> #4
+- Ref: ["x" @ input.sol:16:36] -> unresolved
+- Ref: ["nop" @ input.sol:16:38] -> unresolved
+- Ref: ["abi" @ input.sol:17:9] -> built-in
+- Ref: ["decode" @ input.sol:17:13] -> unresolved
+- Ref: ["input" @ input.sol:17:20] -> #8
+- Ref: ["Point" @ input.sol:17:28] -> #4
+- Ref: ["x" @ input.sol:17:41] -> unresolved
+- Ref: ["nop" @ input.sol:17:43] -> unresolved
+- Ref: ["abi" @ input.sol:18:9] -> built-in
+- Ref: ["decode" @ input.sol:18:13] -> unresolved
+- Ref: ["input" @ input.sol:18:20] -> #8
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function nop(uint256) internal {}
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  6 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  8 │     struct Point {
+    │            ──┬──  
+    │              ╰──── name: 4
+  9 │         uint256 x;
+    │                 ┬  
+    │                 ╰── name: 5
+ 10 │         uint256 y;
+    │                 ┬  
+    │                 ╰── name: 6
+    │ 
+ 13 │     function test(bytes memory input) internal {
+    │              ──┬─              ──┬──  
+    │                ╰────────────────────── name: 7
+    │                                  │    
+    │                                  ╰──── name: 8
+ 14 │         abi.decode(input, (uint256)).nop();
+    │         ─┬─ ───┬── ──┬──             ─┬─  
+    │          ╰──────────────────────────────── built-in
+    │                │     │                │   
+    │                ╰────────────────────────── unresolved
+    │                      │                │   
+    │                      ╰──────────────────── ref: 8
+    │                                       │   
+    │                                       ╰─── unresolved
+ 15 │         abi.decode(input, (uint256[]))[0].nop();
+    │         ─┬─ ───┬── ──┬──                  ─┬─  
+    │          ╰───────────────────────────────────── built-in
+    │                │     │                     │   
+    │                ╰─────────────────────────────── unresolved
+    │                      │                     │   
+    │                      ╰───────────────────────── ref: 8
+    │                                            │   
+    │                                            ╰─── unresolved
+ 16 │         abi.decode(input, (Point)).x.nop();
+    │         ─┬─ ───┬── ──┬──   ──┬──   ┬ ─┬─  
+    │          ╰──────────────────────────────── built-in
+    │                │     │       │     │  │   
+    │                ╰────────────────────────── unresolved
+    │                      │       │     │  │   
+    │                      ╰──────────────────── ref: 8
+    │                              │     │  │   
+    │                              ╰──────────── ref: 4
+    │                                    │  │   
+    │                                    ╰────── unresolved
+    │                                       │   
+    │                                       ╰─── unresolved
+ 17 │         abi.decode(input, (Point[]))[0].x.nop();
+    │         ─┬─ ───┬── ──┬──   ──┬──        ┬ ─┬─  
+    │          ╰───────────────────────────────────── built-in
+    │                │     │       │          │  │   
+    │                ╰─────────────────────────────── unresolved
+    │                      │       │          │  │   
+    │                      ╰───────────────────────── ref: 8
+    │                              │          │  │   
+    │                              ╰───────────────── ref: 4
+    │                                         │  │   
+    │                                         ╰────── unresolved
+    │                                            │   
+    │                                            ╰─── unresolved
+ 18 │         abi.decode(input, (uint256, uint256));
+    │         ─┬─ ───┬── ──┬──  
+    │          ╰──────────────── built-in
+    │                │     │    
+    │                ╰────────── unresolved
+    │                      │    
+    │                      ╰──── ref: 8
+────╯

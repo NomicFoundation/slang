@@ -1,22 +1,31 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Definitions (7):
+Definitions (13):
 - Def: #1 ["Base" @ input.sol:1:10] (contract)
-- Def: #2 ["Owner" @ input.sol:2:12] (struct)
-- Def: #3 ["owner" @ input.sol:2:28] (struct member, type: address)
-- Def: #4 ["owner" @ input.sol:3:18] (state var, type: Owner storage)
-- Def: #5 ["Test" @ input.sol:5:10] (contract)
-- Def: #6 ["test" @ input.sol:6:14] (function, type: function (Base) returns void)
-- Def: #7 ["base" @ input.sol:6:24] (parameter, type: Base)
+- Def: #2 ["Single" @ input.sol:2:12] (struct)
+- Def: #3 ["a" @ input.sol:2:29] (struct member, type: address)
+- Def: #4 ["single" @ input.sol:3:19] (state var, type: Single storage)
+- Def: #5 ["Multi" @ input.sol:5:12] (struct)
+- Def: #6 ["x" @ input.sol:5:25] (struct member, type: uint256)
+- Def: #7 ["y" @ input.sol:5:33] (struct member, type: uint256)
+- Def: #8 ["multi" @ input.sol:6:18] (state var, type: Multi storage)
+- Def: #9 ["Test" @ input.sol:9:10] (contract)
+- Def: #10 ["test" @ input.sol:10:14] (function, type: function (Base) returns void)
+- Def: #11 ["base" @ input.sol:10:24] (parameter, type: Base)
+- Def: #12 ["x" @ input.sol:12:15] (variable, type: uint256)
+- Def: #13 ["y" @ input.sol:12:23] (variable, type: uint256)
 
 ------------------------------------------------------------------------
 
-References (5):
-- Ref: ["Owner" @ input.sol:3:5] -> #2
-- Ref: ["Base" @ input.sol:6:19] -> #1
-- Ref: ["base" @ input.sol:7:9] -> #7
-- Ref: ["owner" @ input.sol:7:14] -> #4
-- Ref: ["balance" @ input.sol:7:22] -> built-in
+References (8):
+- Ref: ["Single" @ input.sol:3:5] -> #2
+- Ref: ["Multi" @ input.sol:6:5] -> #5
+- Ref: ["Base" @ input.sol:10:19] -> #1
+- Ref: ["base" @ input.sol:11:9] -> #11
+- Ref: ["single" @ input.sol:11:14] -> #4
+- Ref: ["balance" @ input.sol:11:23] -> built-in
+- Ref: ["base" @ input.sol:12:28] -> #11
+- Ref: ["multi" @ input.sol:12:33] -> #8
 
 ------------------------------------------------------------------------
 
@@ -25,37 +34,59 @@ Unbound identifiers (0):
 ------------------------------------------------------------------------
 
 Bindings: 
-   ╭─[input.sol:1:1]
-   │
- 1 │ contract Base {
-   │          ──┬─  
-   │            ╰─── name: 1
- 2 │     struct Owner { address owner; }
-   │            ──┬──           ──┬──  
-   │              ╰──────────────────── name: 2
-   │                              │    
-   │                              ╰──── name: 3
- 3 │     Owner public owner;
-   │     ──┬──        ──┬──  
-   │       ╰───────────────── ref: 2
-   │                    │    
-   │                    ╰──── name: 4
-   │ 
- 5 │ contract Test {
-   │          ──┬─  
-   │            ╰─── name: 5
- 6 │     function test(Base base) public {
-   │              ──┬─ ──┬─ ──┬─  
-   │                ╰───────────── name: 6
-   │                     │    │   
-   │                     ╰──────── ref: 1
-   │                          │   
-   │                          ╰─── name: 7
- 7 │         base.owner().balance;
-   │         ──┬─ ──┬──   ───┬───  
-   │           ╰─────────────────── ref: 7
-   │                │        │     
-   │                ╰────────────── ref: 4
-   │                         │     
-   │                         ╰───── built-in
-───╯
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     struct Single { address a; }
+    │            ───┬──           ┬  
+    │               ╰──────────────── name: 2
+    │                             │  
+    │                             ╰── name: 3
+  3 │     Single public single;
+    │     ───┬──        ───┬──  
+    │        ╰────────────────── ref: 2
+    │                      │    
+    │                      ╰──── name: 4
+    │ 
+  5 │     struct Multi { uint x; uint y; }
+    │            ──┬──        ┬       ┬  
+    │              ╰───────────────────── name: 5
+    │                         │       │  
+    │                         ╰────────── name: 6
+    │                                 │  
+    │                                 ╰── name: 7
+  6 │     Multi public multi;
+    │     ──┬──        ──┬──  
+    │       ╰───────────────── ref: 5
+    │                    │    
+    │                    ╰──── name: 8
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 9
+ 10 │     function test(Base base) public {
+    │              ──┬─ ──┬─ ──┬─  
+    │                ╰───────────── name: 10
+    │                     │    │   
+    │                     ╰──────── ref: 1
+    │                          │   
+    │                          ╰─── name: 11
+ 11 │         base.single().balance;
+    │         ──┬─ ───┬──   ───┬───  
+    │           ╰──────────────────── ref: 11
+    │                 │        │     
+    │                 ╰────────────── ref: 4
+    │                          │     
+    │                          ╰───── built-in
+ 12 │         (uint x, uint y) = base.multi();
+    │               ┬       ┬    ──┬─ ──┬──  
+    │               ╰──────────────────────── name: 12
+    │                       │      │    │    
+    │                       ╰──────────────── name: 13
+    │                              │    │    
+    │                              ╰───────── ref: 11
+    │                                   │    
+    │                                   ╰──── ref: 8
+────╯

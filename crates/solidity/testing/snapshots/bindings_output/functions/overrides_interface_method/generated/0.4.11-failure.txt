@@ -1,0 +1,72 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CloseParen or Comma.
+   ╭─[input.sol:7:47]
+   │
+ 7 │ ╭─▶                                bytes calldata data
+ 8 │ ├─▶     ) external returns (bytes4);
+   │ │                                      
+   │ ╰────────────────────────────────────── Error occurred here.
+───╯
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+    ╭─[input.sol:11:1]
+    │
+ 11 │ ╭─▶ abstract contract ERC1155Holder is IERC1155Receiver {
+    ┆ ┆   
+ 21 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface IERC1155Receiver {
+   │           ────────┬───────  
+   │                   ╰───────── name: 1
+ 2 │     function onERC1155Received(
+   │              ────────┬────────  
+   │                      ╰────────── name: 2
+ 3 │                                address operator,
+   │                                        ────┬───  
+   │                                            ╰───── name: 3
+ 4 │                                address from,
+   │                                        ──┬─  
+   │                                          ╰─── name: 4
+ 5 │                                uint256 id,
+   │                                        ─┬  
+   │                                         ╰── name: 5
+ 6 │                                uint256 value,
+   │                                        ──┬──  
+   │                                          ╰──── name: 6
+ 7 │                                bytes calldata data
+   │                                      ────┬───  
+   │                                          ╰───── name: 7
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ interface IERC1155Receiver {
+ 2 │ │ ╭─▶     function onERC1155Received(
+ 3 │ │ │                                  address operator,
+   │ │ │   ───────────────────────┬───────────────────────  
+   │ │ │                          ╰───────────────────────── definiens: 3
+ 4 │ │ │                                  address from,
+   │ │ │   ─────────────────────┬─────────────────────  
+   │ │ │                        ╰─────────────────────── definiens: 4
+ 5 │ │ │                                  uint256 id,
+   │ │ │   ────────────────────┬────────────────────  
+   │ │ │                       ╰────────────────────── definiens: 5
+ 6 │ │ │                                  uint256 value,
+   │ │ │   ──────────────────────┬─────────────────────  
+   │ │ │                         ╰─────────────────────── definiens: 6
+ 7 │ │ │                                  bytes calldata data
+   │ │ │   ──────────────────────┬──────────────────────  
+   │ │ │                         ╰──────────────────────── definiens: 7
+ 8 │ │ ├─▶     ) external returns (bytes4);
+   │ │ │                                      
+   │ │ ╰────────────────────────────────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

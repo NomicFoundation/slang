@@ -11,5 +11,7 @@ contract Test is IFoo {
 
     function test() internal view {
         foo.x;
+        this.foo;
+        this.foo();
     }
 }

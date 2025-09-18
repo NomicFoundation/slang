@@ -8,10 +8,10 @@ use crate::backend::binder::{
     Binder, Definition, EitherIter, Reference, Resolution, ResolveOptions, Scope, ScopeId, Typing,
     UsingDirective,
 };
-use crate::backend::built_ins::BuiltInsResolver;
+use crate::backend::built_ins::{BuiltIn, BuiltInsResolver};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::types::{DataLocation, Type, TypeId, TypeRegistry};
+use crate::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -51,10 +51,13 @@ pub fn run(input: Input) -> Output {
 
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 const VERSION_0_7_0: Version = Version::new(0, 7, 0);
+const VERSION_0_8_0: Version = Version::new(0, 8, 0);
 
 struct Pass {
     language_version: Version,
-    scope_stack: Vec<ScopeId>,
+    // We keep a structural and lexical scope in the stack, to be able to
+    // replace the lexical one after declaration statements
+    scope_stack: Vec<(ScopeId, ScopeId)>,
     binder: Binder,
     types: TypeRegistry,
 }
@@ -81,21 +84,33 @@ impl Pass {
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(scope_id);
+        self.scope_stack.push((scope_id, scope_id));
+    }
+
+    fn enter_replace_scope_for_node_id(&mut self, node_id: NodeId) {
+        let Some((structural_scope_id, _)) = self.scope_stack.pop() else {
+            unreachable!("scope stack cannot be empty");
+        };
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.push((structural_scope_id, scope_id));
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(current_scope_id) = self.scope_stack.pop() else {
+        let Some((structural_scope_id, _)) = self.scope_stack.pop() else {
             unreachable!("attempt to pop an empty scope stack");
         };
         assert_eq!(
-            current_scope_id,
+            structural_scope_id,
             self.binder.scope_id_for_node_id(node_id).unwrap()
         );
     }
 
     fn current_scope_id(&self) -> ScopeId {
-        self.scope_stack.last().copied().unwrap()
+        self.scope_stack
+            .last()
+            .map(|(_, scope_id)| scope_id)
+            .copied()
+            .unwrap()
     }
 
     // This is a "top-level" (ie. not a member access) resolution method
@@ -108,15 +123,26 @@ impl Pass {
                 let first_id = definition_ids.first().copied().unwrap();
                 let first_definition = self.binder.find_definition_by_id(first_id).unwrap();
 
-                if let Definition::StateVariable(_) = first_definition {
-                    // TODO(validation): the state variable should have the
-                    // `override` attribute and the rest of the definitions
-                    // should be functions with the correct signature
-                    Resolution::Definition(first_id)
-                } else {
-                    // TODO(validation): check that the returned definitions are
-                    // all functions (or maybe modifiers?)
-                    resolution
+                match first_definition {
+                    Definition::StateVariable(_) => {
+                        // TODO(validation): the state variable should have the
+                        // `override` attribute and the rest of the definitions
+                        // should be either functions with the correct
+                        // signature, state variables or private variables or
+                        // constants
+                        Resolution::Definition(first_id)
+                    }
+                    Definition::Constant(_) => {
+                        // TODO(validation): if there are other definitions in
+                        // base contracts, they should be marked private and
+                        // they should be constants or state variables
+                        Resolution::Definition(first_id)
+                    }
+                    _ => {
+                        // TODO(validation): check that the returned definitions are
+                        // all functions (or maybe modifiers?)
+                        resolution
+                    }
                 }
             }
             Resolution::Definition(_) | Resolution::BuiltIn(_) => resolution,
@@ -145,7 +171,7 @@ impl Pass {
         self.scope_stack
             .iter()
             .rev()
-            .flat_map(|scope_id| {
+            .flat_map(|(_, scope_id)| {
                 if self.language_version < VERSION_0_7_0 {
                     // In Solidity < 0.7.0 using directives are inherited in contracts,
                     // so we need to pull any `using` directives in a contract hierarchy
@@ -161,6 +187,48 @@ impl Pass {
             // ... and add the global directives
             .chain(self.binder.get_global_using_directives())
             .filter(move |directive| directive.applies_to(type_id))
+    }
+
+    fn filter_overriden_definitions(&self, resolution: Resolution) -> Resolution {
+        let Resolution::Ambiguous(definition_ids) = resolution else {
+            return resolution;
+        };
+        let mut seen_function_types: Vec<&FunctionType> = Vec::new();
+        let mut filtered_definitions = Vec::new();
+        for definition_id in definition_ids {
+            match self.binder.find_definition_by_id(definition_id).unwrap() {
+                Definition::Function(_) => {
+                    if let Typing::Resolved(type_id) = self.binder.node_typing(definition_id) {
+                        let Type::Function(function_type) = self.types.get_type_by_id(type_id)
+                        else {
+                            unreachable!("type of function definition is not a function");
+                        };
+                        if seen_function_types.iter().any(|seen_function_type| {
+                            self.types
+                                .function_type_overrides(seen_function_type, function_type)
+                        }) {
+                            // the function type is overriden by some other previously seen definition
+                            continue;
+                        }
+                        seen_function_types.push(function_type);
+                    }
+                }
+                Definition::StateVariable(state_variable) => {
+                    // remember the getter type if present to override functions
+                    // in bases
+                    if let Some(getter_type_id) = state_variable.getter_type_id {
+                        let Type::Function(getter_type) = self.types.get_type_by_id(getter_type_id)
+                        else {
+                            unreachable!("getter function type is not a function")
+                        };
+                        seen_function_types.push(getter_type);
+                    }
+                }
+                _ => {}
+            }
+            filtered_definitions.push(definition_id);
+        }
+        Resolution::from(filtered_definitions)
     }
 
     fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
@@ -193,19 +261,32 @@ impl Pass {
                     // TODO(validation): for `this` resolutions we need to check
                     // that the returned definitions are externally available
                     // (ie. either `external` or `public`)
-                    let resolution = self
+                    let mut definition_ids = self
                         .binder
-                        .resolve_in_contract_scope(scope_id, symbol, options);
+                        .resolve_in_contract_scope(scope_id, symbol, options)
+                        .get_definition_ids();
 
-                    if self.language_version < VERSION_0_5_0 && resolution == Resolution::Unresolved
-                    {
+                    if matches!(typing, Typing::This) {
+                        // Consider active `using` directives for `this`
+                        if let Some(receiver_type_id) = self.types.find_type(&Type::Contract {
+                            definition_id: node_id,
+                        }) {
+                            self.add_attached_functions_for_type(
+                                receiver_type_id,
+                                symbol,
+                                &mut definition_ids,
+                            );
+                        }
+                    }
+
+                    if self.language_version < VERSION_0_5_0 && definition_ids.is_empty() {
                         // In Solidity < 0.5.0, `this` can be used as an address
                         Resolution::from(
                             self.built_ins_resolver()
                                 .lookup_member_of_type_id(self.types.address(), symbol),
                         )
                     } else {
-                        resolution
+                        Resolution::from(definition_ids)
                     }
                 } else {
                     Resolution::Unresolved
@@ -277,12 +358,13 @@ impl Pass {
 
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
         let type_ = self.types.get_type_by_id(type_id);
-        match type_ {
+
+        // Resolve direct members of the type first
+        let mut definition_ids = match type_ {
             Type::Contract { definition_id, .. } | Type::Interface { definition_id, .. } => {
-                // TODO(validation): check that the found definitions are public
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder
-                    .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::Normal)
+                    .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::External)
                     .or_else(|| {
                         self.built_ins_resolver()
                             .lookup_member_of_type_id(type_id, symbol)
@@ -293,36 +375,82 @@ impl Pass {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
             }
-            _ => self
-                .built_ins_resolver()
-                .lookup_member_of_type_id(type_id, symbol)
-                .into(),
+            _ => Resolution::Unresolved,
         }
-        .or_else(|| {
-            // Consider active `using` directives in the current context
-            let active_directives = self.active_using_directives_for_type(type_id);
-            let mut definition_ids = Vec::new();
-            let mut seen_ids = HashSet::new();
-            for directive in active_directives {
-                let scope_id = directive.get_scope_id();
-                let ids = self
-                    .binder
-                    .resolve_in_scope_as_namespace(scope_id, symbol)
-                    .get_definition_ids();
-                // TODO: filter the resolved definitions to only include
+        .get_definition_ids();
+
+        // Next, consider active `using` directives in the current context
+        self.add_attached_functions_for_type(type_id, symbol, &mut definition_ids);
+
+        Resolution::from(definition_ids).or_else(|| {
+            // If still unresolved, try with a built-in
+            self.built_ins_resolver()
+                .lookup_member_of_type_id(type_id, symbol)
+                .into()
+        })
+    }
+
+    fn add_attached_functions_for_type(
+        &self,
+        receiver_type_id: TypeId,
+        symbol: &str,
+        definition_ids: &mut Vec<NodeId>,
+    ) {
+        let active_directives = self.active_using_directives_for_type(receiver_type_id);
+        let mut seen_ids = HashSet::new();
+        for directive in active_directives {
+            let scope_id = directive.get_scope_id();
+            let ids = self
+                .binder
+                .resolve_in_scope_as_namespace(scope_id, symbol)
+                .get_definition_ids();
+            for id in &ids {
+                // Avoid returning duplicate definition IDs. That may happen
+                // if equivalent `using` directives are active at some point
+                // (eg. inherited through a base in older Solidity)
+                // Filter the resolved definitions to only include
                 // functions whose first parameter is of our type (or
                 // implicitly convertible to it)
-                for id in &ids {
-                    // Avoid returning duplicate definition IDs. That may happen
-                    // if equivalent `using` directives are active at some point
-                    // (eg. inherited through a base in older Solidity)
-                    if seen_ids.insert(*id) {
-                        definition_ids.push(*id);
-                    }
+                if seen_ids.insert(*id)
+                    && self.is_function_with_receiver_type(*id, receiver_type_id)
+                {
+                    definition_ids.push(*id);
                 }
             }
-            Resolution::from(definition_ids)
-        })
+        }
+    }
+
+    fn is_function_with_receiver_type(
+        &self,
+        definition_id: NodeId,
+        receiver_type_id: TypeId,
+    ) -> bool {
+        if !self
+            .binder
+            .find_definition_by_id(definition_id)
+            .is_some_and(|definition| matches!(definition, Definition::Function(_)))
+        {
+            // definition is not a function
+            return false;
+        }
+
+        let Typing::Resolved(definition_type_id) = self.binder.node_typing(definition_id) else {
+            // definition type cannot be resolved
+            return false;
+        };
+        let Type::Function(function_type) = self.types.get_type_by_id(definition_type_id) else {
+            unreachable!("type of function definition is not a function");
+        };
+        // receiver needs to be convertible to the first parameter type; we use
+        // the external call rules because the conversion rules with different
+        // locations are more relaxed
+        function_type
+            .parameter_types
+            .first()
+            .is_some_and(|type_id| {
+                self.types
+                    .implicitly_convertible_to_for_external_call(receiver_type_id, *type_id)
+            })
     }
 
     fn typing_of_expression(&self, node: &input_ir::Expression) -> Typing {
@@ -391,16 +519,14 @@ impl Pass {
                 self.binder.node_typing(array_expression.node_id)
             }
             input_ir::Expression::HexNumberExpression(hex_number_expression) => {
-                if Self::hex_number_is_address_literal(hex_number_expression) {
-                    Typing::Resolved(self.types.address())
-                } else {
-                    Typing::Resolved(self.types.rational())
-                }
+                self.binder.node_typing(hex_number_expression.node_id)
             }
-            input_ir::Expression::DecimalNumberExpression(_) => {
-                Typing::Resolved(self.types.rational())
+            input_ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
+                self.binder.node_typing(decimal_number_expression.node_id)
             }
-            input_ir::Expression::StringExpression(_) => Typing::Resolved(self.types.string()),
+            input_ir::Expression::StringExpression(string_expression) => self
+                .binder
+                .node_typing(Self::string_expression_node_id(string_expression)),
             input_ir::Expression::ElementaryType(elementary_type) => {
                 Typing::MetaType(Self::type_of_elementary_type(elementary_type))
             }
@@ -413,16 +539,105 @@ impl Pass {
         }
     }
 
-    fn hex_number_is_address_literal(
+    fn string_literal_node_id(string_literal: &input_ir::StringLiteral) -> NodeId {
+        match string_literal {
+            input_ir::StringLiteral::SingleQuotedStringLiteral(terminal_node)
+            | input_ir::StringLiteral::DoubleQuotedStringLiteral(terminal_node) => {
+                terminal_node.id()
+            }
+        }
+    }
+
+    fn string_literal_size(string_literal: &input_ir::StringLiteral) -> usize {
+        match string_literal {
+            input_ir::StringLiteral::SingleQuotedStringLiteral(terminal_node)
+            | input_ir::StringLiteral::DoubleQuotedStringLiteral(terminal_node) => {
+                // TODO: consider escaped characters
+                terminal_node.unparse().len() - 2
+            }
+        }
+    }
+
+    fn hex_string_literal_node_id(hex_string_literal: &input_ir::HexStringLiteral) -> NodeId {
+        match hex_string_literal {
+            input_ir::HexStringLiteral::SingleQuotedHexStringLiteral(terminal_node)
+            | input_ir::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal_node) => {
+                terminal_node.id()
+            }
+        }
+    }
+
+    fn hex_string_literal_bytes_size(hex_string_literal: &input_ir::HexStringLiteral) -> usize {
+        match hex_string_literal {
+            input_ir::HexStringLiteral::SingleQuotedHexStringLiteral(terminal_node)
+            | input_ir::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal_node) => {
+                // 5 is the length of the `hex` prefix plus the quotes
+                (terminal_node.unparse().len() - 5) / 2
+            }
+        }
+    }
+
+    fn unicode_string_literal_node_id(
+        unicode_string_literal: &input_ir::UnicodeStringLiteral,
+    ) -> NodeId {
+        match unicode_string_literal {
+            input_ir::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal_node)
+            | input_ir::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal_node) => {
+                terminal_node.id()
+            }
+        }
+    }
+
+    fn unicode_string_literal_size(string_literal: &input_ir::UnicodeStringLiteral) -> usize {
+        match string_literal {
+            input_ir::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal_node)
+            | input_ir::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal_node) => {
+                // TODO: actually parse the string
+                // 9 is the length of the `unicode` prefix plus quotes
+                terminal_node.unparse().len() - 9
+            }
+        }
+    }
+
+    fn string_expression_node_id(string_expression: &input_ir::StringExpression) -> NodeId {
+        match string_expression {
+            input_ir::StringExpression::StringLiteral(string_literal) => {
+                Self::string_literal_node_id(string_literal)
+            }
+            input_ir::StringExpression::StringLiterals(string_literals) => {
+                Self::string_literal_node_id(&string_literals[0])
+            }
+            input_ir::StringExpression::HexStringLiteral(hex_string_literal) => {
+                Self::hex_string_literal_node_id(hex_string_literal)
+            }
+            input_ir::StringExpression::HexStringLiterals(hex_string_literals) => {
+                Self::hex_string_literal_node_id(&hex_string_literals[0])
+            }
+            input_ir::StringExpression::UnicodeStringLiterals(unicode_string_literals) => {
+                Self::unicode_string_literal_node_id(&unicode_string_literals[0])
+            }
+        }
+    }
+
+    fn hex_number_literal_kind(
         hex_number_expression: &input_ir::HexNumberExpression,
-    ) -> bool {
+    ) -> LiteralKind {
         if hex_number_expression.unit.is_some() {
-            return false;
+            // this is deprecated in Solidity >= 0.5.0 anyway
+            return LiteralKind::DecimalInteger;
         }
         let hex_number = hex_number_expression.literal.unparse();
-        // TODO(validation): verify the address is valid (ie. has a valid checksum)
-        // We need at least an implementation of SHA3 to compute the checksum
-        hex_number.len() == 42
+        if hex_number.len() == 42 {
+            // TODO(validation): verify the address is valid (ie. has a valid checksum)
+            // We need at least an implementation of SHA3 to compute the checksum
+            LiteralKind::Address
+        } else if hex_number == "0x0" {
+            LiteralKind::Zero
+        } else {
+            LiteralKind::HexInteger {
+                bytes: u32::try_from((hex_number.len() - 3) / 2 + 1).unwrap(),
+            }
+        }
     }
 
     fn type_of_elementary_type(elementary_type: &input_ir::ElementaryType) -> Type {
@@ -431,8 +646,7 @@ impl Pass {
                 payable: address_type.payable_keyword.is_some(),
             },
             input_ir::ElementaryType::BytesKeyword(terminal) => {
-                Type::from_bytes_keyword(&terminal.unparse(), Some(DataLocation::Inherited))
-                    .unwrap()
+                Type::from_bytes_keyword(&terminal.unparse(), Some(DataLocation::Memory)).unwrap()
             }
             input_ir::ElementaryType::IntKeyword(terminal) => {
                 Type::from_int_keyword(&terminal.unparse())
@@ -449,8 +663,23 @@ impl Pass {
             input_ir::ElementaryType::BoolKeyword => Type::Boolean,
             input_ir::ElementaryType::ByteKeyword => Type::ByteArray { width: 1 },
             input_ir::ElementaryType::StringKeyword => Type::String {
-                location: DataLocation::Inherited,
+                location: DataLocation::Memory,
             },
+        }
+    }
+
+    fn type_of_definition(&mut self, definition_id: NodeId) -> Option<Type> {
+        let definition = self.binder.find_definition_by_id(definition_id)?;
+        match definition {
+            Definition::Contract(_) => Some(Type::Contract { definition_id }),
+            Definition::Enum(_) => Some(Type::Enum { definition_id }),
+            Definition::Interface(_) => Some(Type::Interface { definition_id }),
+            Definition::Struct(_) => Some(Type::Struct {
+                definition_id,
+                location: DataLocation::Memory,
+            }),
+            Definition::UserDefinedValueType(_) => Some(Type::UserDefinedValue { definition_id }),
+            _ => None,
         }
     }
 
@@ -511,7 +740,7 @@ impl Pass {
     }
 
     fn current_contract_scope_id(&self) -> Option<ScopeId> {
-        for scope_id in self.scope_stack.iter().rev() {
+        for (_, scope_id) in self.scope_stack.iter().rev() {
             let scope = self.binder.get_scope_by_id(*scope_id);
             if matches!(scope, Scope::Contract(_)) {
                 return Some(*scope_id);
@@ -520,11 +749,29 @@ impl Pass {
         None
     }
 
+    fn resolve_first_modifier(&self, resolution: &Resolution) -> Resolution {
+        let definition_ids = resolution.get_definition_ids();
+        if definition_ids.is_empty() {
+            return Resolution::Unresolved;
+        }
+        // Find the first definition that is either a modifier or a contract
+        // type, as that's how bases in constructors are parsed
+        definition_ids
+            .into_iter()
+            .find(|definition_id| {
+                matches!(
+                    self.binder.find_definition_by_id(*definition_id),
+                    Some(Definition::Modifier(_) | Definition::Contract(_))
+                )
+            })
+            .into()
+    }
+
     fn resolve_modifier_invocation(&mut self, modifier_invocation: &input_ir::ModifierInvocation) {
         let identifier_path = &modifier_invocation.name;
         let mut scope_id = self.current_contract_scope_id();
         let mut use_contract_lookup = true;
-        for identifier in identifier_path {
+        for (index, identifier) in identifier_path.iter().enumerate() {
             let resolution = if let Some(scope_id) = scope_id {
                 let symbol = identifier.unparse();
                 if use_contract_lookup {
@@ -536,11 +783,19 @@ impl Pass {
             } else {
                 Resolution::Unresolved
             };
+
             // TODO(validation): the found definition(s) must be modifiers
             // and be in the current contract hierarchy. We could potentially
             // verify that the initial symbol lookup is reachable from the
             // contract only (ie. it's a contract modifier, a modifier in a
             // base, or it's the identifier of a base of the current contract)
+            let resolution = if index == identifier_path.len() - 1 {
+                // The last element should be a modifier and for valid Solidity
+                // it overrides all previous definitions in the hierarchy
+                self.resolve_first_modifier(&resolution)
+            } else {
+                resolution
+            };
 
             scope_id = resolution
                 .as_definition_id()
@@ -553,16 +808,9 @@ impl Pass {
 
     fn resolve_named_arguments(
         &mut self,
-        named_arguments_declaration: &input_ir::NamedArgumentsDeclaration,
+        named_arguments: &[input_ir::NamedArgument],
         definition_id: Option<NodeId>,
     ) {
-        let Some(named_arguments) = named_arguments_declaration
-            .arguments
-            .as_ref()
-            .map(|arguments| &arguments.arguments)
-        else {
-            return;
-        };
         let parameters_scope_id = definition_id.and_then(|definition_id| {
             self.binder
                 .get_parameters_scope_for_definition(definition_id)
@@ -582,7 +830,8 @@ impl Pass {
 
     // This is a "top-level" resolution method for symbols in s Yul context
     fn resolve_symbol_in_yul_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
-        let resolution = self.binder.resolve_in_scope(scope_id, symbol);
+        let resolution =
+            self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
         if resolution == Resolution::Unresolved {
             self.built_ins_resolver().lookup_yul_global(symbol).into()
         } else {
@@ -604,24 +853,6 @@ impl Pass {
             Resolution::Unresolved | Resolution::Ambiguous(_) | Resolution::BuiltIn(_) => {
                 Resolution::Unresolved
             }
-        }
-    }
-
-    fn collect_positional_arguments_typings(
-        &self,
-        arguments: &input_ir::ArgumentsDeclaration,
-    ) -> Option<Vec<Typing>> {
-        if let input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(arguments) = arguments
-        {
-            Some(
-                arguments
-                    .arguments
-                    .iter()
-                    .map(|argument| self.typing_of_expression(argument))
-                    .collect::<Vec<_>>(),
-            )
-        } else {
-            None
         }
     }
 
@@ -647,6 +878,576 @@ impl Pass {
             }
         }
         self.typing_of_resolution(resolution)
+    }
+
+    fn lookup_function_matching_positional_arguments<'a>(
+        &'a self,
+        type_ids: &[TypeId],
+        argument_typings: &[Typing],
+        receiver_type_id: Option<TypeId>,
+    ) -> Option<&'a FunctionType> {
+        // get types and filter non-function types
+        let mut function_types = type_ids.iter().filter_map(|type_id| {
+            if let Type::Function(function_type) = self.types.get_type_by_id(*type_id) {
+                Some(function_type)
+            } else {
+                None
+            }
+        });
+        function_types.find(|function_type| {
+            let parameter_types = &function_type.parameter_types;
+            if let Some(receiver_type_id) = receiver_type_id {
+                // we have a receiver type, so either check for an implicit
+                // receiver type, or the first parameter type
+                // against it and then the rest, if the counts match
+                if parameter_types.len() == argument_typings.len()
+                    && function_type.implicit_receiver_type.is_some_and(
+                        |implicit_receiver_type_id| {
+                            self.types.implicitly_convertible_to(
+                                receiver_type_id,
+                                implicit_receiver_type_id,
+                            )
+                        },
+                    )
+                {
+                    // matches "method" functions of a compatible receiver type
+                    self.matches_positional_arguments(
+                        parameter_types,
+                        argument_typings,
+                        function_type.external,
+                    )
+                } else if parameter_types.len() == argument_typings.len() + 1
+                    && function_type.implicit_receiver_type.is_none()
+                    && parameter_types.first().is_some_and(|type_id| {
+                        self.types
+                            .implicitly_convertible_to(receiver_type_id, *type_id)
+                    })
+                {
+                    // matches attached functions (these can only be
+                    // free-functions or library functions) with a compatible
+                    // first argument
+                    self.matches_positional_arguments(
+                        &parameter_types[1..],
+                        argument_typings,
+                        function_type.external,
+                    )
+                } else {
+                    false
+                }
+            } else if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                self.matches_positional_arguments(
+                    parameter_types,
+                    argument_typings,
+                    function_type.external,
+                )
+            } else {
+                false
+            }
+        })
+    }
+
+    fn matches_positional_arguments(
+        &self,
+        parameter_types: &[TypeId],
+        argument_typings: &[Typing],
+        external_call: bool,
+    ) -> bool {
+        parameter_types
+            .iter()
+            .zip(argument_typings)
+            .all(|(parameter_type, argument_typing)| {
+                self.parameter_type_matches_argument_typing(
+                    *parameter_type,
+                    argument_typing,
+                    external_call,
+                )
+            })
+    }
+
+    fn parameter_type_matches_argument_typing(
+        &self,
+        parameter_type: TypeId,
+        argument_typing: &Typing,
+        external_call: bool,
+    ) -> bool {
+        match argument_typing {
+            Typing::Resolved(type_id) => {
+                if external_call {
+                    self.types
+                        .implicitly_convertible_to_for_external_call(*type_id, parameter_type)
+                } else {
+                    self.types
+                        .implicitly_convertible_to(*type_id, parameter_type)
+                }
+            }
+            Typing::This => self
+                .types
+                .implicitly_convertible_to(self.types.address(), parameter_type),
+            _ => false,
+        }
+    }
+
+    fn type_id_of_receiver(&self, operand: &input_ir::Expression) -> Option<TypeId> {
+        if let input_ir::Expression::MemberAccessExpression(member_access_expression) = operand {
+            self.typing_of_expression(&member_access_expression.operand)
+                .as_type_id()
+        } else {
+            None
+        }
+    }
+
+    fn typing_of_cast(&mut self, argument_typing: &Typing, target_type: Type) -> Typing {
+        // TODO(validation): this is a cast to the given type, but we
+        // need to verify that the (single) argument is convertible
+        match argument_typing {
+            Typing::Resolved(argument_type_id) => {
+                // the resulting cast type inherits the data location of the argument
+                let argument_type = self.types.get_type_by_id(*argument_type_id);
+                let type_id = if let Some(data_location) = argument_type.data_location() {
+                    self.types
+                        .register_type_with_data_location(target_type, data_location)
+                // special case: address(uint160(_)) should type to `address payable` in <0.8.0
+                } else if self.language_version < VERSION_0_8_0
+                    && self.language_version >= VERSION_0_5_0
+                    && matches!(
+                        argument_type,
+                        Type::Integer {
+                            signed: false,
+                            bits: 160
+                        }
+                    )
+                    && matches!(target_type, Type::Address { .. })
+                {
+                    self.types.address_payable()
+                } else {
+                    self.types.register_type(target_type)
+                };
+                Typing::Resolved(type_id)
+            }
+            Typing::This => {
+                // special case: "this" can be cast to an address
+                if let Type::Address { .. } = target_type {
+                    Typing::Resolved(self.types.address())
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            _ => Typing::Unresolved,
+        }
+    }
+
+    fn collect_positional_argument_typings(
+        &self,
+        arguments: &[input_ir::Expression],
+    ) -> Vec<Typing> {
+        arguments
+            .iter()
+            .map(|argument| self.typing_of_expression(argument))
+            .collect::<Vec<_>>()
+    }
+
+    fn typing_of_function_call_with_positional_arguments(
+        &mut self,
+        node: &input_ir::FunctionCallExpression,
+        arguments: &[input_ir::Expression],
+    ) -> Typing {
+        let operand_typing = self.typing_of_expression(&node.operand);
+        let argument_typings = self.collect_positional_argument_typings(arguments);
+
+        match operand_typing {
+            Typing::Unresolved | Typing::This | Typing::Super => {
+                // `this` and `super` are not callable
+                Typing::Unresolved
+            }
+            Typing::Resolved(type_id) => {
+                if let Type::Function(FunctionType { return_type, .. }) =
+                    self.types.get_type_by_id(type_id)
+                {
+                    Typing::Resolved(*return_type)
+                } else {
+                    // TODO(validation): the operand did not resolve to a function
+                    Typing::Unresolved
+                }
+            }
+            Typing::Undetermined(type_ids) => {
+                let receiver_type_id = self.type_id_of_receiver(&node.operand);
+                let candidate = self.lookup_function_matching_positional_arguments(
+                    &type_ids,
+                    &argument_typings,
+                    receiver_type_id,
+                );
+
+                if let Some(candidate) = candidate {
+                    let return_type = candidate.return_type;
+
+                    let reference_node_id = reference_node_id_for_expression(&node.operand);
+                    let definition_id = candidate.definition_id;
+                    if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
+                    {
+                        // TODO: maybe update the typing of the operand as well?
+                        self.binder
+                            .fixup_reference(node_id, Resolution::Definition(definition_id));
+                    }
+
+                    Typing::Resolved(return_type)
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            Typing::MetaType(type_) => {
+                if argument_typings.len() == 1 {
+                    self.typing_of_cast(&argument_typings[0], type_)
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            Typing::NewExpression(type_id) => {
+                match self.types.get_type_by_id(type_id) {
+                    Type::Array { .. } | Type::Contract { .. } => Typing::Resolved(type_id),
+                    _ => {
+                        // only contracts can be created with `new`
+                        Typing::Unresolved
+                    }
+                }
+            }
+            Typing::UserMetaType(node_id) => {
+                // Generally this is a cast to the underlying type of the given
+                // definition, except for structs for which we need to construct
+                // the value in memory
+                match self.binder.find_definition_by_id(node_id) {
+                    Some(Definition::Contract(_)) => {
+                        // TODO(validation): the type of the first argument should be an address
+                        let type_id = self.types.register_type(Type::Contract {
+                            definition_id: node_id,
+                        });
+                        Typing::Resolved(type_id)
+                    }
+                    Some(Definition::Interface(_)) => {
+                        // TODO(validation): the type of the first argument should be an address
+                        let type_id = self.types.register_type(Type::Interface {
+                            definition_id: node_id,
+                        });
+                        Typing::Resolved(type_id)
+                    }
+                    Some(Definition::Struct(_)) => {
+                        // struct construction
+                        let type_id = self.types.register_type(Type::Struct {
+                            definition_id: node_id,
+                            location: DataLocation::Memory,
+                        });
+                        Typing::Resolved(type_id)
+                    }
+                    _ => Typing::Unresolved,
+                }
+            }
+            // Special case: for `abi.decode` we need to register the types
+            // given as the second argument and we need a mutable `TypeRegistry`
+            // for that.
+            Typing::BuiltIn(BuiltIn::AbiDecode) => self.typing_of_abi_decode(&argument_typings),
+            Typing::BuiltIn(built_in) => self
+                .built_ins_resolver()
+                .typing_of_function_call(&built_in, &argument_typings),
+        }
+    }
+
+    fn typing_of_abi_decode(&mut self, argument_typings: &[Typing]) -> Typing {
+        if argument_typings.len() != 2 {
+            return Typing::Unresolved;
+        }
+        match &argument_typings[1] {
+            Typing::Resolved(type_id) => {
+                // TODO(validation): this only makes sense if type_id is a tuple
+                Typing::Resolved(*type_id)
+            }
+            Typing::UserMetaType(definition_id) => {
+                if let Some(type_) = self.type_of_definition(*definition_id) {
+                    Typing::Resolved(self.types.register_type(type_))
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            Typing::MetaType(type_) => Typing::Resolved(self.types.register_type(type_.clone())),
+            _ => Typing::Unresolved,
+        }
+    }
+
+    fn lookup_function_matching_named_arguments<'a>(
+        &'a self,
+        type_ids: &[TypeId],
+        argument_typings: &[(String, Typing)],
+        receiver_type_id: Option<TypeId>,
+    ) -> Option<&'a FunctionType> {
+        // get types and filter non-function types
+        let mut function_types = type_ids.iter().filter_map(|type_id| {
+            if let Type::Function(function_type) = self.types.get_type_by_id(*type_id) {
+                Some(function_type)
+            } else {
+                None
+            }
+        });
+        function_types.find(|function_type| {
+            let Some(definition_id) = function_type.definition_id else {
+                return false;
+            };
+            let definition = self.binder.find_definition_by_id(definition_id).unwrap();
+            let Definition::Function(function_definition) = definition else {
+                unreachable!("the definition associated to a function type is not a function");
+            };
+            let parameter_types = &function_type.parameter_types;
+            let parameter_names = &function_definition.parameter_names;
+            assert_eq!(
+                parameter_types.len(),
+                parameter_names.len(),
+                "length of types and names of parameters should match"
+            );
+            if parameter_names.iter().any(|name| name.is_none()) {
+                // function has an unnamed parameter and we cannot use it for
+                // matching named arguments
+                return false;
+            }
+
+            if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                self.matches_named_arguments(
+                    parameter_names,
+                    parameter_types,
+                    argument_typings,
+                    function_type.external,
+                )
+            } else if let Some(receiver_type_id) = receiver_type_id {
+                // we have a receiver type, so check the first parameter type
+                // against it and then the rest, if the counts match
+                if parameter_types.len() == argument_typings.len() + 1
+                    && parameter_types.first().is_some_and(|type_id| {
+                        self.types
+                            .implicitly_convertible_to(receiver_type_id, *type_id)
+                    })
+                {
+                    self.matches_named_arguments(
+                        &parameter_names[1..],
+                        &parameter_types[1..],
+                        argument_typings,
+                        function_type.external,
+                    )
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        })
+    }
+
+    fn matches_named_arguments(
+        &self,
+        parameter_names: &[Option<String>],
+        parameter_types: &[TypeId],
+        argument_typings: &[(String, Typing)],
+        external_call: bool,
+    ) -> bool {
+        argument_typings
+            .iter()
+            .all(|(argument_name, argument_typing)| {
+                let Some(index) = parameter_names
+                    .iter()
+                    .position(|name| name.as_ref().is_some_and(|name| name == argument_name))
+                else {
+                    return false;
+                };
+                let parameter_type = parameter_types[index];
+                self.parameter_type_matches_argument_typing(
+                    parameter_type,
+                    argument_typing,
+                    external_call,
+                )
+            })
+    }
+
+    fn collect_named_argument_typings(
+        &self,
+        arguments: &[input_ir::NamedArgument],
+    ) -> Vec<(String, Typing)> {
+        arguments
+            .iter()
+            .map(|argument| {
+                (
+                    argument.name.unparse(),
+                    self.typing_of_expression(&argument.value),
+                )
+            })
+            .collect::<Vec<_>>()
+    }
+
+    fn typing_of_function_call_with_named_arguments(
+        &mut self,
+        node: &input_ir::FunctionCallExpression,
+        arguments: &[input_ir::NamedArgument],
+    ) -> Typing {
+        let operand_typing = self.typing_of_expression(&node.operand);
+
+        let (typing, definition_id) = match operand_typing {
+            Typing::Unresolved | Typing::This | Typing::Super => {
+                // `this` and `super` are not callable
+                (Typing::Unresolved, None)
+            }
+            Typing::Resolved(type_id) => {
+                if let Type::Function(FunctionType {
+                    definition_id,
+                    return_type,
+                    ..
+                }) = self.types.get_type_by_id(type_id)
+                {
+                    (Typing::Resolved(*return_type), *definition_id)
+                } else {
+                    // TODO(validation): the operand did not resolve to a function
+                    (Typing::Unresolved, None)
+                }
+            }
+            Typing::Undetermined(type_ids) => {
+                let receiver_type_id = self.type_id_of_receiver(&node.operand);
+                let argument_typings = self.collect_named_argument_typings(arguments);
+                let candidate = self.lookup_function_matching_named_arguments(
+                    &type_ids,
+                    &argument_typings,
+                    receiver_type_id,
+                );
+
+                if let Some(candidate) = candidate {
+                    let return_type = candidate.return_type;
+
+                    let reference_node_id = reference_node_id_for_expression(&node.operand);
+                    let definition_id = candidate.definition_id;
+                    if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
+                    {
+                        // TODO: maybe update the typing of the operand as well?
+                        self.binder
+                            .fixup_reference(node_id, Resolution::Definition(definition_id));
+                    }
+
+                    (Typing::Resolved(return_type), definition_id)
+                } else {
+                    (Typing::Unresolved, None)
+                }
+            }
+            Typing::MetaType(_) => {
+                // This is a cast to the given type and is not valid with named arguments
+                (Typing::Unresolved, None)
+            }
+            Typing::NewExpression(type_id) => {
+                if let Type::Contract { definition_id } = self.types.get_type_by_id(type_id) {
+                    (Typing::Resolved(type_id), Some(*definition_id))
+                } else {
+                    // only contracts can be created with `new`
+                    (Typing::Unresolved, None)
+                }
+            }
+            Typing::UserMetaType(node_id) => {
+                // Function call with named arguments are only valid in user
+                // types of the struct kind, which results in the construction
+                // of such struct in memory
+                match self.binder.find_definition_by_id(node_id) {
+                    Some(Definition::Struct(_)) => {
+                        // struct construction
+                        let type_id = self.types.register_type(Type::Struct {
+                            definition_id: node_id,
+                            location: DataLocation::Memory,
+                        });
+                        (Typing::Resolved(type_id), Some(node_id))
+                    }
+                    Some(Definition::Event(_)) => {
+                        // this is an event called as a function, which is valid in <0.5.0
+                        (Typing::Resolved(self.types.void()), Some(node_id))
+                    }
+                    _ => (Typing::Unresolved, None),
+                }
+            }
+            Typing::BuiltIn(_) => {
+                // built-ins cannot be called with named arguments
+                (Typing::Unresolved, None)
+            }
+        };
+
+        // Reference and resolve named arguments
+        self.resolve_named_arguments(arguments, definition_id);
+
+        typing
+    }
+
+    fn lookup_event_matching_positional_arguments(
+        &self,
+        definition_ids: &[NodeId],
+        argument_typings: &[Typing],
+    ) -> Option<NodeId> {
+        for definition_id in definition_ids {
+            let Some(Definition::Event(event_definition)) =
+                self.binder.find_definition_by_id(*definition_id)
+            else {
+                continue;
+            };
+
+            let parameter_types = &event_definition.parameter_types;
+            if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                if self.matches_positional_arguments(parameter_types, argument_typings, false) {
+                    return Some(*definition_id);
+                }
+            }
+        }
+        None
+    }
+
+    fn lookup_event_matching_named_arguments(
+        &self,
+        definition_ids: &[NodeId],
+        argument_typings: &[(String, Typing)],
+    ) -> Option<NodeId> {
+        for definition_id in definition_ids {
+            let Some(Definition::Event(event_definition)) =
+                self.binder.find_definition_by_id(*definition_id)
+            else {
+                continue;
+            };
+
+            let parameter_types = &event_definition.parameter_types;
+            let parameter_names = &event_definition.parameter_names;
+            assert_eq!(
+                parameter_types.len(),
+                parameter_names.len(),
+                "length of types and names of parameters should match"
+            );
+            if parameter_names.iter().any(|name| name.is_none()) {
+                // cannot match if any parameter is unnamed
+                continue;
+            }
+
+            if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                if self.matches_named_arguments(
+                    parameter_names,
+                    parameter_types,
+                    argument_typings,
+                    false,
+                ) {
+                    return Some(*definition_id);
+                }
+            }
+        }
+        None
+    }
+}
+
+// Given an expression node that resolves to a reference, return the node ID of
+// the identifier of the reference. If the expression cannot be traced back to a
+// single reference, return `None`.
+fn reference_node_id_for_expression(node: &input_ir::Expression) -> Option<NodeId> {
+    match &node {
+        input_ir::Expression::MemberAccessExpression(f) => Some(f.member.id()),
+        input_ir::Expression::Identifier(f) => Some(f.id()),
+        input_ir::Expression::CallOptionsExpression(f) => {
+            reference_node_id_for_expression(&f.operand)
+        }
+        _ => None,
     }
 }
 
@@ -850,11 +1651,73 @@ impl Visitor for Pass {
     fn enter_expression(&mut self, node: &input_ir::Expression) -> bool {
         if let input_ir::Expression::Identifier(identifier) = node {
             let scope_id = self.current_scope_id();
-            let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+            let resolution = self.filter_overriden_definitions(
+                self.resolve_symbol_in_scope(scope_id, &identifier.unparse()),
+            );
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
         true
+    }
+
+    fn leave_hex_number_expression(&mut self, node: &input_ir::HexNumberExpression) {
+        let kind = Self::hex_number_literal_kind(node);
+        let type_id = self.types.register_type(Type::Literal(kind));
+        self.binder.set_node_type(node.node_id, Some(type_id));
+    }
+
+    fn leave_decimal_number_expression(&mut self, node: &input_ir::DecimalNumberExpression) {
+        let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
+            Type::Literal(LiteralKind::Zero)
+        } else {
+            Type::Literal(LiteralKind::DecimalInteger)
+        };
+        let type_id = self.types.register_type(type_);
+        self.binder.set_node_type(node.node_id, Some(type_id));
+    }
+
+    fn leave_string_expression(&mut self, node: &input_ir::StringExpression) {
+        let kind = match node {
+            input_ir::StringExpression::StringLiteral(string_literal) => {
+                let size = Self::string_literal_size(string_literal);
+                LiteralKind::String {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+            input_ir::StringExpression::StringLiterals(literals) => {
+                let size = literals.iter().fold(0usize, |acc, literal| {
+                    acc + Self::string_literal_size(literal)
+                });
+                LiteralKind::String {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+            input_ir::StringExpression::HexStringLiteral(hex_string_literal) => {
+                let size = Self::hex_string_literal_bytes_size(hex_string_literal);
+                LiteralKind::HexString {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+            input_ir::StringExpression::HexStringLiterals(literals) => {
+                let size = literals.iter().fold(0usize, |acc, literal| {
+                    acc + Self::hex_string_literal_bytes_size(literal)
+                });
+                LiteralKind::HexString {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+            input_ir::StringExpression::UnicodeStringLiterals(literals) => {
+                let size = literals.iter().fold(0usize, |acc, literal| {
+                    acc + Self::unicode_string_literal_size(literal)
+                });
+                LiteralKind::String {
+                    bytes: u32::try_from(size).unwrap(),
+                }
+            }
+        };
+        let type_id = self.types.register_type(Type::Literal(kind));
+        let node_id = Self::string_expression_node_id(node);
+        self.binder.set_node_type(node_id, Some(type_id));
     }
 
     fn leave_assignment_expression(&mut self, node: &input_ir::AssignmentExpression) {
@@ -865,11 +1728,33 @@ impl Visitor for Pass {
     }
 
     fn leave_conditional_expression(&mut self, node: &input_ir::ConditionalExpression) {
-        let type_id = self
+        let true_type_id = self
             .typing_of_expression(&node.true_expression)
             .as_type_id();
+        let false_type_id = self
+            .typing_of_expression(&node.false_expression)
+            .as_type_id();
+
         // TODO(validation): both true_expression and false_expression should
-        // have the same type
+        // have the compatible types
+        let type_id = match (true_type_id, false_type_id) {
+            (Some(true_type_id), Some(false_type_id)) => {
+                if self
+                    .types
+                    .implicitly_convertible_to(false_type_id, true_type_id)
+                {
+                    Some(true_type_id)
+                } else if self
+                    .types
+                    .implicitly_convertible_to(true_type_id, false_type_id)
+                {
+                    Some(false_type_id)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        };
         self.binder.set_node_type(node.node_id, type_id);
     }
 
@@ -930,12 +1815,14 @@ impl Visitor for Pass {
         let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
-        if type_id.is_some_and(|type_id| type_id == self.types.rational()) {
+        if type_id.is_some_and(|type_id| self.types.get_type_by_id(type_id).is_literal_number()) {
             // if the base is a rational but the exponent is not, then the result is uint256
             if self
                 .typing_of_expression(&node.right_operand)
                 .as_type_id()
-                .is_none_or(|exponent_type| exponent_type != self.types.rational())
+                .is_none_or(|exponent_type| {
+                    !self.types.get_type_by_id(exponent_type).is_literal_number()
+                })
             {
                 type_id = Some(self.types.uint256());
             }
@@ -999,15 +1886,36 @@ impl Visitor for Pass {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
         let operand_typing = self.typing_of_expression(&node.operand);
-        let resolution = self.resolve_symbol_in_typing(&operand_typing, &node.member.unparse());
+        let resolution = self.filter_overriden_definitions(
+            self.resolve_symbol_in_typing(&operand_typing, &node.member.unparse()),
+        );
 
         // Special case: if the operand is either `this` or a contract/interface
         // reference type, then try to type the member as a getter
-        let typing = if self.typing_is_contract_reference(&operand_typing) {
+        let mut typing = if self.typing_is_contract_reference(&operand_typing) {
             self.typing_of_resolution_as_getter(&resolution)
         } else {
             self.typing_of_resolution(&resolution)
         };
+
+        // Special case: If the type is a reference type with location
+        // "inherited", we use the operand's location for the resulting typing
+        if let Some(type_id) = typing.as_type_id() {
+            let type_ = self.types.get_type_by_id(type_id);
+            if type_.is_inherited_location() {
+                if let Some(operand_location) = operand_typing
+                    .as_type_id()
+                    .and_then(|type_id| self.types.get_type_by_id(type_id).data_location())
+                {
+                    let type_id_with_location = self
+                        .types
+                        .register_type_with_data_location(type_.clone(), operand_location);
+                    typing = Typing::Resolved(type_id_with_location);
+                }
+            }
+        }
+
+        // store the typing
         self.binder.set_node_typing(node.node_id, typing);
 
         let reference = Reference::new(Rc::clone(&node.member), resolution);
@@ -1015,20 +1923,67 @@ impl Visitor for Pass {
     }
 
     fn leave_index_access_expression(&mut self, node: &input_ir::IndexAccessExpression) {
-        let typing =
-            if let Some(operand_type_id) = self.typing_of_expression(&node.operand).as_type_id() {
+        let typing = match self.typing_of_expression(&node.operand) {
+            Typing::Resolved(operand_type_id) => {
+                let range_access = node.end.is_some();
                 let operand_type = self.types.get_type_by_id(operand_type_id);
                 match operand_type {
-                    Type::Array { element_type, .. } => Typing::Resolved(*element_type),
-                    Type::Mapping { value_type_id, .. } => Typing::Resolved(*value_type_id),
+                    Type::Array { element_type, .. } => {
+                        if range_access {
+                            Typing::Resolved(operand_type_id)
+                        } else {
+                            Typing::Resolved(*element_type)
+                        }
+                    }
+                    Type::ByteArray { .. } => {
+                        if range_access {
+                            Typing::Unresolved
+                        } else {
+                            Typing::Resolved(self.types.bytes1())
+                        }
+                    }
+                    Type::Bytes { .. } => {
+                        if range_access {
+                            Typing::Resolved(operand_type_id)
+                        } else {
+                            Typing::Resolved(self.types.bytes1())
+                        }
+                    }
+                    Type::Mapping { value_type_id, .. } => {
+                        if range_access {
+                            Typing::Unresolved
+                        } else {
+                            Typing::Resolved(*value_type_id)
+                        }
+                    }
                     _ => {
                         // TODO(validation): the operand is not indexable
                         Typing::Unresolved
                     }
                 }
-            } else {
-                Typing::Unresolved
-            };
+            }
+            Typing::MetaType(operand_type) => {
+                // indexing a meta-type creates a new meta-type of the array
+                let operand_type_id = self.types.register_type(operand_type);
+                Typing::MetaType(Type::Array {
+                    element_type: operand_type_id,
+                    location: DataLocation::Memory,
+                })
+            }
+            Typing::UserMetaType(definition_id) => {
+                // indexing a user meta-type creates a new meta-type of the array
+                if let Some(operand_type) = self.type_of_definition(definition_id) {
+                    let operand_type_id = self.types.register_type(operand_type);
+                    Typing::MetaType(Type::Array {
+                        element_type: operand_type_id,
+                        location: DataLocation::Memory,
+                    })
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            _ => Typing::Unresolved,
+        };
         self.binder.set_node_typing(node.node_id, typing);
     }
 
@@ -1042,6 +1997,7 @@ impl Visitor for Pass {
                 .typing_of_expression(node.items.first().unwrap())
                 .as_type_id()
             {
+                let element_type = self.types.reified_type(element_type);
                 let type_id = self.types.register_type(Type::Array {
                     element_type,
                     location: DataLocation::Memory,
@@ -1055,125 +2011,25 @@ impl Visitor for Pass {
     }
 
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
-        let operand_typing = self.typing_of_expression(&node.operand);
-        let positional_argument_typings =
-            self.collect_positional_arguments_typings(&node.arguments);
-
-        let (typing, definition_id) = match operand_typing {
-            Typing::Unresolved | Typing::This | Typing::Super => {
-                // `this` and `super` are not callable
-                (Typing::Unresolved, None)
-            }
-            Typing::Resolved(type_id) => {
-                let operand_type = self.types.get_type_by_id(type_id);
-                match operand_type {
-                    Type::Function {
-                        definition_id,
-                        return_type,
-                        ..
-                    } => (Typing::Resolved(*return_type), *definition_id),
-                    // TODO: support other types that can be called
-                    _ => {
-                        // TODO(validation): the operand did not resolve to a function
-                        (Typing::Unresolved, None)
-                    }
-                }
-            }
-            Typing::Undetermined(_type_ids) => {
-                // TODO: resolve argument types and match best overload
-                // TODO: maybe update the typing of the operand?
-                // TODO: return the definition_id used to later resolve named arguments
-                (Typing::Unresolved, None)
-            }
-            Typing::MetaType(type_) => {
-                // TODO(validation): this is a cast to the given type, but we
-                // need to verify that the (single) argument is convertible
-                if let Some(typing_of_first_argument) =
-                    positional_argument_typings.and_then(|arguments| arguments.first().cloned())
-                {
-                    match typing_of_first_argument {
-                        Typing::Resolved(type_id) => {
-                            let data_location = self.types.get_type_by_id(type_id).data_location();
-                            let type_id = self
-                                .types
-                                .register_type(type_.with_data_location(data_location));
-                            (Typing::Resolved(type_id), None)
-                        }
-                        Typing::This => {
-                            // special case: "this" can be cast to an address
-                            if let Type::Address { .. } = type_ {
-                                (Typing::Resolved(self.types.address()), None)
-                            } else {
-                                (Typing::Unresolved, None)
-                            }
-                        }
-                        _ => (Typing::Unresolved, None),
-                    }
+        let typing = match &node.arguments {
+            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
+                positional_arguments,
+            ) => self.typing_of_function_call_with_positional_arguments(
+                node,
+                &positional_arguments.arguments,
+            ),
+            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments) => {
+                if let Some(named_arguments) = &named_arguments.arguments {
+                    self.typing_of_function_call_with_named_arguments(
+                        node,
+                        &named_arguments.arguments,
+                    )
                 } else {
-                    (Typing::Unresolved, None)
+                    self.typing_of_function_call_with_named_arguments(node, &[])
                 }
-            }
-            Typing::NewExpression(type_id) => {
-                // TODO(validation): check that the given type is actually constructible
-                let type_ = self.types.get_type_by_id(type_id);
-                let definition_id = match type_ {
-                    Type::Contract { definition_id } => Some(*definition_id),
-                    Type::Struct { definition_id, .. } => Some(*definition_id),
-                    _ => None,
-                };
-                (Typing::Resolved(type_id), definition_id)
-            }
-            Typing::UserMetaType(node_id) => {
-                // Generally this is a cast to the underlying type of the given
-                // definition, except for structs for which we need to construct
-                // the value in memory
-                match self.binder.find_definition_by_id(node_id) {
-                    Some(Definition::Contract(_)) => {
-                        // TODO(validation): the type of the first argument should be an address
-                        let type_id = self.types.register_type(Type::Contract {
-                            definition_id: node_id,
-                        });
-                        (Typing::Resolved(type_id), None)
-                    }
-                    Some(Definition::Interface(_)) => {
-                        // TODO(validation): the type of the first argument should be an address
-                        let type_id = self.types.register_type(Type::Interface {
-                            definition_id: node_id,
-                        });
-                        (Typing::Resolved(type_id), None)
-                    }
-                    Some(Definition::Struct(_)) => {
-                        // struct construction
-                        let type_id = self.types.register_type(Type::Struct {
-                            definition_id: node_id,
-                            location: DataLocation::Memory,
-                        });
-                        (Typing::Resolved(type_id), Some(node_id))
-                    }
-                    _ => (Typing::Unresolved, None),
-                }
-            }
-            Typing::BuiltIn(built_in) => {
-                let typing = if let Some(positional_argument_typings) = positional_argument_typings
-                {
-                    self.built_ins_resolver()
-                        .typing_of_function_call(&built_in, &positional_argument_typings)
-                } else {
-                    // built-ins cannot be called with named arguments
-                    Typing::Unresolved
-                };
-                (typing, None)
             }
         };
         self.binder.set_node_typing(node.node_id, typing);
-
-        // Reference and resolve named arguments
-        if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
-            named_arguments_declaration,
-        ) = &node.arguments
-        {
-            self.resolve_named_arguments(named_arguments_declaration, definition_id);
-        }
     }
 
     fn enter_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) -> bool {
@@ -1300,7 +2156,9 @@ impl Visitor for Pass {
                 input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
                     let identifier = &untyped_tuple_member.name;
                     let scope_id = self.current_scope_id();
-                    let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+                    let resolution = self.filter_overriden_definitions(
+                        self.resolve_symbol_in_scope(scope_id, &identifier.unparse()),
+                    );
                     let reference = Reference::new(Rc::clone(identifier), resolution);
                     self.binder.insert_reference(reference);
                 }
@@ -1311,15 +2169,64 @@ impl Visitor for Pass {
     }
 
     fn leave_emit_statement(&mut self, node: &input_ir::EmitStatement) {
-        if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
-            named_arguments_declaration,
-        ) = &node.arguments
-        {
-            let definition_id = self
-                .binder
-                .find_reference_by_identifier_node_id(node.event.last().unwrap().id())
-                .and_then(|reference| reference.resolution.as_definition_id());
-            self.resolve_named_arguments(named_arguments_declaration, definition_id);
+        let event_reference_id = node.event.last().unwrap().id();
+        let event_resolution = self
+            .binder
+            .find_reference_by_identifier_node_id(event_reference_id)
+            .map(|reference| &reference.resolution);
+        match &node.arguments {
+            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
+                positional_arguments,
+            ) => {
+                // For positional arguments, resolve ambiguity of overloads only
+                if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
+                    let argument_typings =
+                        self.collect_positional_argument_typings(&positional_arguments.arguments);
+                    if let Some(candidate) = self.lookup_event_matching_positional_arguments(
+                        definition_ids,
+                        &argument_typings,
+                    ) {
+                        // update resolved definition
+                        self.binder
+                            .fixup_reference(event_reference_id, Resolution::Definition(candidate));
+                    }
+                }
+            }
+            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments) => {
+                // For named arguments, we need to resolve ambiguity and the named arguments
+                if let Some(named_arguments) = &named_arguments.arguments {
+                    let definition_id = match event_resolution {
+                        Some(Resolution::Ambiguous(definition_ids)) => {
+                            let argument_typings =
+                                self.collect_named_argument_typings(&named_arguments.arguments);
+                            let candidate = self.lookup_event_matching_named_arguments(
+                                definition_ids,
+                                &argument_typings,
+                            );
+                            if let Some(candidate) = candidate {
+                                // update resolved definition
+                                self.binder.fixup_reference(
+                                    event_reference_id,
+                                    Resolution::Definition(candidate),
+                                );
+                            }
+                            candidate
+                        }
+                        Some(Resolution::Definition(definition_id)) => Some(*definition_id),
+                        _ => None,
+                    };
+                    // resolve names in named arguments
+                    self.resolve_named_arguments(&named_arguments.arguments, definition_id);
+                } else if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
+                    if let Some(candidate) =
+                        self.lookup_event_matching_positional_arguments(definition_ids, &[])
+                    {
+                        // update resolved definition
+                        self.binder
+                            .fixup_reference(event_reference_id, Resolution::Definition(candidate));
+                    }
+                }
+            }
         }
     }
 
@@ -1328,15 +2235,85 @@ impl Visitor for Pass {
             named_arguments_declaration,
         ) = &node.arguments
         {
-            let definition_id = node
-                .error
-                .as_ref()
-                .and_then(|error| {
-                    self.binder
-                        .find_reference_by_identifier_node_id(error.last().unwrap().id())
-                })
-                .and_then(|reference| reference.resolution.as_definition_id());
-            self.resolve_named_arguments(named_arguments_declaration, definition_id);
+            if let Some(named_arguments) = &named_arguments_declaration.arguments {
+                let definition_id = node
+                    .error
+                    .as_ref()
+                    .and_then(|error| {
+                        self.binder
+                            .find_reference_by_identifier_node_id(error.last().unwrap().id())
+                    })
+                    .and_then(|reference| reference.resolution.as_definition_id());
+                self.resolve_named_arguments(&named_arguments.arguments, definition_id);
+            }
+        }
+    }
+
+    fn leave_variable_declaration_statement(
+        &mut self,
+        node: &input_ir::VariableDeclarationStatement,
+    ) {
+        if self.language_version >= VERSION_0_5_0 {
+            // in Solidity >= 0.5.0 we need to update the scope so further
+            // resolutions can access this variable definition
+            self.enter_replace_scope_for_node_id(node.node_id);
+            // NOTE: ensure following code does not need to perform resolution
+        }
+
+        if matches!(
+            node.variable_type,
+            input_ir::VariableDeclarationType::VarKeyword
+        ) {
+            // update the type of the variable with the type of the expression (if available)
+            if let Some(value) = &node.value {
+                let typing = self
+                    .typing_of_expression(&value.expression)
+                    .as_type_id()
+                    .map_or(Typing::Unresolved, |type_id| {
+                        Typing::Resolved(self.types.reified_type(type_id))
+                    });
+                self.binder.fixup_node_typing(node.node_id, typing);
+            }
+        }
+    }
+
+    fn leave_tuple_deconstruction_statement(
+        &mut self,
+        node: &input_ir::TupleDeconstructionStatement,
+    ) {
+        if self.language_version >= VERSION_0_5_0 {
+            // in Solidity >= 0.5.0 we need to update the scope so further
+            // resolutions can access these variable definitions
+            self.enter_replace_scope_for_node_id(node.node_id);
+            // NOTE: ensure following code does not need to perform resolution
+        }
+
+        if node.var_keyword.is_none() {
+            return;
+        }
+
+        let typing = self.typing_of_expression(&node.expression);
+        let Typing::Resolved(tuple_type_id) = typing else {
+            // we can't fixup typing if the expression failed to type
+            return;
+        };
+        let types = if let Type::Tuple { types } = self.types.get_type_by_id(tuple_type_id) {
+            types.clone()
+        } else {
+            // the resolved type is not a tuple
+            vec![tuple_type_id]
+        };
+
+        // fixup typing of `var` declarations
+        for (element, element_type_id) in node.elements.iter().zip(types) {
+            let Some(member) = &element.member else {
+                continue;
+            };
+            if let input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) = member {
+                let typing = Typing::Resolved(self.types.reified_type(element_type_id));
+                self.binder
+                    .fixup_node_typing(untyped_tuple_member.node_id, typing);
+            }
         }
     }
 }

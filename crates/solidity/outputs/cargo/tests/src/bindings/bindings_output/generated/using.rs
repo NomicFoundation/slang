@@ -12,6 +12,11 @@ fn address() -> Result<()> {
 }
 
 #[test]
+fn attached_to_this() -> Result<()> {
+    run(T, "attached_to_this")
+}
+
+#[test]
 fn binding_enum() -> Result<()> {
     run(T, "binding_enum")
 }
@@ -27,6 +32,11 @@ fn built_ins_results() -> Result<()> {
 }
 
 #[test]
+fn can_override_built_ins() -> Result<()> {
+    run(T, "can_override_built_ins")
+}
+
+#[test]
 fn casting() -> Result<()> {
     run(T, "casting")
 }
@@ -39,6 +49,11 @@ fn chained_calls() -> Result<()> {
 #[test]
 fn deconstruction() -> Result<()> {
     run(T, "deconstruction")
+}
+
+#[test]
+fn disambiguate_with_interface_function() -> Result<()> {
+    run(T, "disambiguate_with_interface_function")
 }
 
 #[test]
@@ -137,8 +152,23 @@ fn on_super_calls() -> Result<()> {
 }
 
 #[test]
+fn overloaded_functions_attached() -> Result<()> {
+    run(T, "overloaded_functions_attached")
+}
+
+#[test]
+fn overloaded_multi_arity() -> Result<()> {
+    run(T, "overloaded_multi_arity")
+}
+
+#[test]
 fn qualified_type() -> Result<()> {
     run(T, "qualified_type")
+}
+
+#[test]
+fn receiver_implicit_conversion() -> Result<()> {
+    run(T, "receiver_implicit_conversion")
 }
 
 #[test]

@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Definitions (5):
+Definitions (6):
 - Def: #1 ["RefundVault" @ input.sol:1:10] (contract)
 - Def: #2 ["deposit" @ input.sol:2:14] (function, type: function () returns void)
-- Def: #3 ["Test" @ input.sol:4:10] (contract)
-- Def: #4 ["vault" @ input.sol:5:24] (state var, type: RefundVault)
-- Def: #5 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #3 ["deposit2" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #4 ["Test" @ input.sol:5:10] (contract)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function (RefundVault) returns void)
+- Def: #6 ["vault" @ input.sol:6:31] (parameter, type: RefundVault)
 
 ------------------------------------------------------------------------
 
-References (6):
-- Ref: ["RefundVault" @ input.sol:5:5] -> #1
-- Ref: ["vault" @ input.sol:7:9] -> #4
+References (7):
+- Ref: ["RefundVault" @ input.sol:6:19] -> #1
+- Ref: ["vault" @ input.sol:7:9] -> #6
 - Ref: ["deposit" @ input.sol:7:15] -> #2
 - Ref: ["value" @ input.sol:7:23] -> unresolved
-- Ref: ["msg" @ input.sol:7:29] -> built-in
-- Ref: ["value" @ input.sol:7:33] -> built-in
+- Ref: ["vault" @ input.sol:8:9] -> #6
+- Ref: ["deposit2" @ input.sol:8:15] -> unresolved
+- Ref: ["value" @ input.sol:8:24] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -29,30 +31,35 @@ Bindings:
  1 │ contract RefundVault {
    │          ─────┬─────  
    │               ╰─────── name: 1
- 2 │     function deposit() public payable {}
+ 2 │     function deposit() public payable;
    │              ───┬───  
    │                 ╰───── name: 2
+ 3 │     function deposit2() payable; // valid in Solidity < 0.5.0
+   │              ────┬───  
+   │                  ╰───── name: 3
    │ 
- 4 │ contract Test {
+ 5 │ contract Test {
    │          ──┬─  
-   │            ╰─── name: 3
- 5 │     RefundVault public vault;
-   │     ─────┬─────        ──┬──  
-   │          ╰──────────────────── ref: 1
+   │            ╰─── name: 4
+ 6 │     function test(RefundVault vault) internal {
+   │              ──┬─ ─────┬───── ──┬──  
+   │                ╰───────────────────── name: 5
+   │                        │        │    
+   │                        ╰───────────── ref: 1
+   │                                 │    
+   │                                 ╰──── name: 6
+ 7 │         vault.deposit.value(1)();
+   │         ──┬── ───┬─── ──┬──  
+   │           ╰────────────────── ref: 6
+   │                  │      │    
+   │                  ╰─────────── ref: 2
+   │                         │    
+   │                         ╰──── unresolved
+ 8 │         vault.deposit2.value(1)();
+   │         ──┬── ────┬─── ──┬──  
+   │           ╰─────────────────── ref: 6
+   │                   │      │    
+   │                   ╰─────────── unresolved
    │                          │    
-   │                          ╰──── name: 4
- 6 │     function test() internal {
-   │              ──┬─  
-   │                ╰─── name: 5
- 7 │         vault.deposit.value(msg.value)();
-   │         ──┬── ───┬─── ──┬── ─┬─ ──┬──  
-   │           ╰──────────────────────────── ref: 4
-   │                  │      │    │    │    
-   │                  ╰───────────────────── ref: 2
-   │                         │    │    │    
-   │                         ╰────────────── unresolved
-   │                              │    │    
-   │                              ╰───────── built-in
-   │                                   │    
-   │                                   ╰──── built-in
+   │                          ╰──── unresolved
 ───╯

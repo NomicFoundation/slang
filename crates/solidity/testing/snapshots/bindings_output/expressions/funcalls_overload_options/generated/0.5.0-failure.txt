@@ -1,0 +1,90 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
+    ╭─[input.sol:13:17]
+    │
+ 13 │     x.overloaded{ value: 10, gas: 1000 }();
+    │                 ─────────────┬────────────  
+    │                              ╰────────────── Error occurred here.
+────╯
+Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
+    ╭─[input.sol:14:17]
+    │
+ 14 │     x.overloaded{ value: 10, gas: 1000 }(y);
+    │                 ─────────────┬─────────────  
+    │                              ╰─────────────── Error occurred here.
+────╯
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Other {
+    │          ──┬──  
+    │            ╰──── name: 1
+  2 │   function overloaded(int x) public payable returns (uint) {
+    │            ─────┬────     ┬  
+    │                 ╰──────────── name: 2
+    │                           │  
+    │                           ╰── name: 3
+    │ 
+  6 │   function overloaded() public payable returns (uint) {
+    │            ─────┬────  
+    │                 ╰────── name: 4
+    │ 
+ 11 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 12 │   function someFunc(Other x, int y) {
+    │            ────┬─── ──┬── ┬      ┬  
+    │                ╰──────────────────── name: 6
+    │                       │   │      │  
+    │                       ╰───────────── ref: 1
+    │                           │      │  
+    │                           ╰───────── name: 7
+    │                                  │  
+    │                                  ╰── name: 8
+ 13 │     x.overloaded{ value: 10, gas: 1000 }();
+    │     ┬ ─────┬────  
+    │     ╰───────────── unresolved
+    │            │      
+    │            ╰────── unresolved
+ 14 │     x.overloaded{ value: 10, gas: 1000 }(y);
+    │     ┬ ─────┬────  
+    │     ╰───────────── unresolved
+    │            │      
+    │            ╰────── unresolved
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────│ ──▶ contract Other {
+  2 │ │     ╭───▶   function overloaded(int x) public payable returns (uint) {
+    │ │     │                           ──┬──  
+    │ │     │                             ╰──── definiens: 3
+    ┆ ┆     ┆     
+  4 │ │     ├─│ ▶   }
+    │ │     │ │         
+    │ │     ╰─────────── definiens: 2
+  5 │ │       ╭─▶ 
+    ┆ ┆       ┆   
+  8 │ │       ├─▶   }
+    │ │       │         
+    │ │       ╰───────── definiens: 4
+  9 │ ├─│ ──────▶ }
+    │ │ │             
+    │ ╰─────────────── definiens: 1
+ 10 │   ╭───────▶ 
+    ┆   ┆ ┆       
+ 12 │   │ ╭─────▶   function someFunc(Other x, int y) {
+    │   │ │                           ───┬─── ───┬──  
+    │   │ │                              ╰──────────── definiens: 7
+    │   │ │                                      │    
+    │   │ │                                      ╰──── definiens: 8
+    ┆   ┆ ┆       
+ 15 │   │ ├─────▶   }
+    │   │ │             
+    │   │ ╰───────────── definiens: 6
+ 16 │   ├───────▶ }
+    │   │             
+    │   ╰───────────── definiens: 5
+────╯

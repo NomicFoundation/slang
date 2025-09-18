@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
+   ╭─[input.sol:2:27]
+   │
+ 2 │     function x() external view returns (uint);
+   │                           ──────────┬──────────  
+   │                                     ╰──────────── Error occurred here.
+───╯
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:6:26]
+   │
+ 6 │     uint public override x;
+   │                          ┬  
+   │                          ╰── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (4):
+- Def: #1 ["Face" @ input.sol:1:11] (interface)
+- Def: #2 ["Test" @ input.sol:5:10] (contract)
+- Def: #3 ["override" @ input.sol:6:17] (state var, type: uint256)
+- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Face" @ input.sol:5:18] -> #1
+- Ref: ["x" @ input.sol:9:14] -> unresolved
+- Ref: ["selector" @ input.sol:9:16] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["x" @ input.sol:2:14]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface Face {
+   │           ──┬─  
+   │             ╰─── name: 1
+ 2 │     function x() external view returns (uint);
+   │              ┬  
+   │              ╰── ???
+   │ 
+ 5 │ contract Test is Face {
+   │          ──┬─    ──┬─  
+   │            ╰─────────── name: 2
+   │                    │   
+   │                    ╰─── ref: 1
+ 6 │     uint public override x;
+   │                 ────┬───  
+   │                     ╰───── name: 3
+   │ 
+ 8 │     function test() internal {
+   │              ──┬─  
+   │                ╰─── name: 4
+ 9 │         this.x.selector;
+   │              ┬ ────┬───  
+   │              ╰─────────── unresolved
+   │                    │     
+   │                    ╰───── unresolved
+───╯

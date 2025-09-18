@@ -45,17 +45,23 @@ References and definitions:
     │          ╰───── ref: 2
     │             │  
     │             ╰── unresolved
+ 14 │         this.foo;
+    │              ─┬─  
+    │               ╰─── ref: 2
+ 15 │         this.foo();
+    │              ─┬─  
+    │               ╰─── ref: 2
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]
     │
-  1 │   ╭─────▶ interface IFoo {
-  2 │   │           function foo() external returns (uint, uint);
-    │   │       ─────────────────────────┬────────────────────────  
-    │   │                                ╰────────────────────────── definiens: 2
-  3 │ │ ├─────▶ }
-    │ │ │           
-    │ │ ╰─────────── definiens: 1
+  1 │     ╭───▶ interface IFoo {
+  2 │     │         function foo() external returns (uint, uint);
+    │     │     ─────────────────────────┬────────────────────────  
+    │     │                              ╰────────────────────────── definiens: 2
+  3 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 1
   4 │ ╭───────▶ 
     ┆ ┆     ┆   
   6 │ │     ╭─▶     struct Bar {
@@ -68,13 +74,13 @@ Definiens:
   9 │ │     ├─▶     }
     │ │     │           
     │ │     ╰─────────── definiens: 4
-    ┆ ┆   ┆     
- 11 │ │   ╭───▶ 
-    ┆ ┆   ┆     
- 14 │ │   ├───▶     }
-    │ │   │             
-    │ │   ╰───────────── definiens: 7
- 15 │ ├───────▶ }
+    ┆ ┆ ┆       
+ 11 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+ 16 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 7
+ 17 │ ├───────▶ }
     │ │             
     │ ╰───────────── definiens: 3
 ────╯

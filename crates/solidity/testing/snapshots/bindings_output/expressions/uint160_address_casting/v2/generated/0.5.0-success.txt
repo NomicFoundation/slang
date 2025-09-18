@@ -1,0 +1,53 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Utils" @ input.sol:1:9] (library)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function (address payable) returns void)
+- Def: #3 ["_to" @ input.sol:2:34] (parameter, type: address payable)
+- Def: #4 ["Test" @ input.sol:5:10] (contract)
+- Def: #5 ["test" @ input.sol:8:14] (function, type: function (address) returns void)
+- Def: #6 ["_to" @ input.sol:8:27] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Utils" @ input.sol:6:11] -> #1
+- Ref: ["_to" @ input.sol:9:25] -> #6
+- Ref: ["foo" @ input.sol:9:31] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Utils {
+   │         ──┬──  
+   │           ╰──── name: 1
+ 2 │     function foo(address payable _to) internal {}
+   │              ─┬─                 ─┬─  
+   │               ╰─────────────────────── name: 2
+   │                                   │   
+   │                                   ╰─── name: 3
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 6 │     using Utils for address payable;
+   │           ──┬──  
+   │             ╰──── ref: 1
+   │ 
+ 8 │     function test(address _to) internal {
+   │              ──┬─         ─┬─  
+   │                ╰─────────────── name: 5
+   │                            │   
+   │                            ╰─── name: 6
+ 9 │         address(uint160(_to)).foo();  // should bind in >= 0.5.0 and < 0.8.0
+   │                         ─┬─   ─┬─  
+   │                          ╰───────── ref: 6
+   │                                │   
+   │                                ╰─── ref: 2
+───╯

@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CloseParen or Comma.
+   ╭─[input.sol:2:26]
+   │
+ 2 │     function foo(address payable _to) internal {}
+   │                          ─────┬─────  
+   │                               ╰─────── Error occurred here.
+───╯
+Error: Expected OpenBracket or Semicolon.
+   ╭─[input.sol:6:29]
+   │
+ 6 │     using Utils for address payable;
+   │                             ───┬───  
+   │                                ╰───── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["Utils" @ input.sol:1:9] (library)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function (address) returns void)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["test" @ input.sol:8:14] (function, type: function (address) returns void)
+- Def: #5 ["_to" @ input.sol:8:27] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Utils" @ input.sol:6:11] -> #1
+- Ref: ["_to" @ input.sol:9:25] -> #5
+- Ref: ["foo" @ input.sol:9:31] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Utils {
+   │         ──┬──  
+   │           ╰──── name: 1
+ 2 │     function foo(address payable _to) internal {}
+   │              ─┬─  
+   │               ╰─── name: 2
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 3
+ 6 │     using Utils for address payable;
+   │           ──┬──  
+   │             ╰──── ref: 1
+   │ 
+ 8 │     function test(address _to) internal {
+   │              ──┬─         ─┬─  
+   │                ╰─────────────── name: 4
+   │                            │   
+   │                            ╰─── name: 5
+ 9 │         address(uint160(_to)).foo();  // should bind in >= 0.5.0 and < 0.8.0
+   │                         ─┬─   ─┬─  
+   │                          ╰───────── ref: 5
+   │                                │   
+   │                                ╰─── ref: 2
+───╯

@@ -1,0 +1,6 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["token" @ input.sol:9:9] -> #1 resolved to a different definition
+Ref: ["token" @ input.sol:9:21] -> #1 resolved to a different definition
+
+Definitions and/or references from binding graph and new binder DIFFER
