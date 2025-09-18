@@ -37,9 +37,9 @@
 //! ```
 
 mod extensions;
-mod generated;
+mod slang;
 
-pub use generated::*;
+pub use slang::*;
 
 #[cfg(feature = "__private_backend_api")]
 pub mod backend;
