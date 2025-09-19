@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Foo" @ input.sol:2:12] (struct)
+- Def: #3 ["value" @ input.sol:3:15] (struct member, type: bytes (inherited))
+- Def: #4 ["test" @ input.sol:6:14] (function, type: function (bytes32) returns Foo storage)
+- Def: #5 ["slot" @ input.sol:6:27] (parameter, type: bytes32)
+- Def: #6 ["r" @ input.sol:6:63] (parameter, type: Foo storage)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Foo" @ input.sol:6:51] -> #2
+- Ref: ["r" @ input.sol:8:13] -> #6
+- Ref: ["slot" @ input.sol:8:15] -> unresolved
+- Ref: ["slot" @ input.sol:8:23] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     struct Foo {
+   │            ─┬─  
+   │             ╰─── name: 2
+ 3 │         bytes value;
+   │               ──┬──  
+   │                 ╰──── name: 3
+   │ 
+ 6 │     function test(bytes32 slot) internal returns (Foo storage r) {
+   │              ──┬─         ──┬─                    ─┬─         ┬  
+   │                ╰───────────────────────────────────────────────── name: 4
+   │                             │                      │          │  
+   │                             ╰──────────────────────────────────── name: 5
+   │                                                    │          │  
+   │                                                    ╰───────────── ref: 2
+   │                                                               │  
+   │                                                               ╰── name: 6
+   │ 
+ 8 │             r.slot := slot
+   │             ┬ ──┬─    ──┬─  
+   │             ╰─────────────── ref: 6
+   │                 │       │   
+   │                 ╰─────────── unresolved
+   │                         │   
+   │                         ╰─── ref: 5
+───╯

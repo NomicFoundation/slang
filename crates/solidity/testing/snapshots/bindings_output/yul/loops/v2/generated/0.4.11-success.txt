@@ -1,0 +1,98 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["AssemblyLoops" @ input.sol:1:10] (contract)
+- Def: #2 ["yul_for_loop" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #3 ["z" @ input.sol:2:53] (parameter, type: uint256)
+- Def: #4 ["i" @ input.sol:4:23] (yul variable)
+- Def: #5 ["yul_while_loop" @ input.sol:8:14] (function, type: function () returns uint256)
+- Def: #6 ["z" @ input.sol:8:55] (parameter, type: uint256)
+- Def: #7 ["i" @ input.sol:10:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (16):
+- Ref: ["lt" @ input.sol:4:32] -> built-in
+- Ref: ["i" @ input.sol:4:35] -> #4
+- Ref: ["i" @ input.sol:4:44] -> #4
+- Ref: ["add" @ input.sol:4:49] -> built-in
+- Ref: ["i" @ input.sol:4:53] -> #4
+- Ref: ["z" @ input.sol:4:63] -> #3
+- Ref: ["add" @ input.sol:4:68] -> built-in
+- Ref: ["z" @ input.sol:4:72] -> #3
+- Ref: ["lt" @ input.sol:11:20] -> built-in
+- Ref: ["i" @ input.sol:11:23] -> #7
+- Ref: ["i" @ input.sol:12:17] -> #7
+- Ref: ["add" @ input.sol:12:22] -> built-in
+- Ref: ["i" @ input.sol:12:26] -> #7
+- Ref: ["z" @ input.sol:13:17] -> #6
+- Ref: ["add" @ input.sol:13:22] -> built-in
+- Ref: ["z" @ input.sol:13:26] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract AssemblyLoops {
+    │          ──────┬──────  
+    │                ╰──────── name: 1
+  2 │     function yul_for_loop() public returns (uint256 z) {
+    │              ──────┬─────                           ┬  
+    │                    ╰─────────────────────────────────── name: 2
+    │                                                     │  
+    │                                                     ╰── name: 3
+    │ 
+  4 │             for { let i := 0 } lt(i, 10) { i := add(i, 1) } { z := add(z, 1) }
+    │                       ┬        ─┬ ┬        ┬    ─┬─ ┬         ┬    ─┬─ ┬  
+    │                       ╰─────────────────────────────────────────────────── name: 4
+    │                                 │ │        │     │  │         │     │  │  
+    │                                 ╰───────────────────────────────────────── built-in
+    │                                   │        │     │  │         │     │  │  
+    │                                   ╰─────────────────────────────────────── ref: 4
+    │                                            │     │  │         │     │  │  
+    │                                            ╰────────────────────────────── ref: 4
+    │                                                  │  │         │     │  │  
+    │                                                  ╰──────────────────────── built-in
+    │                                                     │         │     │  │  
+    │                                                     ╰───────────────────── ref: 4
+    │                                                               │     │  │  
+    │                                                               ╰─────────── ref: 3
+    │                                                                     │  │  
+    │                                                                     ╰───── built-in
+    │                                                                        │  
+    │                                                                        ╰── ref: 3
+    │ 
+  8 │     function yul_while_loop() public returns (uint256 z) {
+    │              ───────┬──────                           ┬  
+    │                     ╰──────────────────────────────────── name: 5
+    │                                                       │  
+    │                                                       ╰── name: 6
+    │ 
+ 10 │             let i := 0
+    │                 ┬  
+    │                 ╰── name: 7
+ 11 │             for {} lt(i, 5) {} {
+    │                    ─┬ ┬  
+    │                     ╰──── built-in
+    │                       │  
+    │                       ╰── ref: 7
+ 12 │                 i := add(i, 1)
+    │                 ┬    ─┬─ ┬  
+    │                 ╰─────────── ref: 7
+    │                       │  │  
+    │                       ╰───── built-in
+    │                          │  
+    │                          ╰── ref: 7
+ 13 │                 z := add(z, 1)
+    │                 ┬    ─┬─ ┬  
+    │                 ╰─────────── ref: 6
+    │                       │  │  
+    │                       ╰───── built-in
+    │                          │  
+    │                          ╰── ref: 6
+────╯

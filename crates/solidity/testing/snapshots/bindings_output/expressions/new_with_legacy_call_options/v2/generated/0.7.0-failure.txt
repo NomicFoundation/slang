@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Lock" @ input.sol:1:10] (contract)
+- Def: #2 ["Test" @ input.sol:3:10] (contract)
+- Def: #3 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #4 ["l" @ input.sol:5:14] (variable, type: Lock)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Lock" @ input.sol:5:9] -> #1
+- Ref: ["Lock" @ input.sol:5:23] -> #1
+- Ref: ["value" @ input.sol:5:29] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Lock {}
+   │          ──┬─  
+   │            ╰─── name: 1
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 2
+ 4 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 3
+ 5 │         Lock l = (new Lock).value(1)();
+   │         ──┬─ ┬        ──┬─  ──┬──  
+   │           ╰──────────────────────── ref: 1
+   │              │          │     │    
+   │              ╰───────────────────── name: 4
+   │                         │     │    
+   │                         ╰────────── ref: 1
+   │                               │    
+   │                               ╰──── unresolved
+───╯

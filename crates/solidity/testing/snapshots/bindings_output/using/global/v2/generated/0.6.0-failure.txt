@@ -1,0 +1,75 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+   ╭─[counter.sol:5:1]
+   │
+ 5 │ ╭─▶ function increment(Counter memory _counter) public {}
+   ┆ ┆   
+ 8 │ ├─▶ 
+   │ │      
+   │ ╰────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (6):
+- Def: #1 ["Counter" @ counter.sol:1:8] (struct)
+- Def: #2 ["value" @ counter.sol:2:10] (struct member, type: uint256)
+- Def: #3 ["Counter" @ main.sol:1:9] (imported symbol)
+- Def: #4 ["Test" @ main.sol:3:10] (contract)
+- Def: #5 ["test" @ main.sol:4:14] (function, type: function (Counter memory) returns void)
+- Def: #6 ["c" @ main.sol:4:34] (parameter, type: Counter memory)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Counter" @ main.sol:1:9] -> #1
+- Ref: ["Counter" @ main.sol:4:19] -> #1
+- Ref: ["c" @ main.sol:5:9] -> #6
+- Ref: ["increment" @ main.sol:5:11] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[counter.sol:1:1]
+   │
+ 1 │ struct Counter {
+   │        ───┬───  
+   │           ╰───── name: 1
+ 2 │     uint value;
+   │          ──┬──  
+   │            ╰──── name: 2
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {Counter} from "counter.sol";
+   │         ───┬───  
+   │            ╰───── name: 3
+   │            │     
+   │            ╰───── ref: 1
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 4 │     function test(Counter memory c) public {
+   │              ──┬─ ───┬───        ┬  
+   │                ╰──────────────────── name: 5
+   │                      │           │  
+   │                      ╰────────────── ref: 1
+   │                                  │  
+   │                                  ╰── name: 6
+ 5 │         c.increment();
+   │         ┬ ────┬────  
+   │         ╰──────────── ref: 6
+   │               │      
+   │               ╰────── unresolved
+───╯

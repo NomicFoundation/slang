@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+    ╭─[input.sol:16:1]
+    │
+ 16 │ ╭─▶ function top_level() returns (int) {
+    ┆ ┆   
+ 18 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["Sample" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns int256)
+- Def: #3 ["from_sample" @ input.sol:5:14] (function, type: function () returns int256)
+- Def: #4 ["MyLib" @ input.sol:10:9] (library)
+- Def: #5 ["from_lib" @ input.sol:11:14] (function, type: function () returns int256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["from_sample" @ input.sol:3:16] -> #3
+- Ref: ["top_level" @ input.sol:3:32] -> unresolved
+- Ref: ["MyLib" @ input.sol:3:46] -> #4
+- Ref: ["from_lib" @ input.sol:3:52] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Sample {
+    │          ───┬──  
+    │             ╰──── name: 1
+  2 │     function test() returns (int) {
+    │              ──┬─  
+    │                ╰─── name: 2
+  3 │         return from_sample() + top_level() + MyLib.from_lib();
+    │                ─────┬─────     ────┬────     ──┬── ────┬───  
+    │                     ╰──────────────────────────────────────── ref: 3
+    │                                    │           │       │     
+    │                                    ╰───────────────────────── unresolved
+    │                                                │       │     
+    │                                                ╰───────────── ref: 4
+    │                                                        │     
+    │                                                        ╰───── ref: 5
+    │ 
+  5 │     function from_sample() returns (int) {
+    │              ─────┬─────  
+    │                   ╰─────── name: 3
+    │ 
+ 10 │ library MyLib {
+    │         ──┬──  
+    │           ╰──── name: 4
+ 11 │     function from_lib() returns (int) {
+    │              ────┬───  
+    │                  ╰───── name: 5
+────╯

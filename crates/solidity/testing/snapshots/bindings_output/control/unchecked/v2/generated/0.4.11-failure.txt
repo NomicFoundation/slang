@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Identifier or MemoryKeyword or StorageKeyword.
+   ╭─[input.sol:4:19]
+   │
+ 4 │ ╭─▶         unchecked { return c - b; }
+ 5 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["sub" @ input.sol:2:14] (function, type: function (uint256, uint256) returns uint256)
+- Def: #3 ["a" @ input.sol:2:23] (parameter, type: uint256)
+- Def: #4 ["b" @ input.sol:2:31] (parameter, type: uint256)
+- Def: #5 ["c" @ input.sol:3:14] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["a" @ input.sol:3:18] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["unchecked" @ input.sol:4:9]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function sub(uint a, uint b) public returns (uint) {
+   │              ─┬─      ┬       ┬  
+   │               ╰────────────────── name: 2
+   │                       │       │  
+   │                       ╰────────── name: 3
+   │                               │  
+   │                               ╰── name: 4
+ 3 │         uint c = a;
+   │              ┬   ┬  
+   │              ╰────── name: 5
+   │                  │  
+   │                  ╰── ref: 3
+ 4 │         unchecked { return c - b; }
+   │         ────┬────  
+   │             ╰────── ???
+───╯

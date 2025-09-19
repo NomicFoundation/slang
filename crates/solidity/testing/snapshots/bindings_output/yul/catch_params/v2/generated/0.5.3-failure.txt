@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    ╭─[input.sol:3:9]
+    │
+  3 │ ╭─▶         try this.test() {
+    ┆ ┆   
+ 13 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (2):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+───╯

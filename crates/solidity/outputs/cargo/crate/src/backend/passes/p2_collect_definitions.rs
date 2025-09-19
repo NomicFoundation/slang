@@ -16,6 +16,12 @@ pub struct Output {
     pub binder: Binder,
 }
 
+/// In this pass all definitions are collected with their naming identifiers.
+/// Also lexical (and other kinds of) scopes are identified and linked together,
+/// and definitions are registered into them for later lookup. The pass
+/// instantiates a `Binder` object which will store all this information as well
+/// as references and typing information for the nodes, to be resolved in later
+/// passes.
 pub fn run(input: Input) -> Output {
     let files = input.files;
     let compilation_unit = input.compilation_unit;
@@ -68,6 +74,11 @@ impl Pass {
         scope_id
     }
 
+    fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.push(scope_id);
+    }
+
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
         let Some(current_scope_id) = self.scope_stack.pop() else {
             unreachable!("attempt to pop an empty scope stack");
@@ -95,17 +106,6 @@ impl Pass {
             unreachable!("current scope is not a file scope");
         };
         file_scope
-    }
-
-    fn current_non_yul_scope_id(&self) -> ScopeId {
-        // look for the first non-yul scope in the stack
-        for scope_id in self.scope_stack.iter().rev() {
-            match self.binder.get_scope_by_id(*scope_id) {
-                Scope::YulBlock(_) | Scope::YulFunction(_) => continue,
-                _ => return *scope_id,
-            }
-        }
-        unreachable!("cannot find a non Yul scope in the current scope stack");
     }
 
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
@@ -140,6 +140,18 @@ impl Pass {
                 self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }
+    }
+
+    fn register_constructor_parameters(&mut self, constructor_parameters_scope_id: ScopeId) {
+        let current_scope_node_id = self.current_scope().node_id();
+        let Definition::Contract(contract_definition) =
+            self.binder.get_definition_mut(current_scope_node_id)
+        else {
+            unreachable!("the current scope is not a contract");
+        };
+        // TODO(validation): there should be a single constructor, so the
+        // current value should be None
+        contract_definition.constructor_parameters_scope_id = Some(constructor_parameters_scope_id);
     }
 }
 
@@ -254,6 +266,19 @@ impl Visitor for Pass {
         if let input_ir::FunctionName::Identifier(name) = &node.name {
             let definition = Definition::new_function(node.node_id, name, parameters_scope_id);
             self.insert_definition_in_current_scope(definition);
+
+            // For Solidity < 0.5.0, check if we need to register the
+            // constructor parameters scope
+            if self.language_version < VERSION_0_5_0 {
+                let current_scope_node_id = self.current_scope().node_id();
+                let current_definition = self.binder.find_definition_by_id(current_scope_node_id);
+                if let Some(Definition::Contract(contract_definition)) = current_definition {
+                    let contract_name = contract_definition.identifier.unparse();
+                    if contract_name == name.unparse() {
+                        self.register_constructor_parameters(parameters_scope_id);
+                    }
+                }
+            }
         }
 
         let function_scope =
@@ -293,9 +318,9 @@ impl Visitor for Pass {
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
         self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
 
-        // TODO: register the constructor to resolve named parameters when
-        // constructing this contract. Also, for Solidity < 0.5.0, register the
-        // constructor which is the function with the same name as the contract.
+        // Register the constructor to resolve named parameters when
+        // constructing this contract
+        self.register_constructor_parameters(parameters_scope_id);
 
         let function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
@@ -410,7 +435,7 @@ impl Visitor for Pass {
                 .insert_definition_in_scope(definition, struct_scope_id);
         }
 
-        false
+        true
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
@@ -454,7 +479,13 @@ impl Visitor for Pass {
         let is_constant = node.attributes.iter().any(|attribute| {
             matches!(attribute, input_ir::StateVariableAttribute::ConstantKeyword)
         });
-        let definition = if is_constant {
+        let is_public = node
+            .attributes
+            .iter()
+            .any(|attribute| matches!(attribute, input_ir::StateVariableAttribute::PublicKeyword));
+        // Public state variables define a getter, so we don't register them as
+        // constants here
+        let definition = if is_constant && !is_public {
             Definition::new_constant(node.node_id, &node.name)
         } else {
             Definition::new_state_variable(node.node_id, &node.name)
@@ -492,7 +523,7 @@ impl Visitor for Pass {
         let definition = Definition::new_variable(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        false
+        true
     }
 
     fn enter_tuple_deconstruction_statement(
@@ -501,18 +532,29 @@ impl Visitor for Pass {
     ) -> bool {
         // TODO(validation): for Solidity >= 0.5.0 this definition should only
         // be available for statements after this one
+        let is_untyped_declaration = node.var_keyword.is_some();
         for element in &node.elements {
             let Some(tuple_member) = &element.member else {
                 continue;
             };
-            if let input_ir::TupleMember::TypedTupleMember(type_tuple_member) = tuple_member {
-                let definition =
-                    Definition::new_variable(type_tuple_member.node_id, &type_tuple_member.name);
-                self.insert_definition_in_current_scope(definition);
-            }
+            let definition = match tuple_member {
+                input_ir::TupleMember::TypedTupleMember(typed_tuple_member) => {
+                    Definition::new_variable(typed_tuple_member.node_id, &typed_tuple_member.name)
+                }
+                input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
+                    if !is_untyped_declaration {
+                        continue;
+                    }
+                    Definition::new_variable(
+                        untyped_tuple_member.node_id,
+                        &untyped_tuple_member.name,
+                    )
+                }
+            };
+            self.insert_definition_in_current_scope(definition);
         }
 
-        false
+        true
     }
 
     fn enter_block(&mut self, node: &input_ir::Block) -> bool {
@@ -577,7 +619,7 @@ impl Visitor for Pass {
             self.binder.insert_definition_no_scope(definition);
         }
 
-        false
+        true
     }
 
     fn enter_function_type(&mut self, node: &input_ir::FunctionType) -> bool {
@@ -614,8 +656,7 @@ impl Visitor for Pass {
         let definition = Definition::new_yul_function(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        let enclosing_scope_id = self.current_non_yul_scope_id();
-        let scope = Scope::new_yul_function(node.node_id, enclosing_scope_id);
+        let scope = Scope::new_yul_function(node.node_id, self.current_scope_id());
         let scope_id = self.enter_scope(scope);
 
         for parameter in &node.parameters.parameters {
@@ -657,6 +698,22 @@ impl Visitor for Pass {
         // where we insert label and function definitions, since those are
         // hoisted in the block.
 
+        false
+    }
+
+    fn enter_yul_for_statement(&mut self, node: &input_ir::YulForStatement) -> bool {
+        // Visit the initialization block first
+        input_ir::visitor::accept_yul_block(&node.initialization, self);
+
+        // Visit the rest of the children, but in the scope of the
+        // initialization block such that iterator and body blocks link to it
+        self.enter_scope_for_node_id(node.initialization.node_id);
+        input_ir::visitor::accept_yul_expression(&node.condition, self);
+        input_ir::visitor::accept_yul_block(&node.iterator, self);
+        input_ir::visitor::accept_yul_block(&node.body, self);
+        self.leave_scope_for_node_id(node.initialization.node_id);
+
+        // We already visited our children
         false
     }
 }

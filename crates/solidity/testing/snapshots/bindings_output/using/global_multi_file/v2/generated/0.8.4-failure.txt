@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword.
+    ╭─[main.sol:7:1]
+    │
+  7 │ ╭─▶ using Lib for uint;
+    ┆ ┆   
+ 20 │ ├─▶ 
+    │ │      
+    │ ╰────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (6):
+- Def: #1 ["foo" @ main.sol:1:9] (imported symbol)
+- Def: #2 ["Lib" @ main.sol:3:9] (library)
+- Def: #3 ["nop" @ main.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #4 ["x" @ main.sol:4:23] (parameter, type: uint256)
+- Def: #5 ["foo" @ other.sol:1:10] (function, type: function (uint256) returns uint256)
+- Def: #6 ["a" @ other.sol:1:19] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["foo" @ main.sol:1:9] -> #5
+- Ref: ["a" @ other.sol:2:12] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {foo} from "other.sol";
+   │         ─┬─  
+   │          ╰─── name: 1
+   │          │   
+   │          ╰─── ref: 5
+   │ 
+ 3 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 2
+ 4 │     function nop(uint x) public {}
+   │              ─┬─      ┬  
+   │               ╰────────── name: 3
+   │                       │  
+   │                       ╰── name: 4
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ function foo(uint a) pure returns (uint) {
+   │          ─┬─      ┬  
+   │           ╰────────── name: 5
+   │                   │  
+   │                   ╰── name: 6
+ 2 │     return a;
+   │            ┬  
+   │            ╰── ref: 6
+───╯

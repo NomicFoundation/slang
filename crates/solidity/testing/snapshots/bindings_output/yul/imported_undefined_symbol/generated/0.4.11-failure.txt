@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
+    │          ──┬─  
+    │            ╰─── name: 1
+    │            │   
+    │            ╰─── unresolved
+    │ 
+  3 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── name: 2
+  4 │     function useSlotInAssembly() public {
+    │              ────────┬────────  
+    │                      ╰────────── name: 3
+  5 │         uint value;
+    │              ──┬──  
+    │                ╰──── name: 4
+    │ 
+  7 │             value := sload(slot)
+    │             ──┬──    ──┬── ──┬─  
+    │               ╰────────────────── ref: 4
+    │                        │     │   
+    │                        ╰───────── ref: built-in
+    │                              │   
+    │                              ╰─── ref: 1
+    │ 
+ 11 │     function useSlotInSolidity() public {
+    │              ────────┬────────  
+    │                      ╰────────── name: 5
+ 12 │         uint value = slot;
+    │              ──┬──   ──┬─  
+    │                ╰─────────── name: 6
+    │                        │   
+    │                        ╰─── ref: 1
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ │       import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
+    │ │               ──┬──  
+    │ │                 ╰──── definiens: 1
+  2 │ ╭─────▶ 
+    ┆ ┆ ┆     
+  4 │ │ ╭───▶     function useSlotInAssembly() public {
+  5 │ │ │             uint value;
+    │ │ │     ──────────┬─────────  
+    │ │ │               ╰─────────── definiens: 4
+    ┆ ┆ ┆     
+  9 │ │ ├─│ ▶     }
+    │ │ │ │           
+    │ │ ╰───────────── definiens: 3
+ 10 │ │   ╭─▶ 
+    ┆ ┆   ┆   
+ 12 │ │   │           uint value = slot;
+    │ │   │   ─────────────┬─────────────  
+    │ │   │                ╰─────────────── definiens: 6
+ 13 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 5
+ 14 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 2
+────╯

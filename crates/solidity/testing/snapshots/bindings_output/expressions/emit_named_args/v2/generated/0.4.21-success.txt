@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Log" @ input.sol:2:11] (event)
+- Def: #3 ["name" @ input.sol:3:16] (parameter, type: string memory)
+- Def: #4 ["level" @ input.sol:4:14] (parameter, type: uint256)
+- Def: #5 ["test" @ input.sol:7:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Log" @ input.sol:8:14] -> #2
+- Ref: ["level" @ input.sol:8:19] -> #4
+- Ref: ["name" @ input.sol:8:29] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     event Log(
+   │           ─┬─  
+   │            ╰─── name: 2
+ 3 │         string name,
+   │                ──┬─  
+   │                  ╰─── name: 3
+ 4 │         uint level
+   │              ──┬──  
+   │                ╰──── name: 4
+   │ 
+ 7 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 5
+ 8 │         emit Log({level: 1, name: "Testing"});
+   │              ─┬─  ──┬──     ──┬─  
+   │               ╰─────────────────── ref: 2
+   │                     │         │   
+   │                     ╰───────────── ref: 4
+   │                               │   
+   │                               ╰─── ref: 3
+───╯

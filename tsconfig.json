@@ -5,7 +5,6 @@
   ],
 
   "references": [
-    { "path": "./crates/codegen/runtime/npm/package/tsconfig.json" },
     { "path": "./crates/solidity/outputs/npm/package/tsconfig.json" },
     { "path": "./crates/solidity/outputs/npm/tests/tsconfig.json" },
     { "path": "./crates/solidity/testing/perf/npm/tsconfig.json" },

@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #3 ["tl" @ input.sol:3:18] (variable, type: TopLevel)
+- Def: #4 ["TopLevel" @ input.sol:8:6] (udvt, type: meta-type)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["TopLevel" @ input.sol:3:9] -> #4
+- Ref: ["TopLevel" @ input.sol:3:23] -> #4
+- Ref: ["wrap" @ input.sol:3:32] -> built-in
+- Ref: ["TopLevel" @ input.sol:4:16] -> #4
+- Ref: ["unwrap" @ input.sol:4:25] -> built-in
+- Ref: ["tl" @ input.sol:4:32] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public pure returns (uint) {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         TopLevel tl = TopLevel.wrap(20);
+   │         ────┬─── ─┬   ────┬─── ──┬─  
+   │             ╰──────────────────────── ref: 4
+   │                   │       │      │   
+   │                   ╰────────────────── name: 3
+   │                           │      │   
+   │                           ╰────────── ref: 4
+   │                                  │   
+   │                                  ╰─── built-in
+ 4 │         return TopLevel.unwrap(tl);
+   │                ────┬─── ───┬── ─┬  
+   │                    ╰─────────────── ref: 4
+   │                            │    │  
+   │                            ╰─────── built-in
+   │                                 │  
+   │                                 ╰── ref: 3
+   │ 
+ 8 │ type TopLevel is uint256;
+   │      ────┬───  
+   │          ╰───── name: 4
+───╯

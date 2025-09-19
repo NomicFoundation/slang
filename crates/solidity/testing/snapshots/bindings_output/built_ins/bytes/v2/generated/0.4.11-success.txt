@@ -1,0 +1,80 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["testBytes" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["b1" @ input.sol:3:22] (variable, type: bytes memory)
+- Def: #4 ["b2" @ input.sol:4:22] (variable, type: bytes memory)
+- Def: #5 ["b3" @ input.sol:5:22] (variable, type: bytes memory)
+- Def: #6 ["testString" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #7 ["s1" @ input.sol:10:23] (variable, type: string memory)
+- Def: #8 ["s2" @ input.sol:11:23] (variable, type: string memory)
+- Def: #9 ["s3" @ input.sol:12:23] (variable, type: string memory)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["concat" @ input.sol:5:33] -> built-in
+- Ref: ["b1" @ input.sol:5:40] -> #3
+- Ref: ["b2" @ input.sol:5:44] -> #4
+- Ref: ["b1" @ input.sol:6:9] -> #3
+- Ref: ["length" @ input.sol:6:12] -> built-in
+- Ref: ["concat" @ input.sol:12:35] -> built-in
+- Ref: ["s1" @ input.sol:12:42] -> #7
+- Ref: ["s2" @ input.sol:12:46] -> #8
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function testBytes() public {
+    │              ────┬────  
+    │                  ╰────── name: 2
+  3 │         bytes memory b1;
+    │                      ─┬  
+    │                       ╰── name: 3
+  4 │         bytes memory b2;
+    │                      ─┬  
+    │                       ╰── name: 4
+  5 │         bytes memory b3 = bytes.concat(b1, b2);
+    │                      ─┬         ───┬── ─┬  ─┬  
+    │                       ╰──────────────────────── name: 5
+    │                                    │    │   │  
+    │                                    ╰─────────── built-in
+    │                                         │   │  
+    │                                         ╰────── ref: 3
+    │                                             │  
+    │                                             ╰── ref: 4
+  6 │         b1.length;
+    │         ─┬ ───┬──  
+    │          ╰───────── ref: 3
+    │               │    
+    │               ╰──── built-in
+    │ 
+  9 │     function testString() public {
+    │              ─────┬────  
+    │                   ╰────── name: 6
+ 10 │         string memory s1;
+    │                       ─┬  
+    │                        ╰── name: 7
+ 11 │         string memory s2;
+    │                       ─┬  
+    │                        ╰── name: 8
+ 12 │         string memory s3 = string.concat(s1, s2);
+    │                       ─┬          ───┬── ─┬  ─┬  
+    │                        ╰───────────────────────── name: 9
+    │                                      │    │   │  
+    │                                      ╰─────────── built-in
+    │                                           │   │  
+    │                                           ╰────── ref: 7
+    │                                               │  
+    │                                               ╰── ref: 8
+────╯

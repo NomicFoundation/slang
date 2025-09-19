@@ -21,6 +21,7 @@ export class SolcSubject implements Subject {
             },
           },
           settings: {
+            remappings: project.compilation.compilerSettings.remappings,
             outputSelection: {
               "*": {
                 "": ["ast"],

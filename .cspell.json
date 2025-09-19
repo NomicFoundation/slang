@@ -2,10 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/v5.19.2/cspell.schema.json",
   "language": "en-US",
   "files": ["**/*.md"],
-  "ignorePaths": ["submodules/**", "**/generated/**", "CHANGELOG.md"],
+  "ignorePaths": ["submodules/**", "**/generated/**", "**/*.generated.*", "CHANGELOG.md"],
   "ignoreWords": [
     // Alphabetically sorted list of "allowed" words to ignore:
     "abicoder",
+    "callgrind",
     "codecopy",
     "codegen",
     "codesize",
@@ -29,10 +30,12 @@
     "nonterminal",
     "nonterminals",
     "rustup",
+    "sourcify",
     "struct",
     "structs",
     "tera",
     "ufixed",
+    "unshift",
     "unparse",
     "usize"
   ]

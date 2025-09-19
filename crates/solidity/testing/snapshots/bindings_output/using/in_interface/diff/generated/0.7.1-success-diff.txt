@@ -1,0 +1,6 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["Utils" @ input.sol:5:11] -> #3 resolved but did not in stack graph output
+Ref: ["Bar" @ input.sol:5:21] -> #1 resolved but did not in stack graph output
+
+Definitions and/or references from binding graph and new binder DIFFER

@@ -1,0 +1,75 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function nop(uint x) internal {}
+    │              ─┬─      ┬  
+    │               ╰────────── name: 2
+    │                       │  
+    │                       ╰── name: 3
+    │ 
+  5 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 4
+  6 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  9 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 5
+    │                    │   
+    │                    ╰─── ref: 4
+ 10 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+ 11 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+ 13 │     function test(uint x) internal {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 6
+    │                        │  
+    │                        ╰── name: 7
+ 14 │         x.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 7
+    │            │   
+    │            ╰─── ref: 2
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭───▶ library Lib {
+  2 │     │         function nop(uint x) internal {}
+    │     │     ──────────────────┬─┬────────────────  
+    │     │                       ╰──────────────────── definiens: 2
+    │     │                         │                  
+    │     │                         ╰────────────────── definiens: 3
+  3 │     ├─│ ▶ }
+    │     │ │       
+    │     ╰───────── definiens: 1
+  4 │       ╭─▶ 
+    ┆       ┆   
+  7 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 4
+  8 │ ╭───────▶ 
+    ┆ ┆         
+ 12 │ │ ╭─────▶ 
+ 13 │ │ │           function test(uint x) internal {
+    │ │ │                         ───┬──  
+    │ │ │                            ╰──── definiens: 7
+    ┆ ┆ ┆       
+ 15 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 6
+ 16 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
+────╯

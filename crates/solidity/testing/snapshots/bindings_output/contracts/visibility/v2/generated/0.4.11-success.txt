@@ -1,0 +1,95 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (11):
+- Def: #1 ["First" @ input.sol:1:10] (contract)
+- Def: #2 ["Choice" @ input.sol:2:10] (enum)
+- Def: #3 ["One" @ input.sol:2:19] (enum member of Choice)
+- Def: #4 ["Two" @ input.sol:2:24] (enum member of Choice)
+- Def: #5 ["x" @ input.sol:4:9] (state var, type: int256)
+- Def: #6 ["choice" @ input.sol:5:12] (state var, type: Choice)
+- Def: #7 ["get_x" @ input.sol:7:14] (function, type: function () returns int256)
+- Def: #8 ["get_choice" @ input.sol:11:14] (function, type: function () returns Choice)
+- Def: #9 ["Second" @ input.sol:16:10] (contract)
+- Def: #10 ["choice" @ input.sol:17:18] (state var, type: Choice)
+- Def: #11 ["get_choice" @ input.sol:19:14] (function, type: function () returns Choice)
+
+------------------------------------------------------------------------
+
+References (9):
+- Ref: ["Choice" @ input.sol:5:5] -> #2
+- Ref: ["x" @ input.sol:8:16] -> #5
+- Ref: ["Choice" @ input.sol:11:43] -> #2
+- Ref: ["choice" @ input.sol:12:16] -> #6
+- Ref: ["First" @ input.sol:17:5] -> #1
+- Ref: ["Choice" @ input.sol:17:11] -> #2
+- Ref: ["First" @ input.sol:19:43] -> #1
+- Ref: ["Choice" @ input.sol:19:49] -> #2
+- Ref: ["choice" @ input.sol:20:16] -> #10
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract First {
+    │          ──┬──  
+    │            ╰──── name: 1
+  2 │     enum Choice { One, Two }
+    │          ───┬──   ─┬─  ─┬─  
+    │             ╰─────────────── name: 2
+    │                    │    │   
+    │                    ╰──────── name: 3
+    │                         │   
+    │                         ╰─── name: 4
+    │ 
+  4 │     int x;
+    │         ┬  
+    │         ╰── name: 5
+  5 │     Choice choice;
+    │     ───┬── ───┬──  
+    │        ╰─────────── ref: 2
+    │               │    
+    │               ╰──── name: 6
+    │ 
+  7 │     function get_x() public returns (int) {
+    │              ──┬──  
+    │                ╰──── name: 7
+  8 │         return x;
+    │                ┬  
+    │                ╰── ref: 5
+    │ 
+ 11 │     function get_choice() public returns (Choice) {
+    │              ─────┬────                   ───┬──  
+    │                   ╰─────────────────────────────── name: 8
+    │                                              │    
+    │                                              ╰──── ref: 2
+ 12 │         return choice;
+    │                ───┬──  
+    │                   ╰──── ref: 6
+    │ 
+ 16 │ contract Second {
+    │          ───┬──  
+    │             ╰──── name: 9
+ 17 │     First.Choice choice;
+    │     ──┬── ───┬── ───┬──  
+    │       ╰────────────────── ref: 1
+    │              │      │    
+    │              ╰─────────── ref: 2
+    │                     │    
+    │                     ╰──── name: 10
+    │ 
+ 19 │     function get_choice() public returns (First.Choice) {
+    │              ─────┬────                   ──┬── ───┬──  
+    │                   ╰───────────────────────────────────── name: 11
+    │                                             │      │    
+    │                                             ╰─────────── ref: 1
+    │                                                    │    
+    │                                                    ╰──── ref: 2
+ 20 │         return choice;
+    │                ───┬──  
+    │                   ╰──── ref: 10
+────╯

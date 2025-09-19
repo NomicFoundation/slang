@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:7:18]
+    │
+  7 │ ╭─▶     error Failure(
+    ┆ ┆   
+ 10 │ ├─▶     );
+    │ │            
+    │ ╰──────────── Error occurred here.
+────╯
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:13:23]
+    │
+ 13 │         revert Failure(Severity.ERROR, "Testing");
+    │                       ─────────────┬─────────────  
+    │                                    ╰─────────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (7):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Severity" @ input.sol:2:10] (enum)
+- Def: #3 ["INFO" @ input.sol:3:9] (enum member of Severity)
+- Def: #4 ["ERROR" @ input.sol:4:9] (enum member of Severity)
+- Def: #5 ["Failure" @ input.sol:7:11] (state var, type: unresolved)
+- Def: #6 ["test" @ input.sol:12:14] (function, type: function () returns void)
+- Def: #7 ["Failure" @ input.sol:13:16] (variable, type: unresolved)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["error" @ input.sol:7:5] -> unresolved
+- Ref: ["revert" @ input.sol:13:9] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     enum Severity {
+    │          ────┬───  
+    │              ╰───── name: 2
+  3 │         INFO,
+    │         ──┬─  
+    │           ╰─── name: 3
+  4 │         ERROR
+    │         ──┬──  
+    │           ╰──── name: 4
+    │ 
+  7 │     error Failure(
+    │     ──┬── ───┬───  
+    │       ╰──────────── unresolved
+    │              │     
+    │              ╰───── name: 5
+    │ 
+ 12 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 6
+ 13 │         revert Failure(Severity.ERROR, "Testing");
+    │         ───┬── ───┬───  
+    │            ╰──────────── unresolved
+    │                   │     
+    │                   ╰───── name: 7
+────╯

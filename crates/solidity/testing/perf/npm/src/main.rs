@@ -7,14 +7,10 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 use serde_json::json;
+use solidity_testing_utils::config::{self, File, Project};
+use solidity_testing_utils::fetch::fetch;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
-
-use crate::config::{File, Project};
-use crate::fetch::fetch;
-
-mod config;
-mod fetch;
 
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
 pub enum Subject {
@@ -121,11 +117,11 @@ impl NpmController {
         file: Option<&str>,
         sut: Subject,
     ) -> Result<Timings, anyhow::Error> {
-        let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
+        let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf_npm")?;
         let mut command = Command::new("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
-            .arg(perf_crate.join("npm/src/benchmarks/main.mts").unwrap_str())
+            .arg(perf_crate.join("src/benchmarks/main.mts").unwrap_str())
             .property("--dir", path.to_string_lossy())
             .property("--name", name);
 

@@ -64,7 +64,7 @@ References and definitions:
     │                 ─┬   ───┬───  
     │                  ╰──────────── name: 11
     │                         │     
-    │                         ╰───── unresolved
+    │                         ╰───── ref: built-in
  22 │         bytes32 v6 = keccak256(x1);
     │                 ─┬   ────┬──── ─┬  
     │                  ╰───────────────── name: 12
