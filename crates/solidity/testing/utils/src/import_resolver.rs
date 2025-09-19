@@ -5,8 +5,8 @@ use anyhow::{bail, Error, Result};
 use url::Url;
 
 pub struct ImportResolver {
-    import_remaps: Vec<ImportRemap>,
-    source_maps: Vec<SourceMap>,
+    pub import_remaps: Vec<ImportRemap>,
+    pub source_maps: Vec<SourceMap>,
 }
 
 impl ImportResolver {
@@ -86,14 +86,14 @@ impl ImportResolver {
     }
 }
 
-struct SourceMap {
+pub struct SourceMap {
     /// The actual filename for the source file, as found in the archive. This name can
     /// be used to read the content of a source file.
-    source_id: String,
+    pub source_id: String,
     /// The path to the source file in the contract's "virtual filesystem". This is the
     /// path to the source file as the contract was originally constructed. This value
     /// should be used when resolving imports to the real source files.
-    virtual_path: String,
+    pub virtual_path: String,
 }
 
 impl SourceMap {
@@ -106,7 +106,7 @@ impl SourceMap {
     }
 }
 
-struct ImportRemap {
+pub struct ImportRemap {
     /// If provided, then this remap only applies to imports inside source files
     /// whose paths begin with this string.
     context: Option<String>,
@@ -120,7 +120,7 @@ struct ImportRemap {
 }
 
 impl ImportRemap {
-    fn new(remap_str: &str) -> Result<ImportRemap> {
+    pub fn new(remap_str: &str) -> Result<ImportRemap> {
         let Some((context, rest)) = remap_str.split_once(':') else {
             bail!("{remap_str}: Could not separate context from mapping");
         };
@@ -165,56 +165,7 @@ impl ImportRemap {
     pub fn has_known_bug(&self) -> bool {
         // Ex Contract: 0x56D47372A66b3f640Bff83E745dE7D10f4B29075
         // Remapping list includes ":./=remappings.txt/"
-        if self.target.contains("remappings.txt") {
-            return true;
-        }
-
-        false
-    }
-}
-
-impl TryFrom<serde_json::Value> for ImportResolver {
-    type Error = anyhow::Error;
-
-    fn try_from(value: serde_json::Value) -> Result<ImportResolver, Self::Error> {
-        let import_remaps: Vec<ImportRemap> = value
-            .get("settings")
-            .and_then(|settings| settings.get("remappings"))
-            .and_then(|remappings| remappings.as_array())
-            .map_or(vec![], |mappings| {
-                mappings
-                    .iter()
-                    .filter_map(|mapping| mapping.as_str())
-                    .filter_map(|m| ImportRemap::new(m).ok())
-                    .filter(|remap| !remap.has_known_bug())
-                    .collect()
-            });
-
-        let source_maps: Vec<SourceMap> = value
-            .get("sources")
-            .and_then(|sources| sources.as_object())
-            .ok_or(Error::msg(
-                "Could not get sources entry in contract metadata.",
-            ))
-            .map(|sources| {
-                sources
-                    .iter()
-                    .filter_map(|(key, value)| {
-                        value
-                            .get("keccak256")
-                            .and_then(|k| k.as_str())
-                            .map(|source_id| SourceMap {
-                                source_id: source_id.into(),
-                                virtual_path: key.clone(),
-                            })
-                    })
-                    .collect()
-            })?;
-
-        Ok(ImportResolver {
-            import_remaps,
-            source_maps,
-        })
+        self.target.contains("remappings.txt")
     }
 }
 

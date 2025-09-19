@@ -25,7 +25,6 @@ pub struct Project {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct File {
     pub hash: String,
-    #[allow(clippy::struct_field_names)]
     pub file: String,
     pub name: String,
 }
@@ -34,13 +33,9 @@ pub fn working_dir_path() -> PathBuf {
     Path::repo_path("target/benchmarks-inputs")
 }
 
-pub fn config_file_path() -> Result<PathBuf> {
-    let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf_npm")?;
-    Ok(config_path.join("../projects.json"))
-}
-
 pub fn read_config() -> Result<Configuration> {
-    let config_path = config_file_path()?;
+    let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf_cargo")?;
+    let config_path = config_path.join("../projects.json");
     let config_content = fs::read_to_string(config_path)?;
     let config: Configuration = serde_json::from_str(&config_content)?;
     Ok(config)

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { ImportRemap, ImportResolver, SourceMap } from "./import.resolver.mjs";
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -13,6 +14,7 @@ export class SolidityCompilation {
   constructor(
     public compilerVersion: string,
     public fullyQualifiedName: string,
+    public compilerSettings: { remappings: string[] },
   ) {}
 
   public plainVersion(): string {
@@ -28,6 +30,7 @@ export class SolidityCompilation {
 interface CompilationMetadata {
   compilerVersion: string;
   fullyQualifiedName: string;
+  compilerSettings: { remappings: string[] };
 }
 
 interface SourceMetadata {
@@ -42,6 +45,7 @@ export class SolidityProject {
   constructor(
     public sources: Map<string, string>,
     public compilation: SolidityCompilation,
+    public importResolve: ImportResolver,
   ) {}
 
   public static build(jsonFile: string): SolidityProject {
@@ -49,17 +53,24 @@ export class SolidityProject {
 
     // NOTE: we should take other information into account too, in particular, the mappings.
     // This was not necessary for all of the projects we consider, but in the future that might be limiting.
-    let compilation = new SolidityCompilation(
+    const compilation = new SolidityCompilation(
       metadata.compilation.compilerVersion,
       metadata.compilation.fullyQualifiedName,
+      metadata.compilation.compilerSettings,
     );
 
-    let sources = new Map<string, string>();
+    const sources = new Map<string, string>();
+    const sourceMap = new Array<SourceMap>();
     for (const key in metadata.sources) {
       sources.set(key, metadata.sources[key].content);
+      sourceMap.push(new SourceMap(key, key));
     }
 
-    return new SolidityProject(sources, compilation);
+    const importRemaps = metadata.compilation.compilerSettings.remappings.map(
+      (remapping) => new ImportRemap(remapping),
+    );
+    const importResolver = new ImportResolver(importRemaps, sourceMap);
+    return new SolidityProject(sources, compilation, importResolver);
   }
 
   public fileContents(file: string): string {
@@ -76,13 +87,17 @@ export class SolidityProject {
   /// - `importString`: the import string as parsed from the source file.
   /// Returns the relative path of the imported file.
   public resolveImport(sourceFile: string, importString: string): string {
-    const sourceFileDir = path.dirname(sourceFile);
+    const resolved = this.importResolve.resolveImport(sourceFile, importString);
+    if (!resolved) {
+      throw new Error(`Can't resolve import ${importString} in the context of ${sourceFile}`);
+    }
 
-    const file = path.normalize(path.join(sourceFileDir, importString));
+    const sourceFileDir = path.dirname(sourceFile);
+    const file = path.normalize(path.join(sourceFileDir, resolved));
     if (this.sources.has(file)) {
       return file;
-    } else if (this.sources.has(importString)) {
-      return importString;
+    } else if (this.sources.has(resolved)) {
+      return resolved;
     } else {
       throw new Error(`Can't resolve import ${importString} in the context of ${sourceFileDir}`);
     }

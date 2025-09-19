@@ -8,10 +8,10 @@ use infra_utils::paths::PathExtensions;
 use reqwest::blocking::Client;
 use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
+use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
 use tar::Archive;
 
 use crate::command::{ChainId, ShardingOptions};
-use crate::import_resolver::ImportResolver;
 
 pub struct Manifest {
     /// Description of the archives that are available to fetch.
@@ -290,7 +290,7 @@ impl Contract {
             ))?
             .clone();
 
-        let import_resolver: ImportResolver = metadata_val.try_into()?;
+        let import_resolver = import_resolver_from(&metadata_val)?;
 
         Ok(Contract {
             target,
@@ -360,4 +360,45 @@ impl CompilationBuilderConfig for ContractConfig<'_> {
             .import_resolver
             .resolve_import(source_file_id, import_path))
     }
+}
+
+fn import_resolver_from(value: &serde_json::Value) -> Result<ImportResolver> {
+    let import_remaps: Vec<ImportRemap> = value
+        .get("settings")
+        .and_then(|settings| settings.get("remappings"))
+        .and_then(|remappings| remappings.as_array())
+        .map_or(vec![], |mappings| {
+            mappings
+                .iter()
+                .filter_map(|mapping| mapping.as_str())
+                .filter_map(|m| ImportRemap::new(m).ok())
+                .filter(|remap| !remap.has_known_bug())
+                .collect()
+        });
+
+    let source_maps: Vec<SourceMap> = value
+        .get("sources")
+        .and_then(|sources| sources.as_object())
+        .ok_or(Error::msg(
+            "Could not get sources entry in contract metadata.",
+        ))
+        .map(|sources| {
+            sources
+                .iter()
+                .filter_map(|(key, value)| {
+                    value
+                        .get("keccak256")
+                        .and_then(|k| k.as_str())
+                        .map(|source_id| SourceMap {
+                            source_id: source_id.into(),
+                            virtual_path: key.clone(),
+                        })
+                })
+                .collect()
+        })?;
+
+    Ok(ImportResolver {
+        import_remaps,
+        source_maps,
+    })
 }
