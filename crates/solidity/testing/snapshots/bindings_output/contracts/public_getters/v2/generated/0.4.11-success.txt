@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Foo" @ input.sol:1:10] (contract)
+- Def: #2 ["x" @ input.sol:2:16] (state var, type: int256)
+- Def: #3 ["Bar" @ input.sol:5:10] (contract)
+- Def: #4 ["y" @ input.sol:6:16] (state var, type: int256)
+- Def: #5 ["f" @ input.sol:7:9] (state var, type: Foo)
+- Def: #6 ["test" @ input.sol:9:14] (function, type: function () returns int256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Foo" @ input.sol:7:5] -> #1
+- Ref: ["y" @ input.sol:10:16] -> #4
+- Ref: ["y" @ input.sol:10:25] -> #4
+- Ref: ["f" @ input.sol:10:31] -> #5
+- Ref: ["x" @ input.sol:10:33] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── name: 1
+  2 │     int public x;
+    │                ┬  
+    │                ╰── name: 2
+    │ 
+  5 │ contract Bar {
+    │          ─┬─  
+    │           ╰─── name: 3
+  6 │     int public y;
+    │                ┬  
+    │                ╰── name: 4
+  7 │     Foo f;
+    │     ─┬─ ┬  
+    │      ╰───── ref: 1
+    │         │  
+    │         ╰── name: 5
+    │ 
+  9 │     function test() public returns (int) {
+    │              ──┬─  
+    │                ╰─── name: 6
+ 10 │         return y + this.y() + f.x();
+    │                ┬        ┬     ┬ ┬  
+    │                ╰─────────────────── ref: 4
+    │                         │     │ │  
+    │                         ╰────────── ref: 4
+    │                               │ │  
+    │                               ╰──── ref: 5
+    │                                 │  
+    │                                 ╰── ref: 2
+────╯

@@ -1,3 +1,5 @@
+mod diff_report;
 mod generated;
-mod renderer;
+mod report;
+mod report_data;
 mod runner;

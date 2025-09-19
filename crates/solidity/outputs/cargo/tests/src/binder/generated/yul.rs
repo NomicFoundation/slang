@@ -77,6 +77,11 @@ fn imported_deconstructed_constants() -> Result<()> {
 }
 
 #[test]
+fn imported_undefined_symbol() -> Result<()> {
+    run(T, "imported_undefined_symbol")
+}
+
+#[test]
 fn inherited_constant() -> Result<()> {
     run(T, "inherited_constant")
 }
@@ -104,6 +109,11 @@ fn modifier_params() -> Result<()> {
 #[test]
 fn nested_functions() -> Result<()> {
     run(T, "nested_functions")
+}
+
+#[test]
+fn slot_of_return_params() -> Result<()> {
+    run(T, "slot_of_return_params")
 }
 
 #[test]

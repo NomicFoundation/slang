@@ -1,0 +1,112 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or FunctionKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+    ╭─[input.sol:27:1]
+    │
+ 27 │ uint256 constant TOP_LEVEL_CONST = 0;
+    │ ───────────────────┬──────────────────  
+    │                    ╰──────────────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (10):
+- Def: #1 ["InContracts" @ input.sol:1:10] (contract)
+- Def: #2 ["CONTRACT_CONST" @ input.sol:2:30] (constant, type: uint256)
+- Def: #3 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #4 ["swap" @ input.sol:6:22] (yul function)
+- Def: #5 ["emptyPtr" @ input.sol:6:27] (yul parameter)
+- Def: #6 ["InLibraries" @ input.sol:14:9] (library)
+- Def: #7 ["LIB_CONST" @ input.sol:15:30] (constant, type: uint256)
+- Def: #8 ["test" @ input.sol:17:14] (function, type: function () returns void)
+- Def: #9 ["swap" @ input.sol:19:22] (yul function)
+- Def: #10 ["emptyPtr" @ input.sol:19:27] (yul parameter)
+
+------------------------------------------------------------------------
+
+References (12):
+- Ref: ["mstore" @ input.sol:7:17] -> built-in
+- Ref: ["emptyPtr" @ input.sol:7:24] -> #5
+- Ref: ["CONTRACT_CONST" @ input.sol:7:34] -> #2
+- Ref: ["mstore" @ input.sol:8:17] -> built-in
+- Ref: ["emptyPtr" @ input.sol:8:24] -> #5
+- Ref: ["TOP_LEVEL_CONST" @ input.sol:8:34] -> unresolved
+- Ref: ["mstore" @ input.sol:20:17] -> built-in
+- Ref: ["emptyPtr" @ input.sol:20:24] -> #10
+- Ref: ["LIB_CONST" @ input.sol:20:34] -> #7
+- Ref: ["mstore" @ input.sol:21:17] -> built-in
+- Ref: ["emptyPtr" @ input.sol:21:24] -> #10
+- Ref: ["TOP_LEVEL_CONST" @ input.sol:21:34] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract InContracts {
+    │          ─────┬─────  
+    │               ╰─────── name: 1
+  2 │     uint256 private constant CONTRACT_CONST = 1;
+    │                              ───────┬──────  
+    │                                     ╰──────── name: 2
+    │ 
+  4 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 3
+    │ 
+  6 │             function swap(emptyPtr) {
+    │                      ──┬─ ────┬───  
+    │                        ╰──────────── name: 4
+    │                               │     
+    │                               ╰───── name: 5
+  7 │                 mstore(emptyPtr, CONTRACT_CONST)
+    │                 ───┬── ────┬───  ───────┬──────  
+    │                    ╰───────────────────────────── built-in
+    │                            │            │        
+    │                            ╰───────────────────── ref: 5
+    │                                         │        
+    │                                         ╰──────── ref: 2
+  8 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
+    │                 ───┬── ────┬───  ───────┬───────  
+    │                    ╰────────────────────────────── built-in
+    │                            │            │         
+    │                            ╰────────────────────── ref: 5
+    │                                         │         
+    │                                         ╰───────── unresolved
+    │ 
+ 14 │ library InLibraries {
+    │         ─────┬─────  
+    │              ╰─────── name: 6
+ 15 │     uint256 private constant LIB_CONST = 2;
+    │                              ────┬────  
+    │                                  ╰────── name: 7
+    │ 
+ 17 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 8
+    │ 
+ 19 │             function swap(emptyPtr) {
+    │                      ──┬─ ────┬───  
+    │                        ╰──────────── name: 9
+    │                               │     
+    │                               ╰───── name: 10
+ 20 │                 mstore(emptyPtr, LIB_CONST)
+    │                 ───┬── ────┬───  ────┬────  
+    │                    ╰──────────────────────── built-in
+    │                            │         │      
+    │                            ╰──────────────── ref: 10
+    │                                      │      
+    │                                      ╰────── ref: 7
+ 21 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
+    │                 ───┬── ────┬───  ───────┬───────  
+    │                    ╰────────────────────────────── built-in
+    │                            │            │         
+    │                            ╰────────────────────── ref: 10
+    │                                         │         
+    │                                         ╰───────── unresolved
+────╯

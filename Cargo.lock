@@ -727,17 +727,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen_runtime_cargo_wasm"
-version = "1.2.1"
-dependencies = [
- "codegen_runtime_cargo_crate",
- "paste",
- "semver 1.0.26",
- "serde_json",
- "wit-bindgen",
-]
-
-[[package]]
 name = "codegen_runtime_generator"
 version = "1.2.1"
 dependencies = [
@@ -754,10 +743,6 @@ dependencies = [
  "strum 0.26.3",
  "strum_macros 0.26.4",
 ]
-
-[[package]]
-name = "codegen_runtime_npm_package"
-version = "1.2.1"
 
 [[package]]
 name = "codegen_spec"

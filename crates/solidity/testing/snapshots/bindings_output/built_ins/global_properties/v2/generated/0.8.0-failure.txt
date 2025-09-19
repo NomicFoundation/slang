@@ -1,0 +1,186 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (19):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["testTx" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["origin" @ input.sol:3:17] (variable, type: address)
+- Def: #4 ["price" @ input.sol:4:14] (variable, type: uint256)
+- Def: #5 ["testBlock" @ input.sol:7:14] (function, type: function () returns void)
+- Def: #6 ["v1" @ input.sol:8:14] (variable, type: uint256)
+- Def: #7 ["v2" @ input.sol:9:14] (variable, type: uint256)
+- Def: #8 ["v3" @ input.sol:10:14] (variable, type: uint256)
+- Def: #9 ["v4" @ input.sol:11:17] (variable, type: address)
+- Def: #10 ["v5" @ input.sol:12:14] (variable, type: uint256)
+- Def: #11 ["v6" @ input.sol:13:14] (variable, type: uint256)
+- Def: #12 ["v7" @ input.sol:14:14] (variable, type: uint256)
+- Def: #13 ["v8" @ input.sol:15:14] (variable, type: uint256)
+- Def: #14 ["v9" @ input.sol:16:14] (variable, type: uint256)
+- Def: #15 ["testMsg" @ input.sol:19:14] (function, type: function () returns void)
+- Def: #16 ["v1" @ input.sol:20:15] (variable, type: unresolved)
+- Def: #17 ["v2" @ input.sol:21:17] (variable, type: address)
+- Def: #18 ["v3" @ input.sol:22:16] (variable, type: bytes4)
+- Def: #19 ["v4" @ input.sol:23:14] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (30):
+- Ref: ["tx" @ input.sol:3:26] -> built-in
+- Ref: ["origin" @ input.sol:3:29] -> built-in
+- Ref: ["tx" @ input.sol:4:22] -> built-in
+- Ref: ["gasprice" @ input.sol:4:25] -> built-in
+- Ref: ["block" @ input.sol:8:19] -> built-in
+- Ref: ["basefee" @ input.sol:8:25] -> unresolved
+- Ref: ["block" @ input.sol:9:19] -> built-in
+- Ref: ["blobbasefee" @ input.sol:9:25] -> unresolved
+- Ref: ["block" @ input.sol:10:19] -> built-in
+- Ref: ["chainid" @ input.sol:10:25] -> built-in
+- Ref: ["block" @ input.sol:11:22] -> built-in
+- Ref: ["coinbase" @ input.sol:11:28] -> built-in
+- Ref: ["block" @ input.sol:12:19] -> built-in
+- Ref: ["difficulty" @ input.sol:12:25] -> built-in
+- Ref: ["block" @ input.sol:13:19] -> built-in
+- Ref: ["gaslimit" @ input.sol:13:25] -> built-in
+- Ref: ["block" @ input.sol:14:19] -> built-in
+- Ref: ["number" @ input.sol:14:25] -> built-in
+- Ref: ["block" @ input.sol:15:19] -> built-in
+- Ref: ["prevrandao" @ input.sol:15:25] -> unresolved
+- Ref: ["block" @ input.sol:16:19] -> built-in
+- Ref: ["timestamp" @ input.sol:16:25] -> built-in
+- Ref: ["msg" @ input.sol:20:20] -> built-in
+- Ref: ["data" @ input.sol:20:24] -> built-in
+- Ref: ["msg" @ input.sol:21:22] -> built-in
+- Ref: ["sender" @ input.sol:21:26] -> built-in
+- Ref: ["msg" @ input.sol:22:21] -> built-in
+- Ref: ["sig" @ input.sol:22:25] -> built-in
+- Ref: ["msg" @ input.sol:23:19] -> built-in
+- Ref: ["value" @ input.sol:23:23] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function testTx() public {
+    │              ───┬──  
+    │                 ╰──── name: 2
+  3 │         address origin = tx.origin;
+    │                 ───┬──   ─┬ ───┬──  
+    │                    ╰──────────────── name: 3
+    │                           │    │    
+    │                           ╰───────── built-in
+    │                                │    
+    │                                ╰──── built-in
+  4 │         uint price = tx.gasprice;
+    │              ──┬──   ─┬ ────┬───  
+    │                ╰────────────────── name: 4
+    │                       │     │     
+    │                       ╰─────────── built-in
+    │                             │     
+    │                             ╰───── built-in
+    │ 
+  7 │     function testBlock() public {
+    │              ────┬────  
+    │                  ╰────── name: 5
+  8 │         uint v1 = block.basefee;
+    │              ─┬   ──┬── ───┬───  
+    │               ╰────────────────── name: 6
+    │                     │      │     
+    │                     ╰──────────── built-in
+    │                            │     
+    │                            ╰───── unresolved
+  9 │         uint v2 = block.blobbasefee;
+    │              ─┬   ──┬── ─────┬─────  
+    │               ╰────────────────────── name: 7
+    │                     │        │       
+    │                     ╰──────────────── built-in
+    │                              │       
+    │                              ╰─────── unresolved
+ 10 │         uint v3 = block.chainid;
+    │              ─┬   ──┬── ───┬───  
+    │               ╰────────────────── name: 8
+    │                     │      │     
+    │                     ╰──────────── built-in
+    │                            │     
+    │                            ╰───── built-in
+ 11 │         address v4 = block.coinbase;
+    │                 ─┬   ──┬── ────┬───  
+    │                  ╰─────────────────── name: 9
+    │                        │       │     
+    │                        ╰───────────── built-in
+    │                                │     
+    │                                ╰───── built-in
+ 12 │         uint v5 = block.difficulty;
+    │              ─┬   ──┬── ─────┬────  
+    │               ╰───────────────────── name: 10
+    │                     │        │      
+    │                     ╰─────────────── built-in
+    │                              │      
+    │                              ╰────── built-in
+ 13 │         uint v6 = block.gaslimit;
+    │              ─┬   ──┬── ────┬───  
+    │               ╰─────────────────── name: 11
+    │                     │       │     
+    │                     ╰───────────── built-in
+    │                             │     
+    │                             ╰───── built-in
+ 14 │         uint v7 = block.number;
+    │              ─┬   ──┬── ───┬──  
+    │               ╰───────────────── name: 12
+    │                     │      │    
+    │                     ╰─────────── built-in
+    │                            │    
+    │                            ╰──── built-in
+ 15 │         uint v8 = block.prevrandao;
+    │              ─┬   ──┬── ─────┬────  
+    │               ╰───────────────────── name: 13
+    │                     │        │      
+    │                     ╰─────────────── built-in
+    │                              │      
+    │                              ╰────── unresolved
+ 16 │         uint v9 = block.timestamp;
+    │              ─┬   ──┬── ────┬────  
+    │               ╰──────────────────── name: 14
+    │                     │       │      
+    │                     ╰────────────── built-in
+    │                             │      
+    │                             ╰────── built-in
+    │ 
+ 19 │     function testMsg() public {
+    │              ───┬───  
+    │                 ╰───── name: 15
+ 20 │         bytes v1 = msg.data;
+    │               ─┬   ─┬─ ──┬─  
+    │                ╰───────────── name: 16
+    │                     │    │   
+    │                     ╰──────── built-in
+    │                          │   
+    │                          ╰─── built-in
+ 21 │         address v2 = msg.sender;
+    │                 ─┬   ─┬─ ───┬──  
+    │                  ╰─────────────── name: 17
+    │                       │     │    
+    │                       ╰────────── built-in
+    │                             │    
+    │                             ╰──── built-in
+ 22 │         bytes4 v3 = msg.sig;
+    │                ─┬   ─┬─ ─┬─  
+    │                 ╰──────────── name: 18
+    │                      │   │   
+    │                      ╰─────── built-in
+    │                          │   
+    │                          ╰─── built-in
+ 23 │         uint v4 = msg.value;
+    │              ─┬   ─┬─ ──┬──  
+    │               ╰────────────── name: 19
+    │                    │    │    
+    │                    ╰───────── built-in
+    │                         │    
+    │                         ╰──── built-in
+────╯

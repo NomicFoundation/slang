@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Foo" @ lib/foo.sol:1:9] (library)
+- Def: #2 ["test" @ lib/foo.sol:2:14] (function, type: function (int256) returns int256)
+- Def: #3 ["x" @ lib/foo.sol:2:23] (parameter, type: int256)
+- Def: #4 ["foo" @ main.sol:1:13] (import)
+- Def: #5 ["Example" @ main.sol:3:10] (contract)
+- Def: #6 ["test" @ main.sol:4:14] (function, type: function (int256) returns int256)
+- Def: #7 ["x" @ main.sol:4:23] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["x" @ lib/foo.sol:3:16] -> #3
+- Ref: ["foo" @ main.sol:5:16] -> #4
+- Ref: ["Foo" @ main.sol:5:20] -> #1
+- Ref: ["test" @ main.sol:5:24] -> #2
+- Ref: ["x" @ main.sol:5:29] -> #7
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[lib/foo.sol:1:1]
+   │
+ 1 │ library Foo {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     function test(int x) returns (int) {
+   │              ──┬─     ┬  
+   │                ╰───────── name: 2
+   │                       │  
+   │                       ╰── name: 3
+ 3 │         return x + 2;
+   │                ┬  
+   │                ╰── ref: 3
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import * as foo from "lib/foo.sol";
+   │             ─┬─  
+   │              ╰─── name: 4
+   │ 
+ 3 │ contract Example {
+   │          ───┬───  
+   │             ╰───── name: 5
+ 4 │     function test(int x) returns (int) {
+   │              ──┬─     ┬  
+   │                ╰───────── name: 6
+   │                       │  
+   │                       ╰── name: 7
+ 5 │         return foo.Foo.test(x);
+   │                ─┬─ ─┬─ ──┬─ ┬  
+   │                 ╰────────────── ref: 4
+   │                     │    │  │  
+   │                     ╰────────── ref: 1
+   │                          │  │  
+   │                          ╰───── ref: 2
+   │                             │  
+   │                             ╰── ref: 7
+───╯

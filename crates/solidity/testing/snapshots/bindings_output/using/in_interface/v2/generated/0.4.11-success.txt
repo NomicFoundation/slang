@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["Bar" @ input.sol:1:11] (interface)
+- Def: #2 ["Foo" @ input.sol:3:11] (interface)
+- Def: #3 ["Utils" @ input.sol:8:9] (library)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["Utils" @ input.sol:5:11] -> #3
+- Ref: ["Bar" @ input.sol:5:21] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface Bar {}
+   │           ─┬─  
+   │            ╰─── name: 1
+   │ 
+ 3 │ interface Foo {
+   │           ─┬─  
+   │            ╰─── name: 2
+   │ 
+ 5 │     using Utils for Bar;
+   │           ──┬──     ─┬─  
+   │             ╰──────────── ref: 3
+   │                      │   
+   │                      ╰─── ref: 1
+   │ 
+ 8 │ library Utils {
+   │         ──┬──  
+   │           ╰──── name: 3
+───╯

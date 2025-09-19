@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["require" @ input.sol:6:9] -> built-in does not resolve to a built-in in the stack graph output
+Ref: ["owner" @ input.sol:6:22] -> #2 resolved but did not in stack graph output
+Ref: ["sender" @ input.sol:6:37] -> built-in does not resolve to a built-in in the stack graph output
+Ref: ["msg" @ input.sol:6:33] -> built-in does not resolve to a built-in in the stack graph output
+Ref: ["_" @ input.sol:7:9] -> built-in does not resolve to a built-in in the stack graph output
+Ref: ["onlyOwner" @ input.sol:12:28] -> #3 resolved but did not in stack graph output
+
+Definitions and/or references from binding graph and new binder DIFFER

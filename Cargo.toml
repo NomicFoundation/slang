@@ -14,9 +14,7 @@ members = [
     "crates/codegen/language/tests",
     "crates/codegen/runner",
     "crates/codegen/runtime/cargo/crate",
-    "crates/codegen/runtime/cargo/wasm",
     "crates/codegen/runtime/generator",
-    "crates/codegen/runtime/npm/package",
     "crates/codegen/spec",
     "crates/codegen/testing",
 
@@ -53,9 +51,7 @@ codegen_language_macros = { path = "crates/codegen/language/macros", version = "
 codegen_language_tests = { path = "crates/codegen/language/tests", version = "1.2.1" }
 codegen_runner = { path = "crates/codegen/runner", version = "1.2.1" }
 codegen_runtime_cargo_crate = { path = "crates/codegen/runtime/cargo/crate", version = "1.2.1" }
-codegen_runtime_cargo_wasm = { path = "crates/codegen/runtime/cargo/wasm", version = "1.2.1" }
 codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "1.2.1" }
-codegen_runtime_npm_package = { path = "crates/codegen/runtime/npm/package", version = "1.2.1" }
 codegen_spec = { path = "crates/codegen/spec", version = "1.2.1" }
 codegen_testing = { path = "crates/codegen/testing", version = "1.2.1" }
 
