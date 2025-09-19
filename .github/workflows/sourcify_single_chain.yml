@@ -140,7 +140,7 @@ jobs:
         uses: "./.github/actions/cache/restore"
 
       - name: "Restore Test Binary"
-        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
+        uses: "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0"
         with:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
@@ -173,7 +173,7 @@ jobs:
         uses: "./.github/actions/cache/restore"
 
       - name: "Restore Test Binary"
-        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
+        uses: "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0"
         with:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
