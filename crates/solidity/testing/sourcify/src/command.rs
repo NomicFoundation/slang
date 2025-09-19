@@ -30,15 +30,12 @@ pub struct TestCommand {
     #[command(flatten)]
     pub sharding_options: ShardingOptions,
 
+    #[command(flatten)]
+    pub archive_options: ArchiveOptions,
+
     /// Specify a single contract to test using the contract address.
     #[arg(long, conflicts_with = "shard_count")]
     pub contract: Option<String>,
-
-    /// Save the fetch archive under `target/` and don't delete it after the test
-    /// is complete. Only used for debugging purposes. Requires you to select a
-    /// specific contract to test using the `--contract` option.
-    #[arg(long, requires = "contract", default_value_t = false)]
-    pub save: bool,
 
     /// Run tests sequentially, and output extra logging. Tests will run significantly slower
     /// with this option enabled.
@@ -51,15 +48,24 @@ pub struct ShowCombinedResultsCommand {
     pub results_file: PathBuf,
 }
 
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Parser)]
 pub struct TestOptions {
     /// Run bindings tests.
     #[arg(long, default_value_t = false)]
     pub check_bindings: bool,
 
+    /// Run new binder tests.
+    #[arg(long, default_value_t = false)]
+    pub check_new_binder: bool,
+
     /// Run version inference tests.
     #[arg(long, default_value_t = false)]
     pub check_infer_version: bool,
+
+    /// Run comparison between old and new binder.
+    #[arg(long, default_value_t = false)]
+    pub compare_binders: bool,
 }
 
 #[derive(Debug, Parser)]
@@ -77,6 +83,18 @@ pub struct ShardingOptions {
     /// If set, will only test contracts under the '`full_match`' category.
     #[arg(long, default_value_t = false)]
     pub exclude_partial_matches: bool,
+}
+
+#[derive(Debug, Parser)]
+pub struct ArchiveOptions {
+    /// Save the fetch archive under `target/` and don't delete it after the test
+    /// is complete.
+    #[arg(long, default_value_t = false)]
+    pub save: bool,
+
+    /// Don't attempt to download files and fail if some are not available
+    #[arg(long, default_value_t = false)]
+    pub offline: bool,
 }
 
 fn validate_shard_count(count: &str) -> Result<u16, String> {

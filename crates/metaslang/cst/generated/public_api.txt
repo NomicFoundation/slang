@@ -67,10 +67,10 @@ pub fn &'static str::from(val: metaslang_cst::kinds::NodeKind<T>) -> Self
 impl<T: metaslang_cst::kinds::KindTypes> core::fmt::Display for metaslang_cst::kinds::NodeKind<T>
 pub fn metaslang_cst::kinds::NodeKind<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::kinds::NodeKind<T>
-pub trait metaslang_cst::kinds::BaseKind: core::marker::Sized + core::fmt::Debug + core::marker::Copy + core::cmp::PartialEq + core::cmp::Eq + serde::ser::Serialize
+pub trait metaslang_cst::kinds::BaseKind: core::marker::Sized + core::fmt::Debug + core::marker::Copy + core::cmp::PartialEq + core::cmp::Eq + serde_core::ser::Serialize
 pub fn metaslang_cst::kinds::BaseKind::as_static_str(&self) -> &'static str
 pub fn metaslang_cst::kinds::BaseKind::try_from_str(str: &str) -> core::result::Result<Self, alloc::string::String>
-impl<T> metaslang_cst::kinds::BaseKind for T where T: core::marker::Sized + core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
+impl<T> metaslang_cst::kinds::BaseKind for T where T: core::marker::Sized + core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde_core::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
 pub fn T::as_static_str(&self) -> &'static str
 pub fn T::try_from_str(str: &str) -> core::result::Result<Self, alloc::string::String>
 pub trait metaslang_cst::kinds::EdgeLabelExtensions: metaslang_cst::kinds::BaseKind + core::default::Default
@@ -125,8 +125,8 @@ pub fn metaslang_cst::nodes::Node<T>::from(nonterminal: alloc::rc::Rc<metaslang_
 impl<T: metaslang_cst::kinds::KindTypes> core::convert::From<alloc::rc::Rc<metaslang_cst::nodes::TerminalNode<T>>> for metaslang_cst::nodes::Node<T>
 pub fn metaslang_cst::nodes::Node<T>::from(terminal: alloc::rc::Rc<metaslang_cst::nodes::TerminalNode<T>>) -> Self
 impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::nodes::Node<T>
-impl<T> serde::ser::Serialize for metaslang_cst::nodes::Node<T> where T: serde::ser::Serialize + metaslang_cst::kinds::KindTypes
-pub fn metaslang_cst::nodes::Node<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<T> serde_core::ser::Serialize for metaslang_cst::nodes::Node<T> where T: serde_core::ser::Serialize + metaslang_cst::kinds::KindTypes
+pub fn metaslang_cst::nodes::Node<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub struct metaslang_cst::nodes::Edge<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::nodes::Edge::label: <T as metaslang_cst::kinds::KindTypes>::EdgeLabel
 pub metaslang_cst::nodes::Edge::node: metaslang_cst::nodes::Node<T>
@@ -144,8 +144,8 @@ impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for m
 impl<T: metaslang_cst::kinds::KindTypes> core::ops::deref::Deref for metaslang_cst::nodes::Edge<T>
 pub type metaslang_cst::nodes::Edge<T>::Target = metaslang_cst::nodes::Node<T>
 pub fn metaslang_cst::nodes::Edge<T>::deref(&self) -> &Self::Target
-impl<T> serde::ser::Serialize for metaslang_cst::nodes::Edge<T> where T: serde::ser::Serialize + metaslang_cst::kinds::KindTypes, <T as metaslang_cst::kinds::KindTypes>::EdgeLabel: serde::ser::Serialize
-pub fn metaslang_cst::nodes::Edge<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<T> serde_core::ser::Serialize for metaslang_cst::nodes::Edge<T> where T: serde_core::ser::Serialize + metaslang_cst::kinds::KindTypes, <T as metaslang_cst::kinds::KindTypes>::EdgeLabel: serde_core::ser::Serialize
+pub fn metaslang_cst::nodes::Edge<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 #[repr(transparent)] pub struct metaslang_cst::nodes::NodeId(_)
 impl core::clone::Clone for metaslang_cst::nodes::NodeId
 pub fn metaslang_cst::nodes::NodeId::clone(&self) -> metaslang_cst::nodes::NodeId
@@ -186,8 +186,8 @@ pub fn metaslang_cst::nodes::NonterminalNode<T>::eq(&self, other: &metaslang_cst
 impl<T: core::fmt::Debug + metaslang_cst::kinds::KindTypes> core::fmt::Debug for metaslang_cst::nodes::NonterminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::fmt::Debug
 pub fn metaslang_cst::nodes::NonterminalNode<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::nodes::NonterminalNode<T>
-impl<T> serde::ser::Serialize for metaslang_cst::nodes::NonterminalNode<T> where T: serde::ser::Serialize + metaslang_cst::kinds::KindTypes, <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: serde::ser::Serialize
-pub fn metaslang_cst::nodes::NonterminalNode<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<T> serde_core::ser::Serialize for metaslang_cst::nodes::NonterminalNode<T> where T: serde_core::ser::Serialize + metaslang_cst::kinds::KindTypes, <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: serde_core::ser::Serialize
+pub fn metaslang_cst::nodes::NonterminalNode<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub struct metaslang_cst::nodes::TerminalNode<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::nodes::TerminalNode::kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind
 pub metaslang_cst::nodes::TerminalNode::text: alloc::string::String
@@ -206,8 +206,8 @@ pub fn metaslang_cst::nodes::TerminalNode<T>::eq(&self, other: &metaslang_cst::n
 impl<T: core::fmt::Debug + metaslang_cst::kinds::KindTypes> core::fmt::Debug for metaslang_cst::nodes::TerminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::fmt::Debug
 pub fn metaslang_cst::nodes::TerminalNode<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::nodes::TerminalNode<T>
-impl<T: metaslang_cst::kinds::KindTypes> serde::ser::Serialize for metaslang_cst::nodes::TerminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::TerminalKind: serde::ser::Serialize
-pub fn metaslang_cst::nodes::TerminalNode<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<T: metaslang_cst::kinds::KindTypes> serde_core::ser::Serialize for metaslang_cst::nodes::TerminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::TerminalKind: serde_core::ser::Serialize
+pub fn metaslang_cst::nodes::TerminalNode<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub mod metaslang_cst::query
 pub enum metaslang_cst::query::CaptureQuantifier
 pub metaslang_cst::query::CaptureQuantifier::One
@@ -294,8 +294,8 @@ pub type metaslang_cst::text_index::TextIndex::Output = metaslang_cst::text_inde
 pub fn metaslang_cst::text_index::TextIndex::add(self, rhs: Self) -> Self::Output
 impl core::ops::arith::AddAssign for metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::text_index::TextIndex::add_assign(&mut self, rhs: Self)
-impl serde::ser::Serialize for metaslang_cst::text_index::TextIndex
-pub fn metaslang_cst::text_index::TextIndex::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl serde_core::ser::Serialize for metaslang_cst::text_index::TextIndex
+pub fn metaslang_cst::text_index::TextIndex::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 impl<T: core::convert::AsRef<str>> core::convert::From<T> for metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::text_index::TextIndex::from(s: T) -> Self
 pub trait metaslang_cst::text_index::TextRangeExtensions
