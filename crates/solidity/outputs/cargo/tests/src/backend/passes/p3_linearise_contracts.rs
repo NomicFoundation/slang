@@ -34,7 +34,7 @@ interface A is C {}
         }
     }
 
-    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config {})?;
+    let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, Config {})?;
     assert!(builder.add_file("main.sol").is_ok());
     let compilation_unit = builder.build();
     Ok(compilation_unit)

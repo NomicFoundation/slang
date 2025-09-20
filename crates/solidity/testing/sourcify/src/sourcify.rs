@@ -311,7 +311,7 @@ impl Contract {
         )))?;
 
         let mut builder =
-            CompilationBuilder::new(self.version.clone(), ContractConfig { contract: self })?;
+            CompilationBuilder::create(self.version.clone(), ContractConfig { contract: self })?;
 
         builder.add_file(&entrypoint).map_err(|e| anyhow!(e))?;
         Ok(builder.build())
