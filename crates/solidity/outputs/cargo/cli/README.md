@@ -1,4 +1,4 @@
-# slang
+# slang_solidity_cli
 
 <!-- _PRODUCT_README_ (keep in sync) -->
 
