@@ -1585,9 +1585,9 @@ fn query_parse_errors_have_file_location() {
         Err(ParseError::QueryError(e)) => e,
         Err(e) => panic!("Unexpected error: {e}"),
     };
-    assert_eq!(err.message, "Parse error:\n'NonExistingNode' is not a valid node kind at: NonExistingNode ] ]\n        \n");
+    assert_eq!(err.message(), "Parse error:\n'NonExistingNode' is not a valid node kind at: NonExistingNode ] ]\n        \n");
     assert_eq!(
-        format!("{:?}", err.text_range),
+        format!("{:?}", err.text_range()),
         "TextIndex { utf8: 50, utf16: 50, line: 2, column: 19 }..TextIndex { utf8: 78, utf16: 78, line: 3, column: 8 }",
     );
 }
@@ -1608,9 +1608,9 @@ fn multiline_query_parse_errors_have_file_location() {
         Err(ParseError::QueryError(e)) => e,
         Err(e) => panic!("Unexpected error: {e}"),
     };
-    assert_eq!(err.message, "Parse error:\n'NonExistingNode' is not a valid node kind at: NonExistingNode ] ]\n        )\n        \n");
+    assert_eq!(err.message(), "Parse error:\n'NonExistingNode' is not a valid node kind at: NonExistingNode ] ]\n        )\n        \n");
     assert_eq!(
-        format!("{:?}", err.text_range),
+        format!("{:?}", err.text_range()),
         "TextIndex { utf8: 112, utf16: 112, line: 5, column: 23 }..TextIndex { utf8: 150, utf16: 150, line: 7, column: 8 }",
     );
 }
