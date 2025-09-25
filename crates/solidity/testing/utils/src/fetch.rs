@@ -2,8 +2,9 @@ use std::path::Path;
 use std::time::Duration;
 use std::{fs, thread};
 
-use anyhow::{anyhow, Ok, Result};
+use anyhow::{anyhow, bail, Ok, Result};
 use reqwest::blocking::get;
+use reqwest::header::CONTENT_TYPE;
 use serde_json::Value;
 
 // Given an address and a path, it downloads the json file from sourcify,
@@ -34,11 +35,18 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
     let body = body
         .map_err(|e| anyhow!("Error fetching project with address {address} from Sourcify: {e}"))?;
 
-    if let Some((_, value)) = body.headers().iter().find(|(name, value)| {
-        name.as_str() == "content-type" && value.to_str().unwrap_or("") != "application/json"
-    }) {
+    let Some(content_type) = body.headers().get(CONTENT_TYPE) else {
+        bail!("Error fetching project with address {address} from Sourcify: no content-type header")
+    };
+
+    let content_type_str = content_type.to_str().unwrap_or("");
+    if !content_type_str
+        .trim()
+        .to_ascii_lowercase()
+        .starts_with("application/json")
+    {
         return Err(anyhow!(
-            "Error fetching project with address {address} from Sourcify: content-type is {value:?}"
+            "Error fetching project with address {address} from Sourcify: content-type is {content_type_str:?}"
         ));
     }
 
