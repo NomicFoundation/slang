@@ -3,7 +3,7 @@ use std::fs;
 use std::path::Path;
 use std::sync::OnceLock;
 
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, bail, Result};
 use semver::{BuildMetadata, Prerelease};
 use serde::Deserialize;
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
@@ -142,8 +142,12 @@ fn import_resolver_from<'a, T: Iterator<Item = &'a String>>(
 
 impl SolidityProject {
     pub fn build(json_file: &Path) -> Result<Self> {
-        let json_str = fs::read_to_string(json_file)?;
-        let metadata: Metadata = serde_json::from_str(&json_str)?;
+        let Ok(json_str) = fs::read_to_string(json_file) else {
+            bail!("Error reading file {json_file:?}")
+        };
+        let Ok(metadata) = serde_json::from_str::<Metadata>(&json_str) else {
+            bail!("Error parsing file {json_file:?}:\n{json_str}");
+        };
         let sself: Self = Self::try_from(metadata)?;
         Ok(sself)
     }
