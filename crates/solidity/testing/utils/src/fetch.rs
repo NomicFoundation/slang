@@ -2,7 +2,7 @@ use std::path::Path;
 use std::time::Duration;
 use std::{fs, thread};
 
-use anyhow::{Ok, Result};
+use anyhow::{anyhow, Ok, Result};
 use reqwest::blocking::get;
 use serde_json::Value;
 
@@ -24,13 +24,31 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
 
     // Try with exponential backoff
     let mut tries = 0;
-    while body.is_err() && tries < 6 {
+    while (body.is_err() || body.as_ref().unwrap().status() != reqwest::StatusCode::OK) && tries < 6
+    {
         tries += 1;
         thread::sleep(Duration::from_secs(2 ^ tries));
         body = get(&url);
     }
 
-    let project_json: Value = body?.json()?;
+    let body = body
+        .map_err(|e| anyhow!("Error fetching project with address {address} from Sourcify: {e}"))?;
+
+    if let Some((_, value)) = body.headers().iter().find(|(name, value)| {
+        name.as_str() == "content-type" && value.to_str().unwrap_or("") != "application/json"
+    }) {
+        return Err(anyhow!(
+            "Error fetching project with address {address} from Sourcify: content-type is {value:?}"
+        ));
+    }
+
+    if body.content_length().unwrap_or_default() == 0 {
+        return Err(anyhow!(
+            "Error fetching project with address {address} from Sourcify: body is empty"
+        ));
+    }
+
+    let project_json: Value = body.json()?;
 
     let content = serde_json::to_string_pretty(&project_json)?;
     fs::create_dir_all(base_path)?;
