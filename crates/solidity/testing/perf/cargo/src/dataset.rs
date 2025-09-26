@@ -142,11 +142,13 @@ fn import_resolver_from<'a, T: Iterator<Item = &'a String>>(
 
 impl SolidityProject {
     pub fn build(json_file: &Path) -> Result<Self> {
-        let Ok(json_str) = fs::read_to_string(json_file) else {
-            bail!("Error reading file {json_file:?}")
+        let json_str = match fs::read_to_string(json_file) {
+            Ok(json_str) => json_str,
+            Err(e) => bail!("Error reading file {json_file:?}: {e}"),
         };
-        let Ok(metadata) = serde_json::from_str::<Metadata>(&json_str) else {
-            bail!("Error parsing file {json_file:?}:\n{json_str}");
+        let metadata = match serde_json::from_str::<Metadata>(&json_str) {
+            Ok(metadata) => metadata,
+            Err(e) => bail!("Error parsing file {json_file:?}: {e}\nWhile parsing:\n{json_str}"),
         };
         let sself: Self = Self::try_from(metadata)?;
         Ok(sself)
