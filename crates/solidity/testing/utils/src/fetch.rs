@@ -7,6 +7,8 @@ use reqwest::blocking::get;
 use reqwest::header::CONTENT_TYPE;
 use serde_json::Value;
 
+const MAX_RETRIES: u64 = 6;
+
 // Given an address and a path, it downloads the json file from sourcify,
 // and stores it in the path.
 pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
@@ -25,15 +27,22 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
 
     // Try with exponential backoff
     let mut tries = 0;
-    while (body.is_err() || body.as_ref().unwrap().status() != reqwest::StatusCode::OK) && tries < 6
+    while (body.is_err() || body.as_ref().unwrap().status() != reqwest::StatusCode::OK)
+        && tries < MAX_RETRIES
     {
         tries += 1;
         thread::sleep(Duration::from_secs(2 ^ tries));
         body = get(&url);
     }
 
-    let body = body
-        .map_err(|e| anyhow!("Error fetching project with address {address} from Sourcify: {e}"))?;
+    let body = body.map_err(|e| anyhow!("Error fetching {url}: {e}"))?;
+
+    if tries == MAX_RETRIES {
+        bail!(
+            "Error fetching {url}: status code is {status}",
+            status = body.status(),
+        );
+    }
 
     let Some(content_type) = body.headers().get(CONTENT_TYPE) else {
         bail!("Error fetching project with address {address} from Sourcify: no content-type header")
