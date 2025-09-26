@@ -27,7 +27,9 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
 
     // Try with exponential backoff
     let mut tries = 0;
-    while (body.is_err() || body.as_ref().unwrap().status() != reqwest::StatusCode::OK)
+    while !body
+        .as_ref()
+        .is_ok_and(|response| response.status() == reqwest::StatusCode::OK)
         && tries < MAX_RETRIES
     {
         tries += 1;
