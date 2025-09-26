@@ -45,7 +45,7 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
     }
 
     let Some(content_type) = body.headers().get(CONTENT_TYPE) else {
-        bail!("Error fetching project with address {address} from Sourcify: no content-type header")
+        bail!("Error fetching {url}: no content-type header")
     };
 
     let content_type_str = content_type.to_str().unwrap_or("");
@@ -55,14 +55,12 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
         .starts_with("application/json")
     {
         return Err(anyhow!(
-            "Error fetching project with address {address} from Sourcify: content-type is {content_type_str:?}"
+            "Error fetching {url}: content-type is {content_type_str:?}"
         ));
     }
 
     if body.content_length().unwrap_or_default() == 0 {
-        return Err(anyhow!(
-            "Error fetching project with address {address} from Sourcify: body is empty"
-        ));
+        return Err(anyhow!("Error fetching {url}: body is empty"));
     }
 
     let project_json: Value = body.json()?;
