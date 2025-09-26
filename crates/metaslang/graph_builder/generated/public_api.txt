@@ -714,8 +714,8 @@ pub fn metaslang_graph_builder::graph::Value::fmt(&self, f: &mut core::fmt::Form
 impl core::hash::Hash for metaslang_graph_builder::graph::Value
 pub fn metaslang_graph_builder::graph::Value::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::StructuralPartialEq for metaslang_graph_builder::graph::Value
-impl serde_core::ser::Serialize for metaslang_graph_builder::graph::Value
-pub fn metaslang_graph_builder::graph::Value::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl serde::ser::Serialize for metaslang_graph_builder::graph::Value
+pub fn metaslang_graph_builder::graph::Value::serialize<S: serde::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
 pub struct metaslang_graph_builder::graph::Attributes
 impl metaslang_graph_builder::graph::Attributes
 pub fn metaslang_graph_builder::graph::Attributes::add<V: core::convert::Into<metaslang_graph_builder::graph::Value>>(&mut self, name: metaslang_graph_builder::Identifier, value: V) -> core::result::Result<(), metaslang_graph_builder::graph::Value>
@@ -728,8 +728,8 @@ impl core::fmt::Debug for metaslang_graph_builder::graph::Attributes
 pub fn metaslang_graph_builder::graph::Attributes::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for metaslang_graph_builder::graph::Attributes
 pub fn metaslang_graph_builder::graph::Attributes::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl serde_core::ser::Serialize for metaslang_graph_builder::graph::Attributes
-pub fn metaslang_graph_builder::graph::Attributes::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl serde::ser::Serialize for metaslang_graph_builder::graph::Attributes
+pub fn metaslang_graph_builder::graph::Attributes::serialize<S: serde::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
 pub struct metaslang_graph_builder::graph::Edge
 pub metaslang_graph_builder::graph::Edge::attributes: metaslang_graph_builder::graph::Attributes
 pub struct metaslang_graph_builder::graph::Graph<KT: metaslang_cst::kinds::KindTypes>
@@ -749,8 +749,8 @@ pub type metaslang_graph_builder::graph::Graph<KT>::Output = metaslang_cst::curs
 pub fn metaslang_graph_builder::graph::Graph<KT>::index(&self, node_ref: metaslang_graph_builder::graph::SyntaxNodeRef) -> &metaslang_cst::cursor::Cursor<KT>
 impl<KT: metaslang_cst::kinds::KindTypes> core::ops::index::IndexMut<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::index_mut(&mut self, index: metaslang_graph_builder::graph::GraphNodeRef) -> &mut metaslang_graph_builder::graph::GraphNode
-impl<KT: metaslang_cst::kinds::KindTypes> serde_core::ser::Serialize for metaslang_graph_builder::graph::Graph<KT>
-pub fn metaslang_graph_builder::graph::Graph<KT>::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl<KT: metaslang_cst::kinds::KindTypes> serde::ser::Serialize for metaslang_graph_builder::graph::Graph<KT>
+pub fn metaslang_graph_builder::graph::Graph<KT>::serialize<S: serde::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
 pub struct metaslang_graph_builder::graph::GraphNode
 pub metaslang_graph_builder::graph::GraphNode::attributes: metaslang_graph_builder::graph::Attributes
 impl metaslang_graph_builder::graph::GraphNode
@@ -927,8 +927,8 @@ impl core::marker::StructuralPartialEq for metaslang_graph_builder::Identifier
 impl core::ops::deref::Deref for metaslang_graph_builder::Identifier
 pub type metaslang_graph_builder::Identifier::Target = str
 pub fn metaslang_graph_builder::Identifier::deref(&self) -> &str
-impl serde_core::ser::Serialize for metaslang_graph_builder::Identifier
-pub fn metaslang_graph_builder::Identifier::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl serde::ser::Serialize for metaslang_graph_builder::Identifier
+pub fn metaslang_graph_builder::Identifier::serialize<S: serde::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
 impl<'a> core::cmp::PartialEq<&'a str> for metaslang_graph_builder::Identifier
 pub fn metaslang_graph_builder::Identifier::eq(&self, other: &&'a str) -> bool
 pub struct metaslang_graph_builder::Location

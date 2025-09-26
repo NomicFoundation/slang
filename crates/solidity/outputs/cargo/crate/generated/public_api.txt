@@ -214,8 +214,8 @@ impl core::str::traits::FromStr for slang_solidity::cst::EdgeLabel
 pub type slang_solidity::cst::EdgeLabel::Err = strum::ParseError
 pub fn slang_solidity::cst::EdgeLabel::from_str(s: &str) -> core::result::Result<slang_solidity::cst::EdgeLabel, <Self as core::str::traits::FromStr>::Err>
 impl metaslang_cst::kinds::EdgeLabelExtensions for slang_solidity::cst::EdgeLabel
-impl serde_core::ser::Serialize for slang_solidity::cst::EdgeLabel
-pub fn slang_solidity::cst::EdgeLabel::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl serde::ser::Serialize for slang_solidity::cst::EdgeLabel
+pub fn slang_solidity::cst::EdgeLabel::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::EdgeLabel> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::EdgeLabel) -> &'static str
 pub enum slang_solidity::cst::KindTypes
@@ -231,8 +231,8 @@ impl metaslang_cst::kinds::KindTypes for slang_solidity::cst::KindTypes
 pub type slang_solidity::cst::KindTypes::EdgeLabel = slang_solidity::cst::EdgeLabel
 pub type slang_solidity::cst::KindTypes::NonterminalKind = slang_solidity::cst::NonterminalKind
 pub type slang_solidity::cst::KindTypes::TerminalKind = slang_solidity::cst::TerminalKind
-impl serde_core::ser::Serialize for slang_solidity::cst::KindTypes
-pub fn slang_solidity::cst::KindTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl serde::ser::Serialize for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 #[repr(u8)] pub enum slang_solidity::cst::NonterminalKind
 pub slang_solidity::cst::NonterminalKind::AbicoderPragma
 pub slang_solidity::cst::NonterminalKind::AbicoderVersion
@@ -482,8 +482,8 @@ impl core::str::traits::FromStr for slang_solidity::cst::NonterminalKind
 pub type slang_solidity::cst::NonterminalKind::Err = strum::ParseError
 pub fn slang_solidity::cst::NonterminalKind::from_str(s: &str) -> core::result::Result<slang_solidity::cst::NonterminalKind, <Self as core::str::traits::FromStr>::Err>
 impl metaslang_cst::kinds::NonterminalKindExtensions for slang_solidity::cst::NonterminalKind
-impl serde_core::ser::Serialize for slang_solidity::cst::NonterminalKind
-pub fn slang_solidity::cst::NonterminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl serde::ser::Serialize for slang_solidity::cst::NonterminalKind
+pub fn slang_solidity::cst::NonterminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::NonterminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::NonterminalKind) -> &'static str
 #[repr(u16)] pub enum slang_solidity::cst::TerminalKind
@@ -818,8 +818,8 @@ impl metaslang_cst::kinds::TerminalKindExtensions for slang_solidity::cst::Termi
 pub fn slang_solidity::cst::TerminalKind::is_identifier(self) -> bool
 pub fn slang_solidity::cst::TerminalKind::is_trivia(self) -> bool
 pub fn slang_solidity::cst::TerminalKind::is_valid(self) -> bool
-impl serde_core::ser::Serialize for slang_solidity::cst::TerminalKind
-pub fn slang_solidity::cst::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl serde::ser::Serialize for slang_solidity::cst::TerminalKind
+pub fn slang_solidity::cst::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::TerminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::TerminalKind) -> &'static str
 pub trait slang_solidity::cst::BaseRewriter
