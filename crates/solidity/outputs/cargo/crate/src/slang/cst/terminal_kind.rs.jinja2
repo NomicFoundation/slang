@@ -29,47 +29,38 @@ pub enum TerminalKind {
     MISSING,
 
     {# Generated: #}
-
-    {% if rendering_in_stubs -%}
-        Stub1,
-        Stub2,
-        Stub3,
-    {%- else -%}
-        {%- for variant in model.kinds.terminal_kinds -%}
-            /// Represents a node with kind `{{ variant.id }}`, having the following structure:
-            ///
-            /// ```ebnf
-            {%- for line in variant.documentation | split(pat="\n") %}
-            /// {{ line }}
-            {%- endfor %}
-            /// ```
-            {{ variant.id }},
-        {%- endfor -%}
-    {%- endif -%}
+    {%- for variant in model.kinds.terminal_kinds -%}
+        /// Represents a node with kind `{{ variant.id }}`, having the following structure:
+        ///
+        /// ```ebnf
+        {%- for line in variant.documentation | split(pat="\n") %}
+        /// {{ line }}
+        {%- endfor %}
+        /// ```
+        {{ variant.id }},
+    {%- endfor -%}
 }
 
 impl crate::cst::TerminalKindExtensions for TerminalKind {
-    {%- if not rendering_in_stubs -%}
-        fn is_identifier(self) -> bool {
-            matches!(
-                self,
-                {%- for variant in model.kinds.identifier_terminals -%}
-                    | Self::{{ variant }}
-                {%- endfor -%}
-            )
-        }
+    fn is_identifier(self) -> bool {
+        matches!(
+            self,
+            {%- for variant in model.kinds.identifier_terminals -%}
+                | Self::{{ variant }}
+            {%- endfor -%}
+        )
+    }
 
-        fn is_trivia(self) -> bool {
-            matches!(
-                self,
-                {%- for variant in model.kinds.trivia_terminals -%}
-                    | Self::{{ variant }}
-                {%- endfor -%}
-            )
-        }
+    fn is_trivia(self) -> bool {
+        matches!(
+            self,
+            {%- for variant in model.kinds.trivia_terminals -%}
+                | Self::{{ variant }}
+            {%- endfor -%}
+        )
+    }
 
-        fn is_valid(self) -> bool {
-            !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
-        }
-    {%- endif -%}
+    fn is_valid(self) -> bool {
+        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
+    }
 }

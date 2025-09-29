@@ -30,7 +30,6 @@ impl RuntimeGenerator {
         output_dir: &Path,
     ) -> Result<()> {
         let model = ModelWrapper {
-            rendering_in_stubs: false,
             model: RuntimeModel::from_language(language)?,
         };
 
@@ -43,29 +42,17 @@ impl RuntimeGenerator {
         dir: &Path,
     ) -> Result<()> {
         let model = ModelWrapper {
-            rendering_in_stubs: false,
             model: RuntimeModel::from_language(language)?,
         };
 
         CodegenRuntime::render_templates_in_place(fs, dir, model)
     }
-
-    pub fn generate_stubs(fs: &mut CodegenFileSystem, source_dir: &Path) -> Result<()> {
-        let model = ModelWrapper {
-            rendering_in_stubs: true,
-            model: RuntimeModel::default(),
-        };
-
-        CodegenRuntime::render_stubs(fs, source_dir, &model)
-    }
 }
 
-/// A utility wrapper to make it easier to write conditional code in templates
-/// by checking `rendering_in_stubs`. Additionally, it makes sure that all
-/// model properties are prefixed with `model.` to make it easier to read/refactor.
+/// A utility wrapper that makes sure that all model properties are prefixed with `model.`
+/// to make it easier to read/refactor.
 #[derive(Serialize)]
 struct ModelWrapper {
-    rendering_in_stubs: bool,
     model: RuntimeModel,
 }
 

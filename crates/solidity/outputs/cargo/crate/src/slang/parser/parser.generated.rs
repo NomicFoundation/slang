@@ -152,6 +152,7 @@ impl Parser {
     pub fn parse_file_contents(&self, input: &str) -> ParseOutput {
         self.parse_nonterminal(NonterminalKind::SourceUnit, input)
     }
+
     /// Parse the given `Solidity` source code as a specific [`NonterminalKind`].
     pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         match kind {
@@ -9228,17 +9229,17 @@ impl Lexer for Parser {
         let mut longest_terminal = None;
 
         macro_rules! longest_match {
-                ($( { $kind:ident = $function:ident } )*) => {
-                    $(
-                        if self.$function(input) && input.position() > furthest_position {
-                            furthest_position = input.position();
+            ($( { $kind:ident = $function:ident } )*) => {
+                $(
+                    if self.$function(input) && input.position() > furthest_position {
+                        furthest_position = input.position();
 
-                            longest_terminal = Some(TerminalKind::$kind);
-                        }
-                        input.set_position(save);
-                    )*
-                };
-            }
+                        longest_terminal = Some(TerminalKind::$kind);
+                    }
+                    input.set_position(save);
+                )*
+            };
+        }
 
         match LexCtx::value() {
             LexicalContext::Default => {

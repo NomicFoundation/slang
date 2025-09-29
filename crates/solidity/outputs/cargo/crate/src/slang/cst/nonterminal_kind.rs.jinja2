@@ -19,22 +19,16 @@
 #[allow(clippy::doc_markdown)]
 #[allow(clippy::doc_link_with_quotes)]
 pub enum NonterminalKind {
-    {%- if rendering_in_stubs -%}
-        Stub1,
-        Stub2,
-        Stub3,
-    {%- else -%}
-        {%- for variant in model.kinds.nonterminal_kinds -%}
-            /// Represents a node with kind `{{ variant.id }}`, having the following structure:
-            ///
-            /// ```ebnf
-            {%- for line in variant.documentation | split(pat="\n") %}
-            /// {{ line }}
-            {%- endfor %}
-            /// ```
-            {{ variant.id }},
-        {%- endfor -%}
-    {%- endif -%}
+    {%- for variant in model.kinds.nonterminal_kinds -%}
+        /// Represents a node with kind `{{ variant.id }}`, having the following structure:
+        ///
+        /// ```ebnf
+        {%- for line in variant.documentation | split(pat="\n") %}
+        /// {{ line }}
+        {%- endfor %}
+        /// ```
+        {{ variant.id }},
+    {%- endfor -%}
 }
 
 impl crate::cst::NonterminalKindExtensions for NonterminalKind {}

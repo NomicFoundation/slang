@@ -25,17 +25,10 @@ pub enum EdgeLabel {
     {%- endfor %}
 
     {# Generated: #}
-
-    {% if rendering_in_stubs -%}
-        Stub1,
-        Stub2,
-        Stub3,
-    {%- else -%}
-        {% for label in model.kinds.labels -%}
-            /// Represents a child node with the label `{{ label | snake_case }}`.
-            {{ label | pascal_case }},
-        {%- endfor -%}
-    {%- endif -%}
+    {% for label in model.kinds.labels -%}
+        /// Represents a child node with the label `{{ label | snake_case }}`.
+        {{ label | pascal_case }},
+    {%- endfor -%}
 }
 
 impl crate::cst::EdgeLabelExtensions for EdgeLabel {}

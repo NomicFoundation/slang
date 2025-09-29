@@ -3,15 +3,9 @@
 {% if model.kinds.lexical_contexts|length <= 256 -%} #[repr(u8)] {% else -%} #[repr(u16)] {% endif %}
 #[derive(strum_macros::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {
-    {%- if rendering_in_stubs -%}
-        Stub1,
-        Stub2,
-        Stub3,
-    {%- else -%}
-        {%- for context_name in model.kinds.lexical_contexts %}
-            {{ context_name }},
-        {%- endfor %}
-    {%- endif -%}
+    {%- for context_name in model.kinds.lexical_contexts %}
+        {{ context_name }},
+    {%- endfor %}
 }
 
 /// Marker trait for type-level [`LexicalContext`] variants.
@@ -22,15 +16,13 @@ pub(crate) trait IsLexicalContext {
 
 #[allow(non_snake_case)]
 pub(crate) mod LexicalContextType {
-    {%- if not rendering_in_stubs -%}
-        {%- for context_name in model.kinds.lexical_contexts %}
-            pub struct {{ context_name }};
+    {%- for context_name in model.kinds.lexical_contexts %}
+        pub struct {{ context_name }};
 
-            impl super::IsLexicalContext for {{ context_name }} {
-                fn value() -> super::LexicalContext {
-                    super::LexicalContext::{{ context_name }}
-                }
+        impl super::IsLexicalContext for {{ context_name }} {
+            fn value() -> super::LexicalContext {
+                super::LexicalContext::{{ context_name }}
             }
-        {%- endfor %}
-    {%- endif -%}
+        }
+    {%- endfor %}
 }

@@ -11,24 +11,6 @@ use crate::paths::PathExtensions;
 pub struct CodegenRuntime;
 
 impl CodegenRuntime {
-    pub fn render_stubs(
-        fs: &mut CodegenFileSystem,
-        input_dir: impl Into<PathBuf>,
-        model: impl Serialize,
-    ) -> Result<()> {
-        let tera = TeraWrapper::new(input_dir)?;
-        let context = tera::Context::from_serialize(model)?;
-
-        for template_path in tera.find_all_templates()? {
-            let stub_path = Self::get_stub_path(&template_path).with_extension("");
-            let output = tera.render(&template_path, &context)?;
-
-            fs.write_file_formatted(&stub_path, output)?;
-        }
-
-        Ok(())
-    }
-
     pub fn render_templates_in_place(
         fs: &mut CodegenFileSystem,
         dir: impl Into<PathBuf>,
@@ -69,15 +51,6 @@ impl CodegenRuntime {
         }
 
         Ok(())
-    }
-
-    fn get_stub_path(template_path: &Path) -> PathBuf {
-        let base_name = template_path.unwrap_name();
-
-        template_path
-            .unwrap_parent()
-            .join("generated")
-            .join(base_name)
     }
 
     fn get_in_place_path(template_path: &Path) -> PathBuf {
