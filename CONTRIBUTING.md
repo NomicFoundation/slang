@@ -17,8 +17,6 @@ Currently, the repository has the following projects:
         - `spec/`: Language specification generator
         - `runtime/`:
             - `generator/`: Generates Rust source code from language definitions
-            - `cargo/crate`: Rust crate runtime code which gets copied over into generated language code.
-            - `cargo/wasm`: WASM bindings and runtime.
             - `language/definition`: Building blocks for how languages can be defined
     - `metaslang/`:
         - `cst/`: A generic library for building, navigating and querying concrete syntax trees
@@ -27,6 +25,9 @@ Currently, the repository has the following projects:
     - `solidity/`:
         - `inputs/`: Solidity language definition.
         - `outputs/`: different packages and artifacts produced from it.
+            - `cargo/crate`: Rust runtime and API.
+            - `cargo/wasm`: WASM bindings and runtime.
+            - `npm/package`: NodeJS bindings and runtime.
 - `documentation/`: mkdocs site to render project documentation.
 
 ## Dev Containers
