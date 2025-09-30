@@ -87,7 +87,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
 }
 
 #[cfg(feature = "__private_testing_utils")]
-#[allow(missing_docs)]
+#[doc(hidden)]
 impl<KT: KindTypes + 'static> BindingGraph<KT> {
     pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition<KT>> + '_ {
         self.graph.iter_definitions().map(|handle| Definition {
