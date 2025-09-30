@@ -45,7 +45,7 @@
 //! }
 //!
 //! let config = MyProjectConfig::default();
-//! let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, config).unwrap();
+//! let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, config).unwrap();
 //! builder.add_file("b.sol").unwrap();
 //! let unit = builder.build();
 //!

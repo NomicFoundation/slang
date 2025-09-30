@@ -21,7 +21,7 @@ pub slang_solidity::compilation::CompilationBuilder::config: C
 impl<E, C: slang_solidity::compilation::CompilationBuilderConfig<Error = E>> slang_solidity::compilation::CompilationBuilder<E, C>
 pub fn slang_solidity::compilation::CompilationBuilder<E, C>::add_file(&mut self, file_id: &str) -> core::result::Result<(), E>
 pub fn slang_solidity::compilation::CompilationBuilder<E, C>::build(&self) -> slang_solidity::compilation::CompilationUnit
-pub fn slang_solidity::compilation::CompilationBuilder<E, C>::new(version: semver::Version, config: C) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<E, C>, slang_solidity::compilation::CompilationInitializationError>
+pub fn slang_solidity::compilation::CompilationBuilder<E, C>::create(version: semver::Version, config: C) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<E, C>, slang_solidity::compilation::CompilationInitializationError>
 pub struct slang_solidity::compilation::CompilationUnit
 impl slang_solidity::compilation::CompilationUnit
 pub fn slang_solidity::compilation::CompilationUnit::binding_graph(&self) -> &alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
