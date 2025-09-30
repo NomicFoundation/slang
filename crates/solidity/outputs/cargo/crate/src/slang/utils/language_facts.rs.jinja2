@@ -25,6 +25,6 @@ impl LanguageFacts {
     /// source code. The returned iterator will produce all compatible versions in order, starting with
     /// the earliest one.
     pub fn infer_language_versions(input: &str) -> impl Iterator<Item = &'static Version> {
-        crate::extensions::utils::infer_language_versions(input)
+        crate::utils::infer_language_versions(input)
     }
 }

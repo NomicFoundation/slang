@@ -36,7 +36,6 @@
 //! }
 //! ```
 
-mod extensions;
 mod slang;
 
 pub use slang::*;
