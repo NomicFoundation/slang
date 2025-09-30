@@ -1,6 +1,4 @@
-{%- if not target -%}
-{# Not meant to be rendered without an IR model #}
-{%- elif not builder -%}
+{%- if not builder -%}
   // Not rendering builder for Intermediate Language
 {%- else -%}
   #![allow(clippy::too_many_lines)]

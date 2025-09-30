@@ -20,6 +20,12 @@ impl CodegenRuntime {
         let context = tera::Context::from_serialize(model)?;
 
         for template_path in tera.find_all_templates()? {
+            if template_path
+                .file_name()
+                .is_some_and(|name| name.to_string_lossy().starts_with('_'))
+            {
+                continue;
+            }
             let generated_path = Self::get_in_place_path(&template_path);
             let rendered = tera.render(&template_path, &context)?;
 
