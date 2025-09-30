@@ -23,19 +23,6 @@ use crate::parser::ParserModel;
 pub struct RuntimeGenerator;
 
 impl RuntimeGenerator {
-    pub fn generate_product(
-        language: &Language,
-        fs: &mut CodegenFileSystem,
-        input_dir: &Path,
-        output_dir: &Path,
-    ) -> Result<()> {
-        let model = ModelWrapper {
-            model: RuntimeModel::from_language(language)?,
-        };
-
-        CodegenRuntime::render_product(fs, input_dir, output_dir, model)
-    }
-
     pub fn generate_templates_in_place(
         language: &Language,
         fs: &mut CodegenFileSystem,

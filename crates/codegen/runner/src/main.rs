@@ -88,9 +88,9 @@ fn generate_solidity_tests() -> Result<()> {
 fn generate_in_place(
     fs: &mut CodegenFileSystem,
     language: &Language,
-    the_crate: &str,
+    crate_name: &str,
 ) -> Result<()> {
-    let the_crate = CargoWorkspace::locate_source_crate(the_crate)?;
+    let the_crate = CargoWorkspace::locate_source_crate(crate_name)?;
 
     RuntimeGenerator::generate_templates_in_place(language, fs, &the_crate)
 }
