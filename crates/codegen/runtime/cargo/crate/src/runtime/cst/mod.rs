@@ -79,7 +79,7 @@ pub type AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<KindTypes>
 /// for detailed information about the query syntax and how to use queries to find matches.
 pub type Query = metaslang_cst::query::Query<KindTypes>;
 
-pub use metaslang_cst::query::QueryError;
+pub use metaslang_cst::query::{CaptureQuantifier, QueryError};
 /// Represents a match found by executing queries on a cursor.
 pub type QueryMatch = metaslang_cst::query::QueryMatch<KindTypes>;
 /// Iterator over query matches in the syntax tree.

@@ -145,14 +145,10 @@ impl<T: KindTypes + 'static> ASTNode<T> {
 
 /// Represents a match found by executing queries on a cursor.
 pub struct QueryMatch<T: KindTypes> {
-    /// The queries that were matched.
-    pub queries: Rc<Vec<Query<T>>>,
-    /// The index of the matched query within the list of queries.
-    pub query_index: usize,
-    /// The cursor that was used to find the match.
-    pub root_cursor: Cursor<T>,
-    /// The capture definitions in the query
-    pub captures: BTreeMap<String, Vec<Cursor<T>>>,
+    queries: Rc<Vec<Query<T>>>,
+    query_index: usize,
+    root_cursor: Cursor<T>,
+    captures: BTreeMap<String, Vec<Cursor<T>>>,
 }
 
 impl<T: KindTypes> QueryMatch<T> {
@@ -161,9 +157,19 @@ impl<T: KindTypes> QueryMatch<T> {
         &self.queries[self.query_index]
     }
 
+    /// The index of the matched query within the list of queries.
+    pub fn query_index(&self) -> usize {
+        self.query_index
+    }
+
+    /// The cursor that was used to find the match.
+    pub fn root_cursor(&self) -> &Cursor<T> {
+        &self.root_cursor
+    }
+
     /// Returns an iterator over all of the capture names matched by this query.
     pub fn capture_names(&self) -> impl Iterator<Item = &String> {
-        self.query().capture_quantifiers.keys()
+        self.query().capture_quantifiers().keys()
     }
 
     /// Returns an iterator over all of the captures matched by this query. The iterator item
@@ -173,15 +179,18 @@ impl<T: KindTypes> QueryMatch<T> {
         &self,
     ) -> impl Iterator<Item = (&String, CaptureQuantifier, impl Iterator<Item = Cursor<T>>)> {
         let query = self.query();
-        query.capture_quantifiers.iter().map(|(name, quantifier)| {
-            let captures = self
-                .captures
-                .get(name)
-                .unwrap_or(&vec![])
-                .clone()
-                .into_iter();
-            (name, *quantifier, captures)
-        })
+        query
+            .capture_quantifiers()
+            .iter()
+            .map(|(name, quantifier)| {
+                let captures = self
+                    .captures
+                    .get(name)
+                    .unwrap_or(&vec![])
+                    .clone()
+                    .into_iter();
+                (name, *quantifier, captures)
+            })
     }
 
     /// Try to find a single capture matched by this query. If no captures exist with the name `name`,
@@ -192,7 +201,7 @@ impl<T: KindTypes> QueryMatch<T> {
         name: &str,
     ) -> Option<(CaptureQuantifier, impl Iterator<Item = Cursor<T>>)> {
         let query = self.query();
-        query.capture_quantifiers.get(name).map(|quantifier| {
+        query.capture_quantifiers().get(name).map(|quantifier| {
             let captures = self
                 .captures
                 .get(name)
@@ -225,7 +234,7 @@ impl<T: KindTypes + 'static> QueryMatchIterator<T> {
     fn advance_to_next_possible_matching_query(&mut self) {
         while !self.cursor.is_completed() {
             while self.query_index < self.queries.len() {
-                let ast_node = &self.queries[self.query_index].ast_node;
+                let ast_node = &self.queries[self.query_index].ast_node();
                 if ast_node.can_match(&self.cursor) {
                     // The first matcher in the query should allow implicit matches
                     self.matcher = Some(ast_node.create_matcher(self.cursor.clone(), false));

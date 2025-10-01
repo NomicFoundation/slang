@@ -143,7 +143,7 @@ pub struct Match<KT: KindTypes> {
 impl<KT: KindTypes> Match<KT> {
     /// Return the top-level matched node.
     pub fn full_capture(&self) -> metaslang_cst::cursor::Cursor<KT> {
-        self.mat.root_cursor.clone()
+        self.mat.root_cursor().clone()
     }
 
     /// Return the matched nodes for a named capture.
