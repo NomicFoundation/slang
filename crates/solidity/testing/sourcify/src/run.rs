@@ -4,8 +4,7 @@ use std::rc::Rc;
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use slang_solidity::backend::binder::Resolution;
-use slang_solidity::backend::passes;
-use slang_solidity::backend::passes::p5_resolve_references::Output;
+use slang_solidity::backend::build_binder_output;
 use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
 use slang_solidity::cst::{
     Cursor, NodeId, NodeKind, TerminalKind, TerminalKindExtensions, TerminalNode, TextRange,
@@ -251,21 +250,12 @@ fn run_binder_v1_check(
     test_outcome
 }
 
-fn build_new_binder_output(compilation_unit: CompilationUnit) -> Output {
-    let data = passes::p0_build_ast::run(compilation_unit);
-    let data = passes::p1_flatten_contracts::run(data);
-    let data = passes::p2_collect_definitions::run(data);
-    let data = passes::p3_linearise_contracts::run(data);
-    let data = passes::p4_type_definitions::run(data);
-    passes::p5_resolve_references::run(data)
-}
-
 fn run_binder_v2_check(
     contract: &Contract,
     compilation_unit: CompilationUnit,
     events: &Events,
 ) -> TestOutcome {
-    let data = build_new_binder_output(compilation_unit);
+    let data = build_binder_output(compilation_unit);
 
     let mut test_outcome = TestOutcome::Passed;
     let mut cursor_cache: HashMap<NodeId, (Cursor, String)> = HashMap::new();
@@ -333,7 +323,7 @@ fn run_compare_binders(
     compilation_unit: CompilationUnit,
     events: &Events,
 ) -> TestOutcome {
-    let data = build_new_binder_output(compilation_unit);
+    let data = build_binder_output(compilation_unit);
     let binder = data.binder;
 
     let binding_graph = data.compilation_unit.binding_graph();
