@@ -9,10 +9,10 @@ mod ffi {
         AncestorsIterator, AncestorsIteratorBorrow, Cursor, CursorBorrow, CursorIterator,
         CursorIteratorBorrow, Edge, EdgeBorrow, EdgeLabel, Guest, GuestAncestorsIterator,
         GuestCursor, GuestCursorIterator, GuestEdge, GuestNonterminalNode, GuestQuery,
-        GuestQueryMatchIterator, GuestTerminalKindExtensions, GuestTerminalNode, Node,
-        NonterminalKind, NonterminalNode, NonterminalNodeBorrow, Query, QueryBorrow, QueryError,
-        QueryMatch, QueryMatchIterator, QueryMatchIteratorBorrow, TerminalKind, TerminalNode,
-        TerminalNodeBorrow, TextIndex, TextRange,
+        GuestQueryMatchIterator, GuestTerminalKindExtensions, GuestTerminalNode,
+        GuestTextIndexExtensions, Node, NonterminalKind, NonterminalNode, NonterminalNodeBorrow,
+        Query, QueryBorrow, QueryError, QueryMatch, QueryMatchIterator, QueryMatchIteratorBorrow,
+        TerminalKind, TerminalNode, TerminalNodeBorrow, TextIndex, TextRange,
     };
 }
 
@@ -38,6 +38,8 @@ impl ffi::Guest for crate::wasm_crate::World {
 
     type Query = QueryWrapper;
     type QueryMatchIterator = QueryMatchIteratorWrapper;
+
+    type TextIndexExtensions = TextIndexExtensionsWrapper;
 }
 
 //================================================
@@ -475,6 +477,20 @@ impl FromFFI<rust::TextIndex> for &ffi::TextIndex {
             line: self.line as usize,
             column: self.column as usize,
         }
+    }
+}
+
+//================================================
+//
+// resource text-index-extensions
+//
+//================================================
+
+pub struct TextIndexExtensionsWrapper;
+
+impl ffi::GuestTextIndexExtensions for TextIndexExtensionsWrapper {
+    fn zero() -> ffi::TextIndex {
+        crate::rust_crate::cst::TextIndex::ZERO._into_ffi()
     }
 }
 

@@ -28,7 +28,7 @@ pub struct TextIndex {
 }
 
 impl TextIndex {
-    /// Shorthand for `TextIndex { utf8: 0, utf16: 0, line: 0, char: 0 }`.
+    /// Creates a text index with zero offsets.
     pub const ZERO: TextIndex = TextIndex {
         utf8: 0,
         utf16: 0,

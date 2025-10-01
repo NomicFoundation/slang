@@ -10,6 +10,7 @@ export namespace NomicFoundationSlangCst {
   export { AncestorsIterator };
   export { Query };
   export { QueryMatchIterator };
+  export { TextIndexExtensions };
   export { NonterminalKind };
   export { TerminalKind };
   export { EdgeLabel };
@@ -6200,4 +6201,19 @@ export class TerminalNode {
    * Converts the node to a JSON representation for debugging.
    */
   toJson(): string;
+}
+
+/**
+ * Useful extension methods for working with text indices.
+ */
+
+export class TextIndexExtensions {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+  /**
+   * Creates a text index with zero offsets.
+   */
+  static zero(): TextIndex;
 }

@@ -278,6 +278,12 @@ interface cst {
         column: u32,
     }
 
+    //// Useful extension methods for working with text indices.
+    resource text-index-extensions {
+        /// Creates a text index with zero offsets.
+        zero: static func() -> text-index;
+    }
+
     /// Represents a range in the source text.
     record text-range {
         /// Starting (inclusive) position of the range.
