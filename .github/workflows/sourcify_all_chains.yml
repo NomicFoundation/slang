@@ -3,8 +3,13 @@ name: "sourcify_all_chains"
 on:
   workflow_dispatch:
     inputs:
-      check_bindings:
-        description: "Check name bindings on contracts, failing if there's any unresolved symbol."
+      check_binder_v1:
+        description: "Check name bindings on contracts using the graph binder, reporting if there's any unresolved symbol. Only one binder check can be enabled."
+        type: "boolean"
+        required: false
+        default: false
+      check_binder_v2:
+        description: "Check name bindings on contracts using the new binder, reporting if there's any unresolved symbol. Only one binder check can be enabled."
         type: "boolean"
         required: false
         default: false
@@ -18,7 +23,8 @@ jobs:
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
       chain_id: "${{ matrix.chain_id }}"
-      check_bindings: "${{ inputs.check_bindings }}"
+      check_binder_v1: "${{ inputs.check_binder_v1 }}"
+      check_binder_v2: "${{ inputs.check_binder_v2 }}"
       check_infer_version: "${{ inputs.check_infer_version }}"
     strategy:
       fail-fast: false

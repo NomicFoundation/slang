@@ -10,8 +10,13 @@ on:
         type: "number"
         required: true
         default: 1
-      check_bindings:
-        description: "Check name bindings on contracts, failing if there's any unresolved symbol."
+      check_binder_v1:
+        description: "Check name bindings on contracts using the graph binder, reporting if there's any unresolved symbol. Only one binder check can be enabled."
+        type: "boolean"
+        required: false
+        default: false
+      check_binder_v2:
+        description: "Check name bindings on contracts using the new binder, reporting if there's any unresolved symbol. Only one binder check can be enabled."
         type: "boolean"
         required: false
         default: false
@@ -27,8 +32,8 @@ on:
         type: "number"
         required: true
         default: 1
-      check_bindings:
-        description: "Check name bindings on contracts, failing if there's any unresolved symbol."
+      check_binder_v1:
+        description: "Check name bindings on contracts using the graph binder, failing if there's any unresolved symbol."
         type: "boolean"
         required: false
         default: false
@@ -151,7 +156,8 @@ jobs:
               --chain-id ${{ inputs.chain_id }} \
               --shard-count ${{ env.SHARD_COUNT }} \
               --shard-index ${{ matrix.shard_index }} \
-              ${{ inputs.check_bindings == true && '--check-bindings' || '' }} \
+              ${{ inputs.check_binder_v1 == true && '--check-binder-v1' || '' }} \
+              ${{ inputs.check_binder_v2 == true && '--check-binder-v2' || '' }} \
               ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }}
 
       - name: "Write shard results to output"

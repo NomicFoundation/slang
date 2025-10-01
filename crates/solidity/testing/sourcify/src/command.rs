@@ -51,20 +51,20 @@ pub struct ShowCombinedResultsCommand {
 #[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Parser)]
 pub struct TestOptions {
-    /// Run bindings tests.
-    #[arg(long, default_value_t = false)]
-    pub check_bindings: bool,
+    /// Run bindings tests for the graph binder.
+    #[arg(long, default_value_t = false, conflicts_with_all = ["check_binder_v2", "compare_binders"])]
+    pub check_binder_v1: bool,
 
-    /// Run new binder tests.
-    #[arg(long, default_value_t = false)]
-    pub check_new_binder: bool,
+    /// Run bindings tests for the new binder.
+    #[arg(long, default_value_t = false, conflicts_with_all = ["check_binder_v1", "compare_binders"])]
+    pub check_binder_v2: bool,
 
     /// Run version inference tests.
     #[arg(long, default_value_t = false)]
     pub check_infer_version: bool,
 
-    /// Run comparison between old and new binder.
-    #[arg(long, default_value_t = false)]
+    /// Run comparison between graph binder and new binder.
+    #[arg(long, default_value_t = false, conflicts_with_all = ["check_binder_v1", "check_binder_v2"])]
     pub compare_binders: bool,
 }
 
@@ -87,11 +87,6 @@ pub struct ShardingOptions {
 
 #[derive(Debug, Parser)]
 pub struct ArchiveOptions {
-    /// Save the fetch archive under `target/` and don't delete it after the test
-    /// is complete.
-    #[arg(long, default_value_t = false)]
-    pub save: bool,
-
     /// Don't attempt to download files and fail if some are not available
     #[arg(long, default_value_t = false)]
     pub offline: bool,

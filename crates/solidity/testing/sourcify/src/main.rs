@@ -58,8 +58,6 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
                 run_in_parallel(&archive, &events, &cmd.test_options);
             }
             events.finish_archive();
-
-            archive.clean();
         }
 
         events

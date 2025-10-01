@@ -77,10 +77,10 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
             }
 
             if test_outcome == TestOutcome::Passed {
-                if opts.check_bindings {
-                    test_outcome = run_bindings_check(contract, &unit, events);
-                } else if opts.check_new_binder {
-                    test_outcome = run_new_binder_check(contract, unit, events);
+                if opts.check_binder_v1 {
+                    test_outcome = run_binder_v1_check(contract, &unit, events);
+                } else if opts.check_binder_v2 {
+                    test_outcome = run_binder_v2_check(contract, unit, events);
                 } else if opts.compare_binders {
                     test_outcome = run_compare_binders(contract, unit, events);
                 }
@@ -164,7 +164,7 @@ fn run_version_inference_check(
     }
 }
 
-fn run_bindings_check(
+fn run_binder_v1_check(
     contract: &Contract,
     compilation_unit: &CompilationUnit,
     events: &Events,
@@ -260,7 +260,7 @@ fn build_new_binder_output(compilation_unit: CompilationUnit) -> Output {
     passes::p5_resolve_references::run(data)
 }
 
-fn run_new_binder_check(
+fn run_binder_v2_check(
     contract: &Contract,
     compilation_unit: CompilationUnit,
     events: &Events,

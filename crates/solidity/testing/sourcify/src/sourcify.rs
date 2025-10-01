@@ -58,7 +58,11 @@ impl Manifest {
             .unwrap_or_default()
             .join("target/manifest.json");
 
-        if !options.offline && !file_exists_and_is_fresh(&manifest_path) {
+        if options.offline {
+            if !fs::exists(&manifest_path)? {
+                bail!("Manifest does not exists and running in offline mode");
+            }
+        } else if !file_exists_and_is_fresh(&manifest_path) {
             let manifest_url = "https://repo-backup.sourcify.dev/manifest.json";
             println!("Downloading manifest from {manifest_url}");
             let client = Client::new();
@@ -79,10 +83,7 @@ impl Manifest {
     /// Search for a specific contract and return it if found. Returns `None` if the contract can not
     /// be fetched for any reason (including if the `contract_id` is not parseable).
     pub fn fetch_contract(&self, contract_id: &str) -> Option<Contract> {
-        let options = ArchiveOptions {
-            offline: false,
-            save: true,
-        };
+        let options = ArchiveOptions { offline: false };
         u8::from_str_radix(contract_id.get(2..4).unwrap(), 16)
             .ok()
             .and_then(|contract_prefix| {
@@ -205,15 +206,16 @@ pub struct ContractArchive {
     /// Path to the directory inside this archive which contains all of the contracts.
     /// Iterate over the entries at this path to read the contracts.
     contracts_path: PathBuf,
-
-    /// Should remove the archive and contracts at the end
-    delete_files: bool,
 }
 
 impl ContractArchive {
     pub fn fetch(desc: &ArchiveDescriptor, options: &ArchiveOptions) -> Result<ContractArchive> {
         let contracts_path = desc.contracts_dir();
-        if !options.offline && !file_exists_and_is_fresh(&contracts_path) {
+        if options.offline {
+            if !fs::exists(&contracts_path)? {
+                bail!("Shard archive directory does not exists and running in offline mode");
+            }
+        } else if !file_exists_and_is_fresh(&contracts_path) {
             println!("Downloading shard archive from {url}", url = desc.url);
             let client = Client::new();
             let res = client.get(&desc.url).send()?;
@@ -233,10 +235,7 @@ impl ContractArchive {
             fs::File::open(&contracts_path)?.set_modified(SystemTime::now())?;
         }
 
-        Ok(ContractArchive {
-            contracts_path,
-            delete_files: !options.save && !options.offline,
-        })
+        Ok(ContractArchive { contracts_path })
     }
 
     pub fn contracts(&self) -> impl Iterator<Item = Contract> {
@@ -259,12 +258,6 @@ impl ContractArchive {
         fs::read_dir(&self.contracts_path)
             .map(|i| i.count())
             .unwrap_or(0)
-    }
-
-    pub fn clean(self) {
-        if self.delete_files {
-            fs::remove_dir_all(&self.contracts_path).unwrap();
-        }
     }
 
     pub fn display_path(&self) -> String {
@@ -398,7 +391,7 @@ impl CompilationBuilderConfig for ContractConfig<'_> {
 fn file_exists_and_is_fresh<P: AsRef<Path>>(path: P) -> bool {
     if let Ok(metadata) = fs::metadata(path) {
         if let Ok(modified) = metadata.modified() {
-            // Sourcify updates archives once a day, so anything updated updated
+            // Sourcify updates archives once a day, so anything updated
             // in the last 24 hours is considered fresh
             if SystemTime::now()
                 .duration_since(modified)
