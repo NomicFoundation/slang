@@ -25,10 +25,14 @@ fn nonterminal<const N: usize>(
 fn capture_cursors_to_strings(query_match: &QueryMatch) -> BTreeMap<String, Vec<String>> {
     query_match
         .captures()
-        .map(|(name, _, cursors)| {
+        .map(|capture| {
             (
-                name.clone(),
-                cursors.map(|c| c.node().unparse()).collect::<Vec<_>>(),
+                capture.name().to_string(),
+                capture
+                    .cursors()
+                    .iter()
+                    .map(|c| c.node().unparse())
+                    .collect::<Vec<_>>(),
             )
         })
         .collect::<BTreeMap<_, _>>()

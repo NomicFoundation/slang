@@ -435,10 +435,15 @@ impl IntoFFI<ffi::QueryMatch> for rust::QueryMatch {
             root: self.root_cursor().clone()._into_ffi(),
             captures: self
                 .captures()
-                .map(|(name, _, cursors)| {
+                .map(|capture| {
                     (
-                        name.clone(),
-                        cursors.into_iter().map(IntoFFI::_into_ffi).collect(),
+                        capture.name().to_string(),
+                        capture
+                            .cursors()
+                            .iter()
+                            .cloned()
+                            .map(IntoFFI::_into_ffi)
+                            .collect(),
                     )
                 })
                 .collect(),

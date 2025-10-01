@@ -8,7 +8,6 @@ use super::model::{
     OptionalASTNode, Query, SequenceASTNode,
 };
 use crate::kinds::{KindTypes, NodeKind, TerminalKindExtensions};
-use crate::query::CaptureQuantifier;
 
 impl<T: KindTypes + 'static> Cursor<T> {
     /// Returns an iterator over all matches of the given queries in the syntax tree.
@@ -172,44 +171,55 @@ impl<T: KindTypes> QueryMatch<T> {
         self.query().capture_quantifiers().keys()
     }
 
-    /// Returns an iterator over all of the captures matched by this query. The iterator item
-    /// is a 3-tuple containing the capture name, a [`CaptureQuantifier`], and an iterator yielding
-    /// a [`Cursor`] to the location of each capture in the parse tree.
-    pub fn captures(
-        &self,
-    ) -> impl Iterator<Item = (&String, CaptureQuantifier, impl Iterator<Item = Cursor<T>>)> {
-        let query = self.query();
-        query
-            .capture_quantifiers()
-            .iter()
-            .map(|(name, quantifier)| {
-                let captures = self
-                    .captures
-                    .get(name)
-                    .unwrap_or(&vec![])
-                    .clone()
-                    .into_iter();
-                (name, *quantifier, captures)
-            })
+    /// Returns an iterator over all of the captures matched by this query. Each [`Capture`] contains the capture name,
+    /// and a list of [`Cursor`]s to the location of each captured node in the parse tree.
+    pub fn captures(&self) -> impl Iterator<Item = Capture<'_, T>> {
+        self.query().capture_quantifiers().keys().map(|name| {
+            let cursors = match self.captures.get(name) {
+                Some(cursors) => &cursors[..],
+                None => &[],
+            };
+
+            Capture { name, cursors }
+        })
     }
 
-    /// Try to find a single capture matched by this query. If no captures exist with the name `name`,
-    /// this will return `None`. If captures do exist, then this will return a tuple containing a [`CaptureQuantifier`]
-    /// and an iterator yielding a [`Cursor`] to the location of each capture in the parse tree.
-    pub fn capture(
-        &self,
-        name: &str,
-    ) -> Option<(CaptureQuantifier, impl Iterator<Item = Cursor<T>>)> {
-        let query = self.query();
-        query.capture_quantifiers().get(name).map(|quantifier| {
-            let captures = self
-                .captures
-                .get(name)
-                .unwrap_or(&vec![])
-                .clone()
-                .into_iter();
-            (*quantifier, captures)
-        })
+    /// Try to find a single capture matched by this query.
+    /// If no captures exist with the name `name`, this will return `None`.
+    /// If a capture does exist, then this will return a [`Capture`] containing the capture name,
+    /// and a list of [`Cursor`]s to the location of each captured node in the parse tree.
+    pub fn capture(&self, name: &str) -> Option<Capture<'_, T>> {
+        let name = self
+            .query()
+            .capture_quantifiers()
+            .keys()
+            .find(|key| key == &name)?;
+
+        let cursors = match self.captures.get(name) {
+            Some(cursors) => &cursors[..],
+            None => &[],
+        };
+
+        Some(Capture { name, cursors })
+    }
+}
+
+/// A single capture matched by a query, containing the capture name,
+/// and a list of [`Cursor`]s to the location of each captured node in the parse tree.
+pub struct Capture<'a, T: KindTypes> {
+    name: &'a str,
+    cursors: &'a [Cursor<T>],
+}
+
+impl<T: KindTypes> Capture<'_, T> {
+    /// The name of the capture.
+    pub fn name(&self) -> &str {
+        self.name
+    }
+
+    /// A list of cursors to the location of each captured node in the parse tree.
+    pub fn cursors(&self) -> &[Cursor<T>] {
+        self.cursors
     }
 }
 

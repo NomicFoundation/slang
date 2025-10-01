@@ -23,7 +23,7 @@ pub use terminal_kind::TerminalKind;
 
 /// The base type of all nonterminals, terminals, and edges.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
-pub enum KindTypes {
+pub struct KindTypes {
     // These derives are because default #[derive(...)] on a generic type implements only the trait
     // with default bounds also implied for the generic types as well, i.e.
     //
@@ -79,7 +79,11 @@ pub type AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<KindTypes>
 /// for detailed information about the query syntax and how to use queries to find matches.
 pub type Query = metaslang_cst::query::Query<KindTypes>;
 
-pub use metaslang_cst::query::{CaptureQuantifier, QueryError};
+/// A single capture matched by a query, containing the capture name,
+/// and a list of [`Cursor`]s to the location of each captured node in the parse tree.
+pub type Capture<'a> = metaslang_cst::query::Capture<'a, KindTypes>;
+
+pub use metaslang_cst::query::QueryError;
 /// Represents a match found by executing queries on a cursor.
 pub type QueryMatch = metaslang_cst::query::QueryMatch<KindTypes>;
 /// Iterator over query matches in the syntax tree.

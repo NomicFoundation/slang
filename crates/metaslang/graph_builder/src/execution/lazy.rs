@@ -688,7 +688,8 @@ impl ast::Capture {
         &self,
         exec: &mut ExecutionContext<'_, '_, '_, KT>,
     ) -> Result<LazyValue, ExecutionError> {
-        let cursors = exec.mat.capture(&self.name.0).unwrap().1;
+        let capture = exec.mat.capture(&self.name.0);
+        let cursors = capture.as_ref().unwrap().cursors();
         Ok(Value::from_nodes(exec.graph, cursors, self.quantifier).into())
     }
 }

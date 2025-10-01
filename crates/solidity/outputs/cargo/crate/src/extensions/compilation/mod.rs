@@ -31,10 +31,15 @@ impl ImportPathsExtractor {
     }
 
     pub fn extract(&self, cursor: Cursor) -> Vec<Cursor> {
-        cursor
-            .query(self.queries.clone())
-            .flat_map(|query_match| query_match.capture("variant").unwrap().1)
-            .collect()
+        let mut cursors = Vec::new();
+
+        for query_match in cursor.query(self.queries.clone()) {
+            for cursor in query_match.capture("variant").unwrap().cursors() {
+                cursors.push(cursor.clone());
+            }
+        }
+
+        cursors
     }
 }
 

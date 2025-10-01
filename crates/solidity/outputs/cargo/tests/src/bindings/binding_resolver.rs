@@ -23,7 +23,8 @@ fn find_first_match(root_cursor: Cursor, query_string: &str, capture_name: &str)
     query_match
         .capture(capture_name)
         .expect("query to capture identifier")
-        .1
+        .cursors()
+        .iter()
         .next()
         .expect("query to capture identifier")
         .clone()
@@ -33,10 +34,10 @@ fn find_all_matches(root_cursor: Cursor, query_string: &str, capture_name: &str)
     let query = Query::create(query_string).expect("query to be valid");
     let mut results = Vec::new();
     for query_match in root_cursor.query(vec![query]) {
-        let cursors = query_match
+        let capture = query_match
             .capture(capture_name)
-            .expect("query to capture identifier")
-            .1;
+            .expect("query to capture identifier");
+        let cursors = capture.cursors().iter().cloned();
         results.extend(cursors);
     }
     results
