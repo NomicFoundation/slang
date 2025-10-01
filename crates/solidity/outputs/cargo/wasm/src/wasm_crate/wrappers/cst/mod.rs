@@ -403,8 +403,8 @@ impl IntoFFI<ffi::QueryError> for rust::QueryError {
     #[inline]
     fn _into_ffi(self) -> ffi::QueryError {
         ffi::QueryError {
-            message: self.message,
-            text_range: self.text_range._into_ffi(),
+            message: self.message().to_string(),
+            text_range: self.text_range()._into_ffi(),
         }
     }
 }

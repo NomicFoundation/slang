@@ -36,10 +36,10 @@ impl<T: KindTypes> Query<T> {
                 ASTNode::Capture(capture) => {
                     // If the capture has already been used, return an error
                     if capture_quantifiers.contains_key(&capture.name) {
-                        return Err(QueryError {
-                            message: format!("Capture name '{}' used more than once", capture.name),
-                            text_range: TextIndex::ZERO..TextIndex::ZERO,
-                        });
+                        return Err(QueryError::create(
+                            format!("Capture name '{}' used more than once", capture.name),
+                            TextIndex::ZERO..TextIndex::ZERO,
+                        ));
                     }
                     capture_quantifiers.insert(capture.name.clone(), quantifier);
                     collect_capture_quantifiers(&capture.child, quantifier, capture_quantifiers)?;
@@ -79,11 +79,10 @@ impl<T: KindTypes> Query<T> {
                         CaptureQuantifier::One => CaptureQuantifier::OneOrMore,
                         CaptureQuantifier::ZeroOrOne => CaptureQuantifier::ZeroOrMore,
                         CaptureQuantifier::OneOrMore | CaptureQuantifier::ZeroOrMore => {
-                            return Err(QueryError {
-                                message: "Quantification over quantification is not allowed"
-                                    .to_string(),
-                                text_range: TextIndex::ZERO..TextIndex::ZERO,
-                            })
+                            return Err(QueryError::create(
+                                "Quantification over quantification is not allowed".to_string(),
+                                TextIndex::ZERO..TextIndex::ZERO,
+                            ))
                         }
                     };
                     collect_capture_quantifiers(
