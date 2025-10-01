@@ -1,11 +1,14 @@
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
-use std::time::{Duration, SystemTime};
+use std::time::SystemTime;
 
 use anyhow::{anyhow, bail, Error, Result};
+use httpdate::fmt_http_date;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::PathExtensions;
 use reqwest::blocking::Client;
+use reqwest::header::IF_MODIFIED_SINCE;
+use reqwest::StatusCode;
 use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
@@ -62,18 +65,28 @@ impl Manifest {
             if !fs::exists(&manifest_path)? {
                 bail!("Manifest does not exists and running in offline mode");
             }
-        } else if !file_exists_and_is_fresh(&manifest_path) {
+        } else {
             let manifest_url = "https://repo-backup.sourcify.dev/manifest.json";
-            println!("Downloading manifest from {manifest_url}");
             let client = Client::new();
-            let mut res = client.get(manifest_url).send()?;
+            let mut request_builder = client.get(manifest_url);
+            if let Ok(metadata) = fs::metadata(&manifest_path) {
+                if let Ok(modified) = metadata.modified() {
+                    request_builder =
+                        request_builder.header(IF_MODIFIED_SINCE, fmt_http_date(modified));
+                }
+            }
+            let mut res = request_builder.send()?;
 
             let status = res.status();
-            if !status.is_success() {
+            if status.is_success() {
+                println!("Downloading manifest from {manifest_url}");
+                let mut writer = File::create(&manifest_path)?;
+                res.copy_to(&mut writer)?;
+            } else if status.as_u16() == StatusCode::NOT_MODIFIED {
+                println!("Manifest is up-to-date");
+            } else {
                 bail!("Error fetching manifest.json");
             }
-            let mut writer = File::create(&manifest_path)?;
-            res.copy_to(&mut writer)?;
         }
 
         let manifest_contents = fs::read_to_string(manifest_path)?;
@@ -215,24 +228,36 @@ impl ContractArchive {
             if !fs::exists(&contracts_path)? {
                 bail!("Shard archive directory does not exists and running in offline mode");
             }
-        } else if !file_exists_and_is_fresh(&contracts_path) {
-            println!("Downloading shard archive from {url}", url = desc.url);
+        } else {
             let client = Client::new();
-            let res = client.get(&desc.url).send()?;
+            let mut request_builder = client.get(&desc.url);
+            if let Ok(metadata) = fs::metadata(&contracts_path) {
+                if let Ok(modified) = metadata.modified() {
+                    request_builder =
+                        request_builder.header(IF_MODIFIED_SINCE, fmt_http_date(modified));
+                }
+            }
+            let res = request_builder.send()?;
 
             let status = res.status();
-            if !status.is_success() {
+            if status.is_success() {
+                println!("Downloading shard archive from {url}", url = desc.url);
+                let archive_dir = desc.archive_dir();
+
+                let mut archive = Archive::new(res);
+                archive.unpack(&archive_dir)?;
+
+                // explicitly touch the contracts path mtime to avoid downloading
+                // again if sufficiently up-to-date
+                fs::File::open(&contracts_path)?.set_modified(SystemTime::now())?;
+            } else if status.as_u16() == StatusCode::NOT_MODIFIED {
+                println!(
+                    "Shard archive in {path} is up-to-date",
+                    path = contracts_path.to_string_lossy()
+                );
+            } else {
                 bail!("Could not fetch source tarball");
             }
-
-            let archive_dir = desc.archive_dir();
-
-            let mut archive = Archive::new(res);
-            archive.unpack(&archive_dir)?;
-
-            // explicitly touch the contracts path mtime to avoid downloading
-            // again if sufficiently up-to-date
-            fs::File::open(&contracts_path)?.set_modified(SystemTime::now())?;
         }
 
         Ok(ContractArchive { contracts_path })
@@ -386,23 +411,6 @@ impl CompilationBuilderConfig for ContractConfig<'_> {
             .import_resolver
             .resolve_import(source_file_id, import_path))
     }
-}
-
-fn file_exists_and_is_fresh<P: AsRef<Path>>(path: P) -> bool {
-    if let Ok(metadata) = fs::metadata(path) {
-        if let Ok(modified) = metadata.modified() {
-            // Sourcify updates archives once a day, so anything updated
-            // in the last 24 hours is considered fresh
-            if SystemTime::now()
-                .duration_since(modified)
-                .unwrap_or(Duration::MAX)
-                <= Duration::from_secs(24 * 3600)
-            {
-                return true;
-            }
-        }
-    }
-    false
 }
 
 fn import_resolver_from(value: &serde_json::Value) -> Result<ImportResolver> {

@@ -9,6 +9,7 @@ publish = false
 anyhow = { workspace = true }
 clap = { workspace = true }
 console = { workspace = true }
+httpdate = { workspace = true }
 indicatif = { workspace = true }
 infra_utils = { workspace = true }
 rayon = { workspace = true }
