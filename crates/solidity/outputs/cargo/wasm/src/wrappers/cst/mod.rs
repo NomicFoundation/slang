@@ -17,7 +17,7 @@ mod ffi {
 }
 
 mod rust {
-    pub use crate::rust_crate::cst::{
+    pub use slang_solidity::cst::{
         AncestorsIterator, Cursor, CursorIterator, Edge, EdgeLabel, Node, NonterminalKind,
         NonterminalNode, Query, QueryError, QueryMatch, QueryMatchIterator, TerminalKind,
         TerminalNode, TextIndex, TextRange,
@@ -66,15 +66,15 @@ pub struct TerminalKindExtensionsWrapper;
 
 impl ffi::GuestTerminalKindExtensions for TerminalKindExtensionsWrapper {
     fn is_identifier(kind: ffi::TerminalKind) -> bool {
-        crate::rust_crate::cst::TerminalKindExtensions::is_identifier(kind._from_ffi())
+        slang_solidity::cst::TerminalKindExtensions::is_identifier(kind._from_ffi())
     }
 
     fn is_trivia(kind: ffi::TerminalKind) -> bool {
-        crate::rust_crate::cst::TerminalKindExtensions::is_trivia(kind._from_ffi())
+        slang_solidity::cst::TerminalKindExtensions::is_trivia(kind._from_ffi())
     }
 
     fn is_valid(kind: ffi::TerminalKind) -> bool {
-        crate::rust_crate::cst::TerminalKindExtensions::is_valid(kind._from_ffi())
+        slang_solidity::cst::TerminalKindExtensions::is_valid(kind._from_ffi())
     }
 }
 

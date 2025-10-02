@@ -8,5 +8,3 @@ mod wrappers;
 struct World;
 
 bindgen::export!(World with_types_in crate::bindgen);
-
-use slang_solidity as rust_crate;

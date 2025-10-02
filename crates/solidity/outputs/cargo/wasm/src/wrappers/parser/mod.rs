@@ -3,9 +3,7 @@ use std::rc::Rc;
 use crate::utils::{define_wrapper, FromFFI, IntoFFI};
 
 mod ffi {
-    pub use crate::bindgen::exports::nomic_foundation::slang::cst::{
-        Cursor, NonterminalNode,
-    };
+    pub use crate::bindgen::exports::nomic_foundation::slang::cst::{Cursor, NonterminalNode};
     pub use crate::bindgen::exports::nomic_foundation::slang::parser::{
         Guest, GuestParseOutput, GuestParser, NonterminalKind, ParseError, ParseOutput,
         ParseOutputBorrow, Parser, ParserBorrow,
@@ -13,7 +11,7 @@ mod ffi {
 }
 
 mod rust {
-    pub use crate::rust_crate::parser::{ParseError, ParseOutput, Parser};
+    pub use slang_solidity::parser::{ParseError, ParseOutput, Parser};
 }
 
 impl ffi::Guest for crate::World {

@@ -9,7 +9,7 @@ mod ffi {
 }
 
 mod rust {
-    pub use crate::rust_crate::utils::LanguageFacts;
+    pub use slang_solidity::utils::LanguageFacts;
 }
 
 impl ffi::Guest for crate::World {

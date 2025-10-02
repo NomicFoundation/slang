@@ -16,7 +16,7 @@ mod ffi {
 }
 
 mod rust {
-    pub use crate::rust_crate::compilation::{
+    pub use slang_solidity::compilation::{
         AddFileResponse, CompilationUnit, File, InternalCompilationBuilder,
     };
 }

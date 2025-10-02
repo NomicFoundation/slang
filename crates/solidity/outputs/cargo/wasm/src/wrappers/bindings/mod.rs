@@ -11,7 +11,7 @@ mod ffi {
 }
 
 mod rust {
-    pub use crate::rust_crate::bindings::{
+    pub use slang_solidity::bindings::{
         BindingGraph, BindingLocation, BuiltInLocation, Definition, Reference, UserFileLocation,
     };
 }
