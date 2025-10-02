@@ -1,13 +1,18 @@
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
-use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
-use slang_solidity::cst::{Cursor, NodeKind, TerminalKindExtensions, TextRange};
+use slang_solidity::compilation::CompilationInitializationError;
+use slang_solidity::cst::{Cursor, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
-use slang_solidity::utils::LanguageFacts;
 
 use crate::command::TestOptions;
 use crate::events::{Events, TestOutcome};
 use crate::sourcify::{Contract, ContractArchive, Manifest};
+
+mod binder_v1_check;
+mod binder_v2_check;
+mod compare_binders;
+mod parser_check;
+mod version_inference_check;
 
 pub fn test_single_contract(
     manifest: &Manifest,
@@ -62,14 +67,20 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
 
     let test_outcome = match contract.create_compilation_unit() {
         Ok(unit) => {
-            let mut test_outcome = run_parser_check(contract, &unit, events);
+            let mut test_outcome = parser_check::run(contract, &unit, events);
 
             if opts.check_infer_version && test_outcome == TestOutcome::Passed {
-                test_outcome = run_version_inference_check(contract, &unit, events);
+                test_outcome = version_inference_check::run(contract, &unit, events);
             }
 
-            if opts.check_bindings && test_outcome == TestOutcome::Passed {
-                test_outcome = run_bindings_check(contract, &unit, events);
+            if test_outcome == TestOutcome::Passed {
+                if opts.check_binder_v1 {
+                    test_outcome = binder_v1_check::run(contract, &unit, events);
+                } else if opts.check_binder_v2 {
+                    test_outcome = binder_v2_check::run(contract, unit, events);
+                } else if opts.compare_binders {
+                    test_outcome = compare_binders::run(contract, unit, events);
+                }
             }
 
             test_outcome
@@ -86,137 +97,13 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                     e.backtrace()
                 ));
 
-                TestOutcome::Unresolved
+                TestOutcome::Failed
             }
         }
     };
 
     events.inc_files_processed(sources_count);
     events.test(test_outcome);
-}
-
-fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
-    let mut test_outcome = TestOutcome::Passed;
-    for file in unit.files() {
-        if !file.errors().is_empty() {
-            let source = contract.read_file(file.id()).unwrap();
-            let source_name = contract
-                .import_resolver
-                .get_virtual_path(file.id())
-                .unwrap_or(file.id().into());
-
-            for error in file.errors() {
-                let msg = slang_solidity::diagnostic::render(error, &source_name, &source, true);
-                events.parse_error(format!(
-                    "[{contract_name} {version}] Parse error\n{msg}",
-                    contract_name = contract.name,
-                    version = contract.version
-                ));
-            }
-
-            test_outcome = TestOutcome::Failed;
-        }
-    }
-
-    test_outcome
-}
-
-fn run_version_inference_check(
-    contract: &Contract,
-    unit: &CompilationUnit,
-    events: &Events,
-) -> TestOutcome {
-    let mut did_fail = false;
-    for file in unit.files() {
-        let source = contract.read_file(file.id()).unwrap();
-        if !LanguageFacts::infer_language_versions(&source).any(|v| *v == contract.version) {
-            let source_name = contract
-                .import_resolver
-                .get_source_id(file.id())
-                .unwrap_or(file.id().into());
-            events.version_error(format!(
-                "[{contract_name} {version}] Could not infer correct version in file {source_name}",
-                version = contract.version,
-                contract_name = contract.name,
-            ));
-            did_fail = true;
-        }
-    }
-
-    if did_fail {
-        TestOutcome::Failed
-    } else {
-        TestOutcome::Passed
-    }
-}
-
-fn run_bindings_check(
-    contract: &Contract,
-    compilation_unit: &CompilationUnit,
-    events: &Events,
-) -> TestOutcome {
-    let binding_graph = compilation_unit.binding_graph();
-
-    let mut test_outcome = TestOutcome::Passed;
-    for reference in binding_graph.all_references() {
-        let ref_file = reference.get_file();
-
-        if ref_file.is_built_ins() {
-            // skip built-ins
-            continue;
-        }
-        // We're not interested in the exact definition a reference resolves
-        // to, so we lookup all of them and fail if we find none.
-        if reference.definitions().is_empty() {
-            let cursor = reference.get_cursor().to_owned();
-
-            let source = contract.read_file(ref_file.get_path()).unwrap();
-
-            let binding_error = BindingError::UnresolvedReference(cursor);
-            let msg = slang_solidity::diagnostic::render(
-                &binding_error,
-                ref_file.get_path(),
-                &source,
-                true,
-            );
-            events.bindings_error(format!(
-                "[{contract_name} {version}] Binding Error: Reference has no definitions\n{msg}",
-                contract_name = contract.name,
-                version = contract.version,
-            ));
-
-            test_outcome = TestOutcome::Failed;
-        }
-    }
-
-    // Check that all identifier nodes are bound to either a definition or a reference:
-    for file in compilation_unit.files() {
-        let mut cursor = file.create_tree_cursor();
-        while cursor.go_to_next_terminal() {
-            if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
-                continue;
-            }
-
-            if binding_graph.definition_at(&cursor).is_none()
-                && binding_graph.reference_at(&cursor).is_none()
-            {
-                let binding_error = BindingError::UnboundIdentifier(cursor.clone());
-
-                let source = contract.read_file(file.id()).unwrap();
-                let msg =
-                    slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
-                events.bindings_error(format!(
-                    "[{contract_name} {version}] Binding Error: No definition or reference\n{msg}",
-                    contract_name = contract.name,
-                    version = contract.version,
-                ));
-
-                test_outcome = TestOutcome::Failed;
-            }
-        }
-    }
-
-    test_outcome
 }
 
 fn uses_exotic_parser_bug(contract: &Contract) -> bool {
@@ -242,13 +129,17 @@ fn uses_exotic_parser_bug(contract: &Contract) -> bool {
 enum BindingError {
     UnresolvedReference(Cursor),
     UnboundIdentifier(Cursor),
+    MissingDefinition(Cursor),
+    MissingReference(Cursor),
 }
 
 impl Diagnostic for BindingError {
     fn text_range(&self) -> TextRange {
         let cursor = match self {
-            Self::UnboundIdentifier(cursor) => cursor,
-            Self::UnresolvedReference(cursor) => cursor,
+            Self::UnboundIdentifier(cursor)
+            | Self::UnresolvedReference(cursor)
+            | Self::MissingDefinition(cursor)
+            | Self::MissingReference(cursor) => cursor,
         };
         cursor.text_range()
     }
@@ -268,6 +159,18 @@ impl Diagnostic for BindingError {
             Self::UnboundIdentifier(cursor) => {
                 format!(
                     "Missing identifier or definition for `{symbol}`",
+                    symbol = cursor.node().unparse()
+                )
+            }
+            Self::MissingDefinition(cursor) => {
+                format!(
+                    "Definition for `{symbol}` not found in new binder",
+                    symbol = cursor.node().unparse()
+                )
+            }
+            Self::MissingReference(cursor) => {
+                format!(
+                    "Reference for `{symbol}` not found in new binder",
                     symbol = cursor.node().unparse()
                 )
             }
