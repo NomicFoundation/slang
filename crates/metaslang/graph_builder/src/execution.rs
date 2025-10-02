@@ -5,6 +5,7 @@
 // Please see the LICENSE-APACHE or LICENSE-MIT files in this distribution for license details.
 // ------------------------------------------------------------------------------------------------
 
+use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::query::{CaptureQuantifier, QueryMatch};
 use thiserror::Error;
@@ -143,30 +144,16 @@ pub struct Match<KT: KindTypes> {
 impl<KT: KindTypes> Match<KT> {
     /// Return the top-level matched node.
     pub fn full_capture(&self) -> metaslang_cst::cursor::Cursor<KT> {
-        self.mat.root_cursor.clone()
+        self.mat.root_cursor().clone()
     }
 
     /// Return the matched nodes for a named capture.
-    pub fn named_captures(
-        &self,
-    ) -> impl Iterator<
-        Item = (
-            &String,
-            CaptureQuantifier,
-            impl Iterator<Item = metaslang_cst::cursor::Cursor<KT>>,
-        ),
-    > {
+    pub fn named_captures(&self) -> impl Iterator<Item = metaslang_cst::query::Capture<'_, KT>> {
         self.mat.captures()
     }
 
     /// Return the matched nodes for a named capture.
-    pub fn named_capture(
-        &self,
-        name: &str,
-    ) -> Option<(
-        CaptureQuantifier,
-        impl Iterator<Item = metaslang_cst::cursor::Cursor<KT>>,
-    )> {
+    pub fn named_capture(&self, name: &str) -> Option<metaslang_cst::query::Capture<'_, KT>> {
         self.mat.capture(name)
     }
 
@@ -248,27 +235,28 @@ impl CancellationFlag for NoCancellation {
 pub struct CancellationError(pub &'static str);
 
 impl Value {
-    pub fn from_nodes<KT: KindTypes, CI: IntoIterator<Item = metaslang_cst::cursor::Cursor<KT>>>(
+    pub fn from_nodes<KT: KindTypes>(
         graph: &mut Graph<KT>,
-        cursors: CI,
+        cursors: &[Cursor<KT>],
         quantifier: CaptureQuantifier,
     ) -> Value {
         let mut cursors = cursors.into_iter();
         match quantifier {
             CaptureQuantifier::One => {
-                let syntax_node = graph.add_syntax_node(cursors.next().expect("missing capture"));
+                let cursor = cursors.next().expect("missing capture").clone();
+                let syntax_node = graph.add_syntax_node(cursor);
                 syntax_node.into()
             }
             CaptureQuantifier::ZeroOrMore | CaptureQuantifier::OneOrMore => {
                 let syntax_nodes = cursors
-                    .map(|c| graph.add_syntax_node(c).into())
+                    .map(|c| graph.add_syntax_node(c.clone()).into())
                     .collect::<Vec<Value>>();
                 syntax_nodes.into()
             }
             CaptureQuantifier::ZeroOrOne => match cursors.next() {
                 None => Value::Null.into(),
                 Some(cursor) => {
-                    let syntax_node = graph.add_syntax_node(cursor);
+                    let syntax_node = graph.add_syntax_node(cursor.clone());
                     syntax_node.into()
                 }
             },
