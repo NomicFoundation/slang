@@ -1,20 +1,18 @@
-use std::collections::HashMap;
-use std::rc::Rc;
-
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
-use slang_solidity::backend::binder::Resolution;
-use slang_solidity::backend::build_binder_output;
-use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
-use slang_solidity::cst::{
-    Cursor, NodeId, NodeKind, TerminalKind, TerminalKindExtensions, TerminalNode, TextRange,
-};
+use slang_solidity::compilation::CompilationInitializationError;
+use slang_solidity::cst::{Cursor, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
-use slang_solidity::utils::LanguageFacts;
 
 use crate::command::TestOptions;
 use crate::events::{Events, TestOutcome};
 use crate::sourcify::{Contract, ContractArchive, Manifest};
+
+mod binder_v1_check;
+mod binder_v2_check;
+mod compare_binders;
+mod parser_check;
+mod version_inference_check;
 
 pub fn test_single_contract(
     manifest: &Manifest,
@@ -69,19 +67,19 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
 
     let test_outcome = match contract.create_compilation_unit() {
         Ok(unit) => {
-            let mut test_outcome = run_parser_check(contract, &unit, events);
+            let mut test_outcome = parser_check::run(contract, &unit, events);
 
             if opts.check_infer_version && test_outcome == TestOutcome::Passed {
-                test_outcome = run_version_inference_check(contract, &unit, events);
+                test_outcome = version_inference_check::run(contract, &unit, events);
             }
 
             if test_outcome == TestOutcome::Passed {
                 if opts.check_binder_v1 {
-                    test_outcome = run_binder_v1_check(contract, &unit, events);
+                    test_outcome = binder_v1_check::run(contract, &unit, events);
                 } else if opts.check_binder_v2 {
-                    test_outcome = run_binder_v2_check(contract, unit, events);
+                    test_outcome = binder_v2_check::run(contract, unit, events);
                 } else if opts.compare_binders {
-                    test_outcome = run_compare_binders(contract, unit, events);
+                    test_outcome = compare_binders::run(contract, unit, events);
                 }
             }
 
@@ -106,300 +104,6 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
 
     events.inc_files_processed(sources_count);
     events.test(test_outcome);
-}
-
-fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
-    let mut test_outcome = TestOutcome::Passed;
-    for file in unit.files() {
-        if !file.errors().is_empty() {
-            let source = contract.read_file(file.id()).unwrap();
-            let source_name = contract
-                .import_resolver
-                .get_virtual_path(file.id())
-                .unwrap_or(file.id().into());
-
-            for error in file.errors() {
-                let msg = slang_solidity::diagnostic::render(error, &source_name, &source, true);
-                events.parse_error(format!(
-                    "[{contract_name} {version}] Parse error\n{msg}",
-                    contract_name = contract.name,
-                    version = contract.version
-                ));
-            }
-
-            test_outcome = TestOutcome::Failed;
-        }
-    }
-
-    test_outcome
-}
-
-fn run_version_inference_check(
-    contract: &Contract,
-    unit: &CompilationUnit,
-    events: &Events,
-) -> TestOutcome {
-    let mut did_fail = false;
-    for file in unit.files() {
-        let source = contract.read_file(file.id()).unwrap();
-        if !LanguageFacts::infer_language_versions(&source).any(|v| *v == contract.version) {
-            let source_name = contract
-                .import_resolver
-                .get_source_id(file.id())
-                .unwrap_or(file.id().into());
-            events.version_error(format!(
-                "[{contract_name} {version}] Could not infer correct version in file {source_name}",
-                version = contract.version,
-                contract_name = contract.name,
-            ));
-            did_fail = true;
-        }
-    }
-
-    if did_fail {
-        TestOutcome::Failed
-    } else {
-        TestOutcome::Passed
-    }
-}
-
-fn run_binder_v1_check(
-    contract: &Contract,
-    compilation_unit: &CompilationUnit,
-    events: &Events,
-) -> TestOutcome {
-    let binding_graph = compilation_unit.binding_graph();
-
-    let mut test_outcome = TestOutcome::Passed;
-
-    let mut definitions = 0;
-    for definition in binding_graph.all_definitions() {
-        if definition.get_file().is_built_ins() {
-            continue;
-        }
-        definitions += 1;
-    }
-    events.inc_definitions(definitions);
-
-    let mut references = 0;
-    let mut unresolved = 0;
-    for reference in binding_graph.all_references() {
-        let ref_file = reference.get_file();
-
-        if ref_file.is_built_ins() {
-            // skip built-ins
-            continue;
-        }
-
-        references += 1;
-
-        // We're not interested in the exact definition a reference resolves
-        // to, so we lookup all of them and fail if we find none.
-        if reference.definitions().is_empty() {
-            unresolved += 1;
-            let cursor = reference.get_cursor().to_owned();
-
-            let source = contract.read_file(ref_file.get_path()).unwrap();
-
-            let binding_error = BindingError::UnresolvedReference(cursor);
-            let msg = slang_solidity::diagnostic::render(
-                &binding_error,
-                ref_file.get_path(),
-                &source,
-                true,
-            );
-            events.bindings_error(format!(
-                "[{contract_name} {version}] Binding Error: Reference has no definitions\n{msg}",
-                contract_name = contract.name,
-                version = contract.version,
-            ));
-
-            test_outcome = TestOutcome::Unresolved;
-        }
-    }
-    events.inc_references(references);
-    events.inc_unresolved_references(unresolved);
-
-    // Check that all identifier nodes are bound to either a definition or a reference:
-    for file in compilation_unit.files() {
-        let mut cursor = file.create_tree_cursor();
-        while cursor.go_to_next_terminal() {
-            if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
-                continue;
-            }
-
-            if binding_graph.definition_at(&cursor).is_none()
-                && binding_graph.reference_at(&cursor).is_none()
-            {
-                let binding_error = BindingError::UnboundIdentifier(cursor.clone());
-
-                let source = contract.read_file(file.id()).unwrap();
-                let msg =
-                    slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
-                events.bindings_error(format!(
-                    "[{contract_name} {version}] Binding Error: No definition or reference\n{msg}",
-                    contract_name = contract.name,
-                    version = contract.version,
-                ));
-
-                test_outcome = TestOutcome::Unresolved;
-            }
-        }
-    }
-
-    test_outcome
-}
-
-fn run_binder_v2_check(
-    contract: &Contract,
-    compilation_unit: CompilationUnit,
-    events: &Events,
-) -> TestOutcome {
-    let data = build_binder_output(compilation_unit);
-
-    let mut test_outcome = TestOutcome::Passed;
-    let mut cursor_cache: HashMap<NodeId, (Cursor, String)> = HashMap::new();
-
-    events.inc_definitions(data.binder.definitions().len());
-    let mut references = 0;
-    let mut unresolved = 0;
-    for reference in data.binder.references().values() {
-        references += 1;
-        if !matches!(reference.resolution, Resolution::Unresolved) {
-            continue;
-        }
-        unresolved += 1;
-        test_outcome = TestOutcome::Unresolved;
-
-        let (cursor, ref_file_id) = find_cursor_for_identifier(
-            &mut cursor_cache,
-            &data.compilation_unit,
-            &reference.identifier,
-        )
-        .unwrap_or_else(|| {
-            unreachable!(
-                "cannot find Cursor pointing to {identifier:?}",
-                identifier = reference.identifier
-            )
-        });
-
-        let source = contract.read_file(&ref_file_id).unwrap_or_default();
-
-        let binding_error = BindingError::UnresolvedReference(cursor);
-        let msg = slang_solidity::diagnostic::render(&binding_error, &ref_file_id, &source, true);
-        events.bindings_error(format!(
-            "[{contract_name} {version}] Binding Error: Reference has no definitions\n{msg}",
-            contract_name = contract.name,
-            version = contract.version,
-        ));
-    }
-    events.inc_references(references);
-    events.inc_unresolved_references(unresolved);
-
-    test_outcome
-}
-
-fn find_cursor_for_identifier(
-    cursor_cache: &mut HashMap<NodeId, (Cursor, String)>,
-    compilation_unit: &CompilationUnit,
-    identifier: &Rc<TerminalNode>,
-) -> Option<(Cursor, String)> {
-    if cursor_cache.is_empty() {
-        for file in &compilation_unit.files() {
-            let mut cursor = file.create_tree_cursor();
-            while cursor.go_to_next_terminal_with_kinds(&[
-                TerminalKind::Identifier,
-                TerminalKind::YulIdentifier,
-            ]) {
-                cursor_cache.insert(cursor.node().id(), (cursor.clone(), file.id().to_string()));
-            }
-        }
-    }
-    cursor_cache.get(&identifier.id()).cloned()
-}
-
-fn run_compare_binders(
-    contract: &Contract,
-    compilation_unit: CompilationUnit,
-    events: &Events,
-) -> TestOutcome {
-    let data = build_binder_output(compilation_unit);
-    let binder = data.binder;
-
-    let binding_graph = data.compilation_unit.binding_graph();
-
-    let mut outcome = TestOutcome::Passed;
-
-    let mut definitions = 0;
-    for definition in binding_graph.all_definitions() {
-        let def_file = definition.get_file();
-        if def_file.is_built_ins() {
-            continue;
-        }
-        definitions += 1;
-
-        if binder.find_definition_by_id(definition.id()).is_none() {
-            // definition doesn't exist in new binder
-            let cursor = definition.get_cursor().to_owned();
-            let source = contract.read_file(def_file.get_path()).unwrap_or_default();
-            let binding_error = BindingError::MissingDefinition(cursor);
-            let msg = slang_solidity::diagnostic::render(
-                &binding_error,
-                def_file.get_path(),
-                &source,
-                true,
-            );
-            events.bindings_error(format!(
-                "[{contract_name} {version}] Binding Error: Definition does not exist in new binder\n{msg}",
-                contract_name = contract.name,
-                version = contract.version,
-            ));
-
-            outcome = TestOutcome::Failed;
-        }
-    }
-    events.inc_definitions(definitions);
-
-    let mut references = 0;
-    let mut unresolved = 0;
-    for reference in binding_graph.all_references() {
-        let ref_file = reference.get_file();
-        if ref_file.is_built_ins() {
-            continue;
-        }
-        if reference.definitions().is_empty() {
-            unresolved += 1;
-        }
-        references += 1;
-
-        // Only check that the reference exists in the new binder
-        if binder
-            .find_reference_by_identifier_node_id(reference.id())
-            .is_none()
-        {
-            // reference doesn't exist in new binder
-            let cursor = reference.get_cursor().to_owned();
-            let source = contract.read_file(ref_file.get_path()).unwrap_or_default();
-            let binding_error = BindingError::MissingReference(cursor);
-            let msg = slang_solidity::diagnostic::render(
-                &binding_error,
-                ref_file.get_path(),
-                &source,
-                true,
-            );
-            events.bindings_error(format!(
-                "[{contract_name} {version}] Binding Error: Reference does not exist in new binder\n{msg}",
-                contract_name = contract.name,
-                version = contract.version,
-            ));
-
-            outcome = TestOutcome::Failed;
-        }
-    }
-    events.inc_references(references);
-    events.inc_unresolved_references(unresolved);
-
-    outcome
 }
 
 fn uses_exotic_parser_bug(contract: &Contract) -> bool {
