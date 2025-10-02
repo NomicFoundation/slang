@@ -14,10 +14,9 @@ Currently, the repository has the following projects:
     - `infra/`: contains the CLI used for development, and utilities to build/test/run/debug all other projects.
     - `codegen/`: language analysis APIs that convert input crates to output crates below.
         - `ebnf/`: EBNF snippet serializer for language definitions
+        - `generator/`: Generates Rust source code from language definitions
+        - `language/definition`: Building blocks for how languages can be defined
         - `spec/`: Language specification generator
-        - `runtime/`:
-            - `generator/`: Generates Rust source code from language definitions
-            - `language/definition`: Building blocks for how languages can be defined
     - `metaslang/`:
         - `cst/`: A generic library for building, navigating and querying concrete syntax trees
         - `bindings/`: Computes semantic language bindings from parsed source code
