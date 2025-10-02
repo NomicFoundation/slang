@@ -17,10 +17,8 @@ use crate::text_index::TextIndex;
 /// for detailed information about the query syntax and how to use queries to find matches.
 #[derive(Clone, Debug)]
 pub struct Query<T: KindTypes> {
-    /// The abstract syntax tree (AST) representation of the query.
-    pub ast_node: ASTNode<T>,
-    /// A map of capture names to their quantifiers, used to define how many times a capture can occur.
-    pub capture_quantifiers: BTreeMap<String, CaptureQuantifier>,
+    ast_node: ASTNode<T>,
+    capture_quantifiers: BTreeMap<String, CaptureQuantifier>,
 }
 
 impl<T: KindTypes> Query<T> {
@@ -36,10 +34,10 @@ impl<T: KindTypes> Query<T> {
                 ASTNode::Capture(capture) => {
                     // If the capture has already been used, return an error
                     if capture_quantifiers.contains_key(&capture.name) {
-                        return Err(QueryError {
-                            message: format!("Capture name '{}' used more than once", capture.name),
-                            text_range: TextIndex::ZERO..TextIndex::ZERO,
-                        });
+                        return Err(QueryError::create(
+                            format!("Capture name '{}' used more than once", capture.name),
+                            TextIndex::ZERO..TextIndex::ZERO,
+                        ));
                     }
                     capture_quantifiers.insert(capture.name.clone(), quantifier);
                     collect_capture_quantifiers(&capture.child, quantifier, capture_quantifiers)?;
@@ -79,11 +77,10 @@ impl<T: KindTypes> Query<T> {
                         CaptureQuantifier::One => CaptureQuantifier::OneOrMore,
                         CaptureQuantifier::ZeroOrOne => CaptureQuantifier::ZeroOrMore,
                         CaptureQuantifier::OneOrMore | CaptureQuantifier::ZeroOrMore => {
-                            return Err(QueryError {
-                                message: "Quantification over quantification is not allowed"
-                                    .to_string(),
-                                text_range: TextIndex::ZERO..TextIndex::ZERO,
-                            })
+                            return Err(QueryError::create(
+                                "Quantification over quantification is not allowed".to_string(),
+                                TextIndex::ZERO..TextIndex::ZERO,
+                            ))
                         }
                     };
                     collect_capture_quantifiers(
@@ -107,6 +104,16 @@ impl<T: KindTypes> Query<T> {
             ast_node,
             capture_quantifiers,
         })
+    }
+
+    /// The abstract syntax tree (AST) representation of the query.
+    pub(crate) fn ast_node(&self) -> &ASTNode<T> {
+        &self.ast_node
+    }
+
+    /// A map of capture names to their quantifiers, used to define how many times a capture can occur.
+    pub fn capture_quantifiers(&self) -> &BTreeMap<String, CaptureQuantifier> {
+        &self.capture_quantifiers
     }
 }
 

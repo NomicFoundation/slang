@@ -26,10 +26,28 @@ use crate::text_index::{TextIndex, TextRange};
 /// Error from parsing a query.
 #[derive(Clone, Debug, Error)]
 pub struct QueryError {
+    message: String,
+    text_range: TextRange,
+}
+
+impl QueryError {
     /// The error message describing the parsing issue.
-    pub message: String,
+    pub fn message(&self) -> &str {
+        &self.message
+    }
+
     /// The range of text where the error occurred.
-    pub text_range: TextRange,
+    pub fn text_range(&self) -> &TextRange {
+        &self.text_range
+    }
+
+    /// Creates a new `QueryError` with the given message and text range.
+    pub fn create(message: String, text_range: TextRange) -> Self {
+        QueryError {
+            message,
+            text_range,
+        }
+    }
 }
 
 impl std::fmt::Display for QueryError {

@@ -9,10 +9,10 @@ mod ffi {
         AncestorsIterator, AncestorsIteratorBorrow, Cursor, CursorBorrow, CursorIterator,
         CursorIteratorBorrow, Edge, EdgeBorrow, EdgeLabel, Guest, GuestAncestorsIterator,
         GuestCursor, GuestCursorIterator, GuestEdge, GuestNonterminalNode, GuestQuery,
-        GuestQueryMatchIterator, GuestTerminalKindExtensions, GuestTerminalNode, Node,
-        NonterminalKind, NonterminalNode, NonterminalNodeBorrow, Query, QueryBorrow, QueryError,
-        QueryMatch, QueryMatchIterator, QueryMatchIteratorBorrow, TerminalKind, TerminalNode,
-        TerminalNodeBorrow, TextIndex, TextRange,
+        GuestQueryMatchIterator, GuestTerminalKindExtensions, GuestTerminalNode,
+        GuestTextIndexExtensions, Node, NonterminalKind, NonterminalNode, NonterminalNodeBorrow,
+        Query, QueryBorrow, QueryError, QueryMatch, QueryMatchIterator, QueryMatchIteratorBorrow,
+        TerminalKind, TerminalNode, TerminalNodeBorrow, TextIndex, TextRange,
     };
 }
 
@@ -38,6 +38,8 @@ impl ffi::Guest for crate::World {
 
     type Query = QueryWrapper;
     type QueryMatchIterator = QueryMatchIteratorWrapper;
+
+    type TextIndexExtensions = TextIndexExtensionsWrapper;
 }
 
 //================================================
@@ -403,8 +405,8 @@ impl IntoFFI<ffi::QueryError> for rust::QueryError {
     #[inline]
     fn _into_ffi(self) -> ffi::QueryError {
         ffi::QueryError {
-            message: self.message,
-            text_range: self.text_range._into_ffi(),
+            message: self.message().to_string(),
+            text_range: self.text_range()._into_ffi(),
         }
     }
 }
@@ -430,19 +432,22 @@ define_refcell_wrapper! { QueryMatchIterator {
 impl IntoFFI<ffi::QueryMatch> for rust::QueryMatch {
     #[inline]
     fn _into_ffi(self) -> ffi::QueryMatch {
-        let rust::QueryMatch {
-            queries: _,
-            query_index,
-            root_cursor,
-            captures,
-        } = self;
-
         ffi::QueryMatch {
-            query_index: query_index.try_into().unwrap(),
-            root: root_cursor._into_ffi(),
-            captures: captures
-                .into_iter()
-                .map(|(k, v)| (k, v.into_iter().map(IntoFFI::_into_ffi).collect()))
+            query_index: self.query_index().try_into().unwrap(),
+            root: self.root_cursor().clone()._into_ffi(),
+            captures: self
+                .captures()
+                .map(|capture| {
+                    (
+                        capture.name().to_string(),
+                        capture
+                            .cursors()
+                            .iter()
+                            .cloned()
+                            .map(IntoFFI::_into_ffi)
+                            .collect(),
+                    )
+                })
                 .collect(),
         }
     }
@@ -475,6 +480,20 @@ impl FromFFI<rust::TextIndex> for &ffi::TextIndex {
             line: self.line as usize,
             column: self.column as usize,
         }
+    }
+}
+
+//================================================
+//
+// resource text-index-extensions
+//
+//================================================
+
+pub struct TextIndexExtensionsWrapper;
+
+impl ffi::GuestTextIndexExtensions for TextIndexExtensionsWrapper {
+    fn zero() -> ffi::TextIndex {
+        slang_solidity::cst::TextIndex::ZERO._into_ffi()
     }
 }
 

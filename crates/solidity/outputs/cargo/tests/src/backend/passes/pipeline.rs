@@ -85,7 +85,7 @@ impl CompilationBuilderConfig for Config {
 }
 
 fn build_compilation_unit() -> Result<CompilationUnit> {
-    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config {})?;
+    let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, Config {})?;
 
     builder.add_file(MAIN_ID)?;
 

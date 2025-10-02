@@ -1,6 +1,5 @@
 mod command;
 mod events;
-mod import_resolver;
 mod reporting;
 mod results;
 mod run;
