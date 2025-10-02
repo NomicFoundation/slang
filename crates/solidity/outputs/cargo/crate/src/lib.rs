@@ -42,4 +42,5 @@ mod generated;
 pub use generated::*;
 
 #[cfg(feature = "__private_backend_api")]
+#[doc(hidden)]
 pub mod backend;

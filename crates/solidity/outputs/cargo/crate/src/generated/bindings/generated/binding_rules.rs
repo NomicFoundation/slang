@@ -264,10 +264,8 @@ inherit .star_extension
   node @symbol.import
   edge @symbol.import -> @path.import
 
-  node @symbol.yul_def
-  edge @import.yul_defs -> @symbol.yul_def
-  node @symbol.yul_import
-  edge @symbol.yul_import -> @import.yul_path
+  edge @import.yul_defs -> @symbol.def
+  edge @symbol.import -> @import.yul_path
 }
 
 @symbol [ImportDeconstructionSymbol @name name: [Identifier] .] {
@@ -275,10 +273,6 @@ inherit .star_extension
   attr (@symbol.def) definiens_node = @symbol
   attr (@symbol.import) node_reference = @name
   edge @symbol.def -> @symbol.import
-
-  attr (@symbol.yul_def) pop_symbol = (source-text @name)
-  attr (@symbol.yul_import) push_symbol = (source-text @name)
-  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 @symbol [ImportDeconstructionSymbol
@@ -289,10 +283,6 @@ inherit .star_extension
   attr (@symbol.def) definiens_node = @symbol
   attr (@symbol.import) node_reference = @name
   edge @symbol.def -> @symbol.import
-
-  attr (@symbol.yul_def) pop_symbol = (source-text @alias)
-  attr (@symbol.yul_import) push_symbol = (source-text @name)
-  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 
@@ -1584,7 +1574,7 @@ inherit .star_extension
   ;; Function parameters should also be able inside Yul assembly blocks via a guarded path
   edge @function.yul_locals -> @params.defs
 
-  ;; Connect to paramaters for named argument resolution
+  ;; Connect to parameters for named argument resolution
   edge @function.def -> @params.names
 }
 
@@ -1696,7 +1686,7 @@ inherit .star_extension
   ;; ... and shadow other declarations
   attr (@constructor.lexical_scope -> @params.defs) precedence = 1
 
-  ;; Connect to paramaters for named argument resolution
+  ;; Connect to parameters for named argument resolution
   edge @constructor.def -> @params.names
 
   ;; Parameters should be accessible to assembly blocks
@@ -1734,7 +1724,7 @@ inherit .star_extension
 ] {
   if (version-matches "< 0.5.0") {
     if (eq (source-text @contract_name) (source-text @function_name)) {
-      ; Connect to paramaters for named argument resolution
+      ; Connect to parameters for named argument resolution
       edge @contract.def -> @params.names
     }
   }

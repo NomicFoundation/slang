@@ -1,0 +1,17 @@
+[package]
+name = "solidity_testing_utils"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+infra_utils = { workspace = true }
+anyhow = { workspace = true }
+reqwest = { workspace = true, features = ["json"] }
+url = { workspace = true }
+
+[lints]
+workspace = true

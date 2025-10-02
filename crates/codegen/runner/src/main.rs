@@ -22,8 +22,6 @@ fn main() {
         || generate_solidity_spec(),
         || generate_solidity_tests(),
         || generate_stubs("codegen_runtime_cargo_crate"),
-        || generate_stubs("codegen_runtime_cargo_wasm"),
-        || generate_stubs("codegen_runtime_npm_package"),
         || {
             let mut fs = CodegenFileSystem::default();
             let language = SolidityDefinition::create();
@@ -47,18 +45,16 @@ fn main() {
             Ok(())
         },
         || {
-            generate_product(
+            generate_in_place(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
-                "codegen_runtime_cargo_wasm",
                 "solidity_cargo_wasm",
             )
         },
         || {
-            generate_product(
+            generate_in_place(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
-                "codegen_runtime_npm_package",
                 "solidity_npm_package",
             )
         },
@@ -117,6 +113,16 @@ fn generate_product(
     let output_dir = CargoWorkspace::locate_source_crate(output_crate)?.join("src/generated");
 
     RuntimeGenerator::generate_product(language, fs, &input_dir, &output_dir)
+}
+
+fn generate_in_place(
+    fs: &mut CodegenFileSystem,
+    language: &Language,
+    the_crate: &str,
+) -> Result<()> {
+    let the_crate = CargoWorkspace::locate_source_crate(the_crate)?;
+
+    RuntimeGenerator::generate_templates_in_place(language, fs, &the_crate)
 }
 
 fn generate_builtins(

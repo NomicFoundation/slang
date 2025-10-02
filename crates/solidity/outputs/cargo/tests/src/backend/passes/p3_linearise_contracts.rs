@@ -30,7 +30,7 @@ fn build_compilation_unit(contents: &str) -> Result<CompilationUnit> {
         }
     }
 
-    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config { contents })?;
+    let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, Config { contents })?;
     assert!(builder.add_file("main.sol").is_ok());
     let compilation_unit = builder.build();
     Ok(compilation_unit)

@@ -74,7 +74,7 @@ impl<KT: KindTypes + 'static> Definition<KT> {
 }
 
 #[cfg(feature = "__private_testing_utils")]
-#[allow(missing_docs)]
+#[doc(hidden)]
 impl<KT: KindTypes + 'static> Definition<KT> {
     pub fn get_cursor(&self) -> &Cursor<KT> {
         self.internal_get_cursor()

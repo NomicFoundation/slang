@@ -23,20 +23,21 @@ pub use nonterminal_kind::NonterminalKind;
 pub use rewriter::BaseRewriter;
 pub use terminal_kind::TerminalKind;
 
-// These derives are because default #[derive(...)] on a generic type implements only the trait
-// with default bounds also implied for the generic types as well, i.e.
-//
-// #[derive(Clone)] // expands to `impl<T: Clone> Clone for MyOption<T> { ... }` (notice the `T: Clone`)
-// struct MyOption<T>(Option<T>);
-//
-// This assumes that the underlying data type uses this internally, however it's only used as a
-// type container/marker.
-//
-// A slightly more "correct" approach would be to implement the traits while skipping the bounds for
-// the type marker, however this can be more noisy
-#[allow(missing_docs)]
+/// The base type of all nonterminals, terminals, and edges.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
-pub enum KindTypes {}
+pub enum KindTypes {
+    // These derives are because default #[derive(...)] on a generic type implements only the trait
+    // with default bounds also implied for the generic types as well, i.e.
+    //
+    // #[derive(Clone)] // expands to `impl<T: Clone> Clone for MyOption<T> { ... }` (notice the `T: Clone`)
+    // struct MyOption<T>(Option<T>);
+    //
+    // This assumes that the underlying data type uses this internally, however it's only used as a
+    // type container/marker.
+    //
+    // A slightly more "correct" approach would be to implement the traits while skipping the bounds for
+    // the type marker, however this can be more noisy
+}
 
 impl metaslang_cst::kinds::KindTypes for KindTypes {
     type NonterminalKind = NonterminalKind;

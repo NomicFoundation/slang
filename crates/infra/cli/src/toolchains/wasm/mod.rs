@@ -6,34 +6,29 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
-use strum_macros::EnumIter;
 
 pub const WASM_TARGET: &str = "wasm32-wasip1";
+pub const WASM_CRATE: &str = "solidity_cargo_wasm";
+pub const NPM_CRATE: &str = "solidity_npm_package";
 
-#[derive(Clone, Copy, EnumIter)]
-pub enum WasmPackage {
-    Codegen,
-    Solidity,
-}
+pub struct WasmPackage {}
 
 impl WasmPackage {
-    pub fn build(self) -> Result<()> {
-        let wasm_component = self.generate_component()?;
+    pub fn build() -> Result<()> {
+        let wasm_component = Self::generate_component()?;
 
-        self.transpile_wasm(&wasm_component)?;
+        Self::transpile_wasm(&wasm_component)?;
 
-        self.transpile_sources()?;
+        Self::transpile_sources()?;
 
         Ok(())
     }
 
-    fn generate_component(self) -> Result<PathBuf> {
-        let wasm_crate = self.wasm_crate();
-
+    fn generate_component() -> Result<PathBuf> {
         Command::new("cargo")
             .arg("build")
             .property("--target", WASM_TARGET)
-            .property("--package", wasm_crate)
+            .property("--package", WASM_CRATE)
             .flag("--all-features")
             .add_build_rustflags()
             .run();
@@ -45,10 +40,10 @@ impl WasmPackage {
         };
 
         let wasm_binary =
-            Path::repo_path(format!("target/{WASM_TARGET}/{profile}/{wasm_crate}.wasm"));
+            Path::repo_path(format!("target/{WASM_TARGET}/{profile}/{WASM_CRATE}.wasm"));
 
         let wasm_opt_binary = Path::repo_path(format!(
-            "target/{WASM_TARGET}/{profile}/{wasm_crate}.optimized.wasm"
+            "target/{WASM_TARGET}/{profile}/{WASM_CRATE}.optimized.wasm"
         ));
 
         Command::new("slang-jco")
@@ -66,7 +61,7 @@ impl WasmPackage {
         );
 
         let wasm_component = Path::repo_path(format!(
-            "target/{WASM_TARGET}/{profile}/{wasm_crate}.component.wasm"
+            "target/{WASM_TARGET}/{profile}/{WASM_CRATE}.component.wasm"
         ));
 
         Command::new("wasm-tools")
@@ -78,13 +73,12 @@ impl WasmPackage {
         Ok(wasm_component)
     }
 
-    fn transpile_wasm(self, wasm_component: &Path) -> Result<()> {
+    fn transpile_wasm(wasm_component: &Path) -> Result<()> {
         let temp_dir_handle = tempfile::tempdir()?;
         let temp_dir = temp_dir_handle.path();
 
-        let wasm_crate = self.wasm_crate();
-        let runtime_dir = CargoWorkspace::locate_source_crate(wasm_crate)?.join(self.runtime_dir());
-        let jco_config = runtime_dir.join("generated/config.json");
+        let runtime_dir = CargoWorkspace::locate_source_crate(WASM_CRATE)?.join("src/wasm_crate");
+        let jco_config = runtime_dir.join("config.json");
 
         {
             Command::new("slang-jco")
@@ -99,17 +93,16 @@ impl WasmPackage {
         }
 
         {
-            let wit_directory = runtime_dir.join("interface/generated");
+            let wit_directory = runtime_dir.join("interface");
             Command::new("slang-jco")
                 .args(["types", wit_directory.unwrap_str()])
-                .property("--name", format!("{wasm_crate}.component"))
+                .property("--name", format!("{WASM_CRATE}.component"))
                 .property("--configuration-file", jco_config.unwrap_str())
                 .property("--out-dir", temp_dir.unwrap_str())
                 .run();
         }
 
-        let npm_crate = self.npm_crate();
-        let output_dir = CargoWorkspace::locate_source_crate(npm_crate)?.join("wasm/generated");
+        let output_dir = CargoWorkspace::locate_source_crate(NPM_CRATE)?.join("wasm/generated");
 
         let mut fs = CodegenFileSystem::default();
 
@@ -142,13 +135,11 @@ impl WasmPackage {
                 other => panic!("Unexpected file extension: {other}"),
             }
         }
-
         Ok(())
     }
 
-    fn transpile_sources(self) -> Result<()> {
-        let npm_crate = self.npm_crate();
-        let project_dir = CargoWorkspace::locate_source_crate(npm_crate)?;
+    fn transpile_sources() -> Result<()> {
+        let project_dir = CargoWorkspace::locate_source_crate(NPM_CRATE)?;
 
         let temp_dir_handle = tempfile::tempdir()?;
         let temp_dir = temp_dir_handle.path();
@@ -159,8 +150,8 @@ impl WasmPackage {
             .property("--noEmit", "false")
             .run();
 
-        let temp_dir = temp_dir.join(self.runtime_dir());
-        let output_dir = project_dir.join("target/generated");
+        let temp_dir = temp_dir.join("src");
+        let output_dir = project_dir.join("target");
 
         // remove any old generated files
         if output_dir.exists() {
@@ -173,28 +164,6 @@ impl WasmPackage {
             std::fs::create_dir_all(output_path.unwrap_parent())?;
             std::fs::copy(&temp_path, &output_path)?;
         }
-
         Ok(())
-    }
-
-    pub fn wasm_crate(self) -> &'static str {
-        match self {
-            Self::Codegen => "codegen_runtime_cargo_wasm",
-            Self::Solidity => "solidity_cargo_wasm",
-        }
-    }
-
-    pub fn npm_crate(self) -> &'static str {
-        match self {
-            Self::Codegen => "codegen_runtime_npm_package",
-            Self::Solidity => "solidity_npm_package",
-        }
-    }
-
-    fn runtime_dir(self) -> &'static str {
-        match self {
-            Self::Codegen => "src/runtime",
-            Self::Solidity => "src/generated",
-        }
     }
 }

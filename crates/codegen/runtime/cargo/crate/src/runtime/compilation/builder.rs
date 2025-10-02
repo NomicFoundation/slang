@@ -58,7 +58,7 @@ pub enum CompilationInitializationError {
 
 impl<E, C: CompilationBuilderConfig<Error = E>> CompilationBuilder<E, C> {
     /// Creates a new compilation builder for the specified language version and callbacks.
-    pub fn new(
+    pub fn create(
         version: Version,
         config: C,
     ) -> Result<CompilationBuilder<E, C>, CompilationInitializationError> {
