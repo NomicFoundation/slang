@@ -53,11 +53,17 @@ const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 const VERSION_0_7_0: Version = Version::new(0, 7, 0);
 const VERSION_0_8_0: Version = Version::new(0, 8, 0);
 
+struct ScopeFrame {
+    // Scope associated with the node that created the stack frame. This is
+    // solely used for integrity validation when popping the current frame.
+    structural_scope_id: ScopeId,
+    // Scope to use when resolving a symbol.
+    lexical_scope_id: ScopeId,
+}
+
 struct Pass {
     language_version: Version,
-    // We keep a structural and lexical scope in the stack, to be able to
-    // replace the lexical one after declaration statements
-    scope_stack: Vec<(ScopeId, ScopeId)>,
+    scope_stack: Vec<ScopeFrame>,
     binder: Binder,
     types: TypeRegistry,
 }
@@ -84,19 +90,33 @@ impl Pass {
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push((scope_id, scope_id));
+        self.scope_stack.push(ScopeFrame {
+            structural_scope_id: scope_id,
+            lexical_scope_id: scope_id,
+        });
     }
 
-    fn enter_replace_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some((structural_scope_id, _)) = self.scope_stack.pop() else {
+    fn replace_scope_for_node_id(&mut self, node_id: NodeId) {
+        let Some(ScopeFrame {
+            structural_scope_id,
+            ..
+        }) = self.scope_stack.pop()
+        else {
             unreachable!("scope stack cannot be empty");
         };
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push((structural_scope_id, scope_id));
+        self.scope_stack.push(ScopeFrame {
+            structural_scope_id,
+            lexical_scope_id: scope_id,
+        });
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some((structural_scope_id, _)) = self.scope_stack.pop() else {
+        let Some(ScopeFrame {
+            structural_scope_id,
+            ..
+        }) = self.scope_stack.pop()
+        else {
             unreachable!("attempt to pop an empty scope stack");
         };
         assert_eq!(
@@ -108,7 +128,11 @@ impl Pass {
     fn current_scope_id(&self) -> ScopeId {
         self.scope_stack
             .last()
-            .map(|(_, scope_id)| scope_id)
+            .map(
+                |ScopeFrame {
+                     lexical_scope_id, ..
+                 }| lexical_scope_id,
+            )
             .copied()
             .unwrap()
     }
@@ -171,19 +195,27 @@ impl Pass {
         self.scope_stack
             .iter()
             .rev()
-            .flat_map(|(_, scope_id)| {
-                if self.language_version < VERSION_0_7_0 {
-                    // In Solidity < 0.7.0 using directives are inherited in contracts,
-                    // so we need to pull any `using` directives in a contract hierarchy
-                    // if there are linearisations
-                    EitherIter::Left(
-                        self.binder
-                            .get_using_directives_in_scope_including_inherited(*scope_id),
-                    )
-                } else {
-                    EitherIter::Right(self.binder.get_using_directives_in_scope(*scope_id))
-                }
-            })
+            .flat_map(
+                |ScopeFrame {
+                     lexical_scope_id, ..
+                 }| {
+                    if self.language_version < VERSION_0_7_0 {
+                        // In Solidity < 0.7.0 using directives are inherited in contracts,
+                        // so we need to pull any `using` directives in a contract hierarchy
+                        // if there are linearisations
+                        EitherIter::Left(
+                            self.binder
+                                .get_using_directives_in_scope_including_inherited(
+                                    *lexical_scope_id,
+                                ),
+                        )
+                    } else {
+                        EitherIter::Right(
+                            self.binder.get_using_directives_in_scope(*lexical_scope_id),
+                        )
+                    }
+                },
+            )
             // ... and add the global directives
             .chain(self.binder.get_global_using_directives())
             .filter(move |directive| directive.applies_to(type_id))
@@ -740,10 +772,13 @@ impl Pass {
     }
 
     fn current_contract_scope_id(&self) -> Option<ScopeId> {
-        for (_, scope_id) in self.scope_stack.iter().rev() {
-            let scope = self.binder.get_scope_by_id(*scope_id);
+        for ScopeFrame {
+            lexical_scope_id, ..
+        } in self.scope_stack.iter().rev()
+        {
+            let scope = self.binder.get_scope_by_id(*lexical_scope_id);
             if matches!(scope, Scope::Contract(_)) {
-                return Some(*scope_id);
+                return Some(*lexical_scope_id);
             }
         }
         None
@@ -2256,7 +2291,7 @@ impl Visitor for Pass {
         if self.language_version >= VERSION_0_5_0 {
             // in Solidity >= 0.5.0 we need to update the scope so further
             // resolutions can access this variable definition
-            self.enter_replace_scope_for_node_id(node.node_id);
+            self.replace_scope_for_node_id(node.node_id);
             // NOTE: ensure following code does not need to perform resolution
         }
 
@@ -2284,7 +2319,7 @@ impl Visitor for Pass {
         if self.language_version >= VERSION_0_5_0 {
             // in Solidity >= 0.5.0 we need to update the scope so further
             // resolutions can access these variable definitions
-            self.enter_replace_scope_for_node_id(node.node_id);
+            self.replace_scope_for_node_id(node.node_id);
             // NOTE: ensure following code does not need to perform resolution
         }
 
