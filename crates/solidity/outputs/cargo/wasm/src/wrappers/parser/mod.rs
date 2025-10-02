@@ -1,12 +1,12 @@
 use std::rc::Rc;
 
-use crate::wasm_crate::utils::{define_wrapper, FromFFI, IntoFFI};
+use crate::utils::{define_wrapper, FromFFI, IntoFFI};
 
 mod ffi {
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
+    pub use crate::bindgen::exports::nomic_foundation::slang::cst::{
         Cursor, NonterminalNode,
     };
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::parser::{
+    pub use crate::bindgen::exports::nomic_foundation::slang::parser::{
         Guest, GuestParseOutput, GuestParser, NonterminalKind, ParseError, ParseOutput,
         ParseOutputBorrow, Parser, ParserBorrow,
     };
@@ -16,7 +16,7 @@ mod rust {
     pub use crate::rust_crate::parser::{ParseError, ParseOutput, Parser};
 }
 
-impl ffi::Guest for crate::wasm_crate::World {
+impl ffi::Guest for crate::World {
     type Parser = ParserWrapper;
     type ParseOutput = ParseOutputWrapper;
 }

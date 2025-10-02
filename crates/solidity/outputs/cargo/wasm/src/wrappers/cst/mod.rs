@@ -1,11 +1,11 @@
 use std::rc::Rc;
 
-use crate::wasm_crate::utils::{
+use crate::utils::{
     define_rc_wrapper, define_refcell_wrapper, define_wrapper, enum_to_enum, FromFFI, IntoFFI,
 };
 
 mod ffi {
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
+    pub use crate::bindgen::exports::nomic_foundation::slang::cst::{
         AncestorsIterator, AncestorsIteratorBorrow, Cursor, CursorBorrow, CursorIterator,
         CursorIteratorBorrow, Edge, EdgeBorrow, EdgeLabel, Guest, GuestAncestorsIterator,
         GuestCursor, GuestCursorIterator, GuestEdge, GuestNonterminalNode, GuestQuery,
@@ -24,7 +24,7 @@ mod rust {
     };
 }
 
-impl ffi::Guest for crate::wasm_crate::World {
+impl ffi::Guest for crate::World {
     type TerminalKindExtensions = TerminalKindExtensionsWrapper;
 
     type Edge = EdgeWrapper;

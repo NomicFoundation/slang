@@ -2,19 +2,17 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use crate::wasm_crate::utils::{define_rc_wrapper, define_refcell_wrapper, IntoFFI};
+use crate::utils::{define_rc_wrapper, define_refcell_wrapper, IntoFFI};
 
 mod ffi {
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::bindings::BindingGraph;
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::compilation::{
+    pub use crate::bindgen::exports::nomic_foundation::slang::bindings::BindingGraph;
+    pub use crate::bindgen::exports::nomic_foundation::slang::compilation::{
         AddFileResponse, CompilationUnit, CompilationUnitBorrow, CursorBorrow, File, FileBorrow,
         Guest, GuestCompilationUnit, GuestFile, GuestInternalCompilationBuilder,
         InternalCompilationBuilder, InternalCompilationBuilderBorrow,
     };
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
-        Cursor, NonterminalNode,
-    };
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::parser::ParseError;
+    pub use crate::bindgen::exports::nomic_foundation::slang::cst::{Cursor, NonterminalNode};
+    pub use crate::bindgen::exports::nomic_foundation::slang::parser::ParseError;
 }
 
 mod rust {
@@ -23,7 +21,7 @@ mod rust {
     };
 }
 
-impl ffi::Guest for crate::wasm_crate::World {
+impl ffi::Guest for crate::World {
     type InternalCompilationBuilder = InternalCompilationBuilderWrapper;
     type CompilationUnit = CompilationUnitWrapper;
     type File = FileWrapper;

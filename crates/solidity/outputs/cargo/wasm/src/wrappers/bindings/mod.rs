@@ -1,13 +1,13 @@
-use crate::wasm_crate::utils::{define_rc_wrapper, define_wrapper, IntoFFI};
+use crate::utils::{define_rc_wrapper, define_wrapper, IntoFFI};
 
 mod ffi {
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::bindings::{
+    pub use crate::bindgen::exports::nomic_foundation::slang::bindings::{
         BindingGraph, BindingGraphBorrow, BindingLocation, BuiltInLocation, BuiltInLocationBorrow,
         CursorBorrow, Definition, DefinitionBorrow, Guest, GuestBindingGraph, GuestBuiltInLocation,
         GuestDefinition, GuestReference, GuestUserFileLocation, Reference, ReferenceBorrow,
         UserFileLocation, UserFileLocationBorrow,
     };
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::Cursor;
+    pub use crate::bindgen::exports::nomic_foundation::slang::cst::Cursor;
 }
 
 mod rust {
@@ -16,7 +16,7 @@ mod rust {
     };
 }
 
-impl ffi::Guest for crate::wasm_crate::World {
+impl ffi::Guest for crate::World {
     type BindingGraph = BindingGraphWrapper;
 
     type Definition = DefinitionWrapper;

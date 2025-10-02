@@ -1,9 +1,9 @@
 use semver::Version;
 
-use crate::wasm_crate::utils::define_wrapper;
+use crate::utils::define_wrapper;
 
 mod ffi {
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::utils::{
+    pub use crate::bindgen::exports::nomic_foundation::slang::utils::{
         Guest, GuestLanguageFacts, LanguageFacts, LanguageFactsBorrow,
     };
 }
@@ -12,7 +12,7 @@ mod rust {
     pub use crate::rust_crate::utils::LanguageFacts;
 }
 
-impl ffi::Guest for crate::wasm_crate::World {
+impl ffi::Guest for crate::World {
     type LanguageFacts = LanguageFactsWrapper;
 }
 

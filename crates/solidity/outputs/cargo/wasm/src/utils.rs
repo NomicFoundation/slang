@@ -12,14 +12,14 @@ macro_rules! define_wrapper {
             #[repr(transparent)]
             pub struct [<$name Wrapper>] (rust::$name);
 
-            impl $crate::wasm_crate::utils::IntoFFI<ffi::$name> for rust::$name {
+            impl $crate::utils::IntoFFI<ffi::$name> for rust::$name {
                 #[inline]
                 fn _into_ffi(self) -> ffi::$name {
                     ffi::$name::new([<$name Wrapper>](self))
                 }
             }
 
-            impl $crate::wasm_crate::utils::FromFFI<rust::$name> for ffi::$name {
+            impl $crate::utils::FromFFI<rust::$name> for ffi::$name {
                 #[inline]
                 fn _from_ffi(self) -> rust::$name {
                     self.into_inner::<[<$name Wrapper>]>().0
@@ -61,14 +61,14 @@ macro_rules! define_rc_wrapper {
             #[repr(transparent)]
             pub struct [<$name Wrapper>] (std::rc::Rc<rust::$name>);
 
-            impl $crate::wasm_crate::utils::IntoFFI<ffi::$name> for std::rc::Rc<rust::$name> {
+            impl $crate::utils::IntoFFI<ffi::$name> for std::rc::Rc<rust::$name> {
                 #[inline]
                 fn _into_ffi(self) -> ffi::$name {
                     ffi::$name::new([<$name Wrapper>](self))
                 }
             }
 
-            impl $crate::wasm_crate::utils::FromFFI<std::rc::Rc<rust::$name>> for ffi::$name {
+            impl $crate::utils::FromFFI<std::rc::Rc<rust::$name>> for ffi::$name {
                 #[inline]
                 fn _from_ffi(self) -> std::rc::Rc<rust::$name> {
                     self.into_inner::<[<$name Wrapper>]>().0
@@ -110,14 +110,14 @@ macro_rules! define_refcell_wrapper {
             #[repr(transparent)]
             pub struct [<$name Wrapper>] (std::cell::RefCell<rust::$name>);
 
-            impl $crate::wasm_crate::utils::IntoFFI<ffi::$name> for rust::$name {
+            impl $crate::utils::IntoFFI<ffi::$name> for rust::$name {
                 #[inline]
                 fn _into_ffi(self) -> ffi::$name {
                     ffi::$name::new([<$name Wrapper>](std::cell::RefCell::new(self)))
                 }
             }
 
-            impl $crate::wasm_crate::utils::FromFFI<rust::$name> for ffi::$name {
+            impl $crate::utils::FromFFI<rust::$name> for ffi::$name {
                 #[inline]
                 fn _from_ffi(self) -> rust::$name {
                     self.into_inner::<[<$name Wrapper>]>().0.into_inner()
@@ -167,14 +167,14 @@ macro_rules! define_refcell_wrapper {
 
 macro_rules! enum_to_enum {
     ($name:ident) => {
-        impl $crate::wasm_crate::utils::IntoFFI<ffi::$name> for rust::$name {
+        impl $crate::utils::IntoFFI<ffi::$name> for rust::$name {
             #[inline]
             fn _into_ffi(self) -> ffi::$name {
                 unsafe { core::mem::transmute(self) }
             }
         }
 
-        impl $crate::wasm_crate::utils::FromFFI<rust::$name> for ffi::$name {
+        impl $crate::utils::FromFFI<rust::$name> for ffi::$name {
             #[inline]
             fn _from_ffi(self) -> rust::$name {
                 unsafe { core::mem::transmute(self) }
