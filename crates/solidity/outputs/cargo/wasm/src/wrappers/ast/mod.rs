@@ -4,12 +4,8 @@ mod selectors;
 use crate::utils::IntoFFI;
 
 mod ffi {
-    pub use crate::bindgen::exports::nomic_foundation::slang::ast::{
-        Guest, GuestSelectors,
-    };
-    pub use crate::bindgen::exports::nomic_foundation::slang::cst::{
-        Node, NonterminalNodeBorrow,
-    };
+    pub use crate::bindgen::exports::nomic_foundation::slang::ast::{Guest, GuestSelectors};
+    pub use crate::bindgen::exports::nomic_foundation::slang::cst::{Node, NonterminalNodeBorrow};
 }
 
 mod rust {}
