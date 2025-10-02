@@ -20,6 +20,11 @@ on:
         type: "boolean"
         required: false
         default: false
+      compare_binders:
+        description: "Check bindings using the new binder and compare the results against the graph binder, reporting any differences found as failures. Only one binder check can be enabled."
+        type: "boolean"
+        required: false
+        default: false
       check_infer_version:
         description: "Check that we can infer the correct language version based on the available version pragmas."
         type: "boolean"
@@ -158,6 +163,7 @@ jobs:
               --shard-index ${{ matrix.shard_index }} \
               ${{ inputs.check_binder_v1 == true && '--check-binder-v1' || '' }} \
               ${{ inputs.check_binder_v2 == true && '--check-binder-v2' || '' }} \
+              ${{ inputs.compare_binders == true && '--compare-binders' || '' }} \
               ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }}
 
       - name: "Write shard results to output"

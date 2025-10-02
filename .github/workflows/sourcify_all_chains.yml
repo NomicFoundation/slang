@@ -13,6 +13,11 @@ on:
         type: "boolean"
         required: false
         default: false
+      compare_binders:
+        description: "Check bindings using the new binder and compare the results against the graph binder, reporting any differences found as failures. Only one binder check can be enabled."
+        type: "boolean"
+        required: false
+        default: false
       check_infer_version:
         description: "Check that we can infer the correct language version based on the available version pragmas."
         type: "boolean"
@@ -25,6 +30,7 @@ jobs:
       chain_id: "${{ matrix.chain_id }}"
       check_binder_v1: "${{ inputs.check_binder_v1 }}"
       check_binder_v2: "${{ inputs.check_binder_v2 }}"
+      compare_binders: "${{ inputs.compare_binders }}"
       check_infer_version: "${{ inputs.check_infer_version }}"
     strategy:
       fail-fast: false
