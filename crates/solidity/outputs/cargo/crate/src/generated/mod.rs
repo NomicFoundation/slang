@@ -4,7 +4,7 @@ pub mod bindings;
 pub mod compilation;
 pub mod cst;
 #[cfg(feature = "__private_ariadne_errors")]
-#[allow(missing_docs)]
+#[doc(hidden)]
 pub mod diagnostic;
 pub mod parser;
 pub mod utils;

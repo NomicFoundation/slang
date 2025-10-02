@@ -48,7 +48,7 @@ pub enum ParseError {
     InvalidRegex(String, Location),
     #[error("Expected integer constant in regex capture at {0}")]
     InvalidRegexCapture(Location),
-    #[error("Invalid query pattern: {}", _0.message)]
+    #[error("Invalid query pattern: {}", _0.message())]
     QueryError(#[from] QueryError),
     #[error("Unexpected character '{0}' in {1} at {2}")]
     UnexpectedCharacter(char, &'static str, Location),
@@ -94,8 +94,8 @@ impl std::fmt::Display for DisplayParseErrorPretty<'_> {
             ParseError::InvalidRegex(_, location) => *location,
             ParseError::InvalidRegexCapture(location) => *location,
             ParseError::QueryError(err) => Location {
-                row: err.text_range.start.line,
-                column: err.text_range.start.column,
+                row: err.text_range().start.line,
+                column: err.text_range().start.column,
             },
             ParseError::UnexpectedCharacter(_, _, location) => *location,
             ParseError::UnexpectedEOF(location) => *location,
@@ -371,21 +371,18 @@ impl<'a> Parser<'a> {
 
         let query_source = &self.source[query_start..query_end];
 
-        let query = Query::create(query_source).map_err(|mut e| {
-            let start_offset = query_start + e.text_range.start.utf8;
-            let end_offset = query_start + e.text_range.end.utf8;
+        let query = Query::create(query_source).map_err(|e| {
+            let message = e.message().to_string();
+            let start_offset = query_start + e.text_range().start.utf8;
+            let end_offset = query_start + e.text_range().end.utf8;
 
-            e.text_range.start = TextIndex::ZERO;
-            e.text_range
-                .start
-                .advance_str(&self.source[0..start_offset]);
+            let mut start_index = TextIndex::ZERO;
+            start_index.advance_str(&self.source[0..start_offset]);
 
-            e.text_range.end = e.text_range.start;
-            e.text_range
-                .end
-                .advance_str(&self.source[start_offset..end_offset]);
+            let mut end_index = start_index.clone();
+            end_index.advance_str(&self.source[start_offset..end_offset]);
 
-            e
+            QueryError::create(message, start_index..end_index)
         })?;
 
         Ok(query)

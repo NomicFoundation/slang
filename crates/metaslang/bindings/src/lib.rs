@@ -4,11 +4,11 @@
 //!
 //! It's based on the [stack graph library](https://docs.rs/stack-graphs/latest/stack_graphs/index.html).
 
-// This module is not part of the public API.
-#[allow(missing_docs)]
+#[doc(hidden)]
 mod builder;
 mod graph;
 
+#[doc(hidden)]
 pub use builder::{
     BindingGraphBuilder, FileGraphBuilder, GraphHandle, PathResolver, ScopeGraphBuilder,
 };

@@ -235,8 +235,10 @@ pub fn metaslang_cst::query::Query<T>::fmt(&self, f: &mut core::fmt::Formatter<'
 impl<T: metaslang_cst::kinds::KindTypes> core::fmt::Display for metaslang_cst::query::Query<T>
 pub fn metaslang_cst::query::Query<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_cst::query::QueryError
-pub metaslang_cst::query::QueryError::message: alloc::string::String
-pub metaslang_cst::query::QueryError::text_range: metaslang_cst::text_index::TextRange
+impl metaslang_cst::query::QueryError
+pub fn metaslang_cst::query::QueryError::create(message: alloc::string::String, text_range: metaslang_cst::text_index::TextRange) -> Self
+pub fn metaslang_cst::query::QueryError::message(&self) -> &str
+pub fn metaslang_cst::query::QueryError::text_range(&self) -> &metaslang_cst::text_index::TextRange
 impl core::clone::Clone for metaslang_cst::query::QueryError
 pub fn metaslang_cst::query::QueryError::clone(&self) -> metaslang_cst::query::QueryError
 impl core::error::Error for metaslang_cst::query::QueryError

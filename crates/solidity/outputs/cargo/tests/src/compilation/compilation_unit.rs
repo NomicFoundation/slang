@@ -49,7 +49,7 @@ pub(crate) fn build_compilation_unit_from_multi_part_file(
 ) -> Result<CompilationUnit> {
     let multi_part = split_multi_file(contents);
     let mut builder =
-        CompilationBuilder::new(version.clone(), MultiPartBuildConfig::new(&multi_part))?;
+        CompilationBuilder::create(version.clone(), MultiPartBuildConfig::new(&multi_part))?;
 
     for part in &multi_part.parts {
         builder.add_file(part.name)?;

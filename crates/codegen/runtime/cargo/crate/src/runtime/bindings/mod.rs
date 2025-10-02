@@ -52,7 +52,7 @@ pub type UserFileLocation = metaslang_bindings::UserFileLocation<KindTypes>;
 pub type BuiltInLocation = metaslang_bindings::BuiltInLocation;
 
 #[cfg(feature = "__private_testing_utils")]
-#[allow(missing_docs)]
+#[doc(hidden)]
 // Create a new `BindingGraphBuilder` with the specified language version and resolver.
 // Exposed to test the functionality, but users should use the `CompilationBuilder` instead.
 pub fn create_with_resolver(
@@ -78,7 +78,7 @@ pub(crate) fn create_with_resolver_internal(
 }
 
 #[cfg(feature = "__private_testing_utils")]
-#[allow(missing_docs)]
+#[doc(hidden)]
 pub fn get_binding_rules() -> &'static str {
     binding_rules::BINDING_RULES_SOURCE
 }

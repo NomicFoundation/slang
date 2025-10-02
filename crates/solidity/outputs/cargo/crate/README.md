@@ -1,4 +1,4 @@
-# slang
+# slang_solidity
 
 <!-- _PRODUCT_README_ (keep in sync) -->
 
