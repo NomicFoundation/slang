@@ -1,4 +1,4 @@
-use anyhow::{ensure, Result};
+use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
@@ -15,11 +15,6 @@ pub struct CargoController {
 
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
-        ensure!(
-            false,
-            "__SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)"
-        );
-
         let mut changed_crates = vec![];
 
         for crate_name in UserFacingCrate::iter() {

@@ -2,8 +2,7 @@
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
-# __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
-# publish = true
+publish = true
 
 name = "slang_solidity_cli"
 description = "This crate contains the 'slang_solidity' CLI/cargo binary. Please see the 'slang_solidity' crate for more information."
