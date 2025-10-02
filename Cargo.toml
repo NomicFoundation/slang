@@ -13,7 +13,7 @@ members = [
     "crates/codegen/language/macros",
     "crates/codegen/language/tests",
     "crates/codegen/runner",
-    "crates/codegen/runtime/generator",
+    "crates/codegen/generator",
     "crates/codegen/spec",
     "crates/codegen/testing",
 
@@ -48,7 +48,7 @@ codegen_language_internal_macros = { path = "crates/codegen/language/internal_ma
 codegen_language_macros = { path = "crates/codegen/language/macros", version = "1.2.1" }
 codegen_language_tests = { path = "crates/codegen/language/tests", version = "1.2.1" }
 codegen_runner = { path = "crates/codegen/runner", version = "1.2.1" }
-codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "1.2.1" }
+codegen_generator = { path = "crates/codegen/generator", version = "1.2.1" }
 codegen_spec = { path = "crates/codegen/spec", version = "1.2.1" }
 codegen_testing = { path = "crates/codegen/testing", version = "1.2.1" }
 

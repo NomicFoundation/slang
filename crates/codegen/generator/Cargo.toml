@@ -1,5 +1,5 @@
 [package]
-name = "codegen_runtime_generator"
+name = "codegen_generator"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

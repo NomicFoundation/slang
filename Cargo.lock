@@ -389,6 +389,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "codegen_generator"
+version = "1.2.1"
+dependencies = [
+ "Inflector",
+ "anyhow",
+ "codegen_ebnf",
+ "codegen_language_definition",
+ "indexmap",
+ "infra_utils",
+ "proc-macro2",
+ "quote",
+ "semver",
+ "serde",
+ "strum",
+ "strum_macros",
+]
+
+[[package]]
 name = "codegen_language_definition"
 version = "1.2.1"
 dependencies = [
@@ -441,31 +459,13 @@ name = "codegen_runner"
 version = "1.2.1"
 dependencies = [
  "anyhow",
+ "codegen_generator",
  "codegen_language_definition",
- "codegen_runtime_generator",
  "codegen_spec",
  "codegen_testing",
  "infra_utils",
  "rayon",
  "solidity_language",
-]
-
-[[package]]
-name = "codegen_runtime_generator"
-version = "1.2.1"
-dependencies = [
- "Inflector",
- "anyhow",
- "codegen_ebnf",
- "codegen_language_definition",
- "indexmap",
- "infra_utils",
- "proc-macro2",
- "quote",
- "semver",
- "serde",
- "strum",
- "strum_macros",
 ]
 
 [[package]]
