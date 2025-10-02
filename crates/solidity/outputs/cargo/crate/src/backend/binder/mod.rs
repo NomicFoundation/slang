@@ -109,22 +109,21 @@ pub struct Binder {
     linearisations: HashMap<NodeId, Vec<NodeId>>,
 }
 
-// This controls visibility filtering and how to use the linearisation when
-// performing a contract scope resolution.
-// - `Internal` uses all the linearised bases in order and is an internal lookup
-// - `External` uses all the linearised bases and is an external lookup
-// - `Qualified` uses all bases and only excludes private members in bases types
-//   (used for general qualified member access)
-// - `This(node_id)` starts at `node_id` and proceeds in order and is an
-//   external lookup
-// - `Super(node_id)` starts at the contract _following_ `node_id` (ie. its
-//   parent) and is an internal lookup
+/// This controls visibility filtering and how to use the linearisation when
+/// performing a contract scope resolution.
 #[derive(Clone, Copy, Eq, PartialEq)]
 pub(crate) enum ResolveOptions {
+    /// Use all the linearised bases in order for an internal lookup.
     Internal,
+    /// Use all the linearised bases for an external lookup.
     External,
+    /// Use all bases and only excludes private members in bases types (used for
+    /// general qualified member access).
     Qualified,
+    /// Starts at `node_id` and proceeds in order for an external lookup.
     This(NodeId),
+    /// Starts at the contract _following_ `node_id` (ie. its parent) for an
+    /// internal lookup.
     Super(NodeId),
 }
 
