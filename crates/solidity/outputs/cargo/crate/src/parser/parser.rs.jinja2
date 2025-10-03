@@ -1,0 +1,255 @@
+// This file is generated; we can't reasonably satisfy some of these lints.
+#![allow(
+    clippy::if_not_else,
+    clippy::too_many_lines,
+    clippy::unused_self,
+    clippy::struct_excessive_bools,
+    clippy::similar_names,
+    unused_imports
+)]
+
+use semver::Version;
+
+use crate::cst;
+use crate::utils::LanguageFacts;
+use crate::cst::{
+    EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
+};
+use crate::parser::lexer::{KeywordScan, Lexer, ScannedTerminal};
+use crate::parser::parser_support::{
+    ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
+};
+use crate::parser::scanner_macros::{
+    scan_char_range, scan_chars, scan_choice, scan_keyword_choice, scan_none_of,
+    scan_not_followed_by, scan_one_or_more, scan_optional, scan_sequence, scan_zero_or_more,
+};
+use crate::parser::ParseOutput;
+
+/// Parses `{{ model.language_name }}` source code. `Parser` must be initialized with a specific
+/// language version that's supported by Slang. See [`LanguageFacts`] to determine what language
+/// versions are available.
+/// 
+/// ```
+/// use slang_solidity::parser::Parser;
+/// use slang_solidity::utils::LanguageFacts;
+///
+/// // Initialize parser
+/// let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
+/// // Get source code to parse
+/// let source = "contract AContract { }";
+/// 
+/// // Parse the entire file, then get a cursor to start navigating the parsed CST.
+/// // Any parse errors will be reflected by error nodes in the tree. Errors can also
+/// // be listed with `output.errors()`.
+/// let output = parser.parse_file_contents(&source);
+/// let mut cursor = output.create_tree_cursor();
+/// ```
+#[derive(Debug)]
+pub struct Parser {
+    {%- for version in model.breaking_language_versions -%}
+        {% if loop.first %} {# The first supported version may not be referenced by the items #}
+        #[allow(dead_code)]
+        {% endif %}
+        pub(crate) version_is_at_least_{{ version | replace(from=".", to="_") }}: bool,
+    {%- endfor -%}
+
+    language_version: Version,
+}
+
+/// Errors that may occur when initializing a [`Parser`].
+#[derive(thiserror::Error, Debug)]
+pub enum ParserInitializationError {
+    /// Tried to initialize a [`Parser`] with a version that is not supported for `{{ model.language_name }}`.
+    /// See [`LanguageFacts::ALL_VERSIONS`] for a complete list of supported versions.
+    #[error("Unsupported language version '{0}'.")]
+    UnsupportedLanguageVersion(Version),
+}
+
+impl Parser {
+    /// Create a new `{{ model.language_name }}` parser that supports the specified language version.
+    pub fn create(language_version: Version) -> std::result::Result<Self, ParserInitializationError> {
+        if LanguageFacts::ALL_VERSIONS.binary_search(&language_version).is_ok() {
+            Ok(Self {
+                {%- for version in model.breaking_language_versions %}
+                    version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= language_version,
+                {%- endfor -%}
+
+                language_version,
+            })
+        } else {
+            Err(ParserInitializationError::UnsupportedLanguageVersion(language_version))
+        }
+    }
+
+    /// Returns the `{{ model.language_name }}` version that this parser supports.
+    pub fn language_version(&self) -> &Version {
+        &self.language_version
+    }
+
+    /// Parse the contents of an entire `{{ model.language_name }}` source file.
+    pub fn parse_file_contents(&self, input: &str) -> ParseOutput {
+        self.parse_nonterminal(NonterminalKind::{{ model.kinds.root_kind }}, input)
+    }
+
+    /// Parse the given `{{ model.language_name }}` source code as a specific [`NonterminalKind`].
+    pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
+        match kind {
+            {%- for parser_name, _ in model.parser.parser_functions -%}
+                NonterminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input, kind),
+            {%- endfor -%}
+        }
+    }
+
+    /********************************************
+    *         Parser Functions
+    ********************************************/
+
+    {% for parser_name, parser_code in model.parser.parser_functions %}
+        #[allow(unused_assignments, unused_parens)]
+        fn {{ parser_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> ParserResult { {{ parser_code }} }
+    {% endfor %}
+
+    {% for parser_name, parser_code in model.parser.trivia_parser_functions %}
+        #[allow(unused_assignments, unused_parens)]
+        fn {{ parser_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> ParserResult { {{ parser_code }} }
+    {% endfor %}
+
+    /********************************************
+    *         Scanner Functions
+    ********************************************/
+
+    {% for scanner_name, scanner_code in model.parser.scanner_functions %}
+        #[allow(unused_assignments, unused_parens)]
+        fn {{ scanner_name | snake_case }}(&self, input: &mut ParserContext<'_>) -> bool { {{ scanner_code }} }
+    {% endfor %}
+
+    {%- for keyword_name, keyword_code in model.parser.keyword_compound_scanners %}
+        #[inline]
+        fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan { {{ keyword_code }} }
+    {% endfor %}
+
+}
+
+impl Lexer for Parser {
+    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        input.cached_leading_trivia_or(|input| Parser::leading_trivia(self, input))
+    }
+
+    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        Parser::trailing_trivia(self, input)
+    }
+
+    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TerminalKind, TerminalKind)] {
+        match LexCtx::value() {
+            {%- for context_name, context in model.parser.scanner_contexts %}
+                LexicalContext::{{ context_name }} => &[
+                    {%- for open, close in context.delimiters %}
+                        (TerminalKind::{{ open }}, TerminalKind::{{ close }}),
+                    {%- endfor %}
+                ],
+            {%- endfor %}
+        }
+    }
+
+    fn next_terminal<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext<'_>) -> Option<ScannedTerminal> {
+        let save = input.position();
+        let mut furthest_position = input.position();
+        let mut longest_terminal = None;
+
+        macro_rules! longest_match {
+            ($( { $kind:ident = $function:ident } )*) => {
+                $(
+                    if self.$function(input) && input.position() > furthest_position {
+                        furthest_position = input.position();
+
+                        longest_terminal = Some(TerminalKind::$kind);
+                    }
+                    input.set_position(save);
+                )*
+            };
+        }
+
+        match LexCtx::value() {
+            {%- for context_name, context in model.parser.scanner_contexts %}
+                LexicalContext::{{ context_name }} => {
+                    if let Some(kind) = {{ context.literal_scanner }} {
+                        furthest_position = input.position();
+                        longest_terminal = Some(kind);
+                    }
+                    input.set_position(save);
+
+                    longest_match! {
+                        {%- for name in context.compound_scanner_names %}
+                            {%- if name not in context.promotable_identifier_scanners %}
+                        { {{name }} = {{ name | snake_case }} }
+                            {%- endif -%}
+                        {%- endfor %}
+                    }
+                    // Make sure promotable identifiers are last so they don't grab other things
+                    longest_match! {
+                        {%- for name in context.promotable_identifier_scanners %}
+                        { {{ name }} = {{ name | snake_case }} }
+                        {%- endfor %}
+                    }
+
+                    // We have an identifier; we need to check if it's a keyword
+                    if let Some(identifier) = longest_terminal.filter(|tok|
+                        [
+                            {% for name in context.promotable_identifier_scanners %}
+                                TerminalKind::{{ name }},
+                            {% endfor %}
+                        ]
+                        .contains(tok)
+                    ) {
+                        let kw_scan = {{ context.keyword_trie_scanner }};
+                        let kw_scan = match kw_scan {
+                            // Strict prefix; we need to match the whole identifier to promote
+                            _ if input.position() < furthest_position => KeywordScan::Absent,
+                            value => value,
+                        };
+
+                        {% if context.keyword_compound_scanners | length > 0 %}
+                        // Perf: only scan for a compound keyword if we didn't already find one
+                        let mut kw_scan = kw_scan;
+                        if kw_scan == KeywordScan::Absent {
+                            input.set_position(save);
+
+                            let ident_len = furthest_position - save;
+
+                            for keyword_compound_scanner in [
+                            {%- for keyword_name, _ in context.keyword_compound_scanners %}
+                                Self::{{ keyword_name | snake_case }},
+                            {%- endfor %}
+                            ] {
+                                match keyword_compound_scanner(self, input, ident_len) {
+                                    _ if input.position() < furthest_position => {/* Strict prefix */},
+                                    KeywordScan::Absent => {},
+                                    value => kw_scan = value,
+                                }
+                                input.set_position(save);
+                            }
+                        }
+                        {% endif %}
+
+                        input.set_position(furthest_position);
+                        return Some(ScannedTerminal::IdentifierOrKeyword { identifier, kw: kw_scan });
+                    }
+                },
+            {%- endfor %}
+        }
+
+        match longest_terminal {
+            Some(terminal) => {
+                input.set_position(furthest_position);
+                Some(ScannedTerminal::Single(terminal))
+            },
+            // Skip a character if possible and if we didn't recognize a terminal
+            None if input.peek().is_some() => {
+                let _ = input.next();
+                Some(ScannedTerminal::Single(TerminalKind::UNRECOGNIZED))
+            },
+            None => None,
+        }
+    }
+}

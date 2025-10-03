@@ -1,0 +1,28 @@
+{# This needs to stay in sync with the wit-bindgen output #}
+/// The lexical context of the scanner.
+{% if model.kinds.lexical_contexts|length <= 256 -%} #[repr(u8)] {% else -%} #[repr(u16)] {% endif %}
+#[derive(strum_macros::FromRepr, Clone, Copy)]
+pub(crate) enum LexicalContext {
+    {%- for context_name in model.kinds.lexical_contexts %}
+        {{ context_name }},
+    {%- endfor %}
+}
+
+/// Marker trait for type-level [`LexicalContext`] variants.
+pub(crate) trait IsLexicalContext {
+    /// Returns a run-time [`LexicalContext`] value.
+    fn value() -> LexicalContext;
+}
+
+#[allow(non_snake_case)]
+pub(crate) mod LexicalContextType {
+    {%- for context_name in model.kinds.lexical_contexts %}
+        pub struct {{ context_name }};
+
+        impl super::IsLexicalContext for {{ context_name }} {
+            fn value() -> super::LexicalContext {
+                super::LexicalContext::{{ context_name }}
+            }
+        }
+    {%- endfor %}
+}

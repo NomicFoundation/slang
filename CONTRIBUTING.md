@@ -14,12 +14,9 @@ Currently, the repository has the following projects:
     - `infra/`: contains the CLI used for development, and utilities to build/test/run/debug all other projects.
     - `codegen/`: language analysis APIs that convert input crates to output crates below.
         - `ebnf/`: EBNF snippet serializer for language definitions
+        - `generator/`: Generates Rust source code from language definitions
+        - `language/definition`: Building blocks for how languages can be defined
         - `spec/`: Language specification generator
-        - `runtime/`:
-            - `generator/`: Generates Rust source code from language definitions
-            - `cargo/crate`: Rust crate runtime code which gets copied over into generated language code.
-            - `cargo/wasm`: WASM bindings and runtime.
-            - `language/definition`: Building blocks for how languages can be defined
     - `metaslang/`:
         - `cst/`: A generic library for building, navigating and querying concrete syntax trees
         - `bindings/`: Computes semantic language bindings from parsed source code
@@ -27,6 +24,9 @@ Currently, the repository has the following projects:
     - `solidity/`:
         - `inputs/`: Solidity language definition.
         - `outputs/`: different packages and artifacts produced from it.
+            - `cargo/crate`: Rust runtime and API.
+            - `cargo/wasm`: WASM bindings and runtime.
+            - `npm/package`: NodeJS bindings and runtime.
 - `documentation/`: mkdocs site to render project documentation.
 
 ## Dev Containers

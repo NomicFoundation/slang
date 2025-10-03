@@ -1,17 +1,17 @@
 use anyhow::Result;
+use codegen_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
 use codegen_language_definition::model::Language;
-use codegen_runtime_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 
 pub fn generate_passes(
     fs: &mut CodegenFileSystem,
     language: &Language,
-    input_crate: &str,
-    output_crate: &str,
+    crate_name: &str,
 ) -> Result<()> {
-    let ir_input_dir = CargoWorkspace::locate_source_crate(input_crate)?.join("src/ir");
-    let ir_output_dir = CargoWorkspace::locate_source_crate(output_crate)?.join("src/backend");
+    let crate_path = CargoWorkspace::locate_source_crate(crate_name)?;
+    let ir_input_dir = crate_path.join("src/ir");
+    let ir_output_dir = crate_path.join("src/backend");
 
     // L0: CST:
     let cst_model = IrModel::from_language("cst", language);

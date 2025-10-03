@@ -77,7 +77,7 @@ impl WasmPackage {
         let temp_dir_handle = tempfile::tempdir()?;
         let temp_dir = temp_dir_handle.path();
 
-        let runtime_dir = CargoWorkspace::locate_source_crate(WASM_CRATE)?.join("src/wasm_crate");
+        let runtime_dir = CargoWorkspace::locate_source_crate(WASM_CRATE)?.join("src");
         let jco_config = runtime_dir.join("config.json");
 
         {

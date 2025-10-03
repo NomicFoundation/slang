@@ -24,7 +24,6 @@ categories = [
   "text-editors",
 ]
 
-# __RUST_PRODUCT_CRATE_FEATURES__ (keep in sync)
 [features]
 default = []
 __private_ariadne_errors = ["dep:ariadne"]

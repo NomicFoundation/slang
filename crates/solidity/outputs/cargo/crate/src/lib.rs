@@ -36,10 +36,14 @@
 //! }
 //! ```
 
-mod extensions;
-mod generated;
-
-pub use generated::*;
+pub mod bindings;
+pub mod compilation;
+pub mod cst;
+#[cfg(feature = "__private_ariadne_errors")]
+#[doc(hidden)]
+pub mod diagnostic;
+pub mod parser;
+pub mod utils;
 
 #[cfg(feature = "__private_backend_api")]
 #[doc(hidden)]
