@@ -17,7 +17,8 @@ impl CodegenRuntime {
         model: impl Serialize,
     ) -> Result<()> {
         let tera = TeraWrapper::new(dir)?;
-        let context = tera::Context::from_serialize(model)?;
+        let mut context = tera::Context::new();
+        context.insert("model", &model);
 
         for template_path in tera.find_all_templates()? {
             if template_path

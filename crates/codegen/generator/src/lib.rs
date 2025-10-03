@@ -28,19 +28,9 @@ impl RuntimeGenerator {
         fs: &mut CodegenFileSystem,
         dir: &Path,
     ) -> Result<()> {
-        let model = ModelWrapper {
-            model: RuntimeModel::from_language(language)?,
-        };
-
+        let model = RuntimeModel::from_language(language)?;
         CodegenRuntime::render_templates_in_place(fs, dir, model)
     }
-}
-
-/// A utility wrapper that makes sure that all model properties are prefixed with `model.`
-/// to make it easier to read/refactor.
-#[derive(Serialize)]
-struct ModelWrapper {
-    model: RuntimeModel,
 }
 
 #[derive(Serialize)]
