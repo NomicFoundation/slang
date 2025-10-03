@@ -11,6 +11,7 @@ use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::compilation::{CompilationUnit, File};
 use crate::cst::NodeId;
+use crate::utils::versions::VERSION_0_5_0;
 
 pub struct Output {
     pub compilation_unit: CompilationUnit,
@@ -40,8 +41,6 @@ pub fn run(input: Input) -> Output {
         binder,
     }
 }
-
-const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 
 struct ScopeFrame {
     // Scope associated with the node that created the stack frame. This is

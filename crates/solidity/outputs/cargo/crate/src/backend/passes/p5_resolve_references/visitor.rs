@@ -1,11 +1,12 @@
 use std::rc::Rc;
 
-use super::{Pass, VERSION_0_5_0, VERSION_0_7_0};
+use super::Pass;
 use crate::backend::binder::{Reference, Resolution, Typing};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, LiteralKind, Type};
 use crate::cst::TerminalKind;
+use crate::utils::versions::{VERSION_0_5_0, VERSION_0_7_0};
 
 impl Visitor for Pass {
     fn enter_source_unit(&mut self, node: &input_ir::SourceUnit) -> bool {

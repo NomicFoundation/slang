@@ -4,6 +4,7 @@ use indexmap::IndexSet;
 use semver::Version;
 
 use crate::cst::NodeId;
+use crate::utils::versions::VERSION_0_5_0;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct TypeId(usize);
@@ -35,8 +36,6 @@ pub struct TypeRegistry {
     uint8_type_id: TypeId,
     void_type_id: TypeId,
 }
-
-const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 
 impl TypeRegistry {
     #[allow(clippy::similar_names)]

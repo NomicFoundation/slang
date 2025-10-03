@@ -16,6 +16,7 @@ use crate::backend::types::{
 };
 use crate::compilation::CompilationUnit;
 use crate::cst::{NodeId, TerminalKind};
+use crate::utils::versions::VERSION_0_5_0;
 
 pub struct Output {
     pub compilation_unit: CompilationUnit,
@@ -61,8 +62,6 @@ fn storage_location_to_data_location(storage_location: &input_ir::StorageLocatio
         input_ir::StorageLocation::CallDataKeyword => DataLocation::Calldata,
     }
 }
-
-const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 
 struct Pass {
     language_version: Version,

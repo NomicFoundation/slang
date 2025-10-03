@@ -49,10 +49,6 @@ pub fn run(input: Input) -> Output {
     }
 }
 
-const VERSION_0_5_0: Version = Version::new(0, 5, 0);
-const VERSION_0_7_0: Version = Version::new(0, 7, 0);
-const VERSION_0_8_0: Version = Version::new(0, 8, 0);
-
 struct ScopeFrame {
     // Scope associated with the node that created the stack frame. This is
     // solely used for integrity validation when popping the current frame.

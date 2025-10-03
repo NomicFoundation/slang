@@ -3,6 +3,12 @@ use semver::Version;
 use super::binder::{Binder, Definition, Typing};
 use super::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId, TypeRegistry};
 use crate::cst::NodeId;
+use crate::utils::versions::{
+    VERSION_0_4_12, VERSION_0_4_17, VERSION_0_4_21, VERSION_0_4_22, VERSION_0_5_0, VERSION_0_5_3,
+    VERSION_0_6_0, VERSION_0_6_2, VERSION_0_6_7, VERSION_0_6_8, VERSION_0_7_0, VERSION_0_8_0,
+    VERSION_0_8_11, VERSION_0_8_15, VERSION_0_8_18, VERSION_0_8_2, VERSION_0_8_24, VERSION_0_8_4,
+    VERSION_0_8_7, VERSION_0_8_8,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BuiltIn {
@@ -180,27 +186,6 @@ pub enum LegacyCall {
     Staticcall,
     User(TypeId),
 }
-
-const VERSION_0_4_12: Version = Version::new(0, 4, 12);
-const VERSION_0_4_17: Version = Version::new(0, 4, 17);
-const VERSION_0_4_21: Version = Version::new(0, 4, 21);
-const VERSION_0_4_22: Version = Version::new(0, 4, 22);
-const VERSION_0_5_0: Version = Version::new(0, 5, 0);
-const VERSION_0_5_3: Version = Version::new(0, 5, 3);
-const VERSION_0_6_0: Version = Version::new(0, 6, 0);
-const VERSION_0_6_2: Version = Version::new(0, 6, 2);
-const VERSION_0_6_7: Version = Version::new(0, 6, 7);
-const VERSION_0_6_8: Version = Version::new(0, 6, 8);
-const VERSION_0_7_0: Version = Version::new(0, 7, 0);
-const VERSION_0_8_0: Version = Version::new(0, 8, 0);
-const VERSION_0_8_2: Version = Version::new(0, 8, 2);
-const VERSION_0_8_4: Version = Version::new(0, 8, 4);
-const VERSION_0_8_7: Version = Version::new(0, 8, 7);
-const VERSION_0_8_8: Version = Version::new(0, 8, 8);
-const VERSION_0_8_11: Version = Version::new(0, 8, 11);
-const VERSION_0_8_15: Version = Version::new(0, 8, 15);
-const VERSION_0_8_18: Version = Version::new(0, 8, 18);
-const VERSION_0_8_24: Version = Version::new(0, 8, 24);
 
 pub(crate) struct BuiltInsResolver<'a> {
     language_version: Version,
