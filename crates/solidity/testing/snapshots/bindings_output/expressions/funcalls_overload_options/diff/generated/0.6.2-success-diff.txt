@@ -1,0 +1,6 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["overloaded" @ input.sol:13:7] -> #4 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["overloaded" @ input.sol:14:7] -> #2 resolved uniquely but resolved ambiguously in stack graph output
+
+Definitions and/or references from binding graph and new binder DIFFER

@@ -1,0 +1,9 @@
+#![allow(unused)]
+
+use semver::Version;
+
+/// All the versions of `{{ model.language_name }}` supported by Slang.
+{% for version in model.all_language_versions -%}
+pub(crate) const VERSION_{{ version | split(pat=".") | join(sep="_") }}: Version =
+    Version::new({{ version | split(pat=".") | join(sep=", ") }});
+{%- endfor %}

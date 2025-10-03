@@ -1,0 +1,91 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library SafeMath {
+    │         ────┬───  
+    │             ╰───── name: 1
+  2 │     function add(uint, uint) internal returns (uint);
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract ERC20Basic {
+    │          ─────┬────  
+    │               ╰────── name: 3
+  6 │     function balanceOf(address) public returns (uint);
+    │              ────┬────  
+    │                  ╰────── name: 4
+    │ 
+  9 │ contract Token is ERC20Basic {
+    │          ──┬──    ─────┬────  
+    │            ╰────────────────── name: 5
+    │                        │      
+    │                        ╰────── ref: 3
+ 10 │     function balanceOf(address) public returns (uint);
+    │              ────┬────  
+    │                  ╰────── name: 6
+    │ 
+ 13 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 7
+ 14 │     using SafeMath for uint256;
+    │           ────┬───  
+    │               ╰───── ref: 1
+ 15 │     Token token;
+    │     ──┬── ──┬──  
+    │       ╰────────── ref: 5
+    │             │    
+    │             ╰──── name: 8
+    │ 
+ 17 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 9
+ 18 │         token.balanceOf(this).add(1);
+    │         ──┬── ────┬────       ─┬─  
+    │           ╰──────────────────────── ref: 8
+    │                   │            │   
+    │                   ╰──────────────── refs: 6, 4
+    │                                │   
+    │                                ╰─── ref: 2
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭───▶ library SafeMath {
+  2 │       │         function add(uint, uint) internal returns (uint);
+    │       │     ───────────────────────────┬──────────────────────────  
+    │       │                                ╰──────────────────────────── definiens: 2
+  3 │     │ ├───▶ }
+    │     │ │         
+    │     │ ╰───────── definiens: 1
+  4 │     ╭─────▶ 
+    ┆     ┆       
+  6 │     │           function balanceOf(address) public returns (uint);
+    │     │       ───────────────────────────┬───────────────────────────  
+    │     │                                  ╰───────────────────────────── definiens: 4
+  7 │   │ ├─────▶ }
+    │   │ │           
+    │   │ ╰─────────── definiens: 3
+  8 │   ╭───────▶ 
+    ┆   ┆         
+ 10 │   │             function balanceOf(address) public returns (uint);
+    │   │         ───────────────────────────┬───────────────────────────  
+    │   │                                    ╰───────────────────────────── definiens: 6
+ 11 │ │ ├───────▶ }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 12 │ ╭─────────▶ 
+    ┆ ┆           
+ 15 │ │       │       Token token;
+    │ │       │   ────────┬────────  
+    │ │       │           ╰────────── definiens: 8
+ 16 │ │       ╭─▶ 
+    ┆ ┆       ┆   
+ 19 │ │       ├─▶     }
+    │ │       │           
+    │ │       ╰─────────── definiens: 9
+ 20 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 7
+────╯

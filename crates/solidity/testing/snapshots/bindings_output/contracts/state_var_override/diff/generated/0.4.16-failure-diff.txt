@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+reference `foo` at input.sol:13:9 failed to resolve in new binder
+
+Definitions and/or references from binding graph and new binder DIFFER

@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["foo" @ input.sol:13:11] -> #4 resolved to a different definition
+
+Definitions and/or references from binding graph and new binder DIFFER

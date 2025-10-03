@@ -1,0 +1,71 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 1
+  2 │     function foo(ITest subject) internal {}
+    │              ─┬─ ──┬── ───┬───  
+    │               ╰───────────────── name: 2
+    │                    │      │     
+    │                    ╰──────────── ref: 4
+    │                           │     
+    │                           ╰───── name: 3
+    │ 
+  5 │ interface ITest {}
+    │           ──┬──  
+    │             ╰──── name: 4
+    │ 
+  7 │ contract Test is ITest {
+    │          ──┬─    ──┬──  
+    │            ╰──────────── name: 5
+    │                    │    
+    │                    ╰──── ref: 4
+  8 │     using Utils for *;
+    │           ──┬──  
+    │             ╰──── ref: 1
+    │ 
+ 10 │     function bar() internal {}
+    │              ─┬─  
+    │               ╰─── name: 6
+    │ 
+ 12 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 7
+ 13 │         this.foo();
+    │              ─┬─  
+    │               ╰─── ref: 2
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭───────▶ library Utils {
+  2 │   │             function foo(ITest subject) internal {}
+    │   │         ──────────────────────┬┬────────────────────  
+    │   │                               ╰─────────────────────── definiens: 2
+    │   │                                │                      
+    │   │                                ╰────────────────────── definiens: 3
+  3 │   ├─────│ ▶ }
+    │   │     │       
+    │   ╰───────────── definiens: 1
+  4 │         ╭─▶ 
+  5 │ │       ├─▶ interface ITest {}
+    │ │       │                        
+    │ │       ╰──────────────────────── definiens: 4
+  6 │ ╭─────────▶ 
+    ┆ ┆           
+  9 │ │     ╭───▶ 
+ 10 │ │   │ ├───▶     function bar() internal {}
+    │ │   │ │                                      
+    │ │   │ ╰────────────────────────────────────── definiens: 6
+ 11 │ │   ╭─────▶ 
+    ┆ ┆   ┆       
+ 14 │ │   ├─────▶     }
+    │ │   │               
+    │ │   ╰─────────────── definiens: 7
+ 15 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 5
+────╯

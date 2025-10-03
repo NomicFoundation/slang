@@ -1,0 +1,99 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract TestBase {
+    │          ────┬───  
+    │              ╰───── name: 1
+  2 │   function add(int, int) public returns (int);
+    │            ─┬─  
+    │             ╰─── name: 2
+    │ 
+  4 │   function add(int) public returns (int);
+    │            ─┬─  
+    │             ╰─── name: 3
+    │ 
+  7 │ contract Test is TestBase {
+    │          ──┬─    ────┬───  
+    │            ╰─────────────── name: 4
+    │                      │     
+    │                      ╰───── ref: 1
+  8 │   int y;
+    │       ┬  
+    │       ╰── name: 5
+    │ 
+ 10 │   function someFunc(int x) public returns (int) {
+    │            ────┬───     ┬  
+    │                ╰─────────── name: 6
+    │                         │  
+    │                         ╰── name: 7
+ 11 │     int farg = this.add(x);
+    │         ──┬─        ─┬─ ┬  
+    │           ╰──────────────── name: 8
+    │                      │  │  
+    │                      ╰───── refs: 2, 3
+    │                         │  
+    │                         ╰── ref: 7
+ 12 │     int literal = super.add(3);
+    │         ───┬───         ─┬─  
+    │            ╰───────────────── name: 9
+    │                          │   
+    │                          ╰─── refs: 2, 3
+ 13 │     int farg_2 = super.add(x, y);
+    │         ───┬──         ─┬─ ┬  ┬  
+    │            ╰───────────────────── name: 10
+    │                         │  │  │  
+    │                         ╰──────── refs: 2, 3
+    │                            │  │  
+    │                            ╰───── ref: 7
+    │                               │  
+    │                               ╰── ref: 5
+ 14 │     int literal_2 = this.add(3, 1);
+    │         ────┬────        ─┬─  
+    │             ╰───────────────── name: 11
+    │                           │   
+    │                           ╰─── refs: 2, 3
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭───▶ contract TestBase {
+  2 │     │ │     function add(int, int) public returns (int);
+    │     │ │   ───────────────────────┬───────────────────────  
+    │     │ │                          ╰───────────────────────── definiens: 2
+  3 │     │ ╭─▶ 
+  4 │     │ ├─▶   function add(int) public returns (int);
+    │     │ │                                               
+    │     │ ╰─────────────────────────────────────────────── definiens: 3
+  5 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 1
+  6 │ ╭───────▶ 
+    ┆ ┆         
+  8 │ │ │         int y;
+    │ │ │       ────┬────  
+    │ │ │           ╰────── definiens: 5
+  9 │ │ ╭─────▶ 
+ 10 │ │ │         function someFunc(int x) public returns (int) {
+    │ │ │                           ──┬──  
+    │ │ │                             ╰──── definiens: 7
+ 11 │ │ │           int farg = this.add(x);
+    │ │ │       ──────────────┬─────────────  
+    │ │ │                     ╰─────────────── definiens: 8
+ 12 │ │ │           int literal = super.add(3);
+    │ │ │       ────────────────┬───────────────  
+    │ │ │                       ╰───────────────── definiens: 9
+ 13 │ │ │           int farg_2 = super.add(x, y);
+    │ │ │       ─────────────────┬────────────────  
+    │ │ │                        ╰────────────────── definiens: 10
+ 14 │ │ │           int literal_2 = this.add(3, 1);
+    │ │ │       ──────────────────┬─────────────────  
+    │ │ │                         ╰─────────────────── definiens: 11
+ 15 │ │ ├─────▶   }
+    │ │ │             
+    │ │ ╰───────────── definiens: 6
+ 16 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 4
+────╯

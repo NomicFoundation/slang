@@ -1,247 +1,12 @@
-use indexmap::IndexSet;
-
 use crate::cst::NodeId;
+
+mod parsing;
+mod registry;
+
+pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct TypeId(usize);
-
-/// The `TypeRegistry` stores an index of registered types, both elementary
-/// types and user defined types. Each type is given a `TypeId` for efficient
-/// storage, lookup and comparison. The registry also provides direct access to
-/// some common elementary types required to type most built-ins functions and
-/// some kinds of expressions (eg. the boolean type).
-pub struct TypeRegistry {
-    types: IndexSet<Type>,
-
-    // Pre-defined core types
-    address_type_id: TypeId,
-    address_payable_type_id: TypeId,
-    boolean_type_id: TypeId,
-    boolean_bytes_tuple_type_id: TypeId,
-    bytes_type_id: TypeId,
-    bytes20_type_id: TypeId,
-    bytes32_type_id: TypeId,
-    bytes4_type_id: TypeId,
-    rational_type_id: TypeId,
-    string_type_id: TypeId,
-    uint256_type_id: TypeId,
-    uint8_type_id: TypeId,
-    void_type_id: TypeId,
-}
-
-impl TypeRegistry {
-    #[allow(clippy::similar_names)]
-    fn new() -> Self {
-        let mut types = IndexSet::new();
-        let (address_type, _) = types.insert_full(Type::Address { payable: false });
-        let (address_payable_type, _) = types.insert_full(Type::Address { payable: true });
-        let (boolean_type, _) = types.insert_full(Type::Boolean);
-        let (bytes_type, _) = types.insert_full(Type::Bytes {
-            location: DataLocation::Memory,
-        });
-        let (bytes20_type, _) = types.insert_full(Type::ByteArray { width: 20 });
-        let (bytes32_type, _) = types.insert_full(Type::ByteArray { width: 32 });
-        let (bytes4_type, _) = types.insert_full(Type::ByteArray { width: 4 });
-        let (rational_type, _) = types.insert_full(Type::Rational);
-        let (string_type, _) = types.insert_full(Type::String {
-            location: DataLocation::Memory,
-        });
-        let (uint256_type, _) = types.insert_full(Type::Integer {
-            signed: false,
-            bits: 256,
-        });
-        let (uint8_type, _) = types.insert_full(Type::Integer {
-            signed: false,
-            bits: 8,
-        });
-        let (void_type, _) = types.insert_full(Type::Void);
-
-        let (boolean_bytes_tuple_type, _) = types.insert_full(Type::Tuple {
-            types: vec![TypeId(boolean_type), TypeId(bytes_type)],
-        });
-
-        Self {
-            types,
-
-            address_type_id: TypeId(address_type),
-            address_payable_type_id: TypeId(address_payable_type),
-            boolean_type_id: TypeId(boolean_type),
-            boolean_bytes_tuple_type_id: TypeId(boolean_bytes_tuple_type),
-            bytes_type_id: TypeId(bytes_type),
-            bytes20_type_id: TypeId(bytes20_type),
-            bytes32_type_id: TypeId(bytes32_type),
-            bytes4_type_id: TypeId(bytes4_type),
-            rational_type_id: TypeId(rational_type),
-            string_type_id: TypeId(string_type),
-            uint256_type_id: TypeId(uint256_type),
-            uint8_type_id: TypeId(uint8_type),
-            void_type_id: TypeId(void_type),
-        }
-    }
-
-    pub fn find_type(&self, type_: &Type) -> Option<TypeId> {
-        self.types.get_index_of(type_).map(TypeId)
-    }
-
-    pub fn register_type(&mut self, type_: Type) -> TypeId {
-        let (index, _) = self.types.insert_full(type_);
-        TypeId(index)
-    }
-
-    pub fn get_type_by_id(&self, type_id: TypeId) -> &Type {
-        self.types.get_index(type_id.0).unwrap()
-    }
-
-    pub fn implicitly_convertible_to(&self, from_type_id: TypeId, to_type_id: TypeId) -> bool {
-        if from_type_id == to_type_id {
-            return true;
-        }
-        let from_type = self.get_type_by_id(from_type_id);
-        let to_type = self.get_type_by_id(to_type_id);
-
-        match (from_type, to_type) {
-            (
-                Type::Address {
-                    payable: from_payable,
-                },
-                Type::Address { .. },
-            ) => *from_payable,
-
-            (
-                Type::Integer {
-                    signed: from_signed,
-                    bits: from_bits,
-                },
-                Type::Integer {
-                    signed: to_signed,
-                    bits: to_bits,
-                },
-            ) => {
-                if from_signed == to_signed {
-                    from_bits <= to_bits
-                } else if *from_signed {
-                    false
-                } else {
-                    from_bits < to_bits
-                }
-            }
-
-            (Type::Rational, Type::Integer { .. }) => {
-                // TODO(validation): check that the rational can fit in the given integer type
-                true
-            }
-
-            (Type::Integer { .. }, Type::Rational) => false,
-
-            // TODO: add more implicit conversion rules
-            _ => false,
-        }
-    }
-
-    pub fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
-        let canonical_type = match self.get_type_by_id(type_id) {
-            Type::Array { element_type, .. } => {
-                let element_type = self.find_canonical_type_id(*element_type)?;
-                Type::Array {
-                    element_type,
-                    location: DataLocation::Inherited,
-                }
-            }
-            Type::Bytes { .. } => Type::Bytes {
-                location: DataLocation::Inherited,
-            },
-            Type::String { .. } => Type::String {
-                location: DataLocation::Inherited,
-            },
-            Type::Struct { definition_id, .. } => Type::Struct {
-                definition_id: *definition_id,
-                location: DataLocation::Inherited,
-            },
-            Type::Function {
-                parameter_types,
-                return_type,
-                external,
-                kind,
-                ..
-            } => Type::Function {
-                definition_id: None,
-                parameter_types: parameter_types.clone(),
-                return_type: *return_type,
-                external: *external,
-                kind: *kind,
-            },
-
-            Type::Address { .. }
-            | Type::Boolean
-            | Type::ByteArray { .. }
-            | Type::Contract { .. }
-            | Type::Enum { .. }
-            | Type::FixedPointNumber { .. }
-            | Type::Integer { .. }
-            | Type::Interface { .. }
-            | Type::Mapping { .. }
-            | Type::Rational
-            | Type::Tuple { .. }
-            | Type::UserDefinedValue { .. }
-            | Type::Void => return Some(type_id),
-        };
-        self.find_type(&canonical_type)
-    }
-}
-
-impl TypeRegistry {
-    pub fn address(&self) -> TypeId {
-        self.address_type_id
-    }
-    pub fn address_payable(&self) -> TypeId {
-        self.address_payable_type_id
-    }
-    pub fn boolean(&self) -> TypeId {
-        self.boolean_type_id
-    }
-    pub fn boolean_bytes_tuple(&self) -> TypeId {
-        self.boolean_bytes_tuple_type_id
-    }
-    pub fn bytes(&self) -> TypeId {
-        self.bytes_type_id
-    }
-    pub fn bytes20(&self) -> TypeId {
-        self.bytes20_type_id
-    }
-    pub fn bytes32(&self) -> TypeId {
-        self.bytes32_type_id
-    }
-    pub fn bytes4(&self) -> TypeId {
-        self.bytes4_type_id
-    }
-    pub fn rational(&self) -> TypeId {
-        self.rational_type_id
-    }
-    pub fn string(&self) -> TypeId {
-        self.string_type_id
-    }
-    pub fn uint256(&self) -> TypeId {
-        self.uint256_type_id
-    }
-    pub fn uint8(&self) -> TypeId {
-        self.uint8_type_id
-    }
-    pub fn void(&self) -> TypeId {
-        self.void_type_id
-    }
-}
-
-impl TypeRegistry {
-    pub fn iter_types(&self) -> impl Iterator<Item = (TypeId, &Type)> {
-        (0usize..).map(TypeId).zip(self.types.iter())
-    }
-}
-
-impl Default for TypeRegistry {
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Type {
@@ -271,13 +36,7 @@ pub enum Type {
         bits: u32,
         precision_bits: u32,
     },
-    Function {
-        definition_id: Option<NodeId>, // this may point to a FunctionDefinition
-        parameter_types: Vec<TypeId>,
-        return_type: TypeId,
-        external: bool,
-        kind: FunctionTypeKind,
-    },
+    Function(FunctionType),
     Integer {
         signed: bool,
         bits: u32,
@@ -285,11 +44,11 @@ pub enum Type {
     Interface {
         definition_id: NodeId,
     },
+    Literal(LiteralKind),
     Mapping {
         key_type_id: TypeId,
         value_type_id: TypeId,
     },
-    Rational,
     String {
         location: DataLocation,
     },
@@ -306,6 +65,30 @@ pub enum Type {
     Void,
 }
 
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub enum LiteralKind {
+    Zero,
+    // TODO: collect and store more information about literal numbers
+    Rational,
+    DecimalInteger,
+    HexInteger { bytes: u32 },
+    HexString { bytes: u32 },
+    String { bytes: u32 },
+    Address,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct FunctionType {
+    pub definition_id: Option<NodeId>, // this may point to a FunctionDefinition
+    pub implicit_receiver_type: Option<TypeId>,
+    pub parameter_types: Vec<TypeId>,
+    pub return_type: TypeId,
+    // TODO: a bool is not sufficient in some corner cases and we need to
+    // distinguish between public and external
+    pub external: bool,
+    pub kind: FunctionTypeKind,
+}
+
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum DataLocation {
     Memory,
@@ -316,11 +99,51 @@ pub enum DataLocation {
     Inherited,
 }
 
+impl DataLocation {
+    pub fn implicitly_convertible_to(&self, target: Self) -> bool {
+        match (self, target) {
+            (from, to) if *from == to => true,
+            (DataLocation::Storage | DataLocation::Calldata, DataLocation::Memory) => true,
+            _ => false,
+        }
+    }
+
+    pub fn overrides(&self, target: Self) -> bool {
+        *self == target || (*self == Self::Memory && target == Self::Calldata)
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionTypeKind {
     Pure,
     View,
+    NonPayable,
     Payable,
+}
+
+impl FunctionTypeKind {
+    pub fn implicitly_convertible_to(&self, target: Self) -> bool {
+        matches!(
+            (self, target),
+            // pure converts to view or non-payable
+            (
+                FunctionTypeKind::Pure,
+                FunctionTypeKind::Pure | FunctionTypeKind::View | FunctionTypeKind::NonPayable,
+            )
+                // view converts to non-payable
+                | (
+                FunctionTypeKind::View,
+                FunctionTypeKind::View | FunctionTypeKind::NonPayable
+            )
+                // non-payable does not implicitly convert to any other kind
+                | (FunctionTypeKind::NonPayable, FunctionTypeKind::NonPayable)
+                // payable converts to non-payable
+                | (
+                    FunctionTypeKind::Payable,
+                    FunctionTypeKind::Payable | FunctionTypeKind::NonPayable,
+                )
+        )
+    }
 }
 
 impl Type {
@@ -335,94 +158,44 @@ impl Type {
         }
     }
 
-    #[must_use]
-    pub fn with_data_location(&self, data_location: Option<DataLocation>) -> Self {
+    pub fn is_inherited_location(&self) -> bool {
+        self.data_location()
+            .is_some_and(|location| location == DataLocation::Inherited)
+    }
+
+    pub fn can_return_from_getter(&self) -> bool {
         match self {
-            Self::Array {
-                element_type,
-                location,
-            } => Self::Array {
-                element_type: *element_type,
-                location: data_location.unwrap_or(*location),
-            },
-            Self::Bytes { location } => Self::Bytes {
-                location: data_location.unwrap_or(*location),
-            },
-            Self::String { location } => Self::String {
-                location: data_location.unwrap_or(*location),
-            },
-            Self::Struct {
-                definition_id,
-                location,
-            } => Self::Struct {
-                definition_id: *definition_id,
-                location: data_location.unwrap_or(*location),
-            },
-            _ => self.clone(),
-        }
-    }
-}
+            Type::Address { .. }
+            | Type::Boolean
+            | Type::ByteArray { .. }
+            | Type::Bytes { .. }
+            | Type::Contract { .. }
+            | Type::Enum { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Integer { .. }
+            | Type::Interface { .. }
+            | Type::String { .. }
+            | Type::UserDefinedValue { .. } => true,
 
-impl Type {
-    pub fn from_bytes_keyword(keyword: &str, data_location: Option<DataLocation>) -> Option<Self> {
-        let width = keyword.strip_prefix("bytes").unwrap().parse::<u32>();
-        if let Ok(width) = width {
-            Some(Self::ByteArray { width })
-        } else {
-            data_location.map(|data_location| Self::Bytes {
-                location: data_location,
-            })
+            Type::Array { .. }
+            | Type::Function(_)
+            | Type::Mapping { .. }
+            | Type::Literal(_)
+            | Type::Struct { .. }
+            | Type::Tuple { .. }
+            | Type::Void => false,
         }
     }
 
-    pub fn from_int_keyword(keyword: &str) -> Self {
-        let bits = keyword
-            .strip_prefix("int")
-            .unwrap()
-            .parse::<u32>()
-            .unwrap_or(256);
-        Self::Integer { signed: true, bits }
-    }
-
-    pub fn from_uint_keyword(keyword: &str) -> Self {
-        let bits = keyword
-            .strip_prefix("uint")
-            .unwrap()
-            .parse::<u32>()
-            .unwrap_or(256);
-        Self::Integer {
-            signed: false,
-            bits,
-        }
-    }
-
-    pub fn from_fixed_keyword(keyword: &str) -> Self {
-        let mut parts = keyword
-            .strip_prefix("fixed")
-            .unwrap()
-            .split('x')
-            .map(|part| part.parse::<u32>().unwrap());
-        let bits = parts.next().unwrap();
-        let precision_bits = parts.next().unwrap_or(0);
-        Self::FixedPointNumber {
-            signed: true,
-            bits,
-            precision_bits,
-        }
-    }
-
-    pub fn from_ufixed_keyword(keyword: &str) -> Self {
-        let mut parts = keyword
-            .strip_prefix("ufixed")
-            .unwrap()
-            .split('x')
-            .map(|part| part.parse::<u32>().unwrap());
-        let bits = parts.next().unwrap();
-        let precision_bits = parts.next().unwrap_or(0);
-        Self::FixedPointNumber {
-            signed: false,
-            bits,
-            precision_bits,
-        }
+    pub fn is_literal_number(&self) -> bool {
+        matches!(
+            self,
+            Type::Literal(
+                LiteralKind::Zero
+                    | LiteralKind::DecimalInteger
+                    | LiteralKind::HexInteger { .. }
+                    | LiteralKind::Rational
+            )
+        )
     }
 }

@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (bytes memory) returns void)
+- Def: #3 ["calldata" @ input.sol:2:24] (parameter, type: bytes memory)
+- Def: #4 ["Test" @ input.sol:5:10] (contract)
+- Def: #5 ["test" @ input.sol:7:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Lib" @ input.sol:6:11] -> #1
+- Ref: ["msg" @ input.sol:8:9] -> built-in
+- Ref: ["data" @ input.sol:8:13] -> built-in
+- Ref: ["nop" @ input.sol:8:18] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     function nop(bytes calldata) internal {}
+   │              ─┬─       ────┬───  
+   │               ╰────────────────── name: 2
+   │                            │     
+   │                            ╰───── name: 3
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 6 │     using Lib for bytes;
+   │           ─┬─  
+   │            ╰─── ref: 1
+ 7 │     function test() internal {
+   │              ──┬─  
+   │                ╰─── name: 5
+ 8 │         msg.data.nop();
+   │         ─┬─ ──┬─ ─┬─  
+   │          ╰──────────── built-in
+   │               │   │   
+   │               ╰─────── built-in
+   │                   │   
+   │                   ╰─── ref: 2
+───╯

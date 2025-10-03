@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() internal {
+   │              ──┬─  
+   │                ╰─── name: 2
+   │ 
+ 5 │             0x10 dup1 swap2
+   │                  ──┬─ ──┬──  
+   │                    ╰───────── unresolved
+   │                         │    
+   │                         ╰──── unresolved
+ 6 │             pop pop
+   │             ─┬─ ─┬─  
+   │              ╰─────── ref: built-in
+   │                  │   
+   │                  ╰─── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() internal {
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

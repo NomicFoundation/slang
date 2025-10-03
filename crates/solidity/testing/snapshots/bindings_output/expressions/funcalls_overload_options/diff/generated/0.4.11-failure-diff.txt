@@ -1,0 +1,8 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+reference `x` at input.sol:13:5 not found in new binder output
+reference `overloaded` at input.sol:13:7 not found in new binder output
+reference `x` at input.sol:14:5 not found in new binder output
+reference `overloaded` at input.sol:14:7 not found in new binder output
+
+Definitions and/or references from binding graph and new binder DIFFER

@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     event Foo(uint x, uint y);
+    │           ─┬─      ┬       ┬  
+    │            ╰────────────────── name: 2
+    │                    │       │  
+    │                    ╰────────── name: 3
+    │                            │  
+    │                            ╰── name: 4
+  3 │     event Foo(bool flag);
+    │           ─┬─      ──┬─  
+    │            ╰───────────── name: 5
+    │                      │   
+    │                      ╰─── name: 6
+    │ 
+  5 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 7
+  6 │         emit Foo(1, 2);
+    │              ─┬─  
+    │               ╰─── refs: 2, 5
+  7 │         emit Foo(false);
+    │              ─┬─  
+    │               ╰─── refs: 2, 5
+    │ 
+  9 │         emit Foo({ x: 1, y: 2 });
+    │              ─┬─   ┬     ┬  
+    │               ╰───────────── refs: 2, 5
+    │                    │     │  
+    │                    ╰──────── ref: 3
+    │                          │  
+    │                          ╰── ref: 4
+ 10 │         emit Foo({ flag: true });
+    │              ─┬─   ──┬─  
+    │               ╰────────── refs: 2, 5
+    │                      │   
+    │                      ╰─── ref: 6
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───▶ contract Test {
+  2 │ │         event Foo(uint x, uint y);
+    │ │     ───────────────┬─┬──────┬──────  
+    │ │                    ╰───────────────── definiens: 2
+    │ │                      │      │        
+    │ │                      ╰─────────────── definiens: 3
+    │ │                             │        
+    │ │                             ╰──────── definiens: 4
+  3 │ │ │       event Foo(bool flag);
+    │ │ │   ─────────────┬────┬───────  
+    │ │ │                ╰────────────── definiens: 5
+    │ │ │                     │         
+    │ │ │                     ╰───────── definiens: 6
+  4 │ │ ╭─▶ 
+    ┆ ┆ ┆   
+ 11 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 7
+ 12 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

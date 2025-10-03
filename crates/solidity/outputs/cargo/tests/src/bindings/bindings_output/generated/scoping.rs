@@ -22,6 +22,16 @@ fn hoisting_scopes() -> Result<()> {
 }
 
 #[test]
+fn private_variables() -> Result<()> {
+    run(T, "private_variables")
+}
+
+#[test]
 fn shadowing() -> Result<()> {
     run(T, "shadowing")
+}
+
+#[test]
+fn statement_scope() -> Result<()> {
+    run(T, "statement_scope")
 }

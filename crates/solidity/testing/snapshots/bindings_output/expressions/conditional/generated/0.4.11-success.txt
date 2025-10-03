@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     function nop(uint) internal {}
+   │              ─┬─  
+   │               ╰─── name: 2
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 3
+ 6 │     using Lib for uint;
+   │           ─┬─  
+   │            ╰─── ref: 1
+ 7 │     function test(uint x) internal {
+   │              ──┬─      ┬  
+   │                ╰────────── name: 4
+   │                        │  
+   │                        ╰── name: 5
+ 8 │         (true ? 0 : x).nop();
+   │                     ┬  ─┬─  
+   │                     ╰─────── ref: 5
+   │                         │   
+   │                         ╰─── ref: 2
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Lib {
+  2 │     │       function nop(uint) internal {}
+    │     │   ─────────────────┬─────────────────  
+    │     │                    ╰─────────────────── definiens: 2
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  7 │ │ ╭───▶     function test(uint x) internal {
+    │ │ │                       ───┬──  
+    │ │ │                          ╰──── definiens: 5
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 4
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 3
+────╯

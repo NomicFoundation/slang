@@ -1,0 +1,125 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IFoo {}
+    │           ──┬─  
+    │             ╰─── name: 1
+  2 │ contract Bar {}
+    │          ─┬─  
+    │           ╰─── name: 2
+  3 │ contract Foo is IFoo, Bar {}
+    │          ─┬─    ──┬─  ─┬─  
+    │           ╰──────────────── name: 3
+    │                   │    │   
+    │                   ╰──────── ref: 1
+    │                        │   
+    │                        ╰─── ref: 2
+    │ 
+  5 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 4
+  6 │     function useIFoo(IFoo) internal {}
+    │              ───┬─── ──┬─  
+    │                 ╰────────── name: 5
+    │                        │   
+    │                        ╰─── ref: 1
+  7 │     function useIFoo(uint) internal {}
+    │              ───┬───  
+    │                 ╰───── name: 6
+  8 │     function useBar(Bar) internal {}
+    │              ───┬── ─┬─  
+    │                 ╰──────── name: 7
+    │                      │   
+    │                      ╰─── ref: 2
+  9 │     function useBar(uint) internal {}
+    │              ───┬──  
+    │                 ╰──── name: 8
+    │ 
+ 12 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 9
+ 13 │     using Lib for Foo;
+    │           ─┬─     ─┬─  
+    │            ╰─────────── ref: 4
+    │                    │   
+    │                    ╰─── ref: 3
+    │ 
+ 15 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 10
+ 16 │         Foo foo;
+    │         ─┬─ ─┬─  
+    │          ╰─────── ref: 3
+    │              │   
+    │              ╰─── name: 11
+ 17 │         foo.useIFoo();
+    │         ─┬─ ───┬───  
+    │          ╰─────────── ref: 11
+    │                │     
+    │                ╰───── refs: 5, 6
+ 18 │         foo.useBar();
+    │         ─┬─ ───┬──  
+    │          ╰────────── ref: 11
+    │                │    
+    │                ╰──── refs: 7, 8
+ 19 │         Lib.useIFoo(foo);
+    │         ─┬─ ───┬─── ─┬─  
+    │          ╰─────────────── ref: 4
+    │                │     │   
+    │                ╰───────── refs: 5, 6
+    │                      │   
+    │                      ╰─── ref: 11
+ 20 │         Lib.useBar(foo);
+    │         ─┬─ ───┬── ─┬─  
+    │          ╰────────────── ref: 4
+    │                │    │   
+    │                ╰──────── refs: 7, 8
+    │                     │   
+    │                     ╰─── ref: 11
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │         interface IFoo {}
+    │         ─────────┬────────  
+    │                  ╰────────── definiens: 1
+  2 │         contract Bar {}
+    │         ────────┬───────  
+    │                 ╰───────── definiens: 2
+  3 │   │     contract Foo is IFoo, Bar {}
+    │   │     ──────────────┬──────────────  
+    │   │                   ╰──────────────── definiens: 3
+  4 │   ╭───▶ 
+    ┆   ┆     
+  6 │   │         function useIFoo(IFoo) internal {}
+    │   │     ───────────────────┬───────────────────  
+    │   │                        ╰───────────────────── definiens: 5
+  7 │   │         function useIFoo(uint) internal {}
+    │   │     ───────────────────┬───────────────────  
+    │   │                        ╰───────────────────── definiens: 6
+  8 │   │         function useBar(Bar) internal {}
+    │   │     ──────────────────┬──────────────────  
+    │   │                       ╰──────────────────── definiens: 7
+  9 │   │         function useBar(uint) internal {}
+    │   │     ───────────────────┬──────────────────  
+    │   │                        ╰──────────────────── definiens: 8
+ 10 │ │ ├───▶ }
+    │ │ │         
+    │ │ ╰───────── definiens: 4
+ 11 │ ╭─────▶ 
+    ┆ ┆       
+ 14 │ │   ╭─▶ 
+    ┆ ┆   ┆   
+ 16 │ │   │           Foo foo;
+    │ │   │   ────────┬────────  
+    │ │   │           ╰────────── definiens: 11
+    ┆ ┆   ┆   
+ 21 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 10
+ 22 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 9
+────╯

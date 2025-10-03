@@ -7,6 +7,11 @@ use crate::binder::runner::run;
 const T: &str = "events";
 
 #[test]
+fn called_as_functions() -> Result<()> {
+    run(T, "called_as_functions")
+}
+
+#[test]
 fn custom_types() -> Result<()> {
     run(T, "custom_types")
 }
@@ -24,6 +29,11 @@ fn emit_stmt() -> Result<()> {
 #[test]
 fn named_args() -> Result<()> {
     run(T, "named_args")
+}
+
+#[test]
+fn overload_selection() -> Result<()> {
+    run(T, "overload_selection")
 }
 
 #[test]

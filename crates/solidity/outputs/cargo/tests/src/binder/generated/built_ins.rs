@@ -7,6 +7,11 @@ use crate::binder::runner::run;
 const T: &str = "built_ins";
 
 #[test]
+fn abi_decode() -> Result<()> {
+    run(T, "abi_decode")
+}
+
+#[test]
 fn address() -> Result<()> {
     run(T, "address")
 }
@@ -49,6 +54,11 @@ fn global_properties() -> Result<()> {
 #[test]
 fn instance_as_address() -> Result<()> {
     run(T, "instance_as_address")
+}
+
+#[test]
+fn msg_data() -> Result<()> {
+    run(T, "msg_data")
 }
 
 #[test]

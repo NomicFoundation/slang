@@ -1,0 +1,58 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function to160(uint256) internal returns (uint160) {}
+    │              ──┬──  
+    │                ╰──── name: 2
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  6 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  8 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 4
+  9 │         uint256 ratio;
+    │                 ──┬──  
+    │                   ╰──── name: 5
+ 10 │         ((ratio >> 32) + (ratio % (1 << 32) == 0 ? 0 : 1)).to160();
+    │           ──┬──           ──┬──                            ──┬──  
+    │             ╰───────────────────────────────────────────────────── ref: 5
+    │                             │                                │    
+    │                             ╰───────────────────────────────────── ref: 5
+    │                                                              │    
+    │                                                              ╰──── ref: 2
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Lib {
+  2 │     │       function to160(uint256) internal returns (uint160) {}
+    │     │   ─────────────────────────────┬────────────────────────────  
+    │     │                                ╰────────────────────────────── definiens: 2
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  7 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+  9 │ │ │             uint256 ratio;
+    │ │ │     ───────────┬───────────  
+    │ │ │                ╰───────────── definiens: 5
+    ┆ ┆ ┆     
+ 11 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 4
+ 12 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 3
+────╯

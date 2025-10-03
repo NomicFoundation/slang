@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Utils" @ input.sol:1:9] (library)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (bytes1) returns void)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #5 ["seed" @ input.sol:9:17] (variable, type: bytes32)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Utils" @ input.sol:6:11] -> #1
+- Ref: ["seed" @ input.sol:10:9] -> #5
+- Ref: ["nop" @ input.sol:10:17] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 1
+  2 │     function nop(bytes1) internal {}
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  6 │     using Utils for bytes1;
+    │           ──┬──  
+    │             ╰──── ref: 1
+    │ 
+  8 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 4
+  9 │         bytes32 seed;
+    │                 ──┬─  
+    │                   ╰─── name: 5
+ 10 │         seed[0].nop();
+    │         ──┬─    ─┬─  
+    │           ╰────────── ref: 5
+    │                  │   
+    │                  ╰─── ref: 2
+────╯
