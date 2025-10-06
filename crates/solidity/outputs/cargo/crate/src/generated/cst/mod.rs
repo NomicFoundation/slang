@@ -23,20 +23,21 @@ pub use nonterminal_kind::NonterminalKind;
 pub use rewriter::BaseRewriter;
 pub use terminal_kind::TerminalKind;
 
-// These derives are because default #[derive(...)] on a generic type implements only the trait
-// with default bounds also implied for the generic types as well, i.e.
-//
-// #[derive(Clone)] // expands to `impl<T: Clone> Clone for MyOption<T> { ... }` (notice the `T: Clone`)
-// struct MyOption<T>(Option<T>);
-//
-// This assumes that the underlying data type uses this internally, however it's only used as a
-// type container/marker.
-//
-// A slightly more "correct" approach would be to implement the traits while skipping the bounds for
-// the type marker, however this can be more noisy
-#[allow(missing_docs)]
+/// The base type of all nonterminals, terminals, and edges.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
-pub enum KindTypes {}
+pub struct KindTypes {
+    // These derives are because default #[derive(...)] on a generic type implements only the trait
+    // with default bounds also implied for the generic types as well, i.e.
+    //
+    // #[derive(Clone)] // expands to `impl<T: Clone> Clone for MyOption<T> { ... }` (notice the `T: Clone`)
+    // struct MyOption<T>(Option<T>);
+    //
+    // This assumes that the underlying data type uses this internally, however it's only used as a
+    // type container/marker.
+    //
+    // A slightly more "correct" approach would be to implement the traits while skipping the bounds for
+    // the type marker, however this can be more noisy
+}
 
 impl metaslang_cst::kinds::KindTypes for KindTypes {
     type NonterminalKind = NonterminalKind;
@@ -79,6 +80,10 @@ pub type AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<KindTypes>
 /// Please refer to [our documentation](https://nomicfoundation.github.io/slang/latest/user-guide/06-query-language/01-query-syntax/)
 /// for detailed information about the query syntax and how to use queries to find matches.
 pub type Query = metaslang_cst::query::Query<KindTypes>;
+
+/// A single capture matched by a query, containing the capture name,
+/// and a list of [`Cursor`]s to the location of each captured node in the parse tree.
+pub type Capture<'a> = metaslang_cst::query::Capture<'a, KindTypes>;
 
 pub use metaslang_cst::query::QueryError;
 /// Represents a match found by executing queries on a cursor.

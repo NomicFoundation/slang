@@ -21,7 +21,7 @@ pub slang_solidity::compilation::CompilationBuilder::config: C
 impl<E, C: slang_solidity::compilation::CompilationBuilderConfig<Error = E>> slang_solidity::compilation::CompilationBuilder<E, C>
 pub fn slang_solidity::compilation::CompilationBuilder<E, C>::add_file(&mut self, file_id: &str) -> core::result::Result<(), E>
 pub fn slang_solidity::compilation::CompilationBuilder<E, C>::build(&self) -> slang_solidity::compilation::CompilationUnit
-pub fn slang_solidity::compilation::CompilationBuilder<E, C>::new(version: semver::Version, config: C) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<E, C>, slang_solidity::compilation::CompilationInitializationError>
+pub fn slang_solidity::compilation::CompilationBuilder<E, C>::create(version: semver::Version, config: C) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<E, C>, slang_solidity::compilation::CompilationInitializationError>
 pub struct slang_solidity::compilation::CompilationUnit
 impl slang_solidity::compilation::CompilationUnit
 pub fn slang_solidity::compilation::CompilationUnit::binding_graph(&self) -> &alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
@@ -218,21 +218,6 @@ impl serde::ser::Serialize for slang_solidity::cst::EdgeLabel
 pub fn slang_solidity::cst::EdgeLabel::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::EdgeLabel> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::EdgeLabel) -> &'static str
-pub enum slang_solidity::cst::KindTypes
-impl core::clone::Clone for slang_solidity::cst::KindTypes
-pub fn slang_solidity::cst::KindTypes::clone(&self) -> slang_solidity::cst::KindTypes
-impl core::cmp::Eq for slang_solidity::cst::KindTypes
-impl core::cmp::PartialEq for slang_solidity::cst::KindTypes
-pub fn slang_solidity::cst::KindTypes::eq(&self, other: &slang_solidity::cst::KindTypes) -> bool
-impl core::fmt::Debug for slang_solidity::cst::KindTypes
-pub fn slang_solidity::cst::KindTypes::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity::cst::KindTypes
-impl metaslang_cst::kinds::KindTypes for slang_solidity::cst::KindTypes
-pub type slang_solidity::cst::KindTypes::EdgeLabel = slang_solidity::cst::EdgeLabel
-pub type slang_solidity::cst::KindTypes::NonterminalKind = slang_solidity::cst::NonterminalKind
-pub type slang_solidity::cst::KindTypes::TerminalKind = slang_solidity::cst::TerminalKind
-impl serde::ser::Serialize for slang_solidity::cst::KindTypes
-pub fn slang_solidity::cst::KindTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 #[repr(u8)] pub enum slang_solidity::cst::NonterminalKind
 pub slang_solidity::cst::NonterminalKind::AbicoderPragma
 pub slang_solidity::cst::NonterminalKind::AbicoderVersion
@@ -822,6 +807,21 @@ impl serde::ser::Serialize for slang_solidity::cst::TerminalKind
 pub fn slang_solidity::cst::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::TerminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::TerminalKind) -> &'static str
+pub struct slang_solidity::cst::KindTypes
+impl core::clone::Clone for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::clone(&self) -> slang_solidity::cst::KindTypes
+impl core::cmp::Eq for slang_solidity::cst::KindTypes
+impl core::cmp::PartialEq for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::eq(&self, other: &slang_solidity::cst::KindTypes) -> bool
+impl core::fmt::Debug for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::cst::KindTypes
+impl metaslang_cst::kinds::KindTypes for slang_solidity::cst::KindTypes
+pub type slang_solidity::cst::KindTypes::EdgeLabel = slang_solidity::cst::EdgeLabel
+pub type slang_solidity::cst::KindTypes::NonterminalKind = slang_solidity::cst::NonterminalKind
+pub type slang_solidity::cst::KindTypes::TerminalKind = slang_solidity::cst::TerminalKind
+impl serde::ser::Serialize for slang_solidity::cst::KindTypes
+pub fn slang_solidity::cst::KindTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 pub trait slang_solidity::cst::BaseRewriter
 pub fn slang_solidity::cst::BaseRewriter::rewrite_abi_encoder_v2_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_abicoder_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
@@ -1348,6 +1348,7 @@ pub fn slang_solidity::cst::BaseRewriter::rewrite_yul_wei_keyword(&mut self, nod
 pub fn slang_solidity::cst::BaseRewriter::rewrite_yul_while_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_yul_years_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub type slang_solidity::cst::AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cst::Capture<'a> = metaslang_cst::query::engine::Capture<'a, slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Cursor = metaslang_cst::cursor::Cursor<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::CursorIterator = metaslang_cst::cursor::CursorIterator<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Edge = metaslang_cst::nodes::Edge<slang_solidity::cst::KindTypes>

@@ -53,9 +53,9 @@ fn test_parsing_error() {
     match result {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
-            assert_eq!(e.message, "Parse error:\nexpected ']' at: \nAlt at: [_\n");
+            assert_eq!(e.message(), "Parse error:\nexpected ']' at: \nAlt at: [_\n");
             assert_eq!(
-                format!("{:?}", e.text_range),
+                format!("{:?}", e.text_range()),
                 "TextIndex { utf8: 8, utf16: 8, line: 0, column: 8 }..TextIndex { utf8: 8, utf16: 8, line: 0, column: 8 }",
             );
         }
@@ -70,11 +70,11 @@ fn test_parsing_error_with_invalid_edge_label() {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
             assert_eq!(
-                e.message,
+                e.message(),
                 "Parse error:\n'Name' is not a valid edge label at: Name: [_]]\n",
             );
             assert_eq!(
-                format!("{:?}", e.text_range),
+                format!("{:?}", e.text_range()),
                 "TextIndex { utf8: 18, utf16: 18, line: 0, column: 18 }..TextIndex { utf8: 28, utf16: 28, line: 0, column: 28 }",
             );
         }
@@ -88,11 +88,11 @@ fn test_parsing_error_with_invalid_node_kind() {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
             assert_eq!(
-                e.message,
+                e.message(),
                 "Parse error:\n'tree_node' is not a valid node kind at: tree_node]]\n",
             );
             assert_eq!(
-                format!("{:?}", e.text_range),
+                format!("{:?}", e.text_range()),
                 "TextIndex { utf8: 13, utf16: 13, line: 0, column: 13 }..TextIndex { utf8: 24, utf16: 24, line: 0, column: 24 }",
             );
         }
@@ -106,11 +106,11 @@ fn test_parsing_error_with_kind_beginning_with_underscore() {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
             assert_eq!(
-                e.message,
+                e.message(),
                 "Parse error:\n'_tree_node' is not a valid node kind at: _tree_node]]\n",
             );
             assert_eq!(
-                format!("{:?}", e.text_range),
+                format!("{:?}", e.text_range()),
                 "TextIndex { utf8: 13, utf16: 13, line: 0, column: 13 }..TextIndex { utf8: 25, utf16: 25, line: 0, column: 25 }",
             );
         }
@@ -123,7 +123,7 @@ fn test_fails_parsing_ellipsis() {
     match result {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(
-            e.message,
+            e.message(),
             "Parse error:\nThe ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator. at: ...]\n",
         ),
     }
@@ -134,7 +134,7 @@ fn test_fails_consecutive_adjacency_operators() {
     let result = Query::create(r#"[_ [Identifier] . .]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
-        Err(e) => assert_eq!(e.message, "Parse error:\nNoneOf at: .]\n"),
+        Err(e) => assert_eq!(e.message(), "Parse error:\nNoneOf at: .]\n"),
     }
 }
 
@@ -144,7 +144,7 @@ fn test_fails_sole_adjacency() {
     match result {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(
-            e.message,
+            e.message(),
             "Parse error:\nexpected ']' at: .]\nAlt at: [_ .]\n"
         ),
     }
@@ -162,7 +162,7 @@ fn test_fails_parsing_trivia_node_selector() {
     match result {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(
-            e.message,
+            e.message(),
             "Parse error:\nMatching trivia nodes directly is forbidden. at: EndOfLine]\n"
         ),
     }

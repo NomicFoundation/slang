@@ -232,7 +232,7 @@ test("quantification-3", () => {
 
   assert.strictEqual(matches.length, 2);
   assert.strictEqual(matches[0].captures["arg"].length, 1);
-  assert.strictEqual(matches[1].captures["arg"], undefined);
+  assert.strictEqual(matches[1].captures["arg"].length, 0);
 });
 
 test("alternations-1", () => {
@@ -254,14 +254,14 @@ test("alternations-1", () => {
 
     assert.strictEqual(matches.length, 1);
     assert.strictEqual(matches[0].captures["function"].length, 1);
-    assert.strictEqual(matches[0].captures["method"], undefined);
+    assert.strictEqual(matches[0].captures["method"].length, 0);
   }
 
   {
     const matches = extractMatches(query, NonterminalKind.FunctionCallExpression, "a.call(1)");
 
     assert.strictEqual(matches.length, 1);
-    assert.strictEqual(matches[0].captures["function"], undefined);
+    assert.strictEqual(matches[0].captures["function"].length, 0);
     assert.strictEqual(matches[0].captures["method"].length, 1);
   }
 });

@@ -159,7 +159,7 @@ impl SolidityProject {
         version.pre = Prerelease::EMPTY;
         version.build = BuildMetadata::EMPTY;
 
-        let mut builder = CompilationBuilder::new(version, self)?;
+        let mut builder = CompilationBuilder::create(version, self)?;
 
         builder.add_file(&self.entrypoint)?;
 

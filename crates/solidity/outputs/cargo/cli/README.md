@@ -1,14 +1,10 @@
-# slang
+# slang_solidity_cli
 
 <!-- _PRODUCT_README_ (keep in sync) -->
 
 [![release](https://img.shields.io/github/v/tag/NomicFoundation/slang?label=GitHub%20Release&logo=github&sort=semver&logoColor=white)](https://github.com/NomicFoundation/slang/releases)
 [![npm](https://img.shields.io/npm/v/@nomicfoundation/slang?label=NPM%20Package&logo=npm&logoColor=white)](https://www.npmjs.com/package/@nomicfoundation/slang)
-
-<!--
-  __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
-  [![crate](https://img.shields.io/crates/v/slang_solidity?label=Rust%20Crate&logo=rust&logoColor=white)](https://crates.io/crates/slang_solidity)
--->
+[![cargo](https://img.shields.io/crates/v/slang_solidity?label=Rust%20Crate&logo=rust&logoColor=white)](https://crates.io/crates/slang_solidity)
 
 ## Solidity compiler tooling by [@NomicFoundation](https://github.com/NomicFoundation)
 

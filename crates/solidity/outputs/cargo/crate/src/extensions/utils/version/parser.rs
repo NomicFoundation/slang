@@ -1,14 +1,13 @@
-use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::NodeKind;
 
 use super::{Comparator, ComparatorSet, Operator, PartialVersion, Range, VersionPart};
-use crate::cst::{EdgeLabel, KindTypes, NonterminalKind, TerminalKind};
+use crate::cst::{Cursor, EdgeLabel, NonterminalKind, TerminalKind};
 use crate::parser::Parser;
 use crate::utils::LanguageFacts;
 
 type Result<T> = std::result::Result<T, String>;
 
-pub fn parse_range(mut cursor: Cursor<KindTypes>) -> Result<Range> {
+pub fn parse_range(mut cursor: Cursor) -> Result<Range> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionExpressionSets)?;
     let mut range = Range::new();
 
@@ -20,7 +19,7 @@ pub fn parse_range(mut cursor: Cursor<KindTypes>) -> Result<Range> {
     Ok(range)
 }
 
-fn parse_comparator_set(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> {
+fn parse_comparator_set(mut cursor: Cursor) -> Result<ComparatorSet> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionExpressionSet)?;
 
     let mut comparator_set = ComparatorSet::new();
@@ -33,7 +32,7 @@ fn parse_comparator_set(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> 
     Ok(comparator_set)
 }
 
-fn parse_version_expression(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> {
+fn parse_version_expression(mut cursor: Cursor) -> Result<ComparatorSet> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionExpression)?;
 
     cursor.go_to_next_nonterminal_with_kinds(&[
@@ -51,7 +50,7 @@ fn parse_version_expression(mut cursor: Cursor<KindTypes>) -> Result<ComparatorS
     }
 }
 
-fn parse_version_range(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> {
+fn parse_version_range(mut cursor: Cursor) -> Result<ComparatorSet> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionRange)?;
 
     let version_start = if cursor.go_to_next_nonterminal_with_kind(NonterminalKind::VersionLiteral)
@@ -70,7 +69,7 @@ fn parse_version_range(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> {
     Ok(ComparatorSet::hyphen_range(&version_start, &version_end))
 }
 
-fn parse_version_term(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> {
+fn parse_version_term(mut cursor: Cursor) -> Result<ComparatorSet> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionTerm)?;
 
     let operator = if cursor.go_to_next_terminal_with_kinds(&[
@@ -177,7 +176,7 @@ fn parse_version_term(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> {
     Ok(comparator_set)
 }
 
-fn parse_version_literal(mut cursor: Cursor<KindTypes>) -> Result<PartialVersion> {
+fn parse_version_literal(mut cursor: Cursor) -> Result<PartialVersion> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionLiteral)?;
     go_to_child_with_label(&mut cursor, EdgeLabel::Variant)?;
 
@@ -193,7 +192,7 @@ fn parse_version_literal(mut cursor: Cursor<KindTypes>) -> Result<PartialVersion
     }
 }
 
-fn parse_simple_version_literal(mut cursor: Cursor<KindTypes>) -> Result<PartialVersion> {
+fn parse_simple_version_literal(mut cursor: Cursor) -> Result<PartialVersion> {
     expect_nonterminal_kind(&cursor, NonterminalKind::SimpleVersionLiteral)?;
 
     let mut partial = PartialVersion::new();
@@ -234,7 +233,7 @@ fn parse_simple_version_literal(mut cursor: Cursor<KindTypes>) -> Result<Partial
     Ok(partial)
 }
 
-fn parse_quoted_version_literal(cursor: &Cursor<KindTypes>) -> Result<PartialVersion> {
+fn parse_quoted_version_literal(cursor: &Cursor) -> Result<PartialVersion> {
     let quote = if expect_terminal_kind(cursor, TerminalKind::SingleQuotedVersionLiteral).is_ok() {
         '\''
     } else if expect_terminal_kind(cursor, TerminalKind::DoubleQuotedVersionLiteral).is_ok() {
@@ -261,7 +260,7 @@ fn parse_quoted_version_literal(cursor: &Cursor<KindTypes>) -> Result<PartialVer
     parse_simple_version_literal(cursor)
 }
 
-fn expect_nonterminal_kind(cursor: &Cursor<KindTypes>, kind: NonterminalKind) -> Result<()> {
+fn expect_nonterminal_kind(cursor: &Cursor, kind: NonterminalKind) -> Result<()> {
     if cursor.node().is_nonterminal_with_kind(kind) {
         Ok(())
     } else {
@@ -272,7 +271,7 @@ fn expect_nonterminal_kind(cursor: &Cursor<KindTypes>, kind: NonterminalKind) ->
     }
 }
 
-fn expect_terminal_kind(cursor: &Cursor<KindTypes>, kind: TerminalKind) -> Result<()> {
+fn expect_terminal_kind(cursor: &Cursor, kind: TerminalKind) -> Result<()> {
     if cursor.node().is_terminal_with_kind(kind) {
         Ok(())
     } else {
@@ -283,7 +282,7 @@ fn expect_terminal_kind(cursor: &Cursor<KindTypes>, kind: TerminalKind) -> Resul
     }
 }
 
-fn expect_label(cursor: &Cursor<KindTypes>, label: EdgeLabel) -> Result<()> {
+fn expect_label(cursor: &Cursor, label: EdgeLabel) -> Result<()> {
     if cursor.label() == label {
         Ok(())
     } else {
@@ -291,7 +290,7 @@ fn expect_label(cursor: &Cursor<KindTypes>, label: EdgeLabel) -> Result<()> {
     }
 }
 
-fn go_to_child_with_label(cursor: &mut Cursor<KindTypes>, label: EdgeLabel) -> Result<()> {
+fn go_to_child_with_label(cursor: &mut Cursor, label: EdgeLabel) -> Result<()> {
     cursor.go_to_first_child();
 
     loop {

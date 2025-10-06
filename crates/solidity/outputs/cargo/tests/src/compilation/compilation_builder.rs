@@ -46,7 +46,7 @@ impl CompilationBuilderConfig for Config {
 
 #[test]
 fn test_build_compilation_unit() -> Result<()> {
-    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config {})?;
+    let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, Config {})?;
 
     let main_add_file_response = builder.add_file(MAIN_ID);
     assert!(main_add_file_response.is_ok());

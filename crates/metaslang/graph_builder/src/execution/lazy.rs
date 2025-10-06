@@ -108,7 +108,7 @@ impl<KT: KindTypes + 'static> ast::File<KT> {
             .collect();
         let matches = tree.clone().query(queries);
         for mat in matches {
-            let stanza = &self.stanzas[mat.query_index];
+            let stanza = &self.stanzas[mat.query_index()];
             visit(stanza, mat)?;
         }
         Ok(())
@@ -169,7 +169,7 @@ impl<KT: KindTypes> ast::Stanza<KT> {
     ) -> Result<(), ExecutionError> {
         let current_regex_captures = vec![];
         locals.clear();
-        let root_cursor = mat.root_cursor.clone();
+        let root_cursor = mat.root_cursor().clone();
         debug!("match {:?} at {}", root_cursor.node(), self.range.start);
         trace!("{{");
         for statement in &self.statements {
@@ -260,7 +260,7 @@ impl ast::CreateGraphNode {
         self.node
             .add_debug_attrs(&mut exec.graph[graph_node].attributes, exec.config)?;
         if let Some(match_node_attr) = &exec.config.match_node_attr {
-            let root_cursor = exec.mat.root_cursor.clone();
+            let root_cursor = exec.mat.root_cursor().clone();
             let syn_node = exec.graph.add_syntax_node(root_cursor);
             exec.graph[graph_node]
                 .attributes
@@ -688,8 +688,9 @@ impl ast::Capture {
         &self,
         exec: &mut ExecutionContext<'_, '_, '_, KT>,
     ) -> Result<LazyValue, ExecutionError> {
-        let capture = &exec.mat.captures[&*self.name.0];
-        Ok(Value::from_nodes(exec.graph, capture.iter().cloned(), self.quantifier).into())
+        let capture = exec.mat.capture(&self.name.0);
+        let cursors = capture.as_ref().unwrap().cursors();
+        Ok(Value::from_nodes(exec.graph, cursors, self.quantifier).into())
     }
 }
 

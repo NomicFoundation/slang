@@ -59,11 +59,11 @@ pub trait EdgeLabelExtensions: BaseKind + Default {}
 
 /// The base type of all nonterminals, terminals, and edges.
 pub trait KindTypes: std::fmt::Debug + Clone + PartialEq {
-    #[allow(missing_docs)]
+    /// The enum type representing nonterminal kinds.
     type NonterminalKind: NonterminalKindExtensions;
-    #[allow(missing_docs)]
+    /// The enum type representing terminal kinds.
     type TerminalKind: TerminalKindExtensions;
-    #[allow(missing_docs)]
+    /// The enum type representing edge labels.
     type EdgeLabel: EdgeLabelExtensions;
 }
 
