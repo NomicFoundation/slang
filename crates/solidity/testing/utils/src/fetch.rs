@@ -2,8 +2,7 @@ use std::path::Path;
 use std::time::Duration;
 use std::{fs, thread};
 
-use anyhow::{anyhow, bail, Ok, Result};
-use reqwest::blocking::get;
+use anyhow::{bail, Result};
 use reqwest::header::CONTENT_TYPE;
 use serde_json::Value;
 
@@ -23,31 +22,40 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
     let url =
         format!("https://sourcify.dev/server/v2/contract/1/{address}/?fields=sources,compilation");
 
-    let mut body = get(&url);
-
     // Try with exponential backoff
-    let mut tries = 0;
-    while !body
-        .as_ref()
-        .is_ok_and(|response| response.status() == reqwest::StatusCode::OK)
-        && tries < MAX_RETRIES
-    {
-        tries += 1;
-        thread::sleep(Duration::from_secs(2 ^ tries));
-        body = get(&url);
+    let mut retries = 0;
+    let project = loop {
+        retries += 1;
+
+        match try_fetch_project(&url) {
+            Ok(project) => break project,
+            Err(err) => {
+                println!("Error fetching {url} (attempt {retries}/{MAX_RETRIES}): {err}");
+                if retries <= MAX_RETRIES {
+                    thread::sleep(Duration::from_secs(2 ^ retries));
+                } else {
+                    bail!("Giving up after {retries} attempts.");
+                }
+            }
+        }
+    };
+
+    // write project to disk
+    fs::create_dir_all(base_path)?;
+    fs::write(project_file_path, project)?;
+
+    Ok(())
+}
+
+fn try_fetch_project(url: &str) -> Result<String> {
+    let response = reqwest::blocking::get(url)?;
+
+    if response.status() != reqwest::StatusCode::OK {
+        bail!("Status code is {status}", status = response.status());
     }
 
-    let body = body.map_err(|e| anyhow!("Error fetching {url}: {e}"))?;
-
-    if tries == MAX_RETRIES {
-        bail!(
-            "Error fetching {url}: status code is {status}",
-            status = body.status(),
-        );
-    }
-
-    let Some(content_type) = body.headers().get(CONTENT_TYPE) else {
-        bail!("Error fetching {url}: no content-type header")
+    let Some(content_type) = response.headers().get(CONTENT_TYPE) else {
+        bail!("No content-type header")
     };
 
     let content_type_str = content_type.to_str().unwrap_or("");
@@ -56,20 +64,14 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
         .to_ascii_lowercase()
         .starts_with("application/json")
     {
-        return Err(anyhow!(
-            "Error fetching {url}: content-type is {content_type_str:?}"
-        ));
+        bail!("content-type is not json: {content_type_str:?}");
     }
 
-    if body.content_length().unwrap_or_default() == 0 {
-        return Err(anyhow!("Error fetching {url}: body is empty"));
+    if response.content_length().unwrap_or_default() == 0 {
+        bail!("body is empty");
     }
 
-    let project_json: Value = body.json()?;
+    let project_json: Value = response.json()?;
 
-    let content = serde_json::to_string_pretty(&project_json)?;
-    fs::create_dir_all(base_path)?;
-    fs::write(project_file_path, content)?;
-
-    Ok(())
+    Ok(serde_json::to_string_pretty(&project_json)?)
 }
