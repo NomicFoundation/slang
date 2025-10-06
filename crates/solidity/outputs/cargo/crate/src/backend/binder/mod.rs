@@ -15,7 +15,9 @@ pub(crate) use definitions::{
 };
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
-pub(crate) use scopes::{EitherIter, FileScope, Scope, UsingDirective};
+pub(crate) use scopes::{
+    EitherIter, FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ScopeId(usize);
@@ -474,7 +476,9 @@ impl Binder {
                     )
                 }
             }
-            Scope::Parameters(parameters_scope) => parameters_scope.definitions.get(symbol).into(),
+            Scope::Parameters(parameters_scope) => {
+                parameters_scope.lookup_definition(symbol).into()
+            }
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
             Scope::Using(using_scope) => using_scope
                 .symbols
@@ -584,7 +588,9 @@ impl Binder {
                 .get(symbol)
                 .cloned()
                 .map_or(Resolution::Unresolved, Resolution::from),
-            Scope::Parameters(parameters_scope) => parameters_scope.definitions.get(symbol).into(),
+            Scope::Parameters(parameters_scope) => {
+                parameters_scope.lookup_definition(symbol).into()
+            }
 
             Scope::Block(_)
             | Scope::File(_)

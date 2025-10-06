@@ -119,7 +119,7 @@ impl Pass {
         function_definition: &input_ir::FunctionDefinition,
         implicit_receiver_type: Option<TypeId>,
     ) -> Option<TypeId> {
-        // NOTE: Keep in sync with function types in `resolve_type_name` above
+        // NOTE: Keep in sync with function types in `resolve_type_name` in `super::resolution`
         let parameter_types =
             self.resolve_parameter_types(&function_definition.parameters.parameters)?;
         let return_type = if let Some(returns) = &function_definition.returns {

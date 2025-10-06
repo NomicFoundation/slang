@@ -133,6 +133,27 @@ impl Visitor for Pass {
         // now we can compute the function type
         let type_id = self.type_of_function_definition(node, self.current_receiver_type);
         self.binder.set_node_type(node.node_id, type_id);
+
+        // fill-in parameter types in parameters scope
+        let parameter_types: Vec<_> = node
+            .parameters
+            .parameters
+            .iter()
+            .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
+            .collect();
+
+        let Some(parameters_scope_id) = self
+            .binder
+            .get_parameters_scope_for_definition(node.node_id)
+        else {
+            unreachable!("FunctionDefinition does not have associated parameters scope");
+        };
+        let Scope::Parameters(ref mut parameters_scope) =
+            self.binder.get_scope_mut(parameters_scope_id)
+        else {
+            unreachable!("scope is not a ParametersScope");
+        };
+        parameters_scope.set_parameter_types(&parameter_types);
     }
 
     fn leave_function_type(&mut self, node: &input_ir::FunctionType) {
@@ -224,15 +245,21 @@ impl Visitor for Pass {
             .parameters
             .parameters
             .iter()
-            .filter_map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
+            .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
             .collect();
-        if parameter_types.len() == node.parameters.parameters.len() {
-            let Definition::Event(event_definition) = self.binder.get_definition_mut(node.node_id)
-            else {
-                unreachable!("definition in EventDefinition node is not an event");
-            };
-            event_definition.parameter_types = parameter_types;
-        }
+
+        let Some(parameters_scope_id) = self
+            .binder
+            .get_parameters_scope_for_definition(node.node_id)
+        else {
+            unreachable!("EventDefinition does not have associated parameters scope");
+        };
+        let Scope::Parameters(ref mut parameters_scope) =
+            self.binder.get_scope_mut(parameters_scope_id)
+        else {
+            unreachable!("scope is not a ParametersScope");
+        };
+        parameters_scope.set_parameter_types(&parameter_types);
     }
 
     fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {

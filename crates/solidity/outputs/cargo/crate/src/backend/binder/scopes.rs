@@ -1,9 +1,10 @@
 use std::collections::{HashMap, HashSet};
+use std::rc::Rc;
 
 use super::definitions::Definition;
 use super::ScopeId;
 use crate::backend::types::TypeId;
-use crate::cst::{NodeId, TerminalKind};
+use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
 //////////////////////////////////////////////////////////////////////////////
 // Scopes - types
@@ -67,9 +68,21 @@ pub(crate) struct ModifierScope {
     pub(crate) definitions: HashMap<String, NodeId>,
 }
 
+/// This is stored in a vector in the `ParametersScope` below preserving order
+/// for positional arguments and used by the binder, both to resolve named
+/// arguments, and disambiguate overloads of functions and events.
+pub(crate) struct ParameterDefinition {
+    pub(crate) name: Option<String>,
+    pub(crate) node_id: NodeId,
+    /// The type of the parameter, or `None` if it's not yet computed or cannot
+    /// be computed. For some parameter containers (eg. errors) it's never
+    /// computed.
+    pub(crate) type_id: Option<TypeId>,
+}
+
 pub(crate) struct ParametersScope {
     pub(crate) node_id: NodeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) parameters: Vec<ParameterDefinition>,
 }
 
 pub(crate) struct StructScope {
@@ -114,7 +127,7 @@ impl Scope {
         }
     }
 
-    pub(super) fn insert_definition(&mut self, definition: &Definition) {
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
         match self {
             Self::Block(block_scope) => block_scope.insert_definition(definition),
             Self::Contract(contract_scope) => contract_scope.insert_definition(definition),
@@ -122,7 +135,9 @@ impl Scope {
             Self::File(file_scope) => file_scope.insert_definition(definition),
             Self::Function(function_scope) => function_scope.insert_definition(definition),
             Self::Modifier(modifier_scope) => modifier_scope.insert_definition(definition),
-            Self::Parameters(parameters_scope) => parameters_scope.insert_definition(definition),
+            Self::Parameters(_) => {
+                unreachable!("cannot insert a definition into parameters scope directly")
+            }
             Self::Struct(struct_scope) => struct_scope.insert_definition(definition),
             Self::Using(_) => unreachable!("cannot insert a definition into a using clause scope"),
             Self::YulBlock(yul_block_scope) => yul_block_scope.insert_definition(definition),
@@ -170,10 +185,6 @@ impl Scope {
 
     pub(crate) fn new_modifier(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
         Self::Modifier(ModifierScope::new(node_id, parent_scope_id))
-    }
-
-    pub(crate) fn new_parameters(node_id: NodeId) -> Self {
-        Self::Parameters(ParametersScope::new(node_id))
     }
 
     pub(crate) fn new_struct(node_id: NodeId) -> Self {
@@ -312,17 +323,35 @@ impl ModifierScope {
 }
 
 impl ParametersScope {
-    fn new(node_id: NodeId) -> Self {
+    pub(crate) fn new(node_id: NodeId) -> Self {
         Self {
             node_id,
-            definitions: HashMap::new(),
+            parameters: Vec::new(),
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
-        let symbol = definition.identifier().unparse();
-        let node_id = definition.node_id();
-        self.definitions.insert(symbol, node_id);
+    pub(crate) fn add_parameter(&mut self, identifier: Option<&Rc<TerminalNode>>, node_id: NodeId) {
+        self.parameters.push(ParameterDefinition {
+            name: identifier.map(|name| name.unparse()),
+            node_id,
+            type_id: None,
+        });
+    }
+
+    pub(crate) fn set_parameter_types(&mut self, type_ids: &[Option<TypeId>]) {
+        if type_ids.len() != self.parameters.len() {
+            unreachable!("parameter count mismatch while setting types");
+        }
+        for (index, parameter) in self.parameters.iter_mut().enumerate() {
+            parameter.type_id = type_ids[index];
+        }
+    }
+
+    pub(crate) fn lookup_definition(&self, symbol: &str) -> Option<NodeId> {
+        self.parameters
+            .iter()
+            .find(|parameter| parameter.name.as_ref().is_some_and(|name| name == symbol))
+            .map(|parameter| parameter.node_id)
     }
 }
 

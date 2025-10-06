@@ -1,10 +1,29 @@
 use super::Pass;
-use crate::backend::binder::{Definition, Typing};
+use crate::backend::binder::{Definition, ParameterDefinition, Scope, Typing};
 use crate::backend::types::{FunctionType, Type, TypeId};
 use crate::cst::NodeId;
 
 /// Disambiguation functions that require typing (aka overload resolution)
 impl Pass {
+    fn get_function_definition_parameters(
+        &self,
+        definition_id: Option<NodeId>,
+    ) -> Option<&[ParameterDefinition]> {
+        let Some(Definition::Function(function_definition)) =
+            self.binder.find_definition_by_id(definition_id?)
+        else {
+            return None;
+        };
+
+        let Scope::Parameters(parameters_scope) = self
+            .binder
+            .get_scope_by_id(function_definition.parameters_scope_id)
+        else {
+            unreachable!("incorrect scope kind, expected parameters");
+        };
+        Some(&parameters_scope.parameters)
+    }
+
     pub(super) fn lookup_function_matching_positional_arguments<'a>(
         &'a self,
         type_ids: &[TypeId],
@@ -20,12 +39,16 @@ impl Pass {
             }
         });
         function_types.find(|function_type| {
-            let parameter_types = &function_type.parameter_types;
+            let Some(parameters) =
+                self.get_function_definition_parameters(function_type.definition_id)
+            else {
+                return false;
+            };
             if let Some(receiver_type_id) = receiver_type_id {
                 // we have a receiver type, so either check for an implicit
                 // receiver type, or the first parameter type
                 // against it and then the rest, if the counts match
-                if parameter_types.len() == argument_typings.len()
+                if parameters.len() == argument_typings.len()
                     && function_type.implicit_receiver_type.is_some_and(
                         |implicit_receiver_type_id| {
                             self.types.implicitly_convertible_to(
@@ -36,33 +59,35 @@ impl Pass {
                     )
                 {
                     // matches "method" functions of a compatible receiver type
-                    self.matches_positional_arguments(
-                        parameter_types,
+                    self.parameters_match_positional_arguments(
+                        parameters,
                         argument_typings,
                         function_type.external,
                     )
-                } else if parameter_types.len() == argument_typings.len() + 1
+                } else if parameters.len() == argument_typings.len() + 1
                     && function_type.implicit_receiver_type.is_none()
-                    && parameter_types.first().is_some_and(|type_id| {
-                        self.types
-                            .implicitly_convertible_to(receiver_type_id, *type_id)
+                    && parameters.first().is_some_and(|parameter| {
+                        parameter.type_id.is_some_and(|type_id| {
+                            self.types
+                                .implicitly_convertible_to(receiver_type_id, type_id)
+                        })
                     })
                 {
                     // matches attached functions (these can only be
                     // free-functions or library functions) with a compatible
                     // first argument
-                    self.matches_positional_arguments(
-                        &parameter_types[1..],
+                    self.parameters_match_positional_arguments(
+                        &parameters[1..],
                         argument_typings,
                         function_type.external,
                     )
                 } else {
                     false
                 }
-            } else if parameter_types.len() == argument_typings.len() {
+            } else if parameters.len() == argument_typings.len() {
                 // argument count matches, check that all types are implicitly convertible
-                self.matches_positional_arguments(
-                    parameter_types,
+                self.parameters_match_positional_arguments(
+                    parameters,
                     argument_typings,
                     function_type.external,
                 )
@@ -72,21 +97,23 @@ impl Pass {
         })
     }
 
-    fn matches_positional_arguments(
+    fn parameters_match_positional_arguments(
         &self,
-        parameter_types: &[TypeId],
+        parameters: &[ParameterDefinition],
         argument_typings: &[Typing],
         external_call: bool,
     ) -> bool {
-        parameter_types
+        parameters
             .iter()
             .zip(argument_typings)
-            .all(|(parameter_type, argument_typing)| {
-                self.parameter_type_matches_argument_typing(
-                    *parameter_type,
-                    argument_typing,
-                    external_call,
-                )
+            .all(|(parameter, argument_typing)| {
+                parameter.type_id.is_some_and(|type_id| {
+                    self.parameter_type_matches_argument_typing(
+                        type_id,
+                        argument_typing,
+                        external_call,
+                    )
+                })
             })
     }
 
@@ -128,46 +155,37 @@ impl Pass {
             }
         });
         function_types.find(|function_type| {
-            let Some(definition_id) = function_type.definition_id else {
+            let Some(parameters) =
+                self.get_function_definition_parameters(function_type.definition_id)
+            else {
                 return false;
             };
-            let definition = self.binder.find_definition_by_id(definition_id).unwrap();
-            let Definition::Function(function_definition) = definition else {
-                unreachable!("the definition associated to a function type is not a function");
-            };
-            let parameter_types = &function_type.parameter_types;
-            let parameter_names = &function_definition.parameter_names;
-            assert_eq!(
-                parameter_types.len(),
-                parameter_names.len(),
-                "length of types and names of parameters should match"
-            );
-            if parameter_names.iter().any(|name| name.is_none()) {
+            if parameters.iter().any(|parameter| parameter.name.is_none()) {
                 // function has an unnamed parameter and we cannot use it for
                 // matching named arguments
                 return false;
             }
 
-            if parameter_types.len() == argument_typings.len() {
+            if parameters.len() == argument_typings.len() {
                 // argument count matches, check that all types are implicitly convertible
-                self.matches_named_arguments(
-                    parameter_names,
-                    parameter_types,
+                self.parameters_match_named_arguments(
+                    parameters,
                     argument_typings,
                     function_type.external,
                 )
             } else if let Some(receiver_type_id) = receiver_type_id {
                 // we have a receiver type, so check the first parameter type
                 // against it and then the rest, if the counts match
-                if parameter_types.len() == argument_typings.len() + 1
-                    && parameter_types.first().is_some_and(|type_id| {
-                        self.types
-                            .implicitly_convertible_to(receiver_type_id, *type_id)
+                if parameters.len() == argument_typings.len() + 1
+                    && parameters.first().is_some_and(|parameter| {
+                        parameter.type_id.is_some_and(|type_id| {
+                            self.types
+                                .implicitly_convertible_to(receiver_type_id, type_id)
+                        })
                     })
                 {
-                    self.matches_named_arguments(
-                        &parameter_names[1..],
-                        &parameter_types[1..],
+                    self.parameters_match_named_arguments(
+                        &parameters[1..],
                         argument_typings,
                         function_type.external,
                     )
@@ -180,29 +198,50 @@ impl Pass {
         })
     }
 
-    fn matches_named_arguments(
+    fn parameters_match_named_arguments(
         &self,
-        parameter_names: &[Option<String>],
-        parameter_types: &[TypeId],
+        parameters: &[ParameterDefinition],
         argument_typings: &[(String, Typing)],
         external_call: bool,
     ) -> bool {
         argument_typings
             .iter()
             .all(|(argument_name, argument_typing)| {
-                let Some(index) = parameter_names
-                    .iter()
-                    .position(|name| name.as_ref().is_some_and(|name| name == argument_name))
-                else {
+                let Some(parameter) = parameters.iter().find(|parameter| {
+                    parameter
+                        .name
+                        .as_ref()
+                        .is_some_and(|name| name == argument_name)
+                }) else {
                     return false;
                 };
-                let parameter_type = parameter_types[index];
-                self.parameter_type_matches_argument_typing(
-                    parameter_type,
-                    argument_typing,
-                    external_call,
-                )
+                parameter.type_id.is_some_and(|type_id| {
+                    self.parameter_type_matches_argument_typing(
+                        type_id,
+                        argument_typing,
+                        external_call,
+                    )
+                })
             })
+    }
+
+    fn get_event_definition_parameters(
+        &self,
+        definition_id: NodeId,
+    ) -> Option<&[ParameterDefinition]> {
+        let Some(Definition::Event(event_definition)) =
+            self.binder.find_definition_by_id(definition_id)
+        else {
+            return None;
+        };
+
+        let Scope::Parameters(parameters_scope) = self
+            .binder
+            .get_scope_by_id(event_definition.parameters_scope_id)
+        else {
+            unreachable!("incorrect scope kind, expected parameters");
+        };
+        Some(&parameters_scope.parameters)
     }
 
     pub(super) fn lookup_event_matching_positional_arguments(
@@ -211,16 +250,12 @@ impl Pass {
         argument_typings: &[Typing],
     ) -> Option<NodeId> {
         for definition_id in definition_ids {
-            let Some(Definition::Event(event_definition)) =
-                self.binder.find_definition_by_id(*definition_id)
-            else {
+            let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
                 continue;
             };
-
-            let parameter_types = &event_definition.parameter_types;
-            if parameter_types.len() == argument_typings.len() {
+            if parameters.len() == argument_typings.len() {
                 // argument count matches, check that all types are implicitly convertible
-                if self.matches_positional_arguments(parameter_types, argument_typings, false) {
+                if self.parameters_match_positional_arguments(parameters, argument_typings, false) {
                     return Some(*definition_id);
                 }
             }
@@ -234,32 +269,18 @@ impl Pass {
         argument_typings: &[(String, Typing)],
     ) -> Option<NodeId> {
         for definition_id in definition_ids {
-            let Some(Definition::Event(event_definition)) =
-                self.binder.find_definition_by_id(*definition_id)
-            else {
+            let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
                 continue;
             };
 
-            let parameter_types = &event_definition.parameter_types;
-            let parameter_names = &event_definition.parameter_names;
-            assert_eq!(
-                parameter_types.len(),
-                parameter_names.len(),
-                "length of types and names of parameters should match"
-            );
-            if parameter_names.iter().any(|name| name.is_none()) {
+            if parameters.iter().any(|parameter| parameter.name.is_none()) {
                 // cannot match if any parameter is unnamed
                 continue;
             }
 
-            if parameter_types.len() == argument_typings.len() {
+            if parameters.len() == argument_typings.len() {
                 // argument count matches, check that all types are implicitly convertible
-                if self.matches_named_arguments(
-                    parameter_names,
-                    parameter_types,
-                    argument_typings,
-                    false,
-                ) {
+                if self.parameters_match_named_arguments(parameters, argument_typings, false) {
                     return Some(*definition_id);
                 }
             }
