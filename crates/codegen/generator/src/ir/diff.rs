@@ -88,9 +88,10 @@ impl IrModelDiff {
         for source_field in &source_sequence.fields {
             let target_field = target_sequence.fields.get(target_index);
 
-            let is_removed = if target_field
-                .is_some_and(|target_field| target_field.label == source_field.label)
-            {
+            let is_removed = if target_field.is_some_and(|target_field| {
+                target_field.label == source_field.label
+                    && target_field.r#type == source_field.r#type
+            }) {
                 target_index += 1;
                 false
             } else {
