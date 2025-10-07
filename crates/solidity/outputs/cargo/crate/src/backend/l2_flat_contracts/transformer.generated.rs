@@ -392,37 +392,7 @@ pub trait Transformer {
     fn transform_function_definition(
         &mut self,
         source: &input::FunctionDefinition,
-    ) -> output::FunctionDefinition {
-        let name = self.transform_function_name(&source.name);
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_function_attributes(&source.attributes);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_returns_declaration(value));
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::FunctionDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            attributes,
-            returns,
-            body,
-        })
-    }
-
-    fn transform_parameters_declaration(
-        &mut self,
-        source: &input::ParametersDeclaration,
-    ) -> output::ParametersDeclaration {
-        let parameters = self.transform_parameters(&source.parameters);
-
-        Rc::new(output::ParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
+    ) -> output::FunctionDefinition;
 
     fn transform_parameter(&mut self, source: &input::Parameter) -> output::Parameter {
         let type_name = self.transform_type_name(&source.type_name);
@@ -467,107 +437,30 @@ pub trait Transformer {
         })
     }
 
-    fn transform_returns_declaration(
-        &mut self,
-        source: &input::ReturnsDeclaration,
-    ) -> output::ReturnsDeclaration {
-        let variables = self.transform_parameters_declaration(&source.variables);
-
-        Rc::new(output::ReturnsDeclarationStruct {
-            node_id: source.node_id,
-            variables,
-        })
-    }
-
     fn transform_constructor_definition(
         &mut self,
         source: &input::ConstructorDefinition,
-    ) -> output::ConstructorDefinition {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_constructor_attributes(&source.attributes);
-        let body = self.transform_block(&source.body);
-
-        Rc::new(output::ConstructorDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
+    ) -> output::ConstructorDefinition;
 
     fn transform_unnamed_function_definition(
         &mut self,
         source: &input::UnnamedFunctionDefinition,
-    ) -> output::UnnamedFunctionDefinition {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_unnamed_function_attributes(&source.attributes);
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::UnnamedFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
+    ) -> output::UnnamedFunctionDefinition;
 
     fn transform_fallback_function_definition(
         &mut self,
         source: &input::FallbackFunctionDefinition,
-    ) -> output::FallbackFunctionDefinition {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_fallback_function_attributes(&source.attributes);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_returns_declaration(value));
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::FallbackFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            returns,
-            body,
-        })
-    }
+    ) -> output::FallbackFunctionDefinition;
 
     fn transform_receive_function_definition(
         &mut self,
         source: &input::ReceiveFunctionDefinition,
-    ) -> output::ReceiveFunctionDefinition {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_receive_function_attributes(&source.attributes);
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::ReceiveFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
+    ) -> output::ReceiveFunctionDefinition;
 
     fn transform_modifier_definition(
         &mut self,
         source: &input::ModifierDefinition,
-    ) -> output::ModifierDefinition {
-        let name = Rc::clone(&source.name);
-        let parameters = source
-            .parameters
-            .as_ref()
-            .map(|value| self.transform_parameters_declaration(value));
-        let attributes = self.transform_modifier_attributes(&source.attributes);
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::ModifierDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            attributes,
-            body,
-        })
-    }
+    ) -> output::ModifierDefinition;
 
     fn transform_modifier_invocation(
         &mut self,
@@ -701,21 +594,7 @@ pub trait Transformer {
         })
     }
 
-    fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_function_type_attributes(&source.attributes);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_returns_declaration(value));
-
-        Rc::new(output::FunctionTypeStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            returns,
-        })
-    }
+    fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType;
 
     fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
         let key_type = self.transform_mapping_key(&source.key_type);
@@ -1044,23 +923,7 @@ pub trait Transformer {
         })
     }
 
-    fn transform_try_statement(&mut self, source: &input::TryStatement) -> output::TryStatement {
-        let expression = self.transform_expression(&source.expression);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_returns_declaration(value));
-        let body = self.transform_block(&source.body);
-        let catch_clauses = self.transform_catch_clauses(&source.catch_clauses);
-
-        Rc::new(output::TryStatementStruct {
-            node_id: source.node_id,
-            expression,
-            returns,
-            body,
-            catch_clauses,
-        })
-    }
+    fn transform_try_statement(&mut self, source: &input::TryStatement) -> output::TryStatement;
 
     fn transform_catch_clause(&mut self, source: &input::CatchClause) -> output::CatchClause {
         let error = source
@@ -1079,16 +942,7 @@ pub trait Transformer {
     fn transform_catch_clause_error(
         &mut self,
         source: &input::CatchClauseError,
-    ) -> output::CatchClauseError {
-        let name = source.name.as_ref().map(Rc::clone);
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-
-        Rc::new(output::CatchClauseErrorStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-        })
-    }
+    ) -> output::CatchClauseError;
 
     fn transform_revert_statement(
         &mut self,

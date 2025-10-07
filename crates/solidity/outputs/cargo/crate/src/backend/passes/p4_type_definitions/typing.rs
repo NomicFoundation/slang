@@ -120,10 +120,9 @@ impl Pass {
         implicit_receiver_type: Option<TypeId>,
     ) -> Option<TypeId> {
         // NOTE: Keep in sync with function types in `resolve_type_name` in `super::resolution`
-        let parameter_types =
-            self.resolve_parameter_types(&function_definition.parameters.parameters)?;
+        let parameter_types = self.resolve_parameter_types(&function_definition.parameters)?;
         let return_type = if let Some(returns) = &function_definition.returns {
-            let return_types = self.resolve_parameter_types(&returns.variables.parameters)?;
+            let return_types = self.resolve_parameter_types(returns)?;
             if return_types.len() == 1 {
                 // TODO: I think this is more correct, but we may decide to
                 // always return a tuple instead; this will require changing the

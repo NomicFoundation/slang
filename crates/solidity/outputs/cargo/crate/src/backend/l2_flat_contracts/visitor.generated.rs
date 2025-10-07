@@ -160,11 +160,6 @@ pub trait Visitor {
     }
     fn leave_function_definition(&mut self, _node: &FunctionDefinition) {}
 
-    fn enter_parameters_declaration(&mut self, _node: &ParametersDeclaration) -> bool {
-        true
-    }
-    fn leave_parameters_declaration(&mut self, _node: &ParametersDeclaration) {}
-
     fn enter_parameter(&mut self, _node: &Parameter) -> bool {
         true
     }
@@ -179,11 +174,6 @@ pub trait Visitor {
         true
     }
     fn leave_override_paths_declaration(&mut self, _node: &OverridePathsDeclaration) {}
-
-    fn enter_returns_declaration(&mut self, _node: &ReturnsDeclaration) -> bool {
-        true
-    }
-    fn leave_returns_declaration(&mut self, _node: &ReturnsDeclaration) {}
 
     fn enter_constructor_definition(&mut self, _node: &ConstructorDefinition) -> bool {
         true
@@ -1423,21 +1413,13 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
         return;
     }
     accept_function_name(&node.name, visitor);
-    accept_parameters_declaration(&node.parameters, visitor);
     accept_function_attributes(&node.attributes, visitor);
-    if let Some(ref returns) = node.returns {
-        accept_returns_declaration(returns, visitor);
-    }
     accept_function_body(&node.body, visitor);
-    visitor.leave_function_definition(node);
-}
-
-pub fn accept_parameters_declaration(node: &ParametersDeclaration, visitor: &mut impl Visitor) {
-    if !visitor.enter_parameters_declaration(node) {
-        return;
-    }
     accept_parameters(&node.parameters, visitor);
-    visitor.leave_parameters_declaration(node);
+    if let Some(ref returns) = node.returns {
+        accept_parameters(returns, visitor);
+    }
+    visitor.leave_function_definition(node);
 }
 
 pub fn accept_parameter(node: &Parameter, visitor: &mut impl Visitor) {
@@ -1472,21 +1454,13 @@ pub fn accept_override_paths_declaration(
     visitor.leave_override_paths_declaration(node);
 }
 
-pub fn accept_returns_declaration(node: &ReturnsDeclaration, visitor: &mut impl Visitor) {
-    if !visitor.enter_returns_declaration(node) {
-        return;
-    }
-    accept_parameters_declaration(&node.variables, visitor);
-    visitor.leave_returns_declaration(node);
-}
-
 pub fn accept_constructor_definition(node: &ConstructorDefinition, visitor: &mut impl Visitor) {
     if !visitor.enter_constructor_definition(node) {
         return;
     }
-    accept_parameters_declaration(&node.parameters, visitor);
     accept_constructor_attributes(&node.attributes, visitor);
     accept_block(&node.body, visitor);
+    accept_parameters(&node.parameters, visitor);
     visitor.leave_constructor_definition(node);
 }
 
@@ -1497,9 +1471,9 @@ pub fn accept_unnamed_function_definition(
     if !visitor.enter_unnamed_function_definition(node) {
         return;
     }
-    accept_parameters_declaration(&node.parameters, visitor);
     accept_unnamed_function_attributes(&node.attributes, visitor);
     accept_function_body(&node.body, visitor);
+    accept_parameters(&node.parameters, visitor);
     visitor.leave_unnamed_function_definition(node);
 }
 
@@ -1510,12 +1484,12 @@ pub fn accept_fallback_function_definition(
     if !visitor.enter_fallback_function_definition(node) {
         return;
     }
-    accept_parameters_declaration(&node.parameters, visitor);
     accept_fallback_function_attributes(&node.attributes, visitor);
-    if let Some(ref returns) = node.returns {
-        accept_returns_declaration(returns, visitor);
-    }
     accept_function_body(&node.body, visitor);
+    accept_parameters(&node.parameters, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_parameters(returns, visitor);
+    }
     visitor.leave_fallback_function_definition(node);
 }
 
@@ -1526,9 +1500,9 @@ pub fn accept_receive_function_definition(
     if !visitor.enter_receive_function_definition(node) {
         return;
     }
-    accept_parameters_declaration(&node.parameters, visitor);
     accept_receive_function_attributes(&node.attributes, visitor);
     accept_function_body(&node.body, visitor);
+    accept_parameters(&node.parameters, visitor);
     visitor.leave_receive_function_definition(node);
 }
 
@@ -1536,11 +1510,11 @@ pub fn accept_modifier_definition(node: &ModifierDefinition, visitor: &mut impl 
     if !visitor.enter_modifier_definition(node) {
         return;
     }
-    if let Some(ref parameters) = node.parameters {
-        accept_parameters_declaration(parameters, visitor);
-    }
     accept_modifier_attributes(&node.attributes, visitor);
     accept_function_body(&node.body, visitor);
+    if let Some(ref parameters) = node.parameters {
+        accept_parameters(parameters, visitor);
+    }
     visitor.leave_modifier_definition(node);
 }
 
@@ -1635,10 +1609,10 @@ pub fn accept_function_type(node: &FunctionType, visitor: &mut impl Visitor) {
     if !visitor.enter_function_type(node) {
         return;
     }
-    accept_parameters_declaration(&node.parameters, visitor);
     accept_function_type_attributes(&node.attributes, visitor);
+    accept_parameters(&node.parameters, visitor);
     if let Some(ref returns) = node.returns {
-        accept_returns_declaration(returns, visitor);
+        accept_parameters(returns, visitor);
     }
     visitor.leave_function_type(node);
 }
@@ -1887,11 +1861,11 @@ pub fn accept_try_statement(node: &TryStatement, visitor: &mut impl Visitor) {
         return;
     }
     accept_expression(&node.expression, visitor);
-    if let Some(ref returns) = node.returns {
-        accept_returns_declaration(returns, visitor);
-    }
     accept_block(&node.body, visitor);
     accept_catch_clauses(&node.catch_clauses, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_parameters(returns, visitor);
+    }
     visitor.leave_try_statement(node);
 }
 
@@ -1910,7 +1884,7 @@ pub fn accept_catch_clause_error(node: &CatchClauseError, visitor: &mut impl Vis
     if !visitor.enter_catch_clause_error(node) {
         return;
     }
-    accept_parameters_declaration(&node.parameters, visitor);
+    accept_parameters(&node.parameters, visitor);
     visitor.leave_catch_clause_error(node);
 }
 
