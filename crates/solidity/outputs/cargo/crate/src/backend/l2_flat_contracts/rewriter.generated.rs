@@ -1438,43 +1438,19 @@ pub trait Rewriter {
         source: &YulFunctionDefinition,
     ) -> YulFunctionDefinition {
         let name = Rc::clone(&source.name);
-        let parameters = self.rewrite_yul_parameters_declaration(&source.parameters);
+        let body = self.rewrite_yul_block(&source.body);
+        let parameters = self.rewrite_yul_parameters(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_yul_returns_declaration(value));
-        let body = self.rewrite_yul_block(&source.body);
+            .map(|value| self.rewrite_yul_variable_names(value));
 
         Rc::new(YulFunctionDefinitionStruct {
             node_id: source.node_id,
             name,
+            body,
             parameters,
             returns,
-            body,
-        })
-    }
-
-    fn rewrite_yul_parameters_declaration(
-        &mut self,
-        source: &YulParametersDeclaration,
-    ) -> YulParametersDeclaration {
-        let parameters = self.rewrite_yul_parameters(&source.parameters);
-
-        Rc::new(YulParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
-
-    fn rewrite_yul_returns_declaration(
-        &mut self,
-        source: &YulReturnsDeclaration,
-    ) -> YulReturnsDeclaration {
-        let variables = self.rewrite_yul_variable_names(&source.variables);
-
-        Rc::new(YulReturnsDeclarationStruct {
-            node_id: source.node_id,
-            variables,
         })
     }
 

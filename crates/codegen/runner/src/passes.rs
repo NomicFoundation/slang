@@ -145,5 +145,21 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
         false,
     );
 
+    // Ditto for Yul parameters
+    l2_flat_contracts_model.remove_type("YulParametersDeclaration");
+    l2_flat_contracts_model.add_sequence_field(
+        "YulFunctionDefinition",
+        "parameters",
+        "YulParameters",
+        false,
+    );
+    l2_flat_contracts_model.remove_type("YulReturnsDeclaration");
+    l2_flat_contracts_model.add_sequence_field(
+        "YulFunctionDefinition",
+        "returns",
+        "YulVariableNames",
+        true,
+    );
+
     ModelWithTransformer::new(structured_ast_model, l2_flat_contracts_model)
 }
