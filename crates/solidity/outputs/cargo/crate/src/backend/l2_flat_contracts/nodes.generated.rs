@@ -273,9 +273,10 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
     pub node_id: NodeId,
-    pub name: FunctionName,
     pub attributes: FunctionAttributes,
-    pub body: FunctionBody,
+    pub kind: FunctionKind,
+    pub name: Option<Rc<TerminalNode>>,
+    pub body: Option<Block>,
     pub parameters: Parameters,
     pub returns: Option<Parameters>,
 }
@@ -304,58 +305,6 @@ pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
 pub struct OverridePathsDeclarationStruct {
     pub node_id: NodeId,
     pub paths: OverridePaths,
-}
-
-pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ConstructorDefinitionStruct {
-    pub node_id: NodeId,
-    pub attributes: ConstructorAttributes,
-    pub body: Block,
-    pub parameters: Parameters,
-}
-
-pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct UnnamedFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub attributes: UnnamedFunctionAttributes,
-    pub body: FunctionBody,
-    pub parameters: Parameters,
-}
-
-pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct FallbackFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub attributes: FallbackFunctionAttributes,
-    pub body: FunctionBody,
-    pub parameters: Parameters,
-    pub returns: Option<Parameters>,
-}
-
-pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ReceiveFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub attributes: ReceiveFunctionAttributes,
-    pub body: FunctionBody,
-    pub parameters: Parameters,
-}
-
-pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ModifierDefinitionStruct {
-    pub node_id: NodeId,
-    pub name: Rc<TerminalNode>,
-    pub attributes: ModifierAttributes,
-    pub body: FunctionBody,
-    pub parameters: Option<Parameters>,
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
@@ -1251,11 +1200,6 @@ pub enum ContractSpecifier {
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
-    ConstructorDefinition(ConstructorDefinition),
-    ReceiveFunctionDefinition(ReceiveFunctionDefinition),
-    FallbackFunctionDefinition(FallbackFunctionDefinition),
-    UnnamedFunctionDefinition(UnnamedFunctionDefinition),
-    ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
     EventDefinition(EventDefinition),
@@ -1276,13 +1220,6 @@ pub enum StateVariableAttribute {
 }
 
 #[derive(Debug)]
-pub enum FunctionName {
-    Identifier(Rc<TerminalNode>),
-    FallbackKeyword,
-    ReceiveKeyword,
-}
-
-#[derive(Debug)]
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -1294,61 +1231,6 @@ pub enum FunctionAttribute {
     PublicKeyword,
     PureKeyword,
     ViewKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum FunctionBody {
-    Block(Block),
-    Semicolon,
-}
-
-#[derive(Debug)]
-pub enum ConstructorAttribute {
-    ModifierInvocation(ModifierInvocation),
-    InternalKeyword,
-    OverrideKeyword,
-    PayableKeyword,
-    PublicKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum UnnamedFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    ConstantKeyword,
-    ExternalKeyword,
-    InternalKeyword,
-    PayableKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    PureKeyword,
-    ViewKeyword,
-}
-
-#[derive(Debug)]
-pub enum FallbackFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    OverrideSpecifier(OverrideSpecifier),
-    ExternalKeyword,
-    PayableKeyword,
-    PureKeyword,
-    ViewKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum ReceiveFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    OverrideSpecifier(OverrideSpecifier),
-    ExternalKeyword,
-    PayableKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum ModifierAttribute {
-    OverrideSpecifier(OverrideSpecifier),
     VirtualKeyword,
 }
 
@@ -1583,6 +1465,16 @@ pub enum YulLiteral {
     YulFalseKeyword,
 }
 
+#[derive(Debug)]
+pub enum FunctionKind {
+    Regular,
+    Constructor,
+    Unnamed,
+    Fallback,
+    Receive,
+    Modifier,
+}
+
 //
 // Repeated & Separated
 //
@@ -1618,16 +1510,6 @@ pub type Parameters = Vec<Parameter>;
 pub type FunctionAttributes = Vec<FunctionAttribute>;
 
 pub type OverridePaths = Vec<IdentifierPath>;
-
-pub type ConstructorAttributes = Vec<ConstructorAttribute>;
-
-pub type UnnamedFunctionAttributes = Vec<UnnamedFunctionAttribute>;
-
-pub type FallbackFunctionAttributes = Vec<FallbackFunctionAttribute>;
-
-pub type ReceiveFunctionAttributes = Vec<ReceiveFunctionAttribute>;
-
-pub type ModifierAttributes = Vec<ModifierAttribute>;
 
 pub type EventParameters = Vec<EventParameter>;
 

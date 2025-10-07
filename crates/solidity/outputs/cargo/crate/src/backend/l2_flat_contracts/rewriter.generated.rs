@@ -375,9 +375,10 @@ pub trait Rewriter {
     }
 
     fn rewrite_function_definition(&mut self, source: &FunctionDefinition) -> FunctionDefinition {
-        let name = self.rewrite_function_name(&source.name);
         let attributes = self.rewrite_function_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
+        let kind = self.rewrite_function_kind(&source.kind);
+        let name = source.name.as_ref().map(Rc::clone);
+        let body = source.body.as_ref().map(|value| self.rewrite_block(value));
         let parameters = self.rewrite_parameters(&source.parameters);
         let returns = source
             .returns
@@ -386,8 +387,9 @@ pub trait Rewriter {
 
         Rc::new(FunctionDefinitionStruct {
             node_id: source.node_id,
-            name,
             attributes,
+            kind,
+            name,
             body,
             parameters,
             returns,
@@ -431,93 +433,6 @@ pub trait Rewriter {
         Rc::new(OverridePathsDeclarationStruct {
             node_id: source.node_id,
             paths,
-        })
-    }
-
-    fn rewrite_constructor_definition(
-        &mut self,
-        source: &ConstructorDefinition,
-    ) -> ConstructorDefinition {
-        let attributes = self.rewrite_constructor_attributes(&source.attributes);
-        let body = self.rewrite_block(&source.body);
-        let parameters = self.rewrite_parameters(&source.parameters);
-
-        Rc::new(ConstructorDefinitionStruct {
-            node_id: source.node_id,
-            attributes,
-            body,
-            parameters,
-        })
-    }
-
-    fn rewrite_unnamed_function_definition(
-        &mut self,
-        source: &UnnamedFunctionDefinition,
-    ) -> UnnamedFunctionDefinition {
-        let attributes = self.rewrite_unnamed_function_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
-        let parameters = self.rewrite_parameters(&source.parameters);
-
-        Rc::new(UnnamedFunctionDefinitionStruct {
-            node_id: source.node_id,
-            attributes,
-            body,
-            parameters,
-        })
-    }
-
-    fn rewrite_fallback_function_definition(
-        &mut self,
-        source: &FallbackFunctionDefinition,
-    ) -> FallbackFunctionDefinition {
-        let attributes = self.rewrite_fallback_function_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
-        let parameters = self.rewrite_parameters(&source.parameters);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.rewrite_parameters(value));
-
-        Rc::new(FallbackFunctionDefinitionStruct {
-            node_id: source.node_id,
-            attributes,
-            body,
-            parameters,
-            returns,
-        })
-    }
-
-    fn rewrite_receive_function_definition(
-        &mut self,
-        source: &ReceiveFunctionDefinition,
-    ) -> ReceiveFunctionDefinition {
-        let attributes = self.rewrite_receive_function_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
-        let parameters = self.rewrite_parameters(&source.parameters);
-
-        Rc::new(ReceiveFunctionDefinitionStruct {
-            node_id: source.node_id,
-            attributes,
-            body,
-            parameters,
-        })
-    }
-
-    fn rewrite_modifier_definition(&mut self, source: &ModifierDefinition) -> ModifierDefinition {
-        let name = Rc::clone(&source.name);
-        let attributes = self.rewrite_modifier_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
-        let parameters = source
-            .parameters
-            .as_ref()
-            .map(|value| self.rewrite_parameters(value));
-
-        Rc::new(ModifierDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            attributes,
-            body,
-            parameters,
         })
     }
 
@@ -1894,31 +1809,6 @@ pub trait Rewriter {
                     self.rewrite_function_definition(function_definition),
                 )
             }
-            ContractMember::ConstructorDefinition(ref constructor_definition) => {
-                ContractMember::ConstructorDefinition(
-                    self.rewrite_constructor_definition(constructor_definition),
-                )
-            }
-            ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
-                ContractMember::ReceiveFunctionDefinition(
-                    self.rewrite_receive_function_definition(receive_function_definition),
-                )
-            }
-            ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
-                ContractMember::FallbackFunctionDefinition(
-                    self.rewrite_fallback_function_definition(fallback_function_definition),
-                )
-            }
-            ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
-                ContractMember::UnnamedFunctionDefinition(
-                    self.rewrite_unnamed_function_definition(unnamed_function_definition),
-                )
-            }
-            ContractMember::ModifierDefinition(ref modifier_definition) => {
-                ContractMember::ModifierDefinition(
-                    self.rewrite_modifier_definition(modifier_definition),
-                )
-            }
             ContractMember::StructDefinition(ref struct_definition) => {
                 ContractMember::StructDefinition(self.rewrite_struct_definition(struct_definition))
             }
@@ -1972,17 +1862,6 @@ pub trait Rewriter {
         self.default_rewrite_state_variable_attribute(source)
     }
 
-    fn default_rewrite_function_name(&mut self, source: &FunctionName) -> FunctionName {
-        match source {
-            FunctionName::Identifier(node) => FunctionName::Identifier(Rc::clone(node)),
-            FunctionName::FallbackKeyword => FunctionName::FallbackKeyword,
-            FunctionName::ReceiveKeyword => FunctionName::ReceiveKeyword,
-        }
-    }
-    fn rewrite_function_name(&mut self, source: &FunctionName) -> FunctionName {
-        self.default_rewrite_function_name(source)
-    }
-
     fn default_rewrite_function_attribute(
         &mut self,
         source: &FunctionAttribute,
@@ -2011,142 +1890,6 @@ pub trait Rewriter {
     }
     fn rewrite_function_attribute(&mut self, source: &FunctionAttribute) -> FunctionAttribute {
         self.default_rewrite_function_attribute(source)
-    }
-
-    fn default_rewrite_function_body(&mut self, source: &FunctionBody) -> FunctionBody {
-        match source {
-            FunctionBody::Block(ref block) => FunctionBody::Block(self.rewrite_block(block)),
-            FunctionBody::Semicolon => FunctionBody::Semicolon,
-        }
-    }
-    fn rewrite_function_body(&mut self, source: &FunctionBody) -> FunctionBody {
-        self.default_rewrite_function_body(source)
-    }
-
-    fn default_rewrite_constructor_attribute(
-        &mut self,
-        source: &ConstructorAttribute,
-    ) -> ConstructorAttribute {
-        match source {
-            ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
-                ConstructorAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            ConstructorAttribute::InternalKeyword => ConstructorAttribute::InternalKeyword,
-            ConstructorAttribute::OverrideKeyword => ConstructorAttribute::OverrideKeyword,
-            ConstructorAttribute::PayableKeyword => ConstructorAttribute::PayableKeyword,
-            ConstructorAttribute::PublicKeyword => ConstructorAttribute::PublicKeyword,
-            ConstructorAttribute::VirtualKeyword => ConstructorAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_constructor_attribute(
-        &mut self,
-        source: &ConstructorAttribute,
-    ) -> ConstructorAttribute {
-        self.default_rewrite_constructor_attribute(source)
-    }
-
-    fn default_rewrite_unnamed_function_attribute(
-        &mut self,
-        source: &UnnamedFunctionAttribute,
-    ) -> UnnamedFunctionAttribute {
-        match source {
-            UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                UnnamedFunctionAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            UnnamedFunctionAttribute::ConstantKeyword => UnnamedFunctionAttribute::ConstantKeyword,
-            UnnamedFunctionAttribute::ExternalKeyword => UnnamedFunctionAttribute::ExternalKeyword,
-            UnnamedFunctionAttribute::InternalKeyword => UnnamedFunctionAttribute::InternalKeyword,
-            UnnamedFunctionAttribute::PayableKeyword => UnnamedFunctionAttribute::PayableKeyword,
-            UnnamedFunctionAttribute::PrivateKeyword => UnnamedFunctionAttribute::PrivateKeyword,
-            UnnamedFunctionAttribute::PublicKeyword => UnnamedFunctionAttribute::PublicKeyword,
-            UnnamedFunctionAttribute::PureKeyword => UnnamedFunctionAttribute::PureKeyword,
-            UnnamedFunctionAttribute::ViewKeyword => UnnamedFunctionAttribute::ViewKeyword,
-        }
-    }
-    fn rewrite_unnamed_function_attribute(
-        &mut self,
-        source: &UnnamedFunctionAttribute,
-    ) -> UnnamedFunctionAttribute {
-        self.default_rewrite_unnamed_function_attribute(source)
-    }
-
-    fn default_rewrite_fallback_function_attribute(
-        &mut self,
-        source: &FallbackFunctionAttribute,
-    ) -> FallbackFunctionAttribute {
-        match source {
-            FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                FallbackFunctionAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                FallbackFunctionAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            FallbackFunctionAttribute::ExternalKeyword => {
-                FallbackFunctionAttribute::ExternalKeyword
-            }
-            FallbackFunctionAttribute::PayableKeyword => FallbackFunctionAttribute::PayableKeyword,
-            FallbackFunctionAttribute::PureKeyword => FallbackFunctionAttribute::PureKeyword,
-            FallbackFunctionAttribute::ViewKeyword => FallbackFunctionAttribute::ViewKeyword,
-            FallbackFunctionAttribute::VirtualKeyword => FallbackFunctionAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_fallback_function_attribute(
-        &mut self,
-        source: &FallbackFunctionAttribute,
-    ) -> FallbackFunctionAttribute {
-        self.default_rewrite_fallback_function_attribute(source)
-    }
-
-    fn default_rewrite_receive_function_attribute(
-        &mut self,
-        source: &ReceiveFunctionAttribute,
-    ) -> ReceiveFunctionAttribute {
-        match source {
-            ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                ReceiveFunctionAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                ReceiveFunctionAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            ReceiveFunctionAttribute::ExternalKeyword => ReceiveFunctionAttribute::ExternalKeyword,
-            ReceiveFunctionAttribute::PayableKeyword => ReceiveFunctionAttribute::PayableKeyword,
-            ReceiveFunctionAttribute::VirtualKeyword => ReceiveFunctionAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_receive_function_attribute(
-        &mut self,
-        source: &ReceiveFunctionAttribute,
-    ) -> ReceiveFunctionAttribute {
-        self.default_rewrite_receive_function_attribute(source)
-    }
-
-    fn default_rewrite_modifier_attribute(
-        &mut self,
-        source: &ModifierAttribute,
-    ) -> ModifierAttribute {
-        match source {
-            ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
-                ModifierAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            ModifierAttribute::VirtualKeyword => ModifierAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_modifier_attribute(&mut self, source: &ModifierAttribute) -> ModifierAttribute {
-        self.default_rewrite_modifier_attribute(source)
     }
 
     fn default_rewrite_type_name(&mut self, source: &TypeName) -> TypeName {
@@ -2791,6 +2534,20 @@ pub trait Rewriter {
         self.default_rewrite_yul_literal(source)
     }
 
+    fn default_rewrite_function_kind(&mut self, source: &FunctionKind) -> FunctionKind {
+        match source {
+            FunctionKind::Regular => FunctionKind::Regular,
+            FunctionKind::Constructor => FunctionKind::Constructor,
+            FunctionKind::Unnamed => FunctionKind::Unnamed,
+            FunctionKind::Fallback => FunctionKind::Fallback,
+            FunctionKind::Receive => FunctionKind::Receive,
+            FunctionKind::Modifier => FunctionKind::Modifier,
+        }
+    }
+    fn rewrite_function_kind(&mut self, source: &FunctionKind) -> FunctionKind {
+        self.default_rewrite_function_kind(source)
+    }
+
     //
     // Repeated & Separated
     //
@@ -2916,53 +2673,6 @@ pub trait Rewriter {
         source
             .iter()
             .map(|item| self.rewrite_identifier_path(item))
-            .collect()
-    }
-
-    fn rewrite_constructor_attributes(
-        &mut self,
-        source: &ConstructorAttributes,
-    ) -> ConstructorAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_constructor_attribute(item))
-            .collect()
-    }
-
-    fn rewrite_unnamed_function_attributes(
-        &mut self,
-        source: &UnnamedFunctionAttributes,
-    ) -> UnnamedFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_unnamed_function_attribute(item))
-            .collect()
-    }
-
-    fn rewrite_fallback_function_attributes(
-        &mut self,
-        source: &FallbackFunctionAttributes,
-    ) -> FallbackFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_fallback_function_attribute(item))
-            .collect()
-    }
-
-    fn rewrite_receive_function_attributes(
-        &mut self,
-        source: &ReceiveFunctionAttributes,
-    ) -> ReceiveFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_receive_function_attribute(item))
-            .collect()
-    }
-
-    fn rewrite_modifier_attributes(&mut self, source: &ModifierAttributes) -> ModifierAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_modifier_attribute(item))
             .collect()
     }
 

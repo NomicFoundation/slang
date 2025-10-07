@@ -59,6 +59,9 @@ impl Visitor for Pass {
     }
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
+        // TODO(validation): for modifier kind, they are not allowed inside
+        // interfaces since 0.8.8
+
         for attribute in &node.attributes {
             if let input_ir::FunctionAttribute::ModifierInvocation(modifier_invocation) = attribute
             {
@@ -71,93 +74,6 @@ impl Visitor for Pass {
     }
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
-        // TODO(validation): modifiers are not allowed inside interfaces since 0.8.8
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::ConstructorAttribute::ModifierInvocation(modifier_invocation) =
-                attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
-        }
-
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_fallback_function_definition(
-        &mut self,
-        node: &input_ir::FallbackFunctionDefinition,
-    ) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::FallbackFunctionAttribute::ModifierInvocation(modifier_invocation) =
-                attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
-        }
-
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_receive_function_definition(
-        &mut self,
-        node: &input_ir::ReceiveFunctionDefinition,
-    ) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::ReceiveFunctionAttribute::ModifierInvocation(modifier_invocation) =
-                attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
-        }
-
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_unnamed_function_definition(
-        &mut self,
-        node: &input_ir::UnnamedFunctionDefinition,
-    ) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::UnnamedFunctionAttribute::ModifierInvocation(modifier_invocation) =
-                attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
-        }
-
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
         self.leave_scope_for_node_id(node.node_id);
     }
 

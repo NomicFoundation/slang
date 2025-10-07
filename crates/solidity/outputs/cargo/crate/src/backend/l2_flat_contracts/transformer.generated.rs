@@ -437,31 +437,6 @@ pub trait Transformer {
         })
     }
 
-    fn transform_constructor_definition(
-        &mut self,
-        source: &input::ConstructorDefinition,
-    ) -> output::ConstructorDefinition;
-
-    fn transform_unnamed_function_definition(
-        &mut self,
-        source: &input::UnnamedFunctionDefinition,
-    ) -> output::UnnamedFunctionDefinition;
-
-    fn transform_fallback_function_definition(
-        &mut self,
-        source: &input::FallbackFunctionDefinition,
-    ) -> output::FallbackFunctionDefinition;
-
-    fn transform_receive_function_definition(
-        &mut self,
-        source: &input::ReceiveFunctionDefinition,
-    ) -> output::ReceiveFunctionDefinition;
-
-    fn transform_modifier_definition(
-        &mut self,
-        source: &input::ModifierDefinition,
-    ) -> output::ModifierDefinition;
-
     fn transform_modifier_invocation(
         &mut self,
         source: &input::ModifierInvocation,
@@ -1967,31 +1942,6 @@ pub trait Transformer {
                     self.transform_function_definition(function_definition),
                 )
             }
-            input::ContractMember::ConstructorDefinition(ref constructor_definition) => {
-                output::ContractMember::ConstructorDefinition(
-                    self.transform_constructor_definition(constructor_definition),
-                )
-            }
-            input::ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
-                output::ContractMember::ReceiveFunctionDefinition(
-                    self.transform_receive_function_definition(receive_function_definition),
-                )
-            }
-            input::ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
-                output::ContractMember::FallbackFunctionDefinition(
-                    self.transform_fallback_function_definition(fallback_function_definition),
-                )
-            }
-            input::ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
-                output::ContractMember::UnnamedFunctionDefinition(
-                    self.transform_unnamed_function_definition(unnamed_function_definition),
-                )
-            }
-            input::ContractMember::ModifierDefinition(ref modifier_definition) => {
-                output::ContractMember::ModifierDefinition(
-                    self.transform_modifier_definition(modifier_definition),
-                )
-            }
             input::ContractMember::StructDefinition(ref struct_definition) => {
                 output::ContractMember::StructDefinition(
                     self.transform_struct_definition(struct_definition),
@@ -2024,6 +1974,7 @@ pub trait Transformer {
                     self.transform_state_variable_definition(state_variable_definition),
                 )
             }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_contract_member(
@@ -2071,23 +2022,6 @@ pub trait Transformer {
         self.default_transform_state_variable_attribute(source)
     }
 
-    fn default_transform_function_name(
-        &mut self,
-        source: &input::FunctionName,
-    ) -> output::FunctionName {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::FunctionName::Identifier(node) => {
-                output::FunctionName::Identifier(Rc::clone(node))
-            }
-            input::FunctionName::FallbackKeyword => output::FunctionName::FallbackKeyword,
-            input::FunctionName::ReceiveKeyword => output::FunctionName::ReceiveKeyword,
-        }
-    }
-    fn transform_function_name(&mut self, source: &input::FunctionName) -> output::FunctionName {
-        self.default_transform_function_name(source)
-    }
-
     fn default_transform_function_attribute(
         &mut self,
         source: &input::FunctionAttribute,
@@ -2120,196 +2054,6 @@ pub trait Transformer {
         source: &input::FunctionAttribute,
     ) -> output::FunctionAttribute {
         self.default_transform_function_attribute(source)
-    }
-
-    fn default_transform_function_body(
-        &mut self,
-        source: &input::FunctionBody,
-    ) -> output::FunctionBody {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::FunctionBody::Block(ref block) => {
-                output::FunctionBody::Block(self.transform_block(block))
-            }
-            input::FunctionBody::Semicolon => output::FunctionBody::Semicolon,
-        }
-    }
-    fn transform_function_body(&mut self, source: &input::FunctionBody) -> output::FunctionBody {
-        self.default_transform_function_body(source)
-    }
-
-    fn default_transform_constructor_attribute(
-        &mut self,
-        source: &input::ConstructorAttribute,
-    ) -> output::ConstructorAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::ConstructorAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::ConstructorAttribute::InternalKeyword => {
-                output::ConstructorAttribute::InternalKeyword
-            }
-            input::ConstructorAttribute::OverrideKeyword => {
-                output::ConstructorAttribute::OverrideKeyword
-            }
-            input::ConstructorAttribute::PayableKeyword => {
-                output::ConstructorAttribute::PayableKeyword
-            }
-            input::ConstructorAttribute::PublicKeyword => {
-                output::ConstructorAttribute::PublicKeyword
-            }
-            input::ConstructorAttribute::VirtualKeyword => {
-                output::ConstructorAttribute::VirtualKeyword
-            }
-        }
-    }
-    fn transform_constructor_attribute(
-        &mut self,
-        source: &input::ConstructorAttribute,
-    ) -> output::ConstructorAttribute {
-        self.default_transform_constructor_attribute(source)
-    }
-
-    fn default_transform_unnamed_function_attribute(
-        &mut self,
-        source: &input::UnnamedFunctionAttribute,
-    ) -> output::UnnamedFunctionAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::UnnamedFunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::UnnamedFunctionAttribute::ConstantKeyword => {
-                output::UnnamedFunctionAttribute::ConstantKeyword
-            }
-            input::UnnamedFunctionAttribute::ExternalKeyword => {
-                output::UnnamedFunctionAttribute::ExternalKeyword
-            }
-            input::UnnamedFunctionAttribute::InternalKeyword => {
-                output::UnnamedFunctionAttribute::InternalKeyword
-            }
-            input::UnnamedFunctionAttribute::PayableKeyword => {
-                output::UnnamedFunctionAttribute::PayableKeyword
-            }
-            input::UnnamedFunctionAttribute::PrivateKeyword => {
-                output::UnnamedFunctionAttribute::PrivateKeyword
-            }
-            input::UnnamedFunctionAttribute::PublicKeyword => {
-                output::UnnamedFunctionAttribute::PublicKeyword
-            }
-            input::UnnamedFunctionAttribute::PureKeyword => {
-                output::UnnamedFunctionAttribute::PureKeyword
-            }
-            input::UnnamedFunctionAttribute::ViewKeyword => {
-                output::UnnamedFunctionAttribute::ViewKeyword
-            }
-        }
-    }
-    fn transform_unnamed_function_attribute(
-        &mut self,
-        source: &input::UnnamedFunctionAttribute,
-    ) -> output::UnnamedFunctionAttribute {
-        self.default_transform_unnamed_function_attribute(source)
-    }
-
-    fn default_transform_fallback_function_attribute(
-        &mut self,
-        source: &input::FallbackFunctionAttribute,
-    ) -> output::FallbackFunctionAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::FallbackFunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::FallbackFunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::FallbackFunctionAttribute::ExternalKeyword => {
-                output::FallbackFunctionAttribute::ExternalKeyword
-            }
-            input::FallbackFunctionAttribute::PayableKeyword => {
-                output::FallbackFunctionAttribute::PayableKeyword
-            }
-            input::FallbackFunctionAttribute::PureKeyword => {
-                output::FallbackFunctionAttribute::PureKeyword
-            }
-            input::FallbackFunctionAttribute::ViewKeyword => {
-                output::FallbackFunctionAttribute::ViewKeyword
-            }
-            input::FallbackFunctionAttribute::VirtualKeyword => {
-                output::FallbackFunctionAttribute::VirtualKeyword
-            }
-        }
-    }
-    fn transform_fallback_function_attribute(
-        &mut self,
-        source: &input::FallbackFunctionAttribute,
-    ) -> output::FallbackFunctionAttribute {
-        self.default_transform_fallback_function_attribute(source)
-    }
-
-    fn default_transform_receive_function_attribute(
-        &mut self,
-        source: &input::ReceiveFunctionAttribute,
-    ) -> output::ReceiveFunctionAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::ReceiveFunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::ReceiveFunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::ReceiveFunctionAttribute::ExternalKeyword => {
-                output::ReceiveFunctionAttribute::ExternalKeyword
-            }
-            input::ReceiveFunctionAttribute::PayableKeyword => {
-                output::ReceiveFunctionAttribute::PayableKeyword
-            }
-            input::ReceiveFunctionAttribute::VirtualKeyword => {
-                output::ReceiveFunctionAttribute::VirtualKeyword
-            }
-        }
-    }
-    fn transform_receive_function_attribute(
-        &mut self,
-        source: &input::ReceiveFunctionAttribute,
-    ) -> output::ReceiveFunctionAttribute {
-        self.default_transform_receive_function_attribute(source)
-    }
-
-    fn default_transform_modifier_attribute(
-        &mut self,
-        source: &input::ModifierAttribute,
-    ) -> output::ModifierAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::ModifierAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::ModifierAttribute::VirtualKeyword => output::ModifierAttribute::VirtualKeyword,
-        }
-    }
-    fn transform_modifier_attribute(
-        &mut self,
-        source: &input::ModifierAttribute,
-    ) -> output::ModifierAttribute {
-        self.default_transform_modifier_attribute(source)
     }
 
     fn default_transform_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
@@ -3239,56 +2983,6 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_identifier_path(item))
-            .collect()
-    }
-
-    fn transform_constructor_attributes(
-        &mut self,
-        source: &input::ConstructorAttributes,
-    ) -> output::ConstructorAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_constructor_attribute(item))
-            .collect()
-    }
-
-    fn transform_unnamed_function_attributes(
-        &mut self,
-        source: &input::UnnamedFunctionAttributes,
-    ) -> output::UnnamedFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_unnamed_function_attribute(item))
-            .collect()
-    }
-
-    fn transform_fallback_function_attributes(
-        &mut self,
-        source: &input::FallbackFunctionAttributes,
-    ) -> output::FallbackFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_fallback_function_attribute(item))
-            .collect()
-    }
-
-    fn transform_receive_function_attributes(
-        &mut self,
-        source: &input::ReceiveFunctionAttributes,
-    ) -> output::ReceiveFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_receive_function_attribute(item))
-            .collect()
-    }
-
-    fn transform_modifier_attributes(
-        &mut self,
-        source: &input::ModifierAttributes,
-    ) -> output::ModifierAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_modifier_attribute(item))
             .collect()
     }
 
