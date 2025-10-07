@@ -177,7 +177,7 @@ impl Pass {
     // definitions for named ones and return the constructed parameters scope ID
     // to link with the enclosing function definition
     fn collect_parameters(&mut self, parameters: &input_ir::ParametersDeclaration) -> ScopeId {
-        let mut scope = ParametersScope::new(parameters.node_id);
+        let mut scope = ParametersScope::new();
         for parameter in &parameters.parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
             if let Some(name) = &parameter.name {
@@ -193,7 +193,7 @@ impl Pass {
         &mut self,
         parameters: &input_ir::ErrorParametersDeclaration,
     ) -> ScopeId {
-        let mut scope = ParametersScope::new(parameters.node_id);
+        let mut scope = ParametersScope::new();
         for parameter in &parameters.parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
             if let Some(name) = &parameter.name {
@@ -209,7 +209,7 @@ impl Pass {
         &mut self,
         parameters: &input_ir::EventParametersDeclaration,
     ) -> ScopeId {
-        let mut scope = ParametersScope::new(parameters.node_id);
+        let mut scope = ParametersScope::new();
         for parameter in &parameters.parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
             if let Some(name) = &parameter.name {
