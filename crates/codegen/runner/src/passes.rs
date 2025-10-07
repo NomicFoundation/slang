@@ -85,5 +85,65 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
         true,
     );
 
+    // Remove extra holder nodes for parameters and returns declarations,
+    // flattenning all the function declarations
+    l2_flat_contracts_model.remove_type("ParametersDeclaration");
+    l2_flat_contracts_model.remove_type("ReturnsDeclaration");
+
+    l2_flat_contracts_model.add_sequence_field(
+        "FunctionDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    l2_flat_contracts_model.add_sequence_field("FunctionDefinition", "returns", "Parameters", true);
+    l2_flat_contracts_model.add_sequence_field("FunctionType", "parameters", "Parameters", false);
+    l2_flat_contracts_model.add_sequence_field("FunctionType", "returns", "Parameters", true);
+
+    l2_flat_contracts_model.add_sequence_field(
+        "ConstructorDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    l2_flat_contracts_model.add_sequence_field(
+        "UnnamedFunctionDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    l2_flat_contracts_model.add_sequence_field(
+        "FallbackFunctionDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    l2_flat_contracts_model.add_sequence_field(
+        "FallbackFunctionDefinition",
+        "returns",
+        "Parameters",
+        true,
+    );
+    l2_flat_contracts_model.add_sequence_field(
+        "ReceiveFunctionDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    l2_flat_contracts_model.add_sequence_field(
+        "ModifierDefinition",
+        "parameters",
+        "Parameters",
+        true,
+    );
+
+    l2_flat_contracts_model.add_sequence_field("TryStatement", "returns", "Parameters", true);
+    l2_flat_contracts_model.add_sequence_field(
+        "CatchClauseError",
+        "parameters",
+        "Parameters",
+        false,
+    );
+
     ModelWithTransformer::new(structured_ast_model, l2_flat_contracts_model)
 }

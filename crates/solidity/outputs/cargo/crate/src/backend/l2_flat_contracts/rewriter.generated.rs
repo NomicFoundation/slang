@@ -376,33 +376,21 @@ pub trait Rewriter {
 
     fn rewrite_function_definition(&mut self, source: &FunctionDefinition) -> FunctionDefinition {
         let name = self.rewrite_function_name(&source.name);
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
         let attributes = self.rewrite_function_attributes(&source.attributes);
+        let body = self.rewrite_function_body(&source.body);
+        let parameters = self.rewrite_parameters(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_returns_declaration(value));
-        let body = self.rewrite_function_body(&source.body);
+            .map(|value| self.rewrite_parameters(value));
 
         Rc::new(FunctionDefinitionStruct {
             node_id: source.node_id,
             name,
-            parameters,
             attributes,
-            returns,
             body,
-        })
-    }
-
-    fn rewrite_parameters_declaration(
-        &mut self,
-        source: &ParametersDeclaration,
-    ) -> ParametersDeclaration {
-        let parameters = self.rewrite_parameters(&source.parameters);
-
-        Rc::new(ParametersDeclarationStruct {
-            node_id: source.node_id,
             parameters,
+            returns,
         })
     }
 
@@ -446,28 +434,19 @@ pub trait Rewriter {
         })
     }
 
-    fn rewrite_returns_declaration(&mut self, source: &ReturnsDeclaration) -> ReturnsDeclaration {
-        let variables = self.rewrite_parameters_declaration(&source.variables);
-
-        Rc::new(ReturnsDeclarationStruct {
-            node_id: source.node_id,
-            variables,
-        })
-    }
-
     fn rewrite_constructor_definition(
         &mut self,
         source: &ConstructorDefinition,
     ) -> ConstructorDefinition {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
         let attributes = self.rewrite_constructor_attributes(&source.attributes);
         let body = self.rewrite_block(&source.body);
+        let parameters = self.rewrite_parameters(&source.parameters);
 
         Rc::new(ConstructorDefinitionStruct {
             node_id: source.node_id,
-            parameters,
             attributes,
             body,
+            parameters,
         })
     }
 
@@ -475,15 +454,15 @@ pub trait Rewriter {
         &mut self,
         source: &UnnamedFunctionDefinition,
     ) -> UnnamedFunctionDefinition {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
         let attributes = self.rewrite_unnamed_function_attributes(&source.attributes);
         let body = self.rewrite_function_body(&source.body);
+        let parameters = self.rewrite_parameters(&source.parameters);
 
         Rc::new(UnnamedFunctionDefinitionStruct {
             node_id: source.node_id,
-            parameters,
             attributes,
             body,
+            parameters,
         })
     }
 
@@ -491,20 +470,20 @@ pub trait Rewriter {
         &mut self,
         source: &FallbackFunctionDefinition,
     ) -> FallbackFunctionDefinition {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
         let attributes = self.rewrite_fallback_function_attributes(&source.attributes);
+        let body = self.rewrite_function_body(&source.body);
+        let parameters = self.rewrite_parameters(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_returns_declaration(value));
-        let body = self.rewrite_function_body(&source.body);
+            .map(|value| self.rewrite_parameters(value));
 
         Rc::new(FallbackFunctionDefinitionStruct {
             node_id: source.node_id,
-            parameters,
             attributes,
-            returns,
             body,
+            parameters,
+            returns,
         })
     }
 
@@ -512,33 +491,33 @@ pub trait Rewriter {
         &mut self,
         source: &ReceiveFunctionDefinition,
     ) -> ReceiveFunctionDefinition {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
         let attributes = self.rewrite_receive_function_attributes(&source.attributes);
         let body = self.rewrite_function_body(&source.body);
+        let parameters = self.rewrite_parameters(&source.parameters);
 
         Rc::new(ReceiveFunctionDefinitionStruct {
             node_id: source.node_id,
-            parameters,
             attributes,
             body,
+            parameters,
         })
     }
 
     fn rewrite_modifier_definition(&mut self, source: &ModifierDefinition) -> ModifierDefinition {
         let name = Rc::clone(&source.name);
+        let attributes = self.rewrite_modifier_attributes(&source.attributes);
+        let body = self.rewrite_function_body(&source.body);
         let parameters = source
             .parameters
             .as_ref()
-            .map(|value| self.rewrite_parameters_declaration(value));
-        let attributes = self.rewrite_modifier_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
+            .map(|value| self.rewrite_parameters(value));
 
         Rc::new(ModifierDefinitionStruct {
             node_id: source.node_id,
             name,
-            parameters,
             attributes,
             body,
+            parameters,
         })
     }
 
@@ -657,17 +636,17 @@ pub trait Rewriter {
     }
 
     fn rewrite_function_type(&mut self, source: &FunctionType) -> FunctionType {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
         let attributes = self.rewrite_function_type_attributes(&source.attributes);
+        let parameters = self.rewrite_parameters(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_returns_declaration(value));
+            .map(|value| self.rewrite_parameters(value));
 
         Rc::new(FunctionTypeStruct {
             node_id: source.node_id,
-            parameters,
             attributes,
+            parameters,
             returns,
         })
     }
@@ -974,19 +953,19 @@ pub trait Rewriter {
 
     fn rewrite_try_statement(&mut self, source: &TryStatement) -> TryStatement {
         let expression = self.rewrite_expression(&source.expression);
+        let body = self.rewrite_block(&source.body);
+        let catch_clauses = self.rewrite_catch_clauses(&source.catch_clauses);
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_returns_declaration(value));
-        let body = self.rewrite_block(&source.body);
-        let catch_clauses = self.rewrite_catch_clauses(&source.catch_clauses);
+            .map(|value| self.rewrite_parameters(value));
 
         Rc::new(TryStatementStruct {
             node_id: source.node_id,
             expression,
-            returns,
             body,
             catch_clauses,
+            returns,
         })
     }
 
@@ -1006,7 +985,7 @@ pub trait Rewriter {
 
     fn rewrite_catch_clause_error(&mut self, source: &CatchClauseError) -> CatchClauseError {
         let name = source.name.as_ref().map(Rc::clone);
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
+        let parameters = self.rewrite_parameters(&source.parameters);
 
         Rc::new(CatchClauseErrorStruct {
             node_id: source.node_id,
