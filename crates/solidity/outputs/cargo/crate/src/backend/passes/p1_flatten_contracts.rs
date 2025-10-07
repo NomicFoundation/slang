@@ -229,4 +229,25 @@ impl Transformer for Pass {
             parameters,
         })
     }
+
+    fn transform_yul_function_definition(
+        &mut self,
+        source: &input::YulFunctionDefinition,
+    ) -> output::YulFunctionDefinition {
+        let node_id = source.node_id;
+        let name = Rc::clone(&source.name);
+        let body = self.transform_yul_block(&source.body);
+        let parameters = self.transform_yul_parameters(&source.parameters.parameters);
+        let returns = source
+            .returns
+            .as_ref()
+            .map(|returns| self.transform_yul_variable_names(&returns.variables));
+        Rc::new(output::YulFunctionDefinitionStruct {
+            node_id,
+            name,
+            body,
+            parameters,
+            returns,
+        })
+    }
 }

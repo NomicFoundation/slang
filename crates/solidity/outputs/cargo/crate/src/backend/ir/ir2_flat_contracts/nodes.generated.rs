@@ -998,25 +998,9 @@ pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 pub struct YulFunctionDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: YulParametersDeclaration,
-    pub returns: Option<YulReturnsDeclaration>,
     pub body: YulBlock,
-}
-
-pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct YulParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: YulParameters,
-}
-
-pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct YulReturnsDeclarationStruct {
-    pub node_id: NodeId,
-    pub variables: YulVariableNames,
+    pub returns: Option<YulVariableNames>,
 }
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;

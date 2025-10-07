@@ -789,12 +789,12 @@ impl Visitor for Pass {
         let scope = Scope::new_yul_function(node.node_id, self.current_scope_id());
         let scope_id = self.enter_scope(scope);
 
-        for parameter in &node.parameters.parameters {
+        for parameter in &node.parameters {
             let definition = Definition::new_yul_parameter(parameter.id(), parameter);
             self.binder.insert_definition_in_scope(definition, scope_id);
         }
         if let Some(returns) = &node.returns {
-            for parameter in &returns.variables {
+            for parameter in returns {
                 let definition = Definition::new_yul_variable(parameter.id(), parameter);
                 self.binder.insert_definition_in_scope(definition, scope_id);
             }

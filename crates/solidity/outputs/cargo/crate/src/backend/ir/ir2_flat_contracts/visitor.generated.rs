@@ -573,16 +573,6 @@ pub trait Visitor {
     }
     fn leave_yul_function_definition(&mut self, _node: &YulFunctionDefinition) {}
 
-    fn enter_yul_parameters_declaration(&mut self, _node: &YulParametersDeclaration) -> bool {
-        true
-    }
-    fn leave_yul_parameters_declaration(&mut self, _node: &YulParametersDeclaration) {}
-
-    fn enter_yul_returns_declaration(&mut self, _node: &YulReturnsDeclaration) -> bool {
-        true
-    }
-    fn leave_yul_returns_declaration(&mut self, _node: &YulReturnsDeclaration) {}
-
     fn enter_yul_variable_declaration_statement(
         &mut self,
         _node: &YulVariableDeclarationStatement,
@@ -2213,31 +2203,12 @@ pub fn accept_yul_function_definition(node: &YulFunctionDefinition, visitor: &mu
     if !visitor.enter_yul_function_definition(node) {
         return;
     }
-    accept_yul_parameters_declaration(&node.parameters, visitor);
-    if let Some(ref returns) = node.returns {
-        accept_yul_returns_declaration(returns, visitor);
-    }
     accept_yul_block(&node.body, visitor);
-    visitor.leave_yul_function_definition(node);
-}
-
-pub fn accept_yul_parameters_declaration(
-    node: &YulParametersDeclaration,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_yul_parameters_declaration(node) {
-        return;
-    }
     accept_yul_parameters(&node.parameters, visitor);
-    visitor.leave_yul_parameters_declaration(node);
-}
-
-pub fn accept_yul_returns_declaration(node: &YulReturnsDeclaration, visitor: &mut impl Visitor) {
-    if !visitor.enter_yul_returns_declaration(node) {
-        return;
+    if let Some(ref returns) = node.returns {
+        accept_yul_variable_names(returns, visitor);
     }
-    accept_yul_variable_names(&node.variables, visitor);
-    visitor.leave_yul_returns_declaration(node);
+    visitor.leave_yul_function_definition(node);
 }
 
 pub fn accept_yul_variable_declaration_statement(

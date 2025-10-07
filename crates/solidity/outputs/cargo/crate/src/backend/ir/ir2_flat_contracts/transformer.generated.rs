@@ -1422,47 +1422,7 @@ pub trait Transformer {
     fn transform_yul_function_definition(
         &mut self,
         source: &input::YulFunctionDefinition,
-    ) -> output::YulFunctionDefinition {
-        let name = Rc::clone(&source.name);
-        let parameters = self.transform_yul_parameters_declaration(&source.parameters);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_yul_returns_declaration(value));
-        let body = self.transform_yul_block(&source.body);
-
-        Rc::new(output::YulFunctionDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            returns,
-            body,
-        })
-    }
-
-    fn transform_yul_parameters_declaration(
-        &mut self,
-        source: &input::YulParametersDeclaration,
-    ) -> output::YulParametersDeclaration {
-        let parameters = self.transform_yul_parameters(&source.parameters);
-
-        Rc::new(output::YulParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
-
-    fn transform_yul_returns_declaration(
-        &mut self,
-        source: &input::YulReturnsDeclaration,
-    ) -> output::YulReturnsDeclaration {
-        let variables = self.transform_yul_variable_names(&source.variables);
-
-        Rc::new(output::YulReturnsDeclarationStruct {
-            node_id: source.node_id,
-            variables,
-        })
-    }
+    ) -> output::YulFunctionDefinition;
 
     fn transform_yul_variable_declaration_statement(
         &mut self,
