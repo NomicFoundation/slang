@@ -175,31 +175,6 @@ pub trait Visitor {
     }
     fn leave_override_paths_declaration(&mut self, _node: &OverridePathsDeclaration) {}
 
-    fn enter_constructor_definition(&mut self, _node: &ConstructorDefinition) -> bool {
-        true
-    }
-    fn leave_constructor_definition(&mut self, _node: &ConstructorDefinition) {}
-
-    fn enter_unnamed_function_definition(&mut self, _node: &UnnamedFunctionDefinition) -> bool {
-        true
-    }
-    fn leave_unnamed_function_definition(&mut self, _node: &UnnamedFunctionDefinition) {}
-
-    fn enter_fallback_function_definition(&mut self, _node: &FallbackFunctionDefinition) -> bool {
-        true
-    }
-    fn leave_fallback_function_definition(&mut self, _node: &FallbackFunctionDefinition) {}
-
-    fn enter_receive_function_definition(&mut self, _node: &ReceiveFunctionDefinition) -> bool {
-        true
-    }
-    fn leave_receive_function_definition(&mut self, _node: &ReceiveFunctionDefinition) {}
-
-    fn enter_modifier_definition(&mut self, _node: &ModifierDefinition) -> bool {
-        true
-    }
-    fn leave_modifier_definition(&mut self, _node: &ModifierDefinition) {}
-
     fn enter_modifier_invocation(&mut self, _node: &ModifierInvocation) -> bool {
         true
     }
@@ -739,45 +714,10 @@ pub trait Visitor {
     }
     fn leave_state_variable_attribute(&mut self, _node: &StateVariableAttribute) {}
 
-    fn enter_function_name(&mut self, _node: &FunctionName) -> bool {
-        true
-    }
-    fn leave_function_name(&mut self, _node: &FunctionName) {}
-
     fn enter_function_attribute(&mut self, _node: &FunctionAttribute) -> bool {
         true
     }
     fn leave_function_attribute(&mut self, _node: &FunctionAttribute) {}
-
-    fn enter_function_body(&mut self, _node: &FunctionBody) -> bool {
-        true
-    }
-    fn leave_function_body(&mut self, _node: &FunctionBody) {}
-
-    fn enter_constructor_attribute(&mut self, _node: &ConstructorAttribute) -> bool {
-        true
-    }
-    fn leave_constructor_attribute(&mut self, _node: &ConstructorAttribute) {}
-
-    fn enter_unnamed_function_attribute(&mut self, _node: &UnnamedFunctionAttribute) -> bool {
-        true
-    }
-    fn leave_unnamed_function_attribute(&mut self, _node: &UnnamedFunctionAttribute) {}
-
-    fn enter_fallback_function_attribute(&mut self, _node: &FallbackFunctionAttribute) -> bool {
-        true
-    }
-    fn leave_fallback_function_attribute(&mut self, _node: &FallbackFunctionAttribute) {}
-
-    fn enter_receive_function_attribute(&mut self, _node: &ReceiveFunctionAttribute) -> bool {
-        true
-    }
-    fn leave_receive_function_attribute(&mut self, _node: &ReceiveFunctionAttribute) {}
-
-    fn enter_modifier_attribute(&mut self, _node: &ModifierAttribute) -> bool {
-        true
-    }
-    fn leave_modifier_attribute(&mut self, _node: &ModifierAttribute) {}
 
     fn enter_type_name(&mut self, _node: &TypeName) -> bool {
         true
@@ -894,6 +834,11 @@ pub trait Visitor {
     }
     fn leave_yul_literal(&mut self, _node: &YulLiteral) {}
 
+    fn enter_function_kind(&mut self, _node: &FunctionKind) -> bool {
+        true
+    }
+    fn leave_function_kind(&mut self, _node: &FunctionKind) {}
+
     fn enter_source_unit_members(&mut self, _items: &SourceUnitMembers) -> bool {
         true
     }
@@ -976,31 +921,6 @@ pub trait Visitor {
         true
     }
     fn leave_override_paths(&mut self, _items: &OverridePaths) {}
-
-    fn enter_constructor_attributes(&mut self, _items: &ConstructorAttributes) -> bool {
-        true
-    }
-    fn leave_constructor_attributes(&mut self, _items: &ConstructorAttributes) {}
-
-    fn enter_unnamed_function_attributes(&mut self, _items: &UnnamedFunctionAttributes) -> bool {
-        true
-    }
-    fn leave_unnamed_function_attributes(&mut self, _items: &UnnamedFunctionAttributes) {}
-
-    fn enter_fallback_function_attributes(&mut self, _items: &FallbackFunctionAttributes) -> bool {
-        true
-    }
-    fn leave_fallback_function_attributes(&mut self, _items: &FallbackFunctionAttributes) {}
-
-    fn enter_receive_function_attributes(&mut self, _items: &ReceiveFunctionAttributes) -> bool {
-        true
-    }
-    fn leave_receive_function_attributes(&mut self, _items: &ReceiveFunctionAttributes) {}
-
-    fn enter_modifier_attributes(&mut self, _items: &ModifierAttributes) -> bool {
-        true
-    }
-    fn leave_modifier_attributes(&mut self, _items: &ModifierAttributes) {}
 
     fn enter_event_parameters(&mut self, _items: &EventParameters) -> bool {
         true
@@ -1402,9 +1322,11 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
     if !visitor.enter_function_definition(node) {
         return;
     }
-    accept_function_name(&node.name, visitor);
     accept_function_attributes(&node.attributes, visitor);
-    accept_function_body(&node.body, visitor);
+    accept_function_kind(&node.kind, visitor);
+    if let Some(ref body) = node.body {
+        accept_block(body, visitor);
+    }
     accept_parameters(&node.parameters, visitor);
     if let Some(ref returns) = node.returns {
         accept_parameters(returns, visitor);
@@ -1442,70 +1364,6 @@ pub fn accept_override_paths_declaration(
     }
     accept_override_paths(&node.paths, visitor);
     visitor.leave_override_paths_declaration(node);
-}
-
-pub fn accept_constructor_definition(node: &ConstructorDefinition, visitor: &mut impl Visitor) {
-    if !visitor.enter_constructor_definition(node) {
-        return;
-    }
-    accept_constructor_attributes(&node.attributes, visitor);
-    accept_block(&node.body, visitor);
-    accept_parameters(&node.parameters, visitor);
-    visitor.leave_constructor_definition(node);
-}
-
-pub fn accept_unnamed_function_definition(
-    node: &UnnamedFunctionDefinition,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_unnamed_function_definition(node) {
-        return;
-    }
-    accept_unnamed_function_attributes(&node.attributes, visitor);
-    accept_function_body(&node.body, visitor);
-    accept_parameters(&node.parameters, visitor);
-    visitor.leave_unnamed_function_definition(node);
-}
-
-pub fn accept_fallback_function_definition(
-    node: &FallbackFunctionDefinition,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_fallback_function_definition(node) {
-        return;
-    }
-    accept_fallback_function_attributes(&node.attributes, visitor);
-    accept_function_body(&node.body, visitor);
-    accept_parameters(&node.parameters, visitor);
-    if let Some(ref returns) = node.returns {
-        accept_parameters(returns, visitor);
-    }
-    visitor.leave_fallback_function_definition(node);
-}
-
-pub fn accept_receive_function_definition(
-    node: &ReceiveFunctionDefinition,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_receive_function_definition(node) {
-        return;
-    }
-    accept_receive_function_attributes(&node.attributes, visitor);
-    accept_function_body(&node.body, visitor);
-    accept_parameters(&node.parameters, visitor);
-    visitor.leave_receive_function_definition(node);
-}
-
-pub fn accept_modifier_definition(node: &ModifierDefinition, visitor: &mut impl Visitor) {
-    if !visitor.enter_modifier_definition(node) {
-        return;
-    }
-    accept_modifier_attributes(&node.attributes, visitor);
-    accept_function_body(&node.body, visitor);
-    if let Some(ref parameters) = node.parameters {
-        accept_parameters(parameters, visitor);
-    }
-    visitor.leave_modifier_definition(node);
 }
 
 pub fn accept_modifier_invocation(node: &ModifierInvocation, visitor: &mut impl Visitor) {
@@ -2553,21 +2411,6 @@ pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor)
         ContractMember::FunctionDefinition(ref function_definition) => {
             accept_function_definition(function_definition, visitor);
         }
-        ContractMember::ConstructorDefinition(ref constructor_definition) => {
-            accept_constructor_definition(constructor_definition, visitor);
-        }
-        ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
-            accept_receive_function_definition(receive_function_definition, visitor);
-        }
-        ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
-            accept_fallback_function_definition(fallback_function_definition, visitor);
-        }
-        ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
-            accept_unnamed_function_definition(unnamed_function_definition, visitor);
-        }
-        ContractMember::ModifierDefinition(ref modifier_definition) => {
-            accept_modifier_definition(modifier_definition, visitor);
-        }
         ContractMember::StructDefinition(ref struct_definition) => {
             accept_struct_definition(struct_definition, visitor);
         }
@@ -2608,8 +2451,6 @@ pub fn accept_state_variable_attribute(node: &StateVariableAttribute, visitor: &
     visitor.leave_state_variable_attribute(node);
 }
 
-pub fn accept_function_name(_node: &FunctionName, _visitor: &mut impl Visitor) {}
-
 pub fn accept_function_attribute(node: &FunctionAttribute, visitor: &mut impl Visitor) {
     if !visitor.enter_function_attribute(node) {
         return;
@@ -2632,116 +2473,6 @@ pub fn accept_function_attribute(node: &FunctionAttribute, visitor: &mut impl Vi
         | FunctionAttribute::VirtualKeyword => {}
     }
     visitor.leave_function_attribute(node);
-}
-
-pub fn accept_function_body(node: &FunctionBody, visitor: &mut impl Visitor) {
-    if !visitor.enter_function_body(node) {
-        return;
-    }
-    match node {
-        FunctionBody::Block(ref block) => {
-            accept_block(block, visitor);
-        }
-        FunctionBody::Semicolon => {}
-    }
-    visitor.leave_function_body(node);
-}
-
-pub fn accept_constructor_attribute(node: &ConstructorAttribute, visitor: &mut impl Visitor) {
-    if !visitor.enter_constructor_attribute(node) {
-        return;
-    }
-    match node {
-        ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
-        }
-        ConstructorAttribute::InternalKeyword
-        | ConstructorAttribute::OverrideKeyword
-        | ConstructorAttribute::PayableKeyword
-        | ConstructorAttribute::PublicKeyword
-        | ConstructorAttribute::VirtualKeyword => {}
-    }
-    visitor.leave_constructor_attribute(node);
-}
-
-pub fn accept_unnamed_function_attribute(
-    node: &UnnamedFunctionAttribute,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_unnamed_function_attribute(node) {
-        return;
-    }
-    match node {
-        UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
-        }
-        UnnamedFunctionAttribute::ConstantKeyword
-        | UnnamedFunctionAttribute::ExternalKeyword
-        | UnnamedFunctionAttribute::InternalKeyword
-        | UnnamedFunctionAttribute::PayableKeyword
-        | UnnamedFunctionAttribute::PrivateKeyword
-        | UnnamedFunctionAttribute::PublicKeyword
-        | UnnamedFunctionAttribute::PureKeyword
-        | UnnamedFunctionAttribute::ViewKeyword => {}
-    }
-    visitor.leave_unnamed_function_attribute(node);
-}
-
-pub fn accept_fallback_function_attribute(
-    node: &FallbackFunctionAttribute,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_fallback_function_attribute(node) {
-        return;
-    }
-    match node {
-        FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
-        }
-        FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
-        }
-        FallbackFunctionAttribute::ExternalKeyword
-        | FallbackFunctionAttribute::PayableKeyword
-        | FallbackFunctionAttribute::PureKeyword
-        | FallbackFunctionAttribute::ViewKeyword
-        | FallbackFunctionAttribute::VirtualKeyword => {}
-    }
-    visitor.leave_fallback_function_attribute(node);
-}
-
-pub fn accept_receive_function_attribute(
-    node: &ReceiveFunctionAttribute,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_receive_function_attribute(node) {
-        return;
-    }
-    match node {
-        ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
-        }
-        ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
-        }
-        ReceiveFunctionAttribute::ExternalKeyword
-        | ReceiveFunctionAttribute::PayableKeyword
-        | ReceiveFunctionAttribute::VirtualKeyword => {}
-    }
-    visitor.leave_receive_function_attribute(node);
-}
-
-pub fn accept_modifier_attribute(node: &ModifierAttribute, visitor: &mut impl Visitor) {
-    if !visitor.enter_modifier_attribute(node) {
-        return;
-    }
-    match node {
-        ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
-        }
-        ModifierAttribute::VirtualKeyword => {}
-    }
-    visitor.leave_modifier_attribute(node);
 }
 
 pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
@@ -3209,6 +2940,8 @@ pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
     visitor.leave_yul_literal(node);
 }
 
+pub fn accept_function_kind(_node: &FunctionKind, _visitor: &mut impl Visitor) {}
+
 //
 // Repeated & Separated
 //
@@ -3388,70 +3121,6 @@ fn accept_override_paths(items: &Vec<IdentifierPath>, visitor: &mut impl Visitor
         accept_identifier_path(item, visitor);
     }
     visitor.leave_override_paths(items);
-}
-
-#[inline]
-fn accept_constructor_attributes(items: &Vec<ConstructorAttribute>, visitor: &mut impl Visitor) {
-    if !visitor.enter_constructor_attributes(items) {
-        return;
-    }
-    for item in items {
-        accept_constructor_attribute(item, visitor);
-    }
-    visitor.leave_constructor_attributes(items);
-}
-
-#[inline]
-fn accept_unnamed_function_attributes(
-    items: &Vec<UnnamedFunctionAttribute>,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_unnamed_function_attributes(items) {
-        return;
-    }
-    for item in items {
-        accept_unnamed_function_attribute(item, visitor);
-    }
-    visitor.leave_unnamed_function_attributes(items);
-}
-
-#[inline]
-fn accept_fallback_function_attributes(
-    items: &Vec<FallbackFunctionAttribute>,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_fallback_function_attributes(items) {
-        return;
-    }
-    for item in items {
-        accept_fallback_function_attribute(item, visitor);
-    }
-    visitor.leave_fallback_function_attributes(items);
-}
-
-#[inline]
-fn accept_receive_function_attributes(
-    items: &Vec<ReceiveFunctionAttribute>,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_receive_function_attributes(items) {
-        return;
-    }
-    for item in items {
-        accept_receive_function_attribute(item, visitor);
-    }
-    visitor.leave_receive_function_attributes(items);
-}
-
-#[inline]
-fn accept_modifier_attributes(items: &Vec<ModifierAttribute>, visitor: &mut impl Visitor) {
-    if !visitor.enter_modifier_attributes(items) {
-        return;
-    }
-    for item in items {
-        accept_modifier_attribute(item, visitor);
-    }
-    visitor.leave_modifier_attributes(items);
 }
 
 #[inline]

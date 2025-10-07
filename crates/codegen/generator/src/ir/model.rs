@@ -78,6 +78,25 @@ impl IrModel {
 
 // Mutation methods
 impl IrModel {
+    pub fn add_choice_type(&mut self, name: &str) {
+        self.choices.insert(
+            name.into(),
+            Choice {
+                nonterminal_types: Vec::new(),
+                non_unique_terminal_types: Vec::new(),
+                unique_terminal_types: Vec::new(),
+            },
+        );
+    }
+
+    pub fn add_choice_unique_terminal(&mut self, choice_id: &str, unique_terminal: &str) {
+        let identifier: model::Identifier = choice_id.into();
+        let Some(choice) = self.choices.get_mut(&identifier) else {
+            panic!("Choice {choice_id} not found in IR model");
+        };
+        choice.unique_terminal_types.push(unique_terminal.into());
+    }
+
     pub fn remove_type(&mut self, name: &str) {
         let identifier: model::Identifier = name.into();
         let removed = self.sequences.shift_remove(&identifier).is_some()

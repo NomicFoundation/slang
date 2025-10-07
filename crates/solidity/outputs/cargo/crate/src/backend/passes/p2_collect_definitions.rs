@@ -353,182 +353,112 @@ impl Visitor for Pass {
     }
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
-        let parameters_scope_id = self.collect_parameters(&node.parameters);
+        match node.kind {
+            input_ir::FunctionKind::Regular
+            | input_ir::FunctionKind::Constructor
+            | input_ir::FunctionKind::Fallback
+            | input_ir::FunctionKind::Receive
+            | input_ir::FunctionKind::Unnamed => {
+                let parameters_scope_id = self.collect_parameters(&node.parameters);
 
-        if let input_ir::FunctionName::Identifier(name) = &node.name {
-            // TODO(validation): only a single visibility keyword can be provided
-            // TODO(validation): free functions are always internal, but
-            // otherwise a visibility *must* be set explicitly (>= 0.5.0)
-            let visibility = node
-                .attributes
-                .iter()
-                .fold(None, |previous, attribute| match attribute {
-                    input_ir::FunctionAttribute::ExternalKeyword => {
-                        Some(FunctionVisibility::External)
+                if let Some(name) = &node.name {
+                    // TODO(validation): only a single visibility keyword can be provided
+                    // TODO(validation): free functions are always internal, but
+                    // otherwise a visibility *must* be set explicitly (>= 0.5.0)
+                    let visibility = node
+                        .attributes
+                        .iter()
+                        .fold(None, |previous, attribute| match attribute {
+                            input_ir::FunctionAttribute::ExternalKeyword => {
+                                Some(FunctionVisibility::External)
+                            }
+                            input_ir::FunctionAttribute::InternalKeyword => {
+                                Some(FunctionVisibility::Internal)
+                            }
+                            input_ir::FunctionAttribute::PrivateKeyword => {
+                                Some(FunctionVisibility::Private)
+                            }
+                            input_ir::FunctionAttribute::PublicKeyword => {
+                                Some(FunctionVisibility::Public)
+                            }
+                            _ => previous,
+                        })
+                        .unwrap_or(if self.language_version < VERSION_0_5_0 {
+                            // in Solidity < 0.5.0 free functions are not valid and the
+                            // default visibility for contract functions is public
+                            FunctionVisibility::Public
+                        } else {
+                            FunctionVisibility::Internal
+                        });
+                    let definition = Definition::new_function(
+                        node.node_id,
+                        name,
+                        parameters_scope_id,
+                        visibility,
+                    );
+
+                    let current_scope_node_id = self.current_scope().node_id();
+                    let enclosing_definition =
+                        self.binder.find_definition_by_id(current_scope_node_id);
+                    let enclosing_contract_name =
+                        if let Some(Definition::Contract(contract_definition)) =
+                            enclosing_definition
+                        {
+                            Some(contract_definition.identifier.unparse())
+                        } else {
+                            None
+                        };
+
+                    if enclosing_contract_name
+                        .is_some_and(|contract_name| contract_name == name.unparse())
+                    {
+                        // TODO(validation): for Solidity >= 0.5.0 there cannot be a
+                        // function with the same name as the enclosing contract. In any
+                        // case, if the names match we don't register the definition in
+                        // the current scope.
+                        self.binder.insert_definition_no_scope(definition);
+
+                        // For Solidity < 0.5.0, a function with the same name as the
+                        // enclosing contract is a constructor, and we need to register the
+                        // constructor parameters scope.
+                        if self.language_version < VERSION_0_5_0 {
+                            self.register_constructor_parameters(parameters_scope_id);
+                        }
+                    } else {
+                        self.insert_definition_in_current_scope(definition);
                     }
-                    input_ir::FunctionAttribute::InternalKeyword => {
-                        Some(FunctionVisibility::Internal)
-                    }
-                    input_ir::FunctionAttribute::PrivateKeyword => {
-                        Some(FunctionVisibility::Private)
-                    }
-                    input_ir::FunctionAttribute::PublicKeyword => Some(FunctionVisibility::Public),
-                    _ => previous,
-                })
-                .unwrap_or(if self.language_version < VERSION_0_5_0 {
-                    // in Solidity < 0.5.0 free functions are not valid and the
-                    // default visibility for contract functions is public
-                    FunctionVisibility::Public
-                } else {
-                    FunctionVisibility::Internal
-                });
-            let definition =
-                Definition::new_function(node.node_id, name, parameters_scope_id, visibility);
-
-            let current_scope_node_id = self.current_scope().node_id();
-            let enclosing_definition = self.binder.find_definition_by_id(current_scope_node_id);
-            let enclosing_contract_name =
-                if let Some(Definition::Contract(contract_definition)) = enclosing_definition {
-                    Some(contract_definition.identifier.unparse())
-                } else {
-                    None
-                };
-
-            if enclosing_contract_name.is_some_and(|contract_name| contract_name == name.unparse())
-            {
-                // TODO(validation): for Solidity >= 0.5.0 there cannot be a
-                // function with the same name as the enclosing contract. In any
-                // case, if the names match we don't register the definition in
-                // the current scope.
-                self.binder.insert_definition_no_scope(definition);
-
-                // For Solidity < 0.5.0, a function with the same name as the
-                // enclosing contract is a constructor, and we need to register the
-                // constructor parameters scope.
-                if self.language_version < VERSION_0_5_0 {
+                } else if matches!(node.kind, input_ir::FunctionKind::Constructor) {
+                    // Register the constructor to resolve named parameters when
+                    // constructing this contract
                     self.register_constructor_parameters(parameters_scope_id);
                 }
-            } else {
+
+                let function_scope =
+                    Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
+                let function_scope_id = self.enter_scope(function_scope);
+
+                if let Some(returns) = &node.returns {
+                    self.collect_named_parameters_into_scope(returns, function_scope_id);
+                }
+            }
+
+            input_ir::FunctionKind::Modifier => {
+                let Some(name) = &node.name else {
+                    unreachable!("expected a name for the modifier");
+                };
+
+                let definition = Definition::new_modifier(node.node_id, name);
                 self.insert_definition_in_current_scope(definition);
+
+                let modifier_scope = Scope::new_modifier(node.node_id, self.current_scope_id());
+                let modifier_scope_id = self.enter_scope(modifier_scope);
+                self.collect_named_parameters_into_scope(&node.parameters, modifier_scope_id);
             }
         }
-
-        let function_scope =
-            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
-        let function_scope_id = self.enter_scope(function_scope);
-
-        if let Some(returns_declaration) = &node.returns {
-            self.collect_named_parameters_into_scope(returns_declaration, function_scope_id);
-        }
-
         true
     }
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
-        let definition = Definition::new_modifier(node.node_id, &node.name);
-        self.insert_definition_in_current_scope(definition);
-
-        let modifier_scope = Scope::new_modifier(node.node_id, self.current_scope_id());
-        let modifier_scope_id = self.enter_scope(modifier_scope);
-        if let Some(parameters) = &node.parameters {
-            self.collect_named_parameters_into_scope(parameters, modifier_scope_id);
-        }
-
-        true
-    }
-
-    fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) -> bool {
-        let parameters_scope_id = self.collect_parameters(&node.parameters);
-
-        // Register the constructor to resolve named parameters when
-        // constructing this contract
-        self.register_constructor_parameters(parameters_scope_id);
-
-        let function_scope =
-            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
-        self.enter_scope(function_scope);
-
-        true
-    }
-
-    fn leave_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_fallback_function_definition(
-        &mut self,
-        node: &input_ir::FallbackFunctionDefinition,
-    ) -> bool {
-        // TODO: we don't need a separate scope for the parameters here since
-        // the fallback function cannot be invoked with named arguments. Then
-        // again, the function scope requires a parameters scope. Maybe make
-        // that optional?
-        let parameters_scope_id = self.collect_parameters(&node.parameters);
-
-        let function_scope =
-            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
-        let function_scope_id = self.enter_scope(function_scope);
-
-        if let Some(returns_declaration) = &node.returns {
-            self.collect_named_parameters_into_scope(returns_declaration, function_scope_id);
-        }
-
-        true
-    }
-
-    fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_receive_function_definition(
-        &mut self,
-        node: &input_ir::ReceiveFunctionDefinition,
-    ) -> bool {
-        // TODO: we don't need a separate scope for the parameters here since
-        // the receive function cannot be invoked with named arguments. Then
-        // again, the function scope requires a parameters scope. Maybe make
-        // that optional?
-        // TODO: a receive function does not accept parameters. Should we update
-        // the language definition?
-        let parameters_scope_id = self.collect_parameters(&node.parameters);
-
-        let function_scope =
-            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
-        self.enter_scope(function_scope);
-
-        true
-    }
-
-    fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_unnamed_function_definition(
-        &mut self,
-        node: &input_ir::UnnamedFunctionDefinition,
-    ) -> bool {
-        // TODO: we don't need a separate scope for the parameters here since
-        // the unnamed function cannot be invoked with named arguments. Then
-        // again, the function scope requires a parameters scope. Maybe make
-        // that optional?
-        let parameters_scope_id = self.collect_parameters(&node.parameters);
-
-        let function_scope =
-            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
-        self.enter_scope(function_scope);
-
-        true
-    }
-
-    fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
         self.leave_scope_for_node_id(node.node_id);
     }
 

@@ -134,71 +134,34 @@ impl Visitor for Pass {
         let type_id = self.type_of_function_definition(node, self.current_receiver_type);
         self.binder.set_node_type(node.node_id, type_id);
 
-        // fill-in parameter types in parameters scope
-        let parameter_types: Vec<_> = node
-            .parameters
-            .iter()
-            .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
-            .collect();
+        if !matches!(node.kind, input_ir::FunctionKind::Modifier) && node.name.is_some() {
+            // for non-modifier *named* functions, fill-in parameter types in
+            // parameters scope for overload disambiguation in p5
+            let parameter_types: Vec<_> = node
+                .parameters
+                .iter()
+                .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
+                .collect();
 
-        let Some(parameters_scope_id) = self
-            .binder
-            .get_parameters_scope_for_definition(node.node_id)
-        else {
-            unreachable!("FunctionDefinition does not have associated parameters scope");
-        };
-        let Scope::Parameters(ref mut parameters_scope) =
-            self.binder.get_scope_mut(parameters_scope_id)
-        else {
-            unreachable!("scope is not a ParametersScope");
-        };
-        parameters_scope.set_parameter_types(&parameter_types);
+            let Some(parameters_scope_id) = self
+                .binder
+                .get_parameters_scope_for_definition(node.node_id)
+            else {
+                unreachable!("FunctionDefinition does not have associated parameters scope");
+            };
+            let Scope::Parameters(ref mut parameters_scope) =
+                self.binder.get_scope_mut(parameters_scope_id)
+            else {
+                unreachable!("scope is not a ParametersScope");
+            };
+            parameters_scope.set_parameter_types(&parameter_types);
+        }
     }
 
     fn leave_function_type(&mut self, node: &input_ir::FunctionType) {
         self.visit_parameters(&node.parameters, None);
         if let Some(returns) = &node.returns {
             self.visit_parameters(returns, None);
-        }
-    }
-
-    fn leave_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) {
-        let default_location = if self.language_version < VERSION_0_5_0 {
-            Some(DataLocation::Calldata)
-        } else {
-            None
-        };
-        self.visit_parameters(&node.parameters, default_location);
-    }
-
-    fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
-        let default_location = if self.language_version < VERSION_0_5_0 {
-            Some(DataLocation::Calldata)
-        } else {
-            None
-        };
-        self.visit_parameters(&node.parameters, default_location);
-    }
-
-    fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
-        self.visit_parameters(&node.parameters, None);
-        if let Some(returns) = &node.returns {
-            self.visit_parameters(returns, None);
-        }
-    }
-
-    fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
-        self.visit_parameters(&node.parameters, None);
-    }
-
-    fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
-        if let Some(parameters) = &node.parameters {
-            let default_location = if self.language_version < VERSION_0_5_0 {
-                Some(DataLocation::Memory)
-            } else {
-                None
-            };
-            self.visit_parameters(parameters, default_location);
         }
     }
 

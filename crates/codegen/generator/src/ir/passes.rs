@@ -81,6 +81,49 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
         true,
     );
 
+    // Unifiy function definition types
+    ir2_flat_contracts_model.add_choice_type("FunctionKind");
+    ir2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Regular");
+    ir2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Constructor");
+    ir2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Unnamed");
+    ir2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Fallback");
+    ir2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Receive");
+    ir2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Modifier");
+
+    // Add the kind to the FunctionDefinition type, which will now hold all kinds
+    ir2_flat_contracts_model.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
+
+    // And remove other specific function types and related attributes
+    ir2_flat_contracts_model.remove_type("ConstructorDefinition");
+    ir2_flat_contracts_model.remove_type("ConstructorAttributes");
+    ir2_flat_contracts_model.remove_type("ConstructorAttribute");
+
+    ir2_flat_contracts_model.remove_type("UnnamedFunctionDefinition");
+    ir2_flat_contracts_model.remove_type("UnnamedFunctionAttributes");
+    ir2_flat_contracts_model.remove_type("UnnamedFunctionAttribute");
+
+    ir2_flat_contracts_model.remove_type("FallbackFunctionDefinition");
+    ir2_flat_contracts_model.remove_type("FallbackFunctionAttributes");
+    ir2_flat_contracts_model.remove_type("FallbackFunctionAttribute");
+
+    ir2_flat_contracts_model.remove_type("ReceiveFunctionDefinition");
+    ir2_flat_contracts_model.remove_type("ReceiveFunctionAttributes");
+    ir2_flat_contracts_model.remove_type("ReceiveFunctionAttribute");
+
+    ir2_flat_contracts_model.remove_type("ModifierDefinition");
+    ir2_flat_contracts_model.remove_type("ModifierAttributes");
+    ir2_flat_contracts_model.remove_type("ModifierAttribute");
+
+    // This also requires modifying the name and body fields
+    ir2_flat_contracts_model.remove_sequence_field("FunctionDefinition", "name");
+    ir2_flat_contracts_model.add_sequence_field("FunctionDefinition", "name", "Identifier", true);
+    ir2_flat_contracts_model.remove_sequence_field("FunctionDefinition", "body");
+    ir2_flat_contracts_model.add_sequence_field("FunctionDefinition", "body", "Block", true);
+
+    // We don't need FunctionName or FunctionBody anymore
+    ir2_flat_contracts_model.remove_type("FunctionName");
+    ir2_flat_contracts_model.remove_type("FunctionBody");
+
     // Remove extra holder nodes for parameters and returns declarations,
     // flattenning all the function declarations
     ir2_flat_contracts_model.remove_type("ParametersDeclaration");
@@ -96,43 +139,7 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     ir2_flat_contracts_model.add_sequence_field("FunctionType", "parameters", "Parameters", false);
     ir2_flat_contracts_model.add_sequence_field("FunctionType", "returns", "Parameters", true);
 
-    ir2_flat_contracts_model.add_sequence_field(
-        "ConstructorDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    ir2_flat_contracts_model.add_sequence_field(
-        "UnnamedFunctionDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    ir2_flat_contracts_model.add_sequence_field(
-        "FallbackFunctionDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    ir2_flat_contracts_model.add_sequence_field(
-        "FallbackFunctionDefinition",
-        "returns",
-        "Parameters",
-        true,
-    );
-    ir2_flat_contracts_model.add_sequence_field(
-        "ReceiveFunctionDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    ir2_flat_contracts_model.add_sequence_field(
-        "ModifierDefinition",
-        "parameters",
-        "Parameters",
-        true,
-    );
-
+    // We need to patch up try/catch which use parameters type
     ir2_flat_contracts_model.add_sequence_field("TryStatement", "returns", "Parameters", true);
     ir2_flat_contracts_model.add_sequence_field(
         "CatchClauseError",
