@@ -81,5 +81,65 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
         true,
     );
 
+    // Remove extra holder nodes for parameters and returns declarations,
+    // flattenning all the function declarations
+    ir2_flat_contracts_model.remove_type("ParametersDeclaration");
+    ir2_flat_contracts_model.remove_type("ReturnsDeclaration");
+
+    ir2_flat_contracts_model.add_sequence_field(
+        "FunctionDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    ir2_flat_contracts_model.add_sequence_field("FunctionDefinition", "returns", "Parameters", true);
+    ir2_flat_contracts_model.add_sequence_field("FunctionType", "parameters", "Parameters", false);
+    ir2_flat_contracts_model.add_sequence_field("FunctionType", "returns", "Parameters", true);
+
+    ir2_flat_contracts_model.add_sequence_field(
+        "ConstructorDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    ir2_flat_contracts_model.add_sequence_field(
+        "UnnamedFunctionDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    ir2_flat_contracts_model.add_sequence_field(
+        "FallbackFunctionDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    ir2_flat_contracts_model.add_sequence_field(
+        "FallbackFunctionDefinition",
+        "returns",
+        "Parameters",
+        true,
+    );
+    ir2_flat_contracts_model.add_sequence_field(
+        "ReceiveFunctionDefinition",
+        "parameters",
+        "Parameters",
+        false,
+    );
+    ir2_flat_contracts_model.add_sequence_field(
+        "ModifierDefinition",
+        "parameters",
+        "Parameters",
+        true,
+    );
+
+    ir2_flat_contracts_model.add_sequence_field("TryStatement", "returns", "Parameters", true);
+    ir2_flat_contracts_model.add_sequence_field(
+        "CatchClauseError",
+        "parameters",
+        "Parameters",
+        false,
+    );
+
     ModelWithTransformer::new(structured_ast_model, ir2_flat_contracts_model)
 }

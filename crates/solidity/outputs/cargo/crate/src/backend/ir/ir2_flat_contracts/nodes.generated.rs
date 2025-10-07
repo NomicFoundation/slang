@@ -274,18 +274,10 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 pub struct FunctionDefinitionStruct {
     pub node_id: NodeId,
     pub name: FunctionName,
-    pub parameters: ParametersDeclaration,
     pub attributes: FunctionAttributes,
-    pub returns: Option<ReturnsDeclaration>,
     pub body: FunctionBody,
-}
-
-pub type ParametersDeclaration = Rc<ParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: Parameters,
+    pub returns: Option<Parameters>,
 }
 
 pub type Parameter = Rc<ParameterStruct>;
@@ -314,22 +306,14 @@ pub struct OverridePathsDeclarationStruct {
     pub paths: OverridePaths,
 }
 
-pub type ReturnsDeclaration = Rc<ReturnsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ReturnsDeclarationStruct {
-    pub node_id: NodeId,
-    pub variables: ParametersDeclaration,
-}
-
 pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ConstructorDefinitionStruct {
     pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
     pub attributes: ConstructorAttributes,
     pub body: Block,
+    pub parameters: Parameters,
 }
 
 pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
@@ -337,9 +321,9 @@ pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
 #[derive(Debug)]
 pub struct UnnamedFunctionDefinitionStruct {
     pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
     pub attributes: UnnamedFunctionAttributes,
     pub body: FunctionBody,
+    pub parameters: Parameters,
 }
 
 pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
@@ -347,10 +331,10 @@ pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
 #[derive(Debug)]
 pub struct FallbackFunctionDefinitionStruct {
     pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
     pub attributes: FallbackFunctionAttributes,
-    pub returns: Option<ReturnsDeclaration>,
     pub body: FunctionBody,
+    pub parameters: Parameters,
+    pub returns: Option<Parameters>,
 }
 
 pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
@@ -358,9 +342,9 @@ pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
 #[derive(Debug)]
 pub struct ReceiveFunctionDefinitionStruct {
     pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
     pub attributes: ReceiveFunctionAttributes,
     pub body: FunctionBody,
+    pub parameters: Parameters,
 }
 
 pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
@@ -369,9 +353,9 @@ pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
 pub struct ModifierDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: Option<ParametersDeclaration>,
     pub attributes: ModifierAttributes,
     pub body: FunctionBody,
+    pub parameters: Option<Parameters>,
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
@@ -460,9 +444,9 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
     pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
     pub attributes: FunctionTypeAttributes,
-    pub returns: Option<ReturnsDeclaration>,
+    pub parameters: Parameters,
+    pub returns: Option<Parameters>,
 }
 
 pub type MappingType = Rc<MappingTypeStruct>;
@@ -682,9 +666,9 @@ pub type TryStatement = Rc<TryStatementStruct>;
 pub struct TryStatementStruct {
     pub node_id: NodeId,
     pub expression: Expression,
-    pub returns: Option<ReturnsDeclaration>,
     pub body: Block,
     pub catch_clauses: CatchClauses,
+    pub returns: Option<Parameters>,
 }
 
 pub type CatchClause = Rc<CatchClauseStruct>;
@@ -702,7 +686,7 @@ pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 pub struct CatchClauseErrorStruct {
     pub node_id: NodeId,
     pub name: Option<Rc<TerminalNode>>,
-    pub parameters: ParametersDeclaration,
+    pub parameters: Parameters,
 }
 
 pub type RevertStatement = Rc<RevertStatementStruct>;

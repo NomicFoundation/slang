@@ -176,9 +176,9 @@ impl Pass {
     // Collects *all* the sequential parameters making and registering
     // definitions for named ones and return the constructed parameters scope ID
     // to link with the enclosing function definition
-    fn collect_parameters(&mut self, parameters: &input_ir::ParametersDeclaration) -> ScopeId {
+    fn collect_parameters(&mut self, parameters: &input_ir::Parameters) -> ScopeId {
         let mut scope = ParametersScope::new();
-        for parameter in &parameters.parameters {
+        for parameter in parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_parameter(parameter.node_id, name);
@@ -418,10 +418,7 @@ impl Visitor for Pass {
         let function_scope_id = self.enter_scope(function_scope);
 
         if let Some(returns_declaration) = &node.returns {
-            self.collect_named_parameters_into_scope(
-                &returns_declaration.variables.parameters,
-                function_scope_id,
-            );
+            self.collect_named_parameters_into_scope(returns_declaration, function_scope_id);
         }
 
         true
@@ -438,7 +435,7 @@ impl Visitor for Pass {
         let modifier_scope = Scope::new_modifier(node.node_id, self.current_scope_id());
         let modifier_scope_id = self.enter_scope(modifier_scope);
         if let Some(parameters) = &node.parameters {
-            self.collect_named_parameters_into_scope(&parameters.parameters, modifier_scope_id);
+            self.collect_named_parameters_into_scope(parameters, modifier_scope_id);
         }
 
         true
@@ -481,10 +478,7 @@ impl Visitor for Pass {
         let function_scope_id = self.enter_scope(function_scope);
 
         if let Some(returns_declaration) = &node.returns {
-            self.collect_named_parameters_into_scope(
-                &returns_declaration.variables.parameters,
-                function_scope_id,
-            );
+            self.collect_named_parameters_into_scope(returns_declaration, function_scope_id);
         }
 
         true
@@ -732,7 +726,7 @@ impl Visitor for Pass {
             // declaration of the try statement and make them available in the
             // body block.
             let body_scope_id = self.binder.scope_id_for_node_id(node.body.node_id).unwrap();
-            self.collect_named_parameters_into_scope(&returns.variables.parameters, body_scope_id);
+            self.collect_named_parameters_into_scope(returns, body_scope_id);
         }
     }
 
@@ -741,7 +735,7 @@ impl Visitor for Pass {
             // For Solidity >= 0.5.0, collect the parameters in the catch
             // declaration and make them available in the body block.
             let body_scope_id = self.binder.scope_id_for_node_id(node.body.node_id).unwrap();
-            self.collect_named_parameters_into_scope(&error.parameters.parameters, body_scope_id);
+            self.collect_named_parameters_into_scope(&error.parameters, body_scope_id);
         }
     }
 
@@ -759,14 +753,14 @@ impl Visitor for Pass {
     }
 
     fn enter_function_type(&mut self, node: &input_ir::FunctionType) -> bool {
-        for parameter in &node.parameters.parameters {
+        for parameter in &node.parameters {
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_type_parameter(parameter.node_id, name);
                 self.binder.insert_definition_no_scope(definition);
             }
         }
         if let Some(returns) = &node.returns {
-            for parameter in &returns.variables.parameters {
+            for parameter in returns {
                 if let Some(name) = &parameter.name {
                     let definition = Definition::new_type_parameter(parameter.node_id, name);
                     self.binder.insert_definition_no_scope(definition);

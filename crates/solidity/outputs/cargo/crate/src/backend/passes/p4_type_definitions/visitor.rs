@@ -125,9 +125,9 @@ impl Visitor for Pass {
         };
 
         // type parameters and return variables
-        self.visit_parameters(&node.parameters.parameters, default_location);
+        self.visit_parameters(&node.parameters, default_location);
         if let Some(returns) = &node.returns {
-            self.visit_parameters(&returns.variables.parameters, default_location);
+            self.visit_parameters(returns, default_location);
         }
 
         // now we can compute the function type
@@ -136,7 +136,6 @@ impl Visitor for Pass {
 
         // fill-in parameter types in parameters scope
         let parameter_types: Vec<_> = node
-            .parameters
             .parameters
             .iter()
             .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
@@ -157,9 +156,9 @@ impl Visitor for Pass {
     }
 
     fn leave_function_type(&mut self, node: &input_ir::FunctionType) {
-        self.visit_parameters(&node.parameters.parameters, None);
+        self.visit_parameters(&node.parameters, None);
         if let Some(returns) = &node.returns {
-            self.visit_parameters(&returns.variables.parameters, None);
+            self.visit_parameters(returns, None);
         }
     }
 
@@ -169,7 +168,7 @@ impl Visitor for Pass {
         } else {
             None
         };
-        self.visit_parameters(&node.parameters.parameters, default_location);
+        self.visit_parameters(&node.parameters, default_location);
     }
 
     fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
@@ -178,18 +177,18 @@ impl Visitor for Pass {
         } else {
             None
         };
-        self.visit_parameters(&node.parameters.parameters, default_location);
+        self.visit_parameters(&node.parameters, default_location);
     }
 
     fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
-        self.visit_parameters(&node.parameters.parameters, None);
+        self.visit_parameters(&node.parameters, None);
         if let Some(returns) = &node.returns {
-            self.visit_parameters(&returns.variables.parameters, None);
+            self.visit_parameters(returns, None);
         }
     }
 
     fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
-        self.visit_parameters(&node.parameters.parameters, None);
+        self.visit_parameters(&node.parameters, None);
     }
 
     fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
@@ -199,18 +198,18 @@ impl Visitor for Pass {
             } else {
                 None
             };
-            self.visit_parameters(&parameters.parameters, default_location);
+            self.visit_parameters(parameters, default_location);
         }
     }
 
     fn leave_try_statement(&mut self, node: &input_ir::TryStatement) {
         if let Some(returns) = &node.returns {
-            self.visit_parameters(&returns.variables.parameters, None);
+            self.visit_parameters(returns, None);
         }
     }
 
     fn leave_catch_clause_error(&mut self, node: &input_ir::CatchClauseError) {
-        self.visit_parameters(&node.parameters.parameters, None);
+        self.visit_parameters(&node.parameters, None);
     }
 
     fn enter_type_name(&mut self, node: &input_ir::TypeName) -> bool {
