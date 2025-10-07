@@ -85,6 +85,49 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
         true,
     );
 
+    // Unifiy function definition types
+    l2_flat_contracts_model.add_choice_type("FunctionKind");
+    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Regular");
+    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Constructor");
+    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Unnamed");
+    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Fallback");
+    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Receive");
+    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Modifier");
+
+    // Add the kind to the FunctionDefinition type, which will now hold all kinds
+    l2_flat_contracts_model.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
+
+    // And remove other specific function types and related attributes
+    l2_flat_contracts_model.remove_type("ConstructorDefinition");
+    l2_flat_contracts_model.remove_type("ConstructorAttributes");
+    l2_flat_contracts_model.remove_type("ConstructorAttribute");
+
+    l2_flat_contracts_model.remove_type("UnnamedFunctionDefinition");
+    l2_flat_contracts_model.remove_type("UnnamedFunctionAttributes");
+    l2_flat_contracts_model.remove_type("UnnamedFunctionAttribute");
+
+    l2_flat_contracts_model.remove_type("FallbackFunctionDefinition");
+    l2_flat_contracts_model.remove_type("FallbackFunctionAttributes");
+    l2_flat_contracts_model.remove_type("FallbackFunctionAttribute");
+
+    l2_flat_contracts_model.remove_type("ReceiveFunctionDefinition");
+    l2_flat_contracts_model.remove_type("ReceiveFunctionAttributes");
+    l2_flat_contracts_model.remove_type("ReceiveFunctionAttribute");
+
+    l2_flat_contracts_model.remove_type("ModifierDefinition");
+    l2_flat_contracts_model.remove_type("ModifierAttributes");
+    l2_flat_contracts_model.remove_type("ModifierAttribute");
+
+    // This also requires modifying the name and body fields
+    l2_flat_contracts_model.remove_sequence_field("FunctionDefinition", "name");
+    l2_flat_contracts_model.add_sequence_field("FunctionDefinition", "name", "Identifier", true);
+    l2_flat_contracts_model.remove_sequence_field("FunctionDefinition", "body");
+    l2_flat_contracts_model.add_sequence_field("FunctionDefinition", "body", "Block", true);
+
+    // We don't need FunctionName or FunctionBody anymore
+    l2_flat_contracts_model.remove_type("FunctionName");
+    l2_flat_contracts_model.remove_type("FunctionBody");
+
     // Remove extra holder nodes for parameters and returns declarations,
     // flattenning all the function declarations
     l2_flat_contracts_model.remove_type("ParametersDeclaration");
@@ -100,43 +143,7 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
     l2_flat_contracts_model.add_sequence_field("FunctionType", "parameters", "Parameters", false);
     l2_flat_contracts_model.add_sequence_field("FunctionType", "returns", "Parameters", true);
 
-    l2_flat_contracts_model.add_sequence_field(
-        "ConstructorDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    l2_flat_contracts_model.add_sequence_field(
-        "UnnamedFunctionDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    l2_flat_contracts_model.add_sequence_field(
-        "FallbackFunctionDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    l2_flat_contracts_model.add_sequence_field(
-        "FallbackFunctionDefinition",
-        "returns",
-        "Parameters",
-        true,
-    );
-    l2_flat_contracts_model.add_sequence_field(
-        "ReceiveFunctionDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    l2_flat_contracts_model.add_sequence_field(
-        "ModifierDefinition",
-        "parameters",
-        "Parameters",
-        true,
-    );
-
+    // We need to patch up try/catch which use parameters type
     l2_flat_contracts_model.add_sequence_field("TryStatement", "returns", "Parameters", true);
     l2_flat_contracts_model.add_sequence_field(
         "CatchClauseError",
