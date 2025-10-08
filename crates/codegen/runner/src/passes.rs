@@ -168,5 +168,16 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
         true,
     );
 
+    // Remove unnecessary ImportAlias node
+    l2_flat_contracts_model.remove_type("ImportAlias");
+    l2_flat_contracts_model.add_sequence_field("PathImport", "alias", "Identifier", true);
+    l2_flat_contracts_model.add_sequence_field("NamedImport", "alias", "Identifier", false);
+    l2_flat_contracts_model.add_sequence_field(
+        "ImportDeconstructionSymbol",
+        "alias",
+        "Identifier",
+        true,
+    );
+
     ModelWithTransformer::new(structured_ast_model, l2_flat_contracts_model)
 }

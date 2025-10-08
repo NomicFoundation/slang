@@ -67,11 +67,6 @@ pub trait Visitor {
     }
     fn leave_import_deconstruction_symbol(&mut self, _node: &ImportDeconstructionSymbol) {}
 
-    fn enter_import_alias(&mut self, _node: &ImportAlias) -> bool {
-        true
-    }
-    fn leave_import_alias(&mut self, _node: &ImportAlias) {}
-
     fn enter_using_directive(&mut self, _node: &UsingDirective) -> bool {
         true
     }
@@ -1118,9 +1113,6 @@ pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
         return;
     }
     accept_string_literal(&node.path, visitor);
-    if let Some(ref alias) = node.alias {
-        accept_import_alias(alias, visitor);
-    }
     visitor.leave_path_import(node);
 }
 
@@ -1128,7 +1120,6 @@ pub fn accept_named_import(node: &NamedImport, visitor: &mut impl Visitor) {
     if !visitor.enter_named_import(node) {
         return;
     }
-    accept_import_alias(&node.alias, visitor);
     accept_string_literal(&node.path, visitor);
     visitor.leave_named_import(node);
 }
@@ -1149,17 +1140,7 @@ pub fn accept_import_deconstruction_symbol(
     if !visitor.enter_import_deconstruction_symbol(node) {
         return;
     }
-    if let Some(ref alias) = node.alias {
-        accept_import_alias(alias, visitor);
-    }
     visitor.leave_import_deconstruction_symbol(node);
-}
-
-pub fn accept_import_alias(node: &ImportAlias, visitor: &mut impl Visitor) {
-    if !visitor.enter_import_alias(node) {
-        return;
-    }
-    visitor.leave_import_alias(node);
 }
 
 pub fn accept_using_directive(node: &UsingDirective, visitor: &mut impl Visitor) {
