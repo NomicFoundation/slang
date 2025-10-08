@@ -168,6 +168,23 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
         true,
     );
 
+    // And event and error definitions
+    l2_flat_contracts_model.remove_type("EventParametersDeclaration");
+    l2_flat_contracts_model.add_sequence_field(
+        "EventDefinition",
+        "parameters",
+        "EventParameters",
+        false,
+    );
+
+    l2_flat_contracts_model.remove_type("ErrorParametersDeclaration");
+    l2_flat_contracts_model.add_sequence_field(
+        "ErrorDefinition",
+        "parameters",
+        "ErrorParameters",
+        false,
+    );
+
     // Remove unnecessary ImportAlias node
     l2_flat_contracts_model.remove_type("ImportAlias");
     l2_flat_contracts_model.add_sequence_field("PathImport", "alias", "Identifier", true);

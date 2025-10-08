@@ -415,30 +415,7 @@ pub trait Transformer {
     fn transform_event_definition(
         &mut self,
         source: &input::EventDefinition,
-    ) -> output::EventDefinition {
-        let name = Rc::clone(&source.name);
-        let parameters = self.transform_event_parameters_declaration(&source.parameters);
-        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
-
-        Rc::new(output::EventDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            anonymous_keyword,
-        })
-    }
-
-    fn transform_event_parameters_declaration(
-        &mut self,
-        source: &input::EventParametersDeclaration,
-    ) -> output::EventParametersDeclaration {
-        let parameters = self.transform_event_parameters(&source.parameters);
-
-        Rc::new(output::EventParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
+    ) -> output::EventDefinition;
 
     fn transform_event_parameter(
         &mut self,
@@ -473,28 +450,7 @@ pub trait Transformer {
     fn transform_error_definition(
         &mut self,
         source: &input::ErrorDefinition,
-    ) -> output::ErrorDefinition {
-        let name = Rc::clone(&source.name);
-        let members = self.transform_error_parameters_declaration(&source.members);
-
-        Rc::new(output::ErrorDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            members,
-        })
-    }
-
-    fn transform_error_parameters_declaration(
-        &mut self,
-        source: &input::ErrorParametersDeclaration,
-    ) -> output::ErrorParametersDeclaration {
-        let parameters = self.transform_error_parameters(&source.parameters);
-
-        Rc::new(output::ErrorParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
+    ) -> output::ErrorDefinition;
 
     fn transform_error_parameter(
         &mut self,

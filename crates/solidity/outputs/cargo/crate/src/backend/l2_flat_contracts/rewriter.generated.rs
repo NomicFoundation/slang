@@ -437,25 +437,13 @@ pub trait Rewriter {
 
     fn rewrite_event_definition(&mut self, source: &EventDefinition) -> EventDefinition {
         let name = Rc::clone(&source.name);
-        let parameters = self.rewrite_event_parameters_declaration(&source.parameters);
         let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
+        let parameters = self.rewrite_event_parameters(&source.parameters);
 
         Rc::new(EventDefinitionStruct {
             node_id: source.node_id,
             name,
-            parameters,
             anonymous_keyword,
-        })
-    }
-
-    fn rewrite_event_parameters_declaration(
-        &mut self,
-        source: &EventParametersDeclaration,
-    ) -> EventParametersDeclaration {
-        let parameters = self.rewrite_event_parameters(&source.parameters);
-
-        Rc::new(EventParametersDeclarationStruct {
-            node_id: source.node_id,
             parameters,
         })
     }
@@ -489,23 +477,11 @@ pub trait Rewriter {
 
     fn rewrite_error_definition(&mut self, source: &ErrorDefinition) -> ErrorDefinition {
         let name = Rc::clone(&source.name);
-        let members = self.rewrite_error_parameters_declaration(&source.members);
+        let parameters = self.rewrite_error_parameters(&source.parameters);
 
         Rc::new(ErrorDefinitionStruct {
             node_id: source.node_id,
             name,
-            members,
-        })
-    }
-
-    fn rewrite_error_parameters_declaration(
-        &mut self,
-        source: &ErrorParametersDeclaration,
-    ) -> ErrorParametersDeclaration {
-        let parameters = self.rewrite_error_parameters(&source.parameters);
-
-        Rc::new(ErrorParametersDeclarationStruct {
-            node_id: source.node_id,
             parameters,
         })
     }
