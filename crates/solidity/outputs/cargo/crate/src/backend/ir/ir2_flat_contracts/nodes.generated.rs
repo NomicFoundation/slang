@@ -83,7 +83,7 @@ pub type PathImport = Rc<PathImportStruct>;
 pub struct PathImportStruct {
     pub node_id: NodeId,
     pub path: StringLiteral,
-    pub alias: Option<ImportAlias>,
+    pub alias: Option<Rc<TerminalNode>>,
 }
 
 pub type NamedImport = Rc<NamedImportStruct>;
@@ -91,8 +91,8 @@ pub type NamedImport = Rc<NamedImportStruct>;
 #[derive(Debug)]
 pub struct NamedImportStruct {
     pub node_id: NodeId,
-    pub alias: ImportAlias,
     pub path: StringLiteral,
+    pub alias: Rc<TerminalNode>,
 }
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
@@ -110,15 +110,7 @@ pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 pub struct ImportDeconstructionSymbolStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub alias: Option<ImportAlias>,
-}
-
-pub type ImportAlias = Rc<ImportAliasStruct>;
-
-#[derive(Debug)]
-pub struct ImportAliasStruct {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub alias: Option<Rc<TerminalNode>>,
 }
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;

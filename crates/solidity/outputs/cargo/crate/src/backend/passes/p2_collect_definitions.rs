@@ -310,8 +310,7 @@ impl Visitor for Pass {
         let imported_file_id = self.resolve_import_path(&node.path);
 
         if let Some(alias) = &node.alias {
-            let definition =
-                Definition::new_import(node.node_id, &alias.identifier, imported_file_id);
+            let definition = Definition::new_import(node.node_id, alias, imported_file_id);
             self.insert_definition_in_current_scope(definition);
         } else if let Some(imported_file_id) = imported_file_id {
             self.current_file_scope()
@@ -324,8 +323,7 @@ impl Visitor for Pass {
     fn enter_named_import(&mut self, node: &input_ir::NamedImport) -> bool {
         let imported_file_id = self.resolve_import_path(&node.path);
 
-        let definition =
-            Definition::new_import(node.node_id, &node.alias.identifier, imported_file_id);
+        let definition = Definition::new_import(node.node_id, &node.alias, imported_file_id);
         self.insert_definition_in_current_scope(definition);
 
         false
@@ -336,7 +334,7 @@ impl Visitor for Pass {
 
         for symbol in &node.symbols {
             let identifier = if let Some(alias) = &symbol.alias {
-                &alias.identifier
+                alias
             } else {
                 &symbol.name
             };
