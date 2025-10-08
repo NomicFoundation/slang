@@ -189,12 +189,9 @@ impl Pass {
     }
 
     // Collect parameters in error definition
-    fn collect_error_parameters(
-        &mut self,
-        parameters: &input_ir::ErrorParametersDeclaration,
-    ) -> ScopeId {
+    fn collect_error_parameters(&mut self, parameters: &input_ir::ErrorParameters) -> ScopeId {
         let mut scope = ParametersScope::new();
-        for parameter in &parameters.parameters {
+        for parameter in parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_parameter(parameter.node_id, name);
@@ -205,12 +202,9 @@ impl Pass {
     }
 
     // Collect parameters in event definition
-    fn collect_event_parameters(
-        &mut self,
-        parameters: &input_ir::EventParametersDeclaration,
-    ) -> ScopeId {
+    fn collect_event_parameters(&mut self, parameters: &input_ir::EventParameters) -> ScopeId {
         let mut scope = ParametersScope::new();
-        for parameter in &parameters.parameters {
+        for parameter in parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_parameter(parameter.node_id, name);
@@ -491,7 +485,7 @@ impl Visitor for Pass {
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
-        let parameters_scope_id = self.collect_error_parameters(&node.members);
+        let parameters_scope_id = self.collect_error_parameters(&node.parameters);
         let definition = Definition::new_error(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
