@@ -92,7 +92,7 @@ impl Visitor for Pass {
     fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
         for symbol in &node.symbols {
             let target_symbol = if let Some(alias) = &symbol.alias {
-                &alias.identifier
+                alias
             } else {
                 &symbol.name
             };

@@ -93,10 +93,7 @@ pub trait Rewriter {
 
     fn rewrite_path_import(&mut self, source: &PathImport) -> PathImport {
         let path = self.rewrite_string_literal(&source.path);
-        let alias = source
-            .alias
-            .as_ref()
-            .map(|value| self.rewrite_import_alias(value));
+        let alias = source.alias.as_ref().map(Rc::clone);
 
         Rc::new(PathImportStruct {
             node_id: source.node_id,
@@ -106,13 +103,13 @@ pub trait Rewriter {
     }
 
     fn rewrite_named_import(&mut self, source: &NamedImport) -> NamedImport {
-        let alias = self.rewrite_import_alias(&source.alias);
         let path = self.rewrite_string_literal(&source.path);
+        let alias = Rc::clone(&source.alias);
 
         Rc::new(NamedImportStruct {
             node_id: source.node_id,
-            alias,
             path,
+            alias,
         })
     }
 
@@ -135,24 +132,12 @@ pub trait Rewriter {
         source: &ImportDeconstructionSymbol,
     ) -> ImportDeconstructionSymbol {
         let name = Rc::clone(&source.name);
-        let alias = source
-            .alias
-            .as_ref()
-            .map(|value| self.rewrite_import_alias(value));
+        let alias = source.alias.as_ref().map(Rc::clone);
 
         Rc::new(ImportDeconstructionSymbolStruct {
             node_id: source.node_id,
             name,
             alias,
-        })
-    }
-
-    fn rewrite_import_alias(&mut self, source: &ImportAlias) -> ImportAlias {
-        let identifier = Rc::clone(&source.identifier);
-
-        Rc::new(ImportAliasStruct {
-            node_id: source.node_id,
-            identifier,
         })
     }
 
