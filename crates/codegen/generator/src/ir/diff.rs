@@ -2,7 +2,7 @@ use indexmap::IndexMap;
 use language_definition::model;
 use serde::Serialize;
 
-use super::model::{Choice, Collection, IrModel, Sequence};
+use super::model::{Collection, IrModel};
 
 #[derive(Default, Serialize)]
 pub struct IrModelDiff {
@@ -36,124 +36,54 @@ pub struct ChoiceDiff {
 }
 
 impl IrModelDiff {
-    pub fn diff(source: &IrModel, target: &IrModel) -> Self {
+    pub fn new_from(source: &IrModel) -> Self {
         let sequences = source
             .sequences
             .iter()
-            .filter_map(|(identifier, source_sequence)| {
-                let target_sequence = target.sequences.get(identifier)?;
-                let transformed_sequence = Self::diff_sequence(source_sequence, target_sequence);
-                Some((identifier.clone(), transformed_sequence))
+            .map(|(identifier, sequence)| {
+                let fields = sequence
+                    .fields
+                    .iter()
+                    .map(|field| FieldDiff {
+                        label: field.label.clone(),
+                        r#type: field.r#type.clone(),
+                        is_terminal: field.is_terminal,
+                        is_optional: field.is_optional,
+                        is_removed: false,
+                    })
+                    .collect();
+                (
+                    identifier.clone(),
+                    SequenceDiff {
+                        fields,
+                        has_added_fields: false,
+                    },
+                )
             })
             .collect();
 
         let choices = source
             .choices
             .iter()
-            .filter_map(|(identifier, source_choice)| {
-                let target_choice = target.choices.get(identifier)?;
-                let transformed_choice = Self::diff_choice(source_choice, target_choice);
-
-                Some((identifier.clone(), transformed_choice))
+            .map(|(identifier, choice)| {
+                (
+                    identifier.clone(),
+                    ChoiceDiff {
+                        nonterminal_types: choice.nonterminal_types.clone(),
+                        non_unique_terminal_types: choice.non_unique_terminal_types.clone(),
+                        unique_terminal_types: choice.unique_terminal_types.clone(),
+                        has_removed_variants: false,
+                    },
+                )
             })
             .collect();
 
-        // Remove collections types not present in target. Assume others are identical.
-        let collections = source
-            .collections
-            .iter()
-            .filter_map(|(identifier, repeated)| {
-                if target.collections.contains_key(identifier) {
-                    Some((identifier.clone(), repeated.clone()))
-                } else {
-                    None
-                }
-            })
-            .collect();
+        let collections = source.collections.clone();
 
         IrModelDiff {
             sequences,
             choices,
             collections,
         }
-    }
-
-    fn diff_sequence(source_sequence: &Sequence, target_sequence: &Sequence) -> SequenceDiff {
-        // For sequences we compute determine which fields were removed, and if
-        // *any* was added (because in that case we cannot generate
-        // transformation code). We assume the order of the existing fields is
-        // not changed.
-        let mut fields = Vec::new();
-        let mut target_index = 0;
-        for source_field in &source_sequence.fields {
-            let target_field = target_sequence.fields.get(target_index);
-
-            let is_removed = if target_field.is_some_and(|target_field| {
-                target_field.label == source_field.label
-                    && target_field.r#type == source_field.r#type
-            }) {
-                target_index += 1;
-                false
-            } else {
-                true
-            };
-
-            fields.push(FieldDiff {
-                label: source_field.label.clone(),
-                r#type: source_field.r#type.clone(),
-                is_terminal: source_field.is_terminal,
-                is_optional: source_field.is_optional,
-                is_removed,
-            });
-        }
-        let has_added_fields = target_index < target_sequence.fields.len();
-        SequenceDiff {
-            fields,
-            has_added_fields,
-        }
-    }
-
-    fn diff_choice(source_choice: &Choice, target_choice: &Choice) -> ChoiceDiff {
-        // For choices we want to find out if some variant was removed and mark the type if so.
-        let (removed_nonterminals, nonterminal_types) = Self::filter_removed_variants(
-            &source_choice.nonterminal_types,
-            &target_choice.nonterminal_types,
-        );
-        let (removed_terminals, terminal_types) = Self::filter_removed_variants(
-            &source_choice.non_unique_terminal_types,
-            &target_choice.non_unique_terminal_types,
-        );
-        let (removed_unique_terminals, unique_terminal_types) = Self::filter_removed_variants(
-            &source_choice.unique_terminal_types,
-            &target_choice.unique_terminal_types,
-        );
-        let has_removed_variants =
-            removed_nonterminals || removed_terminals || removed_unique_terminals;
-
-        ChoiceDiff {
-            nonterminal_types,
-            non_unique_terminal_types: terminal_types,
-            unique_terminal_types,
-            has_removed_variants,
-        }
-    }
-
-    fn filter_removed_variants(
-        source_variants: &[model::Identifier],
-        target_variants: &[model::Identifier],
-    ) -> (bool, Vec<model::Identifier>) {
-        let mut variants = Vec::new();
-        let mut target_index = 0;
-        let mut has_removed_variants = false;
-        for source_variant in source_variants {
-            let target_variant = target_variants.get(target_index);
-            if target_variant.is_some_and(|target_variant| target_variant == source_variant) {
-                variants.push(source_variant.clone());
-                target_index += 1;
-            } else {
-                has_removed_variants = true;
-            }
-        }
-        (has_removed_variants, variants)
     }
 }

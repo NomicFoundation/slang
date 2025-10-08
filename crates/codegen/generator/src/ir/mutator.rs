@@ -1,0 +1,160 @@
+use language_definition::model;
+
+use super::diff::{FieldDiff, IrModelDiff};
+use super::model::{Choice, Field};
+use super::IrModel;
+
+pub struct IrModelMutator {
+    pub target: IrModel,
+    pub diff: IrModelDiff,
+}
+
+impl IrModelMutator {
+    pub fn create_from(source: &IrModel) -> Self {
+        let target = IrModel::from_model(source);
+        let diff = IrModelDiff::new_from(source);
+        Self { target, diff }
+    }
+
+    pub fn add_choice_type(&mut self, name: &str) {
+        self.target.choices.insert(
+            name.into(),
+            Choice {
+                nonterminal_types: Vec::new(),
+                non_unique_terminal_types: Vec::new(),
+                unique_terminal_types: Vec::new(),
+            },
+        );
+        // new choice types are not added to the diff
+    }
+
+    pub fn add_choice_unique_terminal(&mut self, choice_id: &str, unique_terminal: &str) {
+        let identifier: model::Identifier = choice_id.into();
+        let Some(choice) = self.target.choices.get_mut(&identifier) else {
+            panic!("Choice {choice_id} not found in IR model");
+        };
+        choice.unique_terminal_types.push(unique_terminal.into());
+
+        // new choice types are not added to the diff
+    }
+
+    pub fn remove_type(&mut self, name: &str) {
+        let identifier: model::Identifier = name.into();
+        let removed = self.target.sequences.shift_remove(&identifier).is_some()
+            || self.target.choices.shift_remove(&identifier).is_some()
+            || self.target.collections.shift_remove(&identifier).is_some()
+            || self.target.unique_terminals.shift_remove(&identifier)
+            || self.target.non_unique_terminals.shift_remove(&identifier);
+
+        assert!(removed, "Could not find type {name} to remove");
+
+        self.diff.sequences.shift_remove(&identifier);
+        self.diff.choices.shift_remove(&identifier);
+        self.diff.collections.shift_remove(&identifier);
+
+        for (_, sequence) in &mut self.target.sequences {
+            sequence.fields.retain(|field| field.r#type != identifier);
+        }
+        for (_, sequence) in &mut self.diff.sequences {
+            for field in &mut sequence.fields {
+                if field.r#type == identifier {
+                    field.is_removed = true;
+                }
+            }
+        }
+
+        for (_, choice) in &mut self.target.choices {
+            choice.nonterminal_types.retain(|item| *item != identifier);
+            choice
+                .non_unique_terminal_types
+                .retain(|item| *item != identifier);
+            choice
+                .unique_terminal_types
+                .retain(|item| *item != identifier);
+        }
+        for (_, choice) in &mut self.diff.choices {
+            if choice.non_unique_terminal_types.contains(&identifier)
+                || choice.nonterminal_types.contains(&identifier)
+                || choice.unique_terminal_types.contains(&identifier)
+            {
+                choice.has_removed_variants = true;
+            }
+            choice.nonterminal_types.retain(|item| *item != identifier);
+            choice
+                .non_unique_terminal_types
+                .retain(|item| *item != identifier);
+            choice
+                .unique_terminal_types
+                .retain(|item| *item != identifier);
+        }
+
+        self.target
+            .collections
+            .retain(|_, repeated| repeated.item_type != identifier);
+        self.diff
+            .collections
+            .retain(|_, repeated| repeated.item_type != identifier);
+    }
+
+    pub fn remove_sequence_field(&mut self, sequence_id: &str, field_label: &str) {
+        let identifier: model::Identifier = sequence_id.into();
+        let Some(sequence) = self.target.sequences.get_mut(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        let fields_count = sequence.fields.len();
+        let field_label: model::Identifier = field_label.into();
+        sequence.fields.retain(|field| field.label != field_label);
+        assert!(
+            fields_count > sequence.fields.len(),
+            "Could not find field {field_label} to remove in {sequence_id}"
+        );
+
+        let Some(sequence) = self.diff.sequences.get_mut(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        for field in &mut sequence.fields {
+            if field.label == field_label {
+                field.is_removed = true;
+            }
+        }
+    }
+
+    pub fn add_sequence_field(
+        &mut self,
+        sequence_id: &str,
+        field_label: &str,
+        field_type: &str,
+        is_optional: bool,
+    ) {
+        let identifier: model::Identifier = sequence_id.into();
+        let Some(sequence) = self.target.sequences.get_mut(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        let is_terminal = self
+            .target
+            .non_unique_terminals
+            .contains::<model::Identifier>(&field_type.into())
+            || self
+                .target
+                .unique_terminals
+                .contains::<model::Identifier>(&field_type.into());
+        sequence.fields.push(Field {
+            label: field_label.into(),
+            r#type: field_type.into(),
+            is_terminal,
+            is_optional,
+        });
+
+        let Some(sequence) = self.diff.sequences.get_mut(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        sequence.fields.push(FieldDiff {
+            label: field_label.into(),
+            r#type: field_type.into(),
+            is_terminal,
+            is_optional,
+            is_removed: false,
+        });
+        sequence.has_added_fields = true;
+    }
+}
