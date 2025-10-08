@@ -205,7 +205,6 @@ impl Visitor for Pass {
 
         let parameter_types: Vec<_> = node
             .parameters
-            .parameters
             .iter()
             .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
             .collect();

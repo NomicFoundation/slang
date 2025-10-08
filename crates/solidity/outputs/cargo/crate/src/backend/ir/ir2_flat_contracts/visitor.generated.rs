@@ -180,11 +180,6 @@ pub trait Visitor {
     }
     fn leave_event_definition(&mut self, _node: &EventDefinition) {}
 
-    fn enter_event_parameters_declaration(&mut self, _node: &EventParametersDeclaration) -> bool {
-        true
-    }
-    fn leave_event_parameters_declaration(&mut self, _node: &EventParametersDeclaration) {}
-
     fn enter_event_parameter(&mut self, _node: &EventParameter) -> bool {
         true
     }
@@ -203,11 +198,6 @@ pub trait Visitor {
         true
     }
     fn leave_error_definition(&mut self, _node: &ErrorDefinition) {}
-
-    fn enter_error_parameters_declaration(&mut self, _node: &ErrorParametersDeclaration) -> bool {
-        true
-    }
-    fn leave_error_parameters_declaration(&mut self, _node: &ErrorParametersDeclaration) {}
 
     fn enter_error_parameter(&mut self, _node: &ErrorParameter) -> bool {
         true
@@ -1362,19 +1352,8 @@ pub fn accept_event_definition(node: &EventDefinition, visitor: &mut impl Visito
     if !visitor.enter_event_definition(node) {
         return;
     }
-    accept_event_parameters_declaration(&node.parameters, visitor);
-    visitor.leave_event_definition(node);
-}
-
-pub fn accept_event_parameters_declaration(
-    node: &EventParametersDeclaration,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_event_parameters_declaration(node) {
-        return;
-    }
     accept_event_parameters(&node.parameters, visitor);
-    visitor.leave_event_parameters_declaration(node);
+    visitor.leave_event_definition(node);
 }
 
 pub fn accept_event_parameter(node: &EventParameter, visitor: &mut impl Visitor) {
@@ -1400,19 +1379,8 @@ pub fn accept_error_definition(node: &ErrorDefinition, visitor: &mut impl Visito
     if !visitor.enter_error_definition(node) {
         return;
     }
-    accept_error_parameters_declaration(&node.members, visitor);
-    visitor.leave_error_definition(node);
-}
-
-pub fn accept_error_parameters_declaration(
-    node: &ErrorParametersDeclaration,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_error_parameters_declaration(node) {
-        return;
-    }
     accept_error_parameters(&node.parameters, visitor);
-    visitor.leave_error_parameters_declaration(node);
+    visitor.leave_error_definition(node);
 }
 
 pub fn accept_error_parameter(node: &ErrorParameter, visitor: &mut impl Visitor) {

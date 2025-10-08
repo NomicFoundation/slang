@@ -248,6 +248,36 @@ impl Transformer for Pass {
             alias,
         })
     }
+
+    fn transform_event_definition(
+        &mut self,
+        source: &input::EventDefinition,
+    ) -> output::EventDefinition {
+        let node_id = source.node_id;
+        let name = Rc::clone(&source.name);
+        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
+        let parameters = self.transform_event_parameters(&source.parameters.parameters);
+        Rc::new(output::EventDefinitionStruct {
+            node_id,
+            name,
+            anonymous_keyword,
+            parameters,
+        })
+    }
+
+    fn transform_error_definition(
+        &mut self,
+        source: &input::ErrorDefinition,
+    ) -> output::ErrorDefinition {
+        let node_id = source.node_id;
+        let name = Rc::clone(&source.name);
+        let parameters = self.transform_error_parameters(&source.members.parameters);
+        Rc::new(output::ErrorDefinitionStruct {
+            node_id,
+            name,
+            parameters,
+        })
+    }
 }
 
 impl Pass {

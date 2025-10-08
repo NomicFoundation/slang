@@ -314,15 +314,7 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 pub struct EventDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: EventParametersDeclaration,
     pub anonymous_keyword: Option<Rc<TerminalNode>>,
-}
-
-pub type EventParametersDeclaration = Rc<EventParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct EventParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: EventParameters,
 }
 
@@ -351,14 +343,6 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 pub struct ErrorDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub members: ErrorParametersDeclaration,
-}
-
-pub type ErrorParametersDeclaration = Rc<ErrorParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ErrorParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: ErrorParameters,
 }
 
