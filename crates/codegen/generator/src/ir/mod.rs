@@ -1,8 +1,10 @@
 mod diff;
 mod model;
+mod mutator;
 
 use diff::IrModelDiff;
 pub use model::IrModel;
+pub use mutator::IrModelMutator;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -11,9 +13,10 @@ pub struct ModelWithBuilder {
     pub builder: IrModelDiff,
 }
 
-impl ModelWithBuilder {
-    pub fn new(source: &IrModel, target: IrModel) -> Self {
-        let builder = IrModelDiff::diff(source, &target);
+impl From<IrModelMutator> for ModelWithBuilder {
+    fn from(mutator: IrModelMutator) -> Self {
+        let target = mutator.target;
+        let builder = mutator.diff;
         Self { target, builder }
     }
 }
@@ -24,9 +27,10 @@ pub struct ModelWithTransformer {
     pub transformer: IrModelDiff,
 }
 
-impl ModelWithTransformer {
-    pub fn new(source: &IrModel, target: IrModel) -> Self {
-        let transformer = IrModelDiff::diff(source, &target);
+impl From<IrModelMutator> for ModelWithTransformer {
+    fn from(mutator: IrModelMutator) -> Self {
+        let target = mutator.target;
+        let transformer = mutator.diff;
         Self {
             target,
             transformer,

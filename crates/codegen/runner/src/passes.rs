@@ -1,5 +1,5 @@
 use anyhow::Result;
-use codegen_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
+use codegen_generator::ir::{IrModel, IrModelMutator, ModelWithBuilder, ModelWithTransformer};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use language_definition::model::Language;
@@ -40,30 +40,30 @@ pub fn generate_passes(
 }
 
 fn build_l1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
-    let mut l1_structured_ast_model = IrModel::from_model("l1_structured_ast", cst_model);
+    let mut mutator = IrModelMutator::create_from("l1_structured_ast", cst_model);
 
     // remove fields from sequences that contain redundant terminal nodes
-    for (_, sequence) in &mut l1_structured_ast_model.sequences {
+    for (sequence_id, sequence) in &cst_model.sequences {
         if sequence.multiple_operators {
             // don't remove terminals if the sequence is modelling a precedence
             // expression with multiple variant operators
             continue;
         }
-        sequence.fields.retain(|field| {
-            field.is_optional
-                || !field.is_terminal
-                || !l1_structured_ast_model
-                    .unique_terminals
-                    .contains(&field.r#type)
-        });
+        for field in &sequence.fields {
+            if !field.is_optional
+                && field.is_terminal
+                && cst_model.unique_terminals.contains(&field.r#type)
+            {
+                mutator.remove_sequence_field(sequence_id, &field.label);
+            }
+        }
     }
 
-    ModelWithBuilder::new(cst_model, l1_structured_ast_model)
+    mutator.into()
 }
 
 fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTransformer {
-    let mut l2_flat_contracts_model =
-        IrModel::from_model("l2_flat_contracts", structured_ast_model);
+    let mut mutator = IrModelMutator::create_from("l2_flat_contracts", structured_ast_model);
 
     // L2 is for now only a proof of concept for rendering transfomation code
     // from previous trees. Therefore, the following modifications are (a
@@ -71,14 +71,14 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
 
     // Flatten contract specifiers and bring the inherited types and storage
     // layout to the contract definition itself.
-    l2_flat_contracts_model.remove_type("ContractSpecifiers");
-    l2_flat_contracts_model.add_sequence_field(
+    mutator.remove_type("ContractSpecifiers");
+    mutator.add_sequence_field(
         "ContractDefinition",
         "inheritance_types",
         "InheritanceTypes",
         false,
     );
-    l2_flat_contracts_model.add_sequence_field(
+    mutator.add_sequence_field(
         "ContractDefinition",
         "storage_layout",
         "StorageLayoutSpecifier",
@@ -86,115 +86,85 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
     );
 
     // Unifiy function definition types
-    l2_flat_contracts_model.add_choice_type("FunctionKind");
-    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Regular");
-    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Constructor");
-    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Unnamed");
-    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Fallback");
-    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Receive");
-    l2_flat_contracts_model.add_choice_unique_terminal("FunctionKind", "Modifier");
+    mutator.add_choice_type("FunctionKind");
+    mutator.add_choice_unique_terminal("FunctionKind", "Regular");
+    mutator.add_choice_unique_terminal("FunctionKind", "Constructor");
+    mutator.add_choice_unique_terminal("FunctionKind", "Unnamed");
+    mutator.add_choice_unique_terminal("FunctionKind", "Fallback");
+    mutator.add_choice_unique_terminal("FunctionKind", "Receive");
+    mutator.add_choice_unique_terminal("FunctionKind", "Modifier");
 
     // Add the kind to the FunctionDefinition type, which will now hold all kinds
-    l2_flat_contracts_model.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
+    mutator.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
 
     // And remove other specific function types and related attributes
-    l2_flat_contracts_model.remove_type("ConstructorDefinition");
-    l2_flat_contracts_model.remove_type("ConstructorAttributes");
-    l2_flat_contracts_model.remove_type("ConstructorAttribute");
+    mutator.remove_type("ConstructorDefinition");
+    mutator.remove_type("ConstructorAttributes");
+    mutator.remove_type("ConstructorAttribute");
 
-    l2_flat_contracts_model.remove_type("UnnamedFunctionDefinition");
-    l2_flat_contracts_model.remove_type("UnnamedFunctionAttributes");
-    l2_flat_contracts_model.remove_type("UnnamedFunctionAttribute");
+    mutator.remove_type("UnnamedFunctionDefinition");
+    mutator.remove_type("UnnamedFunctionAttributes");
+    mutator.remove_type("UnnamedFunctionAttribute");
 
-    l2_flat_contracts_model.remove_type("FallbackFunctionDefinition");
-    l2_flat_contracts_model.remove_type("FallbackFunctionAttributes");
-    l2_flat_contracts_model.remove_type("FallbackFunctionAttribute");
+    mutator.remove_type("FallbackFunctionDefinition");
+    mutator.remove_type("FallbackFunctionAttributes");
+    mutator.remove_type("FallbackFunctionAttribute");
 
-    l2_flat_contracts_model.remove_type("ReceiveFunctionDefinition");
-    l2_flat_contracts_model.remove_type("ReceiveFunctionAttributes");
-    l2_flat_contracts_model.remove_type("ReceiveFunctionAttribute");
+    mutator.remove_type("ReceiveFunctionDefinition");
+    mutator.remove_type("ReceiveFunctionAttributes");
+    mutator.remove_type("ReceiveFunctionAttribute");
 
-    l2_flat_contracts_model.remove_type("ModifierDefinition");
-    l2_flat_contracts_model.remove_type("ModifierAttributes");
-    l2_flat_contracts_model.remove_type("ModifierAttribute");
+    mutator.remove_type("ModifierDefinition");
+    mutator.remove_type("ModifierAttributes");
+    mutator.remove_type("ModifierAttribute");
 
     // This also requires modifying the name and body fields
-    l2_flat_contracts_model.remove_sequence_field("FunctionDefinition", "name");
-    l2_flat_contracts_model.add_sequence_field("FunctionDefinition", "name", "Identifier", true);
-    l2_flat_contracts_model.remove_sequence_field("FunctionDefinition", "body");
-    l2_flat_contracts_model.add_sequence_field("FunctionDefinition", "body", "Block", true);
+    mutator.remove_sequence_field("FunctionDefinition", "name");
+    mutator.add_sequence_field("FunctionDefinition", "name", "Identifier", true);
+    mutator.remove_sequence_field("FunctionDefinition", "body");
+    mutator.add_sequence_field("FunctionDefinition", "body", "Block", true);
 
     // We don't need FunctionName or FunctionBody anymore
-    l2_flat_contracts_model.remove_type("FunctionName");
-    l2_flat_contracts_model.remove_type("FunctionBody");
+    mutator.remove_type("FunctionName");
+    mutator.remove_type("FunctionBody");
 
     // Remove extra holder nodes for parameters and returns declarations,
     // flattenning all the function declarations
-    l2_flat_contracts_model.remove_type("ParametersDeclaration");
-    l2_flat_contracts_model.remove_type("ReturnsDeclaration");
+    mutator.remove_type("ParametersDeclaration");
+    mutator.remove_type("ReturnsDeclaration");
 
-    l2_flat_contracts_model.add_sequence_field(
-        "FunctionDefinition",
-        "parameters",
-        "Parameters",
-        false,
-    );
-    l2_flat_contracts_model.add_sequence_field("FunctionDefinition", "returns", "Parameters", true);
-    l2_flat_contracts_model.add_sequence_field("FunctionType", "parameters", "Parameters", false);
-    l2_flat_contracts_model.add_sequence_field("FunctionType", "returns", "Parameters", true);
+    mutator.add_sequence_field("FunctionDefinition", "parameters", "Parameters", false);
+    mutator.add_sequence_field("FunctionDefinition", "returns", "Parameters", true);
+    mutator.add_sequence_field("FunctionType", "parameters", "Parameters", false);
+    mutator.add_sequence_field("FunctionType", "returns", "Parameters", true);
 
     // We need to patch up try/catch which use parameters type
-    l2_flat_contracts_model.add_sequence_field("TryStatement", "returns", "Parameters", true);
-    l2_flat_contracts_model.add_sequence_field(
-        "CatchClauseError",
-        "parameters",
-        "Parameters",
-        false,
-    );
+    mutator.add_sequence_field("TryStatement", "returns", "Parameters", true);
+    mutator.add_sequence_field("CatchClauseError", "parameters", "Parameters", false);
 
     // Ditto for Yul parameters
-    l2_flat_contracts_model.remove_type("YulParametersDeclaration");
-    l2_flat_contracts_model.add_sequence_field(
+    mutator.remove_type("YulParametersDeclaration");
+    mutator.add_sequence_field(
         "YulFunctionDefinition",
         "parameters",
         "YulParameters",
         false,
     );
-    l2_flat_contracts_model.remove_type("YulReturnsDeclaration");
-    l2_flat_contracts_model.add_sequence_field(
-        "YulFunctionDefinition",
-        "returns",
-        "YulVariableNames",
-        true,
-    );
+    mutator.remove_type("YulReturnsDeclaration");
+    mutator.add_sequence_field("YulFunctionDefinition", "returns", "YulVariableNames", true);
 
     // And event and error definitions
-    l2_flat_contracts_model.remove_type("EventParametersDeclaration");
-    l2_flat_contracts_model.add_sequence_field(
-        "EventDefinition",
-        "parameters",
-        "EventParameters",
-        false,
-    );
+    mutator.remove_type("EventParametersDeclaration");
+    mutator.add_sequence_field("EventDefinition", "parameters", "EventParameters", false);
 
-    l2_flat_contracts_model.remove_type("ErrorParametersDeclaration");
-    l2_flat_contracts_model.add_sequence_field(
-        "ErrorDefinition",
-        "parameters",
-        "ErrorParameters",
-        false,
-    );
+    mutator.remove_type("ErrorParametersDeclaration");
+    mutator.add_sequence_field("ErrorDefinition", "parameters", "ErrorParameters", false);
 
     // Remove unnecessary ImportAlias node
-    l2_flat_contracts_model.remove_type("ImportAlias");
-    l2_flat_contracts_model.add_sequence_field("PathImport", "alias", "Identifier", true);
-    l2_flat_contracts_model.add_sequence_field("NamedImport", "alias", "Identifier", false);
-    l2_flat_contracts_model.add_sequence_field(
-        "ImportDeconstructionSymbol",
-        "alias",
-        "Identifier",
-        true,
-    );
+    mutator.remove_type("ImportAlias");
+    mutator.add_sequence_field("PathImport", "alias", "Identifier", true);
+    mutator.add_sequence_field("NamedImport", "alias", "Identifier", false);
+    mutator.add_sequence_field("ImportDeconstructionSymbol", "alias", "Identifier", true);
 
-    ModelWithTransformer::new(structured_ast_model, l2_flat_contracts_model)
+    mutator.into()
 }
