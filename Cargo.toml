@@ -8,13 +8,12 @@ publish = false
 resolver = "2"
 members = [
     "crates/codegen/ebnf",
+    "crates/codegen/generator",
     "crates/codegen/language/definition",
     "crates/codegen/language/internal_macros",
     "crates/codegen/language/macros",
     "crates/codegen/language/tests",
     "crates/codegen/runner",
-    "crates/codegen/runtime/cargo/crate",
-    "crates/codegen/runtime/generator",
     "crates/codegen/spec",
     "crates/codegen/testing",
 
@@ -45,13 +44,12 @@ members = [
 # Internal
 #
 codegen_ebnf = { path = "crates/codegen/ebnf", version = "1.2.1" }
+codegen_generator = { path = "crates/codegen/generator", version = "1.2.1" }
 codegen_language_definition = { path = "crates/codegen/language/definition", version = "1.2.1" }
 codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros", version = "1.2.1" }
 codegen_language_macros = { path = "crates/codegen/language/macros", version = "1.2.1" }
 codegen_language_tests = { path = "crates/codegen/language/tests", version = "1.2.1" }
 codegen_runner = { path = "crates/codegen/runner", version = "1.2.1" }
-codegen_runtime_cargo_crate = { path = "crates/codegen/runtime/cargo/crate", version = "1.2.1" }
-codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "1.2.1" }
 codegen_spec = { path = "crates/codegen/spec", version = "1.2.1" }
 codegen_testing = { path = "crates/codegen/testing", version = "1.2.1" }
 

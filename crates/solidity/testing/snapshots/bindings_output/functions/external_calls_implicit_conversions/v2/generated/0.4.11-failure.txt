@@ -1,0 +1,129 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CloseParen or Comma.
+   ╭─[input.sol:6:60]
+   │
+ 6 │     function doFoo(AStruct memory aStruct, string calldata witnessString) external;
+   │                                                            ──────┬──────  
+   │                                                                  ╰──────── Error occurred here.
+───╯
+Error: Expected CloseParen or Comma.
+   ╭─[input.sol:7:66]
+   │
+ 7 │     function doFoo(AStruct[] memory someStructs, string calldata witnessString) external;
+   │                                                                  ──────┬──────  
+   │                                                                        ╰──────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (14):
+- Def: #1 ["IFoo" @ input.sol:1:11] (interface)
+- Def: #2 ["AStruct" @ input.sol:2:12] (struct)
+- Def: #3 ["token" @ input.sol:3:17] (struct member, type: address)
+- Def: #4 ["doFoo" @ input.sol:6:14] (function, type: function (AStruct memory, string calldata) returns void)
+- Def: #5 ["aStruct" @ input.sol:6:35] (parameter, type: AStruct memory)
+- Def: #6 ["calldata" @ input.sol:6:51] (parameter, type: string calldata)
+- Def: #7 ["doFoo" @ input.sol:7:14] (function, type: function (AStruct memory[] memory, string calldata) returns void)
+- Def: #8 ["someStructs" @ input.sol:7:37] (parameter, type: AStruct memory[] memory)
+- Def: #9 ["calldata" @ input.sol:7:57] (parameter, type: string calldata)
+- Def: #10 ["Test" @ input.sol:10:10] (contract)
+- Def: #11 ["myFoo" @ input.sol:11:10] (state var, type: IFoo)
+- Def: #12 ["myWitness" @ input.sol:12:12] (state var, type: string storage)
+- Def: #13 ["test" @ input.sol:14:14] (function, type: function () returns void)
+- Def: #14 ["someStructs" @ input.sol:16:31] (variable, type: AStruct memory[] memory)
+
+------------------------------------------------------------------------
+
+References (11):
+- Ref: ["AStruct" @ input.sol:6:20] -> #2
+- Ref: ["AStruct" @ input.sol:7:20] -> #2
+- Ref: ["IFoo" @ input.sol:11:5] -> #1
+- Ref: ["IFoo" @ input.sol:16:9] -> #1
+- Ref: ["AStruct" @ input.sol:16:14] -> #2
+- Ref: ["myFoo" @ input.sol:18:9] -> #11
+- Ref: ["doFoo" @ input.sol:18:15] -> refs: [4, 7]
+- Ref: ["someStructs" @ input.sol:19:13] -> unresolved
+- Ref: ["someStructs" @ input.sol:19:26] -> #14
+- Ref: ["witnessString" @ input.sol:20:13] -> unresolved
+- Ref: ["myWitness" @ input.sol:20:28] -> #12
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IFoo {
+    │           ──┬─  
+    │             ╰─── name: 1
+  2 │     struct AStruct {
+    │            ───┬───  
+    │               ╰───── name: 2
+  3 │         address token;
+    │                 ──┬──  
+    │                   ╰──── name: 3
+    │ 
+  6 │     function doFoo(AStruct memory aStruct, string calldata witnessString) external;
+    │              ──┬── ───┬───        ───┬───         ────┬───  
+    │                ╰──────────────────────────────────────────── name: 4
+    │                       │              │                │     
+    │                       ╰───────────────────────────────────── ref: 2
+    │                                      │                │     
+    │                                      ╰────────────────────── name: 5
+    │                                                       │     
+    │                                                       ╰───── name: 6
+  7 │     function doFoo(AStruct[] memory someStructs, string calldata witnessString) external;
+    │              ──┬── ───┬───          ─────┬─────         ────┬───  
+    │                ╰────────────────────────────────────────────────── name: 7
+    │                       │                  │                  │     
+    │                       ╰─────────────────────────────────────────── ref: 2
+    │                                          │                  │     
+    │                                          ╰──────────────────────── name: 8
+    │                                                             │     
+    │                                                             ╰───── name: 9
+    │ 
+ 10 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 10
+ 11 │     IFoo myFoo;
+    │     ──┬─ ──┬──  
+    │       ╰───────── ref: 1
+    │            │    
+    │            ╰──── name: 11
+ 12 │     string myWitness;
+    │            ────┬────  
+    │                ╰────── name: 12
+    │ 
+ 14 │     function test() internal
+    │              ──┬─  
+    │                ╰─── name: 13
+    │ 
+ 16 │         IFoo.AStruct[] memory someStructs;
+    │         ──┬─ ───┬───          ─────┬─────  
+    │           ╰──────────────────────────────── ref: 1
+    │                 │                  │       
+    │                 ╰────────────────────────── ref: 2
+    │                                    │       
+    │                                    ╰─────── name: 14
+    │ 
+ 18 │         myFoo.doFoo({
+    │         ──┬── ──┬──  
+    │           ╰────────── ref: 11
+    │                 │    
+    │                 ╰──── refs: [4, 7]
+ 19 │             someStructs: someStructs,
+    │             ─────┬─────  ─────┬─────  
+    │                  ╰──────────────────── unresolved
+    │                               │       
+    │                               ╰─────── ref: 14
+ 20 │             witnessString: myWitness
+    │             ──────┬──────  ────┬────  
+    │                   ╰─────────────────── unresolved
+    │                                │      
+    │                                ╰────── ref: 12
+────╯

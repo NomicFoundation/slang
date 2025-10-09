@@ -1,0 +1,64 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
+   ╭─[input.sol:6:17]
+   │
+ 6 │     uint public override x;
+   │                 ─────┬────  
+   │                      ╰────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["x" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #5 ["a" @ input.sol:10:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["virtual" @ input.sol:2:30] -> unresolved
+- Ref: ["Base" @ input.sol:5:18] -> #1
+- Ref: ["x" @ input.sol:10:22] -> #2
+- Ref: ["slot" @ input.sol:10:24] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function x() public view virtual returns (uint) {}
+    │              ┬               ───┬───  
+    │              ╰──────────────────────── name: 2
+    │                                 │     
+    │                                 ╰───── unresolved
+    │ 
+  5 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 3
+    │                    │   
+    │                    ╰─── ref: 1
+    │ 
+  8 │     function test() internal pure {
+    │              ──┬─  
+    │                ╰─── name: 4
+    │ 
+ 10 │             let a := x.slot
+    │                 ┬    ┬ ──┬─  
+    │                 ╰──────────── name: 5
+    │                      │   │   
+    │                      ╰─────── ref: 2
+    │                          │   
+    │                          ╰─── unresolved
+────╯

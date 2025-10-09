@@ -7,6 +7,11 @@ use crate::binder::runner::run;
 const T: &str = "interfaces";
 
 #[test]
+fn implicit_conversions() -> Result<()> {
+    run(T, "implicit_conversions")
+}
+
+#[test]
 fn inheritance() -> Result<()> {
     run(T, "inheritance")
 }

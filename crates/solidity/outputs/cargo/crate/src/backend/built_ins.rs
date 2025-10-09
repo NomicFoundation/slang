@@ -1,8 +1,14 @@
 use semver::Version;
 
 use super::binder::{Binder, Definition, Typing};
-use super::types::{Type, TypeId, TypeRegistry};
+use super::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId, TypeRegistry};
 use crate::cst::NodeId;
+use crate::utils::versions::{
+    VERSION_0_4_12, VERSION_0_4_17, VERSION_0_4_21, VERSION_0_4_22, VERSION_0_5_0, VERSION_0_5_3,
+    VERSION_0_6_0, VERSION_0_6_2, VERSION_0_6_7, VERSION_0_6_8, VERSION_0_7_0, VERSION_0_8_0,
+    VERSION_0_8_11, VERSION_0_8_15, VERSION_0_8_18, VERSION_0_8_2, VERSION_0_8_24, VERSION_0_8_4,
+    VERSION_0_8_7, VERSION_0_8_8,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BuiltIn {
@@ -47,8 +53,8 @@ pub enum BuiltIn {
     ErrorOrPanic,
     Gasleft,
     Keccak256,
-    LegacyCallOptionGas(Option<TypeId>),
-    LegacyCallOptionValue(Option<TypeId>),
+    LegacyCallOptionGas(LegacyCall),
+    LegacyCallOptionValue(LegacyCall),
     LegacyCallOptionValueNew(TypeId),
     Length,
     Log(u8),
@@ -110,6 +116,7 @@ pub enum BuiltIn {
     YulDelegatecall,
     YulDifficulty,
     YulDiv,
+    YulDup(u8),
     YulEq,
     YulExp,
     YulExtcodecopy,
@@ -165,32 +172,20 @@ pub enum BuiltIn {
     YulStop,
     YulSub,
     YulSuicide,
+    YulSwap(u8),
     YulTimestamp,
     YulTload,
     YulTstore,
     YulXor,
 }
 
-const VERSION_0_4_12: Version = Version::new(0, 4, 12);
-const VERSION_0_4_17: Version = Version::new(0, 4, 17);
-const VERSION_0_4_21: Version = Version::new(0, 4, 21);
-const VERSION_0_4_22: Version = Version::new(0, 4, 22);
-const VERSION_0_5_0: Version = Version::new(0, 5, 0);
-const VERSION_0_5_3: Version = Version::new(0, 5, 3);
-const VERSION_0_6_0: Version = Version::new(0, 6, 0);
-const VERSION_0_6_2: Version = Version::new(0, 6, 2);
-const VERSION_0_6_7: Version = Version::new(0, 6, 7);
-const VERSION_0_6_8: Version = Version::new(0, 6, 8);
-const VERSION_0_7_0: Version = Version::new(0, 7, 0);
-const VERSION_0_8_0: Version = Version::new(0, 8, 0);
-const VERSION_0_8_2: Version = Version::new(0, 8, 2);
-const VERSION_0_8_4: Version = Version::new(0, 8, 4);
-const VERSION_0_8_7: Version = Version::new(0, 8, 7);
-const VERSION_0_8_8: Version = Version::new(0, 8, 8);
-const VERSION_0_8_11: Version = Version::new(0, 8, 11);
-const VERSION_0_8_15: Version = Version::new(0, 8, 15);
-const VERSION_0_8_18: Version = Version::new(0, 8, 18);
-const VERSION_0_8_24: Version = Version::new(0, 8, 24);
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LegacyCall {
+    Call,
+    Delegatecall,
+    Staticcall,
+    User(TypeId),
+}
 
 pub(crate) struct BuiltInsResolver<'a> {
     language_version: Version,
@@ -241,6 +236,7 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     pub(crate) fn lookup_yul_global(&self, symbol: &str) -> Option<BuiltIn> {
         match symbol {
             "add" => Some(BuiltIn::YulAdd),
@@ -271,6 +267,13 @@ impl<'a> BuiltInsResolver<'a> {
             "delegatecall" => Some(BuiltIn::YulDelegatecall),
             "difficulty" if self.language_version < VERSION_0_8_18 => Some(BuiltIn::YulDifficulty),
             "div" => Some(BuiltIn::YulDiv),
+            "dup1" | "dup2" | "dup3" | "dup4" | "dup5" | "dup6" | "dup7" | "dup8" | "dup9"
+            | "dup10" | "dup11" | "dup12" | "dup13" | "dup14" | "dup15" | "dup16"
+                if self.language_version < VERSION_0_5_0 =>
+            {
+                let arity = symbol[3..].parse::<u8>().unwrap();
+                Some(BuiltIn::YulDup(arity))
+            }
             "eq" => Some(BuiltIn::YulEq),
             "exp" => Some(BuiltIn::YulExp),
             "extcodecopy" => Some(BuiltIn::YulExtcodecopy),
@@ -327,6 +330,14 @@ impl<'a> BuiltInsResolver<'a> {
             "stop" => Some(BuiltIn::YulStop),
             "sub" => Some(BuiltIn::YulSub),
             "suicide" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::YulSuicide),
+            "swap1" | "swap2" | "swap3" | "swap4" | "swap5" | "swap6" | "swap7" | "swap8"
+            | "swap9" | "swap10" | "swap11" | "swap12" | "swap13" | "swap14" | "swap15"
+            | "swap16"
+                if self.language_version < VERSION_0_5_0 =>
+            {
+                let arity = symbol[4..].parse::<u8>().unwrap();
+                Some(BuiltIn::YulSwap(arity))
+            }
             "timestamp" => Some(BuiltIn::YulTimestamp),
             "tload" if self.language_version >= VERSION_0_8_24 => Some(BuiltIn::YulTload),
             "tstore" if self.language_version >= VERSION_0_8_24 => Some(BuiltIn::YulTstore),
@@ -419,8 +430,16 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             BuiltIn::AddressCall if self.language_version < VERSION_0_7_0 => match symbol {
-                "gas" => Some(BuiltIn::LegacyCallOptionGas(None)),
-                "value" => Some(BuiltIn::LegacyCallOptionValue(None)),
+                "gas" => Some(BuiltIn::LegacyCallOptionGas(LegacyCall::Call)),
+                "value" => Some(BuiltIn::LegacyCallOptionValue(LegacyCall::Call)),
+                _ => None,
+            },
+            BuiltIn::AddressDelegatecall if self.language_version < VERSION_0_7_0 => match symbol {
+                "gas" => Some(BuiltIn::LegacyCallOptionGas(LegacyCall::Delegatecall)),
+                _ => None,
+            },
+            BuiltIn::AddressStaticcall if self.language_version < VERSION_0_7_0 => match symbol {
+                "gas" => Some(BuiltIn::LegacyCallOptionGas(LegacyCall::Staticcall)),
                 _ => None,
             },
             _ => None,
@@ -517,10 +536,17 @@ impl<'a> BuiltInsResolver<'a> {
                 "length" => Some(BuiltIn::Length),
                 _ => None,
             },
-            Type::Bytes { .. } => match symbol {
+            Type::Bytes { location } => match symbol {
                 "length" => Some(BuiltIn::Length),
-                "pop" if self.language_version >= VERSION_0_5_0 => Some(BuiltIn::ArrayPop),
-                "push" => Some(BuiltIn::ArrayPush(self.types.uint8())),
+                "pop"
+                    if self.language_version >= VERSION_0_5_0
+                        && *location == DataLocation::Storage =>
+                {
+                    Some(BuiltIn::ArrayPop)
+                }
+                "push" if *location == DataLocation::Storage => {
+                    Some(BuiltIn::ArrayPush(self.types.uint8()))
+                }
                 _ => None,
             },
             Type::Contract { .. } | Type::Interface { .. } => {
@@ -532,8 +558,9 @@ impl<'a> BuiltInsResolver<'a> {
             }
             Type::Enum { .. } => None,
             Type::FixedPointNumber { .. } => None,
-            Type::Function { external, .. } => {
-                if *external {
+            Type::Function(FunctionType { external, .. }) => {
+                // Solidity < 0.5.0 didn't require explicit visibility attributes
+                if *external || self.language_version < VERSION_0_5_0 {
                     match symbol {
                         "address" if self.language_version >= VERSION_0_8_2 => {
                             Some(BuiltIn::Address)
@@ -542,10 +569,10 @@ impl<'a> BuiltInsResolver<'a> {
                             Some(BuiltIn::Selector)
                         }
                         "gas" if self.language_version < VERSION_0_7_0 => {
-                            Some(BuiltIn::LegacyCallOptionGas(Some(type_id)))
+                            Some(BuiltIn::LegacyCallOptionGas(LegacyCall::User(type_id)))
                         }
                         "value" if self.language_version < VERSION_0_7_0 => {
-                            Some(BuiltIn::LegacyCallOptionValue(Some(type_id)))
+                            Some(BuiltIn::LegacyCallOptionValue(LegacyCall::User(type_id)))
                         }
                         _ => None,
                     }
@@ -554,8 +581,9 @@ impl<'a> BuiltInsResolver<'a> {
                 }
             }
             Type::Integer { .. } => None,
+            Type::Literal(LiteralKind::Address) => self.lookup_member_of_address(symbol, false),
+            Type::Literal(_) => None,
             Type::Mapping { .. } => None,
-            Type::Rational => None,
             Type::String { .. } => match symbol {
                 "length" => Some(BuiltIn::Length),
                 _ => None,
@@ -618,7 +646,7 @@ impl<'a> BuiltInsResolver<'a> {
             // variables and members
             BuiltIn::Address => Typing::Resolved(self.types.address()),
             BuiltIn::AddressBalance => Typing::Resolved(self.types.uint256()),
-            BuiltIn::AddressCode => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AddressCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::AddressCodehash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::BlockBasefee => Typing::Resolved(self.types.uint256()),
             BuiltIn::BlockBlobbasefee => Typing::Resolved(self.types.uint256()),
@@ -631,7 +659,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::BlockTimestamp => Typing::Resolved(self.types.uint256()),
             BuiltIn::Length => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgGas => Typing::Resolved(self.types.uint256()),
-            BuiltIn::MsgData => Typing::Resolved(self.types.bytes()),
+            BuiltIn::MsgData => Typing::Resolved(self.types.bytes_calldata()),
             BuiltIn::MsgSender => {
                 if self.language_version >= VERSION_0_5_0 && self.language_version < VERSION_0_8_0 {
                     Typing::Resolved(self.types.address_payable())
@@ -645,15 +673,15 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
             BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
             BuiltIn::TxOrigin => {
-                if self.language_version >= VERSION_0_8_0 {
-                    Typing::Resolved(self.types.address())
-                } else {
+                if self.language_version >= VERSION_0_5_0 && self.language_version < VERSION_0_8_0 {
                     Typing::Resolved(self.types.address_payable())
+                } else {
+                    Typing::Resolved(self.types.address())
                 }
             }
             BuiltIn::TypeName => Typing::Resolved(self.types.string()),
-            BuiltIn::TypeCreationCode => Typing::Resolved(self.types.bytes()),
-            BuiltIn::TypeRuntimeCode => Typing::Resolved(self.types.bytes()),
+            BuiltIn::TypeCreationCode => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::TypeRuntimeCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::TypeInterfaceId => Typing::Resolved(self.types.bytes4()),
             BuiltIn::TypeMin(type_id) => Typing::Resolved(*type_id),
             BuiltIn::TypeMax(type_id) => Typing::Resolved(*type_id),
@@ -715,15 +743,15 @@ impl<'a> BuiltInsResolver<'a> {
     ) -> Typing {
         match built_in {
             BuiltIn::AbiDecode => {
-                // TODO: the return type is a tuple of the types given in the
-                // arguments
+                // Special case: this is handled in the resolution pass because
+                // we need to register the types given as parameters
                 Typing::Unresolved
             }
-            BuiltIn::AbiEncode => Typing::Resolved(self.types.bytes()),
-            BuiltIn::AbiEncodeCall => Typing::Resolved(self.types.bytes()),
-            BuiltIn::AbiEncodePacked => Typing::Resolved(self.types.bytes()),
-            BuiltIn::AbiEncodeWithSelector => Typing::Resolved(self.types.bytes()),
-            BuiltIn::AbiEncodeWithSignature => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AbiEncode => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::AbiEncodeCall => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::AbiEncodePacked => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::AbiEncodeWithSelector => Typing::Resolved(self.types.bytes_memory()),
+            BuiltIn::AbiEncodeWithSignature => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::Addmod => Typing::Resolved(self.types.uint256()),
             BuiltIn::AddressCall => {
                 if self.language_version >= VERSION_0_5_0 {
@@ -768,17 +796,16 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Assert => Typing::Resolved(self.types.void()),
             BuiltIn::Blobhash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::Blockhash => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::BytesConcat => Typing::Resolved(self.types.bytes()),
+            BuiltIn::BytesConcat => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::LegacyCallOptionGas(type_id) | BuiltIn::LegacyCallOptionValue(type_id) => {
-                if let Some(type_id) = type_id {
-                    Typing::Resolved(*type_id)
-                } else if self.language_version < VERSION_0_7_0 {
-                    Typing::BuiltIn(BuiltIn::AddressCall)
-                } else {
-                    Typing::Unresolved
+            BuiltIn::LegacyCallOptionGas(call_type) | BuiltIn::LegacyCallOptionValue(call_type) => {
+                match call_type {
+                    LegacyCall::Call => Typing::BuiltIn(BuiltIn::AddressCall),
+                    LegacyCall::Delegatecall => Typing::BuiltIn(BuiltIn::AddressDelegatecall),
+                    LegacyCall::Staticcall => Typing::BuiltIn(BuiltIn::AddressStaticcall),
+                    LegacyCall::User(type_id) => Typing::Resolved(*type_id),
                 }
             }
             BuiltIn::LegacyCallOptionValueNew(type_id) => Typing::NewExpression(*type_id),

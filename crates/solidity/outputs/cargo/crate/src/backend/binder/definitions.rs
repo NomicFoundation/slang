@@ -74,11 +74,20 @@ pub struct EventDefinition {
     pub parameters_scope_id: ScopeId,
 }
 
+#[derive(Debug, Eq, PartialEq)]
+pub enum FunctionVisibility {
+    External,
+    Internal,
+    Private,
+    Public,
+}
+
 #[derive(Debug)]
 pub struct FunctionDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
     pub parameters_scope_id: ScopeId,
+    pub visibility: FunctionVisibility,
 }
 
 #[derive(Debug)]
@@ -121,11 +130,19 @@ pub struct ParameterDefinition {
     pub identifier: Rc<TerminalNode>,
 }
 
+#[derive(Debug, Eq, PartialEq)]
+pub enum StateVariableVisibility {
+    Internal,
+    Private,
+    Public,
+}
+
 #[derive(Debug)]
 pub struct StateVariableDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
     pub getter_type_id: Option<TypeId>,
+    pub visibility: StateVariableVisibility,
 }
 
 #[derive(Debug)]
@@ -240,6 +257,40 @@ impl Definition {
         }
     }
 
+    pub(crate) fn is_private_or_internally_visible(&self) -> bool {
+        if let Self::Function(function_definition) = self {
+            function_definition.visibility != FunctionVisibility::External
+        } else {
+            true
+        }
+    }
+
+    pub(crate) fn is_internally_visible(&self) -> bool {
+        match self {
+            Self::Function(function_definition) => {
+                function_definition.visibility == FunctionVisibility::Internal
+                    || function_definition.visibility == FunctionVisibility::Public
+            }
+            Self::StateVariable(variable_definition) => {
+                variable_definition.visibility != StateVariableVisibility::Private
+            }
+            _ => true,
+        }
+    }
+
+    pub(crate) fn is_externally_visible(&self) -> bool {
+        match self {
+            Self::Function(function_definition) => {
+                function_definition.visibility == FunctionVisibility::Public
+                    || function_definition.visibility == FunctionVisibility::External
+            }
+            Self::StateVariable(variable_definition) => {
+                variable_definition.visibility == StateVariableVisibility::Public
+            }
+            _ => true,
+        }
+    }
+
     pub(crate) fn new_constant(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Constant(ConstantDefinition {
             node_id,
@@ -298,11 +349,13 @@ impl Definition {
         node_id: NodeId,
         identifier: &Rc<TerminalNode>,
         parameters_scope_id: ScopeId,
+        visibility: FunctionVisibility,
     ) -> Self {
         Self::Function(FunctionDefinition {
             node_id,
             identifier: Rc::clone(identifier),
             parameters_scope_id,
+            visibility,
         })
     }
 
@@ -361,11 +414,16 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_state_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_state_variable(
+        node_id: NodeId,
+        identifier: &Rc<TerminalNode>,
+        visibility: StateVariableVisibility,
+    ) -> Self {
         Self::StateVariable(StateVariableDefinition {
             node_id,
             identifier: Rc::clone(identifier),
             getter_type_id: None,
+            visibility,
         })
     }
 

@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function push(bytes memory, uint x) internal returns (bytes memory) {}
+    │              ──┬─                    ┬  
+    │                ╰──────────────────────── name: 2
+    │                                      │  
+    │                                      ╰── name: 3
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 4
+  6 │     using Lib for bytes;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  8 │     bytes b;
+    │           ┬  
+    │           ╰── name: 5
+    │ 
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 6
+ 11 │         b.push(1).push(2);
+    │         ┬ ──┬─    ──┬─  
+    │         ╰─────────────── ref: 5
+    │             │       │   
+    │             ╰─────────── refs: built-in, 2
+    │                     │   
+    │                     ╰─── refs: built-in, 2
+ 12 │         b.length;
+    │         ┬ ───┬──  
+    │         ╰───────── ref: 5
+    │              │    
+    │              ╰──── ref: built-in
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─────▶ library Lib {
+  2 │   │           function push(bytes memory, uint x) internal returns (bytes memory) {}
+    │   │       ──────────────────────────────────┬──┬─────────────────────────────────────  
+    │   │                                         ╰────────────────────────────────────────── definiens: 3
+    │   │                                            │                                       
+    │   │                                            ╰─────────────────────────────────────── definiens: 2
+  3 │ │ ├─────▶ }
+    │ │ │           
+    │ │ ╰─────────── definiens: 1
+  4 │ ╭───────▶ 
+    ┆ ┆         
+  7 │ │     ╭─▶ 
+  8 │ │   │ ├─▶     bytes b;
+    │ │   │ │                  
+    │ │   │ ╰────────────────── definiens: 5
+  9 │ │   ╭───▶ 
+    ┆ ┆   ┆     
+ 13 │ │   ├───▶     }
+    │ │   │             
+    │ │   ╰───────────── definiens: 6
+ 14 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 4
+────╯

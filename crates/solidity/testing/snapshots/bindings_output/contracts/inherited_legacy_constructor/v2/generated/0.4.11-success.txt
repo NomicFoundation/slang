@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["token" @ input.sol:1:10] (contract)
+- Def: #2 ["balanceOf" @ input.sol:2:40] (state var, type: address => uint256)
+- Def: #3 ["token" @ input.sol:4:14] (function, type: function (uint256, string calldata, string calldata) returns void)
+- Def: #4 ["Test" @ input.sol:7:10] (contract)
+- Def: #5 ["merge" @ input.sol:8:14] (function, type: function (address) returns void)
+- Def: #6 ["target" @ input.sol:8:28] (parameter, type: address)
+- Def: #7 ["old" @ input.sol:9:15] (variable, type: token)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["token" @ input.sol:7:18] -> #1
+- Ref: ["token" @ input.sol:9:9] -> #1
+- Ref: ["token" @ input.sol:9:21] -> #1
+- Ref: ["old" @ input.sol:10:9] -> #7
+- Ref: ["balanceOf" @ input.sol:10:13] -> #2
+- Ref: ["target" @ input.sol:10:23] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract token {
+    │          ──┬──  
+    │            ╰──── name: 1
+  2 │     mapping(address => uint256) public balanceOf;
+    │                                        ────┬────  
+    │                                            ╰────── name: 2
+    │ 
+  4 │     function token(uint256, string, string) public {}
+    │              ──┬──  
+    │                ╰──── name: 3
+    │ 
+  7 │ contract Test is token {
+    │          ──┬─    ──┬──  
+    │            ╰──────────── name: 4
+    │                    │    
+    │                    ╰──── ref: 1
+  8 │     function merge(address target) {
+    │              ──┬──         ───┬──  
+    │                ╰─────────────────── name: 5
+    │                               │    
+    │                               ╰──── name: 6
+  9 │         token old = token(address(0x7F2176cEB16dcb648dc924eff617c3dC2BEfd30d));
+    │         ──┬── ─┬─   ──┬──  
+    │           ╰──────────────── ref: 1
+    │                │      │    
+    │                ╰─────────── name: 7
+    │                       │    
+    │                       ╰──── ref: 1
+ 10 │         old.balanceOf(target);
+    │         ─┬─ ────┬──── ───┬──  
+    │          ╰──────────────────── ref: 7
+    │                 │        │    
+    │                 ╰───────────── ref: 2
+    │                          │    
+    │                          ╰──── ref: 6
+────╯

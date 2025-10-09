@@ -1,0 +1,71 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Utils" @ input.sol:1:9] (library)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function (bytes memory) returns void)
+- Def: #3 ["x" @ input.sol:2:31] (parameter, type: bytes memory)
+- Def: #4 ["foo" @ input.sol:3:14] (function, type: function (bytes1) returns void)
+- Def: #5 ["x" @ input.sol:3:25] (parameter, type: bytes1)
+- Def: #6 ["Test" @ input.sol:6:10] (contract)
+- Def: #7 ["test" @ input.sol:10:14] (function, type: function (bytes calldata) returns void)
+- Def: #8 ["name" @ input.sol:10:34] (parameter, type: bytes calldata)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["Utils" @ input.sol:7:11] -> #1
+- Ref: ["Utils" @ input.sol:8:11] -> #1
+- Ref: ["name" @ input.sol:11:15] -> #8
+- Ref: ["foo" @ input.sol:11:27] -> #2
+- Ref: ["name" @ input.sol:12:9] -> #8
+- Ref: ["foo" @ input.sol:12:17] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 1
+  2 │     function foo(bytes memory x) internal {}
+    │              ─┬─              ┬  
+    │               ╰────────────────── name: 2
+    │                               │  
+    │                               ╰── name: 3
+  3 │     function foo(bytes1 x) internal {}
+    │              ─┬─        ┬  
+    │               ╰──────────── name: 4
+    │                         │  
+    │                         ╰── name: 5
+    │ 
+  6 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 6
+  7 │     using Utils for bytes;
+    │           ──┬──  
+    │             ╰──── ref: 1
+  8 │     using Utils for bytes1;
+    │           ──┬──  
+    │             ╰──── ref: 1
+    │ 
+ 10 │     function test(bytes calldata name) public {
+    │              ──┬─                ──┬─  
+    │                ╰─────────────────────── name: 7
+    │                                    │   
+    │                                    ╰─── name: 8
+ 11 │         bytes(name[0:16]).foo();
+    │               ──┬─        ─┬─  
+    │                 ╰────────────── ref: 8
+    │                            │   
+    │                            ╰─── ref: 2
+ 12 │         name[0].foo();
+    │         ──┬─    ─┬─  
+    │           ╰────────── ref: 8
+    │                  │   
+    │                  ╰─── ref: 4
+────╯

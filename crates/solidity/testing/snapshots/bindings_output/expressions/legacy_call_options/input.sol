@@ -4,5 +4,8 @@ contract Test {
         rcpt.call.value(1)(data);
         rcpt.call.gas(1)(data);
         rcpt.call.value(1).gas(1)(data);
+
+        rcpt.staticcall.gas(1)(data); // staticcall is valid >= 0.5.0
+        rcpt.delegatecall.gas(1)(data);
     }
 }

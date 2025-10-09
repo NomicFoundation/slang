@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 1
+  2 │     function nop(bytes1) internal {}
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  6 │     using Utils for bytes1;
+    │           ──┬──  
+    │             ╰──── ref: 1
+    │ 
+  8 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 4
+  9 │         bytes32 seed;
+    │                 ──┬─  
+    │                   ╰─── name: 5
+ 10 │         seed[0].nop();
+    │         ──┬─    ─┬─  
+    │           ╰────────── ref: 5
+    │                  │   
+    │                  ╰─── unresolved
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Utils {
+  2 │     │       function nop(bytes1) internal {}
+    │     │   ──────────────────┬──────────────────  
+    │     │                     ╰──────────────────── definiens: 2
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  7 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+  9 │ │ │             bytes32 seed;
+    │ │ │     ───────────┬──────────  
+    │ │ │                ╰──────────── definiens: 5
+    ┆ ┆ ┆     
+ 11 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 4
+ 12 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 3
+────╯

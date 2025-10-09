@@ -16,37 +16,37 @@ contract Middle is Base {}
 contract Test is Base, Middle {}
 "##;
 
-fn find_first_match(root_cursor: Cursor, query_string: &str, capture_name: &str) -> Result<Cursor> {
-    let query = Query::create(query_string)?;
+fn find_first_match(root_cursor: Cursor, query_string: &str, capture_name: &str) -> Cursor {
+    let query = Query::create(query_string).expect("query to be valid");
     let query_match = root_cursor.query(vec![query]).next();
     let query_match = query_match.expect("query to succeed");
-    Ok(query_match.captures[capture_name]
-        .first()
+    query_match
+        .capture(capture_name)
         .expect("query to capture identifier")
-        .clone())
+        .cursors()
+        .iter()
+        .next()
+        .expect("query to capture identifier")
+        .clone()
 }
 
-fn find_all_matches(
-    root_cursor: Cursor,
-    query_string: &str,
-    capture_name: &str,
-) -> Result<Vec<Cursor>> {
-    let query = Query::create(query_string)?;
+fn find_all_matches(root_cursor: Cursor, query_string: &str, capture_name: &str) -> Vec<Cursor> {
+    let query = Query::create(query_string).expect("query to be valid");
     let mut results = Vec::new();
     for query_match in root_cursor.query(vec![query]) {
-        let cursor = query_match.captures[capture_name]
-            .first()
+        let capture = query_match
+            .capture(capture_name)
             .expect("query to capture identifier");
-        results.push(cursor.clone());
+        let cursors = capture.cursors().iter().cloned();
+        results.extend(cursors);
     }
-    Ok(results)
+    results
 }
 
 fn setup() -> Result<(Cursor, Rc<BindingGraph>)> {
     let version = TEST_VERSION;
     let parser = Parser::create(version.clone())?;
-    let mut builder =
-        bindings::create_with_resolver(version.clone(), Rc::new(TestsPathResolver {}));
+    let mut builder = bindings::create_with_resolver(&version, Rc::new(TestsPathResolver {}));
 
     let parse_output = parser.parse_file_contents(INPUT_FILE);
     builder.add_user_file("input.sol", parse_output.create_tree_cursor());
@@ -66,7 +66,7 @@ fn test_resolve_references_from_definition() -> Result<()> {
         root_cursor.clone(),
         "[ContractDefinition @identifier [\"Base\"]]",
         "identifier",
-    )?;
+    );
     let base_definition = binding_graph
         .definition_at(&base_cursor)
         .expect("Base definition to be found");
@@ -77,7 +77,7 @@ fn test_resolve_references_from_definition() -> Result<()> {
         root_cursor.clone(),
         "[IdentifierPath @identifier [\"Base\"]]",
         "identifier",
-    )?;
+    );
     for base_ref in &base_references {
         assert!(base_ref_cursors.contains(base_ref.get_cursor()));
     }
@@ -87,7 +87,7 @@ fn test_resolve_references_from_definition() -> Result<()> {
         root_cursor.clone(),
         "[ContractDefinition @identifier [\"Middle\"]]",
         "identifier",
-    )?;
+    );
     let middle_definition = binding_graph
         .definition_at(&middle_cursor)
         .expect("Middle definition to be found");
@@ -98,7 +98,7 @@ fn test_resolve_references_from_definition() -> Result<()> {
         root_cursor.clone(),
         "[IdentifierPath @identifier [\"Middle\"]]",
         "identifier",
-    )?;
+    );
     for middle_ref in &middle_references {
         assert!(middle_ref_cursors.contains(middle_ref.get_cursor()));
     }
@@ -108,7 +108,7 @@ fn test_resolve_references_from_definition() -> Result<()> {
         root_cursor.clone(),
         "[ContractDefinition @identifier [\"Test\"]]",
         "identifier",
-    )?;
+    );
     let test_definition = binding_graph
         .definition_at(&test_cursor)
         .expect("Test definition to be found");
@@ -119,7 +119,7 @@ fn test_resolve_references_from_definition() -> Result<()> {
         root_cursor.clone(),
         "[IdentifierPath @identifier [\"Test\"]]",
         "identifier",
-    )?;
+    );
     assert!(test_ref_cursors.is_empty());
 
     Ok(())
@@ -134,7 +134,7 @@ fn test_find_definitions_at_cursors() -> Result<()> {
         root_cursor.clone(),
         "[ContractDefinition @identifier [\"Base\"]]",
         "identifier",
-    )?;
+    );
     let base_definition = binding_graph
         .definition_by_node_id(base_identifier_cursor.node().id())
         .expect("Base definition to be found");
@@ -144,7 +144,7 @@ fn test_find_definitions_at_cursors() -> Result<()> {
         root_cursor.clone(),
         "@contract [ContractDefinition [\"Base\"]]",
         "contract",
-    )?;
+    );
     let base_contract_definition = binding_graph
         .definition_at(&base_contract_cursor)
         .expect("Base contract found via its definiens");
@@ -165,7 +165,7 @@ fn test_find_definitions_and_references_by_node_id() -> Result<()> {
         root_cursor.clone(),
         "@contract [ContractDefinition [\"Base\"]]",
         "contract",
-    )?;
+    );
     let contract_definition = binding_graph
         .definition_by_node_id(contract_cursor.node().id())
         .expect("Contract definition can be found by its node id");
@@ -185,7 +185,7 @@ fn test_find_definitions_and_references_by_node_id() -> Result<()> {
         root_cursor.clone(),
         "[IdentifierPath @identifier [\"Base\"]]",
         "identifier",
-    )?;
+    );
     for base_ref_cursor in &base_ref_cursors {
         let reference = binding_graph
             .reference_by_node_id(base_ref_cursor.node().id())

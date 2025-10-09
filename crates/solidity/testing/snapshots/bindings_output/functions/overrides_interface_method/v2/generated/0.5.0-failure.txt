@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+    ╭─[input.sol:11:1]
+    │
+ 11 │ ╭─▶ abstract contract ERC1155Holder is IERC1155Receiver {
+    ┆ ┆   
+ 21 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (7):
+- Def: #1 ["IERC1155Receiver" @ input.sol:1:11] (interface)
+- Def: #2 ["onERC1155Received" @ input.sol:2:14] (function, type: function (address, address, uint256, uint256, bytes calldata) returns bytes4)
+- Def: #3 ["operator" @ input.sol:3:40] (parameter, type: address)
+- Def: #4 ["from" @ input.sol:4:40] (parameter, type: address)
+- Def: #5 ["id" @ input.sol:5:40] (parameter, type: uint256)
+- Def: #6 ["value" @ input.sol:6:40] (parameter, type: uint256)
+- Def: #7 ["data" @ input.sol:7:47] (parameter, type: bytes calldata)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface IERC1155Receiver {
+   │           ────────┬───────  
+   │                   ╰───────── name: 1
+ 2 │     function onERC1155Received(
+   │              ────────┬────────  
+   │                      ╰────────── name: 2
+ 3 │                                address operator,
+   │                                        ────┬───  
+   │                                            ╰───── name: 3
+ 4 │                                address from,
+   │                                        ──┬─  
+   │                                          ╰─── name: 4
+ 5 │                                uint256 id,
+   │                                        ─┬  
+   │                                         ╰── name: 5
+ 6 │                                uint256 value,
+   │                                        ──┬──  
+   │                                          ╰──── name: 6
+ 7 │                                bytes calldata data
+   │                                               ──┬─  
+   │                                                 ╰─── name: 7
+───╯

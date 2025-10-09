@@ -223,10 +223,13 @@ impl core::fmt::Debug for metaslang_cst::query::CaptureQuantifier
 pub fn metaslang_cst::query::CaptureQuantifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for metaslang_cst::query::CaptureQuantifier
 impl core::marker::StructuralPartialEq for metaslang_cst::query::CaptureQuantifier
+pub struct metaslang_cst::query::Capture<'a, T: metaslang_cst::kinds::KindTypes>
+impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::query::Capture<'_, T>
+pub fn metaslang_cst::query::Capture<'_, T>::cursors(&self) -> &[metaslang_cst::cursor::Cursor<T>]
+pub fn metaslang_cst::query::Capture<'_, T>::name(&self) -> &str
 pub struct metaslang_cst::query::Query<T: metaslang_cst::kinds::KindTypes>
-pub metaslang_cst::query::Query::ast_node: metaslang_cst::query::model::ASTNode<T>
-pub metaslang_cst::query::Query::capture_quantifiers: alloc::collections::btree::map::BTreeMap<alloc::string::String, metaslang_cst::query::CaptureQuantifier>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::query::Query<T>
+pub fn metaslang_cst::query::Query<T>::capture_quantifiers(&self) -> &alloc::collections::btree::map::BTreeMap<alloc::string::String, metaslang_cst::query::CaptureQuantifier>
 pub fn metaslang_cst::query::Query<T>::create(text: &str) -> core::result::Result<Self, metaslang_cst::query::QueryError>
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::query::Query<T>
 pub fn metaslang_cst::query::Query<T>::clone(&self) -> metaslang_cst::query::Query<T>
@@ -247,15 +250,13 @@ pub fn metaslang_cst::query::QueryError::fmt(&self, f: &mut core::fmt::Formatter
 impl core::fmt::Display for metaslang_cst::query::QueryError
 pub fn metaslang_cst::query::QueryError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_cst::query::QueryMatch<T: metaslang_cst::kinds::KindTypes>
-pub metaslang_cst::query::QueryMatch::captures: alloc::collections::btree::map::BTreeMap<alloc::string::String, alloc::vec::Vec<metaslang_cst::cursor::Cursor<T>>>
-pub metaslang_cst::query::QueryMatch::queries: alloc::rc::Rc<alloc::vec::Vec<metaslang_cst::query::Query<T>>>
-pub metaslang_cst::query::QueryMatch::query_index: usize
-pub metaslang_cst::query::QueryMatch::root_cursor: metaslang_cst::cursor::Cursor<T>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::query::QueryMatch<T>
-pub fn metaslang_cst::query::QueryMatch<T>::capture(&self, name: &str) -> core::option::Option<(metaslang_cst::query::CaptureQuantifier, impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::cursor::Cursor<T>>)>
+pub fn metaslang_cst::query::QueryMatch<T>::capture(&self, name: &str) -> core::option::Option<metaslang_cst::query::Capture<'_, T>>
 pub fn metaslang_cst::query::QueryMatch<T>::capture_names(&self) -> impl core::iter::traits::iterator::Iterator<Item = &alloc::string::String>
-pub fn metaslang_cst::query::QueryMatch<T>::captures(&self) -> impl core::iter::traits::iterator::Iterator<Item = (&alloc::string::String, metaslang_cst::query::CaptureQuantifier, impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::cursor::Cursor<T>>)>
+pub fn metaslang_cst::query::QueryMatch<T>::captures(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::query::Capture<'_, T>>
 pub fn metaslang_cst::query::QueryMatch<T>::query(&self) -> &metaslang_cst::query::Query<T>
+pub fn metaslang_cst::query::QueryMatch<T>::query_index(&self) -> usize
+pub fn metaslang_cst::query::QueryMatch<T>::root_cursor(&self) -> &metaslang_cst::cursor::Cursor<T>
 pub struct metaslang_cst::query::QueryMatchIterator<T: metaslang_cst::kinds::KindTypes>
 impl<T: metaslang_cst::kinds::KindTypes + 'static> core::iter::traits::iterator::Iterator for metaslang_cst::query::QueryMatchIterator<T>
 pub type metaslang_cst::query::QueryMatchIterator<T>::Item = metaslang_cst::query::QueryMatch<T>

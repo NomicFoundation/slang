@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         var x = tx.origin;
+   │             ┬   ─┬ ───┬──  
+   │             ╰────────────── name: 3
+   │                  │    │    
+   │                  ╰───────── ref: built-in
+   │                       │    
+   │                       ╰──── ref: built-in
+ 4 │         x.transfer(1);
+   │         ┬ ────┬───  
+   │         ╰─────────── refs: 3, built-in
+   │               │     
+   │               ╰───── unresolved
+   │ 
+ 6 │         var (a, b) = (msg.sender, 1);
+   │              ┬  ┬     ─┬─ ───┬──  
+   │              ╰──────────────────── name: 4
+   │                 │      │     │    
+   │                 ╰───────────────── name: 5
+   │                        │     │    
+   │                        ╰────────── ref: built-in
+   │                              │    
+   │                              ╰──── ref: built-in
+ 7 │         a.send(b);
+   │         ┬ ──┬─ ┬  
+   │         ╰───────── ref: 4
+   │             │  │  
+   │             ╰───── unresolved
+   │                │  
+   │                ╰── ref: 5
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+ 3 │ │ │           var x = tx.origin;
+   │ │ │   ─────────────┬─────────────  
+   │ │ │                ╰─────────────── definiens: 3
+   ┆ ┆ ┆   
+ 6 │ │ │           var (a, b) = (msg.sender, 1);
+   │ │ │                ┬ ─┬  
+   │ │ │                ╰───── definiens: 4
+   │ │ │                   │  
+   │ │ │                   ╰── definiens: 5
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

@@ -1,0 +1,6 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+reference `value` at input.sol:8:24 failed to resolve in new binder
+reference `deposit2` at input.sol:8:15 failed to resolve in new binder
+
+Definitions and/or references from binding graph and new binder DIFFER

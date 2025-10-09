@@ -138,7 +138,7 @@ impl<KT: KindTypes + 'static> Stanza<KT> {
         locals.clear();
         for statement in &self.statements {
             let error_context = {
-                let cursor = &mat.root_cursor;
+                let cursor = &mat.root_cursor();
                 StatementContext::new(&statement, &self, cursor)
             };
             let mut exec = ExecutionContext {
@@ -254,7 +254,7 @@ impl CreateGraphNode {
         self.node
             .add_debug_attrs(&mut exec.graph[graph_node].attributes, exec.config)?;
         if let Some(match_node_attr) = &exec.config.match_node_attr {
-            let cursor = exec.mat.root_cursor.clone();
+            let cursor = exec.mat.root_cursor().clone();
             let syn_node = exec.graph.add_syntax_node(cursor);
             exec.graph[graph_node]
                 .attributes
@@ -662,8 +662,9 @@ impl Capture {
         &self,
         exec: &mut ExecutionContext<'_, '_, '_, '_, KT>,
     ) -> Result<Value, ExecutionError> {
-        let capture = &exec.mat.captures[&*self.name.0];
-        Ok(Value::from_nodes(exec.graph, capture.iter().cloned(), self.quantifier).into())
+        let capture = exec.mat.capture(&self.name.0);
+        let cursors = capture.as_ref().unwrap().cursors();
+        Ok(Value::from_nodes(exec.graph, cursors, self.quantifier).into())
     }
 }
 

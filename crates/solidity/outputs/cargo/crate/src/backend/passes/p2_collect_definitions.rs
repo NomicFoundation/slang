@@ -4,11 +4,15 @@ use std::rc::Rc;
 use semver::Version;
 
 use super::p1_flatten_contracts::Output as Input;
-use crate::backend::binder::{Binder, Definition, FileScope, Scope, ScopeId};
+use crate::backend::binder::{
+    Binder, Definition, FileScope, FunctionVisibility, ParametersScope, Scope, ScopeId,
+    StateVariableVisibility,
+};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::compilation::{CompilationUnit, File};
 use crate::cst::NodeId;
+use crate::utils::versions::VERSION_0_5_0;
 
 pub struct Output {
     pub compilation_unit: CompilationUnit,
@@ -39,12 +43,18 @@ pub fn run(input: Input) -> Output {
     }
 }
 
-const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+struct ScopeFrame {
+    // Scope associated with the node that created the stack frame. This is
+    // solely used for integrity validation when popping the current frame.
+    structural_scope_id: ScopeId,
+    // Scope to use when resolving a symbol.
+    lexical_scope_id: ScopeId,
+}
 
 struct Pass {
     language_version: Version,
     current_file: Option<Rc<File>>, // needed to resolve imports on the file
-    scope_stack: Vec<ScopeId>,
+    scope_stack: Vec<ScopeFrame>,
     binder: Binder,
 }
 
@@ -70,30 +80,60 @@ impl Pass {
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = self.binder.insert_scope(scope);
-        self.scope_stack.push(scope_id);
+        self.scope_stack.push(ScopeFrame {
+            structural_scope_id: scope_id,
+            lexical_scope_id: scope_id,
+        });
+        scope_id
+    }
+
+    fn replace_scope(&mut self, scope: Scope) -> ScopeId {
+        let Some(ScopeFrame {
+            structural_scope_id,
+            ..
+        }) = self.scope_stack.pop()
+        else {
+            unreachable!("scope stack cannot be empty");
+        };
+
+        let scope_id = self.binder.insert_scope(scope);
+        self.scope_stack.push(ScopeFrame {
+            structural_scope_id,
+            lexical_scope_id: scope_id,
+        });
         scope_id
     }
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(scope_id);
+        self.scope_stack.push(ScopeFrame {
+            structural_scope_id: scope_id,
+            lexical_scope_id: scope_id,
+        });
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(current_scope_id) = self.scope_stack.pop() else {
+        let Some(ScopeFrame {
+            structural_scope_id,
+            ..
+        }) = self.scope_stack.pop()
+        else {
             unreachable!("attempt to pop an empty scope stack");
         };
         assert_eq!(
-            current_scope_id,
+            structural_scope_id,
             self.binder.scope_id_for_node_id(node_id).unwrap()
         );
     }
 
     fn current_scope_id(&self) -> ScopeId {
-        let Some(scope_id) = self.scope_stack.last() else {
+        let Some(ScopeFrame {
+            lexical_scope_id, ..
+        }) = self.scope_stack.last()
+        else {
             unreachable!("empty scope stack");
         };
-        *scope_id
+        *lexical_scope_id
     }
 
     fn current_scope(&mut self) -> &mut Scope {
@@ -133,7 +173,61 @@ impl Pass {
         // TODO(validation): emit an error/warning if the file cannot be resolved
     }
 
-    fn collect_parameters(&mut self, parameters: &input_ir::Parameters, scope_id: ScopeId) {
+    // Collects *all* the sequential parameters making and registering
+    // definitions for named ones and return the constructed parameters scope ID
+    // to link with the enclosing function definition
+    fn collect_parameters(&mut self, parameters: &input_ir::ParametersDeclaration) -> ScopeId {
+        let mut scope = ParametersScope::new(parameters.node_id);
+        for parameter in &parameters.parameters {
+            scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
+            if let Some(name) = &parameter.name {
+                let definition = Definition::new_parameter(parameter.node_id, name);
+                self.binder.insert_definition_no_scope(definition);
+            }
+        }
+        self.binder.insert_scope(Scope::Parameters(scope))
+    }
+
+    // Collect parameters in error definition
+    fn collect_error_parameters(
+        &mut self,
+        parameters: &input_ir::ErrorParametersDeclaration,
+    ) -> ScopeId {
+        let mut scope = ParametersScope::new(parameters.node_id);
+        for parameter in &parameters.parameters {
+            scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
+            if let Some(name) = &parameter.name {
+                let definition = Definition::new_parameter(parameter.node_id, name);
+                self.binder.insert_definition_no_scope(definition);
+            }
+        }
+        self.binder.insert_scope(Scope::Parameters(scope))
+    }
+
+    // Collect parameters in event definition
+    fn collect_event_parameters(
+        &mut self,
+        parameters: &input_ir::EventParametersDeclaration,
+    ) -> ScopeId {
+        let mut scope = ParametersScope::new(parameters.node_id);
+        for parameter in &parameters.parameters {
+            scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
+            if let Some(name) = &parameter.name {
+                let definition = Definition::new_parameter(parameter.node_id, name);
+                self.binder.insert_definition_no_scope(definition);
+            }
+        }
+        self.binder.insert_scope(Scope::Parameters(scope))
+    }
+
+    // This is used to collect only named parameters and insert their
+    // definitions into an existing scope. Used mostly for return parameters,
+    // where position and types are not used for binding.
+    fn collect_named_parameters_into_scope(
+        &mut self,
+        parameters: &input_ir::Parameters,
+        scope_id: ScopeId,
+    ) {
         for parameter in parameters {
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_parameter(parameter.node_id, name);
@@ -259,25 +353,63 @@ impl Visitor for Pass {
     }
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
-        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
-        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
 
         if let input_ir::FunctionName::Identifier(name) = &node.name {
-            let definition = Definition::new_function(node.node_id, name, parameters_scope_id);
-            self.insert_definition_in_current_scope(definition);
-
-            // For Solidity < 0.5.0, check if we need to register the
-            // constructor parameters scope
-            if self.language_version < VERSION_0_5_0 {
-                let current_scope_node_id = self.current_scope().node_id();
-                let current_definition = self.binder.find_definition_by_id(current_scope_node_id);
-                if let Some(Definition::Contract(contract_definition)) = current_definition {
-                    let contract_name = contract_definition.identifier.unparse();
-                    if contract_name == name.unparse() {
-                        self.register_constructor_parameters(parameters_scope_id);
+            // TODO(validation): only a single visibility keyword can be provided
+            // TODO(validation): free functions are always internal, but
+            // otherwise a visibility *must* be set explicitly (>= 0.5.0)
+            let visibility = node
+                .attributes
+                .iter()
+                .fold(None, |previous, attribute| match attribute {
+                    input_ir::FunctionAttribute::ExternalKeyword => {
+                        Some(FunctionVisibility::External)
                     }
+                    input_ir::FunctionAttribute::InternalKeyword => {
+                        Some(FunctionVisibility::Internal)
+                    }
+                    input_ir::FunctionAttribute::PrivateKeyword => {
+                        Some(FunctionVisibility::Private)
+                    }
+                    input_ir::FunctionAttribute::PublicKeyword => Some(FunctionVisibility::Public),
+                    _ => previous,
+                })
+                .unwrap_or(if self.language_version < VERSION_0_5_0 {
+                    // in Solidity < 0.5.0 free functions are not valid and the
+                    // default visibility for contract functions is public
+                    FunctionVisibility::Public
+                } else {
+                    FunctionVisibility::Internal
+                });
+            let definition =
+                Definition::new_function(node.node_id, name, parameters_scope_id, visibility);
+
+            let current_scope_node_id = self.current_scope().node_id();
+            let enclosing_definition = self.binder.find_definition_by_id(current_scope_node_id);
+            let enclosing_contract_name =
+                if let Some(Definition::Contract(contract_definition)) = enclosing_definition {
+                    Some(contract_definition.identifier.unparse())
+                } else {
+                    None
+                };
+
+            if enclosing_contract_name.is_some_and(|contract_name| contract_name == name.unparse())
+            {
+                // TODO(validation): for Solidity >= 0.5.0 there cannot be a
+                // function with the same name as the enclosing contract. In any
+                // case, if the names match we don't register the definition in
+                // the current scope.
+                self.binder.insert_definition_no_scope(definition);
+
+                // For Solidity < 0.5.0, a function with the same name as the
+                // enclosing contract is a constructor, and we need to register the
+                // constructor parameters scope.
+                if self.language_version < VERSION_0_5_0 {
+                    self.register_constructor_parameters(parameters_scope_id);
                 }
+            } else {
+                self.insert_definition_in_current_scope(definition);
             }
         }
 
@@ -286,7 +418,10 @@ impl Visitor for Pass {
         let function_scope_id = self.enter_scope(function_scope);
 
         if let Some(returns_declaration) = &node.returns {
-            self.collect_parameters(&returns_declaration.variables.parameters, function_scope_id);
+            self.collect_named_parameters_into_scope(
+                &returns_declaration.variables.parameters,
+                function_scope_id,
+            );
         }
 
         true
@@ -303,7 +438,7 @@ impl Visitor for Pass {
         let modifier_scope = Scope::new_modifier(node.node_id, self.current_scope_id());
         let modifier_scope_id = self.enter_scope(modifier_scope);
         if let Some(parameters) = &node.parameters {
-            self.collect_parameters(&parameters.parameters, modifier_scope_id);
+            self.collect_named_parameters_into_scope(&parameters.parameters, modifier_scope_id);
         }
 
         true
@@ -314,9 +449,7 @@ impl Visitor for Pass {
     }
 
     fn enter_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) -> bool {
-        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
-        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
 
         // Register the constructor to resolve named parameters when
         // constructing this contract
@@ -341,16 +474,17 @@ impl Visitor for Pass {
         // the fallback function cannot be invoked with named arguments. Then
         // again, the function scope requires a parameters scope. Maybe make
         // that optional?
-        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
-        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
 
         let function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
         let function_scope_id = self.enter_scope(function_scope);
 
         if let Some(returns_declaration) = &node.returns {
-            self.collect_parameters(&returns_declaration.variables.parameters, function_scope_id);
+            self.collect_named_parameters_into_scope(
+                &returns_declaration.variables.parameters,
+                function_scope_id,
+            );
         }
 
         true
@@ -370,9 +504,7 @@ impl Visitor for Pass {
         // that optional?
         // TODO: a receive function does not accept parameters. Should we update
         // the language definition?
-        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
-        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
 
         let function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
@@ -393,9 +525,7 @@ impl Visitor for Pass {
         // the unnamed function cannot be invoked with named arguments. Then
         // again, the function scope requires a parameters scope. Maybe make
         // that optional?
-        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
-        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
 
         let function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
@@ -439,16 +569,7 @@ impl Visitor for Pass {
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
-        let parameters_scope = Scope::new_parameters(node.members.node_id);
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
-        for parameter in &node.members.parameters {
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
-                self.binder
-                    .insert_definition_in_scope(definition, parameters_scope_id);
-            }
-        }
-
+        let parameters_scope_id = self.collect_error_parameters(&node.members);
         let definition = Definition::new_error(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
@@ -456,16 +577,7 @@ impl Visitor for Pass {
     }
 
     fn enter_event_definition(&mut self, node: &input_ir::EventDefinition) -> bool {
-        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
-        for parameter in &node.parameters.parameters {
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
-                self.binder
-                    .insert_definition_in_scope(definition, parameters_scope_id);
-            }
-        }
-
+        let parameters_scope_id = self.collect_event_parameters(&node.parameters);
         let definition = Definition::new_event(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
@@ -488,7 +600,23 @@ impl Visitor for Pass {
         let definition = if is_constant && !is_public {
             Definition::new_constant(node.node_id, &node.name)
         } else {
-            Definition::new_state_variable(node.node_id, &node.name)
+            // TODO(validation): only one visibility keyword is allowed
+            let visibility = node.attributes.iter().fold(
+                StateVariableVisibility::Internal,
+                |previous, attribute| match attribute {
+                    input_ir::StateVariableAttribute::InternalKeyword => {
+                        StateVariableVisibility::Internal
+                    }
+                    input_ir::StateVariableAttribute::PrivateKeyword => {
+                        StateVariableVisibility::Private
+                    }
+                    input_ir::StateVariableAttribute::PublicKeyword => {
+                        StateVariableVisibility::Public
+                    }
+                    _ => previous,
+                },
+            );
+            Definition::new_state_variable(node.node_id, &node.name, visibility)
         };
         self.insert_definition_in_current_scope(definition);
 
@@ -514,24 +642,34 @@ impl Visitor for Pass {
         false
     }
 
-    fn enter_variable_declaration_statement(
+    fn leave_variable_declaration_statement(
         &mut self,
         node: &input_ir::VariableDeclarationStatement,
-    ) -> bool {
-        // TODO(validation): for Solidity >= 0.5.0 this definition should only
-        // be available for statements after this one
+    ) {
+        if self.language_version >= VERSION_0_5_0 {
+            // In Solidity >= 0.5.0 this definition should only be available for
+            // statements after this one. So we open a new scope that replaces
+            // but is linked to the current one
+            let scope = Scope::new_block(node.node_id, self.current_scope_id());
+            self.replace_scope(scope);
+        }
+
         let definition = Definition::new_variable(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
-
-        true
     }
 
-    fn enter_tuple_deconstruction_statement(
+    fn leave_tuple_deconstruction_statement(
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
-    ) -> bool {
-        // TODO(validation): for Solidity >= 0.5.0 this definition should only
-        // be available for statements after this one
+    ) {
+        if self.language_version >= VERSION_0_5_0 {
+            // In Solidity >= 0.5.0 the definitions should only be available for
+            // statements after this one. So we open a new scope that replaces
+            // but is linked to the current one
+            let scope = Scope::new_block(node.node_id, self.current_scope_id());
+            self.replace_scope(scope);
+        }
+
         let is_untyped_declaration = node.var_keyword.is_some();
         for element in &node.elements {
             let Some(tuple_member) = &element.member else {
@@ -553,8 +691,6 @@ impl Visitor for Pass {
             };
             self.insert_definition_in_current_scope(definition);
         }
-
-        true
     }
 
     fn enter_block(&mut self, node: &input_ir::Block) -> bool {
@@ -596,7 +732,7 @@ impl Visitor for Pass {
             // declaration of the try statement and make them available in the
             // body block.
             let body_scope_id = self.binder.scope_id_for_node_id(node.body.node_id).unwrap();
-            self.collect_parameters(&returns.variables.parameters, body_scope_id);
+            self.collect_named_parameters_into_scope(&returns.variables.parameters, body_scope_id);
         }
     }
 
@@ -605,7 +741,7 @@ impl Visitor for Pass {
             // For Solidity >= 0.5.0, collect the parameters in the catch
             // declaration and make them available in the body block.
             let body_scope_id = self.binder.scope_id_for_node_id(node.body.node_id).unwrap();
-            self.collect_parameters(&error.parameters.parameters, body_scope_id);
+            self.collect_named_parameters_into_scope(&error.parameters.parameters, body_scope_id);
         }
     }
 

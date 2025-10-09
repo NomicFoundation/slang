@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function () returns address)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #5 ["foo" @ input.sol:7:15] (variable, type: bool)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Base" @ input.sol:5:18] -> #1
+- Ref: ["foo" @ input.sol:7:24] -> #5
+- Ref: ["call" @ input.sol:7:30] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function foo() public returns (address) {}
+   │              ─┬─  
+   │               ╰─── name: 2
+   │ 
+ 5 │ contract Test is Base {
+   │          ──┬─    ──┬─  
+   │            ╰─────────── name: 3
+   │                    │   
+   │                    ╰─── ref: 1
+ 6 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 4
+ 7 │         (bool foo, ) = foo().call('');
+   │               ─┬─      ─┬─   ──┬─  
+   │                ╰─────────────────── name: 5
+   │                         │      │   
+   │                         ╰────────── ref: 5
+   │                                │   
+   │                                ╰─── unresolved
+───╯

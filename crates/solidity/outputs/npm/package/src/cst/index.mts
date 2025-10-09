@@ -81,5 +81,10 @@ export type QueryMatchIterator = wasm.cst.QueryMatchIterator;
 /** {@inheritDoc wasm.cst.TextIndex} */
 export type TextIndex = wasm.cst.TextIndex;
 
+/** {@inheritDoc wasm.cst.TextIndexExtensions} */
+export const TextIndexExtensions = wasm.cst.TextIndexExtensions;
+/** {@inheritDoc wasm.cst.TextIndexExtensions} */
+export type TextIndexExtensions = wasm.cst.TextIndexExtensions;
+
 /** {@inheritDoc wasm.cst.TextRange} */
 export type TextRange = wasm.cst.TextRange;

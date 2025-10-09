@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │   function someFunc(int64 x) returns (int256) {
+   │            ────┬───       ┬  
+   │                ╰───────────── name: 2
+   │                           │  
+   │                           ╰── name: 3
+ 3 │     return add(add(x), add(3));
+   │            ─┬─ ─┬─ ┬   ─┬─  
+   │             ╰─────────────── refs: 4, 5
+   │                 │  │    │   
+   │                 ╰─────────── refs: 4, 5
+   │                    │    │   
+   │                    ╰──────── ref: 3
+   │                         │   
+   │                         ╰─── refs: 4, 5
+   │ 
+ 6 │   function add(int64, int64) returns (int256);
+   │            ─┬─  
+   │             ╰─── name: 4
+   │ 
+ 8 │   function add(int64) returns (int64);
+   │            ─┬─  
+   │             ╰─── name: 5
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ────▶ contract Test {
+ 2 │ │ ╭─────▶   function someFunc(int64 x) returns (int256) {
+   │ │ │                           ───┬───  
+   │ │ │                              ╰───── definiens: 3
+   ┆ ┆ ┆       
+ 4 │ │ ├─│ ──▶   }
+   │ │ │ │           
+   │ │ ╰───────────── definiens: 2
+ 5 │ │   ╭───▶ 
+ 6 │ │   ├─│ ▶   function add(int64, int64) returns (int256);
+   │ │   │ │                                                    
+   │ │   ╰────────────────────────────────────────────────────── definiens: 4
+ 7 │ │     ╭─▶ 
+ 8 │ │     ├─▶   function add(int64) returns (int64);
+   │ │     │                                            
+   │ │     ╰──────────────────────────────────────────── definiens: 5
+ 9 │ ├───────▶ }
+   │ │             
+   │ ╰───────────── definiens: 1
+───╯

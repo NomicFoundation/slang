@@ -10,11 +10,14 @@ mod scopes;
 
 pub use definitions::Definition;
 pub(crate) use definitions::{
-    ContractDefinition, ImportDefinition, InterfaceDefinition, LibraryDefinition,
+    ContractDefinition, FunctionVisibility, ImportDefinition, InterfaceDefinition,
+    LibraryDefinition, StateVariableVisibility,
 };
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
-pub(crate) use scopes::{EitherIter, FileScope, Scope, UsingDirective};
+pub(crate) use scopes::{
+    EitherIter, FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ScopeId(usize);
@@ -108,14 +111,21 @@ pub struct Binder {
     linearisations: HashMap<NodeId, Vec<NodeId>>,
 }
 
-// This controls how to use the linearisation when performing a contract scope
-// resolution. `Normal` uses all the linearised bases in order; `This(node_id)`
-// starts at `node_id` and proceeds in order; `Super(node_id)` starts at the
-// contract _following_ `node_id` (ie. its parent)
+/// This controls visibility filtering and how to use the linearisation when
+/// performing a contract scope resolution.
 #[derive(Clone, Copy, Eq, PartialEq)]
 pub(crate) enum ResolveOptions {
-    Normal,
+    /// Use all the linearised bases in order for an internal lookup.
+    Internal,
+    /// Use all the linearised bases for an external lookup.
+    External,
+    /// Use all bases and only excludes private members in bases types (used for
+    /// general qualified member access).
+    Qualified,
+    /// Starts at `node_id` and proceeds in order for an external lookup.
     This(NodeId),
+    /// Starts at the contract _following_ `node_id` (ie. its parent) for an
+    /// internal lookup.
     Super(NodeId),
 }
 
@@ -213,6 +223,11 @@ impl Binder {
     }
 
     #[cfg(feature = "__private_testing_utils")]
+    pub(crate) fn get_linearised_bases(&self, node_id: NodeId) -> Option<&Vec<NodeId>> {
+        self.linearisations.get(&node_id)
+    }
+
+    #[cfg(feature = "__private_testing_utils")]
     pub fn linearisations(&self) -> &HashMap<NodeId, Vec<NodeId>> {
         &self.linearisations
     }
@@ -224,6 +239,11 @@ impl Binder {
     pub(crate) fn insert_reference(&mut self, reference: Reference) {
         let node_id = reference.node_id();
         self.references.insert(node_id, reference);
+    }
+
+    pub(crate) fn fixup_reference(&mut self, node_id: NodeId, resolution: Resolution) {
+        let reference = self.references.get_mut(&node_id).unwrap();
+        reference.resolution = resolution;
     }
 
     pub fn find_reference_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Reference> {
@@ -308,6 +328,14 @@ impl Binder {
         }
     }
 
+    pub(crate) fn fixup_node_typing(&mut self, node_id: NodeId, typing: Typing) {
+        assert!(
+            self.node_typing.contains_key(&node_id),
+            "typing information for node {node_id:?} not set"
+        );
+        self.node_typing.insert(node_id, typing);
+    }
+
     // File scope resolution context
 
     fn get_file_scope(&self, file_id: &str) -> &FileScope {
@@ -352,7 +380,9 @@ impl Binder {
         // Search for the symbol in the linearised bases *in-order*.
         if let Some(linearisations) = self.linearisations.get(&contract_scope.node_id) {
             let linearisations = match options {
-                ResolveOptions::Normal => linearisations.as_slice(),
+                ResolveOptions::Internal | ResolveOptions::External | ResolveOptions::Qualified => {
+                    linearisations.as_slice()
+                }
                 ResolveOptions::This(node_id) => {
                     if let Some(index) = linearisations.iter().position(|id| *id == node_id) {
                         &linearisations[index..]
@@ -369,7 +399,7 @@ impl Binder {
                 }
             };
             let mut results = Vec::new();
-            for node_id in linearisations {
+            for (index, node_id) in linearisations.iter().enumerate() {
                 let Some(base_scope_id) = self.scope_id_for_node_id(*node_id) else {
                     continue;
                 };
@@ -380,7 +410,30 @@ impl Binder {
                 let Some(definitions) = base_contract_scope.definitions.get(symbol) else {
                     continue;
                 };
-                results.extend(definitions);
+                for definition_id in definitions {
+                    let definition = &self.definitions[definition_id];
+                    let visible = match options {
+                        ResolveOptions::Internal => {
+                            if index == 0 {
+                                definition.is_private_or_internally_visible()
+                            } else {
+                                definition.is_internally_visible()
+                            }
+                        }
+                        ResolveOptions::Qualified => {
+                            index == 0
+                                || definition.is_internally_visible()
+                                || definition.is_externally_visible()
+                        }
+                        ResolveOptions::This(_) | ResolveOptions::External => {
+                            definition.is_externally_visible()
+                        }
+                        ResolveOptions::Super(_) => definition.is_internally_visible(),
+                    };
+                    if visible {
+                        results.push(*definition_id);
+                    }
+                }
             }
             Resolution::from(results)
         } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
@@ -403,7 +456,7 @@ impl Binder {
                 self.resolve_in_contract_scope_internal(
                     contract_scope,
                     symbol,
-                    ResolveOptions::Normal,
+                    ResolveOptions::Internal,
                 )
                 .or_else(|| {
                     // Otherwise, delegate to the containing file scope.
@@ -431,7 +484,9 @@ impl Binder {
                     )
                 }
             }
-            Scope::Parameters(parameters_scope) => parameters_scope.definitions.get(symbol).into(),
+            Scope::Parameters(parameters_scope) => {
+                parameters_scope.lookup_definition(symbol).into()
+            }
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
             Scope::Using(using_scope) => using_scope
                 .symbols
@@ -532,7 +587,7 @@ impl Binder {
             Scope::Contract(contract_scope) => self.resolve_in_contract_scope_internal(
                 contract_scope,
                 symbol,
-                ResolveOptions::Normal,
+                ResolveOptions::Qualified,
             ),
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
@@ -541,7 +596,9 @@ impl Binder {
                 .get(symbol)
                 .cloned()
                 .map_or(Resolution::Unresolved, Resolution::from),
-            Scope::Parameters(parameters_scope) => parameters_scope.definitions.get(symbol).into(),
+            Scope::Parameters(parameters_scope) => {
+                parameters_scope.lookup_definition(symbol).into()
+            }
 
             Scope::Block(_)
             | Scope::File(_)

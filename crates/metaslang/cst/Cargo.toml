@@ -2,8 +2,7 @@
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
-# __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
-# publish = true
+publish = true
 
 name = "metaslang_cst"
 description = "A generic library for building, navigating and querying concrete syntax trees."

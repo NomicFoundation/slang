@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fmt::Display;
 
 use slang_solidity::backend::binder::{Definition, Resolution, Typing};
-use slang_solidity::backend::types::{DataLocation, Type, TypeId};
+use slang_solidity::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 use slang_solidity::backend::BinderOutput;
 use slang_solidity::cst::{Cursor, NodeId, NodeKind, TerminalKindExtensions};
 
@@ -268,11 +268,11 @@ impl CollectedDefinitionDisplay<'_> {
                     signed = if *signed { "" } else { "u" }
                 )
             }
-            Type::Function {
+            Type::Function(FunctionType {
                 parameter_types,
                 return_type,
                 ..
-            } => {
+            }) => {
                 format!(
                     "function ({parameters}) returns {returns}",
                     parameters = parameter_types
@@ -297,7 +297,15 @@ impl CollectedDefinitionDisplay<'_> {
                     value = self.type_display(*value_type_id)
                 )
             }
-            Type::Rational => "rational".to_string(),
+            Type::Literal(kind) => match kind {
+                LiteralKind::Zero => "lit-zero".to_string(),
+                LiteralKind::Rational => "rational".to_string(),
+                LiteralKind::DecimalInteger => "lit-integer".to_string(),
+                LiteralKind::HexInteger { bytes } => format!("lit-hex({bytes})"),
+                LiteralKind::HexString { bytes } => format!("lit-hexstring({bytes})"),
+                LiteralKind::String { bytes } => format!("lit-string({bytes})"),
+                LiteralKind::Address => "lit-address".to_string(),
+            },
             Type::String { location } => {
                 format!(
                     "string {location}",

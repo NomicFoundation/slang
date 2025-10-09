@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library FooUtils {
+    │         ────┬───  
+    │             ╰───── name: 1
+  2 │     function nop(address) internal {}
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract Foo {}
+    │          ─┬─  
+    │           ╰─── name: 3
+    │ 
+  7 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 4
+  8 │     using FooUtils for Foo;
+    │           ────┬───     ─┬─  
+    │               ╰───────────── ref: 1
+    │                         │   
+    │                         ╰─── ref: 3
+    │ 
+ 10 │     function test(Foo f) internal {
+    │              ──┬─ ─┬─ ┬  
+    │                ╰───────── name: 5
+    │                    │  │  
+    │                    ╰───── ref: 3
+    │                       │  
+    │                       ╰── name: 6
+ 11 │         f.nop(); // in Solidity <0.5.0 contract references are convertible to address
+    │         ┬ ─┬─  
+    │         ╰────── ref: 6
+    │            │   
+    │            ╰─── ref: 2
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭───▶ library FooUtils {
+  2 │     │         function nop(address) internal {}
+    │     │     ───────────────────┬──────────────────  
+    │     │                        ╰──────────────────── definiens: 2
+  3 │     ├─│ ▶ }
+    │     │ │       
+    │     ╰───────── definiens: 1
+  4 │       ╭─▶ 
+  5 │ │     ├─▶ contract Foo {}
+    │ │     │                     
+    │ │     ╰───────────────────── definiens: 3
+  6 │ ╭───────▶ 
+    ┆ ┆         
+  9 │ │ ╭─────▶ 
+ 10 │ │ │           function test(Foo f) internal {
+    │ │ │                         ──┬──  
+    │ │ │                           ╰──── definiens: 6
+    ┆ ┆ ┆       
+ 12 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 5
+ 13 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 4
+────╯
