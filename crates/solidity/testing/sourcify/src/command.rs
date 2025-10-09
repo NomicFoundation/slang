@@ -48,7 +48,6 @@ pub struct ShowCombinedResultsCommand {
     pub results_file: PathBuf,
 }
 
-#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Parser)]
 pub struct TestOptions {
     /// Run version inference tests.
