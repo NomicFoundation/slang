@@ -1,0 +1,34 @@
+{# This needs to stay in sync with the wit-bindgen output #}
+/// Represents different kinds of nonterminal nodes in the syntax tree.
+/// These are nodes that can have child nodes and represent higher-level language constructs.
+{% if model.kinds.nonterminal_kinds|length <= 256 %} #[repr(u8)] {% else %} #[repr(u16)] {% endif %}
+#[derive(
+    Debug,
+    Eq,
+    Hash,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
+#[derive(Clone, Copy)] 
+#[allow(clippy::doc_markdown)]
+#[allow(clippy::doc_link_with_quotes)]
+pub enum NonterminalKind {
+    {%- for variant in model.kinds.nonterminal_kinds -%}
+        /// Represents a node with kind `{{ variant.id }}`, having the following structure:
+        ///
+        /// ```ebnf
+        {%- for line in variant.documentation | split(pat="\n") %}
+        /// {{ line }}
+        {%- endfor %}
+        /// ```
+        {{ variant.id }},
+    {%- endfor -%}
+}
+
+impl crate::cst::NonterminalKindExtensions for NonterminalKind {}

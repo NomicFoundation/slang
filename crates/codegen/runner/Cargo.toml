@@ -9,7 +9,7 @@ publish = false
 [dependencies]
 anyhow = { workspace = true }
 codegen_language_definition = { workspace = true }
-codegen_runtime_generator = { workspace = true }
+codegen_generator = { workspace = true }
 codegen_spec = { workspace = true }
 codegen_testing = { workspace = true }
 infra_utils = { workspace = true }

@@ -46,8 +46,7 @@ fn find_all_matches(root_cursor: Cursor, query_string: &str, capture_name: &str)
 fn setup() -> Result<(Cursor, Rc<BindingGraph>)> {
     let version = TEST_VERSION;
     let parser = Parser::create(version.clone())?;
-    let mut builder =
-        bindings::create_with_resolver(version.clone(), Rc::new(TestsPathResolver {}));
+    let mut builder = bindings::create_with_resolver(&version, Rc::new(TestsPathResolver {}));
 
     let parse_output = parser.parse_file_contents(INPUT_FILE);
     builder.add_user_file("input.sol", parse_output.create_tree_cursor());
