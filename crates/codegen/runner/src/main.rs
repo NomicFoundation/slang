@@ -1,8 +1,8 @@
 mod passes;
 
 use anyhow::Result;
+use codegen_generator::RuntimeGenerator;
 use codegen_language_definition::model::Language;
-use codegen_runtime_generator::RuntimeGenerator;
 use codegen_spec::Spec;
 use codegen_testing::TestingGeneratorExtensions;
 use infra_utils::cargo::CargoWorkspace;
@@ -21,26 +21,15 @@ fn main() {
     [
         || generate_solidity_spec(),
         || generate_solidity_tests(),
-        || generate_stubs("codegen_runtime_cargo_crate"),
         || {
             let mut fs = CodegenFileSystem::default();
             let language = SolidityDefinition::create();
 
-            generate_product(
-                &mut fs,
-                &language,
-                "codegen_runtime_cargo_crate",
-                "slang_solidity",
-            )?;
+            generate_in_place(&mut fs, &language, "slang_solidity")?;
 
             generate_builtins(&mut fs, &language, "slang_solidity")?;
 
-            generate_passes(
-                &mut fs,
-                &language,
-                "codegen_runtime_cargo_crate",
-                "slang_solidity",
-            )?;
+            generate_passes(&mut fs, &language, "slang_solidity")?;
 
             Ok(())
         },
@@ -96,31 +85,12 @@ fn generate_solidity_tests() -> Result<()> {
     Ok(())
 }
 
-fn generate_stubs(crate_name: &str) -> Result<()> {
-    let mut fs = CodegenFileSystem::default();
-    let source_dir = CargoWorkspace::locate_source_crate(crate_name)?;
-
-    RuntimeGenerator::generate_stubs(&mut fs, &source_dir)
-}
-
-fn generate_product(
-    fs: &mut CodegenFileSystem,
-    language: &Language,
-    input_crate: &str,
-    output_crate: &str,
-) -> Result<()> {
-    let input_dir = CargoWorkspace::locate_source_crate(input_crate)?.join("src/runtime");
-    let output_dir = CargoWorkspace::locate_source_crate(output_crate)?.join("src/generated");
-
-    RuntimeGenerator::generate_product(language, fs, &input_dir, &output_dir)
-}
-
 fn generate_in_place(
     fs: &mut CodegenFileSystem,
     language: &Language,
-    the_crate: &str,
+    crate_name: &str,
 ) -> Result<()> {
-    let the_crate = CargoWorkspace::locate_source_crate(the_crate)?;
+    let the_crate = CargoWorkspace::locate_source_crate(crate_name)?;
 
     RuntimeGenerator::generate_templates_in_place(language, fs, &the_crate)
 }
@@ -131,7 +101,7 @@ fn generate_builtins(
     output_crate: &str,
 ) -> Result<()> {
     let file_path = CargoWorkspace::locate_source_crate(output_crate)?
-        .join("src/generated/extensions/built_ins.rs");
+        .join("src/bindings/built_ins.generated.rs");
 
     let contents = solidity_language::render_built_ins(language)?;
 

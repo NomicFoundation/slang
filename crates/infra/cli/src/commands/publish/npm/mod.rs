@@ -35,6 +35,7 @@ impl NpmController {
 
         let mut command = Command::new("npm")
             .args(["publish", package_dir.unwrap_str()])
+            .flag("--provenance")
             .property("--access", "public");
 
         if self.dry_run.get() {

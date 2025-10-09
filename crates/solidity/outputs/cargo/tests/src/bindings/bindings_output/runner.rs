@@ -44,8 +44,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     for version in &VERSION_BREAKS {
         let parser = Parser::create(version.clone())?;
-        let mut builder =
-            bindings::create_with_resolver(version.clone(), Rc::new(TestsPathResolver {}));
+        let mut builder = bindings::create_with_resolver(version, Rc::new(TestsPathResolver {}));
 
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
         let multi_part = split_multi_file(&contents);

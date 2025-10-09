@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use slang_solidity::cst::{
-    Cursor, Edge, EdgeLabel, Node, NonterminalKind, Query, QueryMatch, TerminalKind, TextIndex,
+    Edge, EdgeLabel, Node, NonterminalKind, Query, QueryMatch, TerminalKind, TextIndex,
 };
 
 fn terminal(label: EdgeLabel, kind: TerminalKind, text: &str) -> Edge {
@@ -22,17 +22,16 @@ fn nonterminal<const N: usize>(
     }
 }
 
-fn capture_cursors_to_strings(
-    captures: BTreeMap<String, Vec<Cursor>>,
-) -> BTreeMap<String, Vec<String>> {
-    captures
-        .into_iter()
-        .map(|(key, values)| {
+fn capture_cursors_to_strings(query_match: &QueryMatch) -> BTreeMap<String, Vec<String>> {
+    query_match
+        .captures()
+        .map(|capture| {
             (
-                key,
-                values
+                capture.name().to_string(),
+                capture
+                    .cursors()
                     .iter()
-                    .map(|v| v.node().unparse())
+                    .map(|c| c.node().unparse())
                     .collect::<Vec<_>>(),
             )
         })
@@ -82,19 +81,19 @@ macro_rules! query_matches {
 
 }
 
-fn run_query_test(tree: Edge, query: &str, matches: Vec<BTreeMap<String, Vec<String>>>) {
+fn run_query_test(tree: Edge, query: &str, expected_matches: Vec<BTreeMap<String, Vec<String>>>) {
     let cursor = tree.node.create_cursor(TextIndex::ZERO);
     let query = vec![Query::create(query).unwrap()];
-    let mut matches = matches.into_iter();
-    for QueryMatch { captures, .. } in cursor.query(query) {
-        let captures = capture_cursors_to_strings(captures);
-        if let Some(expected_captures) = matches.next() {
+    let mut expected_matches = expected_matches.into_iter();
+    for query_match in cursor.query(query) {
+        let captures = capture_cursors_to_strings(&query_match);
+        if let Some(expected_captures) = expected_matches.next() {
             assert_eq!(captures, expected_captures);
         } else {
             panic!("Unexpected query match: {captures:?}");
         }
     }
-    if let Some(expected_captures) = matches.next() {
+    if let Some(expected_captures) = expected_matches.next() {
         panic!("Missing query match: {expected_captures:?}");
     }
 }
@@ -313,7 +312,7 @@ fn test_zero_or_more() {
             {y: ["A", "B", "C"]}
             {y: ["B", "C"]}
             {y: ["C"]}
-            {}
+            {y: []}
         },
     );
 }
@@ -325,7 +324,7 @@ fn test_optional() {
         "[ContractDefinition (@z [Identifier])? . [_] .]",
         query_matches! {
             {z: ["C"]}
-            {}
+            {z: []}
         },
     );
 }
@@ -347,11 +346,11 @@ fn test_alternatives() {
         common_test_tree(),
         "(@x name:[_] | @y [Identifier] . @z [Identifier])",
         query_matches! {
-            {x: ["A"]}
-            {y: ["A"], z: ["B"]}
-            {y: ["B"], z: ["C"]}
-            {y: ["D"], z: ["E"]}
-            {x: ["E"]}
+            {x: ["A"], y: [], z: []}
+            {x: [], y: ["A"], z: ["B"]}
+            {x: [], y: ["B"], z: ["C"]}
+            {x: [], y: ["D"], z: ["E"]}
+            {x: ["E"], y: [], z: []}
         },
     );
 }
@@ -398,11 +397,11 @@ fn test_ellipsis_followed_by_optional_grouping() {
         query_matches! {
             {x: ["A"], y: ["B"], z: ["C"]}
             {x: ["A"], y: ["C"], z: ["D"]}
-            {x: ["A"]}
+            {x: ["A"], y: [], z:[]}
             {x: ["B"], y: ["C"], z: ["D"]}
-            {x: ["B"]}
-            {x: ["C"]}
-            {x: ["D"]}
+            {x: ["B"], y: [], z:[]}
+            {x: ["C"], y: [], z:[]}
+            {x: ["D"], y: [], z:[]}
         },
     );
 }
@@ -413,12 +412,12 @@ fn test_adjacency_followed_by_optional_grouping() {
         flat_tree(),
         "[ContractDefinition @x [Identifier] . (@y [Identifier] . @z [Identifier])?]",
         query_matches! {
-            {x: ["A"]}
+            {x: ["A"], y: [], z:[]}
             {x: ["A"], y: ["B"], z: ["C"]}
-            {x: ["B"]}
+            {x: ["B"], y: [], z:[]}
             {x: ["B"], y: ["C"], z: ["D"]}
-            {x: ["C"]}
-            {x: ["D"]}
+            {x: ["C"], y: [], z:[]}
+            {x: ["D"], y: [], z:[]}
         },
     );
 }
@@ -484,13 +483,13 @@ fn test_captures_followed_by_captured_optional_matchers() {
             {x: ["A"], y: ["B"]}
             {x: ["A"], y: ["C"]}
             {x: ["A"], y: ["D"]}
-            {x: ["A"]}
+            {x: ["A"], y: []}
             {x: ["B"], y: ["C"]}
             {x: ["B"], y: ["D"]}
-            {x: ["B"]}
+            {x: ["B"], y: []}
             {x: ["C"], y: ["D"]}
-            {x: ["C"]}
-            {x: ["D"]}
+            {x: ["C"], y: []}
+            {x: ["D"], y: []}
         },
     );
 }

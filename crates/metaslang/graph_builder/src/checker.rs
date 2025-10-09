@@ -163,7 +163,7 @@ impl<KT: KindTypes> ast::Stanza<KT> {
 
         let all_captures = self
             .query
-            .capture_quantifiers
+            .capture_quantifiers()
             .keys()
             .into_iter()
             .map(|cn| Identifier::from(cn.as_str()))
@@ -607,7 +607,7 @@ impl ast::Capture {
         ctx: &mut StanzaCheckContext<'_, KT>,
     ) -> Result<ExpressionResult, CheckError> {
         let name = self.name.to_string();
-        if let Some(quantifier) = ctx.stanza_query.capture_quantifiers.get(&name) {
+        if let Some(quantifier) = ctx.stanza_query.capture_quantifiers().get(&name) {
             self.quantifier = *quantifier;
             ctx.used_captures.insert(self.name.clone());
             Ok(ExpressionResult {

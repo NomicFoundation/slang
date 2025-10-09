@@ -681,7 +681,7 @@ pub fn metaslang_graph_builder::graph::Value::into_syntax_node<'a, KT: metaslang
 pub fn metaslang_graph_builder::graph::Value::into_syntax_node_ref(self) -> core::result::Result<metaslang_graph_builder::graph::SyntaxNodeRef, metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::graph::Value::is_null(&self) -> bool
 impl metaslang_graph_builder::graph::Value
-pub fn metaslang_graph_builder::graph::Value::from_nodes<KT: metaslang_cst::kinds::KindTypes, CI: core::iter::traits::collect::IntoIterator<Item = metaslang_cst::cursor::Cursor<KT>>>(graph: &mut metaslang_graph_builder::graph::Graph<KT>, cursors: CI, quantifier: metaslang_cst::query::parser::CaptureQuantifier) -> metaslang_graph_builder::graph::Value
+pub fn metaslang_graph_builder::graph::Value::from_nodes<KT: metaslang_cst::kinds::KindTypes>(graph: &mut metaslang_graph_builder::graph::Graph<KT>, cursors: &[metaslang_cst::cursor::Cursor<KT>], quantifier: metaslang_cst::query::parser::CaptureQuantifier) -> metaslang_graph_builder::graph::Value
 impl core::clone::Clone for metaslang_graph_builder::graph::Value
 pub fn metaslang_graph_builder::graph::Value::clone(&self) -> metaslang_graph_builder::graph::Value
 impl core::cmp::Eq for metaslang_graph_builder::graph::Value
@@ -953,8 +953,8 @@ pub struct metaslang_graph_builder::Match<KT: metaslang_cst::kinds::KindTypes>
 impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::Match<KT>
 pub fn metaslang_graph_builder::Match<KT>::capture_names(&self) -> impl core::iter::traits::iterator::Iterator<Item = &alloc::string::String>
 pub fn metaslang_graph_builder::Match<KT>::full_capture(&self) -> metaslang_cst::cursor::Cursor<KT>
-pub fn metaslang_graph_builder::Match<KT>::named_capture(&self, name: &str) -> core::option::Option<(metaslang_cst::query::parser::CaptureQuantifier, impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::cursor::Cursor<KT>>)>
-pub fn metaslang_graph_builder::Match<KT>::named_captures(&self) -> impl core::iter::traits::iterator::Iterator<Item = (&alloc::string::String, metaslang_cst::query::parser::CaptureQuantifier, impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::cursor::Cursor<KT>>)>
+pub fn metaslang_graph_builder::Match<KT>::named_capture(&self, name: &str) -> core::option::Option<metaslang_cst::query::engine::Capture<'_, KT>>
+pub fn metaslang_graph_builder::Match<KT>::named_captures(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::query::engine::Capture<'_, KT>>
 pub fn metaslang_graph_builder::Match<KT>::query_location(&self) -> &metaslang_graph_builder::Location
 pub struct metaslang_graph_builder::NoCancellation
 impl metaslang_graph_builder::CancellationFlag for metaslang_graph_builder::NoCancellation

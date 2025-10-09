@@ -1,17 +1,17 @@
 use anyhow::Result;
+use codegen_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
 use codegen_language_definition::model::Language;
-use codegen_runtime_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 
 pub fn generate_passes(
     fs: &mut CodegenFileSystem,
     language: &Language,
-    input_crate: &str,
-    output_crate: &str,
+    crate_name: &str,
 ) -> Result<()> {
-    let ir_input_dir = CargoWorkspace::locate_source_crate(input_crate)?.join("src/ir");
-    let ir_output_dir = CargoWorkspace::locate_source_crate(output_crate)?.join("src/backend");
+    let crate_path = CargoWorkspace::locate_source_crate(crate_name)?;
+    let ir_input_dir = crate_path.join("src/ir");
+    let ir_output_dir = crate_path.join("src/backend");
 
     // L0: CST:
     let cst_model = IrModel::from_language("cst", language);
@@ -19,7 +19,7 @@ pub fn generate_passes(
     // L1: structured AST:
     let l1_structured_ast_model = build_l1_structured_ast_model(&cst_model);
     let l1_structured_ast_output_dir = ir_output_dir.join(&l1_structured_ast_model.target.name);
-    CodegenRuntime::render_product(
+    CodegenRuntime::render_ir(
         fs,
         &ir_input_dir,
         &l1_structured_ast_output_dir,
@@ -29,7 +29,7 @@ pub fn generate_passes(
     // L2: flat contract specifiers:
     let l2_flat_contracts_model = build_l2_flat_contracts_model(&l1_structured_ast_model.target);
     let l2_flat_contracts_output_dir = ir_output_dir.join(&l2_flat_contracts_model.target.name);
-    CodegenRuntime::render_product(
+    CodegenRuntime::render_ir(
         fs,
         &ir_input_dir,
         &l2_flat_contracts_output_dir,

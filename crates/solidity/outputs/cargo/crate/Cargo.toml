@@ -2,8 +2,7 @@
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
-# __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
-# publish = true
+publish = true
 
 name = "slang_solidity"
 description = "A modular set of compiler APIs empowering the next generation of Solidity code analysis and developer tooling. Written in Rust and distributed in multiple languages."
@@ -25,7 +24,6 @@ categories = [
   "text-editors",
 ]
 
-# __RUST_PRODUCT_CRATE_FEATURES__ (keep in sync)
 [features]
 default = []
 __private_ariadne_errors = ["dep:ariadne"]
