@@ -57,7 +57,7 @@ impl CompilationUnit {
             };
 
             let mut builder =
-                create_with_resolver_internal(self.language_version.clone(), Rc::new(resolver));
+                create_with_resolver_internal(&self.language_version, Rc::new(resolver));
 
             for (id, file) in &self.files {
                 builder.add_user_file(id, file.create_tree_cursor());

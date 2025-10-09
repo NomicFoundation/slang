@@ -62,14 +62,14 @@ pub type BuiltInLocation = metaslang_bindings::BuiltInLocation;
 // Create a new `BindingGraphBuilder` with the specified language version and resolver.
 // Exposed to test the functionality, but users should use the `CompilationBuilder` instead.
 pub fn create_with_resolver(
-    version: Version,
+    version: &Version,
     resolver: Rc<dyn metaslang_bindings::PathResolver<KindTypes>>,
 ) -> BindingGraphBuilder {
     create_with_resolver_internal(version, resolver)
 }
 
 pub(crate) fn create_with_resolver_internal(
-    version: Version,
+    version: &Version,
     resolver: Rc<dyn metaslang_bindings::PathResolver<KindTypes>>,
 ) -> BindingGraphBuilder {
     let mut binding_graph = BindingGraphBuilder::create(
@@ -89,8 +89,7 @@ pub fn get_binding_rules() -> &'static str {
     binding_rules::BINDING_RULES_SOURCE
 }
 
-#[allow(clippy::needless_pass_by_value)]
-pub(crate) fn add_built_ins(builder: &mut BindingGraphBuilder, version: Version) {
+pub(crate) fn add_built_ins(builder: &mut BindingGraphBuilder, version: &Version) {
     let empty_node = Node::nonterminal(NonterminalKind::SourceUnit, Vec::new())
         .into_nonterminal()
         .unwrap();
@@ -102,5 +101,5 @@ pub(crate) fn add_built_ins(builder: &mut BindingGraphBuilder, version: Version)
     // __SLANG_SOLIDITY_BUILT_INS_SCOPE_GUARD__ keep in sync with binding rules
     let mut globals = ScopeGraphBuilder::new(&mut file_builder, "@@built-ins@@", root_node, None);
 
-    define_built_ins(&mut file_builder, &mut globals, &version);
+    define_built_ins(&mut file_builder, &mut globals, version);
 }
