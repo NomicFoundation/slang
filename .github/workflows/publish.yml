@@ -71,13 +71,11 @@ jobs:
         env:
           NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"
 
-      # __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
-      #
-      # - name: "infra publish cargo"
-      #   if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
-      #   run: "./scripts/bin/infra publish cargo"
-      #   env:
-      #     CARGO_REGISTRY_TOKEN: "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+      - name: "infra publish cargo"
+        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
+        run: "./scripts/bin/infra publish cargo"
+        env:
+          CARGO_REGISTRY_TOKEN: "${{ secrets.CARGO_REGISTRY_TOKEN }}"
 
       - name: "infra publish github-release"
         if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
