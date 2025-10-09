@@ -11,12 +11,8 @@ on:
         required: true
         default: true
 
-      bencherProjectSlang:
-        description: "Bencher project (Slang tests):"
-        type: "string"
-
-      bencherProjectCmp:
-        description: "Bencher project (comparisons):"
+      bencherProject:
+        description: "Bencher project:"
         type: "string"
 
   # Run on pushes to 'main' branch:
@@ -46,25 +42,14 @@ jobs:
       - name: "infra setup cargo"
         run: "./scripts/bin/infra setup cargo"
 
-      - name: "Set bencher project (Slang)"
+      - name: "Set bencher project"
 
         run: |
-          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProjectSlang }}" >> $GITHUB_ENV
-        if: "${{ inputs.bencherProjectSlang }}"
+          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
+        if: "${{ inputs.bencherProject }}"
 
       - name: "infra perf cargo slang"
         run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }} slang"
-        env:
-          BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-
-      - name: "Set bencher project (comparisons)"
-
-        run: |
-          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProjectCmp }}" >> $GITHUB_ENV
-        if: "${{ inputs.bencherProjectCmp }}"
-
-      - name: "infra perf cargo comparison"
-        run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }} comparison"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
 
