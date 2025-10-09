@@ -100,7 +100,7 @@ impl Reporter {
     ) -> ProgressBar {
         let template = format!(
             "  {{msg:<25}}  :  {position}  :  {percent}",
-            position = style("{human_pos:>7}").fg(color).bright(),
+            position = style("{human_pos:>9}").fg(color).bright(),
             percent = style("{percent_precise:>7} %").fg(color).bright(),
         );
 
