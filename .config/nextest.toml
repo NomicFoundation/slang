@@ -1,0 +1,8 @@
+[test-groups]
+serial-integration = { max-threads = 1 }
+
+# Run perf unit tests sequentially to avoid race conditions retrieving the JSON
+# files from sourcify
+[[profile.default.overrides]]
+filter = 'package(solidity_testing_perf_cargo)'
+test-group = 'serial-integration'
