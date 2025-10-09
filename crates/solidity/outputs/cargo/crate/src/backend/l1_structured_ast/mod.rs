@@ -1,4 +1,4 @@
-#[path = "_mod.generated.rs"]
+#[path = "mod.generated.rs"]
 mod generated;
 
 pub use generated::*;

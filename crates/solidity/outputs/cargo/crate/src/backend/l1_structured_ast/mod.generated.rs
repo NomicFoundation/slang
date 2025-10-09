@@ -1,14 +1,14 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-#[path = "_nodes.generated.rs"]
+#[path = "nodes.generated.rs"]
 mod nodes;
 pub use nodes::*;
 
-#[path = "_builder.generated.rs"]
+#[path = "builder.generated.rs"]
 pub mod builder;
-#[path = "_rewriter.generated.rs"]
+#[path = "rewriter.generated.rs"]
 pub mod rewriter;
-#[path = "_transformer.generated.rs"]
+#[path = "transformer.generated.rs"]
 pub mod transformer;
-#[path = "_visitor.generated.rs"]
+#[path = "visitor.generated.rs"]
 pub mod visitor;

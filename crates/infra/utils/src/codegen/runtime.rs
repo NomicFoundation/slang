@@ -39,7 +39,7 @@ impl CodegenRuntime {
         Ok(())
     }
 
-    pub fn render_product(
+    pub fn render_ir(
         fs: &mut CodegenFileSystem,
         input_dir: impl Into<PathBuf>,
         output_dir: impl AsRef<Path>,
@@ -68,6 +68,9 @@ impl CodegenRuntime {
 
         let template_path = template_path.with_extension("");
         let (base_name, extension) = template_path.unwrap_name().rsplit_once('.').unwrap();
+
+        // remove the starting `_` if there is one (ir templates starts with this marker)
+        let base_name = base_name.strip_prefix('_').unwrap_or(base_name);
 
         template_path
             .unwrap_parent()

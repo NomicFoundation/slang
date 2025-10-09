@@ -19,7 +19,7 @@ pub fn generate_passes(
     // L1: structured AST:
     let l1_structured_ast_model = build_l1_structured_ast_model(&cst_model);
     let l1_structured_ast_output_dir = ir_output_dir.join(&l1_structured_ast_model.target.name);
-    CodegenRuntime::render_product(
+    CodegenRuntime::render_ir(
         fs,
         &ir_input_dir,
         &l1_structured_ast_output_dir,
@@ -29,7 +29,7 @@ pub fn generate_passes(
     // L2: flat contract specifiers:
     let l2_flat_contracts_model = build_l2_flat_contracts_model(&l1_structured_ast_model.target);
     let l2_flat_contracts_output_dir = ir_output_dir.join(&l2_flat_contracts_model.target.name);
-    CodegenRuntime::render_product(
+    CodegenRuntime::render_ir(
         fs,
         &ir_input_dir,
         &l2_flat_contracts_output_dir,
