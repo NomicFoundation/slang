@@ -21,9 +21,12 @@ impl CodegenRuntime {
         context.insert("model", &model);
 
         for template_path in tera.find_all_templates()? {
+            // Ignore templates starting with `_`. Those templates will be rendered by another process.
             if template_path
                 .file_name()
-                .is_some_and(|name| name.to_string_lossy().starts_with('_'))
+                .unwrap()
+                .to_string_lossy()
+                .starts_with('_')
             {
                 continue;
             }
