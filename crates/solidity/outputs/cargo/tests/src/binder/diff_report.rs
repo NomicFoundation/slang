@@ -3,7 +3,7 @@ use std::fmt::Write;
 
 use anyhow::Result;
 use slang_solidity::backend::binder::Resolution;
-use slang_solidity::backend::passes::p5_resolve_references::Output;
+use slang_solidity::backend::BinderOutput;
 use slang_solidity::cst::NodeId;
 
 use super::report_data::{CollectedDefinition, CollectedReference, ReportData};
@@ -12,7 +12,7 @@ pub(crate) fn binding_graph_diff_report(report_data: &'_ ReportData<'_>) -> Resu
     let mut report = String::new();
 
     let ReportData {
-        binder_data,
+        binder_output,
         all_definitions,
         all_references,
         definitions_by_id,
@@ -21,12 +21,12 @@ pub(crate) fn binding_graph_diff_report(report_data: &'_ ReportData<'_>) -> Resu
 
     let has_diff = diff_binding_graph_definitions(
         &mut report,
-        binder_data,
+        binder_output,
         all_definitions,
         definitions_by_id,
     )? || diff_binding_graph_references(
         &mut report,
-        binder_data,
+        binder_output,
         all_references,
         definitions_by_id,
     )?;
@@ -50,12 +50,12 @@ pub(crate) fn binding_graph_diff_report(report_data: &'_ ReportData<'_>) -> Resu
 
 fn diff_binding_graph_definitions(
     report: &mut String,
-    binder_data: &Output,
+    binder_output: &BinderOutput,
     all_definitions: &[CollectedDefinition],
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<bool> {
     let mut has_diff = false;
-    let binding_graph = binder_data.compilation_unit.binding_graph();
+    let binding_graph = binder_output.compilation_unit.binding_graph();
     let mut binder_definitions = definitions_by_id
         .keys()
         .copied()
@@ -79,7 +79,7 @@ fn diff_binding_graph_definitions(
         writeln!(
             report,
             "{definition} not found in stack graph output",
-            definition = definition.display(binder_data),
+            definition = definition.display(binder_output),
         )?;
         has_diff = true;
     }
@@ -89,12 +89,12 @@ fn diff_binding_graph_definitions(
 
 fn diff_binding_graph_references(
     report: &mut String,
-    binder_data: &Output,
+    binder_output: &BinderOutput,
     all_references: &[CollectedReference],
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<bool> {
     let mut has_diff = false;
-    let binding_graph = binder_data.compilation_unit.binding_graph();
+    let binding_graph = binder_output.compilation_unit.binding_graph();
     let mut binder_references = all_references
         .iter()
         .map(|reference| (reference.cursor.node().id(), reference))

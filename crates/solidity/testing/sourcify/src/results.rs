@@ -10,7 +10,6 @@ pub struct ShardResults {
     pub source_files: u64,
     pub passed: u64,
     pub failed: u64,
-    pub unresolved: u64,
     pub incompatible: u64,
     pub elapsed: Duration,
 }
@@ -71,28 +70,25 @@ impl<'de> Visitor<'de> for AllResultsVisitor {
 
 pub fn display_all_results(all_results: &AllResults) {
     let mut totals = ShardResults::default();
-    println!("Shard ID | Source files |       Passed |       Failed | Incompatible |    Not found | Elapsed");
-    println!("------------------------------------------------------------------------------------------------");
+    println!("Shard ID | Source files |       Passed |       Failed | Incompatible | Elapsed");
+    println!("----------------------------------------------------------------------------------");
     for (shard_index, shard_results) in &all_results.shards {
         println!(
             "{shard_index:<8} | \
              {source_files:>12} | \
              {passed:>12} | \
              {failed:>12} | \
-             {unresolved:>12} | \
              {incompatible:>12} | \
              {elapsed}",
             source_files = format!("{}", HumanCount(shard_results.source_files)),
             passed = format!("{}", HumanCount(shard_results.passed)),
             failed = format!("{}", HumanCount(shard_results.failed)),
-            unresolved = format!("{}", HumanCount(shard_results.unresolved)),
             incompatible = format!("{}", HumanCount(shard_results.incompatible)),
             elapsed = FormattedDuration(shard_results.elapsed),
         );
         totals.source_files += shard_results.source_files;
         totals.passed += shard_results.passed;
         totals.failed += shard_results.failed;
-        totals.unresolved += shard_results.unresolved;
         totals.incompatible += shard_results.incompatible;
         totals.elapsed += shard_results.elapsed;
     }
@@ -102,13 +98,11 @@ pub fn display_all_results(all_results: &AllResults) {
          {source_files:>12} | \
          {passed:>12} | \
          {failed:>12} | \
-         {unresolved:>12} | \
          {incompatible:>12} | \
          {elapsed}",
         source_files = format!("{}", HumanCount(totals.source_files)),
         passed = format!("{}", HumanCount(totals.passed)),
         failed = format!("{}", HumanCount(totals.failed)),
-        unresolved = format!("{}", HumanCount(totals.unresolved)),
         incompatible = format!("{}", HumanCount(totals.incompatible)),
         elapsed = FormattedDuration(totals.elapsed),
     );
