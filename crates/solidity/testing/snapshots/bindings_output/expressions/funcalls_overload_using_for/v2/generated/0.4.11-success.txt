@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["someFunc" @ input.sol:4:12] (function, type: function (int256) returns int256)
+- Def: #3 ["x" @ input.sol:4:25] (parameter, type: int256)
+- Def: #4 ["here" @ input.sol:5:9] (variable, type: int256)
+- Def: #5 ["lib" @ input.sol:6:9] (variable, type: int256)
+- Def: #6 ["add" @ input.sol:9:12] (function, type: function (int256, int32) returns int256)
+- Def: #7 ["Lib" @ input.sol:12:9] (library)
+- Def: #8 ["add" @ input.sol:13:12] (function, type: function (int256, int256) returns int256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Lib" @ input.sol:2:9] -> #7
+- Ref: ["add" @ input.sol:5:16] -> #6
+- Ref: ["x" @ input.sol:5:20] -> #3
+- Ref: ["x" @ input.sol:6:15] -> #3
+- Ref: ["add" @ input.sol:6:17] -> #8
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │   using Lib for int;
+    │         ─┬─  
+    │          ╰─── ref: 7
+    │ 
+  4 │   function someFunc(int x) returns (int) {
+    │            ────┬───     ┬  
+    │                ╰─────────── name: 2
+    │                         │  
+    │                         ╰── name: 3
+  5 │     int here = add(x, 3);
+    │         ──┬─   ─┬─ ┬  
+    │           ╰─────────── name: 4
+    │                 │  │  
+    │                 ╰───── ref: 6
+    │                    │  
+    │                    ╰── ref: 3
+  6 │     int lib = x.add(3);
+    │         ─┬─   ┬ ─┬─  
+    │          ╰─────────── name: 5
+    │               │  │   
+    │               ╰────── ref: 3
+    │                  │   
+    │                  ╰─── ref: 8
+    │ 
+  9 │   function add(int, int32) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 6
+    │ 
+ 12 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 7
+ 13 │   function add(int, int) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 8
+────╯

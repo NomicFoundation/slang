@@ -1,0 +1,88 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (11):
+- Def: #1 ["TestBase" @ input.sol:1:10] (contract)
+- Def: #2 ["add" @ input.sol:2:12] (function, type: function (int256, int256) returns int256)
+- Def: #3 ["add" @ input.sol:4:12] (function, type: function (int256) returns int256)
+- Def: #4 ["Test" @ input.sol:7:10] (contract)
+- Def: #5 ["y" @ input.sol:8:7] (state var, type: int256)
+- Def: #6 ["someFunc" @ input.sol:10:12] (function, type: function (int256) returns int256)
+- Def: #7 ["x" @ input.sol:10:25] (parameter, type: int256)
+- Def: #8 ["farg" @ input.sol:11:9] (variable, type: int256)
+- Def: #9 ["literal" @ input.sol:12:9] (variable, type: int256)
+- Def: #10 ["farg_2" @ input.sol:13:9] (variable, type: int256)
+- Def: #11 ["literal_2" @ input.sol:14:9] (variable, type: int256)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["TestBase" @ input.sol:7:18] -> #1
+- Ref: ["add" @ input.sol:11:21] -> #3
+- Ref: ["x" @ input.sol:11:25] -> #7
+- Ref: ["add" @ input.sol:12:25] -> #3
+- Ref: ["add" @ input.sol:13:24] -> #2
+- Ref: ["x" @ input.sol:13:28] -> #7
+- Ref: ["y" @ input.sol:13:31] -> #5
+- Ref: ["add" @ input.sol:14:26] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract TestBase {
+    │          ────┬───  
+    │              ╰───── name: 1
+  2 │   function add(int, int) public returns (int);
+    │            ─┬─  
+    │             ╰─── name: 2
+    │ 
+  4 │   function add(int) public returns (int);
+    │            ─┬─  
+    │             ╰─── name: 3
+    │ 
+  7 │ contract Test is TestBase {
+    │          ──┬─    ────┬───  
+    │            ╰─────────────── name: 4
+    │                      │     
+    │                      ╰───── ref: 1
+  8 │   int y;
+    │       ┬  
+    │       ╰── name: 5
+    │ 
+ 10 │   function someFunc(int x) public returns (int) {
+    │            ────┬───     ┬  
+    │                ╰─────────── name: 6
+    │                         │  
+    │                         ╰── name: 7
+ 11 │     int farg = this.add(x);
+    │         ──┬─        ─┬─ ┬  
+    │           ╰──────────────── name: 8
+    │                      │  │  
+    │                      ╰───── ref: 3
+    │                         │  
+    │                         ╰── ref: 7
+ 12 │     int literal = super.add(3);
+    │         ───┬───         ─┬─  
+    │            ╰───────────────── name: 9
+    │                          │   
+    │                          ╰─── ref: 3
+ 13 │     int farg_2 = super.add(x, y);
+    │         ───┬──         ─┬─ ┬  ┬  
+    │            ╰───────────────────── name: 10
+    │                         │  │  │  
+    │                         ╰──────── ref: 2
+    │                            │  │  
+    │                            ╰───── ref: 7
+    │                               │  
+    │                               ╰── ref: 5
+ 14 │     int literal_2 = this.add(3, 1);
+    │         ────┬────        ─┬─  
+    │             ╰───────────────── name: 11
+    │                           │   
+    │                           ╰─── ref: 2
+────╯

@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() internal {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         process({ rcpt: tx.origin, qty: 1 });
+   │         ───┬───   ──┬─  ─┬ ───┬──  ─┬─  
+   │            ╰──────────────────────────── refs: 3, 6
+   │                     │    │    │     │   
+   │                     ╰─────────────────── ref: 5
+   │                          │    │     │   
+   │                          ╰────────────── ref: built-in
+   │                               │     │   
+   │                               ╰───────── ref: built-in
+   │                                     │   
+   │                                     ╰─── refs: 4, 8
+ 4 │         process({ symbol: "foo", qty: 2 });
+   │         ───┬───   ───┬──         ─┬─  
+   │            ╰────────────────────────── refs: 3, 6
+   │                      │            │   
+   │                      ╰──────────────── ref: 7
+   │                                   │   
+   │                                   ╰─── refs: 4, 8
+   │ 
+ 7 │     function process(uint256 qty, address rcpt) internal {}
+   │              ───┬───         ─┬─          ──┬─  
+   │                 ╰─────────────────────────────── name: 3
+   │                               │             │   
+   │                               ╰───────────────── name: 4
+   │                                             │   
+   │                                             ╰─── name: 5
+ 8 │     function process(string memory symbol, uint256 qty) internal {}
+   │              ───┬───               ───┬──          ─┬─  
+   │                 ╰─────────────────────────────────────── name: 6
+   │                                       │             │   
+   │                                       ╰───────────────── name: 7
+   │                                                     │   
+   │                                                     ╰─── name: 8
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ──▶ contract Test {
+ 2 │ │ ╭───▶     function test() internal {
+   ┆ ┆ ┆     
+ 5 │ │ ├─│ ▶     }
+   │ │ │ │           
+   │ │ ╰───────────── definiens: 2
+ 6 │ │   ╭─▶ 
+ 7 │ │   ├─▶     function process(uint256 qty, address rcpt) internal {}
+   │ │   │                        ─────┬───── ──────┬──────                
+   │ │   │                             ╰─────────────────────────────────── definiens: 4
+   │ │   │                                          │                      
+   │ │   │                                          ╰────────────────────── definiens: 5
+   │ │   │                                                                 
+   │ │   ╰───────────────────────────────────────────────────────────────── definiens: 3
+ 8 │ │           function process(string memory symbol, uint256 qty) internal {}
+   │ │       ───────────────────────────────┬──┬─────────────┬───────────────────  
+   │ │                                      ╰────────────────────────────────────── definiens: 7
+   │ │                                         │             │                     
+   │ │                                         ╰─────────────────────────────────── definiens: 6
+   │ │                                                       │                     
+   │ │                                                       ╰───────────────────── definiens: 8
+ 9 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 1
+───╯

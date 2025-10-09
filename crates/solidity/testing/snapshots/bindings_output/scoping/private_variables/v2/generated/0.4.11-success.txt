@@ -1,0 +1,71 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["A" @ input.sol:1:10] (contract)
+- Def: #2 ["foo" @ input.sol:2:30] (constant, type: uint256)
+- Def: #3 ["bar" @ input.sol:3:21] (state var, type: uint256)
+- Def: #4 ["quux" @ input.sol:4:21] (state var, type: uint256)
+- Def: #5 ["B" @ input.sol:7:10] (contract)
+- Def: #6 ["foo" @ input.sol:8:27] (constant, type: bool)
+- Def: #7 ["bar" @ input.sol:9:18] (state var, type: bool)
+- Def: #8 ["quux" @ input.sol:10:10] (state var, type: bool)
+- Def: #9 ["test" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["A" @ input.sol:7:15] -> #1
+- Ref: ["foo" @ input.sol:13:9] -> #6
+- Ref: ["bar" @ input.sol:14:9] -> #7
+- Ref: ["quux" @ input.sol:15:9] -> #8
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  2 │     uint256 private constant foo = 1;
+    │                              ─┬─  
+    │                               ╰─── name: 2
+  3 │     uint256 private bar;
+    │                     ─┬─  
+    │                      ╰─── name: 3
+  4 │     uint256 private quux;
+    │                     ──┬─  
+    │                       ╰─── name: 4
+    │ 
+  7 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 5
+    │               │  
+    │               ╰── ref: 1
+  8 │     bool private constant foo = true;
+    │                           ─┬─  
+    │                            ╰─── name: 6
+  9 │     bool private bar;
+    │                  ─┬─  
+    │                   ╰─── name: 7
+ 10 │     bool quux;
+    │          ──┬─  
+    │            ╰─── name: 8
+    │ 
+ 12 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 9
+ 13 │         foo;
+    │         ─┬─  
+    │          ╰─── ref: 6
+ 14 │         bar;
+    │         ─┬─  
+    │          ╰─── ref: 7
+ 15 │         quux;
+    │         ──┬─  
+    │           ╰─── ref: 8
+────╯

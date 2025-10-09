@@ -1,0 +1,77 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["TestBase" @ input.sol:1:11] (interface)
+- Def: #2 ["add" @ input.sol:2:14] (function, type: function (int256, int256) returns int256)
+- Def: #3 ["add" @ input.sol:4:14] (function, type: function (int256) returns int256)
+- Def: #4 ["Test" @ input.sol:7:10] (contract)
+- Def: #5 ["y" @ input.sol:8:9] (state var, type: int256)
+- Def: #6 ["someFunc" @ input.sol:10:14] (function, type: function (TestBase[] memory, int256) returns void)
+- Def: #7 ["arr" @ input.sol:10:41] (parameter, type: TestBase[] memory)
+- Def: #8 ["x" @ input.sol:10:50] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["TestBase" @ input.sol:10:23] -> #1
+- Ref: ["arr" @ input.sol:11:9] -> #7
+- Ref: ["add" @ input.sol:11:16] -> #3
+- Ref: ["x" @ input.sol:11:20] -> #8
+- Ref: ["arr" @ input.sol:12:9] -> #7
+- Ref: ["add" @ input.sol:12:16] -> #2
+- Ref: ["x" @ input.sol:12:20] -> #8
+- Ref: ["y" @ input.sol:12:23] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface TestBase {
+    │           ────┬───  
+    │               ╰───── name: 1
+  2 │     function add(int, int) external returns (int);
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  4 │     function add(int) external returns (int);
+    │              ─┬─  
+    │               ╰─── name: 3
+    │ 
+  7 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 4
+  8 │     int y;
+    │         ┬  
+    │         ╰── name: 5
+    │ 
+ 10 │     function someFunc(TestBase[] memory arr, int x) internal {
+    │              ────┬─── ────┬───          ─┬─      ┬  
+    │                  ╰────────────────────────────────── name: 6
+    │                           │              │       │  
+    │                           ╰───────────────────────── ref: 1
+    │                                          │       │  
+    │                                          ╰────────── name: 7
+    │                                                  │  
+    │                                                  ╰── name: 8
+ 11 │         arr[0].add(x);
+    │         ─┬─    ─┬─ ┬  
+    │          ╰──────────── ref: 7
+    │                 │  │  
+    │                 ╰───── ref: 3
+    │                    │  
+    │                    ╰── ref: 8
+ 12 │         arr[0].add(x, y);
+    │         ─┬─    ─┬─ ┬  ┬  
+    │          ╰─────────────── ref: 7
+    │                 │  │  │  
+    │                 ╰──────── ref: 2
+    │                    │  │  
+    │                    ╰───── ref: 8
+    │                       │  
+    │                       ╰── ref: 5
+────╯

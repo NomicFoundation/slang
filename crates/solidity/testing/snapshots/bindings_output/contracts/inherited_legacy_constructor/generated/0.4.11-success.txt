@@ -1,0 +1,71 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract token {
+    │          ──┬──  
+    │            ╰──── name: 1
+  2 │     mapping(address => uint256) public balanceOf;
+    │                                        ────┬────  
+    │                                            ╰────── name: 2
+    │ 
+  4 │     function token(uint256, string, string) public {}
+    │              ──┬──  
+    │                ╰──── name: 3
+    │ 
+  7 │ contract Test is token {
+    │          ──┬─    ──┬──  
+    │            ╰──────────── name: 4
+    │                    │    
+    │                    ╰──── ref: 1
+  8 │     function merge(address target) {
+    │              ──┬──         ───┬──  
+    │                ╰─────────────────── name: 5
+    │                               │    
+    │                               ╰──── name: 6
+  9 │         token old = token(address(0x7F2176cEB16dcb648dc924eff617c3dC2BEfd30d));
+    │         ──┬── ─┬─   ──┬──  
+    │           ╰──────────────── ref: 3
+    │                │      │    
+    │                ╰─────────── name: 7
+    │                       │    
+    │                       ╰──── ref: 3
+ 10 │         old.balanceOf(target);
+    │         ─┬─ ────┬──── ───┬──  
+    │          ╰──────────────────── ref: 7
+    │                 │        │    
+    │                 ╰───────────── ref: 2
+    │                          │    
+    │                          ╰──── ref: 6
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭───▶ contract token {
+  2 │     │ │       mapping(address => uint256) public balanceOf;
+    │     │ │   ─────────────────────────┬────────────────────────  
+    │     │ │                            ╰────────────────────────── definiens: 2
+  3 │     │ ╭─▶ 
+  4 │     │ ├─▶     function token(uint256, string, string) public {}
+    │     │ │                                                           
+    │     │ ╰─────────────────────────────────────────────────────────── definiens: 3
+  5 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 1
+  6 │ ╭───────▶ 
+    ┆ ┆ ┆       
+  8 │ │ ╭─────▶     function merge(address target) {
+    │ │ │                          ───────┬──────  
+    │ │ │                                 ╰──────── definiens: 6
+  9 │ │ │               token old = token(address(0x7F2176cEB16dcb648dc924eff617c3dC2BEfd30d));
+    │ │ │       ────────────────────────────────────────┬───────────────────────────────────────  
+    │ │ │                                               ╰───────────────────────────────────────── definiens: 7
+    ┆ ┆ ┆       
+ 11 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 5
+ 12 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 4
+────╯

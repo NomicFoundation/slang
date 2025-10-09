@@ -1,0 +1,82 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  2 │     uint256 private constant foo = 1;
+    │                              ─┬─  
+    │                               ╰─── name: 2
+  3 │     uint256 private bar;
+    │                     ─┬─  
+    │                      ╰─── name: 3
+  4 │     uint256 private quux;
+    │                     ──┬─  
+    │                       ╰─── name: 4
+    │ 
+  7 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 5
+    │               │  
+    │               ╰── ref: 1
+  8 │     bool private constant foo = true;
+    │                           ─┬─  
+    │                            ╰─── name: 6
+  9 │     bool private bar;
+    │                  ─┬─  
+    │                   ╰─── name: 7
+ 10 │     bool quux;
+    │          ──┬─  
+    │            ╰─── name: 8
+    │ 
+ 12 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 9
+ 13 │         foo;
+    │         ─┬─  
+    │          ╰─── refs: 6, 2
+ 14 │         bar;
+    │         ─┬─  
+    │          ╰─── refs: 7, 3
+ 15 │         quux;
+    │         ──┬─  
+    │           ╰─── refs: 8, 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭───▶ contract A {
+  2 │   │         uint256 private constant foo = 1;
+    │   │     ───────────────────┬──────────────────  
+    │   │                        ╰──────────────────── definiens: 2
+  3 │   │         uint256 private bar;
+    │   │     ────────────┬────────────  
+    │   │                 ╰────────────── definiens: 3
+  4 │   │         uint256 private quux;
+    │   │     ─────────────┬────────────  
+    │   │                  ╰────────────── definiens: 4
+  5 │ │ ├───▶ }
+    │ │ │         
+    │ │ ╰───────── definiens: 1
+  6 │ ╭─────▶ 
+    ┆ ┆       
+  8 │ │           bool private constant foo = true;
+    │ │       ───────────────────┬──────────────────  
+    │ │                          ╰──────────────────── definiens: 6
+  9 │ │           bool private bar;
+    │ │       ───────────┬──────────  
+    │ │                  ╰──────────── definiens: 7
+ 10 │ │   │       bool quux;
+    │ │   │   ───────┬───────  
+    │ │   │          ╰───────── definiens: 8
+ 11 │ │   ╭─▶ 
+    ┆ ┆   ┆   
+ 16 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 9
+ 17 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 5
+────╯

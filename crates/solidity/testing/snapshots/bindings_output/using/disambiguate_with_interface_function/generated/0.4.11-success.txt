@@ -1,0 +1,84 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IFoo {
+    │           ──┬─  
+    │             ╰─── name: 1
+  2 │     function foo(address, uint) external;
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ library LibFoo {
+    │         ───┬──  
+    │            ╰──── name: 3
+  6 │     function foo(IFoo, uint) external {}
+    │              ─┬─ ──┬─  
+    │               ╰──────── name: 4
+    │                    │   
+    │                    ╰─── ref: 1
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 10 │     using LibFoo for IFoo;
+    │           ───┬──     ──┬─  
+    │              ╰───────────── ref: 3
+    │                        │   
+    │                        ╰─── ref: 1
+    │ 
+ 12 │     function test(IFoo f) internal {
+    │              ──┬─ ──┬─ ┬  
+    │                ╰────────── name: 6
+    │                     │  │  
+    │                     ╰───── ref: 1
+    │                        │  
+    │                        ╰── name: 7
+ 13 │         f.foo(1); // invokes the attached function
+    │         ┬ ─┬─  
+    │         ╰────── ref: 7
+    │            │   
+    │            ╰─── ref: 2
+ 14 │         f.foo(msg.sender, 1); // invokes the interface function
+    │         ┬ ─┬─ ─┬─ ───┬──  
+    │         ╰───────────────── ref: 7
+    │            │   │     │    
+    │            ╰────────────── ref: 2
+    │                │     │    
+    │                ╰────────── ref: built-in
+    │                      │    
+    │                      ╰──── ref: built-in
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭───▶ interface IFoo {
+  2 │     │         function foo(address, uint) external;
+    │     │     ─────────────────────┬────────────────────  
+    │     │                          ╰────────────────────── definiens: 2
+  3 │     ├─│ ▶ }
+    │     │ │       
+    │     ╰───────── definiens: 1
+  4 │       ╭─▶ 
+    ┆       ┆   
+  6 │       │       function foo(IFoo, uint) external {}
+    │       │   ────────────────────┬────────────────────  
+    │       │                       ╰────────────────────── definiens: 4
+  7 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 3
+  8 │ ╭───────▶ 
+    ┆ ┆         
+ 11 │ │ ╭─────▶ 
+ 12 │ │ │           function test(IFoo f) internal {
+    │ │ │                         ───┬──  
+    │ │ │                            ╰──── definiens: 7
+    ┆ ┆ ┆       
+ 15 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 6
+ 16 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
+────╯

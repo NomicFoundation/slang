@@ -1,5 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 reference `Bar` at input.sol:10:5 not found in new binder output
+reference `foo` at input.sol:13:9 failed to resolve in new binder
 
 Definitions and/or references from binding graph and new binder DIFFER

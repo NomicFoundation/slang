@@ -1,0 +1,58 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Utils {
+   │         ──┬──  
+   │           ╰──── name: 1
+ 2 │     function foo(address payable _to) internal {}
+   │              ─┬─                 ─┬─  
+   │               ╰─────────────────────── name: 2
+   │                                   │   
+   │                                   ╰─── name: 3
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 6 │     using Utils for address payable;
+   │           ──┬──  
+   │             ╰──── ref: 1
+   │ 
+ 8 │     function test(address _to) internal {
+   │              ──┬─         ─┬─  
+   │                ╰─────────────── name: 5
+   │                            │   
+   │                            ╰─── name: 6
+ 9 │         address(uint160(_to)).foo();  // should bind in >= 0.5.0 and < 0.8.0
+   │                         ─┬─   ─┬─  
+   │                          ╰───────── ref: 6
+   │                                │   
+   │                                ╰─── unresolved
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Utils {
+  2 │     │       function foo(address payable _to) internal {}
+    │     │   ─────────────────────────┬┬───────────────────────  
+    │     │                            ╰────────────────────────── definiens: 2
+    │     │                             │                         
+    │     │                             ╰───────────────────────── definiens: 3
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  7 │ │ ╭───▶ 
+  8 │ │ │         function test(address _to) internal {
+    │ │ │                       ─────┬─────  
+    │ │ │                            ╰─────── definiens: 6
+    ┆ ┆ ┆     
+ 10 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 4
+────╯

@@ -3,6 +3,9 @@
 #[path = "language_facts.generated.rs"]
 mod language_facts;
 
+#[path = "versions.generated.rs"]
+pub(crate) mod versions;
+
 pub use language_facts::LanguageFacts;
 
 mod version;

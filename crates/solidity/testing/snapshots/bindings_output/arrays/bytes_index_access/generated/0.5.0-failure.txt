@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 1
+  2 │     function foo(bytes memory x) internal {}
+    │              ─┬─              ┬  
+    │               ╰────────────────── name: 2
+    │                               │  
+    │                               ╰── name: 3
+  3 │     function foo(bytes1 x) internal {}
+    │              ─┬─        ┬  
+    │               ╰──────────── name: 4
+    │                         │  
+    │                         ╰── name: 5
+    │ 
+  6 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 6
+  7 │     using Utils for bytes;
+    │           ──┬──  
+    │             ╰──── ref: 1
+  8 │     using Utils for bytes1;
+    │           ──┬──  
+    │             ╰──── ref: 1
+    │ 
+ 10 │     function test(bytes calldata name) public {
+    │              ──┬─                ──┬─  
+    │                ╰─────────────────────── name: 7
+    │                                    │   
+    │                                    ╰─── name: 8
+ 11 │         bytes(name[0:16]).foo();
+    │               ──┬─        ─┬─  
+    │                 ╰────────────── ref: 8
+    │                            │   
+    │                            ╰─── refs: 2, 4
+ 12 │         name[0].foo();
+    │         ──┬─    ─┬─  
+    │           ╰────────── ref: 8
+    │                  │   
+    │                  ╰─── unresolved
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Utils {
+  2 │     │       function foo(bytes memory x) internal {}
+    │     │   ──────────────────────┬─┬────────────────────  
+    │     │                         ╰──────────────────────── definiens: 2
+    │     │                           │                      
+    │     │                           ╰────────────────────── definiens: 3
+  3 │     │       function foo(bytes1 x) internal {}
+    │     │   ───────────────────┬─┬─────────────────  
+    │     │                      ╰───────────────────── definiens: 4
+    │     │                        │                   
+    │     │                        ╰─────────────────── definiens: 5
+  4 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  5 │ ╭─────▶ 
+    ┆ ┆       
+  9 │ │ ╭───▶ 
+ 10 │ │ │         function test(bytes calldata name) public {
+    │ │ │                       ─────────┬─────────  
+    │ │ │                                ╰─────────── definiens: 8
+    ┆ ┆ ┆     
+ 13 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 7
+ 14 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 6
+────╯

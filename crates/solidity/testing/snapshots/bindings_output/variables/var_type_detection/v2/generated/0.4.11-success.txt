@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["x" @ input.sol:3:13] (variable, type: address)
+- Def: #4 ["a" @ input.sol:6:14] (variable, type: address)
+- Def: #5 ["b" @ input.sol:6:17] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (9):
+- Ref: ["tx" @ input.sol:3:17] -> built-in
+- Ref: ["origin" @ input.sol:3:20] -> built-in
+- Ref: ["x" @ input.sol:4:9] -> #3
+- Ref: ["transfer" @ input.sol:4:11] -> built-in
+- Ref: ["msg" @ input.sol:6:23] -> built-in
+- Ref: ["sender" @ input.sol:6:27] -> built-in
+- Ref: ["a" @ input.sol:7:9] -> #4
+- Ref: ["send" @ input.sol:7:11] -> built-in
+- Ref: ["b" @ input.sol:7:16] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         var x = tx.origin;
+   │             ┬   ─┬ ───┬──  
+   │             ╰────────────── name: 3
+   │                  │    │    
+   │                  ╰───────── built-in
+   │                       │    
+   │                       ╰──── built-in
+ 4 │         x.transfer(1);
+   │         ┬ ────┬───  
+   │         ╰─────────── ref: 3
+   │               │     
+   │               ╰───── built-in
+   │ 
+ 6 │         var (a, b) = (msg.sender, 1);
+   │              ┬  ┬     ─┬─ ───┬──  
+   │              ╰──────────────────── name: 4
+   │                 │      │     │    
+   │                 ╰───────────────── name: 5
+   │                        │     │    
+   │                        ╰────────── built-in
+   │                              │    
+   │                              ╰──── built-in
+ 7 │         a.send(b);
+   │         ┬ ──┬─ ┬  
+   │         ╰───────── ref: 4
+   │             │  │  
+   │             ╰───── built-in
+   │                │  
+   │                ╰── ref: 5
+───╯

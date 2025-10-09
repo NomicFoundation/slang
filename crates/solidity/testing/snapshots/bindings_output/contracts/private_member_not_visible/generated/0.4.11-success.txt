@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     string internal _name;
+    │                     ──┬──  
+    │                       ╰──── name: 2
+    │ 
+  5 │ contract Other {
+    │          ──┬──  
+    │            ╰──── name: 3
+  6 │     string private _name;
+    │                    ──┬──  
+    │                      ╰──── name: 4
+    │ 
+  9 │ contract Test is Base, Other {
+    │          ──┬─    ──┬─  ──┬──  
+    │            ╰────────────────── name: 5
+    │                    │     │    
+    │                    ╰────────── ref: 1
+    │                          │    
+    │                          ╰──── ref: 3
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 6
+ 11 │         _name;
+    │         ──┬──  
+    │           ╰──── refs: 2, 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ contract Base {
+  2 │       │       string internal _name;
+    │       │   ─────────────┬─────────────  
+    │       │                ╰─────────────── definiens: 2
+  3 │     │ ├─▶ }
+    │     │ │       
+    │     │ ╰─────── definiens: 1
+  4 │     ╭───▶ 
+    ┆     ┆     
+  6 │     │         string private _name;
+    │     │     ─────────────┬────────────  
+    │     │                  ╰────────────── definiens: 4
+  7 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 3
+  8 │ ╭───────▶ 
+    ┆ ┆ ┆       
+ 10 │ │ ╭─────▶     function test() internal {
+    ┆ ┆ ┆       
+ 12 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 6
+ 13 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
+────╯

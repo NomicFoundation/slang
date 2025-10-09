@@ -662,10 +662,10 @@ dependencies = [
  "infra_utils",
  "proc-macro2",
  "quote",
- "semver",
+ "semver 1.0.26",
  "serde",
- "strum",
- "strum_macros",
+ "strum 0.26.3",
+ "strum_macros 0.26.4",
 ]
 
 [[package]]

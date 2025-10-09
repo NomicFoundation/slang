@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["nop" @ input.sol:14:38] -> #2 resolved but did not in stack graph output
+Ref: ["nop" @ input.sol:15:43] -> #2 resolved but did not in stack graph output
+Ref: ["nop" @ input.sol:16:38] -> #2 resolved but did not in stack graph output
+Ref: ["x" @ input.sol:16:36] -> #5 resolved but did not in stack graph output
+Ref: ["nop" @ input.sol:17:43] -> #2 resolved but did not in stack graph output
+Ref: ["x" @ input.sol:17:41] -> #5 resolved but did not in stack graph output
+
+Definitions and/or references from binding graph and new binder DIFFER
