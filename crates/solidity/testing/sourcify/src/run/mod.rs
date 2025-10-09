@@ -4,7 +4,7 @@ use slang_solidity::compilation::CompilationInitializationError;
 use slang_solidity::cst::{Cursor, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 
-use crate::command::TestOptions;
+use crate::command::{CheckBinderMode, TestOptions};
 use crate::events::{Events, TestOutcome};
 use crate::sourcify::{Contract, ContractArchive, Manifest};
 
@@ -74,12 +74,17 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
             }
 
             if test_outcome == TestOutcome::Passed {
-                if opts.check_binder_v1 {
-                    test_outcome = binder_v1_check::run(contract, &unit, events);
-                } else if opts.check_binder_v2 {
-                    test_outcome = binder_v2_check::run(contract, unit, events);
-                } else if opts.compare_binders {
-                    test_outcome = compare_binders::run(contract, unit, events);
+                match opts.check_binder {
+                    Some(CheckBinderMode::V1) => {
+                        test_outcome = binder_v1_check::run(contract, &unit, events);
+                    }
+                    Some(CheckBinderMode::V2) => {
+                        test_outcome = binder_v2_check::run(contract, unit, events);
+                    }
+                    Some(CheckBinderMode::Compare) => {
+                        test_outcome = compare_binders::run(contract, unit, events);
+                    }
+                    _ => {}
                 }
             }
 

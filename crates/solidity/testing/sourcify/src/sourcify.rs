@@ -60,6 +60,7 @@ impl Manifest {
         let manifest_path = CargoWorkspace::locate_source_crate("solidity_testing_sourcify")
             .unwrap_or_default()
             .join("target/manifest.json");
+        fs::create_dir_all(manifest_path.parent().unwrap())?;
 
         if options.offline {
             if !fs::exists(&manifest_path)? {

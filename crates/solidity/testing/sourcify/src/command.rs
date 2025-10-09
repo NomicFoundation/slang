@@ -3,7 +3,7 @@ use std::ops::RangeInclusive;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 
 #[derive(Debug, Parser)]
 pub struct Cli {
@@ -51,21 +51,20 @@ pub struct ShowCombinedResultsCommand {
 #[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Parser)]
 pub struct TestOptions {
-    /// Run bindings tests for the graph binder.
-    #[arg(long, default_value_t = false, conflicts_with_all = ["check_binder_v2", "compare_binders"])]
-    pub check_binder_v1: bool,
-
-    /// Run bindings tests for the new binder.
-    #[arg(long, default_value_t = false, conflicts_with_all = ["check_binder_v1", "compare_binders"])]
-    pub check_binder_v2: bool,
-
     /// Run version inference tests.
     #[arg(long, default_value_t = false)]
     pub check_infer_version: bool,
 
-    /// Run comparison between graph binder and new binder.
-    #[arg(long, default_value_t = false, conflicts_with_all = ["check_binder_v1", "check_binder_v2"])]
-    pub compare_binders: bool,
+    /// Run bindings tests
+    #[arg(long, value_enum)]
+    pub check_binder: Option<CheckBinderMode>,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
+pub enum CheckBinderMode {
+    V1,
+    V2,
+    Compare,
 }
 
 #[derive(Debug, Parser)]

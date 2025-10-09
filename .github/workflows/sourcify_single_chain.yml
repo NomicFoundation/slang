@@ -10,26 +10,21 @@ on:
         type: "number"
         required: true
         default: 1
-      check_binder_v1:
-        description: "Check name bindings on contracts using the graph binder, reporting if there's any unresolved symbol. Only one binder check can be enabled."
-        type: "boolean"
-        required: false
-        default: false
-      check_binder_v2:
-        description: "Check name bindings on contracts using the new binder, reporting if there's any unresolved symbol. Only one binder check can be enabled."
-        type: "boolean"
-        required: false
-        default: false
-      compare_binders:
-        description: "Check bindings using the new binder and compare the results against the graph binder, reporting any differences found as failures. Only one binder check can be enabled."
-        type: "boolean"
-        required: false
-        default: false
       check_infer_version:
         description: "Check that we can infer the correct language version based on the available version pragmas."
         type: "boolean"
         required: false
         default: false
+      check_binder:
+        description: "Check name bindings on contracts reporting if there's any unresolved symbol."
+        type: "choice"
+        required: true
+        default: "none"
+        options:
+          - "none"
+          - "v1"
+          - "v2"
+          - "compare"
   workflow_call:
     inputs:
       chain_id:
@@ -37,16 +32,16 @@ on:
         type: "number"
         required: true
         default: 1
-      check_binder_v1:
-        description: "Check name bindings on contracts using the graph binder, failing if there's any unresolved symbol."
-        type: "boolean"
-        required: false
-        default: false
       check_infer_version:
         description: "Check that we can infer the correct language version based on the available version pragmas."
         type: "boolean"
         required: false
         default: false
+      check_binder:
+        description: "Check name bindings on contracts reporting if there's any unresolved symbol."
+        type: "string"
+        required: false
+        default: null
 jobs:
   buildSlang:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
@@ -161,9 +156,7 @@ jobs:
               --chain-id ${{ inputs.chain_id }} \
               --shard-count ${{ env.SHARD_COUNT }} \
               --shard-index ${{ matrix.shard_index }} \
-              ${{ inputs.check_binder_v1 == true && '--check-binder-v1' || '' }} \
-              ${{ inputs.check_binder_v2 == true && '--check-binder-v2' || '' }} \
-              ${{ inputs.compare_binders == true && '--compare-binders' || '' }} \
+              ${{ inputs.check_binder != 'none' && format('--check-binder={0}', inputs.check_binder) || '' }} \
               ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }}
 
       - name: "Write shard results to output"
