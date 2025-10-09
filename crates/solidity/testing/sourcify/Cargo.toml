@@ -9,11 +9,9 @@ publish = false
 anyhow = { workspace = true }
 clap = { workspace = true }
 console = { workspace = true }
-httpdate = { workspace = true }
 indicatif = { workspace = true }
 infra_utils = { workspace = true }
 rayon = { workspace = true }
-reqwest = { workspace = true, features = ["json"] }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

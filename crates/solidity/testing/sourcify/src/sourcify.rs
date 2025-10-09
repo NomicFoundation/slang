@@ -3,12 +3,9 @@ use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
 use anyhow::{anyhow, bail, Error, Result};
-use httpdate::fmt_http_date;
 use infra_utils::cargo::CargoWorkspace;
+use infra_utils::http::{request_download_if_modified, DownloadResult};
 use infra_utils::paths::PathExtensions;
-use reqwest::blocking::Client;
-use reqwest::header::IF_MODIFIED_SINCE;
-use reqwest::StatusCode;
 use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
@@ -68,25 +65,18 @@ impl Manifest {
             }
         } else {
             let manifest_url = "https://repo-backup.sourcify.dev/manifest.json";
-            let client = Client::new();
-            let mut request_builder = client.get(manifest_url);
-            if let Ok(metadata) = fs::metadata(&manifest_path) {
-                if let Ok(modified) = metadata.modified() {
-                    request_builder =
-                        request_builder.header(IF_MODIFIED_SINCE, fmt_http_date(modified));
+            match request_download_if_modified(manifest_url, &manifest_path) {
+                DownloadResult::Ok(mut response) => {
+                    println!("Downloading manifest from {manifest_url}");
+                    let mut writer = File::create(&manifest_path)?;
+                    std::io::copy(&mut response, &mut writer)?;
                 }
-            }
-            let mut res = request_builder.send()?;
-
-            let status = res.status();
-            if status.is_success() {
-                println!("Downloading manifest from {manifest_url}");
-                let mut writer = File::create(&manifest_path)?;
-                res.copy_to(&mut writer)?;
-            } else if status.as_u16() == StatusCode::NOT_MODIFIED {
-                println!("Manifest is up-to-date");
-            } else {
-                bail!("Error fetching manifest.json");
+                DownloadResult::NotModified => {
+                    println!("Manifest is up-to-date");
+                }
+                DownloadResult::Error => {
+                    bail!("Error fetching manifest.json");
+                }
             }
         }
 
@@ -230,34 +220,27 @@ impl ContractArchive {
                 bail!("Shard archive directory does not exists and running in offline mode");
             }
         } else {
-            let client = Client::new();
-            let mut request_builder = client.get(&desc.url);
-            if let Ok(metadata) = fs::metadata(&contracts_path) {
-                if let Ok(modified) = metadata.modified() {
-                    request_builder =
-                        request_builder.header(IF_MODIFIED_SINCE, fmt_http_date(modified));
+            match request_download_if_modified(&desc.url, &contracts_path) {
+                DownloadResult::Ok(response) => {
+                    println!("Downloading shard archive from {url}", url = desc.url);
+                    let archive_dir = desc.archive_dir();
+
+                    let mut archive = Archive::new(response);
+                    archive.unpack(&archive_dir)?;
+
+                    // explicitly touch the contracts path mtime to avoid downloading
+                    // again if sufficiently up-to-date
+                    fs::File::open(&contracts_path)?.set_modified(SystemTime::now())?;
                 }
-            }
-            let res = request_builder.send()?;
-
-            let status = res.status();
-            if status.is_success() {
-                println!("Downloading shard archive from {url}", url = desc.url);
-                let archive_dir = desc.archive_dir();
-
-                let mut archive = Archive::new(res);
-                archive.unpack(&archive_dir)?;
-
-                // explicitly touch the contracts path mtime to avoid downloading
-                // again if sufficiently up-to-date
-                fs::File::open(&contracts_path)?.set_modified(SystemTime::now())?;
-            } else if status.as_u16() == StatusCode::NOT_MODIFIED {
-                println!(
-                    "Shard archive in {path} is up-to-date",
-                    path = contracts_path.to_string_lossy()
-                );
-            } else {
-                bail!("Could not fetch source tarball");
+                DownloadResult::NotModified => {
+                    println!(
+                        "Shard archive in {path} is up-to-date",
+                        path = contracts_path.to_string_lossy()
+                    );
+                }
+                DownloadResult::Error => {
+                    bail!("Could not fetch source tarball");
+                }
             }
         }
 
