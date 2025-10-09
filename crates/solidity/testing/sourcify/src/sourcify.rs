@@ -27,8 +27,8 @@ impl Manifest {
         options: &ShardingOptions,
         archive_options: &ArchiveOptions,
     ) -> Result<Manifest> {
-        let obj = Self::obtain_manifest(archive_options)?;
-        let mut archive_descriptors: Vec<_> = obj
+        let manifest = Self::obtain_manifest(archive_options)?;
+        let mut archive_descriptors: Vec<_> = manifest
             .get("files")
             .and_then(|files| files.as_array())
             .map(|files| {
