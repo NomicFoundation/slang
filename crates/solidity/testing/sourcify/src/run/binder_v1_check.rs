@@ -56,7 +56,7 @@ pub(super) fn run(
                 version = contract.version,
             ));
 
-            test_outcome = TestOutcome::Unresolved;
+            test_outcome = TestOutcome::Failed;
         }
     }
     events.inc_references(references);
@@ -84,7 +84,7 @@ pub(super) fn run(
                     version = contract.version,
                 ));
 
-                test_outcome = TestOutcome::Unresolved;
+                test_outcome = TestOutcome::Failed;
             }
         }
     }

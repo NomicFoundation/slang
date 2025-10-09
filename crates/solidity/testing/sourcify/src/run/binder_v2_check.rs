@@ -29,7 +29,7 @@ pub(super) fn run(
             continue;
         }
         unresolved += 1;
-        test_outcome = TestOutcome::Unresolved;
+        test_outcome = TestOutcome::Failed;
 
         let (cursor, ref_file_id) = find_cursor_for_identifier(
             &mut cursor_cache,
