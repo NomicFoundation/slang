@@ -2,7 +2,7 @@ use std::fmt::{Display, Write};
 
 use anyhow::Result;
 use codegen_ebnf::EbnfWriter;
-use codegen_language_definition::model::Identifier;
+use language_definition::model::Identifier;
 
 use crate::model::SpecModel;
 

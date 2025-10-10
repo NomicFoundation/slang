@@ -1,0 +1,15 @@
+[package]
+name = "language_macros"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[lib]
+proc-macro = true
+
+[dependencies]
+language_definition = { workspace = true }
+
+[lints]
+workspace = true

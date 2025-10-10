@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
 use codegen_ebnf::{EbnfModel, PlainWriter};
-use codegen_language_definition::model::{self, Identifier, Item, PredefinedLabel};
+use language_definition::model::{self, Identifier, Item, PredefinedLabel};
 use serde::Serialize;
 use strum::VariantNames;
 

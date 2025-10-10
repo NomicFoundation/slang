@@ -1,5 +1,5 @@
-use codegen_language_definition::model;
 use indexmap::IndexMap;
+use language_definition::model;
 use serde::Serialize;
 
 use super::model::{Choice, Collection, IrModel, Sequence};

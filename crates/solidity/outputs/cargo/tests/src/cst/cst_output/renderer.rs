@@ -5,8 +5,8 @@ use std::ops::Range;
 use std::sync::LazyLock;
 
 use anyhow::Result;
-use codegen_language_definition::model::Item;
 use inflector::Inflector;
+use language_definition::model::Item;
 use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
 use solidity_language::SolidityDefinition;
 

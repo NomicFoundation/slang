@@ -9,10 +9,6 @@ resolver = "2"
 members = [
     "crates/codegen/ebnf",
     "crates/codegen/generator",
-    "crates/codegen/language/definition",
-    "crates/codegen/language/internal_macros",
-    "crates/codegen/language/macros",
-    "crates/codegen/language/tests",
     "crates/codegen/runner",
     "crates/codegen/spec",
     "crates/codegen/testing",
@@ -20,11 +16,22 @@ members = [
     "crates/infra/cli",
     "crates/infra/utils",
 
+    "crates/language/definition",
+    "crates/language/internal_macros",
+    "crates/language/macros",
+    "crates/language/tests",
+
+    "crates/language-v2/definition",
+    "crates/language-v2/internal_macros",
+    "crates/language-v2/macros",
+    "crates/language-v2/tests",
+
     "crates/metaslang/bindings",
     "crates/metaslang/cst",
     "crates/metaslang/graph_builder",
 
     "crates/solidity/inputs/language",
+
     "crates/solidity/outputs/cargo/cli",
     "crates/solidity/outputs/cargo/crate",
     "crates/solidity/outputs/cargo/tests",
@@ -37,6 +44,8 @@ members = [
     "crates/solidity/testing/solc",
     "crates/solidity/testing/sourcify",
     "crates/solidity/testing/utils",
+
+    "crates/solidity-v2/inputs/language",
 ]
 
 [workspace.dependencies]
@@ -45,10 +54,6 @@ members = [
 #
 codegen_ebnf = { path = "crates/codegen/ebnf", version = "1.2.1" }
 codegen_generator = { path = "crates/codegen/generator", version = "1.2.1" }
-codegen_language_definition = { path = "crates/codegen/language/definition", version = "1.2.1" }
-codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros", version = "1.2.1" }
-codegen_language_macros = { path = "crates/codegen/language/macros", version = "1.2.1" }
-codegen_language_tests = { path = "crates/codegen/language/tests", version = "1.2.1" }
 codegen_runner = { path = "crates/codegen/runner", version = "1.2.1" }
 codegen_spec = { path = "crates/codegen/spec", version = "1.2.1" }
 codegen_testing = { path = "crates/codegen/testing", version = "1.2.1" }
@@ -56,15 +61,26 @@ codegen_testing = { path = "crates/codegen/testing", version = "1.2.1" }
 infra_cli = { path = "crates/infra/cli", version = "1.2.1" }
 infra_utils = { path = "crates/infra/utils", version = "1.2.1" }
 
+language_definition = { path = "crates/language/definition", version = "1.2.1" }
+language_internal_macros = { path = "crates/language/internal_macros", version = "1.2.1" }
+language_macros = { path = "crates/language/macros", version = "1.2.1" }
+language_tests = { path = "crates/language/tests", version = "1.2.1" }
+
+language_v2_definition = { path = "crates/language-v2/definition", version = "1.2.1" }
+language_v2_internal_macros = { path = "crates/language-v2/internal_macros", version = "1.2.1" }
+language_v2_macros = { path = "crates/language-v2/macros", version = "1.2.1" }
+language_v2_tests = { path = "crates/language-v2/tests", version = "1.2.1" }
+
 metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.2.1" }
 metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.2.1" }
 metaslang_cst = { path = "crates/metaslang/cst", version = "1.2.1" }
+
+solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.1" }
 
 slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.2.1" }
 slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.2.1" }
 solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.2.1" }
 solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.2.1" }
-solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.1" }
 solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.2.1" }
 solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.2.1" }
 solidity_testing_perf_cargo = { path = "crates/solidity/testing/perf/cargo", version = "1.2.1" }
@@ -73,6 +89,8 @@ solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", versi
 solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.2.1" }
 solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.2.1" }
 solidity_testing_utils = { path = "crates/solidity/testing/utils", version = "1.2.1" }
+
+solidity_v2_language = { path = "crates/solidity-v2/inputs/language", version = "1.2.1" }
 
 #
 # External

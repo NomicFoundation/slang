@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use codegen_language_definition::model::{self, Identifier};
+use language_definition::model::{self, Identifier};
 
 use crate::parser::grammar::visitor::{GrammarVisitor, Visitable};
 use crate::parser::grammar::{PrecedenceParserDefinitionRef, ScannerDefinitionRef};

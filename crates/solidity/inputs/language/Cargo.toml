@@ -7,8 +7,8 @@ edition.workspace = true
 publish = false
 
 [dependencies]
-codegen_language_definition = { workspace = true }
-codegen_language_macros = { workspace = true }
+language_definition = { workspace = true }
+language_macros = { workspace = true }
 semver = { workspace = true }
 
 [lints]

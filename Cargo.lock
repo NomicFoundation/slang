@@ -645,9 +645,9 @@ name = "codegen_ebnf"
 version = "1.2.1"
 dependencies = [
  "Inflector",
- "codegen_language_definition",
  "derive-new",
  "indexmap",
+ "language_definition",
 ]
 
 [[package]]
@@ -657,63 +657,15 @@ dependencies = [
  "Inflector",
  "anyhow",
  "codegen_ebnf",
- "codegen_language_definition",
  "indexmap",
  "infra_utils",
+ "language_definition",
  "proc-macro2",
  "quote",
  "semver 1.0.26",
  "serde",
  "strum 0.26.3",
  "strum_macros 0.26.4",
-]
-
-[[package]]
-name = "codegen_language_definition"
-version = "1.2.1"
-dependencies = [
- "Inflector",
- "codegen_language_internal_macros",
- "indexmap",
- "infra_utils",
- "itertools 0.13.0",
- "proc-macro2",
- "quote",
- "semver 1.0.26",
- "serde",
- "strum 0.26.3",
- "strum_macros 0.26.4",
- "syn 2.0.104",
- "thiserror 2.0.12",
-]
-
-[[package]]
-name = "codegen_language_internal_macros"
-version = "1.2.1"
-dependencies = [
- "itertools 0.13.0",
- "proc-macro2",
- "quote",
- "syn 2.0.104",
-]
-
-[[package]]
-name = "codegen_language_macros"
-version = "1.2.1"
-dependencies = [
- "codegen_language_definition",
-]
-
-[[package]]
-name = "codegen_language_tests"
-version = "1.2.1"
-dependencies = [
- "codegen_language_definition",
- "codegen_language_macros",
- "infra_utils",
- "rayon",
- "semver 1.0.26",
- "trybuild",
 ]
 
 [[package]]
@@ -722,10 +674,10 @@ version = "1.2.1"
 dependencies = [
  "anyhow",
  "codegen_generator",
- "codegen_language_definition",
  "codegen_spec",
  "codegen_testing",
  "infra_utils",
+ "language_definition",
  "rayon",
  "solidity_language",
 ]
@@ -737,9 +689,9 @@ dependencies = [
  "Inflector",
  "anyhow",
  "codegen_ebnf",
- "codegen_language_definition",
  "infra_utils",
  "itertools 0.13.0",
+ "language_definition",
  "serde",
  "serde_json",
 ]
@@ -750,8 +702,8 @@ version = "1.2.1"
 dependencies = [
  "Inflector",
  "anyhow",
- "codegen_language_definition",
  "infra_utils",
+ "language_definition",
  "semver 1.0.26",
 ]
 
@@ -2087,6 +2039,102 @@ checksum = "505d1856a39b200489082f90d897c3f07c455563880bc5952e38eabf731c83b6"
 dependencies = [
  "digest 0.10.7",
  "sha3-asm",
+]
+
+[[package]]
+name = "language_definition"
+version = "1.2.1"
+dependencies = [
+ "Inflector",
+ "indexmap",
+ "infra_utils",
+ "itertools 0.13.0",
+ "language_internal_macros",
+ "proc-macro2",
+ "quote",
+ "semver 1.0.26",
+ "serde",
+ "strum 0.26.3",
+ "strum_macros 0.26.4",
+ "syn 2.0.104",
+ "thiserror 2.0.12",
+]
+
+[[package]]
+name = "language_internal_macros"
+version = "1.2.1"
+dependencies = [
+ "itertools 0.13.0",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.104",
+]
+
+[[package]]
+name = "language_macros"
+version = "1.2.1"
+dependencies = [
+ "language_definition",
+]
+
+[[package]]
+name = "language_tests"
+version = "1.2.1"
+dependencies = [
+ "infra_utils",
+ "language_definition",
+ "language_macros",
+ "rayon",
+ "semver 1.0.26",
+ "trybuild",
+]
+
+[[package]]
+name = "language_tests_v2"
+version = "1.2.1"
+dependencies = [
+ "infra_utils",
+ "language_v2_definition",
+ "language_v2_macros",
+ "rayon",
+ "semver 1.0.26",
+ "trybuild",
+]
+
+[[package]]
+name = "language_v2_definition"
+version = "1.2.1"
+dependencies = [
+ "Inflector",
+ "indexmap",
+ "infra_utils",
+ "itertools 0.13.0",
+ "language_v2_internal_macros",
+ "proc-macro2",
+ "quote",
+ "semver 1.0.26",
+ "serde",
+ "strum 0.26.3",
+ "strum_macros 0.26.4",
+ "syn 2.0.104",
+ "thiserror 2.0.12",
+]
+
+[[package]]
+name = "language_v2_internal_macros"
+version = "1.2.1"
+dependencies = [
+ "itertools 0.13.0",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.104",
+]
+
+[[package]]
+name = "language_v2_macros"
+version = "1.2.1"
+dependencies = [
+ "language_v2_definition",
 ]
 
 [[package]]
@@ -3678,9 +3726,9 @@ dependencies = [
  "Inflector",
  "anyhow",
  "ariadne",
- "codegen_language_definition",
  "indoc",
  "infra_utils",
+ "language_definition",
  "metaslang_bindings",
  "metaslang_graph_builder",
  "regex",
@@ -3705,8 +3753,8 @@ dependencies = [
 name = "solidity_language"
 version = "1.2.1"
 dependencies = [
- "codegen_language_definition",
- "codegen_language_macros",
+ "language_definition",
+ "language_macros",
  "semver 1.0.26",
 ]
 
@@ -3762,11 +3810,11 @@ dependencies = [
  "anyhow",
  "ariadne",
  "clap",
- "codegen_language_definition",
  "console 0.15.11",
  "indicatif",
  "infra_utils",
  "itertools 0.13.0",
+ "language_definition",
  "rayon",
  "regex",
  "reqwest",
@@ -3807,6 +3855,15 @@ dependencies = [
  "serde",
  "serde_json",
  "url",
+]
+
+[[package]]
+name = "solidity_v2_language"
+version = "1.2.1"
+dependencies = [
+ "language_v2_definition",
+ "language_v2_macros",
+ "semver 1.0.26",
 ]
 
 [[package]]
