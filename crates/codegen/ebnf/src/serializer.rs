@@ -1,7 +1,7 @@
 use std::fmt::Display;
 use std::mem::discriminant;
 
-use codegen_language_definition::model::Identifier;
+use language_definition::model::Identifier;
 
 use crate::model::{Definition, DefinitionKind, Entry, Expression, Value};
 use crate::{EbnfModel, EbnfWriter};

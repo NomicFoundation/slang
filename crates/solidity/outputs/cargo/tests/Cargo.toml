@@ -8,10 +8,10 @@ publish = false
 [dev-dependencies]
 anyhow = { workspace = true }
 ariadne = { workspace = true }
-codegen_language_definition = { workspace = true }
 indoc = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
+language_definition = { workspace = true }
 metaslang_bindings = { workspace = true, features = [
   "__private_testing_utils",
 ] }

@@ -2,7 +2,7 @@ use std::collections::BTreeSet;
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use codegen_language_definition::model::{self, Identifier};
+use language_definition::model::{self, Identifier};
 use proc_macro2::TokenStream;
 
 use crate::parser::grammar::{GrammarVisitor, Visitable};

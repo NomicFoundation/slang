@@ -2,11 +2,11 @@ mod passes;
 
 use anyhow::Result;
 use codegen_generator::RuntimeGenerator;
-use codegen_language_definition::model::Language;
 use codegen_spec::Spec;
 use codegen_testing::TestingGeneratorExtensions;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
+use language_definition::model::Language;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use solidity_language::SolidityDefinition;
 

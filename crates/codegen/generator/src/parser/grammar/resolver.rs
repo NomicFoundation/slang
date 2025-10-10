@@ -6,10 +6,10 @@ use std::ops::Deref;
 use std::rc::Rc;
 use std::sync::LazyLock;
 
-use codegen_language_definition::model::{
+use indexmap::IndexMap;
+use language_definition::model::{
     self, FieldsErrorRecovery, Identifier, Item, Language, PredefinedLabel,
 };
-use indexmap::IndexMap;
 
 use crate::parser::grammar::{
     DelimitedRecoveryTerminalThreshold, Grammar, GrammarElement, Labeled, ParserDefinition,

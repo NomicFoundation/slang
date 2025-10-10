@@ -7,9 +7,9 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
-codegen_language_definition = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
+language_definition = { workspace = true }
 semver = { workspace = true }
 
 [lints]

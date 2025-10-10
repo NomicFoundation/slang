@@ -15,8 +15,8 @@ Currently, the repository has the following projects:
     - `codegen/`: language analysis APIs that convert input crates to output crates below.
         - `ebnf/`: EBNF snippet serializer for language definitions
         - `generator/`: Generates Rust source code from language definitions
-        - `language/definition`: Building blocks for how languages can be defined
         - `spec/`: Language specification generator
+    - `language/`: Building blocks for how languages can be defined
     - `metaslang/`:
         - `cst/`: A generic library for building, navigating and querying concrete syntax trees
         - `bindings/`: Computes semantic language bindings from parsed source code

@@ -1,0 +1,5 @@
+error: Reference to unknown item 'Unknown'.
+  --> src/fail/references/unknown_reference/test.rs:17:75
+   |
+17 |                     fields = (field_1 = Required(Baz), field_2 = Required(Unknown))
+   |                                                                           ^^^^^^^

@@ -7,10 +7,10 @@ edition.workspace = true
 publish = false
 
 [dependencies]
-codegen_language_definition = { workspace = true }
 derive-new = { workspace = true }
 indexmap = { workspace = true }
 Inflector = { workspace = true }
+language_definition = { workspace = true }
 
 [lints]
 workspace = true

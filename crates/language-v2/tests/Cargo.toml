@@ -1,0 +1,17 @@
+[package]
+name = "language_tests_v2"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dev-dependencies]
+infra_utils = { workspace = true }
+language_v2_definition = { workspace = true }
+language_v2_macros = { workspace = true }
+rayon = { workspace = true }
+semver = { workspace = true }
+trybuild = { workspace = true }
+
+[lints]
+workspace = true

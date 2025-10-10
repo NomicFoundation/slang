@@ -1,8 +1,6 @@
 use std::fmt::{Error, Write};
 
-use codegen_language_definition::model::{
-    filter_built_ins_for_version, BuiltIn, BuiltInContext, Language,
-};
+use language_definition::model::{filter_built_ins_for_version, BuiltIn, BuiltInContext, Language};
 use semver::Version;
 
 pub fn render_built_ins(language: &Language) -> Result<String, Error> {

@@ -1,4 +1,4 @@
-//! Provides an [`EbnfModel`] that converts [`codegen_language_definition`] items into EBNF blocks of tokens
+//! Provides an [`EbnfModel`] that converts [`language_definition`] items into EBNF blocks of tokens
 //! that can be serialized into strings (for doc comments) or HTML (for the human readable spec).
 
 mod builder;
@@ -8,7 +8,7 @@ mod serializer;
 use std::collections::HashMap;
 use std::fmt::{Display, Write};
 
-use codegen_language_definition::model::{Identifier, Language};
+use language_definition::model::{Identifier, Language};
 
 use crate::builder::Builder;
 use crate::model::Entry;

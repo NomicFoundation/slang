@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
 use codegen_ebnf::EbnfModel;
-use codegen_language_definition::model::{Identifier, Item, Language, Section, Topic};
 use inflector::Inflector;
+use language_definition::model::{Identifier, Item, Language, Section, Topic};
 use serde::Serialize;
 
 pub struct SpecModel {

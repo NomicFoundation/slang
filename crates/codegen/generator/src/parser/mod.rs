@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
-use codegen_language_definition::model::{self, Identifier, Language};
+use language_definition::model::{self, Identifier, Language};
 use serde::Serialize;
 
 mod codegen;

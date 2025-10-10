@@ -1,0 +1,15 @@
+[package]
+name = "solidity_v2_language"
+description = "Solidity language definition compilation"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+language_v2_definition = { workspace = true }
+language_v2_macros = { workspace = true }
+semver = { workspace = true }
+
+[lints]
+workspace = true

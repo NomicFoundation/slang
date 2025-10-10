@@ -1,5 +1,5 @@
-use codegen_language_definition::model::Identifier;
 use inflector::Inflector;
+use language_definition::model::Identifier;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 

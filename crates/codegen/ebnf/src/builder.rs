@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 
-use codegen_language_definition::model::{
+use indexmap::IndexMap;
+use inflector::Inflector;
+use language_definition::model::{
     EnumItem, EnumVariant, Field, FragmentItem, Identifier, Item, KeywordDefinition, KeywordItem,
     KeywordValue, Language, OperatorModel, PrecedenceExpression, PrecedenceItem,
     PrecedenceOperator, PredefinedLabel, PrimaryExpression, RepeatedItem, Scanner, SeparatedItem,
     StructItem, TokenDefinition, TokenItem, TriviaItem, VersionSpecifier,
 };
-use indexmap::IndexMap;
-use inflector::Inflector;
 
 use crate::model::{Definition, DefinitionKind, Entry, Expression, Value};
 

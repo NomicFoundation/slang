@@ -1,4 +1,4 @@
-use codegen_language_definition::model::VersionSpecifier;
+use language_definition::model::VersionSpecifier;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use semver::Version;

@@ -1,0 +1,17 @@
+error: Reference 'Baz' is only defined in '2.0.0..3.0.0', but not in '3.0.0..MAX'.
+  --> src/fail/references/invalid_version/test.rs:20:41
+   |
+20 | ...                   reference = Baz,
+   |                                   ^^^
+
+error: Reference 'Baz' is only defined in '2.0.0..3.0.0', but not in '1.0.0..2.0.0'.
+  --> src/fail/references/invalid_version/test.rs:25:41
+   |
+25 | ...                   reference = Baz,
+   |                                   ^^^
+
+error: Reference 'Baz' is only defined in '2.0.0..3.0.0', but not in '1.0.0..2.0.0 | 3.0.0..MAX'.
+  --> src/fail/references/invalid_version/test.rs:30:41
+   |
+30 | ...                   reference = Baz
+   |                                   ^^^

@@ -1,8 +1,8 @@
 use std::path::Path;
 
 use anyhow::Result;
-use codegen_language_definition::model;
 use infra_utils::paths::PathExtensions;
+use language_definition::model;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]

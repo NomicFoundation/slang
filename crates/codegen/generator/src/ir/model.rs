@@ -1,5 +1,5 @@
-use codegen_language_definition::model;
 use indexmap::{IndexMap, IndexSet};
+use language_definition::model;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]

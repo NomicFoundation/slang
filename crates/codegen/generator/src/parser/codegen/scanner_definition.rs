@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
-use codegen_language_definition::model::{self, Identifier};
 use inflector::Inflector;
+use language_definition::model::{self, Identifier};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
