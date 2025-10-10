@@ -103,13 +103,13 @@ pub trait Rewriter {
     }
 
     fn rewrite_named_import(&mut self, source: &NamedImport) -> NamedImport {
-        let path = self.rewrite_string_literal(&source.path);
         let alias = Rc::clone(&source.alias);
+        let path = self.rewrite_string_literal(&source.path);
 
         Rc::new(NamedImportStruct {
             node_id: source.node_id,
-            path,
             alias,
+            path,
         })
     }
 
@@ -437,14 +437,14 @@ pub trait Rewriter {
 
     fn rewrite_event_definition(&mut self, source: &EventDefinition) -> EventDefinition {
         let name = Rc::clone(&source.name);
-        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
         let parameters = self.rewrite_event_parameters(&source.parameters);
+        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
 
         Rc::new(EventDefinitionStruct {
             node_id: source.node_id,
             name,
-            anonymous_keyword,
             parameters,
+            anonymous_keyword,
         })
     }
 
@@ -477,12 +477,12 @@ pub trait Rewriter {
 
     fn rewrite_error_definition(&mut self, source: &ErrorDefinition) -> ErrorDefinition {
         let name = Rc::clone(&source.name);
-        let parameters = self.rewrite_error_parameters(&source.parameters);
+        let members = self.rewrite_error_parameters(&source.members);
 
         Rc::new(ErrorDefinitionStruct {
             node_id: source.node_id,
             name,
-            parameters,
+            members,
         })
     }
 
@@ -733,22 +733,13 @@ pub trait Rewriter {
         let else_branch = source
             .else_branch
             .as_ref()
-            .map(|value| self.rewrite_else_branch(value));
+            .map(|value| self.rewrite_statement(value));
 
         Rc::new(IfStatementStruct {
             node_id: source.node_id,
             condition,
             body,
             else_branch,
-        })
-    }
-
-    fn rewrite_else_branch(&mut self, source: &ElseBranch) -> ElseBranch {
-        let body = self.rewrite_statement(&source.body);
-
-        Rc::new(ElseBranchStruct {
-            node_id: source.node_id,
-            body,
         })
     }
 

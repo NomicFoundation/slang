@@ -485,7 +485,7 @@ impl Visitor for Pass {
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
-        let parameters_scope_id = self.collect_error_parameters(&node.parameters);
+        let parameters_scope_id = self.collect_error_parameters(&node.members);
         let definition = Definition::new_error(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 

@@ -91,8 +91,8 @@ pub type NamedImport = Rc<NamedImportStruct>;
 #[derive(Debug)]
 pub struct NamedImportStruct {
     pub node_id: NodeId,
-    pub path: StringLiteral,
     pub alias: Rc<TerminalNode>,
+    pub path: StringLiteral,
 }
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
@@ -314,8 +314,8 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 pub struct EventDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub anonymous_keyword: Option<Rc<TerminalNode>>,
     pub parameters: EventParameters,
+    pub anonymous_keyword: Option<Rc<TerminalNode>>,
 }
 
 pub type EventParameter = Rc<EventParameterStruct>;
@@ -343,7 +343,7 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 pub struct ErrorDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: ErrorParameters,
+    pub members: ErrorParameters,
 }
 
 pub type ErrorParameter = Rc<ErrorParameterStruct>;
@@ -514,15 +514,7 @@ pub struct IfStatementStruct {
     pub node_id: NodeId,
     pub condition: Expression,
     pub body: Statement,
-    pub else_branch: Option<ElseBranch>,
-}
-
-pub type ElseBranch = Rc<ElseBranchStruct>;
-
-#[derive(Debug)]
-pub struct ElseBranchStruct {
-    pub node_id: NodeId,
-    pub body: Statement,
+    pub else_branch: Option<Statement>,
 }
 
 pub type ForStatement = Rc<ForStatementStruct>;
