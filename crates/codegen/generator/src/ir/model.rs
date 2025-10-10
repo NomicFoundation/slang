@@ -22,9 +22,9 @@ pub struct IrModel {
 #[derive(Clone, Serialize)]
 pub struct Sequence {
     pub fields: Vec<Field>,
-    pub has_nonterminals: bool,
-    // if true, this sequence models a precedence expression with multiple
-    // operators and the terminals should not be elided
+    // If true, this sequence models a precedence expression with multiple
+    // operators and the terminals should not be elided. This is only relevant
+    // for the initial builder from the CST.
     pub multiple_operators: bool,
 }
 
@@ -79,76 +79,6 @@ impl IrModel {
             choices: model.choices.clone(),
             collections: model.collections.clone(),
         }
-    }
-}
-
-// Mutation methods
-impl IrModel {
-    pub fn remove_type(&mut self, name: &str) {
-        let identifier: model::Identifier = name.into();
-        let removed = self.sequences.shift_remove(&identifier).is_some()
-            || self.choices.shift_remove(&identifier).is_some()
-            || self.collections.shift_remove(&identifier).is_some()
-            || self.unique_terminals.shift_remove(&identifier)
-            || self.non_unique_terminals.shift_remove(&identifier);
-
-        assert!(removed, "Could not find type {name} to remove");
-
-        for (_, sequence) in &mut self.sequences {
-            sequence.fields.retain(|field| field.r#type != identifier);
-        }
-
-        for (_, choice) in &mut self.choices {
-            choice.nonterminal_types.retain(|item| *item != identifier);
-            choice
-                .non_unique_terminal_types
-                .retain(|item| *item != identifier);
-            choice
-                .unique_terminal_types
-                .retain(|item| *item != identifier);
-        }
-
-        self.collections
-            .retain(|_, repeated| repeated.item_type != identifier);
-    }
-
-    pub fn remove_sequence_field(&mut self, sequence_id: &str, field_label: &str) {
-        let identifier: model::Identifier = sequence_id.into();
-        let Some(sequence) = self.sequences.get_mut(&identifier) else {
-            panic!("Sequence {sequence_id} not found in IR model");
-        };
-        let fields_count = sequence.fields.len();
-        let field_label: model::Identifier = field_label.into();
-        sequence.fields.retain(|field| field.label != field_label);
-        assert!(
-            fields_count > sequence.fields.len(),
-            "Could not find field {field_label} to remove in {sequence_id}"
-        );
-    }
-
-    pub fn add_sequence_field(
-        &mut self,
-        sequence_id: &str,
-        field_label: &str,
-        field_type: &str,
-        is_optional: bool,
-    ) {
-        let identifier: model::Identifier = sequence_id.into();
-        let Some(sequence) = self.sequences.get_mut(&identifier) else {
-            panic!("Sequence {sequence_id} not found in IR model");
-        };
-        let is_terminal = self
-            .non_unique_terminals
-            .contains::<model::Identifier>(&field_type.into())
-            || self
-                .unique_terminals
-                .contains::<model::Identifier>(&field_type.into());
-        sequence.fields.push(Field {
-            label: field_label.into(),
-            r#type: field_type.into(),
-            is_terminal,
-            is_optional,
-        });
     }
 }
 
@@ -255,13 +185,11 @@ impl IrModelBuilder {
     fn add_struct_item(&mut self, item: &model::StructItem) {
         let parent_type = item.name.clone();
         let fields: Vec<_> = self.convert_fields(&item.fields).collect();
-        let has_nonterminals = fields.iter().any(|field| !field.is_terminal);
 
         self.sequences.insert(
             parent_type,
             Sequence {
                 fields,
-                has_nonterminals,
                 multiple_operators: false,
             },
         );
@@ -398,14 +326,12 @@ impl IrModelBuilder {
                 fields.push(operand(model::PredefinedLabel::RightOperand));
             }
         }
-        let has_nonterminals = fields.iter().any(|field| !field.is_terminal);
         let multiple_operators = expression.operators.len() > 1;
 
         self.sequences.insert(
             parent_type,
             Sequence {
                 fields,
-                has_nonterminals,
                 multiple_operators,
             },
         );
