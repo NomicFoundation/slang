@@ -55,13 +55,13 @@
 
     {% for parent_type, collapsed in transformer.collapsed_sequences %}
       fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) ->
-      {%- if collapsed.is_terminal -%}
+      {%- if collapsed.target_is_terminal -%}
         Rc<TerminalNode>
       {%- else -%}
-        output::{{ collapsed.type }}
+        output::{{ collapsed.target_type }}
       {%- endif -%}
       {
-        {%- if collapsed.is_terminal -%}
+        {%- if collapsed.target_is_terminal -%}
           Rc::clone(&source.{{ collapsed.label }})
         {%- else -%}
           self.transform_{{ collapsed.type | snake_case }}(&source.{{ collapsed.label }})
