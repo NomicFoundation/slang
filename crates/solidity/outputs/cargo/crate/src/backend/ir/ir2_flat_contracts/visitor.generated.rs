@@ -300,11 +300,6 @@ pub trait Visitor {
     }
     fn leave_if_statement(&mut self, _node: &IfStatement) {}
 
-    fn enter_else_branch(&mut self, _node: &ElseBranch) -> bool {
-        true
-    }
-    fn leave_else_branch(&mut self, _node: &ElseBranch) {}
-
     fn enter_for_statement(&mut self, _node: &ForStatement) -> bool {
         true
     }
@@ -1379,7 +1374,7 @@ pub fn accept_error_definition(node: &ErrorDefinition, visitor: &mut impl Visito
     if !visitor.enter_error_definition(node) {
         return;
     }
-    accept_error_parameters(&node.parameters, visitor);
+    accept_error_parameters(&node.members, visitor);
     visitor.leave_error_definition(node);
 }
 
@@ -1576,17 +1571,9 @@ pub fn accept_if_statement(node: &IfStatement, visitor: &mut impl Visitor) {
     accept_expression(&node.condition, visitor);
     accept_statement(&node.body, visitor);
     if let Some(ref else_branch) = node.else_branch {
-        accept_else_branch(else_branch, visitor);
+        accept_statement(else_branch, visitor);
     }
     visitor.leave_if_statement(node);
-}
-
-pub fn accept_else_branch(node: &ElseBranch, visitor: &mut impl Visitor) {
-    if !visitor.enter_else_branch(node) {
-        return;
-    }
-    accept_statement(&node.body, visitor);
-    visitor.leave_else_branch(node);
 }
 
 pub fn accept_for_statement(node: &ForStatement, visitor: &mut impl Visitor) {

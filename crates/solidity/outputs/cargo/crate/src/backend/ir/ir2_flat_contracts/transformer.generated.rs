@@ -6,6 +6,8 @@
 use std::rc::Rc;
 
 use super::{input, nodes as output};
+#[allow(unused)]
+use crate::cst::TerminalNode;
 
 pub trait Transformer {
     //
@@ -103,9 +105,30 @@ pub trait Transformer {
         })
     }
 
-    fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport;
+    fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
+        let path = self.transform_string_literal(&source.path);
+        let alias = source
+            .alias
+            .as_ref()
+            .map(|value| self.transform_import_alias(value));
 
-    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport;
+        Rc::new(output::PathImportStruct {
+            node_id: source.node_id,
+            path,
+            alias,
+        })
+    }
+
+    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport {
+        let alias = self.transform_import_alias(&source.alias);
+        let path = self.transform_string_literal(&source.path);
+
+        Rc::new(output::NamedImportStruct {
+            node_id: source.node_id,
+            alias,
+            path,
+        })
+    }
 
     fn transform_import_deconstruction(
         &mut self,
@@ -124,7 +147,19 @@ pub trait Transformer {
     fn transform_import_deconstruction_symbol(
         &mut self,
         source: &input::ImportDeconstructionSymbol,
-    ) -> output::ImportDeconstructionSymbol;
+    ) -> output::ImportDeconstructionSymbol {
+        let name = Rc::clone(&source.name);
+        let alias = source
+            .alias
+            .as_ref()
+            .map(|value| self.transform_import_alias(value));
+
+        Rc::new(output::ImportDeconstructionSymbolStruct {
+            node_id: source.node_id,
+            name,
+            alias,
+        })
+    }
 
     fn transform_using_directive(
         &mut self,
@@ -415,7 +450,18 @@ pub trait Transformer {
     fn transform_event_definition(
         &mut self,
         source: &input::EventDefinition,
-    ) -> output::EventDefinition;
+    ) -> output::EventDefinition {
+        let name = Rc::clone(&source.name);
+        let parameters = self.transform_event_parameters_declaration(&source.parameters);
+        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
+
+        Rc::new(output::EventDefinitionStruct {
+            node_id: source.node_id,
+            name,
+            parameters,
+            anonymous_keyword,
+        })
+    }
 
     fn transform_event_parameter(
         &mut self,
@@ -450,7 +496,16 @@ pub trait Transformer {
     fn transform_error_definition(
         &mut self,
         source: &input::ErrorDefinition,
-    ) -> output::ErrorDefinition;
+    ) -> output::ErrorDefinition {
+        let name = Rc::clone(&source.name);
+        let members = self.transform_error_parameters_declaration(&source.members);
+
+        Rc::new(output::ErrorDefinitionStruct {
+            node_id: source.node_id,
+            name,
+            members,
+        })
+    }
 
     fn transform_error_parameter(
         &mut self,
@@ -710,15 +765,6 @@ pub trait Transformer {
             condition,
             body,
             else_branch,
-        })
-    }
-
-    fn transform_else_branch(&mut self, source: &input::ElseBranch) -> output::ElseBranch {
-        let body = self.transform_statement(&source.body);
-
-        Rc::new(output::ElseBranchStruct {
-            node_id: source.node_id,
-            body,
         })
     }
 
@@ -1509,6 +1555,28 @@ pub trait Transformer {
             operand,
             arguments,
         })
+    }
+
+    fn transform_event_parameters_declaration(
+        &mut self,
+        source: &input::EventParametersDeclaration,
+    ) -> output::EventParameters {
+        self.transform_event_parameters(&source.parameters)
+    }
+
+    fn transform_error_parameters_declaration(
+        &mut self,
+        source: &input::ErrorParametersDeclaration,
+    ) -> output::ErrorParameters {
+        self.transform_error_parameters(&source.parameters)
+    }
+
+    fn transform_import_alias(&mut self, source: &input::ImportAlias) -> Rc<TerminalNode> {
+        Rc::clone(&source.identifier)
+    }
+
+    fn transform_else_branch(&mut self, source: &input::ElseBranch) -> output::Statement {
+        self.transform_statement(&source.body)
     }
 
     //

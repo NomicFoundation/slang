@@ -151,17 +151,14 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     mutator.add_sequence_field("YulFunctionDefinition", "returns", "YulVariableNames", true);
 
     // And event and error definitions
-    mutator.remove_type("EventParametersDeclaration");
-    mutator.add_sequence_field("EventDefinition", "parameters", "EventParameters", false);
-
-    mutator.remove_type("ErrorParametersDeclaration");
-    mutator.add_sequence_field("ErrorDefinition", "parameters", "ErrorParameters", false);
+    mutator.collapse_sequence("EventParametersDeclaration");
+    mutator.collapse_sequence("ErrorParametersDeclaration");
 
     // Remove unnecessary ImportAlias node
-    mutator.remove_type("ImportAlias");
-    mutator.add_sequence_field("PathImport", "alias", "Identifier", true);
-    mutator.add_sequence_field("NamedImport", "alias", "Identifier", false);
-    mutator.add_sequence_field("ImportDeconstructionSymbol", "alias", "Identifier", true);
+    mutator.collapse_sequence("ImportAlias");
+
+    // Collapse `ElseBranch`
+    mutator.collapse_sequence("ElseBranch");
 
     mutator.into()
 }

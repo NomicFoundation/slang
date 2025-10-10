@@ -9,12 +9,25 @@ pub struct IrModelDiff {
     pub sequences: IndexMap<model::Identifier, SequenceDiff>,
     pub choices: IndexMap<model::Identifier, ChoiceDiff>,
     pub collections: IndexMap<model::Identifier, Collection>,
+
+    // Single field sequences that should be collapsed to their content
+    pub collapsed_sequences: IndexMap<model::Identifier, CollapsedSequence>,
 }
 
 #[derive(Clone, Serialize)]
 pub struct SequenceDiff {
     pub fields: Vec<FieldDiff>,
     pub has_added_fields: bool,
+}
+
+#[derive(Clone, Serialize)]
+pub struct CollapsedSequence {
+    // label of the field of the collapsed sequence
+    pub label: model::Identifier,
+    // type of the field of the collapsed sequence, ie. the target type to collapse to
+    pub r#type: model::Identifier,
+    // whether the target type is a terminal or not
+    pub is_terminal: bool,
 }
 
 #[derive(Clone, Serialize)]
@@ -84,6 +97,7 @@ impl IrModelDiff {
             sequences,
             choices,
             collections,
+            collapsed_sequences: IndexMap::new(),
         }
     }
 }
