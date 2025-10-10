@@ -82,30 +82,15 @@ pub trait Visitor {
     }
     fn leave_using_deconstruction_symbol(&mut self, _node: &UsingDeconstructionSymbol) {}
 
-    fn enter_using_alias(&mut self, _node: &UsingAlias) -> bool {
-        true
-    }
-    fn leave_using_alias(&mut self, _node: &UsingAlias) {}
-
     fn enter_contract_definition(&mut self, _node: &ContractDefinition) -> bool {
         true
     }
     fn leave_contract_definition(&mut self, _node: &ContractDefinition) {}
 
-    fn enter_inheritance_specifier(&mut self, _node: &InheritanceSpecifier) -> bool {
-        true
-    }
-    fn leave_inheritance_specifier(&mut self, _node: &InheritanceSpecifier) {}
-
     fn enter_inheritance_type(&mut self, _node: &InheritanceType) -> bool {
         true
     }
     fn leave_inheritance_type(&mut self, _node: &InheritanceType) {}
-
-    fn enter_storage_layout_specifier(&mut self, _node: &StorageLayoutSpecifier) -> bool {
-        true
-    }
-    fn leave_storage_layout_specifier(&mut self, _node: &StorageLayoutSpecifier) {}
 
     fn enter_interface_definition(&mut self, _node: &InterfaceDefinition) -> bool {
         true
@@ -142,14 +127,6 @@ pub trait Visitor {
     }
     fn leave_state_variable_definition(&mut self, _node: &StateVariableDefinition) {}
 
-    fn enter_state_variable_definition_value(
-        &mut self,
-        _node: &StateVariableDefinitionValue,
-    ) -> bool {
-        true
-    }
-    fn leave_state_variable_definition_value(&mut self, _node: &StateVariableDefinitionValue) {}
-
     fn enter_function_definition(&mut self, _node: &FunctionDefinition) -> bool {
         true
     }
@@ -164,11 +141,6 @@ pub trait Visitor {
         true
     }
     fn leave_override_specifier(&mut self, _node: &OverrideSpecifier) {}
-
-    fn enter_override_paths_declaration(&mut self, _node: &OverridePathsDeclaration) -> bool {
-        true
-    }
-    fn leave_override_paths_declaration(&mut self, _node: &OverridePathsDeclaration) {}
 
     fn enter_modifier_invocation(&mut self, _node: &ModifierInvocation) -> bool {
         true
@@ -254,11 +226,6 @@ pub trait Visitor {
     }
     fn leave_assembly_statement(&mut self, _node: &AssemblyStatement) {}
 
-    fn enter_assembly_flags_declaration(&mut self, _node: &AssemblyFlagsDeclaration) -> bool {
-        true
-    }
-    fn leave_assembly_flags_declaration(&mut self, _node: &AssemblyFlagsDeclaration) {}
-
     fn enter_tuple_deconstruction_statement(
         &mut self,
         _node: &TupleDeconstructionStatement,
@@ -289,11 +256,6 @@ pub trait Visitor {
         true
     }
     fn leave_variable_declaration_statement(&mut self, _node: &VariableDeclarationStatement) {}
-
-    fn enter_variable_declaration_value(&mut self, _node: &VariableDeclarationValue) -> bool {
-        true
-    }
-    fn leave_variable_declaration_value(&mut self, _node: &VariableDeclarationValue) {}
 
     fn enter_if_statement(&mut self, _node: &IfStatement) -> bool {
         true
@@ -455,11 +417,6 @@ pub trait Visitor {
     }
     fn leave_index_access_expression(&mut self, _node: &IndexAccessExpression) {}
 
-    fn enter_index_access_end(&mut self, _node: &IndexAccessEnd) -> bool {
-        true
-    }
-    fn leave_index_access_end(&mut self, _node: &IndexAccessEnd) {}
-
     fn enter_positional_arguments_declaration(
         &mut self,
         _node: &PositionalArgumentsDeclaration,
@@ -472,11 +429,6 @@ pub trait Visitor {
         true
     }
     fn leave_named_arguments_declaration(&mut self, _node: &NamedArgumentsDeclaration) {}
-
-    fn enter_named_argument_group(&mut self, _node: &NamedArgumentGroup) -> bool {
-        true
-    }
-    fn leave_named_argument_group(&mut self, _node: &NamedArgumentGroup) {}
 
     fn enter_named_argument(&mut self, _node: &NamedArgument) -> bool {
         true
@@ -678,11 +630,6 @@ pub trait Visitor {
         true
     }
     fn leave_using_target(&mut self, _node: &UsingTarget) {}
-
-    fn enter_contract_specifier(&mut self, _node: &ContractSpecifier) -> bool {
-        true
-    }
-    fn leave_contract_specifier(&mut self, _node: &ContractSpecifier) {}
 
     fn enter_contract_member(&mut self, _node: &ContractMember) -> bool {
         true
@@ -1154,17 +1101,9 @@ pub fn accept_using_deconstruction_symbol(
     }
     accept_identifier_path(&node.name, visitor);
     if let Some(ref alias) = node.alias {
-        accept_using_alias(alias, visitor);
+        accept_using_operator(alias, visitor);
     }
     visitor.leave_using_deconstruction_symbol(node);
-}
-
-pub fn accept_using_alias(node: &UsingAlias, visitor: &mut impl Visitor) {
-    if !visitor.enter_using_alias(node) {
-        return;
-    }
-    accept_using_operator(&node.operator, visitor);
-    visitor.leave_using_alias(node);
 }
 
 pub fn accept_contract_definition(node: &ContractDefinition, visitor: &mut impl Visitor) {
@@ -1174,17 +1113,9 @@ pub fn accept_contract_definition(node: &ContractDefinition, visitor: &mut impl 
     accept_contract_members(&node.members, visitor);
     accept_inheritance_types(&node.inheritance_types, visitor);
     if let Some(ref storage_layout) = node.storage_layout {
-        accept_storage_layout_specifier(storage_layout, visitor);
+        accept_expression(storage_layout, visitor);
     }
     visitor.leave_contract_definition(node);
-}
-
-pub fn accept_inheritance_specifier(node: &InheritanceSpecifier, visitor: &mut impl Visitor) {
-    if !visitor.enter_inheritance_specifier(node) {
-        return;
-    }
-    accept_inheritance_types(&node.types, visitor);
-    visitor.leave_inheritance_specifier(node);
 }
 
 pub fn accept_inheritance_type(node: &InheritanceType, visitor: &mut impl Visitor) {
@@ -1198,20 +1129,12 @@ pub fn accept_inheritance_type(node: &InheritanceType, visitor: &mut impl Visito
     visitor.leave_inheritance_type(node);
 }
 
-pub fn accept_storage_layout_specifier(node: &StorageLayoutSpecifier, visitor: &mut impl Visitor) {
-    if !visitor.enter_storage_layout_specifier(node) {
-        return;
-    }
-    accept_expression(&node.expression, visitor);
-    visitor.leave_storage_layout_specifier(node);
-}
-
 pub fn accept_interface_definition(node: &InterfaceDefinition, visitor: &mut impl Visitor) {
     if !visitor.enter_interface_definition(node) {
         return;
     }
     if let Some(ref inheritance) = node.inheritance {
-        accept_inheritance_specifier(inheritance, visitor);
+        accept_inheritance_types(inheritance, visitor);
     }
     accept_interface_members(&node.members, visitor);
     visitor.leave_interface_definition(node);
@@ -1268,20 +1191,9 @@ pub fn accept_state_variable_definition(
     accept_type_name(&node.type_name, visitor);
     accept_state_variable_attributes(&node.attributes, visitor);
     if let Some(ref value) = node.value {
-        accept_state_variable_definition_value(value, visitor);
+        accept_expression(value, visitor);
     }
     visitor.leave_state_variable_definition(node);
-}
-
-pub fn accept_state_variable_definition_value(
-    node: &StateVariableDefinitionValue,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_state_variable_definition_value(node) {
-        return;
-    }
-    accept_expression(&node.value, visitor);
-    visitor.leave_state_variable_definition_value(node);
 }
 
 pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl Visitor) {
@@ -1316,20 +1228,9 @@ pub fn accept_override_specifier(node: &OverrideSpecifier, visitor: &mut impl Vi
         return;
     }
     if let Some(ref overridden) = node.overridden {
-        accept_override_paths_declaration(overridden, visitor);
+        accept_override_paths(overridden, visitor);
     }
     visitor.leave_override_specifier(node);
-}
-
-pub fn accept_override_paths_declaration(
-    node: &OverridePathsDeclaration,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_override_paths_declaration(node) {
-        return;
-    }
-    accept_override_paths(&node.paths, visitor);
-    visitor.leave_override_paths_declaration(node);
 }
 
 pub fn accept_modifier_invocation(node: &ModifierInvocation, visitor: &mut impl Visitor) {
@@ -1473,21 +1374,10 @@ pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Vi
         accept_string_literal(label, visitor);
     }
     if let Some(ref flags) = node.flags {
-        accept_assembly_flags_declaration(flags, visitor);
+        accept_assembly_flags(flags, visitor);
     }
     accept_yul_block(&node.body, visitor);
     visitor.leave_assembly_statement(node);
-}
-
-pub fn accept_assembly_flags_declaration(
-    node: &AssemblyFlagsDeclaration,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_assembly_flags_declaration(node) {
-        return;
-    }
-    accept_assembly_flags(&node.flags, visitor);
-    visitor.leave_assembly_flags_declaration(node);
 }
 
 pub fn accept_tuple_deconstruction_statement(
@@ -1548,20 +1438,9 @@ pub fn accept_variable_declaration_statement(
         accept_storage_location(storage_location, visitor);
     }
     if let Some(ref value) = node.value {
-        accept_variable_declaration_value(value, visitor);
+        accept_expression(value, visitor);
     }
     visitor.leave_variable_declaration_statement(node);
-}
-
-pub fn accept_variable_declaration_value(
-    node: &VariableDeclarationValue,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_variable_declaration_value(node) {
-        return;
-    }
-    accept_expression(&node.expression, visitor);
-    visitor.leave_variable_declaration_value(node);
 }
 
 pub fn accept_if_statement(node: &IfStatement, visitor: &mut impl Visitor) {
@@ -1865,19 +1744,9 @@ pub fn accept_index_access_expression(node: &IndexAccessExpression, visitor: &mu
         accept_expression(start, visitor);
     }
     if let Some(ref end) = node.end {
-        accept_index_access_end(end, visitor);
-    }
-    visitor.leave_index_access_expression(node);
-}
-
-pub fn accept_index_access_end(node: &IndexAccessEnd, visitor: &mut impl Visitor) {
-    if !visitor.enter_index_access_end(node) {
-        return;
-    }
-    if let Some(ref end) = node.end {
         accept_expression(end, visitor);
     }
-    visitor.leave_index_access_end(node);
+    visitor.leave_index_access_expression(node);
 }
 
 pub fn accept_positional_arguments_declaration(
@@ -1899,17 +1768,9 @@ pub fn accept_named_arguments_declaration(
         return;
     }
     if let Some(ref arguments) = node.arguments {
-        accept_named_argument_group(arguments, visitor);
+        accept_named_arguments(arguments, visitor);
     }
     visitor.leave_named_arguments_declaration(node);
-}
-
-pub fn accept_named_argument_group(node: &NamedArgumentGroup, visitor: &mut impl Visitor) {
-    if !visitor.enter_named_argument_group(node) {
-        return;
-    }
-    accept_named_arguments(&node.arguments, visitor);
-    visitor.leave_named_argument_group(node);
 }
 
 pub fn accept_named_argument(node: &NamedArgument, visitor: &mut impl Visitor) {
@@ -2319,21 +2180,6 @@ pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
         UsingTarget::Asterisk => {}
     }
     visitor.leave_using_target(node);
-}
-
-pub fn accept_contract_specifier(node: &ContractSpecifier, visitor: &mut impl Visitor) {
-    if !visitor.enter_contract_specifier(node) {
-        return;
-    }
-    match node {
-        ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
-            accept_inheritance_specifier(inheritance_specifier, visitor);
-        }
-        ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
-            accept_storage_layout_specifier(storage_layout_specifier, visitor);
-        }
-    }
-    visitor.leave_contract_specifier(node);
 }
 
 pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor) {

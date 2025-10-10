@@ -32,7 +32,7 @@ impl Visitor for Pass {
             input_ir::visitor::accept_inheritance_type(inheritance_type, self);
         }
         if let Some(ref storage_layout) = node.storage_layout {
-            input_ir::visitor::accept_storage_layout_specifier(storage_layout, self);
+            input_ir::visitor::accept_expression(storage_layout, self);
         }
 
         // We already visited the contract definition's children above to be
@@ -457,10 +457,7 @@ impl Visitor for Pass {
             ),
             input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments) => {
                 if let Some(named_arguments) = &named_arguments.arguments {
-                    self.typing_of_function_call_with_named_arguments(
-                        node,
-                        &named_arguments.arguments,
-                    )
+                    self.typing_of_function_call_with_named_arguments(node, named_arguments)
                 } else {
                     self.typing_of_function_call_with_named_arguments(node, &[])
                 }
@@ -635,7 +632,7 @@ impl Visitor for Pass {
                     let definition_id = match event_resolution {
                         Some(Resolution::Ambiguous(definition_ids)) => {
                             let argument_typings =
-                                self.collect_named_argument_typings(&named_arguments.arguments);
+                                self.collect_named_argument_typings(named_arguments);
                             let candidate = self.lookup_event_matching_named_arguments(
                                 definition_ids,
                                 &argument_typings,
@@ -653,7 +650,7 @@ impl Visitor for Pass {
                         _ => None,
                     };
                     // resolve names in named arguments
-                    self.resolve_named_arguments(&named_arguments.arguments, definition_id);
+                    self.resolve_named_arguments(named_arguments, definition_id);
                 } else if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
                     if let Some(candidate) =
                         self.lookup_event_matching_positional_arguments(definition_ids, &[])
@@ -681,7 +678,7 @@ impl Visitor for Pass {
                             .find_reference_by_identifier_node_id(error.last().unwrap().id())
                     })
                     .and_then(|reference| reference.resolution.as_definition_id());
-                self.resolve_named_arguments(&named_arguments.arguments, definition_id);
+                self.resolve_named_arguments(named_arguments, definition_id);
             }
         }
     }
@@ -704,7 +701,7 @@ impl Visitor for Pass {
             // update the type of the variable with the type of the expression (if available)
             if let Some(value) = &node.value {
                 let typing = self
-                    .typing_of_expression(&value.expression)
+                    .typing_of_expression(value)
                     .as_type_id()
                     .map_or(Typing::Unresolved, |type_id| {
                         Typing::Resolved(self.types.reified_type(type_id))

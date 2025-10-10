@@ -137,15 +137,7 @@ pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 pub struct UsingDeconstructionSymbolStruct {
     pub node_id: NodeId,
     pub name: IdentifierPath,
-    pub alias: Option<UsingAlias>,
-}
-
-pub type UsingAlias = Rc<UsingAliasStruct>;
-
-#[derive(Debug)]
-pub struct UsingAliasStruct {
-    pub node_id: NodeId,
-    pub operator: UsingOperator,
+    pub alias: Option<UsingOperator>,
 }
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
@@ -157,15 +149,7 @@ pub struct ContractDefinitionStruct {
     pub name: Rc<TerminalNode>,
     pub members: ContractMembers,
     pub inheritance_types: InheritanceTypes,
-    pub storage_layout: Option<StorageLayoutSpecifier>,
-}
-
-pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
-
-#[derive(Debug)]
-pub struct InheritanceSpecifierStruct {
-    pub node_id: NodeId,
-    pub types: InheritanceTypes,
+    pub storage_layout: Option<Expression>,
 }
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
@@ -177,21 +161,13 @@ pub struct InheritanceTypeStruct {
     pub arguments: Option<ArgumentsDeclaration>,
 }
 
-pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
-
-#[derive(Debug)]
-pub struct StorageLayoutSpecifierStruct {
-    pub node_id: NodeId,
-    pub expression: Expression,
-}
-
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct InterfaceDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub inheritance: Option<InheritanceSpecifier>,
+    pub inheritance: Option<InheritanceTypes>,
     pub members: InterfaceMembers,
 }
 
@@ -249,15 +225,7 @@ pub struct StateVariableDefinitionStruct {
     pub type_name: TypeName,
     pub attributes: StateVariableAttributes,
     pub name: Rc<TerminalNode>,
-    pub value: Option<StateVariableDefinitionValue>,
-}
-
-pub type StateVariableDefinitionValue = Rc<StateVariableDefinitionValueStruct>;
-
-#[derive(Debug)]
-pub struct StateVariableDefinitionValueStruct {
-    pub node_id: NodeId,
-    pub value: Expression,
+    pub value: Option<Expression>,
 }
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
@@ -288,15 +256,7 @@ pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 #[derive(Debug)]
 pub struct OverrideSpecifierStruct {
     pub node_id: NodeId,
-    pub overridden: Option<OverridePathsDeclaration>,
-}
-
-pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct OverridePathsDeclarationStruct {
-    pub node_id: NodeId,
-    pub paths: OverridePaths,
+    pub overridden: Option<OverridePaths>,
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
@@ -439,16 +399,8 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 pub struct AssemblyStatementStruct {
     pub node_id: NodeId,
     pub label: Option<StringLiteral>,
-    pub flags: Option<AssemblyFlagsDeclaration>,
+    pub flags: Option<AssemblyFlags>,
     pub body: YulBlock,
-}
-
-pub type AssemblyFlagsDeclaration = Rc<AssemblyFlagsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct AssemblyFlagsDeclarationStruct {
-    pub node_id: NodeId,
-    pub flags: AssemblyFlags,
 }
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
@@ -496,15 +448,7 @@ pub struct VariableDeclarationStatementStruct {
     pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
-    pub value: Option<VariableDeclarationValue>,
-}
-
-pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
-
-#[derive(Debug)]
-pub struct VariableDeclarationValueStruct {
-    pub node_id: NodeId,
-    pub expression: Expression,
+    pub value: Option<Expression>,
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -799,14 +743,6 @@ pub struct IndexAccessExpressionStruct {
     pub node_id: NodeId,
     pub operand: Expression,
     pub start: Option<Expression>,
-    pub end: Option<IndexAccessEnd>,
-}
-
-pub type IndexAccessEnd = Rc<IndexAccessEndStruct>;
-
-#[derive(Debug)]
-pub struct IndexAccessEndStruct {
-    pub node_id: NodeId,
     pub end: Option<Expression>,
 }
 
@@ -823,15 +759,7 @@ pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
 #[derive(Debug)]
 pub struct NamedArgumentsDeclarationStruct {
     pub node_id: NodeId,
-    pub arguments: Option<NamedArgumentGroup>,
-}
-
-pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;
-
-#[derive(Debug)]
-pub struct NamedArgumentGroupStruct {
-    pub node_id: NodeId,
-    pub arguments: NamedArguments,
+    pub arguments: Option<NamedArguments>,
 }
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
@@ -1156,12 +1084,6 @@ pub enum UsingOperator {
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk,
-}
-
-#[derive(Debug)]
-pub enum ContractSpecifier {
-    InheritanceSpecifier(InheritanceSpecifier),
-    StorageLayoutSpecifier(StorageLayoutSpecifier),
 }
 
 #[derive(Debug)]

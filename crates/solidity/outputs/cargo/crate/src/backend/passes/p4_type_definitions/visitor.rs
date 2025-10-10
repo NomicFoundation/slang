@@ -408,8 +408,8 @@ impl Visitor for Pass {
 
                             symbols.insert(symbol_name.unparse(), definition_ids);
 
-                            if let Some(alias) = &symbol.alias {
-                                let terminal = match alias.operator {
+                            if let Some(operator) = &symbol.alias {
+                                let terminal = match operator {
                                     input_ir::UsingOperator::Ampersand => TerminalKind::Ampersand,
                                     input_ir::UsingOperator::Asterisk => TerminalKind::Asterisk,
                                     input_ir::UsingOperator::BangEqual => TerminalKind::BangEqual,
