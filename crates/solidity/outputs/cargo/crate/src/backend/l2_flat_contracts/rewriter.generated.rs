@@ -174,21 +174,12 @@ pub trait Rewriter {
         let alias = source
             .alias
             .as_ref()
-            .map(|value| self.rewrite_using_alias(value));
+            .map(|value| self.rewrite_using_operator(value));
 
         Rc::new(UsingDeconstructionSymbolStruct {
             node_id: source.node_id,
             name,
             alias,
-        })
-    }
-
-    fn rewrite_using_alias(&mut self, source: &UsingAlias) -> UsingAlias {
-        let operator = self.rewrite_using_operator(&source.operator);
-
-        Rc::new(UsingAliasStruct {
-            node_id: source.node_id,
-            operator,
         })
     }
 
@@ -200,7 +191,7 @@ pub trait Rewriter {
         let storage_layout = source
             .storage_layout
             .as_ref()
-            .map(|value| self.rewrite_storage_layout_specifier(value));
+            .map(|value| self.rewrite_expression(value));
 
         Rc::new(ContractDefinitionStruct {
             node_id: source.node_id,
@@ -209,18 +200,6 @@ pub trait Rewriter {
             members,
             inheritance_types,
             storage_layout,
-        })
-    }
-
-    fn rewrite_inheritance_specifier(
-        &mut self,
-        source: &InheritanceSpecifier,
-    ) -> InheritanceSpecifier {
-        let types = self.rewrite_inheritance_types(&source.types);
-
-        Rc::new(InheritanceSpecifierStruct {
-            node_id: source.node_id,
-            types,
         })
     }
 
@@ -238,18 +217,6 @@ pub trait Rewriter {
         })
     }
 
-    fn rewrite_storage_layout_specifier(
-        &mut self,
-        source: &StorageLayoutSpecifier,
-    ) -> StorageLayoutSpecifier {
-        let expression = self.rewrite_expression(&source.expression);
-
-        Rc::new(StorageLayoutSpecifierStruct {
-            node_id: source.node_id,
-            expression,
-        })
-    }
-
     fn rewrite_interface_definition(
         &mut self,
         source: &InterfaceDefinition,
@@ -258,7 +225,7 @@ pub trait Rewriter {
         let inheritance = source
             .inheritance
             .as_ref()
-            .map(|value| self.rewrite_inheritance_specifier(value));
+            .map(|value| self.rewrite_inheritance_types(value));
         let members = self.rewrite_interface_members(&source.members);
 
         Rc::new(InterfaceDefinitionStruct {
@@ -336,25 +303,13 @@ pub trait Rewriter {
         let value = source
             .value
             .as_ref()
-            .map(|value| self.rewrite_state_variable_definition_value(value));
+            .map(|value| self.rewrite_expression(value));
 
         Rc::new(StateVariableDefinitionStruct {
             node_id: source.node_id,
             type_name,
             attributes,
             name,
-            value,
-        })
-    }
-
-    fn rewrite_state_variable_definition_value(
-        &mut self,
-        source: &StateVariableDefinitionValue,
-    ) -> StateVariableDefinitionValue {
-        let value = self.rewrite_expression(&source.value);
-
-        Rc::new(StateVariableDefinitionValueStruct {
-            node_id: source.node_id,
             value,
         })
     }
@@ -401,23 +356,11 @@ pub trait Rewriter {
         let overridden = source
             .overridden
             .as_ref()
-            .map(|value| self.rewrite_override_paths_declaration(value));
+            .map(|value| self.rewrite_override_paths(value));
 
         Rc::new(OverrideSpecifierStruct {
             node_id: source.node_id,
             overridden,
-        })
-    }
-
-    fn rewrite_override_paths_declaration(
-        &mut self,
-        source: &OverridePathsDeclaration,
-    ) -> OverridePathsDeclaration {
-        let paths = self.rewrite_override_paths(&source.paths);
-
-        Rc::new(OverridePathsDeclarationStruct {
-            node_id: source.node_id,
-            paths,
         })
     }
 
@@ -607,7 +550,7 @@ pub trait Rewriter {
         let flags = source
             .flags
             .as_ref()
-            .map(|value| self.rewrite_assembly_flags_declaration(value));
+            .map(|value| self.rewrite_assembly_flags(value));
         let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(AssemblyStatementStruct {
@@ -615,18 +558,6 @@ pub trait Rewriter {
             label,
             flags,
             body,
-        })
-    }
-
-    fn rewrite_assembly_flags_declaration(
-        &mut self,
-        source: &AssemblyFlagsDeclaration,
-    ) -> AssemblyFlagsDeclaration {
-        let flags = self.rewrite_assembly_flags(&source.flags);
-
-        Rc::new(AssemblyFlagsDeclarationStruct {
-            node_id: source.node_id,
-            flags,
         })
     }
 
@@ -704,7 +635,7 @@ pub trait Rewriter {
         let value = source
             .value
             .as_ref()
-            .map(|value| self.rewrite_variable_declaration_value(value));
+            .map(|value| self.rewrite_expression(value));
 
         Rc::new(VariableDeclarationStatementStruct {
             node_id: source.node_id,
@@ -712,18 +643,6 @@ pub trait Rewriter {
             storage_location,
             name,
             value,
-        })
-    }
-
-    fn rewrite_variable_declaration_value(
-        &mut self,
-        source: &VariableDeclarationValue,
-    ) -> VariableDeclarationValue {
-        let expression = self.rewrite_expression(&source.expression);
-
-        Rc::new(VariableDeclarationValueStruct {
-            node_id: source.node_id,
-            expression,
         })
     }
 
@@ -1140,24 +1059,12 @@ pub trait Rewriter {
         let end = source
             .end
             .as_ref()
-            .map(|value| self.rewrite_index_access_end(value));
+            .map(|value| self.rewrite_expression(value));
 
         Rc::new(IndexAccessExpressionStruct {
             node_id: source.node_id,
             operand,
             start,
-            end,
-        })
-    }
-
-    fn rewrite_index_access_end(&mut self, source: &IndexAccessEnd) -> IndexAccessEnd {
-        let end = source
-            .end
-            .as_ref()
-            .map(|value| self.rewrite_expression(value));
-
-        Rc::new(IndexAccessEndStruct {
-            node_id: source.node_id,
             end,
         })
     }
@@ -1181,18 +1088,9 @@ pub trait Rewriter {
         let arguments = source
             .arguments
             .as_ref()
-            .map(|value| self.rewrite_named_argument_group(value));
+            .map(|value| self.rewrite_named_arguments(value));
 
         Rc::new(NamedArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
-    fn rewrite_named_argument_group(&mut self, source: &NamedArgumentGroup) -> NamedArgumentGroup {
-        let arguments = self.rewrite_named_arguments(&source.arguments);
-
-        Rc::new(NamedArgumentGroupStruct {
             node_id: source.node_id,
             arguments,
         })
@@ -1728,27 +1626,6 @@ pub trait Rewriter {
     }
     fn rewrite_using_target(&mut self, source: &UsingTarget) -> UsingTarget {
         self.default_rewrite_using_target(source)
-    }
-
-    fn default_rewrite_contract_specifier(
-        &mut self,
-        source: &ContractSpecifier,
-    ) -> ContractSpecifier {
-        match source {
-            ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
-                ContractSpecifier::InheritanceSpecifier(
-                    self.rewrite_inheritance_specifier(inheritance_specifier),
-                )
-            }
-            ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
-                ContractSpecifier::StorageLayoutSpecifier(
-                    self.rewrite_storage_layout_specifier(storage_layout_specifier),
-                )
-            }
-        }
-    }
-    fn rewrite_contract_specifier(&mut self, source: &ContractSpecifier) -> ContractSpecifier {
-        self.default_rewrite_contract_specifier(source)
     }
 
     fn default_rewrite_contract_member(&mut self, source: &ContractMember) -> ContractMember {

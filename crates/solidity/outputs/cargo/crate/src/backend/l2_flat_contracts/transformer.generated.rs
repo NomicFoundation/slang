@@ -206,31 +206,10 @@ pub trait Transformer {
         })
     }
 
-    fn transform_using_alias(&mut self, source: &input::UsingAlias) -> output::UsingAlias {
-        let operator = self.transform_using_operator(&source.operator);
-
-        Rc::new(output::UsingAliasStruct {
-            node_id: source.node_id,
-            operator,
-        })
-    }
-
     fn transform_contract_definition(
         &mut self,
         source: &input::ContractDefinition,
     ) -> output::ContractDefinition;
-
-    fn transform_inheritance_specifier(
-        &mut self,
-        source: &input::InheritanceSpecifier,
-    ) -> output::InheritanceSpecifier {
-        let types = self.transform_inheritance_types(&source.types);
-
-        Rc::new(output::InheritanceSpecifierStruct {
-            node_id: source.node_id,
-            types,
-        })
-    }
 
     fn transform_inheritance_type(
         &mut self,
@@ -246,18 +225,6 @@ pub trait Transformer {
             node_id: source.node_id,
             type_name,
             arguments,
-        })
-    }
-
-    fn transform_storage_layout_specifier(
-        &mut self,
-        source: &input::StorageLayoutSpecifier,
-    ) -> output::StorageLayoutSpecifier {
-        let expression = self.transform_expression(&source.expression);
-
-        Rc::new(output::StorageLayoutSpecifierStruct {
-            node_id: source.node_id,
-            expression,
         })
     }
 
@@ -370,18 +337,6 @@ pub trait Transformer {
         })
     }
 
-    fn transform_state_variable_definition_value(
-        &mut self,
-        source: &input::StateVariableDefinitionValue,
-    ) -> output::StateVariableDefinitionValue {
-        let value = self.transform_expression(&source.value);
-
-        Rc::new(output::StateVariableDefinitionValueStruct {
-            node_id: source.node_id,
-            value,
-        })
-    }
-
     fn transform_function_definition(
         &mut self,
         source: &input::FunctionDefinition,
@@ -415,18 +370,6 @@ pub trait Transformer {
         Rc::new(output::OverrideSpecifierStruct {
             node_id: source.node_id,
             overridden,
-        })
-    }
-
-    fn transform_override_paths_declaration(
-        &mut self,
-        source: &input::OverridePathsDeclaration,
-    ) -> output::OverridePathsDeclaration {
-        let paths = self.transform_override_paths(&source.paths);
-
-        Rc::new(output::OverridePathsDeclarationStruct {
-            node_id: source.node_id,
-            paths,
         })
     }
 
@@ -651,18 +594,6 @@ pub trait Transformer {
         })
     }
 
-    fn transform_assembly_flags_declaration(
-        &mut self,
-        source: &input::AssemblyFlagsDeclaration,
-    ) -> output::AssemblyFlagsDeclaration {
-        let flags = self.transform_assembly_flags(&source.flags);
-
-        Rc::new(output::AssemblyFlagsDeclarationStruct {
-            node_id: source.node_id,
-            flags,
-        })
-    }
-
     fn transform_tuple_deconstruction_statement(
         &mut self,
         source: &input::TupleDeconstructionStatement,
@@ -751,18 +682,6 @@ pub trait Transformer {
             storage_location,
             name,
             value,
-        })
-    }
-
-    fn transform_variable_declaration_value(
-        &mut self,
-        source: &input::VariableDeclarationValue,
-    ) -> output::VariableDeclarationValue {
-        let expression = self.transform_expression(&source.expression);
-
-        Rc::new(output::VariableDeclarationValueStruct {
-            node_id: source.node_id,
-            expression,
         })
     }
 
@@ -1209,39 +1128,7 @@ pub trait Transformer {
     fn transform_index_access_expression(
         &mut self,
         source: &input::IndexAccessExpression,
-    ) -> output::IndexAccessExpression {
-        let operand = self.transform_expression(&source.operand);
-        let start = source
-            .start
-            .as_ref()
-            .map(|value| self.transform_expression(value));
-        let end = source
-            .end
-            .as_ref()
-            .map(|value| self.transform_index_access_end(value));
-
-        Rc::new(output::IndexAccessExpressionStruct {
-            node_id: source.node_id,
-            operand,
-            start,
-            end,
-        })
-    }
-
-    fn transform_index_access_end(
-        &mut self,
-        source: &input::IndexAccessEnd,
-    ) -> output::IndexAccessEnd {
-        let end = source
-            .end
-            .as_ref()
-            .map(|value| self.transform_expression(value));
-
-        Rc::new(output::IndexAccessEndStruct {
-            node_id: source.node_id,
-            end,
-        })
-    }
+    ) -> output::IndexAccessExpression;
 
     fn transform_positional_arguments_declaration(
         &mut self,
@@ -1265,18 +1152,6 @@ pub trait Transformer {
             .map(|value| self.transform_named_argument_group(value));
 
         Rc::new(output::NamedArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
-    fn transform_named_argument_group(
-        &mut self,
-        source: &input::NamedArgumentGroup,
-    ) -> output::NamedArgumentGroup {
-        let arguments = self.transform_named_arguments(&source.arguments);
-
-        Rc::new(output::NamedArgumentGroupStruct {
             node_id: source.node_id,
             arguments,
         })
@@ -1612,6 +1487,20 @@ pub trait Transformer {
         })
     }
 
+    fn transform_inheritance_specifier(
+        &mut self,
+        source: &input::InheritanceSpecifier,
+    ) -> output::InheritanceTypes {
+        self.transform_inheritance_types(&source.types)
+    }
+
+    fn transform_storage_layout_specifier(
+        &mut self,
+        source: &input::StorageLayoutSpecifier,
+    ) -> output::Expression {
+        self.transform_expression(&source.expression)
+    }
+
     fn transform_parameters_declaration(
         &mut self,
         source: &input::ParametersDeclaration,
@@ -1660,6 +1549,45 @@ pub trait Transformer {
 
     fn transform_else_branch(&mut self, source: &input::ElseBranch) -> output::Statement {
         self.transform_statement(&source.body)
+    }
+
+    fn transform_using_alias(&mut self, source: &input::UsingAlias) -> output::UsingOperator {
+        self.transform_using_operator(&source.operator)
+    }
+
+    fn transform_state_variable_definition_value(
+        &mut self,
+        source: &input::StateVariableDefinitionValue,
+    ) -> output::Expression {
+        self.transform_expression(&source.value)
+    }
+
+    fn transform_override_paths_declaration(
+        &mut self,
+        source: &input::OverridePathsDeclaration,
+    ) -> output::OverridePaths {
+        self.transform_override_paths(&source.paths)
+    }
+
+    fn transform_assembly_flags_declaration(
+        &mut self,
+        source: &input::AssemblyFlagsDeclaration,
+    ) -> output::AssemblyFlags {
+        self.transform_assembly_flags(&source.flags)
+    }
+
+    fn transform_variable_declaration_value(
+        &mut self,
+        source: &input::VariableDeclarationValue,
+    ) -> output::Expression {
+        self.transform_expression(&source.expression)
+    }
+
+    fn transform_named_argument_group(
+        &mut self,
+        source: &input::NamedArgumentGroup,
+    ) -> output::NamedArguments {
+        self.transform_named_arguments(&source.arguments)
     }
 
     //
@@ -1964,31 +1892,6 @@ pub trait Transformer {
     }
     fn transform_using_target(&mut self, source: &input::UsingTarget) -> output::UsingTarget {
         self.default_transform_using_target(source)
-    }
-
-    fn default_transform_contract_specifier(
-        &mut self,
-        source: &input::ContractSpecifier,
-    ) -> output::ContractSpecifier {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
-                output::ContractSpecifier::InheritanceSpecifier(
-                    self.transform_inheritance_specifier(inheritance_specifier),
-                )
-            }
-            input::ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
-                output::ContractSpecifier::StorageLayoutSpecifier(
-                    self.transform_storage_layout_specifier(storage_layout_specifier),
-                )
-            }
-        }
-    }
-    fn transform_contract_specifier(
-        &mut self,
-        source: &input::ContractSpecifier,
-    ) -> output::ContractSpecifier {
-        self.default_transform_contract_specifier(source)
     }
 
     fn default_transform_contract_member(
