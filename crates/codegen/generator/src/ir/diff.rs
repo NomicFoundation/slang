@@ -24,10 +24,13 @@ pub struct SequenceDiff {
 pub struct CollapsedSequence {
     // label of the field of the collapsed sequence
     pub label: model::Identifier,
-    // type of the field of the collapsed sequence, ie. the target type to collapse to
+    // type of the field of the collapsed sequence
     pub r#type: model::Identifier,
+    // target type of the collapsed sequence; this should usually be `r#type`,
+    // unless that was collapsed as well
+    pub target_type: model::Identifier,
     // whether the target type is a terminal or not
-    pub is_terminal: bool,
+    pub target_is_terminal: bool,
 }
 
 #[derive(Clone, Serialize)]

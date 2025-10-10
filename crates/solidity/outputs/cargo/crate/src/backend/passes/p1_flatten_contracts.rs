@@ -83,20 +83,20 @@ impl Transformer for Pass {
         };
         let attributes = self.transform_function_attributes(&source.attributes);
         let body = self.transform_function_body(&source.body);
-        let parameters = self.transform_parameters(&source.parameters.parameters);
+        let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|returns| self.transform_parameters(&returns.variables.parameters));
+            .map(|returns| self.transform_returns_declaration(returns));
 
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
+            parameters,
             attributes,
+            returns,
             kind,
             name,
             body,
-            parameters,
-            returns,
         })
     }
 
@@ -137,72 +137,16 @@ impl Transformer for Pass {
     fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
         let node_id = source.node_id;
         let attributes = self.transform_function_type_attributes(&source.attributes);
-        let parameters = self.transform_parameters(&source.parameters.parameters);
+        let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|returns| self.transform_parameters(&returns.variables.parameters));
+            .map(|returns| self.transform_returns_declaration(returns));
 
         Rc::new(output::FunctionTypeStruct {
             node_id,
+            parameters,
             attributes,
-            parameters,
-            returns,
-        })
-    }
-
-    fn transform_try_statement(&mut self, source: &input::TryStatement) -> output::TryStatement {
-        let node_id = source.node_id;
-        let expression = self.transform_expression(&source.expression);
-        let body = self.transform_block(&source.body);
-        let catch_clauses = self.transform_catch_clauses(&source.catch_clauses);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|returns| self.transform_parameters(&returns.variables.parameters));
-
-        Rc::new(output::TryStatementStruct {
-            node_id,
-            expression,
-            body,
-            catch_clauses,
-            returns,
-        })
-    }
-
-    fn transform_catch_clause_error(
-        &mut self,
-        source: &input::CatchClauseError,
-    ) -> output::CatchClauseError {
-        let node_id = source.node_id;
-        let name = source.name.as_ref().map(Rc::clone);
-        let parameters = self.transform_parameters(&source.parameters.parameters);
-
-        Rc::new(output::CatchClauseErrorStruct {
-            node_id,
-            name,
-            parameters,
-        })
-    }
-
-    fn transform_yul_function_definition(
-        &mut self,
-        source: &input::YulFunctionDefinition,
-    ) -> output::YulFunctionDefinition {
-        let node_id = source.node_id;
-        let name = Rc::clone(&source.name);
-        let body = self.transform_yul_block(&source.body);
-        let parameters = self.transform_yul_parameters(&source.parameters.parameters);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|returns| self.transform_yul_variable_names(&returns.variables));
-
-        Rc::new(output::YulFunctionDefinitionStruct {
-            node_id,
-            name,
-            body,
-            parameters,
             returns,
         })
     }
@@ -225,17 +169,17 @@ impl Pass {
         let name = None;
         let attributes = self.transform_constructor_attributes(&source.attributes);
         let body = Some(self.transform_block(&source.body));
-        let parameters = self.transform_parameters(&source.parameters.parameters);
+        let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
 
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
+            parameters,
             attributes,
+            returns,
             kind,
             name,
             body,
-            parameters,
-            returns,
         })
     }
 
@@ -288,17 +232,17 @@ impl Pass {
         let name = None;
         let attributes = self.transform_unnamed_function_attributes(&source.attributes);
         let body = self.transform_function_body(&source.body);
-        let parameters = self.transform_parameters(&source.parameters.parameters);
+        let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
 
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
+            parameters,
             attributes,
+            returns,
             kind,
             name,
             body,
-            parameters,
-            returns,
         })
     }
 
@@ -354,20 +298,20 @@ impl Pass {
         let name = None;
         let attributes = self.transform_fallback_function_attributes(&source.attributes);
         let body = self.transform_function_body(&source.body);
-        let parameters = self.transform_parameters(&source.parameters.parameters);
+        let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|returns| self.transform_parameters(&returns.variables.parameters));
+            .map(|returns| self.transform_returns_declaration(returns));
 
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
+            parameters,
             attributes,
+            returns,
             kind,
             name,
             body,
-            parameters,
-            returns,
         })
     }
 
@@ -419,17 +363,17 @@ impl Pass {
         let name = None;
         let attributes = self.transform_receive_function_attributes(&source.attributes);
         let body = self.transform_function_body(&source.body);
-        let parameters = self.transform_parameters(&source.parameters.parameters);
+        let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
 
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
+            parameters,
             attributes,
+            returns,
             kind,
             name,
             body,
-            parameters,
-            returns,
         })
     }
 
@@ -480,18 +424,18 @@ impl Pass {
         let attributes = self.transform_modifier_attributes(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameters| {
-            self.transform_parameters(&parameters.parameters)
+            self.transform_parameters_declaration(parameters)
         });
         let returns = None;
 
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
+            parameters,
             attributes,
+            returns,
             kind,
             name,
             body,
-            parameters,
-            returns,
         })
     }
 

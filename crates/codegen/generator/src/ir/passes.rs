@@ -62,10 +62,6 @@ fn build_ir1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
 fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTransformer {
     let mut mutator = IrModelMutator::create_from(structured_ast_model);
 
-    // L2 is for now only a proof of concept for rendering transfomation code
-    // from previous trees. Therefore, the following modifications are (a
-    // non-exhaustive list of) samples of what can be done.
-
     // Flatten contract specifiers and bring the inherited types and storage
     // layout to the contract definition itself.
     mutator.remove_type("ContractSpecifiers");
@@ -125,39 +121,14 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     mutator.remove_type("FunctionName");
     mutator.remove_type("FunctionBody");
 
-    // Remove extra holder nodes for parameters and returns declarations,
-    // flattenning all the function declarations
-    mutator.remove_type("ParametersDeclaration");
-    mutator.remove_type("ReturnsDeclaration");
-
-    mutator.add_sequence_field("FunctionDefinition", "parameters", "Parameters", false);
-    mutator.add_sequence_field("FunctionDefinition", "returns", "Parameters", true);
-    mutator.add_sequence_field("FunctionType", "parameters", "Parameters", false);
-    mutator.add_sequence_field("FunctionType", "returns", "Parameters", true);
-
-    // We need to patch up try/catch which use parameters type
-    mutator.add_sequence_field("TryStatement", "returns", "Parameters", true);
-    mutator.add_sequence_field("CatchClauseError", "parameters", "Parameters", false);
-
-    // Ditto for Yul parameters
-    mutator.remove_type("YulParametersDeclaration");
-    mutator.add_sequence_field(
-        "YulFunctionDefinition",
-        "parameters",
-        "YulParameters",
-        false,
-    );
-    mutator.remove_type("YulReturnsDeclaration");
-    mutator.add_sequence_field("YulFunctionDefinition", "returns", "YulVariableNames", true);
-
-    // And event and error definitions
+    // Collapse redundant node types
+    mutator.collapse_sequence("ParametersDeclaration");
+    mutator.collapse_sequence("ReturnsDeclaration");
+    mutator.collapse_sequence("YulParametersDeclaration");
+    mutator.collapse_sequence("YulReturnsDeclaration");
     mutator.collapse_sequence("EventParametersDeclaration");
     mutator.collapse_sequence("ErrorParametersDeclaration");
-
-    // Remove unnecessary ImportAlias node
     mutator.collapse_sequence("ImportAlias");
-
-    // Collapse `ElseBranch`
     mutator.collapse_sequence("ElseBranch");
 
     mutator.into()

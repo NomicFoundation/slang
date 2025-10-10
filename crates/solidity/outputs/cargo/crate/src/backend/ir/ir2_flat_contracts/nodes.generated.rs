@@ -265,12 +265,12 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
     pub node_id: NodeId,
+    pub parameters: Parameters,
     pub attributes: FunctionAttributes,
+    pub returns: Option<Parameters>,
     pub kind: FunctionKind,
     pub name: Option<Rc<TerminalNode>>,
     pub body: Option<Block>,
-    pub parameters: Parameters,
-    pub returns: Option<Parameters>,
 }
 
 pub type Parameter = Rc<ParameterStruct>;
@@ -369,8 +369,8 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
     pub node_id: NodeId,
-    pub attributes: FunctionTypeAttributes,
     pub parameters: Parameters,
+    pub attributes: FunctionTypeAttributes,
     pub returns: Option<Parameters>,
 }
 
@@ -583,9 +583,9 @@ pub type TryStatement = Rc<TryStatementStruct>;
 pub struct TryStatementStruct {
     pub node_id: NodeId,
     pub expression: Expression,
+    pub returns: Option<Parameters>,
     pub body: Block,
     pub catch_clauses: CatchClauses,
-    pub returns: Option<Parameters>,
 }
 
 pub type CatchClause = Rc<CatchClauseStruct>;
@@ -915,9 +915,9 @@ pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 pub struct YulFunctionDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub body: YulBlock,
     pub parameters: YulParameters,
     pub returns: Option<YulVariableNames>,
+    pub body: YulBlock,
 }
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
