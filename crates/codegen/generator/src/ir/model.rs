@@ -20,9 +20,9 @@ pub struct IrModel {
 #[derive(Clone, Serialize)]
 pub struct Sequence {
     pub fields: Vec<Field>,
-    pub has_nonterminals: bool,
-    // if true, this sequence models a precedence expression with multiple
-    // operators and the terminals should not be elided
+    // If true, this sequence models a precedence expression with multiple
+    // operators and the terminals should not be elided. This is only relevant
+    // for the initial builder from the CST.
     pub multiple_operators: bool,
 }
 
@@ -179,13 +179,11 @@ impl IrModelBuilder {
     fn add_struct_item(&mut self, item: &model::StructItem) {
         let parent_type = item.name.clone();
         let fields: Vec<_> = self.convert_fields(&item.fields).collect();
-        let has_nonterminals = fields.iter().any(|field| !field.is_terminal);
 
         self.sequences.insert(
             parent_type,
             Sequence {
                 fields,
-                has_nonterminals,
                 multiple_operators: false,
             },
         );
@@ -322,14 +320,12 @@ impl IrModelBuilder {
                 fields.push(operand(model::PredefinedLabel::RightOperand));
             }
         }
-        let has_nonterminals = fields.iter().any(|field| !field.is_terminal);
         let multiple_operators = expression.operators.len() > 1;
 
         self.sequences.insert(
             parent_type,
             Sequence {
                 fields,
-                has_nonterminals,
                 multiple_operators,
             },
         );
