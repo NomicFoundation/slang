@@ -1,6 +1,6 @@
 use language_definition::model;
 
-use super::diff::{FieldDiff, IrModelDiff};
+use super::diff::{CollapsedSequence, FieldDiff, IrModelDiff};
 use super::model::{Choice, Field};
 use super::IrModel;
 
@@ -156,5 +156,48 @@ impl IrModelMutator {
             is_removed: false,
         });
         sequence.has_added_fields = true;
+    }
+
+    // Removes a sequence type with a single field from the target language,
+    // replacing all instances with the contents of such field.
+    pub fn collapse_sequence(&mut self, sequence_id: &str) {
+        let identifier: model::Identifier = sequence_id.into();
+        let Some(mut sequence) = self.target.sequences.shift_remove(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        assert!(
+            sequence.fields.len() == 1,
+            "Sequence to collapse {sequence_id} contains does not contain a single field"
+        );
+        let replace_field = sequence.fields.remove(0);
+
+        // Iterate remaining sequences and replace any fields referencing the
+        // removed type by the target type
+        for (_, sequence) in &mut self.target.sequences {
+            for field in &mut sequence.fields {
+                if field.r#type == identifier {
+                    field.r#type = replace_field.r#type.clone();
+                    field.is_terminal = replace_field.is_terminal;
+                }
+            }
+        }
+
+        // Create the CollapsedSequence to render the transformer method
+        let Some(mut sequence) = self.diff.sequences.shift_remove(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR diff model");
+        };
+        let field = sequence.fields.remove(0);
+        assert!(
+            !field.is_optional,
+            "cannot collapse a sequence of an optional field"
+        );
+        self.diff.collapsed_sequences.insert(
+            identifier.clone(),
+            CollapsedSequence {
+                label: field.label,
+                r#type: field.r#type,
+                is_terminal: field.is_terminal,
+            },
+        );
     }
 }

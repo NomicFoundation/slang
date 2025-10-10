@@ -6,6 +6,8 @@
 
   use std::rc::Rc;
   use super::{input, nodes as output};
+  #[allow(unused)]
+  use crate::cst::TerminalNode;
 
   pub trait Transformer {
     //
@@ -49,6 +51,22 @@
       {% else %}
         ;
       {% endif %}
+    {% endfor %}
+
+    {% for parent_type, collapsed in transformer.collapsed_sequences %}
+      fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) ->
+      {%- if collapsed.is_terminal -%}
+        Rc<TerminalNode>
+      {%- else -%}
+        output::{{ collapsed.type }}
+      {%- endif -%}
+      {
+        {%- if collapsed.is_terminal -%}
+          Rc::clone(&source.{{ collapsed.label }})
+        {%- else -%}
+          self.transform_{{ collapsed.type | snake_case }}(&source.{{ collapsed.label }})
+        {%- endif -%}
+      }
     {% endfor %}
 
     //
