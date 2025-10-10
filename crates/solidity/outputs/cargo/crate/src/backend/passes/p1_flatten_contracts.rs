@@ -173,6 +173,29 @@ impl Transformer for Pass {
             end,
         })
     }
+
+    fn transform_arguments_declaration(
+        &mut self,
+        source: &input::ArgumentsDeclaration,
+    ) -> output::ArgumentsDeclaration {
+        match source {
+            input::ArgumentsDeclaration::PositionalArgumentsDeclaration(
+                positional_arguments_declaration,
+            ) => output::ArgumentsDeclaration::PositionalArguments(
+                self.transform_positional_arguments(&positional_arguments_declaration.arguments),
+            ),
+            input::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments_declaration) => {
+                output::ArgumentsDeclaration::NamedArguments(
+                    named_arguments_declaration.arguments.as_ref().map_or(
+                        Vec::new(),
+                        |named_argument_group| {
+                            self.transform_named_argument_group(named_argument_group)
+                        },
+                    ),
+                )
+            }
+        }
+    }
 }
 
 impl Pass {

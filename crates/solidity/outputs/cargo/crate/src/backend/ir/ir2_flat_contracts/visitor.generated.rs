@@ -417,19 +417,6 @@ pub trait Visitor {
     }
     fn leave_index_access_expression(&mut self, _node: &IndexAccessExpression) {}
 
-    fn enter_positional_arguments_declaration(
-        &mut self,
-        _node: &PositionalArgumentsDeclaration,
-    ) -> bool {
-        true
-    }
-    fn leave_positional_arguments_declaration(&mut self, _node: &PositionalArgumentsDeclaration) {}
-
-    fn enter_named_arguments_declaration(&mut self, _node: &NamedArgumentsDeclaration) -> bool {
-        true
-    }
-    fn leave_named_arguments_declaration(&mut self, _node: &NamedArgumentsDeclaration) {}
-
     fn enter_named_argument(&mut self, _node: &NamedArgument) -> bool {
         true
     }
@@ -1749,30 +1736,6 @@ pub fn accept_index_access_expression(node: &IndexAccessExpression, visitor: &mu
     visitor.leave_index_access_expression(node);
 }
 
-pub fn accept_positional_arguments_declaration(
-    node: &PositionalArgumentsDeclaration,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_positional_arguments_declaration(node) {
-        return;
-    }
-    accept_positional_arguments(&node.arguments, visitor);
-    visitor.leave_positional_arguments_declaration(node);
-}
-
-pub fn accept_named_arguments_declaration(
-    node: &NamedArgumentsDeclaration,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_named_arguments_declaration(node) {
-        return;
-    }
-    if let Some(ref arguments) = node.arguments {
-        accept_named_arguments(arguments, visitor);
-    }
-    visitor.leave_named_arguments_declaration(node);
-}
-
 pub fn accept_named_argument(node: &NamedArgument, visitor: &mut impl Visitor) {
     if !visitor.enter_named_argument(node) {
         return;
@@ -2551,13 +2514,11 @@ pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut i
         return;
     }
     match node {
-        ArgumentsDeclaration::PositionalArgumentsDeclaration(
-            ref positional_arguments_declaration,
-        ) => {
-            accept_positional_arguments_declaration(positional_arguments_declaration, visitor);
+        ArgumentsDeclaration::PositionalArguments(ref positional_arguments) => {
+            accept_positional_arguments(positional_arguments, visitor);
         }
-        ArgumentsDeclaration::NamedArgumentsDeclaration(ref named_arguments_declaration) => {
-            accept_named_arguments_declaration(named_arguments_declaration, visitor);
+        ArgumentsDeclaration::NamedArguments(ref named_arguments) => {
+            accept_named_arguments(named_arguments, visitor);
         }
     }
     visitor.leave_arguments_declaration(node);
