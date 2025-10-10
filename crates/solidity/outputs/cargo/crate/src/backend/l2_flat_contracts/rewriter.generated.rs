@@ -360,24 +360,24 @@ pub trait Rewriter {
     }
 
     fn rewrite_function_definition(&mut self, source: &FunctionDefinition) -> FunctionDefinition {
-        let attributes = self.rewrite_function_attributes(&source.attributes);
-        let kind = self.rewrite_function_kind(&source.kind);
-        let name = source.name.as_ref().map(Rc::clone);
-        let body = source.body.as_ref().map(|value| self.rewrite_block(value));
         let parameters = self.rewrite_parameters(&source.parameters);
+        let attributes = self.rewrite_function_attributes(&source.attributes);
         let returns = source
             .returns
             .as_ref()
             .map(|value| self.rewrite_parameters(value));
+        let kind = self.rewrite_function_kind(&source.kind);
+        let name = source.name.as_ref().map(Rc::clone);
+        let body = source.body.as_ref().map(|value| self.rewrite_block(value));
 
         Rc::new(FunctionDefinitionStruct {
             node_id: source.node_id,
+            parameters,
             attributes,
+            returns,
             kind,
             name,
             body,
-            parameters,
-            returns,
         })
     }
 
@@ -512,8 +512,8 @@ pub trait Rewriter {
     }
 
     fn rewrite_function_type(&mut self, source: &FunctionType) -> FunctionType {
-        let attributes = self.rewrite_function_type_attributes(&source.attributes);
         let parameters = self.rewrite_parameters(&source.parameters);
+        let attributes = self.rewrite_function_type_attributes(&source.attributes);
         let returns = source
             .returns
             .as_ref()
@@ -521,8 +521,8 @@ pub trait Rewriter {
 
         Rc::new(FunctionTypeStruct {
             node_id: source.node_id,
-            attributes,
             parameters,
+            attributes,
             returns,
         })
     }
@@ -820,19 +820,19 @@ pub trait Rewriter {
 
     fn rewrite_try_statement(&mut self, source: &TryStatement) -> TryStatement {
         let expression = self.rewrite_expression(&source.expression);
-        let body = self.rewrite_block(&source.body);
-        let catch_clauses = self.rewrite_catch_clauses(&source.catch_clauses);
         let returns = source
             .returns
             .as_ref()
             .map(|value| self.rewrite_parameters(value));
+        let body = self.rewrite_block(&source.body);
+        let catch_clauses = self.rewrite_catch_clauses(&source.catch_clauses);
 
         Rc::new(TryStatementStruct {
             node_id: source.node_id,
             expression,
+            returns,
             body,
             catch_clauses,
-            returns,
         })
     }
 
@@ -1305,19 +1305,19 @@ pub trait Rewriter {
         source: &YulFunctionDefinition,
     ) -> YulFunctionDefinition {
         let name = Rc::clone(&source.name);
-        let body = self.rewrite_yul_block(&source.body);
         let parameters = self.rewrite_yul_parameters(&source.parameters);
         let returns = source
             .returns
             .as_ref()
             .map(|value| self.rewrite_yul_variable_names(value));
+        let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(YulFunctionDefinitionStruct {
             node_id: source.node_id,
             name,
-            body,
             parameters,
             returns,
+            body,
         })
     }
 

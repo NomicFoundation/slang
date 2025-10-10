@@ -170,6 +170,10 @@ impl IrModelMutator {
             "Sequence to collapse {sequence_id} contains does not contain a single field"
         );
         let replace_field = sequence.fields.remove(0);
+        assert!(
+            !replace_field.is_optional,
+            "Cannot collapse sequence {sequence_id} of an optional field"
+        );
 
         // Iterate remaining sequences and replace any fields referencing the
         // removed type by the target type
@@ -186,18 +190,33 @@ impl IrModelMutator {
         let Some(mut sequence) = self.diff.sequences.shift_remove(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR diff model");
         };
-        let field = sequence.fields.remove(0);
-        assert!(
-            !field.is_optional,
-            "cannot collapse a sequence of an optional field"
-        );
+        let diff_field = sequence.fields.remove(0);
+
+        // Determine the target type; the type of the single field may be
+        // already collapsed, so we need to use it in that case
+        let (target_type, target_is_terminal) =
+            if let Some(collapsed) = self.diff.collapsed_sequences.get(&diff_field.r#type) {
+                (collapsed.target_type.clone(), collapsed.target_is_terminal)
+            } else {
+                (diff_field.r#type.clone(), diff_field.is_terminal)
+            };
         self.diff.collapsed_sequences.insert(
             identifier.clone(),
             CollapsedSequence {
-                label: field.label,
-                r#type: field.r#type,
-                is_terminal: field.is_terminal,
+                label: diff_field.label,
+                r#type: diff_field.r#type.clone(),
+                target_type,
+                target_is_terminal,
             },
         );
+
+        // Conversely, check if we need to update any other previously collapsed
+        // sequences
+        for (_, collapsed) in &mut self.diff.collapsed_sequences {
+            if collapsed.target_type == identifier {
+                collapsed.target_type = diff_field.r#type.clone();
+                collapsed.target_is_terminal = diff_field.is_terminal;
+            }
+        }
     }
 }

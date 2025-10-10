@@ -1288,14 +1288,14 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
     if !visitor.enter_function_definition(node) {
         return;
     }
+    accept_parameters(&node.parameters, visitor);
     accept_function_attributes(&node.attributes, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_parameters(returns, visitor);
+    }
     accept_function_kind(&node.kind, visitor);
     if let Some(ref body) = node.body {
         accept_block(body, visitor);
-    }
-    accept_parameters(&node.parameters, visitor);
-    if let Some(ref returns) = node.returns {
-        accept_parameters(returns, visitor);
     }
     visitor.leave_function_definition(node);
 }
@@ -1401,8 +1401,8 @@ pub fn accept_function_type(node: &FunctionType, visitor: &mut impl Visitor) {
     if !visitor.enter_function_type(node) {
         return;
     }
-    accept_function_type_attributes(&node.attributes, visitor);
     accept_parameters(&node.parameters, visitor);
+    accept_function_type_attributes(&node.attributes, visitor);
     if let Some(ref returns) = node.returns {
         accept_parameters(returns, visitor);
     }
@@ -1645,11 +1645,11 @@ pub fn accept_try_statement(node: &TryStatement, visitor: &mut impl Visitor) {
         return;
     }
     accept_expression(&node.expression, visitor);
-    accept_block(&node.body, visitor);
-    accept_catch_clauses(&node.catch_clauses, visitor);
     if let Some(ref returns) = node.returns {
         accept_parameters(returns, visitor);
     }
+    accept_block(&node.body, visitor);
+    accept_catch_clauses(&node.catch_clauses, visitor);
     visitor.leave_try_statement(node);
 }
 
@@ -1997,11 +1997,11 @@ pub fn accept_yul_function_definition(node: &YulFunctionDefinition, visitor: &mu
     if !visitor.enter_yul_function_definition(node) {
         return;
     }
-    accept_yul_block(&node.body, visitor);
     accept_yul_parameters(&node.parameters, visitor);
     if let Some(ref returns) = node.returns {
         accept_yul_variable_names(returns, visitor);
     }
+    accept_yul_block(&node.body, visitor);
     visitor.leave_yul_function_definition(node);
 }
 
