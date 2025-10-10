@@ -150,6 +150,29 @@ impl Transformer for Pass {
             returns,
         })
     }
+
+    fn transform_index_access_expression(
+        &mut self,
+        source: &input::IndexAccessExpression,
+    ) -> output::IndexAccessExpression {
+        let node_id = source.node_id;
+        let operand = self.transform_expression(&source.operand);
+        let start = source
+            .start
+            .as_ref()
+            .map(|start| self.transform_expression(start));
+        let end = source
+            .end
+            .as_ref()
+            .and_then(|end| end.end.as_ref().map(|end| self.transform_expression(end)));
+
+        Rc::new(output::IndexAccessExpressionStruct {
+            node_id,
+            operand,
+            start,
+            end,
+        })
+    }
 }
 
 impl Pass {

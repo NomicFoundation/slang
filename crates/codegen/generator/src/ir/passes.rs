@@ -65,18 +65,16 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     // Flatten contract specifiers and bring the inherited types and storage
     // layout to the contract definition itself.
     mutator.remove_type("ContractSpecifiers");
+    mutator.remove_type("ContractSpecifier");
+    mutator.collapse_sequence("InheritanceSpecifier");
+    mutator.collapse_sequence("StorageLayoutSpecifier");
     mutator.add_sequence_field(
         "ContractDefinition",
         "inheritance_types",
         "InheritanceTypes",
         false,
     );
-    mutator.add_sequence_field(
-        "ContractDefinition",
-        "storage_layout",
-        "StorageLayoutSpecifier",
-        true,
-    );
+    mutator.add_sequence_field("ContractDefinition", "storage_layout", "Expression", true);
 
     // Unifiy function definition types
     mutator.add_choice_type("FunctionKind");
@@ -130,6 +128,18 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     mutator.collapse_sequence("ErrorParametersDeclaration");
     mutator.collapse_sequence("ImportAlias");
     mutator.collapse_sequence("ElseBranch");
+    mutator.collapse_sequence("UsingAlias");
+    mutator.collapse_sequence("StateVariableDefinitionValue");
+    mutator.collapse_sequence("OverridePathsDeclaration");
+    mutator.collapse_sequence("AssemblyFlagsDeclaration");
+    mutator.collapse_sequence("VariableDeclarationValue");
+    mutator.collapse_sequence("NamedArgumentGroup");
+
+    // Collapse IndexAccessEnd manually (requires code in the transformer
+    // implementation) because it's an optional containing an optional, and that
+    // complicates automatic code generation in the transformer.
+    mutator.remove_type("IndexAccessEnd");
+    mutator.add_sequence_field("IndexAccessExpression", "end", "Expression", true);
 
     mutator.into()
 }
