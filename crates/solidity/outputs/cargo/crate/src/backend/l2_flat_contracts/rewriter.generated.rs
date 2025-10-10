@@ -1069,33 +1069,6 @@ pub trait Rewriter {
         })
     }
 
-    fn rewrite_positional_arguments_declaration(
-        &mut self,
-        source: &PositionalArgumentsDeclaration,
-    ) -> PositionalArgumentsDeclaration {
-        let arguments = self.rewrite_positional_arguments(&source.arguments);
-
-        Rc::new(PositionalArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
-    fn rewrite_named_arguments_declaration(
-        &mut self,
-        source: &NamedArgumentsDeclaration,
-    ) -> NamedArgumentsDeclaration {
-        let arguments = source
-            .arguments
-            .as_ref()
-            .map(|value| self.rewrite_named_arguments(value));
-
-        Rc::new(NamedArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
     fn rewrite_named_argument(&mut self, source: &NamedArgument) -> NamedArgument {
         let name = Rc::clone(&source.name);
         let value = self.rewrite_expression(&source.value);
@@ -2089,15 +2062,13 @@ pub trait Rewriter {
         source: &ArgumentsDeclaration,
     ) -> ArgumentsDeclaration {
         match source {
-            ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                ref positional_arguments_declaration,
-            ) => ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                self.rewrite_positional_arguments_declaration(positional_arguments_declaration),
-            ),
-            ArgumentsDeclaration::NamedArgumentsDeclaration(ref named_arguments_declaration) => {
-                ArgumentsDeclaration::NamedArgumentsDeclaration(
-                    self.rewrite_named_arguments_declaration(named_arguments_declaration),
+            ArgumentsDeclaration::PositionalArguments(ref positional_arguments) => {
+                ArgumentsDeclaration::PositionalArguments(
+                    self.rewrite_positional_arguments(positional_arguments),
                 )
+            }
+            ArgumentsDeclaration::NamedArguments(ref named_arguments) => {
+                ArgumentsDeclaration::NamedArguments(self.rewrite_named_arguments(named_arguments))
             }
         }
     }

@@ -746,22 +746,6 @@ pub struct IndexAccessExpressionStruct {
     pub end: Option<Expression>,
 }
 
-pub type PositionalArgumentsDeclaration = Rc<PositionalArgumentsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct PositionalArgumentsDeclarationStruct {
-    pub node_id: NodeId,
-    pub arguments: PositionalArguments,
-}
-
-pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct NamedArgumentsDeclarationStruct {
-    pub node_id: NodeId,
-    pub arguments: Option<NamedArguments>,
-}
-
 pub type NamedArgument = Rc<NamedArgumentStruct>;
 
 #[derive(Debug)]
@@ -1257,8 +1241,8 @@ pub enum Expression {
 
 #[derive(Debug)]
 pub enum ArgumentsDeclaration {
-    PositionalArgumentsDeclaration(PositionalArgumentsDeclaration),
-    NamedArgumentsDeclaration(NamedArgumentsDeclaration),
+    PositionalArguments(PositionalArguments),
+    NamedArguments(NamedArguments),
 }
 
 #[derive(Debug)]
