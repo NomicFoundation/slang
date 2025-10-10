@@ -1130,33 +1130,6 @@ pub trait Transformer {
         source: &input::IndexAccessExpression,
     ) -> output::IndexAccessExpression;
 
-    fn transform_positional_arguments_declaration(
-        &mut self,
-        source: &input::PositionalArgumentsDeclaration,
-    ) -> output::PositionalArgumentsDeclaration {
-        let arguments = self.transform_positional_arguments(&source.arguments);
-
-        Rc::new(output::PositionalArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
-    fn transform_named_arguments_declaration(
-        &mut self,
-        source: &input::NamedArgumentsDeclaration,
-    ) -> output::NamedArgumentsDeclaration {
-        let arguments = source
-            .arguments
-            .as_ref()
-            .map(|value| self.transform_named_argument_group(value));
-
-        Rc::new(output::NamedArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
     fn transform_named_argument(&mut self, source: &input::NamedArgument) -> output::NamedArgument {
         let name = Rc::clone(&source.name);
         let value = self.transform_expression(&source.value);
@@ -1599,6 +1572,7 @@ pub trait Transformer {
         source: &input::SourceUnitMember,
     ) -> output::SourceUnitMember {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::SourceUnitMember::PragmaDirective(ref pragma_directive) => {
                 output::SourceUnitMember::PragmaDirective(
@@ -1678,6 +1652,7 @@ pub trait Transformer {
 
     fn default_transform_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::Pragma::VersionPragma(ref version_pragma) => {
                 output::Pragma::VersionPragma(self.transform_version_pragma(version_pragma))
@@ -1701,6 +1676,7 @@ pub trait Transformer {
         source: &input::AbicoderVersion,
     ) -> output::AbicoderVersion {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::AbicoderVersion::AbicoderV1Keyword => output::AbicoderVersion::AbicoderV1Keyword,
             input::AbicoderVersion::AbicoderV2Keyword => output::AbicoderVersion::AbicoderV2Keyword,
@@ -1718,6 +1694,7 @@ pub trait Transformer {
         source: &input::ExperimentalFeature,
     ) -> output::ExperimentalFeature {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ExperimentalFeature::StringLiteral(ref string_literal) => {
                 output::ExperimentalFeature::StringLiteral(
@@ -1744,6 +1721,7 @@ pub trait Transformer {
         source: &input::VersionExpression,
     ) -> output::VersionExpression {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::VersionExpression::VersionRange(ref version_range) => {
                 output::VersionExpression::VersionRange(self.transform_version_range(version_range))
@@ -1765,6 +1743,7 @@ pub trait Transformer {
         source: &input::VersionOperator,
     ) -> output::VersionOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::VersionOperator::Caret => output::VersionOperator::Caret,
             input::VersionOperator::Tilde => output::VersionOperator::Tilde,
@@ -1787,6 +1766,7 @@ pub trait Transformer {
         source: &input::VersionLiteral,
     ) -> output::VersionLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
                 output::VersionLiteral::SimpleVersionLiteral(
@@ -1813,6 +1793,7 @@ pub trait Transformer {
         source: &input::ImportClause,
     ) -> output::ImportClause {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ImportClause::PathImport(ref path_import) => {
                 output::ImportClause::PathImport(self.transform_path_import(path_import))
@@ -1836,6 +1817,7 @@ pub trait Transformer {
         source: &input::UsingClause,
     ) -> output::UsingClause {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::UsingClause::IdentifierPath(ref identifier_path) => {
                 output::UsingClause::IdentifierPath(self.transform_identifier_path(identifier_path))
@@ -1856,6 +1838,7 @@ pub trait Transformer {
         source: &input::UsingOperator,
     ) -> output::UsingOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::UsingOperator::Ampersand => output::UsingOperator::Ampersand,
             input::UsingOperator::Asterisk => output::UsingOperator::Asterisk,
@@ -1883,6 +1866,7 @@ pub trait Transformer {
         source: &input::UsingTarget,
     ) -> output::UsingTarget {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::UsingTarget::TypeName(ref type_name) => {
                 output::UsingTarget::TypeName(self.transform_type_name(type_name))
@@ -1899,6 +1883,7 @@ pub trait Transformer {
         source: &input::ContractMember,
     ) -> output::ContractMember {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ContractMember::UsingDirective(ref using_directive) => {
                 output::ContractMember::UsingDirective(
@@ -1957,6 +1942,7 @@ pub trait Transformer {
         source: &input::StateVariableAttribute,
     ) -> output::StateVariableAttribute {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
                 output::StateVariableAttribute::OverrideSpecifier(
@@ -1995,6 +1981,7 @@ pub trait Transformer {
         source: &input::FunctionAttribute,
     ) -> output::FunctionAttribute {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
                 output::FunctionAttribute::ModifierInvocation(
@@ -2026,6 +2013,7 @@ pub trait Transformer {
 
     fn default_transform_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::TypeName::ArrayTypeName(ref array_type_name) => {
                 output::TypeName::ArrayTypeName(self.transform_array_type_name(array_type_name))
@@ -2053,6 +2041,7 @@ pub trait Transformer {
         source: &input::FunctionTypeAttribute,
     ) -> output::FunctionTypeAttribute {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::FunctionTypeAttribute::InternalKeyword => {
                 output::FunctionTypeAttribute::InternalKeyword
@@ -2088,6 +2077,7 @@ pub trait Transformer {
         source: &input::MappingKeyType,
     ) -> output::MappingKeyType {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::MappingKeyType::ElementaryType(ref elementary_type) => {
                 output::MappingKeyType::ElementaryType(
@@ -2113,6 +2103,7 @@ pub trait Transformer {
         source: &input::ElementaryType,
     ) -> output::ElementaryType {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ElementaryType::AddressType(ref address_type) => {
                 output::ElementaryType::AddressType(self.transform_address_type(address_type))
@@ -2146,6 +2137,7 @@ pub trait Transformer {
 
     fn default_transform_statement(&mut self, source: &input::Statement) -> output::Statement {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::Statement::IfStatement(ref if_statement) => {
                 output::Statement::IfStatement(self.transform_if_statement(if_statement))
@@ -2225,6 +2217,7 @@ pub trait Transformer {
         source: &input::TupleMember,
     ) -> output::TupleMember {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::TupleMember::TypedTupleMember(ref typed_tuple_member) => {
                 output::TupleMember::TypedTupleMember(
@@ -2247,6 +2240,7 @@ pub trait Transformer {
         source: &input::VariableDeclarationType,
     ) -> output::VariableDeclarationType {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::VariableDeclarationType::TypeName(ref type_name) => {
                 output::VariableDeclarationType::TypeName(self.transform_type_name(type_name))
@@ -2268,6 +2262,7 @@ pub trait Transformer {
         source: &input::StorageLocation,
     ) -> output::StorageLocation {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::StorageLocation::MemoryKeyword => output::StorageLocation::MemoryKeyword,
             input::StorageLocation::StorageKeyword => output::StorageLocation::StorageKeyword,
@@ -2286,6 +2281,7 @@ pub trait Transformer {
         source: &input::ForStatementInitialization,
     ) -> output::ForStatementInitialization {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ForStatementInitialization::TupleDeconstructionStatement(
                 ref tuple_deconstruction_statement,
@@ -2319,6 +2315,7 @@ pub trait Transformer {
         source: &input::ForStatementCondition,
     ) -> output::ForStatementCondition {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ForStatementCondition::ExpressionStatement(ref expression_statement) => {
                 output::ForStatementCondition::ExpressionStatement(
@@ -2337,6 +2334,7 @@ pub trait Transformer {
 
     fn default_transform_expression(&mut self, source: &input::Expression) -> output::Expression {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::Expression::AssignmentExpression(ref assignment_expression) => {
                 output::Expression::AssignmentExpression(
@@ -2480,17 +2478,9 @@ pub trait Transformer {
         source: &input::ArgumentsDeclaration,
     ) -> output::ArgumentsDeclaration {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
-            input::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                ref positional_arguments_declaration,
-            ) => output::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                self.transform_positional_arguments_declaration(positional_arguments_declaration),
-            ),
-            input::ArgumentsDeclaration::NamedArgumentsDeclaration(
-                ref named_arguments_declaration,
-            ) => output::ArgumentsDeclaration::NamedArgumentsDeclaration(
-                self.transform_named_arguments_declaration(named_arguments_declaration),
-            ),
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_arguments_declaration(
@@ -2502,6 +2492,7 @@ pub trait Transformer {
 
     fn default_transform_number_unit(&mut self, source: &input::NumberUnit) -> output::NumberUnit {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::NumberUnit::WeiKeyword => output::NumberUnit::WeiKeyword,
             input::NumberUnit::GweiKeyword => output::NumberUnit::GweiKeyword,
@@ -2525,6 +2516,7 @@ pub trait Transformer {
         source: &input::StringExpression,
     ) -> output::StringExpression {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::StringExpression::StringLiteral(ref string_literal) => {
                 output::StringExpression::StringLiteral(
@@ -2565,6 +2557,7 @@ pub trait Transformer {
         source: &input::StringLiteral,
     ) -> output::StringLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::StringLiteral::SingleQuotedStringLiteral(node) => {
                 output::StringLiteral::SingleQuotedStringLiteral(Rc::clone(node))
@@ -2583,6 +2576,7 @@ pub trait Transformer {
         source: &input::HexStringLiteral,
     ) -> output::HexStringLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::HexStringLiteral::SingleQuotedHexStringLiteral(node) => {
                 output::HexStringLiteral::SingleQuotedHexStringLiteral(Rc::clone(node))
@@ -2604,6 +2598,7 @@ pub trait Transformer {
         source: &input::UnicodeStringLiteral,
     ) -> output::UnicodeStringLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(node) => {
                 output::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(Rc::clone(node))
@@ -2625,6 +2620,7 @@ pub trait Transformer {
         source: &input::YulStatement,
     ) -> output::YulStatement {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulStatement::YulBlock(ref yul_block) => {
                 output::YulStatement::YulBlock(self.transform_yul_block(yul_block))
@@ -2698,6 +2694,7 @@ pub trait Transformer {
         source: &input::YulAssignmentOperator,
     ) -> output::YulAssignmentOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulAssignmentOperator::YulColonAndEqual(ref yul_colon_and_equal) => {
                 output::YulAssignmentOperator::YulColonAndEqual(
@@ -2719,6 +2716,7 @@ pub trait Transformer {
         source: &input::YulStackAssignmentOperator,
     ) -> output::YulStackAssignmentOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulStackAssignmentOperator::YulEqualAndColon(ref yul_equal_and_colon) => {
                 output::YulStackAssignmentOperator::YulEqualAndColon(
@@ -2742,6 +2740,7 @@ pub trait Transformer {
         source: &input::YulSwitchCase,
     ) -> output::YulSwitchCase {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
                 output::YulSwitchCase::YulDefaultCase(
@@ -2765,6 +2764,7 @@ pub trait Transformer {
         source: &input::YulExpression,
     ) -> output::YulExpression {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
                 output::YulExpression::YulFunctionCallExpression(
@@ -2785,6 +2785,7 @@ pub trait Transformer {
 
     fn default_transform_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulLiteral::HexStringLiteral(ref hex_string_literal) => {
                 output::YulLiteral::HexStringLiteral(

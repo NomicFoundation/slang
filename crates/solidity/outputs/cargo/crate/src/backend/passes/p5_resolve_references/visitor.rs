@@ -449,18 +449,11 @@ impl Visitor for Pass {
 
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let typing = match &node.arguments {
-            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                positional_arguments,
-            ) => self.typing_of_function_call_with_positional_arguments(
-                node,
-                &positional_arguments.arguments,
-            ),
-            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments) => {
-                if let Some(named_arguments) = &named_arguments.arguments {
-                    self.typing_of_function_call_with_named_arguments(node, named_arguments)
-                } else {
-                    self.typing_of_function_call_with_named_arguments(node, &[])
-                }
+            input_ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
+                self.typing_of_function_call_with_positional_arguments(node, positional_arguments)
+            }
+            input_ir::ArgumentsDeclaration::NamedArguments(named_arguments) => {
+                self.typing_of_function_call_with_named_arguments(node, named_arguments)
             }
         };
         self.binder.set_node_typing(node.node_id, typing);
@@ -609,13 +602,11 @@ impl Visitor for Pass {
             .find_reference_by_identifier_node_id(event_reference_id)
             .map(|reference| &reference.resolution);
         match &node.arguments {
-            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                positional_arguments,
-            ) => {
+            input_ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
                 // For positional arguments, resolve ambiguity of overloads only
                 if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
                     let argument_typings =
-                        self.collect_positional_argument_typings(&positional_arguments.arguments);
+                        self.collect_positional_argument_typings(positional_arguments);
                     if let Some(candidate) = self.lookup_event_matching_positional_arguments(
                         definition_ids,
                         &argument_typings,
@@ -626,60 +617,44 @@ impl Visitor for Pass {
                     }
                 }
             }
-            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments) => {
+            input_ir::ArgumentsDeclaration::NamedArguments(named_arguments) => {
                 // For named arguments, we need to resolve ambiguity and the named arguments
-                if let Some(named_arguments) = &named_arguments.arguments {
-                    let definition_id = match event_resolution {
-                        Some(Resolution::Ambiguous(definition_ids)) => {
-                            let argument_typings =
-                                self.collect_named_argument_typings(named_arguments);
-                            let candidate = self.lookup_event_matching_named_arguments(
-                                definition_ids,
-                                &argument_typings,
+                let definition_id = match event_resolution {
+                    Some(Resolution::Ambiguous(definition_ids)) => {
+                        let argument_typings = self.collect_named_argument_typings(named_arguments);
+                        let candidate = self.lookup_event_matching_named_arguments(
+                            definition_ids,
+                            &argument_typings,
+                        );
+                        if let Some(candidate) = candidate {
+                            // update resolved definition
+                            self.binder.fixup_reference(
+                                event_reference_id,
+                                Resolution::Definition(candidate),
                             );
-                            if let Some(candidate) = candidate {
-                                // update resolved definition
-                                self.binder.fixup_reference(
-                                    event_reference_id,
-                                    Resolution::Definition(candidate),
-                                );
-                            }
-                            candidate
                         }
-                        Some(Resolution::Definition(definition_id)) => Some(*definition_id),
-                        _ => None,
-                    };
-                    // resolve names in named arguments
-                    self.resolve_named_arguments(named_arguments, definition_id);
-                } else if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
-                    if let Some(candidate) =
-                        self.lookup_event_matching_positional_arguments(definition_ids, &[])
-                    {
-                        // update resolved definition
-                        self.binder
-                            .fixup_reference(event_reference_id, Resolution::Definition(candidate));
+                        candidate
                     }
-                }
+                    Some(Resolution::Definition(definition_id)) => Some(*definition_id),
+                    _ => None,
+                };
+                // resolve names in named arguments
+                self.resolve_named_arguments(named_arguments, definition_id);
             }
         }
     }
 
     fn leave_revert_statement(&mut self, node: &input_ir::RevertStatement) {
-        if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
-            named_arguments_declaration,
-        ) = &node.arguments
-        {
-            if let Some(named_arguments) = &named_arguments_declaration.arguments {
-                let definition_id = node
-                    .error
-                    .as_ref()
-                    .and_then(|error| {
-                        self.binder
-                            .find_reference_by_identifier_node_id(error.last().unwrap().id())
-                    })
-                    .and_then(|reference| reference.resolution.as_definition_id());
-                self.resolve_named_arguments(named_arguments, definition_id);
-            }
+        if let input_ir::ArgumentsDeclaration::NamedArguments(named_arguments) = &node.arguments {
+            let definition_id = node
+                .error
+                .as_ref()
+                .and_then(|error| {
+                    self.binder
+                        .find_reference_by_identifier_node_id(error.last().unwrap().id())
+                })
+                .and_then(|reference| reference.resolution.as_definition_id());
+            self.resolve_named_arguments(named_arguments, definition_id);
         }
     }
 

@@ -144,5 +144,11 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
     mutator.remove_type("IndexAccessEnd");
     mutator.add_sequence_field("IndexAccessExpression", "end", "Expression", true);
 
+    // Collapse the middle node in ArgumentsDeclaration
+    mutator.remove_type("PositionalArgumentsDeclaration");
+    mutator.remove_type("NamedArgumentsDeclaration");
+    mutator.add_choice_nonterminal("ArgumentsDeclaration", "PositionalArguments");
+    mutator.add_choice_nonterminal("ArgumentsDeclaration", "NamedArguments");
+
     mutator.into()
 }

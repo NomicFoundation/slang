@@ -38,6 +38,16 @@ impl IrModelMutator {
         // new choice types are not added to the diff
     }
 
+    pub fn add_choice_nonterminal(&mut self, choice_id: &str, nonterminal: &str) {
+        let identifier: model::Identifier = choice_id.into();
+        let Some(choice) = self.target.choices.get_mut(&identifier) else {
+            panic!("Choice {choice_id} not found in IR model");
+        };
+        choice.nonterminal_types.push(nonterminal.into());
+
+        // new choice types are not added to the diff
+    }
+
     pub fn remove_type(&mut self, name: &str) {
         let identifier: model::Identifier = name.into();
         let removed = self.target.sequences.shift_remove(&identifier).is_some()
