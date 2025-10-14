@@ -1460,6 +1460,10 @@ pub trait Transformer {
         })
     }
 
+    //
+    // Collapsed sequences:
+    //
+
     fn transform_inheritance_specifier(
         &mut self,
         source: &input::InheritanceSpecifier,
