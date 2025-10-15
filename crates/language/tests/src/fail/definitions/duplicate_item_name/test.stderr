@@ -1,0 +1,5 @@
+error: An item with the name 'Bar1' already exists.
+  --> src/fail/definitions/duplicate_item_name/test.rs:16:31
+   |
+16 |                 Struct(name = Bar1, fields = (field = Required(Bar2))),
+   |                               ^^^^

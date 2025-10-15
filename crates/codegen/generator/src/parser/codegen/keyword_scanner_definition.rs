@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use codegen_language_definition::model;
+use language_definition::model;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 

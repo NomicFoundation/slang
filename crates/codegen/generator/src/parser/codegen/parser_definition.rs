@@ -1,5 +1,5 @@
-use codegen_language_definition::model::{Identifier, VersionSpecifier};
 use inflector::Inflector;
+use language_definition::model::{Identifier, VersionSpecifier};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 

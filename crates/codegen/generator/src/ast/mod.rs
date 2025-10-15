@@ -1,6 +1,6 @@
 use codegen_ebnf::{EbnfModel, PlainWriter};
-use codegen_language_definition::model::{self, PredefinedLabel};
 use indexmap::{IndexMap, IndexSet};
+use language_definition::model::{self, PredefinedLabel};
 use serde::Serialize;
 
 #[derive(Default, Serialize)]

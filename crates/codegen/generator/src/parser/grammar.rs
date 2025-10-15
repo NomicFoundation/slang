@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use codegen_language_definition::model::{self, Identifier};
+use language_definition::model::{self, Identifier};
 
 pub mod parser_definition;
 pub mod precedence_parser_definition;

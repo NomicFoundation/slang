@@ -1,4 +1,4 @@
-//! Generates a human-readable specification for [`codegen_language_definition`].
+//! Generates a human-readable specification for [`language_definition`].
 //!
 //! At the time of writing, the generated pages include:
 //! - A page containing a list of supported versions.
@@ -13,8 +13,8 @@ use std::path::Path;
 use std::rc::Rc;
 
 use anyhow::Result;
-use codegen_language_definition::model::Language;
 use infra_utils::codegen::CodegenFileSystem;
+use language_definition::model::Language;
 
 use crate::generators::grammar_ebnf::generate_grammar_ebnf;
 use crate::generators::navigation::{SpecDir, SpecPage};

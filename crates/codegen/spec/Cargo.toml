@@ -9,10 +9,10 @@ publish = false
 [dependencies]
 anyhow = { workspace = true }
 codegen_ebnf = { workspace = true }
-codegen_language_definition = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
+language_definition = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 

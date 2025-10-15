@@ -1,6 +1,6 @@
 pub use solidity::SolidityDefinition;
 
-codegen_language_macros::compile!(Language(
+language_macros::compile!(Language(
     name = Solidity,
     binding_rules_file = "crates/solidity/inputs/language/bindings/rules.msgb",
     root_item = SourceUnit,

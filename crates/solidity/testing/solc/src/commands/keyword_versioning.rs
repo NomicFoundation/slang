@@ -2,9 +2,9 @@ use std::collections::HashSet;
 
 use anyhow::Result;
 use clap::Parser;
-use codegen_language_definition::model::{Item, KeywordDefinition, KeywordItem, Language};
 use indicatif::{ProgressBar, ProgressStyle};
 use infra_utils::terminal::NumbersDefaultDisplay;
+use language_definition::model::{Item, KeywordDefinition, KeywordItem, Language};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use regex::Regex;
 use semver::Version;
