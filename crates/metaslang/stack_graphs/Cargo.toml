@@ -1,50 +1,56 @@
 [package]
-name = "stack-graphs"
-version = "0.14.1"
-description = "Name binding for arbitrary programming languages"
-homepage = "https://github.com/github/stack-graphs/tree/main/stack-graphs"
-repository = "https://github.com/github/stack-graphs/"
-readme = "README.md"
-license = "MIT OR Apache-2.0"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = true
+
+name = "metaslang_stack_graphs"
+description = "Stack graphs utilities used in Slang"
+homepage = "https://nomicfoundation.github.io/slang/"
+repository = "https://github.com/NomicFoundation/slang/"
 authors = [
-  "GitHub <opensource+stack-graphs@github.com>",
-  "Douglas Creager <dcreager@dcreager.net>"
+  "Slang Team <slang@nomic.foundation>",
+  "Nomic Foundation <packages@nomic.foundation>",
 ]
-edition = "2018"
 
-[features]
-bincode = ["dep:bincode", "lsp-positions/bincode"]
-copious-debugging = []
-serde = ["dep:serde", "serde_with", "lsp-positions/serde"]
-storage = ["bincode", "rusqlite"]
-visualization = ["serde", "serde_json"]
+readme = "README.md"
+license = "MIT"
+keywords = ["stack-graphs"]
+categories = ["compilers"]
 
-[lib]
-# All of our tests are in the tests/it "integration" test executable.
-test = false
+# __NOMIC_FOUNDATION_FORK__ (disable optional features not used in Slang)
+# [features]
+# bincode = ["dep:bincode", "lsp-positions/bincode"]
+# copious-debugging = []
+# serde = ["dep:serde", "serde_with", "lsp-positions/serde"]
+# storage = ["bincode", "rusqlite"]
+# visualization = ["serde", "serde_json"]
 
 [dependencies]
-bincode = { version = "2.0.0-rc.3", optional = true }
-bitvec = "1.0.1"
-controlled-option = "0.4.1"
-either = "1.6"
-enumset = "1.1"
-fxhash = "0.2"
-itertools = "0.10.2"
-libc = "0.2"
-lsp-positions = { version = "0.3", path = "../lsp-positions" } # explicit version is required to be able to publish crate
-rusqlite = { version = "0.28", optional = true, features = ["bundled", "functions"] }
-serde = { version = "1.0", optional = true, features = ["derive"] }
-serde_json = { version = "1.0", optional = true }
-serde_with = { version = "3.1", optional = true }
-smallvec = { version = "1.6", features = ["union"] }
-thiserror = { version = "1.0" }
+bitvec = { workspace = true }
+controlled-option = { workspace = true }
+either = { workspace = true }
+enumset = { workspace = true }
+fxhash = { workspace = true }
+itertools = { workspace = true }
+libc = { workspace = true }
+lsp-positions = { workspace = true }
+smallvec = { workspace = true, features = ["union"] }
+thiserror = { workspace = true }
 
-[dev-dependencies]
-assert-json-diff = "2"
-maplit = "1.0"
-pretty_assertions = "0.7"
-serde_json = { version = "1.0" }
+# __NOMIC_FOUNDATION_FORK__ (disable optional dependencies not used in Slang)
+# [dependencies]
+# bincode = { version = "2.0.0-rc.3", optional = true }
+# rusqlite = { version = "0.28", optional = true, features = ["bundled", "functions"] }
+# serde = { version = "1.0", optional = true, features = ["derive"] }
+# serde_json = { version = "1.0", optional = true }
+# serde_with = { version = "3.1", optional = true }
 
-[package.metadata.docs.rs]
-all-features = true
+[lints.rust]
+unexpected_cfgs = "allow" # __NOMIC_FOUNDATION_FORK__ (disable warning about non-existing features, disabled above)
+
+[lints.rustdoc]
+all = "allow" # __NOMIC_FOUNDATION_FORK__ (disable lints to minimize changes to the fork)
+
+[lints.clippy]
+all = "allow" # __NOMIC_FOUNDATION_FORK__ (disable lints to minimize changes to the fork)

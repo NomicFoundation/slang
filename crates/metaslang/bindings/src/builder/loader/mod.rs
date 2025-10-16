@@ -289,8 +289,8 @@ use metaslang_graph_builder::ast::File as GraphBuilderFile;
 use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::graph::{Edge, Graph, GraphNode, GraphNodeRef, Value};
 use metaslang_graph_builder::{ExecutionConfig, ExecutionError, Variables};
-use stack_graphs::arena::Handle;
-use stack_graphs::graph::{File, Node, NodeID, StackGraph};
+use metaslang_stack_graphs::arena::Handle;
+use metaslang_stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
 
 use crate::builder::{DefinitionBindingInfo, ReferenceBindingInfo};
@@ -547,8 +547,8 @@ pub enum BuildError {
     InvalidParent(GraphNodeRef),
 }
 
-impl From<stack_graphs::CancellationError> for BuildError {
-    fn from(value: stack_graphs::CancellationError) -> Self {
+impl From<metaslang_stack_graphs::CancellationError> for BuildError {
+    fn from(value: metaslang_stack_graphs::CancellationError) -> Self {
         Self::Cancelled(value.0)
     }
 }
@@ -564,7 +564,7 @@ impl From<ExecutionError> for BuildError {
 
 impl<KT: KindTypes + 'static> Loader<'_, KT> {
     fn load(&mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
-        let cancellation_flag: &dyn stack_graphs::CancellationFlag = &cancellation_flag;
+        let cancellation_flag: &dyn metaslang_stack_graphs::CancellationFlag = &cancellation_flag;
 
         // By default graph ids are used for stack graph local_ids. A remapping is computed
         // for local_ids that already exist in the graph---all other graph ids are mapped to

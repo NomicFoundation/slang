@@ -247,8 +247,8 @@ impl<T> Arena<T> {
 /// type if there isn't already an instance for that handle in the arena.
 ///
 /// ```
-/// # use stack_graphs::arena::Arena;
-/// # use stack_graphs::arena::SupplementalArena;
+/// # use metaslang_stack_graphs::arena::Arena;
+/// # use metaslang_stack_graphs::arena::SupplementalArena;
 /// // We need an Arena to create handles.
 /// let mut arena = Arena::<u32>::new();
 /// let handle = arena.add(1);

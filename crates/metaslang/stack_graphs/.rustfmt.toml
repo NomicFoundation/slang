@@ -1,0 +1,1 @@
+ignore = ["src/"] # __NOMIC_FOUNDATION_FORK__ (disable formatting to minimize changes to the fork)
