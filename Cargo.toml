@@ -29,6 +29,7 @@ members = [
     "crates/metaslang/bindings",
     "crates/metaslang/cst",
     "crates/metaslang/graph_builder",
+    "crates/metaslang/stack_graphs",
 
     "crates/solidity/inputs/language",
 
@@ -72,8 +73,9 @@ language_v2_macros = { path = "crates/language-v2/macros", version = "1.3.0" }
 language_v2_tests = { path = "crates/language-v2/tests", version = "1.3.0" }
 
 metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.3.0" }
-metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.3.0" }
 metaslang_cst = { path = "crates/metaslang/cst", version = "1.3.0" }
+metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.3.0" }
+metaslang_stack_graphs = { path = "crates/metaslang/stack_graphs", version = "1.3.0" }
 
 solidity_language = { path = "crates/solidity/inputs/language", version = "1.3.0" }
 
@@ -100,13 +102,18 @@ ariadne = { version = "0.2.0" }
 # Currently 'bencher' backend API is under development/unstable.
 # They recommend always running with the latest CLI version from 'main' until it is stabilized.
 bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
+bitvec = { version = "1.0.1" }
 cargo-edit = { version = "0.12.3" }
 cargo-nextest = { version = "0.9.72" }
 clap = { version = "4.5.40", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.54" }
 console = { version = "0.15.11" }
+controlled-option = { version = "0.4.1" }
 derive-new = { version = "0.6.0" }
+either = { version = "1.6.0" }
+enumset = { version = "1.1.0" }
 env_logger = { version = "0.11.6" }
+fxhash = { version = "0.2.0" }
 iai-callgrind = { version = "0.12.3" }
 iai-callgrind-runner = { version = "0.12.3" }
 ignore = { version = "0.4.23" }
@@ -115,7 +122,9 @@ indicatif = { version = "0.17.12", features = ["in_memory"] }
 indoc = { version = "2.0.6" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.13.0" }
+libc = { version = "0.2.0" }
 log = { version = "0.4.27" }
+lsp-positions = { version = "0.3.0" } 
 markdown = { version = "0.3.0" }
 nom = { version = "7.1.3" }
 num-format = { version = "0.4.4" }
@@ -133,7 +142,6 @@ serde_json = { version = "1.0.140", features = ["preserve_order"] }
 similar-asserts = { version = "1.7.0" }
 smallvec = { version = "1.15.0", features = ["union"] }
 solar = { version = "0.1.3", package = "solar-compiler" }
-stack-graphs = { git = "https://github.com/NomicFoundation/stack-graphs", branch = "nomic" }
 streaming-iterator = { version = "0.1.9" }
 string-interner = { version = "0.17.0", features = [
     "std",

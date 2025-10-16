@@ -11,6 +11,7 @@ pub enum UserFacingCrate {
     // Sorted by dependency order (from dependencies to dependents):
     metaslang_cst,
     metaslang_graph_builder,
+    metaslang_stack_graphs,
     metaslang_bindings,
     slang_solidity,
     slang_solidity_cli,
@@ -51,6 +52,7 @@ fn has_library_target(crate_name: UserFacingCrate) -> bool {
     match crate_name {
         UserFacingCrate::metaslang_cst => true,
         UserFacingCrate::metaslang_graph_builder => true,
+        UserFacingCrate::metaslang_stack_graphs => true,
         UserFacingCrate::metaslang_bindings => true,
         UserFacingCrate::slang_solidity => true,
         UserFacingCrate::slang_solidity_cli => false,

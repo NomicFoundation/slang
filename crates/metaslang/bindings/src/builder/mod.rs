@@ -10,11 +10,12 @@ use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::nodes::NodeId;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
+use metaslang_stack_graphs::graph::{NodeID as GraphNodeId, StackGraph};
 use semver::Version;
-use stack_graphs::graph::{NodeID as GraphNodeId, StackGraph};
 
-pub type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
-pub(crate) type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
+pub type GraphHandle = metaslang_stack_graphs::arena::Handle<metaslang_stack_graphs::graph::Node>;
+pub(crate) type FileHandle =
+    metaslang_stack_graphs::arena::Handle<metaslang_stack_graphs::graph::File>;
 
 pub use crate::graph::BindingGraph;
 

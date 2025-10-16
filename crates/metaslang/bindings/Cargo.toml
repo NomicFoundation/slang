@@ -21,8 +21,8 @@ categories = ["compilers", "parsing", "parser-implementations"]
 [dependencies]
 metaslang_cst = { workspace = true }
 metaslang_graph_builder = { workspace = true }
+metaslang_stack_graphs = { workspace = true }
 semver = { workspace = true }
-stack-graphs = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
