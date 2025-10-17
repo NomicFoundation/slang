@@ -83,7 +83,7 @@ pub type PathImport = Rc<PathImportStruct>;
 pub struct PathImportStruct {
     pub node_id: NodeId,
     pub path: StringLiteral,
-    pub alias: Option<ImportAlias>,
+    pub alias: Option<Rc<TerminalNode>>,
 }
 
 pub type NamedImport = Rc<NamedImportStruct>;
@@ -91,7 +91,7 @@ pub type NamedImport = Rc<NamedImportStruct>;
 #[derive(Debug)]
 pub struct NamedImportStruct {
     pub node_id: NodeId,
-    pub alias: ImportAlias,
+    pub alias: Rc<TerminalNode>,
     pub path: StringLiteral,
 }
 
@@ -110,15 +110,7 @@ pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 pub struct ImportDeconstructionSymbolStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub alias: Option<ImportAlias>,
-}
-
-pub type ImportAlias = Rc<ImportAliasStruct>;
-
-#[derive(Debug)]
-pub struct ImportAliasStruct {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub alias: Option<Rc<TerminalNode>>,
 }
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
@@ -145,15 +137,7 @@ pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 pub struct UsingDeconstructionSymbolStruct {
     pub node_id: NodeId,
     pub name: IdentifierPath,
-    pub alias: Option<UsingAlias>,
-}
-
-pub type UsingAlias = Rc<UsingAliasStruct>;
-
-#[derive(Debug)]
-pub struct UsingAliasStruct {
-    pub node_id: NodeId,
-    pub operator: UsingOperator,
+    pub alias: Option<UsingOperator>,
 }
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
@@ -165,15 +149,7 @@ pub struct ContractDefinitionStruct {
     pub name: Rc<TerminalNode>,
     pub members: ContractMembers,
     pub inheritance_types: InheritanceTypes,
-    pub storage_layout: Option<StorageLayoutSpecifier>,
-}
-
-pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
-
-#[derive(Debug)]
-pub struct InheritanceSpecifierStruct {
-    pub node_id: NodeId,
-    pub types: InheritanceTypes,
+    pub storage_layout: Option<Expression>,
 }
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
@@ -185,21 +161,13 @@ pub struct InheritanceTypeStruct {
     pub arguments: Option<ArgumentsDeclaration>,
 }
 
-pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
-
-#[derive(Debug)]
-pub struct StorageLayoutSpecifierStruct {
-    pub node_id: NodeId,
-    pub expression: Expression,
-}
-
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct InterfaceDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub inheritance: Option<InheritanceSpecifier>,
+    pub inheritance: Option<InheritanceTypes>,
     pub members: InterfaceMembers,
 }
 
@@ -257,15 +225,7 @@ pub struct StateVariableDefinitionStruct {
     pub type_name: TypeName,
     pub attributes: StateVariableAttributes,
     pub name: Rc<TerminalNode>,
-    pub value: Option<StateVariableDefinitionValue>,
-}
-
-pub type StateVariableDefinitionValue = Rc<StateVariableDefinitionValueStruct>;
-
-#[derive(Debug)]
-pub struct StateVariableDefinitionValueStruct {
-    pub node_id: NodeId,
-    pub value: Expression,
+    pub value: Option<Expression>,
 }
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
@@ -273,19 +233,12 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
     pub node_id: NodeId,
-    pub name: FunctionName,
-    pub parameters: ParametersDeclaration,
-    pub attributes: FunctionAttributes,
-    pub returns: Option<ReturnsDeclaration>,
-    pub body: FunctionBody,
-}
-
-pub type ParametersDeclaration = Rc<ParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: Parameters,
+    pub attributes: FunctionAttributes,
+    pub returns: Option<Parameters>,
+    pub kind: FunctionKind,
+    pub name: Option<Rc<TerminalNode>>,
+    pub body: Option<Block>,
 }
 
 pub type Parameter = Rc<ParameterStruct>;
@@ -303,75 +256,7 @@ pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 #[derive(Debug)]
 pub struct OverrideSpecifierStruct {
     pub node_id: NodeId,
-    pub overridden: Option<OverridePathsDeclaration>,
-}
-
-pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct OverridePathsDeclarationStruct {
-    pub node_id: NodeId,
-    pub paths: OverridePaths,
-}
-
-pub type ReturnsDeclaration = Rc<ReturnsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ReturnsDeclarationStruct {
-    pub node_id: NodeId,
-    pub variables: ParametersDeclaration,
-}
-
-pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ConstructorDefinitionStruct {
-    pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: ConstructorAttributes,
-    pub body: Block,
-}
-
-pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct UnnamedFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: UnnamedFunctionAttributes,
-    pub body: FunctionBody,
-}
-
-pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct FallbackFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: FallbackFunctionAttributes,
-    pub returns: Option<ReturnsDeclaration>,
-    pub body: FunctionBody,
-}
-
-pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ReceiveFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: ReceiveFunctionAttributes,
-    pub body: FunctionBody,
-}
-
-pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ModifierDefinitionStruct {
-    pub node_id: NodeId,
-    pub name: Rc<TerminalNode>,
-    pub parameters: Option<ParametersDeclaration>,
-    pub attributes: ModifierAttributes,
-    pub body: FunctionBody,
+    pub overridden: Option<OverridePaths>,
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
@@ -389,16 +274,8 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 pub struct EventDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: EventParametersDeclaration,
-    pub anonymous_keyword: Option<Rc<TerminalNode>>,
-}
-
-pub type EventParametersDeclaration = Rc<EventParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct EventParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: EventParameters,
+    pub anonymous_keyword: Option<Rc<TerminalNode>>,
 }
 
 pub type EventParameter = Rc<EventParameterStruct>;
@@ -426,15 +303,7 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 pub struct ErrorDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub members: ErrorParametersDeclaration,
-}
-
-pub type ErrorParametersDeclaration = Rc<ErrorParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ErrorParametersDeclarationStruct {
-    pub node_id: NodeId,
-    pub parameters: ErrorParameters,
+    pub members: ErrorParameters,
 }
 
 pub type ErrorParameter = Rc<ErrorParameterStruct>;
@@ -460,9 +329,9 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
     pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
+    pub parameters: Parameters,
     pub attributes: FunctionTypeAttributes,
-    pub returns: Option<ReturnsDeclaration>,
+    pub returns: Option<Parameters>,
 }
 
 pub type MappingType = Rc<MappingTypeStruct>;
@@ -530,16 +399,8 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 pub struct AssemblyStatementStruct {
     pub node_id: NodeId,
     pub label: Option<StringLiteral>,
-    pub flags: Option<AssemblyFlagsDeclaration>,
+    pub flags: Option<AssemblyFlags>,
     pub body: YulBlock,
-}
-
-pub type AssemblyFlagsDeclaration = Rc<AssemblyFlagsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct AssemblyFlagsDeclarationStruct {
-    pub node_id: NodeId,
-    pub flags: AssemblyFlags,
 }
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
@@ -587,15 +448,7 @@ pub struct VariableDeclarationStatementStruct {
     pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
-    pub value: Option<VariableDeclarationValue>,
-}
-
-pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
-
-#[derive(Debug)]
-pub struct VariableDeclarationValueStruct {
-    pub node_id: NodeId,
-    pub expression: Expression,
+    pub value: Option<Expression>,
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -605,15 +458,7 @@ pub struct IfStatementStruct {
     pub node_id: NodeId,
     pub condition: Expression,
     pub body: Statement,
-    pub else_branch: Option<ElseBranch>,
-}
-
-pub type ElseBranch = Rc<ElseBranchStruct>;
-
-#[derive(Debug)]
-pub struct ElseBranchStruct {
-    pub node_id: NodeId,
-    pub body: Statement,
+    pub else_branch: Option<Statement>,
 }
 
 pub type ForStatement = Rc<ForStatementStruct>;
@@ -682,7 +527,7 @@ pub type TryStatement = Rc<TryStatementStruct>;
 pub struct TryStatementStruct {
     pub node_id: NodeId,
     pub expression: Expression,
-    pub returns: Option<ReturnsDeclaration>,
+    pub returns: Option<Parameters>,
     pub body: Block,
     pub catch_clauses: CatchClauses,
 }
@@ -702,7 +547,7 @@ pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 pub struct CatchClauseErrorStruct {
     pub node_id: NodeId,
     pub name: Option<Rc<TerminalNode>>,
-    pub parameters: ParametersDeclaration,
+    pub parameters: Parameters,
 }
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
@@ -898,39 +743,7 @@ pub struct IndexAccessExpressionStruct {
     pub node_id: NodeId,
     pub operand: Expression,
     pub start: Option<Expression>,
-    pub end: Option<IndexAccessEnd>,
-}
-
-pub type IndexAccessEnd = Rc<IndexAccessEndStruct>;
-
-#[derive(Debug)]
-pub struct IndexAccessEndStruct {
-    pub node_id: NodeId,
     pub end: Option<Expression>,
-}
-
-pub type PositionalArgumentsDeclaration = Rc<PositionalArgumentsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct PositionalArgumentsDeclarationStruct {
-    pub node_id: NodeId,
-    pub arguments: PositionalArguments,
-}
-
-pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct NamedArgumentsDeclarationStruct {
-    pub node_id: NodeId,
-    pub arguments: Option<NamedArgumentGroup>,
-}
-
-pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;
-
-#[derive(Debug)]
-pub struct NamedArgumentGroupStruct {
-    pub node_id: NodeId,
-    pub arguments: NamedArguments,
 }
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
@@ -1014,25 +827,9 @@ pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 pub struct YulFunctionDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: YulParametersDeclaration,
-    pub returns: Option<YulReturnsDeclaration>,
-    pub body: YulBlock,
-}
-
-pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct YulParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: YulParameters,
-}
-
-pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct YulReturnsDeclarationStruct {
-    pub node_id: NodeId,
-    pub variables: YulVariableNames,
+    pub returns: Option<YulVariableNames>,
+    pub body: YulBlock,
 }
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
@@ -1274,20 +1071,9 @@ pub enum UsingTarget {
 }
 
 #[derive(Debug)]
-pub enum ContractSpecifier {
-    InheritanceSpecifier(InheritanceSpecifier),
-    StorageLayoutSpecifier(StorageLayoutSpecifier),
-}
-
-#[derive(Debug)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
-    ConstructorDefinition(ConstructorDefinition),
-    ReceiveFunctionDefinition(ReceiveFunctionDefinition),
-    FallbackFunctionDefinition(FallbackFunctionDefinition),
-    UnnamedFunctionDefinition(UnnamedFunctionDefinition),
-    ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
     EventDefinition(EventDefinition),
@@ -1308,13 +1094,6 @@ pub enum StateVariableAttribute {
 }
 
 #[derive(Debug)]
-pub enum FunctionName {
-    Identifier(Rc<TerminalNode>),
-    FallbackKeyword,
-    ReceiveKeyword,
-}
-
-#[derive(Debug)]
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -1326,61 +1105,6 @@ pub enum FunctionAttribute {
     PublicKeyword,
     PureKeyword,
     ViewKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum FunctionBody {
-    Block(Block),
-    Semicolon,
-}
-
-#[derive(Debug)]
-pub enum ConstructorAttribute {
-    ModifierInvocation(ModifierInvocation),
-    InternalKeyword,
-    OverrideKeyword,
-    PayableKeyword,
-    PublicKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum UnnamedFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    ConstantKeyword,
-    ExternalKeyword,
-    InternalKeyword,
-    PayableKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    PureKeyword,
-    ViewKeyword,
-}
-
-#[derive(Debug)]
-pub enum FallbackFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    OverrideSpecifier(OverrideSpecifier),
-    ExternalKeyword,
-    PayableKeyword,
-    PureKeyword,
-    ViewKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum ReceiveFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    OverrideSpecifier(OverrideSpecifier),
-    ExternalKeyword,
-    PayableKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum ModifierAttribute {
-    OverrideSpecifier(OverrideSpecifier),
     VirtualKeyword,
 }
 
@@ -1517,8 +1241,8 @@ pub enum Expression {
 
 #[derive(Debug)]
 pub enum ArgumentsDeclaration {
-    PositionalArgumentsDeclaration(PositionalArgumentsDeclaration),
-    NamedArgumentsDeclaration(NamedArgumentsDeclaration),
+    PositionalArguments(PositionalArguments),
+    NamedArguments(NamedArguments),
 }
 
 #[derive(Debug)]
@@ -1615,6 +1339,16 @@ pub enum YulLiteral {
     YulFalseKeyword,
 }
 
+#[derive(Debug)]
+pub enum FunctionKind {
+    Regular,
+    Constructor,
+    Unnamed,
+    Fallback,
+    Receive,
+    Modifier,
+}
+
 //
 // Repeated & Separated
 //
@@ -1650,16 +1384,6 @@ pub type Parameters = Vec<Parameter>;
 pub type FunctionAttributes = Vec<FunctionAttribute>;
 
 pub type OverridePaths = Vec<IdentifierPath>;
-
-pub type ConstructorAttributes = Vec<ConstructorAttribute>;
-
-pub type UnnamedFunctionAttributes = Vec<UnnamedFunctionAttribute>;
-
-pub type FallbackFunctionAttributes = Vec<FallbackFunctionAttribute>;
-
-pub type ReceiveFunctionAttributes = Vec<ReceiveFunctionAttribute>;
-
-pub type ModifierAttributes = Vec<ModifierAttribute>;
 
 pub type EventParameters = Vec<EventParameter>;
 

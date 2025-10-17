@@ -15,7 +15,7 @@ use metaslang_cst::nodes::NodeId;
     pub node_id: NodeId,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
-      {%- if field.is_terminal -%}
+      {%- if field.type.is_terminal -%}
         {%- if field.is_optional -%}
           Option<Rc<TerminalNode>>,
         {%- else -%}
@@ -23,9 +23,9 @@ use metaslang_cst::nodes::NodeId;
         {%- endif -%}
       {%- else -%}
         {%- if field.is_optional -%}
-          Option<{{ field.type }}>,
+          Option<{{ field.type.name }}>,
         {%- else -%}
-          {{ field.type }},
+          {{ field.type.name }},
         {%- endif -%}
       {%- endif -%}
     {% endfor -%}
@@ -40,14 +40,14 @@ use metaslang_cst::nodes::NodeId;
 {% for parent_type, choice in target.choices %}
   #[derive(Debug)]
   pub enum {{ parent_type }} {
-    {% for nonterminal in choice.nonterminal_types -%}
-      {{ nonterminal }}({{ nonterminal }}),
+    {% for nonterminal in choice.variants | filter(attribute="is_terminal", value=false) -%}
+      {{ nonterminal.name }}({{ nonterminal.name }}),
     {%- endfor -%}
-    {% for terminal in choice.non_unique_terminal_types -%}
-      {{ terminal }}(Rc<TerminalNode>),
+    {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+      {{ terminal.name }}(Rc<TerminalNode>),
     {%- endfor -%}
-    {% for terminal in choice.unique_terminal_types -%}
-      {{ terminal }},
+    {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+      {{ terminal.name }},
     {%- endfor -%}
   }
 {% endfor %}
@@ -58,10 +58,10 @@ use metaslang_cst::nodes::NodeId;
 
 {% for parent_type, collection in target.collections %}
   pub type {{ parent_type }} = Vec<
-    {%- if collection.is_terminal -%}
+    {%- if collection.item_type.is_terminal -%}
       Rc<TerminalNode>
     {%- else -%}
-      {{ collection.item_type }}
+      {{ collection.item_type.name }}
     {%- endif -%}
   >;
 {% endfor %}

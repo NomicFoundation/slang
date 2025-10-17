@@ -1,5 +1,5 @@
 use anyhow::Result;
-use codegen_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
+use codegen_generator::ir::{IrModel, IrModelMutator, ModelWithBuilder, ModelWithTransformer};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use language_definition::model::Language;
@@ -40,50 +40,121 @@ pub fn generate_passes(
 }
 
 fn build_l1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
-    let mut l1_structured_ast_model = IrModel::from_model("l1_structured_ast", cst_model);
+    let mut mutator = IrModelMutator::create_from("l1_structured_ast", cst_model);
 
     // remove fields from sequences that contain redundant terminal nodes
-    for (_, sequence) in &mut l1_structured_ast_model.sequences {
+    for (sequence_id, sequence) in &cst_model.sequences {
         if sequence.multiple_operators {
             // don't remove terminals if the sequence is modelling a precedence
             // expression with multiple variant operators
             continue;
         }
-        sequence.fields.retain(|field| {
-            field.is_optional
-                || !field.is_terminal
-                || !l1_structured_ast_model
-                    .unique_terminals
-                    .contains(&field.r#type)
-        });
+        for field in &sequence.fields {
+            if !field.is_optional
+                && field.r#type.is_terminal()
+                && cst_model.terminals[field.r#type.as_identifier()]
+            {
+                mutator.remove_sequence_field(sequence_id, &field.label);
+            }
+        }
     }
 
-    ModelWithBuilder::new(cst_model, l1_structured_ast_model)
+    mutator.into()
 }
 
 fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTransformer {
-    let mut l2_flat_contracts_model =
-        IrModel::from_model("l2_flat_contracts", structured_ast_model);
-
-    // L2 is for now only a proof of concept for rendering transfomation code
-    // from previous trees. Therefore, the following modifications are (a
-    // non-exhaustive list of) samples of what can be done.
+    let mut mutator = IrModelMutator::create_from("l2_flat_contracts", structured_ast_model);
 
     // Flatten contract specifiers and bring the inherited types and storage
     // layout to the contract definition itself.
-    l2_flat_contracts_model.remove_type("ContractSpecifiers");
-    l2_flat_contracts_model.add_sequence_field(
+    mutator.remove_type("ContractSpecifiers");
+    mutator.remove_type("ContractSpecifier");
+    mutator.collapse_sequence("InheritanceSpecifier");
+    mutator.collapse_sequence("StorageLayoutSpecifier");
+    mutator.add_sequence_field(
         "ContractDefinition",
         "inheritance_types",
         "InheritanceTypes",
         false,
     );
-    l2_flat_contracts_model.add_sequence_field(
-        "ContractDefinition",
-        "storage_layout",
-        "StorageLayoutSpecifier",
-        true,
-    );
+    mutator.add_sequence_field("ContractDefinition", "storage_layout", "Expression", true);
 
-    ModelWithTransformer::new(structured_ast_model, l2_flat_contracts_model)
+    // Unifiy function definition types
+    mutator.add_unique_terminal("Regular");
+    mutator.add_unique_terminal("Constructor");
+    mutator.add_unique_terminal("Unnamed");
+    mutator.add_unique_terminal("Fallback");
+    mutator.add_unique_terminal("Receive");
+    mutator.add_unique_terminal("Modifier");
+    mutator.add_choice_type("FunctionKind");
+    mutator.add_choice_variant("FunctionKind", "Regular");
+    mutator.add_choice_variant("FunctionKind", "Constructor");
+    mutator.add_choice_variant("FunctionKind", "Unnamed");
+    mutator.add_choice_variant("FunctionKind", "Fallback");
+    mutator.add_choice_variant("FunctionKind", "Receive");
+    mutator.add_choice_variant("FunctionKind", "Modifier");
+
+    // Add the kind to the FunctionDefinition type, which will now hold all kinds
+    mutator.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
+
+    // And remove other specific function types and related attributes
+    mutator.remove_type("ConstructorDefinition");
+    mutator.remove_type("ConstructorAttributes");
+    mutator.remove_type("ConstructorAttribute");
+
+    mutator.remove_type("UnnamedFunctionDefinition");
+    mutator.remove_type("UnnamedFunctionAttributes");
+    mutator.remove_type("UnnamedFunctionAttribute");
+
+    mutator.remove_type("FallbackFunctionDefinition");
+    mutator.remove_type("FallbackFunctionAttributes");
+    mutator.remove_type("FallbackFunctionAttribute");
+
+    mutator.remove_type("ReceiveFunctionDefinition");
+    mutator.remove_type("ReceiveFunctionAttributes");
+    mutator.remove_type("ReceiveFunctionAttribute");
+
+    mutator.remove_type("ModifierDefinition");
+    mutator.remove_type("ModifierAttributes");
+    mutator.remove_type("ModifierAttribute");
+
+    // This also requires modifying the name and body fields
+    mutator.remove_sequence_field("FunctionDefinition", "name");
+    mutator.add_sequence_field("FunctionDefinition", "name", "Identifier", true);
+    mutator.remove_sequence_field("FunctionDefinition", "body");
+    mutator.add_sequence_field("FunctionDefinition", "body", "Block", true);
+
+    // We don't need FunctionName or FunctionBody anymore
+    mutator.remove_type("FunctionName");
+    mutator.remove_type("FunctionBody");
+
+    // Collapse redundant node types
+    mutator.collapse_sequence("ParametersDeclaration");
+    mutator.collapse_sequence("ReturnsDeclaration");
+    mutator.collapse_sequence("YulParametersDeclaration");
+    mutator.collapse_sequence("YulReturnsDeclaration");
+    mutator.collapse_sequence("EventParametersDeclaration");
+    mutator.collapse_sequence("ErrorParametersDeclaration");
+    mutator.collapse_sequence("ImportAlias");
+    mutator.collapse_sequence("ElseBranch");
+    mutator.collapse_sequence("UsingAlias");
+    mutator.collapse_sequence("StateVariableDefinitionValue");
+    mutator.collapse_sequence("OverridePathsDeclaration");
+    mutator.collapse_sequence("AssemblyFlagsDeclaration");
+    mutator.collapse_sequence("VariableDeclarationValue");
+    mutator.collapse_sequence("NamedArgumentGroup");
+
+    // Collapse IndexAccessEnd manually (requires code in the transformer
+    // implementation) because it's an optional containing an optional, and that
+    // complicates automatic code generation in the transformer.
+    mutator.remove_type("IndexAccessEnd");
+    mutator.add_sequence_field("IndexAccessExpression", "end", "Expression", true);
+
+    // Collapse the middle node in ArgumentsDeclaration
+    mutator.remove_type("PositionalArgumentsDeclaration");
+    mutator.remove_type("NamedArgumentsDeclaration");
+    mutator.add_choice_variant("ArgumentsDeclaration", "PositionalArguments");
+    mutator.add_choice_variant("ArgumentsDeclaration", "NamedArguments");
+
+    mutator.into()
 }

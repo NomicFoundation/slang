@@ -89,8 +89,8 @@ impl Pass {
         scope_id: ScopeId,
     ) {
         let mut resolved_bases = vec![];
-        if let Some(inheritance) = &node.inheritance {
-            resolved_bases = self.resolve_inheritance_types(&inheritance.types, scope_id);
+        if let Some(inheritance_types) = &node.inheritance {
+            resolved_bases = self.resolve_inheritance_types(inheritance_types, scope_id);
         }
 
         let Definition::Interface(definition) = self.binder.get_definition_mut(node.node_id) else {
