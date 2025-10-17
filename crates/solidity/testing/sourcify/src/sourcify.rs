@@ -74,8 +74,8 @@ impl Manifest {
                 DownloadResult::NotModified => {
                     println!("Manifest is up-to-date");
                 }
-                DownloadResult::Error => {
-                    bail!("Error fetching manifest.json");
+                DownloadResult::Error(err) => {
+                    bail!("Error fetching manifest.json: {err}");
                 }
             }
         }
@@ -238,8 +238,8 @@ impl ContractArchive {
                         path = contracts_path.to_string_lossy()
                     );
                 }
-                DownloadResult::Error => {
-                    bail!("Could not fetch source tarball");
+                DownloadResult::Error(err) => {
+                    bail!("Could not fetch source tarball: {err}");
                 }
             }
         }

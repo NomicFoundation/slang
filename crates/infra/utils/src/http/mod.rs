@@ -10,7 +10,7 @@ use reqwest::StatusCode;
 pub enum DownloadResult {
     Ok(Box<dyn Read>),
     NotModified,
-    Error,
+    Error(reqwest::Error),
 }
 
 pub fn request_download_if_modified<P>(url: &str, path: P) -> DownloadResult
@@ -24,16 +24,22 @@ where
             request_builder = request_builder.header(IF_MODIFIED_SINCE, fmt_http_date(modified));
         }
     }
-    let Ok(res) = request_builder.send() else {
-        return DownloadResult::Error;
+
+    let response = match request_builder.send() {
+        Ok(response) => response,
+        Err(error) => return DownloadResult::Error(error),
     };
 
-    let status = res.status();
+    let status = response.status();
     if status.is_success() {
-        DownloadResult::Ok(Box::new(res))
+        DownloadResult::Ok(Box::new(response))
     } else if status.as_u16() == StatusCode::NOT_MODIFIED {
         DownloadResult::NotModified
     } else {
-        DownloadResult::Error
+        DownloadResult::Error(
+            response
+                .error_for_status()
+                .expect_err("expected the response to contain an error"),
+        )
     }
 }
