@@ -114,6 +114,7 @@ either = { version = "1.6.0" }
 enumset = { version = "1.1.0" }
 env_logger = { version = "0.11.6" }
 fxhash = { version = "0.2.0" }
+httpdate = { version = "1.0.3" }
 iai-callgrind = { version = "0.12.3" }
 iai-callgrind-runner = { version = "0.12.3" }
 ignore = { version = "0.4.23" }

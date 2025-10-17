@@ -2,9 +2,7 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity::backend::passes;
-use slang_solidity::backend::passes::p5_resolve_references::Output;
-use slang_solidity::compilation::CompilationUnit;
+use slang_solidity::backend::build_binder_output;
 
 use super::diff_report::binding_graph_diff_report;
 use super::report::binder_report;
@@ -34,8 +32,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
             .iter()
             .any(|file| !file.errors().is_empty());
 
-        let binder_data = build_binder(compilation_unit);
-        let report_data = ReportData::prepare(&binder_data);
+        let binder_output = build_binder_output(compilation_unit);
+        let report_data = ReportData::prepare(&binder_output);
         let all_resolved = report_data.all_resolved();
         let status = if has_parse_errors || !all_resolved {
             "failure"
@@ -75,13 +73,4 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     }
 
     Ok(())
-}
-
-fn build_binder(compilation_unit: CompilationUnit) -> Output {
-    let data = passes::p0_build_ast::run(compilation_unit);
-    let data = passes::p1_flatten_contracts::run(data);
-    let data = passes::p2_collect_definitions::run(data);
-    let data = passes::p3_linearise_contracts::run(data);
-    let data = passes::p4_type_definitions::run(data);
-    passes::p5_resolve_references::run(data)
 }
