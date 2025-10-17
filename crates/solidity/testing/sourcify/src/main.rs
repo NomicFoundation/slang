@@ -1,3 +1,8 @@
+// NOTE: there's a [bug](https://github.com/rust-lang/rust-clippy/issues/11916)
+// in clippy for Rust 1.87 which reports `sourcify.rs` as an offending module.
+// Remove this override when we upgrade.
+#![allow(clippy::self_named_module_files)]
+
 mod command;
 mod events;
 mod reporting;
