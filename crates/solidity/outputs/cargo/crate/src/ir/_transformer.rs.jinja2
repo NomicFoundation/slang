@@ -21,18 +21,18 @@
             {%- if not field.is_removed -%}
               {%- if field.is_optional -%}
                 let {{ field.label }} = source.{{ field.label }}.as_ref().map(
-                  {%- if field.is_terminal -%}
+                  {%- if field.type.is_terminal -%}
                     Rc::clone
                   {%- else -%}
-                    |value| self.transform_{{ field.type | snake_case }}(value)
+                    |value| self.transform_{{ field.type.name | snake_case }}(value)
                   {%- endif -%}
                 );
               {%- else -%}
                 let {{ field.label }} =
-                {%- if field.is_terminal -%}
+                {%- if field.type.is_terminal -%}
                   Rc::clone(&source.{{ field.label }})
                 {%- else -%}
-                  self.transform_{{ field.type | snake_case }}(&source.{{ field.label }})
+                  self.transform_{{ field.type.name | snake_case }}(&source.{{ field.label }})
                 {%- endif -%}
                 ;
               {%- endif -%}
@@ -58,16 +58,16 @@
     //
     {% for parent_type, collapsed in transformer.collapsed_sequences %}
       fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) ->
-      {%- if collapsed.target_is_terminal -%}
+      {%- if collapsed.target_type.is_terminal -%}
         Rc<TerminalNode>
       {%- else -%}
-        output::{{ collapsed.target_type }}
+        output::{{ collapsed.target_type.name }}
       {%- endif -%}
       {
-        {%- if collapsed.target_is_terminal -%}
+        {%- if collapsed.target_type.is_terminal -%}
           Rc::clone(&source.{{ collapsed.label }})
         {%- else -%}
-          self.transform_{{ collapsed.type | snake_case }}(&source.{{ collapsed.label }})
+          self.transform_{{ collapsed.type.name | snake_case }}(&source.{{ collapsed.label }})
         {%- endif -%}
       }
     {% endfor %}
@@ -110,10 +110,10 @@
     {% for parent_type, collection in target.collections %}
       fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
         source.iter().map(
-          {%- if collection.is_terminal -%}
+          {%- if collection.item_type.is_terminal -%}
             Rc::clone
           {%- else -%}
-            |item| self.transform_{{ collection.item_type | snake_case }}(item)
+            |item| self.transform_{{ collection.item_type.name | snake_case }}(item)
           {%- endif -%}
         ).collect()
       }

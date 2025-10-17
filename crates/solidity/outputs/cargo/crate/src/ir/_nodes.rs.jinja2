@@ -15,7 +15,7 @@ use metaslang_cst::nodes::NodeId;
     pub node_id: NodeId,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
-      {%- if field.is_terminal -%}
+      {%- if field.type.is_terminal -%}
         {%- if field.is_optional -%}
           Option<Rc<TerminalNode>>,
         {%- else -%}
@@ -23,9 +23,9 @@ use metaslang_cst::nodes::NodeId;
         {%- endif -%}
       {%- else -%}
         {%- if field.is_optional -%}
-          Option<{{ field.type }}>,
+          Option<{{ field.type.name }}>,
         {%- else -%}
-          {{ field.type }},
+          {{ field.type.name }},
         {%- endif -%}
       {%- endif -%}
     {% endfor -%}
@@ -58,10 +58,10 @@ use metaslang_cst::nodes::NodeId;
 
 {% for parent_type, collection in target.collections %}
   pub type {{ parent_type }} = Vec<
-    {%- if collection.is_terminal -%}
+    {%- if collection.item_type.is_terminal -%}
       Rc<TerminalNode>
     {%- else -%}
-      {{ collection.item_type }}
+      {{ collection.item_type.name }}
     {%- endif -%}
   >;
 {% endfor %}
