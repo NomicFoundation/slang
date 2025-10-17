@@ -30,13 +30,13 @@
         return;
       }
       {% for field in sequence.fields -%}
-        {%- if not field.is_terminal -%}
+        {%- if not field.type.is_terminal -%}
           {%- if field.is_optional -%}
             if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
-              accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
+              accept_{{ field.type.name | snake_case }}({{ field.label }}, visitor);
             }
           {% else -%}
-            accept_{{ field.type | snake_case }}(&node.{{ field.label }}, visitor);
+            accept_{{ field.type.name | snake_case }}(&node.{{ field.label }}, visitor);
           {%- endif -%}
         {%- endif -%}
       {%- endfor -%}
@@ -88,7 +88,7 @@
   //
 
   {% for parent_type, collection in target.collections -%}
-    {%- if collection.is_terminal %}
+    {%- if collection.item_type.is_terminal %}
       #[inline]
       fn accept_{{ parent_type | snake_case }}(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor) {
         if visitor.enter_{{ parent_type | snake_case }}(items) {
@@ -97,12 +97,12 @@
       }
     {% else %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(items: &Vec<{{ collection.item_type }}>, visitor: &mut impl Visitor) {
+      fn accept_{{ parent_type | snake_case }}(items: &Vec<{{ collection.item_type.name }}>, visitor: &mut impl Visitor) {
         if !visitor.enter_{{ parent_type | snake_case }}(items) {
           return;
         }
         for item in items {
-          accept_{{ collection.item_type | snake_case }}(item, visitor);
+          accept_{{ collection.item_type.name | snake_case }}(item, visitor);
         }
         visitor.leave_{{ parent_type | snake_case }}(items);
       }

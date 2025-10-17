@@ -15,18 +15,18 @@
         {% for field in sequence.fields %}
           {%- if field.is_optional -%}
             let {{ field.label }} = source.{{ field.label }}.as_ref().map(
-              {%- if field.is_terminal -%}
+              {%- if field.type.is_terminal -%}
                 Rc::clone
               {%- else -%}
-                |value| self.rewrite_{{ field.type | snake_case }}(value)
+                |value| self.rewrite_{{ field.type.name | snake_case }}(value)
               {%- endif -%}
             );
           {%- else -%}
             let {{ field.label }} =
-            {%- if field.is_terminal -%}
+            {%- if field.type.is_terminal -%}
               Rc::clone(&source.{{ field.label }})
             {%- else -%}
-              self.rewrite_{{ field.type | snake_case }}(&source.{{ field.label }})
+              self.rewrite_{{ field.type.name | snake_case }}(&source.{{ field.label }})
             {%- endif -%}
             ;
           {%- endif -%}
@@ -71,10 +71,10 @@
     {% for parent_type, collection in target.collections %}
       fn rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         source.iter().map(
-          {%- if collection.is_terminal -%}
+          {%- if collection.item_type.is_terminal -%}
             Rc::clone
           {%- else -%}
-            |item| self.rewrite_{{ collection.item_type | snake_case }}(item)
+            |item| self.rewrite_{{ collection.item_type.name | snake_case }}(item)
           {%- endif -%}
         ).collect()
       }

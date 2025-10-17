@@ -1,8 +1,8 @@
-use indexmap::{IndexMap, IndexSet};
+use indexmap::IndexMap;
 use language_definition::model;
 use serde::Serialize;
 
-use super::model::{Choice, Collection, Field, IrModel, Sequence};
+use super::model::{Choice, Collection, Field, IrModel, NodeType, Sequence};
 
 #[derive(Default, Serialize)]
 pub struct IrModelMutator {
@@ -13,14 +13,11 @@ pub struct IrModelMutator {
     // Single field sequences that should be collapsed to their content.
     pub collapsed_sequences: IndexMap<model::Identifier, CollapsedSequence>,
 
-    // Set of non-unique terminals, ie. the value depends on the node contents,
-    // eg. Identifier.
+    // Terminal nodes and whether they are unique or their value depends on the
+    // content. The collection is not needed for generating the code, so it's
+    // not necessary to serialize it.
     #[serde(skip)]
-    pub non_unique_terminals: IndexSet<model::Identifier>,
-
-    // Set of unique terminals, ie. content is fixed for the kind, eg. Asterisk.
-    #[serde(skip)]
-    pub unique_terminals: IndexSet<model::Identifier>,
+    pub terminals: IndexMap<model::Identifier, bool>,
 }
 
 #[derive(Clone, Serialize)]
@@ -29,6 +26,10 @@ pub struct MutatedSequence {
     // Indicates that new fields where added to the sequence, making it
     // impossible to auto-generate a transformer function.
     pub has_added_fields: bool,
+    // If true, this sequence models a precedence expression with multiple
+    // operators and the terminals should not be elided. This is only relevant
+    // for the initial builder from the CST.
+    pub multiple_operators: bool,
 }
 
 impl From<&Sequence> for MutatedSequence {
@@ -36,6 +37,7 @@ impl From<&Sequence> for MutatedSequence {
         Self {
             fields: value.fields.iter().map(|field| field.into()).collect(),
             has_added_fields: false,
+            multiple_operators: value.multiple_operators,
         }
     }
 }
@@ -57,7 +59,7 @@ impl From<&MutatedSequence> for Sequence {
             fields,
             // NOTE: not strictly correct, but this info is only used for the
             // transformation from the CST model into L1
-            multiple_operators: false,
+            multiple_operators: value.multiple_operators,
         }
     }
 }
@@ -68,24 +70,18 @@ pub struct CollapsedSequence {
     pub label: model::Identifier,
     // Original type of the field of the collapsed sequence, used to generate
     // the transformer function.
-    pub r#type: model::Identifier,
+    pub r#type: NodeType,
     // Target type of the collapsed sequence. This should usually be `r#type`,
     // unless that it collapsed as well.
-    pub target_type: model::Identifier,
-    // Whether the target type is a terminal or not
-    pub target_is_terminal: bool,
+    pub target_type: NodeType,
 }
 
 #[derive(Clone, Serialize)]
-#[allow(clippy::struct_excessive_bools)]
 pub struct MutatedField {
     pub label: model::Identifier,
-    pub r#type: model::Identifier,
-    pub is_terminal: bool,
+    pub r#type: NodeType,
     pub is_optional: bool,
-
-    pub target_type: model::Identifier,
-    pub target_is_terminal: bool,
+    pub target_type: NodeType,
 
     pub is_removed: bool,
 }
@@ -95,10 +91,8 @@ impl From<&Field> for MutatedField {
         Self {
             label: value.label.clone(),
             r#type: value.r#type.clone(),
-            is_terminal: value.is_terminal,
             is_optional: value.is_optional,
             target_type: value.r#type.clone(),
-            target_is_terminal: value.is_terminal,
             is_removed: false,
         }
     }
@@ -109,7 +103,6 @@ impl From<&MutatedField> for Field {
         Self {
             label: value.label.clone(),
             r#type: value.target_type.clone(),
-            is_terminal: value.target_is_terminal,
             is_optional: value.is_optional,
         }
     }
@@ -180,22 +173,19 @@ impl IrModelMutator {
 
         let collections = source.collections.clone();
 
-        let unique_terminals = source.unique_terminals.clone();
-        let non_unique_terminals = source.non_unique_terminals.clone();
+        let terminals = source.terminals.clone();
 
         IrModelMutator {
             sequences,
             choices,
             collections,
             collapsed_sequences: IndexMap::new(),
-            unique_terminals,
-            non_unique_terminals,
+            terminals,
         }
     }
 
     pub fn build_target(&self) -> IrModel {
-        let non_unique_terminals = self.non_unique_terminals.clone();
-        let unique_terminals = self.unique_terminals.clone();
+        let terminals = self.terminals.clone();
 
         let sequences = self
             .sequences
@@ -212,8 +202,7 @@ impl IrModelMutator {
         let collections = self.collections.clone();
 
         IrModel {
-            non_unique_terminals,
-            unique_terminals,
+            terminals,
             sequences,
             choices,
             collections,
@@ -263,8 +252,7 @@ impl IrModelMutator {
         let removed = self.sequences.shift_remove(&identifier).is_some()
             || self.choices.shift_remove(&identifier).is_some()
             || self.collections.shift_remove(&identifier).is_some()
-            || self.unique_terminals.shift_remove(&identifier)
-            || self.non_unique_terminals.shift_remove(&identifier);
+            || self.terminals.shift_remove(&identifier).is_some();
 
         assert!(removed, "Could not find type {name} to remove");
 
@@ -328,19 +316,19 @@ impl IrModelMutator {
         let Some(sequence) = self.sequences.get_mut(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
-        let is_terminal = self
-            .non_unique_terminals
-            .contains::<model::Identifier>(&field_type.into())
-            || self
-                .unique_terminals
-                .contains::<model::Identifier>(&field_type.into());
+        let target_type = if self
+            .terminals
+            .contains_key::<model::Identifier>(&field_type.into())
+        {
+            NodeType::Terminal(field_type.into())
+        } else {
+            NodeType::Nonterminal(field_type.into())
+        };
         sequence.fields.push(MutatedField {
             label: field_label.into(),
-            r#type: field_type.into(),
-            is_terminal,
-            target_type: field_type.into(),
-            target_is_terminal: is_terminal,
+            r#type: target_type.clone(),
             is_optional,
+            target_type,
             is_removed: false,
         });
         sequence.has_added_fields = true;
@@ -369,19 +357,20 @@ impl IrModelMutator {
             for field in &mut sequence.fields {
                 if field.target_type == identifier {
                     field.target_type = replace_field.target_type.clone();
-                    field.target_is_terminal = replace_field.target_is_terminal;
                 }
             }
         }
 
         // Determine the target type; the type of the single field may be
         // already collapsed, so we need to use it in that case
-        let (target_type, target_is_terminal) =
-            if let Some(collapsed) = self.collapsed_sequences.get(&replace_field.r#type) {
-                (collapsed.target_type.clone(), collapsed.target_is_terminal)
-            } else {
-                (replace_field.r#type.clone(), replace_field.is_terminal)
-            };
+        let target_type = if let Some(collapsed) = self
+            .collapsed_sequences
+            .get(replace_field.r#type.as_identifier())
+        {
+            collapsed.target_type.clone()
+        } else {
+            replace_field.r#type.clone()
+        };
 
         // Create the collapsed sequence
         self.collapsed_sequences.insert(
@@ -390,7 +379,6 @@ impl IrModelMutator {
                 label: replace_field.label,
                 r#type: replace_field.r#type.clone(),
                 target_type,
-                target_is_terminal,
             },
         );
 
@@ -399,7 +387,6 @@ impl IrModelMutator {
         for (_, collapsed) in &mut self.collapsed_sequences {
             if collapsed.target_type == identifier {
                 collapsed.target_type = replace_field.r#type.clone();
-                collapsed.target_is_terminal = replace_field.is_terminal;
             }
         }
     }

@@ -1,16 +1,15 @@
-use indexmap::{IndexMap, IndexSet};
+use indexmap::IndexMap;
 use language_definition::model;
+use serde::ser::SerializeMap;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
 pub struct IrModel {
-    // set of non-unique terminals, ie. the value depends on the node contents, eg. Identifier
+    // Terminal nodes and whether they are unique or their value depends on the
+    // content. The collection is not needed for generating the code, so it's
+    // not necessary to serialize it.
     #[serde(skip)]
-    pub non_unique_terminals: IndexSet<model::Identifier>,
-
-    // set of unique terminals, ie. content is fixed for the kind, eg. Asterisk
-    #[serde(skip)]
-    pub unique_terminals: IndexSet<model::Identifier>,
+    pub terminals: IndexMap<model::Identifier, bool>,
 
     pub sequences: IndexMap<model::Identifier, Sequence>,
     pub choices: IndexMap<model::Identifier, Choice>,
@@ -26,12 +25,16 @@ pub struct Sequence {
     pub multiple_operators: bool,
 }
 
+#[derive(Clone)]
+pub enum NodeType {
+    Terminal(model::Identifier),
+    Nonterminal(model::Identifier),
+}
+
 #[derive(Clone, Serialize)]
 pub struct Field {
     pub label: model::Identifier,
-    pub r#type: model::Identifier,
-
-    pub is_terminal: bool,
+    pub r#type: NodeType,
     pub is_optional: bool,
 }
 
@@ -45,8 +48,45 @@ pub struct Choice {
 
 #[derive(Clone, Serialize)]
 pub struct Collection {
-    pub item_type: model::Identifier,
-    pub is_terminal: bool,
+    pub item_type: NodeType,
+}
+
+impl NodeType {
+    pub fn as_identifier(&self) -> &model::Identifier {
+        match self {
+            NodeType::Terminal(identifier) | NodeType::Nonterminal(identifier) => identifier,
+        }
+    }
+
+    pub fn is_terminal(&self) -> bool {
+        matches!(self, Self::Terminal(_))
+    }
+}
+
+impl PartialEq<model::Identifier> for NodeType {
+    fn eq(&self, other: &model::Identifier) -> bool {
+        match self {
+            NodeType::Terminal(identifier) | NodeType::Nonterminal(identifier) => {
+                identifier == other
+            }
+        }
+    }
+}
+
+impl Serialize for NodeType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut map = serializer.serialize_map(Some(2))?;
+        let (identifier, is_terminal) = match self {
+            NodeType::Terminal(identifier) => (identifier, true),
+            NodeType::Nonterminal(identifier) => (identifier, false),
+        };
+        map.serialize_entry("name", identifier)?;
+        map.serialize_entry("is_terminal", &is_terminal)?;
+        map.end()
+    }
 }
 
 // Construction
@@ -55,9 +95,7 @@ impl IrModel {
         let builder = IrModelBuilder::create(language);
 
         Self {
-            non_unique_terminals: builder.non_unique_terminals,
-            unique_terminals: builder.unique_terminals,
-
+            terminals: builder.terminals,
             sequences: builder.sequences,
             choices: builder.choices,
             collections: builder.collections,
@@ -66,9 +104,7 @@ impl IrModel {
 
     pub fn from_model(model: &Self) -> Self {
         Self {
-            non_unique_terminals: model.non_unique_terminals.clone(),
-            unique_terminals: model.unique_terminals.clone(),
-
+            terminals: model.terminals.clone(),
             sequences: model.sequences.clone(),
             choices: model.choices.clone(),
             collections: model.collections.clone(),
@@ -77,12 +113,7 @@ impl IrModel {
 }
 
 struct IrModelBuilder {
-    // set of non-unique terminals, ie. the value depends on the node contents, eg. Identifier
-    pub non_unique_terminals: IndexSet<model::Identifier>,
-
-    // set of unique terminals, ie. content is fixed for the kind, eg. Asterisk
-    pub unique_terminals: IndexSet<model::Identifier>,
-
+    pub terminals: IndexMap<model::Identifier, bool>,
     pub sequences: IndexMap<model::Identifier, Sequence>,
     pub choices: IndexMap<model::Identifier, Choice>,
     pub collections: IndexMap<model::Identifier, Collection>,
@@ -91,9 +122,7 @@ struct IrModelBuilder {
 impl IrModelBuilder {
     fn create(language: &model::Language) -> Self {
         let mut builder = Self {
-            non_unique_terminals: IndexSet::new(),
-            unique_terminals: IndexSet::new(),
-
+            terminals: IndexMap::new(),
             sequences: IndexMap::new(),
             choices: IndexMap::new(),
             collections: IndexMap::new(),
@@ -119,21 +148,13 @@ impl IrModelBuilder {
                     // These items are nonterminals.
                 }
                 model::Item::Trivia { item } => {
-                    self.non_unique_terminals.insert(item.name.clone());
+                    self.terminals.insert(item.name.clone(), false);
                 }
                 model::Item::Keyword { item } => {
-                    if item.is_unique() {
-                        self.unique_terminals.insert(item.name.clone());
-                    } else {
-                        self.non_unique_terminals.insert(item.name.clone());
-                    }
+                    self.terminals.insert(item.name.clone(), item.is_unique());
                 }
                 model::Item::Token { item } => {
-                    if item.is_unique() {
-                        self.unique_terminals.insert(item.name.clone());
-                    } else {
-                        self.non_unique_terminals.insert(item.name.clone());
-                    }
+                    self.terminals.insert(item.name.clone(), item.is_unique());
                 }
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
@@ -176,6 +197,14 @@ impl IrModelBuilder {
         }
     }
 
+    fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
+        if self.terminals.contains_key(identifier) {
+            NodeType::Terminal(identifier.clone())
+        } else {
+            NodeType::Nonterminal(identifier.clone())
+        }
+    }
+
     fn add_struct_item(&mut self, item: &model::StructItem) {
         let parent_type = item.name.clone();
         let fields: Vec<_> = self.convert_fields(&item.fields).collect();
@@ -202,12 +231,16 @@ impl IrModelBuilder {
         let mut unique_terminal_types = Vec::new();
 
         for identifier in types {
-            if self.unique_terminals.contains(&identifier) {
-                unique_terminal_types.push(identifier);
-            } else if self.non_unique_terminals.contains(&identifier) {
-                terminal_types.push(identifier);
-            } else {
-                nonterminal_types.push(identifier);
+            match self.terminals.get(&identifier) {
+                Some(true) => {
+                    unique_terminal_types.push(identifier);
+                }
+                Some(false) => {
+                    terminal_types.push(identifier);
+                }
+                None => {
+                    nonterminal_types.push(identifier);
+                }
             }
         }
 
@@ -217,17 +250,18 @@ impl IrModelBuilder {
     fn add_enum_item(&mut self, item: &model::EnumItem) {
         let parent_type = item.name.clone();
 
-        let (nonterminal_types, terminal_types, unique_terminal_types) = self.partition_types(
-            item.variants
-                .iter()
-                .map(|variant| variant.reference.clone()),
-        );
+        let (nonterminal_types, non_unique_terminal_types, unique_terminal_types) = self
+            .partition_types(
+                item.variants
+                    .iter()
+                    .map(|variant| variant.reference.clone()),
+            );
 
         self.choices.insert(
             parent_type,
             Choice {
                 nonterminal_types,
-                non_unique_terminal_types: terminal_types,
+                non_unique_terminal_types,
                 unique_terminal_types,
             },
         );
@@ -235,28 +269,18 @@ impl IrModelBuilder {
 
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
         let parent_type = item.name.clone();
+        let item_type = self.find_node_type(&item.reference);
 
-        self.collections.insert(
-            parent_type,
-            Collection {
-                item_type: item.reference.clone(),
-                is_terminal: self.non_unique_terminals.contains(&item.reference)
-                    || self.unique_terminals.contains(&item.reference),
-            },
-        );
+        self.collections
+            .insert(parent_type, Collection { item_type });
     }
 
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
         let parent_type = item.name.clone();
+        let item_type = self.find_node_type(&item.reference);
 
-        self.collections.insert(
-            parent_type,
-            Collection {
-                item_type: item.reference.clone(),
-                is_terminal: self.non_unique_terminals.contains(&item.reference)
-                    || self.unique_terminals.contains(&item.reference),
-            },
-        );
+        self.collections
+            .insert(parent_type, Collection { item_type });
     }
 
     fn add_precedence_item(&mut self, item: &model::PrecedenceItem) {
@@ -272,14 +296,14 @@ impl IrModelBuilder {
             .iter()
             .map(|expression| expression.reference.clone());
 
-        let (nonterminal_types, terminal_types, unique_terminal_types) =
+        let (nonterminal_types, non_unique_terminal_types, unique_terminal_types) =
             self.partition_types(precedence_expressions.chain(primary_expressions));
 
         self.choices.insert(
             parent_type,
             Choice {
                 nonterminal_types,
-                non_unique_terminal_types: terminal_types,
+                non_unique_terminal_types,
                 unique_terminal_types,
             },
         );
@@ -299,8 +323,7 @@ impl IrModelBuilder {
 
         let operand = |label: model::PredefinedLabel| Field {
             label: label.as_ref().into(),
-            r#type: base_name.clone(),
-            is_terminal: false,
+            r#type: NodeType::Nonterminal(base_name.clone()),
             is_optional: false,
         };
 
@@ -340,12 +363,11 @@ impl IrModelBuilder {
                 model::Field::Required { reference } => (reference, false),
                 model::Field::Optional { reference, .. } => (reference, true),
             };
+            let r#type = self.find_node_type(reference);
 
             Field {
                 label: label.clone(),
-                r#type: reference.clone(),
-                is_terminal: self.non_unique_terminals.contains(reference)
-                    || self.unique_terminals.contains(reference),
+                r#type,
                 is_optional,
             }
         })

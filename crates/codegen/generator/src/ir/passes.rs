@@ -48,8 +48,8 @@ fn build_ir1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
         }
         for field in &sequence.fields {
             if !field.is_optional
-                && field.is_terminal
-                && cst_model.unique_terminals.contains(&field.r#type)
+                && field.r#type.is_terminal()
+                && cst_model.terminals[field.r#type.as_identifier()]
             {
                 mutator.remove_sequence_field(sequence_id, &field.label);
             }
