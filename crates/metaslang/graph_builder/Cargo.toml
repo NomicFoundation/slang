@@ -34,5 +34,5 @@ string-interner = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 
-[lints]
-workspace = true
+[lints.clippy]
+self_named_module_files = "allow" # __NOMIC_FOUNDATION_FORK__ (disable lint to minimize changes to the fork)
