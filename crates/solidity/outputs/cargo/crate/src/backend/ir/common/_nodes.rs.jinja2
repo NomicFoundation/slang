@@ -42,14 +42,14 @@
   {% for parent_type, choice in target.choices %}
     #[derive(Debug)]
     pub enum {{ parent_type }} {
-      {% for nonterminal in choice.nonterminal_types -%}
-        {{ nonterminal }}({{ nonterminal }}),
+      {% for nonterminal in choice.variants | filter(attribute="is_terminal", value=false) -%}
+        {{ nonterminal.name }}({{ nonterminal.name }}),
       {%- endfor -%}
-      {% for terminal in choice.non_unique_terminal_types -%}
-        {{ terminal }}(Rc<TerminalNode>),
+      {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+        {{ terminal.name }}(Rc<TerminalNode>),
       {%- endfor -%}
-      {% for terminal in choice.unique_terminal_types -%}
-        {{ terminal }},
+      {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+        {{ terminal.name }},
       {%- endfor -%}
     }
   {% endfor %}

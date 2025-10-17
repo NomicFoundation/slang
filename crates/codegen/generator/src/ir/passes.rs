@@ -77,13 +77,19 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     mutator.add_sequence_field("ContractDefinition", "storage_layout", "Expression", true);
 
     // Unifiy function definition types
+    mutator.add_unique_terminal("Regular");
+    mutator.add_unique_terminal("Constructor");
+    mutator.add_unique_terminal("Unnamed");
+    mutator.add_unique_terminal("Fallback");
+    mutator.add_unique_terminal("Receive");
+    mutator.add_unique_terminal("Modifier");
     mutator.add_choice_type("FunctionKind");
-    mutator.add_choice_unique_terminal("FunctionKind", "Regular");
-    mutator.add_choice_unique_terminal("FunctionKind", "Constructor");
-    mutator.add_choice_unique_terminal("FunctionKind", "Unnamed");
-    mutator.add_choice_unique_terminal("FunctionKind", "Fallback");
-    mutator.add_choice_unique_terminal("FunctionKind", "Receive");
-    mutator.add_choice_unique_terminal("FunctionKind", "Modifier");
+    mutator.add_choice_variant("FunctionKind", "Regular");
+    mutator.add_choice_variant("FunctionKind", "Constructor");
+    mutator.add_choice_variant("FunctionKind", "Unnamed");
+    mutator.add_choice_variant("FunctionKind", "Fallback");
+    mutator.add_choice_variant("FunctionKind", "Receive");
+    mutator.add_choice_variant("FunctionKind", "Modifier");
 
     // Add the kind to the FunctionDefinition type, which will now hold all kinds
     mutator.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
@@ -144,8 +150,8 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     // Collapse the middle node in ArgumentsDeclaration
     mutator.remove_type("PositionalArgumentsDeclaration");
     mutator.remove_type("NamedArgumentsDeclaration");
-    mutator.add_choice_nonterminal("ArgumentsDeclaration", "PositionalArguments");
-    mutator.add_choice_nonterminal("ArgumentsDeclaration", "NamedArguments");
+    mutator.add_choice_variant("ArgumentsDeclaration", "PositionalArguments");
+    mutator.add_choice_variant("ArgumentsDeclaration", "NamedArguments");
 
     mutator.into()
 }

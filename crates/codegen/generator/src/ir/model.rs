@@ -25,10 +25,11 @@ pub struct Sequence {
     pub multiple_operators: bool,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub enum NodeType {
-    Terminal(model::Identifier),
     Nonterminal(model::Identifier),
+    Terminal(model::Identifier),
+    UniqueTerminal(model::Identifier),
 }
 
 #[derive(Clone, Serialize)]
@@ -41,9 +42,7 @@ pub struct Field {
 #[allow(clippy::struct_field_names)]
 #[derive(Clone, Serialize)]
 pub struct Choice {
-    pub nonterminal_types: Vec<model::Identifier>,
-    pub non_unique_terminal_types: Vec<model::Identifier>,
-    pub unique_terminal_types: Vec<model::Identifier>,
+    pub variants: Vec<NodeType>,
 }
 
 #[derive(Clone, Serialize)]
@@ -54,21 +53,23 @@ pub struct Collection {
 impl NodeType {
     pub fn as_identifier(&self) -> &model::Identifier {
         match self {
-            NodeType::Terminal(identifier) | NodeType::Nonterminal(identifier) => identifier,
+            NodeType::Nonterminal(identifier)
+            | NodeType::Terminal(identifier)
+            | NodeType::UniqueTerminal(identifier) => identifier,
         }
     }
 
     pub fn is_terminal(&self) -> bool {
-        matches!(self, Self::Terminal(_))
+        matches!(self, Self::Terminal(_) | Self::UniqueTerminal(_))
     }
 }
 
 impl PartialEq<model::Identifier> for NodeType {
     fn eq(&self, other: &model::Identifier) -> bool {
         match self {
-            NodeType::Terminal(identifier) | NodeType::Nonterminal(identifier) => {
-                identifier == other
-            }
+            NodeType::Nonterminal(identifier)
+            | NodeType::Terminal(identifier)
+            | NodeType::UniqueTerminal(identifier) => identifier == other,
         }
     }
 }
@@ -78,13 +79,15 @@ impl Serialize for NodeType {
     where
         S: serde::Serializer,
     {
-        let mut map = serializer.serialize_map(Some(2))?;
-        let (identifier, is_terminal) = match self {
-            NodeType::Terminal(identifier) => (identifier, true),
-            NodeType::Nonterminal(identifier) => (identifier, false),
+        let mut map = serializer.serialize_map(Some(3))?;
+        let (identifier, is_terminal, is_unique) = match self {
+            NodeType::Nonterminal(identifier) => (identifier, false, false),
+            NodeType::Terminal(identifier) => (identifier, true, false),
+            NodeType::UniqueTerminal(identifier) => (identifier, true, true),
         };
         map.serialize_entry("name", identifier)?;
         map.serialize_entry("is_terminal", &is_terminal)?;
+        map.serialize_entry("is_unique", &is_unique)?;
         map.end()
     }
 }
@@ -198,10 +201,10 @@ impl IrModelBuilder {
     }
 
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
-        if self.terminals.contains_key(identifier) {
-            NodeType::Terminal(identifier.clone())
-        } else {
-            NodeType::Nonterminal(identifier.clone())
+        match self.terminals.get(identifier) {
+            None => NodeType::Nonterminal(identifier.clone()),
+            Some(false) => NodeType::Terminal(identifier.clone()),
+            Some(true) => NodeType::UniqueTerminal(identifier.clone()),
         }
     }
 
@@ -218,53 +221,16 @@ impl IrModelBuilder {
         );
     }
 
-    fn partition_types(
-        &self,
-        types: impl Iterator<Item = model::Identifier>,
-    ) -> (
-        Vec<model::Identifier>,
-        Vec<model::Identifier>,
-        Vec<model::Identifier>,
-    ) {
-        let mut nonterminal_types = Vec::new();
-        let mut terminal_types = Vec::new();
-        let mut unique_terminal_types = Vec::new();
-
-        for identifier in types {
-            match self.terminals.get(&identifier) {
-                Some(true) => {
-                    unique_terminal_types.push(identifier);
-                }
-                Some(false) => {
-                    terminal_types.push(identifier);
-                }
-                None => {
-                    nonterminal_types.push(identifier);
-                }
-            }
-        }
-
-        (nonterminal_types, terminal_types, unique_terminal_types)
-    }
-
     fn add_enum_item(&mut self, item: &model::EnumItem) {
         let parent_type = item.name.clone();
 
-        let (nonterminal_types, non_unique_terminal_types, unique_terminal_types) = self
-            .partition_types(
-                item.variants
-                    .iter()
-                    .map(|variant| variant.reference.clone()),
-            );
+        let variants = item
+            .variants
+            .iter()
+            .map(|variant| self.find_node_type(&variant.reference))
+            .collect();
 
-        self.choices.insert(
-            parent_type,
-            Choice {
-                nonterminal_types,
-                non_unique_terminal_types,
-                unique_terminal_types,
-            },
-        );
+        self.choices.insert(parent_type, Choice { variants });
     }
 
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
@@ -289,24 +255,19 @@ impl IrModelBuilder {
         let precedence_expressions = item
             .precedence_expressions
             .iter()
-            .map(|expression| expression.name.clone());
+            .map(|expression| &expression.name);
 
         let primary_expressions = item
             .primary_expressions
             .iter()
-            .map(|expression| expression.reference.clone());
+            .map(|expression| &expression.reference);
 
-        let (nonterminal_types, non_unique_terminal_types, unique_terminal_types) =
-            self.partition_types(precedence_expressions.chain(primary_expressions));
+        let variants = precedence_expressions
+            .chain(primary_expressions)
+            .map(|item| self.find_node_type(item))
+            .collect();
 
-        self.choices.insert(
-            parent_type,
-            Choice {
-                nonterminal_types,
-                non_unique_terminal_types,
-                unique_terminal_types,
-            },
-        );
+        self.choices.insert(parent_type, Choice { variants });
     }
 
     fn add_precedence_expression(

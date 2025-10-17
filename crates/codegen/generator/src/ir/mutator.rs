@@ -110,13 +110,8 @@ impl From<&MutatedField> for Field {
 
 #[derive(Clone, Serialize)]
 pub struct MutatedChoice {
-    pub nonterminal_types: Vec<model::Identifier>,
-    pub non_unique_terminal_types: Vec<model::Identifier>,
-    pub unique_terminal_types: Vec<model::Identifier>,
-
-    pub added_nonterminal_types: Vec<model::Identifier>,
-    pub added_non_unique_terminal_types: Vec<model::Identifier>,
-    pub added_unique_terminal_types: Vec<model::Identifier>,
+    pub variants: Vec<NodeType>,
+    pub added_variants: Vec<NodeType>,
 
     // Indicates some variants have been removed so the transformer
     // generator can handle them.
@@ -129,12 +124,8 @@ pub struct MutatedChoice {
 impl From<&Choice> for MutatedChoice {
     fn from(value: &Choice) -> Self {
         Self {
-            nonterminal_types: value.nonterminal_types.clone(),
-            non_unique_terminal_types: value.non_unique_terminal_types.clone(),
-            unique_terminal_types: value.unique_terminal_types.clone(),
-            added_nonterminal_types: Vec::new(),
-            added_non_unique_terminal_types: Vec::new(),
-            added_unique_terminal_types: Vec::new(),
+            variants: value.variants.clone(),
+            added_variants: Vec::new(),
             has_removed_variants: false,
             is_new: false,
         }
@@ -143,17 +134,9 @@ impl From<&Choice> for MutatedChoice {
 
 impl From<&MutatedChoice> for Choice {
     fn from(value: &MutatedChoice) -> Self {
-        let mut nonterminal_types = value.nonterminal_types.clone();
-        nonterminal_types.extend_from_slice(&value.added_nonterminal_types);
-        let mut non_unique_terminal_types = value.non_unique_terminal_types.clone();
-        non_unique_terminal_types.extend_from_slice(&value.added_non_unique_terminal_types);
-        let mut unique_terminal_types = value.unique_terminal_types.clone();
-        unique_terminal_types.extend_from_slice(&value.added_unique_terminal_types);
-        Self {
-            nonterminal_types,
-            non_unique_terminal_types,
-            unique_terminal_types,
-        }
+        let mut variants = value.variants.clone();
+        variants.extend_from_slice(&value.added_variants);
+        Self { variants }
     }
 }
 
@@ -209,45 +192,36 @@ impl IrModelMutator {
         }
     }
 
+    pub fn add_unique_terminal(&mut self, name: &str) {
+        assert!(
+            self.terminals.insert(name.into(), true).is_none(),
+            "Attempting to add a terminal node type that already exists"
+        );
+    }
+
     pub fn add_choice_type(&mut self, name: &str) {
         self.choices.insert(
             name.into(),
             MutatedChoice {
-                nonterminal_types: Vec::new(),
-                non_unique_terminal_types: Vec::new(),
-                unique_terminal_types: Vec::new(),
-                added_nonterminal_types: Vec::new(),
-                added_non_unique_terminal_types: Vec::new(),
-                added_unique_terminal_types: Vec::new(),
+                variants: Vec::new(),
+                added_variants: Vec::new(),
                 is_new: true,
                 has_removed_variants: false,
             },
         );
     }
 
-    pub fn add_choice_unique_terminal(&mut self, choice_id: &str, unique_terminal: &str) {
+    pub fn add_choice_variant(&mut self, choice_id: &str, variant: &str) {
+        let variant_type = self.find_node_type(&variant.into());
         let identifier: model::Identifier = choice_id.into();
         let Some(choice) = self.choices.get_mut(&identifier) else {
             panic!("Choice {choice_id} not found in IR model");
         };
-        choice
-            .added_unique_terminal_types
-            .push(unique_terminal.into());
-        // TODO: we should verify that the type added is indeed a terminal type
-        // and is unique; but if we are adding a custom enum type we don't want
-        // to do that
-    }
-
-    pub fn add_choice_nonterminal(&mut self, choice_id: &str, nonterminal: &str) {
-        let identifier: model::Identifier = choice_id.into();
-        let Some(choice) = self.choices.get_mut(&identifier) else {
-            panic!("Choice {choice_id} not found in IR model");
-        };
-        choice.added_nonterminal_types.push(nonterminal.into());
-        // TODO: we should verify that the type exists as a non-terminal
+        choice.added_variants.push(variant_type);
     }
 
     pub fn remove_type(&mut self, name: &str) {
+        let removed_type = self.find_node_type(&name.into());
         let identifier: model::Identifier = name.into();
         let removed = self.sequences.shift_remove(&identifier).is_some()
             || self.choices.shift_remove(&identifier).is_some()
@@ -265,19 +239,10 @@ impl IrModelMutator {
         }
 
         for (_, choice) in &mut self.choices {
-            if choice.non_unique_terminal_types.contains(&identifier)
-                || choice.nonterminal_types.contains(&identifier)
-                || choice.unique_terminal_types.contains(&identifier)
-            {
+            if choice.variants.contains(&removed_type) {
                 choice.has_removed_variants = true;
             }
-            choice.nonterminal_types.retain(|item| *item != identifier);
-            choice
-                .non_unique_terminal_types
-                .retain(|item| *item != identifier);
-            choice
-                .unique_terminal_types
-                .retain(|item| *item != identifier);
+            choice.variants.retain(|item| *item != identifier);
         }
 
         self.collections
@@ -305,6 +270,14 @@ impl IrModelMutator {
         );
     }
 
+    fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
+        match self.terminals.get(identifier) {
+            None => NodeType::Nonterminal(identifier.clone()),
+            Some(false) => NodeType::Terminal(identifier.clone()),
+            Some(true) => NodeType::UniqueTerminal(identifier.clone()),
+        }
+    }
+
     pub fn add_sequence_field(
         &mut self,
         sequence_id: &str,
@@ -312,17 +285,10 @@ impl IrModelMutator {
         field_type: &str,
         is_optional: bool,
     ) {
+        let target_type = self.find_node_type(&field_type.into());
         let identifier: model::Identifier = sequence_id.into();
         let Some(sequence) = self.sequences.get_mut(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
-        };
-        let target_type = if self
-            .terminals
-            .contains_key::<model::Identifier>(&field_type.into())
-        {
-            NodeType::Terminal(field_type.into())
-        } else {
-            NodeType::Nonterminal(field_type.into())
         };
         sequence.fields.push(MutatedField {
             label: field_label.into(),

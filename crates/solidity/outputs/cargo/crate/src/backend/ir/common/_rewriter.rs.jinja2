@@ -47,16 +47,16 @@
     {% for parent_type, choice in target.choices %}
       fn default_rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         match source {
-          {% for nonterminal in choice.nonterminal_types -%}
-            {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
-              {{ parent_type }}::{{ nonterminal }}(self.rewrite_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}))
+          {% for nonterminal in choice.variants | filter(attribute="is_terminal", value=false) -%}
+            {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+              {{ parent_type }}::{{ nonterminal.name }}(self.rewrite_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
             }
           {%- endfor %}
-          {%- for terminal in choice.non_unique_terminal_types -%}
-            {{ parent_type }}::{{ terminal }}(node) => {{ parent_type }}::{{ terminal }}(Rc::clone(node)),
+          {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+            {{ parent_type }}::{{ terminal.name }}(node) => {{ parent_type }}::{{ terminal.name }}(Rc::clone(node)),
           {%- endfor -%}
-          {%- for terminal in choice.unique_terminal_types -%}
-            {{ parent_type }}::{{ terminal }} => {{ parent_type }}::{{ terminal }},
+          {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+            {{ parent_type }}::{{ terminal.name }} => {{ parent_type }}::{{ terminal.name }},
           {%- endfor -%}
         }
       }

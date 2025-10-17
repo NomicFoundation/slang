@@ -81,16 +81,16 @@
           #[allow(clippy::match_wildcard_for_single_variants)]
           #[allow(clippy::match_single_binding)]
           match source {
-            {% for nonterminal in choice.nonterminal_types -%}
-              input::{{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
-                output::{{ parent_type }}::{{ nonterminal }}(self.transform_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}))
+            {% for nonterminal in choice.variants | filter(attribute="is_terminal", value=false) -%}
+              input::{{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+                output::{{ parent_type }}::{{ nonterminal.name }}(self.transform_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
               }
-            {%- endfor %}
-            {%- for terminal in choice.non_unique_terminal_types -%}
-              input::{{ parent_type }}::{{ terminal }}(node) => output::{{ parent_type }}::{{ terminal }}(Rc::clone(node)),
             {%- endfor -%}
-            {%- for terminal in choice.unique_terminal_types -%}
-              input::{{ parent_type }}::{{ terminal }} => output::{{ parent_type }}::{{ terminal }},
+            {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+              input::{{ parent_type }}::{{ terminal.name }}(node) => output::{{ parent_type }}::{{ terminal.name }}(Rc::clone(node)),
+            {%- endfor -%}
+            {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+              input::{{ parent_type }}::{{ terminal.name }} => output::{{ parent_type }}::{{ terminal.name }},
             {%- endfor -%}
             {% if choice.has_removed_variants %}
               _ => panic!("Unexpected variant {source:?}"),

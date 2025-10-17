@@ -70,19 +70,19 @@
       let mut helper = ChildrenHelper::new(&node.children);
       let variant = helper.accept_label(EdgeLabel::Variant)?;
       let item = match variant.kind() {
-        {% for type in choice.nonterminal_types -%}
-          NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type }}(build_{{ type | snake_case }}(nonterminal_node(variant))?),
+        {% for type in choice.variants | filter(attribute="is_terminal", value=false) -%}
+          NodeKind::Nonterminal(NonterminalKind::{{ type.name }}) => {{ parent_type }}::{{ type.name }}(build_{{ type.name | snake_case }}(nonterminal_node(variant))?),
         {%- endfor -%}
 
-        {% for type in choice.non_unique_terminal_types -%}
-          NodeKind::Terminal(TerminalKind::{{ type }}) => {
-            {{ parent_type }}::{{ type }}(terminal_node_cloned(variant))
+        {% for type in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+          NodeKind::Terminal(TerminalKind::{{ type.name }}) => {
+            {{ parent_type }}::{{ type.name }}(terminal_node_cloned(variant))
           },
         {%- endfor -%}
 
-        {% for type in choice.unique_terminal_types -%}
-          NodeKind::Terminal(TerminalKind::{{ type }}) => {
-            {{ parent_type }}::{{ type }}
+        {% for type in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+          NodeKind::Terminal(TerminalKind::{{ type.name }}) => {
+            {{ parent_type }}::{{ type.name }}
           },
         {%- endfor -%}
 

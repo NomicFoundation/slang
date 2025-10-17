@@ -50,7 +50,10 @@
   //
 
   {% for parent_type, choice in target.choices %}
-    {% if choice.nonterminal_types | length == 0 %}
+    {%- set nonterminals = choice.variants | filter(attribute="is_terminal", value=false) -%}
+    {%- set unique_terminals = choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+    {%- set non_unique_terminals = choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+    {% if nonterminals | length == 0 %}
       pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
     {% else %}
       pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
@@ -58,22 +61,22 @@
           return;
         }
         match node {
-          {% for nonterminal in choice.nonterminal_types -%}
-            {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
-              accept_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}, visitor);
+          {% for nonterminal in nonterminals -%}
+            {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+              accept_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}, visitor);
             }
           {%- endfor %}
-          {%- if choice.non_unique_terminal_types | length > 0 %}
-            {%- for terminal in choice.non_unique_terminal_types -%}
+          {%- if non_unique_terminals | length > 0 %}
+            {%- for terminal in non_unique_terminals -%}
               {%- if not loop.first -%} | {%- endif -%}
-              {{ parent_type }}::{{terminal}}(_)
+              {{ parent_type }}::{{ terminal.name }}(_)
             {%- endfor -%}
             => {}
           {% endif -%}
-          {%- if choice.unique_terminal_types | length > 0 %}
-            {%- for terminal in choice.unique_terminal_types -%}
+          {%- if unique_terminals | length > 0 %}
+            {%- for terminal in unique_terminals -%}
               {%- if not loop.first -%} | {%- endif -%}
-              {{ parent_type }}::{{terminal}}
+              {{ parent_type }}::{{ terminal.name }}
             {%- endfor -%}
             => {}
           {% endif -%}
