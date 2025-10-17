@@ -23,10 +23,8 @@ jobs:
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
       chain_id: "${{ matrix.chain_id }}"
-      check_binder_v1: "${{ inputs.check_binder_v1 }}"
-      check_binder_v2: "${{ inputs.check_binder_v2 }}"
-      compare_binders: "${{ inputs.compare_binders }}"
       check_infer_version: "${{ inputs.check_infer_version }}"
+      check_binder: "${{ inputs.check_binder }}"
     strategy:
       fail-fast: false
       matrix:
