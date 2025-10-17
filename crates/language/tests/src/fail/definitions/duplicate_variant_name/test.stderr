@@ -1,0 +1,5 @@
+error: A variant referencing 'Baz1' already exists.
+  --> src/fail/definitions/duplicate_variant_name/test.rs:20:49
+   |
+20 |                         EnumVariant(reference = Baz1)
+   |                                                 ^^^^

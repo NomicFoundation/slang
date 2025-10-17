@@ -6,8 +6,8 @@ mod cst_output;
 use std::path::Path;
 
 use anyhow::Result;
-use codegen_language_definition::model::Language;
 use common::generate_version_breaks;
+use language_definition::model::Language;
 
 use crate::binder::generate_binder_tests;
 use crate::bindings_output::generate_bindings_output_tests;

@@ -1,5 +1,5 @@
 [workspace.package]
-version = "1.2.1"
+version = "1.3.0"
 rust-version = "1.87.0" # __RUST_STABLE_VERSION_MARKER__ (keep in sync)
 edition = "2021"
 publish = false
@@ -9,10 +9,6 @@ resolver = "2"
 members = [
     "crates/codegen/ebnf",
     "crates/codegen/generator",
-    "crates/codegen/language/definition",
-    "crates/codegen/language/internal_macros",
-    "crates/codegen/language/macros",
-    "crates/codegen/language/tests",
     "crates/codegen/runner",
     "crates/codegen/spec",
     "crates/codegen/testing",
@@ -20,11 +16,23 @@ members = [
     "crates/infra/cli",
     "crates/infra/utils",
 
+    "crates/language/definition",
+    "crates/language/internal_macros",
+    "crates/language/macros",
+    "crates/language/tests",
+
+    "crates/language-v2/definition",
+    "crates/language-v2/internal_macros",
+    "crates/language-v2/macros",
+    "crates/language-v2/tests",
+
     "crates/metaslang/bindings",
     "crates/metaslang/cst",
     "crates/metaslang/graph_builder",
+    "crates/metaslang/stack_graphs",
 
     "crates/solidity/inputs/language",
+
     "crates/solidity/outputs/cargo/cli",
     "crates/solidity/outputs/cargo/crate",
     "crates/solidity/outputs/cargo/tests",
@@ -37,42 +45,54 @@ members = [
     "crates/solidity/testing/solc",
     "crates/solidity/testing/sourcify",
     "crates/solidity/testing/utils",
+
+    "crates/solidity-v2/inputs/language",
 ]
 
 [workspace.dependencies]
 #
 # Internal
 #
-codegen_ebnf = { path = "crates/codegen/ebnf", version = "1.2.1" }
-codegen_generator = { path = "crates/codegen/generator", version = "1.2.1" }
-codegen_language_definition = { path = "crates/codegen/language/definition", version = "1.2.1" }
-codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros", version = "1.2.1" }
-codegen_language_macros = { path = "crates/codegen/language/macros", version = "1.2.1" }
-codegen_language_tests = { path = "crates/codegen/language/tests", version = "1.2.1" }
-codegen_runner = { path = "crates/codegen/runner", version = "1.2.1" }
-codegen_spec = { path = "crates/codegen/spec", version = "1.2.1" }
-codegen_testing = { path = "crates/codegen/testing", version = "1.2.1" }
+codegen_ebnf = { path = "crates/codegen/ebnf", version = "1.3.0" }
+codegen_generator = { path = "crates/codegen/generator", version = "1.3.0" }
+codegen_runner = { path = "crates/codegen/runner", version = "1.3.0" }
+codegen_spec = { path = "crates/codegen/spec", version = "1.3.0" }
+codegen_testing = { path = "crates/codegen/testing", version = "1.3.0" }
 
-infra_cli = { path = "crates/infra/cli", version = "1.2.1" }
-infra_utils = { path = "crates/infra/utils", version = "1.2.1" }
+infra_cli = { path = "crates/infra/cli", version = "1.3.0" }
+infra_utils = { path = "crates/infra/utils", version = "1.3.0" }
 
-metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.2.1" }
-metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.2.1" }
-metaslang_cst = { path = "crates/metaslang/cst", version = "1.2.1" }
+language_definition = { path = "crates/language/definition", version = "1.3.0" }
+language_internal_macros = { path = "crates/language/internal_macros", version = "1.3.0" }
+language_macros = { path = "crates/language/macros", version = "1.3.0" }
+language_tests = { path = "crates/language/tests", version = "1.3.0" }
 
-slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.2.1" }
-slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.2.1" }
-solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.2.1" }
-solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.2.1" }
-solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.1" }
-solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.2.1" }
-solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.2.1" }
-solidity_testing_perf_cargo = { path = "crates/solidity/testing/perf/cargo", version = "1.2.1" }
-solidity_testing_perf_npm = { path = "crates/solidity/testing/perf/npm", version = "1.2.1" }
-solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.2.1" }
-solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.2.1" }
-solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.2.1" }
-solidity_testing_utils = { path = "crates/solidity/testing/utils", version = "1.2.1" }
+language_v2_definition = { path = "crates/language-v2/definition", version = "1.3.0" }
+language_v2_internal_macros = { path = "crates/language-v2/internal_macros", version = "1.3.0" }
+language_v2_macros = { path = "crates/language-v2/macros", version = "1.3.0" }
+language_v2_tests = { path = "crates/language-v2/tests", version = "1.3.0" }
+
+metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.3.0" }
+metaslang_cst = { path = "crates/metaslang/cst", version = "1.3.0" }
+metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.3.0" }
+metaslang_stack_graphs = { path = "crates/metaslang/stack_graphs", version = "1.3.0" }
+
+solidity_language = { path = "crates/solidity/inputs/language", version = "1.3.0" }
+
+slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.3.0" }
+slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.3.0" }
+solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.3.0" }
+solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.3.0" }
+solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.3.0" }
+solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.3.0" }
+solidity_testing_perf_cargo = { path = "crates/solidity/testing/perf/cargo", version = "1.3.0" }
+solidity_testing_perf_npm = { path = "crates/solidity/testing/perf/npm", version = "1.3.0" }
+solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.3.0" }
+solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.3.0" }
+solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.3.0" }
+solidity_testing_utils = { path = "crates/solidity/testing/utils", version = "1.3.0" }
+
+solidity_v2_language = { path = "crates/solidity-v2/inputs/language", version = "1.3.0" }
 
 #
 # External
@@ -82,13 +102,18 @@ ariadne = { version = "0.2.0" }
 # Currently 'bencher' backend API is under development/unstable.
 # They recommend always running with the latest CLI version from 'main' until it is stabilized.
 bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
+bitvec = { version = "1.0.1" }
 cargo-edit = { version = "0.12.3" }
 cargo-nextest = { version = "0.9.72" }
 clap = { version = "4.5.40", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.54" }
 console = { version = "0.15.11" }
+controlled-option = { version = "0.4.1" }
 derive-new = { version = "0.6.0" }
+either = { version = "1.6.0" }
+enumset = { version = "1.1.0" }
 env_logger = { version = "0.11.6" }
+fxhash = { version = "0.2.0" }
 httpdate = { version = "1.0.3" }
 iai-callgrind = { version = "0.12.3" }
 iai-callgrind-runner = { version = "0.12.3" }
@@ -98,7 +123,9 @@ indicatif = { version = "0.17.12", features = ["in_memory"] }
 indoc = { version = "2.0.6" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.13.0" }
+libc = { version = "0.2.0" }
 log = { version = "0.4.27" }
+lsp-positions = { version = "0.3.0" } 
 markdown = { version = "0.3.0" }
 nom = { version = "7.1.3" }
 num-format = { version = "0.4.4" }
@@ -116,7 +143,6 @@ serde_json = { version = "1.0.140", features = ["preserve_order"] }
 similar-asserts = { version = "1.7.0" }
 smallvec = { version = "1.15.0", features = ["union"] }
 solar = { version = "0.1.3", package = "solar-compiler" }
-stack-graphs = { git = "https://github.com/NomicFoundation/stack-graphs", branch = "nomic" }
 streaming-iterator = { version = "0.1.9" }
 string-interner = { version = "0.17.0", features = [
     "std",

@@ -1,8 +1,8 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use codegen_language_definition::model::Identifier;
-pub use codegen_language_definition::model::OperatorModel as PrecedenceOperatorModel;
+use language_definition::model::Identifier;
+pub use language_definition::model::OperatorModel as PrecedenceOperatorModel;
 
 use crate::parser::grammar::{GrammarVisitor, ParserDefinitionNode, Visitable};
 

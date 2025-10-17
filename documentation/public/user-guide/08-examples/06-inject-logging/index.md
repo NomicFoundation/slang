@@ -1,4 +1,4 @@
-# 8.5. Inject logging
+# 8.6. Inject logging
 
 In this example, we use the `BaseRewriter` class to achieve something different: instead of removing nodes, we edit them to insert snippets of code. In particular, we insert in every function a call to a fictitious `log` function, using the name of the function to make it a bit more interesting.
 

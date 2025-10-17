@@ -1,0 +1,5 @@
+error: unexpected token, expected `)`
+  --> src/fail/parsing/unrecognized_field/test.rs:18:13
+   |
+18 |             unrecognized_field = true
+   |             ^^^^^^^^^^^^^^^^^^

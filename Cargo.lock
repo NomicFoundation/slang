@@ -642,116 +642,68 @@ checksum = "b94f61472cee1439c0b966b47e3aca9ae07e45d070759512cd390ea2bebc6675"
 
 [[package]]
 name = "codegen_ebnf"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "Inflector",
- "codegen_language_definition",
  "derive-new",
  "indexmap",
+ "language_definition",
 ]
 
 [[package]]
 name = "codegen_generator"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "Inflector",
  "anyhow",
  "codegen_ebnf",
- "codegen_language_definition",
  "indexmap",
  "infra_utils",
+ "language_definition",
  "proc-macro2",
  "quote",
  "semver 1.0.26",
  "serde",
  "strum 0.26.3",
  "strum_macros 0.26.4",
-]
-
-[[package]]
-name = "codegen_language_definition"
-version = "1.2.1"
-dependencies = [
- "Inflector",
- "codegen_language_internal_macros",
- "indexmap",
- "infra_utils",
- "itertools 0.13.0",
- "proc-macro2",
- "quote",
- "semver 1.0.26",
- "serde",
- "strum 0.26.3",
- "strum_macros 0.26.4",
- "syn 2.0.104",
- "thiserror 2.0.12",
-]
-
-[[package]]
-name = "codegen_language_internal_macros"
-version = "1.2.1"
-dependencies = [
- "itertools 0.13.0",
- "proc-macro2",
- "quote",
- "syn 2.0.104",
-]
-
-[[package]]
-name = "codegen_language_macros"
-version = "1.2.1"
-dependencies = [
- "codegen_language_definition",
-]
-
-[[package]]
-name = "codegen_language_tests"
-version = "1.2.1"
-dependencies = [
- "codegen_language_definition",
- "codegen_language_macros",
- "infra_utils",
- "rayon",
- "semver 1.0.26",
- "trybuild",
 ]
 
 [[package]]
 name = "codegen_runner"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "anyhow",
  "codegen_generator",
- "codegen_language_definition",
  "codegen_spec",
  "codegen_testing",
  "infra_utils",
+ "language_definition",
  "rayon",
  "solidity_language",
 ]
 
 [[package]]
 name = "codegen_spec"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "Inflector",
  "anyhow",
  "codegen_ebnf",
- "codegen_language_definition",
  "infra_utils",
  "itertools 0.13.0",
+ "language_definition",
  "serde",
  "serde_json",
 ]
 
 [[package]]
 name = "codegen_testing"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "Inflector",
  "anyhow",
- "codegen_language_definition",
  "infra_utils",
+ "language_definition",
  "semver 1.0.26",
 ]
 
@@ -1932,7 +1884,7 @@ checksum = "f4c7245a08504955605670dbf141fceab975f15ca21570696aebe9d2e71576bd"
 
 [[package]]
 name = "infra_cli"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1954,7 +1906,7 @@ dependencies = [
 
 [[package]]
 name = "infra_utils"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2098,6 +2050,102 @@ dependencies = [
 ]
 
 [[package]]
+name = "language_definition"
+version = "1.3.0"
+dependencies = [
+ "Inflector",
+ "indexmap",
+ "infra_utils",
+ "itertools 0.13.0",
+ "language_internal_macros",
+ "proc-macro2",
+ "quote",
+ "semver 1.0.26",
+ "serde",
+ "strum 0.26.3",
+ "strum_macros 0.26.4",
+ "syn 2.0.104",
+ "thiserror 2.0.12",
+]
+
+[[package]]
+name = "language_internal_macros"
+version = "1.3.0"
+dependencies = [
+ "itertools 0.13.0",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.104",
+]
+
+[[package]]
+name = "language_macros"
+version = "1.3.0"
+dependencies = [
+ "language_definition",
+]
+
+[[package]]
+name = "language_tests"
+version = "1.3.0"
+dependencies = [
+ "infra_utils",
+ "language_definition",
+ "language_macros",
+ "rayon",
+ "semver 1.0.26",
+ "trybuild",
+]
+
+[[package]]
+name = "language_tests_v2"
+version = "1.3.0"
+dependencies = [
+ "infra_utils",
+ "language_v2_definition",
+ "language_v2_macros",
+ "rayon",
+ "semver 1.0.26",
+ "trybuild",
+]
+
+[[package]]
+name = "language_v2_definition"
+version = "1.3.0"
+dependencies = [
+ "Inflector",
+ "indexmap",
+ "infra_utils",
+ "itertools 0.13.0",
+ "language_v2_internal_macros",
+ "proc-macro2",
+ "quote",
+ "semver 1.0.26",
+ "serde",
+ "strum 0.26.3",
+ "strum_macros 0.26.4",
+ "syn 2.0.104",
+ "thiserror 2.0.12",
+]
+
+[[package]]
+name = "language_v2_internal_macros"
+version = "1.3.0"
+dependencies = [
+ "itertools 0.13.0",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.104",
+]
+
+[[package]]
+name = "language_v2_macros"
+version = "1.3.0"
+dependencies = [
+ "language_v2_definition",
+]
+
+[[package]]
 name = "lasso"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2183,7 +2231,8 @@ checksum = "13dc2df351e3202783a1fe0d44375f7295ffb4049267b0f3018346dc122a1d94"
 [[package]]
 name = "lsp-positions"
 version = "0.3.4"
-source = "git+https://github.com/NomicFoundation/stack-graphs?branch=nomic#9631ed9c7de4443525491745d46557dc16a7355c"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "562e6bd1c8366ac1cbe8a37057f530c40101eb8f4e98ce005be641c99d7331c8"
 dependencies = [
  "memchr",
  "unicode-segmentation",
@@ -2223,18 +2272,18 @@ checksum = "32a282da65faaf38286cf3be983213fcf1d2e2a58700e808f83f4ea9a4804bc0"
 
 [[package]]
 name = "metaslang_bindings"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "metaslang_cst",
  "metaslang_graph_builder",
+ "metaslang_stack_graphs",
  "semver 1.0.26",
- "stack-graphs",
  "thiserror 2.0.12",
 ]
 
 [[package]]
 name = "metaslang_cst"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "nom",
  "serde",
@@ -2243,7 +2292,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_graph_builder"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "env_logger",
  "indoc",
@@ -2256,6 +2305,22 @@ dependencies = [
  "string-interner",
  "strum 0.26.3",
  "strum_macros 0.26.4",
+ "thiserror 2.0.12",
+]
+
+[[package]]
+name = "metaslang_stack_graphs"
+version = "1.3.0"
+dependencies = [
+ "bitvec",
+ "controlled-option",
+ "either",
+ "enumset",
+ "fxhash",
+ "itertools 0.13.0",
+ "libc",
+ "lsp-positions",
+ "smallvec",
  "thiserror 2.0.12",
 ]
 
@@ -3460,7 +3525,7 @@ checksum = "04dc19736151f35336d325007ac991178d504a119863a2fcb3758cdb5e52c50d"
 
 [[package]]
 name = "slang_solidity"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "ariadne",
  "indexmap",
@@ -3475,7 +3540,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_cli"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "clap",
  "semver 1.0.26",
@@ -3681,14 +3746,14 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_tests"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "Inflector",
  "anyhow",
  "ariadne",
- "codegen_language_definition",
  "indoc",
  "infra_utils",
+ "language_definition",
  "metaslang_bindings",
  "metaslang_graph_builder",
  "regex",
@@ -3700,7 +3765,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_wasm"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "paste",
  "semver 1.0.26",
@@ -3711,24 +3776,24 @@ dependencies = [
 
 [[package]]
 name = "solidity_language"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
- "codegen_language_definition",
- "codegen_language_macros",
+ "language_definition",
+ "language_macros",
  "semver 1.0.26",
 ]
 
 [[package]]
 name = "solidity_npm_package"
-version = "1.2.1"
+version = "1.3.0"
 
 [[package]]
 name = "solidity_spec"
-version = "1.2.1"
+version = "1.3.0"
 
 [[package]]
 name = "solidity_testing_perf_cargo"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "anyhow",
  "iai-callgrind",
@@ -3747,7 +3812,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_perf_npm"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -3761,20 +3826,20 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_snapshots"
-version = "1.2.1"
+version = "1.3.0"
 
 [[package]]
 name = "solidity_testing_solc"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "anyhow",
  "ariadne",
  "clap",
- "codegen_language_definition",
  "console 0.15.11",
  "indicatif",
  "infra_utils",
  "itertools 0.13.0",
+ "language_definition",
  "rayon",
  "regex",
  "reqwest",
@@ -3788,7 +3853,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_sourcify"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -3806,7 +3871,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_utils"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "anyhow",
  "infra_utils",
@@ -3814,6 +3879,15 @@ dependencies = [
  "serde",
  "serde_json",
  "url",
+]
+
+[[package]]
+name = "solidity_v2_language"
+version = "1.3.0"
+dependencies = [
+ "language_v2_definition",
+ "language_v2_macros",
+ "semver 1.0.26",
 ]
 
 [[package]]
@@ -3840,23 +3914,6 @@ name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
-
-[[package]]
-name = "stack-graphs"
-version = "0.14.1"
-source = "git+https://github.com/NomicFoundation/stack-graphs?branch=nomic#9631ed9c7de4443525491745d46557dc16a7355c"
-dependencies = [
- "bitvec",
- "controlled-option",
- "either",
- "enumset",
- "fxhash",
- "itertools 0.10.5",
- "libc",
- "lsp-positions",
- "smallvec",
- "thiserror 1.0.69",
-]
 
 [[package]]
 name = "static_assertions"

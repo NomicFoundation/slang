@@ -25,9 +25,10 @@ pub trait CancellationFlag: Sync {
 #[error("Cancelled at \"{0}\"")]
 pub struct CancellationError(pub &'static str);
 
-impl stack_graphs::CancellationFlag for &dyn CancellationFlag {
-    fn check(&self, at: &'static str) -> Result<(), stack_graphs::CancellationError> {
-        CancellationFlag::check(*self, at).map_err(|err| stack_graphs::CancellationError(err.0))
+impl metaslang_stack_graphs::CancellationFlag for &dyn CancellationFlag {
+    fn check(&self, at: &'static str) -> Result<(), metaslang_stack_graphs::CancellationError> {
+        CancellationFlag::check(*self, at)
+            .map_err(|err| metaslang_stack_graphs::CancellationError(err.0))
     }
 }
 

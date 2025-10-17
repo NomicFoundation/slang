@@ -4,11 +4,11 @@ use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use anyhow::{Context, Result};
-use codegen_language_definition::model::Language;
 use indicatif::{ProgressBar, ProgressStyle};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
+use language_definition::model::Language;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use semver::Version;
 use serde::Deserialize;

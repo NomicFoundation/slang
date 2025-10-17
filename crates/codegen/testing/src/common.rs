@@ -3,10 +3,10 @@ use std::fmt::Write;
 use std::path::Path;
 
 use anyhow::{bail, Result};
-use codegen_language_definition::model::Language;
 use inflector::Inflector;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::{FileWalker, PathExtensions};
+use language_definition::model::Language;
 use semver::Version;
 
 pub(crate) fn collect_snapshot_tests(

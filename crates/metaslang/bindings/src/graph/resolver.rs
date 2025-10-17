@@ -2,13 +2,13 @@ use std::collections::{HashMap, HashSet};
 use std::iter::once;
 
 use metaslang_cst::kinds::KindTypes;
-use stack_graphs::arena::Handle;
-use stack_graphs::graph::{Degree, Edge, StackGraph};
-use stack_graphs::partial::{PartialPath, PartialPaths};
-use stack_graphs::stitching::{
+use metaslang_stack_graphs::arena::Handle;
+use metaslang_stack_graphs::graph::{Degree, Edge, StackGraph};
+use metaslang_stack_graphs::partial::{PartialPath, PartialPaths};
+use metaslang_stack_graphs::stitching::{
     Database, ForwardCandidates, ForwardPartialPathStitcher, StitcherConfig, ToAppendable,
 };
-use stack_graphs::{CancellationError, NoCancellation};
+use metaslang_stack_graphs::{CancellationError, NoCancellation};
 
 use crate::builder::{ExtendedStackGraph, GraphHandle};
 

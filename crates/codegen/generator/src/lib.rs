@@ -9,9 +9,9 @@ use std::collections::BTreeSet;
 use std::path::Path;
 
 use anyhow::Result;
-use codegen_language_definition::model::Language;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
+use language_definition::model::Language;
 use semver::Version;
 use serde::Serialize;
 
