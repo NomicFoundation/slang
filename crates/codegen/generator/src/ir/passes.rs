@@ -62,6 +62,14 @@ fn build_ir1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
 fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTransformer {
     let mut mutator = IrModelMutator::create_from(structured_ast_model);
 
+    flatten_contract_specifiers(&mut mutator);
+    unify_function_types(&mut mutator);
+    collapse_redundant_node_types(&mut mutator);
+
+    mutator.into()
+}
+
+fn flatten_contract_specifiers(mutator: &mut IrModelMutator) {
     // Flatten contract specifiers and bring the inherited types and storage
     // layout to the contract definition itself.
     mutator.remove_type("ContractSpecifiers");
@@ -75,7 +83,9 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
         false,
     );
     mutator.add_sequence_field("ContractDefinition", "storage_layout", "Expression", true);
+}
 
+fn unify_function_types(mutator: &mut IrModelMutator) {
     // Unifiy function definition types
     mutator.add_enum_type(
         "FunctionKind",
@@ -123,7 +133,26 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
         true,
     );
 
-    // And remove other specific function types and related attributes
+    // Flatten list of override specifiers and modifier invocations
+    mutator.add_sequence_field(
+        "FunctionDefinition",
+        "override_specifier",
+        "OverridePaths",
+        true,
+    );
+    mutator.add_collection_type("ModifierInvocations", "ModifierInvocation");
+    mutator.add_sequence_field(
+        "FunctionDefinition",
+        "modifier_invocations",
+        "ModifierInvocations",
+        false,
+    );
+
+    // And remove the list of attributes
+    mutator.remove_type("FunctionAttributes");
+    mutator.remove_type("FunctionAttribute");
+
+    // Then remove other specific function types and related attributes
     mutator.remove_type("ConstructorDefinition");
     mutator.remove_type("ConstructorAttributes");
     mutator.remove_type("ConstructorAttribute");
@@ -153,7 +182,9 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     // We don't need FunctionName or FunctionBody anymore
     mutator.remove_type("FunctionName");
     mutator.remove_type("FunctionBody");
+}
 
+fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
     // Collapse redundant node types
     mutator.collapse_sequence("ParametersDeclaration");
     mutator.collapse_sequence("ReturnsDeclaration");
@@ -181,6 +212,4 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     mutator.remove_type("NamedArgumentsDeclaration");
     mutator.add_choice_variant("ArgumentsDeclaration", "PositionalArguments");
     mutator.add_choice_variant("ArgumentsDeclaration", "NamedArguments");
-
-    mutator.into()
 }

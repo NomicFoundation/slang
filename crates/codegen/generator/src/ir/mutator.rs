@@ -8,7 +8,7 @@ use super::model::{Choice, Collection, Field, IrModel, NodeType, Sequence};
 pub struct IrModelMutator {
     pub sequences: IndexMap<model::Identifier, MutatedSequence>,
     pub choices: IndexMap<model::Identifier, MutatedChoice>,
-    pub collections: IndexMap<model::Identifier, Collection>,
+    pub collections: IndexMap<model::Identifier, MutatedCollection>,
 
     // Single field sequences that should be collapsed to their content.
     pub collapsed_sequences: IndexMap<model::Identifier, CollapsedSequence>,
@@ -140,6 +140,31 @@ impl From<&MutatedChoice> for Choice {
     }
 }
 
+#[derive(Clone, Serialize)]
+pub struct MutatedCollection {
+    pub item_type: NodeType,
+
+    // Indicates this is a new collection type, created in this language.
+    pub is_new: bool,
+}
+
+impl From<&Collection> for MutatedCollection {
+    fn from(value: &Collection) -> Self {
+        Self {
+            item_type: value.item_type.clone(),
+            is_new: false,
+        }
+    }
+}
+
+impl From<&MutatedCollection> for Collection {
+    fn from(value: &MutatedCollection) -> Self {
+        Self {
+            item_type: value.item_type.clone(),
+        }
+    }
+}
+
 impl IrModelMutator {
     pub fn create_from(source: &IrModel) -> Self {
         let sequences = source
@@ -154,7 +179,11 @@ impl IrModelMutator {
             .map(|(identifier, choice)| (identifier.clone(), choice.into()))
             .collect();
 
-        let collections = source.collections.clone();
+        let collections = source
+            .collections
+            .iter()
+            .map(|(identifier, collection)| (identifier.clone(), collection.into()))
+            .collect();
 
         let terminals = source.terminals.clone();
 
@@ -182,7 +211,11 @@ impl IrModelMutator {
             .map(|(identifier, choice)| (identifier.clone(), choice.into()))
             .collect();
 
-        let collections = self.collections.clone();
+        let collections = self
+            .collections
+            .iter()
+            .map(|(identifier, collection)| (identifier.clone(), collection.into()))
+            .collect();
 
         IrModel {
             terminals,
@@ -370,5 +403,16 @@ impl IrModelMutator {
                 collapsed.target_type = replace_field.r#type.clone();
             }
         }
+    }
+
+    pub fn add_collection_type(&mut self, name: &str, item_type: &str) {
+        let item_type = self.find_node_type(&item_type.into());
+        self.collections.insert(
+            name.into(),
+            MutatedCollection {
+                item_type,
+                is_new: true,
+            },
+        );
     }
 }

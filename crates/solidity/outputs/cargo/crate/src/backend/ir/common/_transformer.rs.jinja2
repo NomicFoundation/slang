@@ -108,16 +108,18 @@
     // Repeated & Separated
     //
 
-    {% for parent_type, collection in target.collections %}
-      fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-        source.iter().map(
-          {%- if collection.item_type.is_terminal -%}
-            Rc::clone
-          {%- else -%}
-            |item| self.transform_{{ collection.item_type.name | snake_case }}(item)
-          {%- endif -%}
-        ).collect()
-      }
+    {% for parent_type, collection in transformer.collections %}
+      {% if not collection.is_new -%}
+        fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+          source.iter().map(
+            {%- if collection.item_type.is_terminal -%}
+              Rc::clone
+            {%- else -%}
+              |item| self.transform_{{ collection.item_type.name | snake_case }}(item)
+            {%- endif -%}
+          ).collect()
+        }
+      {%- endif %}
     {% endfor %}
   }
 

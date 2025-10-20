@@ -628,11 +628,6 @@ pub trait Visitor {
     }
     fn leave_state_variable_attribute(&mut self, _node: &StateVariableAttribute) {}
 
-    fn enter_function_attribute(&mut self, _node: &FunctionAttribute) -> bool {
-        true
-    }
-    fn leave_function_attribute(&mut self, _node: &FunctionAttribute) {}
-
     fn enter_type_name(&mut self, _node: &TypeName) -> bool {
         true
     }
@@ -836,11 +831,6 @@ pub trait Visitor {
     }
     fn leave_parameters(&mut self, _items: &Parameters) {}
 
-    fn enter_function_attributes(&mut self, _items: &FunctionAttributes) -> bool {
-        true
-    }
-    fn leave_function_attributes(&mut self, _items: &FunctionAttributes) {}
-
     fn enter_override_paths(&mut self, _items: &OverridePaths) -> bool {
         true
     }
@@ -963,6 +953,11 @@ pub trait Visitor {
         true
     }
     fn leave_yul_path(&mut self, _items: &YulPath) {}
+
+    fn enter_modifier_invocations(&mut self, _items: &ModifierInvocations) -> bool {
+        true
+    }
+    fn leave_modifier_invocations(&mut self, _items: &ModifierInvocations) {}
 }
 
 //
@@ -1198,13 +1193,16 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
         return;
     }
     accept_parameters(&node.parameters, visitor);
-    accept_function_attributes(&node.attributes, visitor);
     if let Some(ref returns) = node.returns {
         accept_parameters(returns, visitor);
     }
     accept_function_kind(&node.kind, visitor);
     accept_function_visibility(&node.visibility, visitor);
     accept_function_mutability(&node.mutability, visitor);
+    if let Some(ref override_specifier) = node.override_specifier {
+        accept_override_paths(override_specifier, visitor);
+    }
+    accept_modifier_invocations(&node.modifier_invocations, visitor);
     if let Some(ref body) = node.body {
         accept_block(body, visitor);
     }
@@ -2208,30 +2206,6 @@ pub fn accept_state_variable_attribute(node: &StateVariableAttribute, visitor: &
     visitor.leave_state_variable_attribute(node);
 }
 
-pub fn accept_function_attribute(node: &FunctionAttribute, visitor: &mut impl Visitor) {
-    if !visitor.enter_function_attribute(node) {
-        return;
-    }
-    match node {
-        FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
-        }
-        FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
-        }
-        FunctionAttribute::ConstantKeyword
-        | FunctionAttribute::ExternalKeyword
-        | FunctionAttribute::InternalKeyword
-        | FunctionAttribute::PayableKeyword
-        | FunctionAttribute::PrivateKeyword
-        | FunctionAttribute::PublicKeyword
-        | FunctionAttribute::PureKeyword
-        | FunctionAttribute::ViewKeyword
-        | FunctionAttribute::VirtualKeyword => {}
-    }
-    visitor.leave_function_attribute(node);
-}
-
 pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
     if !visitor.enter_type_name(node) {
         return;
@@ -2861,17 +2835,6 @@ fn accept_parameters(items: &Vec<Parameter>, visitor: &mut impl Visitor) {
 }
 
 #[inline]
-fn accept_function_attributes(items: &Vec<FunctionAttribute>, visitor: &mut impl Visitor) {
-    if !visitor.enter_function_attributes(items) {
-        return;
-    }
-    for item in items {
-        accept_function_attribute(item, visitor);
-    }
-    visitor.leave_function_attributes(items);
-}
-
-#[inline]
 fn accept_override_paths(items: &Vec<IdentifierPath>, visitor: &mut impl Visitor) {
     if !visitor.enter_override_paths(items) {
         return;
@@ -3120,4 +3083,15 @@ fn accept_yul_path(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor) {
     if visitor.enter_yul_path(items) {
         visitor.leave_yul_path(items);
     }
+}
+
+#[inline]
+fn accept_modifier_invocations(items: &Vec<ModifierInvocation>, visitor: &mut impl Visitor) {
+    if !visitor.enter_modifier_invocations(items) {
+        return;
+    }
+    for item in items {
+        accept_modifier_invocation(item, visitor);
+    }
+    visitor.leave_modifier_invocations(items);
 }

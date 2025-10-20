@@ -62,11 +62,8 @@ impl Visitor for Pass {
         // TODO(validation): for modifier kind, they are not allowed inside
         // interfaces since 0.8.8
 
-        for attribute in &node.attributes {
-            if let input_ir::FunctionAttribute::ModifierInvocation(modifier_invocation) = attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
+        for modifier_invocation in &node.modifier_invocations {
+            self.resolve_modifier_invocation(modifier_invocation);
         }
 
         self.enter_scope_for_node_id(node.node_id);
