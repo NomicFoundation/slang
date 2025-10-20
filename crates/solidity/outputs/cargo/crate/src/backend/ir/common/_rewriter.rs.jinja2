@@ -47,15 +47,15 @@
     {% for parent_type, choice in target.choices %}
       fn default_rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         match source {
-          {% for nonterminal in choice.variants | filter(attribute="is_terminal", value=false) -%}
+          {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
             {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
               {{ parent_type }}::{{ nonterminal.name }}(self.rewrite_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
             }
           {%- endfor %}
-          {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+          {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
             {{ parent_type }}::{{ terminal.name }}(node) => {{ parent_type }}::{{ terminal.name }}(Rc::clone(node)),
           {%- endfor -%}
-          {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+          {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
             {{ parent_type }}::{{ terminal.name }} => {{ parent_type }}::{{ terminal.name }},
           {%- endfor -%}
         }

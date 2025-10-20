@@ -79,13 +79,14 @@ impl Serialize for NodeType {
     where
         S: serde::Serializer,
     {
-        let mut map = serializer.serialize_map(Some(3))?;
-        let (identifier, is_terminal, is_unique) = match self {
-            NodeType::Nonterminal(identifier) => (identifier, false, false),
-            NodeType::Terminal(identifier) => (identifier, true, false),
-            NodeType::UniqueTerminal(identifier) => (identifier, true, true),
+        let mut map = serializer.serialize_map(Some(4))?;
+        let (identifier, kind, is_terminal, is_unique) = match self {
+            NodeType::Nonterminal(identifier) => (identifier, "Nonterminal", false, false),
+            NodeType::Terminal(identifier) => (identifier, "Terminal", true, false),
+            NodeType::UniqueTerminal(identifier) => (identifier, "UniqueTerminal", true, true),
         };
         map.serialize_entry("name", identifier)?;
+        map.serialize_entry("kind", kind)?;
         map.serialize_entry("is_terminal", &is_terminal)?;
         map.serialize_entry("is_unique", &is_unique)?;
         map.end()

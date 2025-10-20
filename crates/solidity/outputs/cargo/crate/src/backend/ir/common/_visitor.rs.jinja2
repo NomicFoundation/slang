@@ -50,9 +50,9 @@
   //
 
   {% for parent_type, choice in target.choices %}
-    {%- set nonterminals = choice.variants | filter(attribute="is_terminal", value=false) -%}
-    {%- set unique_terminals = choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
-    {%- set non_unique_terminals = choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+    {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+    {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+    {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
     {% if nonterminals | length == 0 %}
       pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
     {% else %}

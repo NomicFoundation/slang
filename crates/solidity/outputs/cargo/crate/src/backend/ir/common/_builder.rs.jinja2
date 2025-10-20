@@ -70,17 +70,17 @@
       let mut helper = ChildrenHelper::new(&node.children);
       let variant = helper.accept_label(EdgeLabel::Variant)?;
       let item = match variant.kind() {
-        {% for type in choice.variants | filter(attribute="is_terminal", value=false) -%}
+        {% for type in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
           NodeKind::Nonterminal(NonterminalKind::{{ type.name }}) => {{ parent_type }}::{{ type.name }}(build_{{ type.name | snake_case }}(nonterminal_node(variant))?),
         {%- endfor -%}
 
-        {% for type in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+        {% for type in choice.variants | filter(attribute="kind", value="Terminal") -%}
           NodeKind::Terminal(TerminalKind::{{ type.name }}) => {
             {{ parent_type }}::{{ type.name }}(terminal_node_cloned(variant))
           },
         {%- endfor -%}
 
-        {% for type in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+        {% for type in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
           NodeKind::Terminal(TerminalKind::{{ type.name }}) => {
             {{ parent_type }}::{{ type.name }}
           },

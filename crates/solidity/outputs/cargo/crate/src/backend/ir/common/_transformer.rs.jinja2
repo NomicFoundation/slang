@@ -81,15 +81,15 @@
           #[allow(clippy::match_wildcard_for_single_variants)]
           #[allow(clippy::match_single_binding)]
           match source {
-            {% for nonterminal in choice.variants | filter(attribute="is_terminal", value=false) -%}
+            {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
               input::{{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
                 output::{{ parent_type }}::{{ nonterminal.name }}(self.transform_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
               }
             {%- endfor -%}
-            {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=false) -%}
+            {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
               input::{{ parent_type }}::{{ terminal.name }}(node) => output::{{ parent_type }}::{{ terminal.name }}(Rc::clone(node)),
             {%- endfor -%}
-            {% for terminal in choice.variants | filter(attribute="is_terminal", value=true) | filter(attribute="is_unique", value=true) -%}
+            {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
               input::{{ parent_type }}::{{ terminal.name }} => output::{{ parent_type }}::{{ terminal.name }},
             {%- endfor -%}
             {% if choice.has_removed_variants %}
