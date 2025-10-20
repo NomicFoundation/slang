@@ -120,7 +120,7 @@ pub struct UsingDirectiveStruct {
     pub node_id: NodeId,
     pub clause: UsingClause,
     pub target: UsingTarget,
-    pub global_keyword: Option<Rc<TerminalNode>>,
+    pub global_keyword: bool,
 }
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
@@ -145,7 +145,7 @@ pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 #[derive(Debug)]
 pub struct ContractDefinitionStruct {
     pub node_id: NodeId,
-    pub abstract_keyword: Option<Rc<TerminalNode>>,
+    pub abstract_keyword: bool,
     pub name: Rc<TerminalNode>,
     pub members: ContractMembers,
     pub inheritance_types: InheritanceTypes,
@@ -275,7 +275,7 @@ pub struct EventDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub parameters: EventParameters,
-    pub anonymous_keyword: Option<Rc<TerminalNode>>,
+    pub anonymous_keyword: bool,
 }
 
 pub type EventParameter = Rc<EventParameterStruct>;
@@ -284,7 +284,7 @@ pub type EventParameter = Rc<EventParameterStruct>;
 pub struct EventParameterStruct {
     pub node_id: NodeId,
     pub type_name: TypeName,
-    pub indexed_keyword: Option<Rc<TerminalNode>>,
+    pub indexed_keyword: bool,
     pub name: Option<Rc<TerminalNode>>,
 }
 
@@ -366,7 +366,7 @@ pub type AddressType = Rc<AddressTypeStruct>;
 #[derive(Debug)]
 pub struct AddressTypeStruct {
     pub node_id: NodeId,
-    pub payable_keyword: Option<Rc<TerminalNode>>,
+    pub payable_keyword: bool,
 }
 
 pub type Block = Rc<BlockStruct>;
@@ -408,7 +408,7 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
     pub node_id: NodeId,
-    pub var_keyword: Option<Rc<TerminalNode>>,
+    pub var_keyword: bool,
     pub elements: TupleDeconstructionElements,
     pub expression: Expression,
 }

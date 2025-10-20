@@ -141,7 +141,7 @@ contract Test {
     let l1_structured_ast::ElementaryType::AddressType(ref address_type) = parameter_type else {
         panic!("Expected AddressType");
     };
-    assert!(address_type.payable_keyword.is_none());
+    assert!(!address_type.payable_keyword);
 
     Ok(())
 }

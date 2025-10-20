@@ -567,7 +567,7 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
     ) -> bool {
-        if node.var_keyword.is_some() {
+        if node.var_keyword {
             // this is a (deprecated) variable declaration, not assignment
             return true;
         }
@@ -697,7 +697,7 @@ impl Visitor for Pass {
             // NOTE: ensure following code does not need to perform resolution
         }
 
-        if node.var_keyword.is_none() {
+        if !node.var_keyword {
             return;
         }
 

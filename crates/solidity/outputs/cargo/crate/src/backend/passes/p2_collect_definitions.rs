@@ -586,7 +586,7 @@ impl Visitor for Pass {
             self.replace_scope(scope);
         }
 
-        let is_untyped_declaration = node.var_keyword.is_some();
+        let is_untyped_declaration = node.var_keyword;
         for element in &node.elements {
             let Some(tuple_member) = &element.member else {
                 continue;
