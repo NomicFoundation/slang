@@ -323,6 +323,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_parameters(value));
         let kind = self.rewrite_function_kind(&source.kind);
         let visibility = self.rewrite_function_visibility(&source.visibility);
+        let mutability = self.rewrite_function_mutability(&source.mutability);
         let name = source.name.as_ref().map(Rc::clone);
         let body = source.body.as_ref().map(|value| self.rewrite_block(value));
 
@@ -333,6 +334,7 @@ pub trait Rewriter {
             returns,
             kind,
             visibility,
+            mutability,
             name,
             body,
         })
@@ -2363,6 +2365,21 @@ pub trait Rewriter {
     }
     fn rewrite_function_visibility(&mut self, source: &FunctionVisibility) -> FunctionVisibility {
         self.default_rewrite_function_visibility(source)
+    }
+
+    fn default_rewrite_function_mutability(
+        &mut self,
+        source: &FunctionMutability,
+    ) -> FunctionMutability {
+        match source {
+            FunctionMutability::Pure => FunctionMutability::Pure,
+            FunctionMutability::View => FunctionMutability::View,
+            FunctionMutability::NonPayable => FunctionMutability::NonPayable,
+            FunctionMutability::Payable => FunctionMutability::Payable,
+        }
+    }
+    fn rewrite_function_mutability(&mut self, source: &FunctionMutability) -> FunctionMutability {
+        self.default_rewrite_function_mutability(source)
     }
 
     //

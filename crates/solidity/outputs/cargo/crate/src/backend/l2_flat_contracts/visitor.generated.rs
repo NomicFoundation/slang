@@ -758,6 +758,11 @@ pub trait Visitor {
     }
     fn leave_function_visibility(&mut self, _node: &FunctionVisibility) {}
 
+    fn enter_function_mutability(&mut self, _node: &FunctionMutability) -> bool {
+        true
+    }
+    fn leave_function_mutability(&mut self, _node: &FunctionMutability) {}
+
     fn enter_source_unit_members(&mut self, _items: &SourceUnitMembers) -> bool {
         true
     }
@@ -1199,6 +1204,7 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
     }
     accept_function_kind(&node.kind, visitor);
     accept_function_visibility(&node.visibility, visitor);
+    accept_function_mutability(&node.mutability, visitor);
     if let Some(ref body) = node.body {
         accept_block(body, visitor);
     }
@@ -2692,6 +2698,8 @@ pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
 pub fn accept_function_kind(_node: &FunctionKind, _visitor: &mut impl Visitor) {}
 
 pub fn accept_function_visibility(_node: &FunctionVisibility, _visitor: &mut impl Visitor) {}
+
+pub fn accept_function_mutability(_node: &FunctionMutability, _visitor: &mut impl Visitor) {}
 
 //
 // Repeated & Separated
