@@ -238,6 +238,7 @@ pub struct FunctionDefinitionStruct {
     pub returns: Option<Parameters>,
     pub kind: FunctionKind,
     pub visibility: FunctionVisibility,
+    pub mutability: FunctionMutability,
     pub name: Option<Rc<TerminalNode>>,
     pub body: Option<Block>,
 }
@@ -1356,6 +1357,14 @@ pub enum FunctionVisibility {
     Private,
     Internal,
     External,
+}
+
+#[derive(Debug)]
+pub enum FunctionMutability {
+    Pure,
+    View,
+    NonPayable,
+    Payable,
 }
 
 //

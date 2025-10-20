@@ -136,25 +136,11 @@ impl Pass {
         } else {
             self.types.void()
         };
-        let mut kind = FunctionTypeKind::NonPayable;
+        let kind = (&function_definition.mutability).into();
         let external = matches!(
             function_definition.visibility,
             input_ir::FunctionVisibility::External | input_ir::FunctionVisibility::Public
         );
-        for attribute in &function_definition.attributes {
-            match attribute {
-                input_ir::FunctionAttribute::PureKeyword => {
-                    kind = FunctionTypeKind::Pure;
-                }
-                input_ir::FunctionAttribute::ViewKeyword => {
-                    kind = FunctionTypeKind::View;
-                }
-                input_ir::FunctionAttribute::PayableKeyword => {
-                    kind = FunctionTypeKind::Payable;
-                }
-                _ => {}
-            }
-        }
         Some(self.types.register_type(Type::Function(FunctionType {
             definition_id: Some(function_definition.node_id),
             implicit_receiver_type,

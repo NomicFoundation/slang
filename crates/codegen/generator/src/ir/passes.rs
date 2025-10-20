@@ -95,12 +95,24 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
         &["Public", "Private", "Internal", "External"],
     );
 
+    // Function mutability, computed from a subset of the attributes
+    mutator.add_enum_type(
+        "FunctionMutability",
+        &["Pure", "View", "NonPayable", "Payable"],
+    );
+
     // Add the kind to the FunctionDefinition type, which will now hold all kinds
     mutator.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
     mutator.add_sequence_field(
         "FunctionDefinition",
         "visibility",
         "FunctionVisibility",
+        false,
+    );
+    mutator.add_sequence_field(
+        "FunctionDefinition",
+        "mutability",
+        "FunctionMutability",
         false,
     );
 

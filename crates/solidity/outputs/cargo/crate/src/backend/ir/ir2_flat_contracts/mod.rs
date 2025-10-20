@@ -30,3 +30,14 @@ impl From<&StorageLocation> for types::DataLocation {
         }
     }
 }
+
+impl From<&FunctionMutability> for types::FunctionTypeKind {
+    fn from(value: &FunctionMutability) -> Self {
+        match value {
+            FunctionMutability::Pure => Self::Pure,
+            FunctionMutability::View => Self::View,
+            FunctionMutability::NonPayable => Self::NonPayable,
+            FunctionMutability::Payable => Self::Payable,
+        }
+    }
+}

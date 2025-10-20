@@ -90,6 +90,7 @@ impl Transformer for Pass {
         };
         let attributes = self.transform_function_attributes(&source.attributes);
         let visibility = self.function_visibility(&source.attributes);
+        let mutability = Self::function_mutability(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
@@ -104,6 +105,7 @@ impl Transformer for Pass {
             returns,
             kind,
             visibility,
+            mutability,
             name,
             body,
         })
@@ -235,6 +237,20 @@ impl Pass {
         )
     }
 
+    fn function_mutability(attributes: &input::FunctionAttributes) -> output::FunctionMutability {
+        // TODO(validation): only a single mutability keyword can be provided
+        attributes.iter().fold(
+            output::FunctionMutability::NonPayable,
+            |mutability, attribute| match attribute {
+                input::FunctionAttribute::PayableKeyword => output::FunctionMutability::Payable,
+                input::FunctionAttribute::PureKeyword => output::FunctionMutability::Pure,
+                input::FunctionAttribute::ConstantKeyword
+                | input::FunctionAttribute::ViewKeyword => output::FunctionMutability::View,
+                _ => mutability,
+            },
+        )
+    }
+
     fn transform_function_body(&mut self, source: &input::FunctionBody) -> Option<output::Block> {
         match source {
             input::FunctionBody::Block(block) => Some(self.transform_block(block)),
@@ -251,6 +267,7 @@ impl Pass {
         let name = None;
         let attributes = self.transform_constructor_attributes(&source.attributes);
         let visibility = Self::constructor_visibility(&source.attributes);
+        let mutability = Self::constructor_mutability(&source.attributes);
         let body = Some(self.transform_block(&source.body));
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -262,6 +279,7 @@ impl Pass {
             returns,
             kind,
             visibility,
+            mutability,
             name,
             body,
         })
@@ -278,6 +296,18 @@ impl Pass {
                 }
                 input::ConstructorAttribute::PublicKeyword => output::FunctionVisibility::Public,
                 _ => visibility,
+            },
+        )
+    }
+
+    fn constructor_mutability(
+        attributes: &input::ConstructorAttributes,
+    ) -> output::FunctionMutability {
+        attributes.iter().fold(
+            output::FunctionMutability::NonPayable,
+            |mutability, attribute| match attribute {
+                input::ConstructorAttribute::PayableKeyword => output::FunctionMutability::Payable,
+                _ => mutability,
             },
         )
     }
@@ -332,6 +362,7 @@ impl Pass {
         let attributes = self.transform_unnamed_function_attributes(&source.attributes);
         // TODO(validation): unnamed (aka fallback) functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
+        let mutability = Self::unnamed_function_mutability(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -343,9 +374,27 @@ impl Pass {
             returns,
             kind,
             visibility,
+            mutability,
             name,
             body,
         })
+    }
+
+    fn unnamed_function_mutability(
+        attributes: &input::UnnamedFunctionAttributes,
+    ) -> output::FunctionMutability {
+        attributes.iter().fold(
+            output::FunctionMutability::NonPayable,
+            |mutability, attribute| match attribute {
+                input::UnnamedFunctionAttribute::PayableKeyword => {
+                    output::FunctionMutability::Payable
+                }
+                input::UnnamedFunctionAttribute::PureKeyword => output::FunctionMutability::Pure,
+                input::UnnamedFunctionAttribute::ConstantKeyword
+                | input::UnnamedFunctionAttribute::ViewKeyword => output::FunctionMutability::View,
+                _ => mutability,
+            },
+        )
     }
 
     fn transform_unnamed_function_attributes(
@@ -401,6 +450,7 @@ impl Pass {
         let attributes = self.transform_fallback_function_attributes(&source.attributes);
         // TODO(validation): fallback functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
+        let mutability = Self::fallback_function_mutability(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
@@ -415,9 +465,24 @@ impl Pass {
             returns,
             kind,
             visibility,
+            mutability,
             name,
             body,
         })
+    }
+
+    fn fallback_function_mutability(
+        attributes: &input::FallbackFunctionAttributes,
+    ) -> output::FunctionMutability {
+        attributes.iter().fold(
+            output::FunctionMutability::NonPayable,
+            |mutability, attribute| match attribute {
+                input::FallbackFunctionAttribute::PayableKeyword => output::FunctionMutability::Payable,
+                input::FallbackFunctionAttribute::PureKeyword => output::FunctionMutability::Pure,
+                input::FallbackFunctionAttribute::ViewKeyword => output::FunctionMutability::View,
+                _ => mutability,
+            },
+        )
     }
 
     fn transform_fallback_function_attributes(
@@ -469,6 +534,8 @@ impl Pass {
         let attributes = self.transform_receive_function_attributes(&source.attributes);
         // TODO(validation): receive functions *must* have an external visibility
         let visibility = output::FunctionVisibility::External;
+        // TODO(validation): receive functions *must* be payable
+        let mutability = output::FunctionMutability::Payable;
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -480,6 +547,7 @@ impl Pass {
             returns,
             kind,
             visibility,
+            mutability,
             name,
             body,
         })
@@ -531,6 +599,8 @@ impl Pass {
         let name = Some(Rc::clone(&source.name));
         let attributes = self.transform_modifier_attributes(&source.attributes);
         let visibility = output::FunctionVisibility::Internal;
+        // mutability is irrelevant for modifiers
+        let mutability = output::FunctionMutability::NonPayable;
         let body = self.transform_function_body(&source.body);
         let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameters| {
             self.transform_parameters_declaration(parameters)
@@ -544,6 +614,7 @@ impl Pass {
             returns,
             kind,
             visibility,
+            mutability,
             name,
             body,
         })
