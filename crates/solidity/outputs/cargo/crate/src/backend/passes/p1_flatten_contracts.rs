@@ -91,6 +91,10 @@ impl Transformer for Pass {
         let attributes = self.transform_function_attributes(&source.attributes);
         let visibility = self.function_visibility(&source.attributes);
         let mutability = Self::function_mutability(&source.attributes);
+        let virtual_keyword = source
+            .attributes
+            .iter()
+            .any(|attribute| matches!(attribute, input::FunctionAttribute::VirtualKeyword));
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
@@ -106,6 +110,7 @@ impl Transformer for Pass {
             kind,
             visibility,
             mutability,
+            virtual_keyword,
             name,
             body,
         })
@@ -268,6 +273,10 @@ impl Pass {
         let attributes = self.transform_constructor_attributes(&source.attributes);
         let visibility = Self::constructor_visibility(&source.attributes);
         let mutability = Self::constructor_mutability(&source.attributes);
+        let virtual_keyword = source
+            .attributes
+            .iter()
+            .any(|attribute| matches!(attribute, input::ConstructorAttribute::VirtualKeyword));
         let body = Some(self.transform_block(&source.body));
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -280,6 +289,7 @@ impl Pass {
             kind,
             visibility,
             mutability,
+            virtual_keyword,
             name,
             body,
         })
@@ -363,6 +373,7 @@ impl Pass {
         // TODO(validation): unnamed (aka fallback) functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         let mutability = Self::unnamed_function_mutability(&source.attributes);
+        let virtual_keyword = false;
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -375,6 +386,7 @@ impl Pass {
             kind,
             visibility,
             mutability,
+            virtual_keyword,
             name,
             body,
         })
@@ -451,6 +463,10 @@ impl Pass {
         // TODO(validation): fallback functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         let mutability = Self::fallback_function_mutability(&source.attributes);
+        let virtual_keyword = source
+            .attributes
+            .iter()
+            .any(|attribute| matches!(attribute, input::FallbackFunctionAttribute::VirtualKeyword));
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
@@ -466,6 +482,7 @@ impl Pass {
             kind,
             visibility,
             mutability,
+            virtual_keyword,
             name,
             body,
         })
@@ -477,7 +494,9 @@ impl Pass {
         attributes.iter().fold(
             output::FunctionMutability::NonPayable,
             |mutability, attribute| match attribute {
-                input::FallbackFunctionAttribute::PayableKeyword => output::FunctionMutability::Payable,
+                input::FallbackFunctionAttribute::PayableKeyword => {
+                    output::FunctionMutability::Payable
+                }
                 input::FallbackFunctionAttribute::PureKeyword => output::FunctionMutability::Pure,
                 input::FallbackFunctionAttribute::ViewKeyword => output::FunctionMutability::View,
                 _ => mutability,
@@ -536,6 +555,10 @@ impl Pass {
         let visibility = output::FunctionVisibility::External;
         // TODO(validation): receive functions *must* be payable
         let mutability = output::FunctionMutability::Payable;
+        let virtual_keyword = source
+            .attributes
+            .iter()
+            .any(|attribute| matches!(attribute, input::ReceiveFunctionAttribute::VirtualKeyword));
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -548,6 +571,7 @@ impl Pass {
             kind,
             visibility,
             mutability,
+            virtual_keyword,
             name,
             body,
         })
@@ -601,6 +625,10 @@ impl Pass {
         let visibility = output::FunctionVisibility::Internal;
         // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
+        let virtual_keyword = source
+            .attributes
+            .iter()
+            .any(|attribute| matches!(attribute, input::ModifierAttribute::VirtualKeyword));
         let body = self.transform_function_body(&source.body);
         let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameters| {
             self.transform_parameters_declaration(parameters)
@@ -615,6 +643,7 @@ impl Pass {
             kind,
             visibility,
             mutability,
+            virtual_keyword,
             name,
             body,
         })

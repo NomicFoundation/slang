@@ -239,6 +239,7 @@ pub struct FunctionDefinitionStruct {
     pub kind: FunctionKind,
     pub visibility: FunctionVisibility,
     pub mutability: FunctionMutability,
+    pub virtual_keyword: bool,
     pub name: Option<Rc<TerminalNode>>,
     pub body: Option<Block>,
 }
