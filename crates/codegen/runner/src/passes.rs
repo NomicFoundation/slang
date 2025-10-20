@@ -118,6 +118,13 @@ fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTra
         "FunctionMutability",
         false,
     );
+    // We use an optional unique terminal to effectively have a boolean
+    mutator.add_sequence_field(
+        "FunctionDefinition",
+        "virtual_keyword",
+        "VirtualKeyword",
+        true,
+    );
 
     // And remove other specific function types and related attributes
     mutator.remove_type("ConstructorDefinition");

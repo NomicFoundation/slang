@@ -324,6 +324,7 @@ pub trait Rewriter {
         let kind = self.rewrite_function_kind(&source.kind);
         let visibility = self.rewrite_function_visibility(&source.visibility);
         let mutability = self.rewrite_function_mutability(&source.mutability);
+        let virtual_keyword = source.virtual_keyword;
         let name = source.name.as_ref().map(Rc::clone);
         let body = source.body.as_ref().map(|value| self.rewrite_block(value));
 
@@ -335,6 +336,7 @@ pub trait Rewriter {
             kind,
             visibility,
             mutability,
+            virtual_keyword,
             name,
             body,
         })
