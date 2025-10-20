@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use super::{storage_location_to_data_location, Pass};
+use super::Pass;
 use crate::backend::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
 use crate::backend::built_ins::BuiltIn;
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
@@ -109,13 +109,10 @@ impl Visitor for Pass {
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
         let default_location = if self.language_version < VERSION_0_5_0 {
-            if node.attributes.iter().any(|attribute| {
-                matches!(
-                    attribute,
-                    input_ir::FunctionAttribute::ExternalKeyword
-                        | input_ir::FunctionAttribute::PublicKeyword
-                )
-            }) {
+            if matches!(
+                node.visibility,
+                input_ir::FunctionVisibility::External | input_ir::FunctionVisibility::Public
+            ) {
                 Some(DataLocation::Calldata)
             } else {
                 Some(DataLocation::Memory)
@@ -263,17 +260,14 @@ impl Visitor for Pass {
             if let input_ir::VariableDeclarationType::TypeName(type_name) = &node.variable_type {
                 self.resolve_type_name(
                     type_name,
-                    node.storage_location
-                        .as_ref()
-                        .map(storage_location_to_data_location)
-                        .or_else(|| {
-                            if self.language_version < VERSION_0_5_0 {
-                                // default data location is storage for variables
-                                Some(DataLocation::Storage)
-                            } else {
-                                None
-                            }
-                        }),
+                    node.storage_location.as_ref().map(Into::into).or_else(|| {
+                        if self.language_version < VERSION_0_5_0 {
+                            // default data location is storage for variables
+                            Some(DataLocation::Storage)
+                        } else {
+                            None
+                        }
+                    }),
                 )
             } else {
                 // this is for `var` variables (in Solidity < 0.5.0) we cannot
@@ -286,17 +280,14 @@ impl Visitor for Pass {
     fn leave_typed_tuple_member(&mut self, node: &input_ir::TypedTupleMember) {
         let type_id = self.resolve_type_name(
             &node.type_name,
-            node.storage_location
-                .as_ref()
-                .map(storage_location_to_data_location)
-                .or_else(|| {
-                    if self.language_version < VERSION_0_5_0 {
-                        // default data location is storage for variables
-                        Some(DataLocation::Storage)
-                    } else {
-                        None
-                    }
-                }),
+            node.storage_location.as_ref().map(Into::into).or_else(|| {
+                if self.language_version < VERSION_0_5_0 {
+                    // default data location is storage for variables
+                    Some(DataLocation::Storage)
+                } else {
+                    None
+                }
+            }),
         );
         self.binder.set_node_type(node.node_id, type_id);
     }

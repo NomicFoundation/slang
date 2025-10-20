@@ -5,7 +5,7 @@ use semver::Version;
 use super::p3_linearise_contracts::Output as Input;
 use crate::backend::binder::{Binder, Definition, Scope, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::backend::types::{DataLocation, Type, TypeId, TypeRegistry};
+use crate::backend::types::{Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;
 
@@ -47,14 +47,6 @@ pub fn run(input: Input) -> Output {
         files,
         binder,
         types,
-    }
-}
-
-fn storage_location_to_data_location(storage_location: &input_ir::StorageLocation) -> DataLocation {
-    match storage_location {
-        input_ir::StorageLocation::MemoryKeyword => DataLocation::Memory,
-        input_ir::StorageLocation::StorageKeyword => DataLocation::Storage,
-        input_ir::StorageLocation::CallDataKeyword => DataLocation::Calldata,
     }
 }
 

@@ -5,8 +5,7 @@ use semver::Version;
 
 use super::p1_flatten_contracts::Output as Input;
 use crate::backend::binder::{
-    Binder, Definition, FileScope, FunctionVisibility, ParametersScope, Scope, ScopeId,
-    StateVariableVisibility,
+    Binder, Definition, FileScope, ParametersScope, Scope, ScopeId, StateVariableVisibility,
 };
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
@@ -354,34 +353,7 @@ impl Visitor for Pass {
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
 
                 if let Some(name) = &node.name {
-                    // TODO(validation): only a single visibility keyword can be provided
-                    // TODO(validation): free functions are always internal, but
-                    // otherwise a visibility *must* be set explicitly (>= 0.5.0)
-                    let visibility = node
-                        .attributes
-                        .iter()
-                        .fold(None, |previous, attribute| match attribute {
-                            input_ir::FunctionAttribute::ExternalKeyword => {
-                                Some(FunctionVisibility::External)
-                            }
-                            input_ir::FunctionAttribute::InternalKeyword => {
-                                Some(FunctionVisibility::Internal)
-                            }
-                            input_ir::FunctionAttribute::PrivateKeyword => {
-                                Some(FunctionVisibility::Private)
-                            }
-                            input_ir::FunctionAttribute::PublicKeyword => {
-                                Some(FunctionVisibility::Public)
-                            }
-                            _ => previous,
-                        })
-                        .unwrap_or(if self.language_version < VERSION_0_5_0 {
-                            // in Solidity < 0.5.0 free functions are not valid and the
-                            // default visibility for contract functions is public
-                            FunctionVisibility::Public
-                        } else {
-                            FunctionVisibility::Internal
-                        });
+                    let visibility = (&node.visibility).into();
                     let definition = Definition::new_function(
                         node.node_id,
                         name,

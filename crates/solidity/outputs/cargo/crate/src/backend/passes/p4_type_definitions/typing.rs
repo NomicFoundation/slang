@@ -1,4 +1,4 @@
-use super::{storage_location_to_data_location, Pass};
+use super::Pass;
 use crate::backend::binder::{Definition, Scope};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
@@ -137,11 +137,12 @@ impl Pass {
             self.types.void()
         };
         let mut kind = FunctionTypeKind::NonPayable;
-        let mut external = false;
+        let external = matches!(
+            function_definition.visibility,
+            input_ir::FunctionVisibility::External | input_ir::FunctionVisibility::Public
+        );
         for attribute in &function_definition.attributes {
             match attribute {
-                input_ir::FunctionAttribute::ExternalKeyword
-                | input_ir::FunctionAttribute::PublicKeyword => external = true,
                 input_ir::FunctionAttribute::PureKeyword => {
                     kind = FunctionTypeKind::Pure;
                 }
@@ -268,7 +269,7 @@ impl Pass {
                 parameter
                     .storage_location
                     .as_ref()
-                    .map(storage_location_to_data_location)
+                    .map(Into::into)
                     .or(default_location),
             );
             self.binder.set_node_type(parameter.node_id, type_id);

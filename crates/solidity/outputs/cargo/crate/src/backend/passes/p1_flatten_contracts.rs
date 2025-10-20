@@ -1,10 +1,13 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use semver::Version;
+
 use super::p0_build_ast::Output as Input;
 use crate::backend::ir::ir2_flat_contracts::transformer::Transformer;
 use crate::backend::ir::ir2_flat_contracts::{self as output, input, SourceUnit};
 use crate::compilation::CompilationUnit;
+use crate::utils::versions::VERSION_0_5_0;
 
 pub struct Output {
     pub compilation_unit: CompilationUnit,
@@ -16,7 +19,9 @@ pub struct Output {
 /// inheritance and storage layout specifiers. In the future, more
 /// transformations will be added.
 pub fn run(input: Input) -> Output {
-    let mut pass = Pass {};
+    let mut pass = Pass {
+        language_version: input.compilation_unit.language_version().clone(),
+    };
     let files = input
         .files
         .iter()
@@ -29,7 +34,9 @@ pub fn run(input: Input) -> Output {
     }
 }
 
-struct Pass;
+struct Pass {
+    language_version: Version,
+}
 
 impl Transformer for Pass {
     fn transform_contract_definition(
@@ -82,6 +89,7 @@ impl Transformer for Pass {
             input::FunctionName::ReceiveKeyword => (None, output::FunctionKind::Receive),
         };
         let attributes = self.transform_function_attributes(&source.attributes);
+        let visibility = self.function_visibility(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
@@ -95,6 +103,7 @@ impl Transformer for Pass {
             attributes,
             returns,
             kind,
+            visibility,
             name,
             body,
         })
@@ -199,6 +208,33 @@ impl Transformer for Pass {
 }
 
 impl Pass {
+    fn function_visibility(
+        &self,
+        attributes: &input::FunctionAttributes,
+    ) -> output::FunctionVisibility {
+        // TODO(validation): only a single visibility keyword can be provided
+        // TODO(validation): free functions are always internal, but
+        // otherwise a visibility *must* be set explicitly (>= 0.5.0)
+        attributes.iter().fold(
+            if self.language_version < VERSION_0_5_0 {
+                // In Solidity < 0.5.0 free functions are not valid and the
+                // default visibility for contract functions is public
+                output::FunctionVisibility::Public
+            } else {
+                // Otherwise the default for free functions is internal, and for
+                // contract function you must specify a visibility attribute.
+                output::FunctionVisibility::Internal
+            },
+            |visibility, attribute| match attribute {
+                input::FunctionAttribute::ExternalKeyword => output::FunctionVisibility::External,
+                input::FunctionAttribute::InternalKeyword => output::FunctionVisibility::Internal,
+                input::FunctionAttribute::PrivateKeyword => output::FunctionVisibility::Private,
+                input::FunctionAttribute::PublicKeyword => output::FunctionVisibility::Public,
+                _ => visibility,
+            },
+        )
+    }
+
     fn transform_function_body(&mut self, source: &input::FunctionBody) -> Option<output::Block> {
         match source {
             input::FunctionBody::Block(block) => Some(self.transform_block(block)),
@@ -214,6 +250,7 @@ impl Pass {
         let kind = output::FunctionKind::Constructor;
         let name = None;
         let attributes = self.transform_constructor_attributes(&source.attributes);
+        let visibility = Self::constructor_visibility(&source.attributes);
         let body = Some(self.transform_block(&source.body));
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -224,9 +261,25 @@ impl Pass {
             attributes,
             returns,
             kind,
+            visibility,
             name,
             body,
         })
+    }
+
+    fn constructor_visibility(
+        attributes: &input::ConstructorAttributes,
+    ) -> output::FunctionVisibility {
+        attributes.iter().fold(
+            output::FunctionVisibility::Public,
+            |visibility, attribute| match attribute {
+                input::ConstructorAttribute::InternalKeyword => {
+                    output::FunctionVisibility::Internal
+                }
+                input::ConstructorAttribute::PublicKeyword => output::FunctionVisibility::Public,
+                _ => visibility,
+            },
+        )
     }
 
     fn transform_constructor_attributes(
@@ -277,6 +330,8 @@ impl Pass {
         let kind = output::FunctionKind::Unnamed;
         let name = None;
         let attributes = self.transform_unnamed_function_attributes(&source.attributes);
+        // TODO(validation): unnamed (aka fallback) functions *must* have external visibility
+        let visibility = output::FunctionVisibility::External;
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -287,6 +342,7 @@ impl Pass {
             attributes,
             returns,
             kind,
+            visibility,
             name,
             body,
         })
@@ -343,6 +399,8 @@ impl Pass {
         let kind = output::FunctionKind::Fallback;
         let name = None;
         let attributes = self.transform_fallback_function_attributes(&source.attributes);
+        // TODO(validation): fallback functions *must* have external visibility
+        let visibility = output::FunctionVisibility::External;
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
@@ -356,6 +414,7 @@ impl Pass {
             attributes,
             returns,
             kind,
+            visibility,
             name,
             body,
         })
@@ -408,6 +467,8 @@ impl Pass {
         let kind = output::FunctionKind::Receive;
         let name = None;
         let attributes = self.transform_receive_function_attributes(&source.attributes);
+        // TODO(validation): receive functions *must* have an external visibility
+        let visibility = output::FunctionVisibility::External;
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -418,6 +479,7 @@ impl Pass {
             attributes,
             returns,
             kind,
+            visibility,
             name,
             body,
         })
@@ -468,6 +530,7 @@ impl Pass {
         let kind = output::FunctionKind::Modifier;
         let name = Some(Rc::clone(&source.name));
         let attributes = self.transform_modifier_attributes(&source.attributes);
+        let visibility = output::FunctionVisibility::Internal;
         let body = self.transform_function_body(&source.body);
         let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameters| {
             self.transform_parameters_declaration(parameters)
@@ -480,6 +543,7 @@ impl Pass {
             attributes,
             returns,
             kind,
+            visibility,
             name,
             body,
         })
