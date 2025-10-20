@@ -192,13 +192,6 @@ impl IrModelMutator {
         }
     }
 
-    pub fn add_unique_terminal(&mut self, name: &str) {
-        assert!(
-            self.terminals.insert(name.into(), true).is_none(),
-            "Attempting to add a terminal node type that already exists"
-        );
-    }
-
     pub fn add_choice_type(&mut self, name: &str) {
         self.choices.insert(
             name.into(),
@@ -218,6 +211,28 @@ impl IrModelMutator {
             panic!("Choice {choice_id} not found in IR model");
         };
         choice.added_variants.push(variant_type);
+    }
+
+    // Adds a synthetic (ie. not referencing any CST nodes) choice type by adding
+    // unique terminal types as the variants
+    pub fn add_enum_type(&mut self, name: &str, variants: &[&str]) {
+        let mut added_variants = Vec::new();
+        for variant in variants {
+            assert!(
+                self.terminals.insert((*variant).into(), true).is_none(),
+                "Attempt to insert an already existing unique terminal variant"
+            );
+            added_variants.push(NodeType::UniqueTerminal((*variant).into()));
+        }
+        self.choices.insert(
+            name.into(),
+            MutatedChoice {
+                variants: Vec::new(),
+                added_variants,
+                is_new: true,
+                has_removed_variants: false,
+            },
+        );
     }
 
     pub fn remove_type(&mut self, name: &str) {
