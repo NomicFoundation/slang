@@ -234,12 +234,13 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 pub struct FunctionDefinitionStruct {
     pub node_id: NodeId,
     pub parameters: Parameters,
-    pub attributes: FunctionAttributes,
     pub returns: Option<Parameters>,
     pub kind: FunctionKind,
     pub visibility: FunctionVisibility,
     pub mutability: FunctionMutability,
     pub virtual_keyword: bool,
+    pub override_specifier: Option<OverridePaths>,
+    pub modifier_invocations: ModifierInvocations,
     pub name: Option<Rc<TerminalNode>>,
     pub body: Option<Block>,
 }
@@ -1097,21 +1098,6 @@ pub enum StateVariableAttribute {
 }
 
 #[derive(Debug)]
-pub enum FunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    OverrideSpecifier(OverrideSpecifier),
-    ConstantKeyword,
-    ExternalKeyword,
-    InternalKeyword,
-    PayableKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    PureKeyword,
-    ViewKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -1400,8 +1386,6 @@ pub type StateVariableAttributes = Vec<StateVariableAttribute>;
 
 pub type Parameters = Vec<Parameter>;
 
-pub type FunctionAttributes = Vec<FunctionAttribute>;
-
 pub type OverridePaths = Vec<IdentifierPath>;
 
 pub type EventParameters = Vec<EventParameter>;
@@ -1449,3 +1433,5 @@ pub type YulArguments = Vec<YulExpression>;
 pub type YulPaths = Vec<YulPath>;
 
 pub type YulPath = Vec<Rc<TerminalNode>>;
+
+pub type ModifierInvocations = Vec<ModifierInvocation>;

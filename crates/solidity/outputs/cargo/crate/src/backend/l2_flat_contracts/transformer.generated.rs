@@ -1980,41 +1980,6 @@ pub trait Transformer {
         self.default_transform_state_variable_attribute(source)
     }
 
-    fn default_transform_function_attribute(
-        &mut self,
-        source: &input::FunctionAttribute,
-    ) -> output::FunctionAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::FunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::FunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::FunctionAttribute::ConstantKeyword => output::FunctionAttribute::ConstantKeyword,
-            input::FunctionAttribute::ExternalKeyword => output::FunctionAttribute::ExternalKeyword,
-            input::FunctionAttribute::InternalKeyword => output::FunctionAttribute::InternalKeyword,
-            input::FunctionAttribute::PayableKeyword => output::FunctionAttribute::PayableKeyword,
-            input::FunctionAttribute::PrivateKeyword => output::FunctionAttribute::PrivateKeyword,
-            input::FunctionAttribute::PublicKeyword => output::FunctionAttribute::PublicKeyword,
-            input::FunctionAttribute::PureKeyword => output::FunctionAttribute::PureKeyword,
-            input::FunctionAttribute::ViewKeyword => output::FunctionAttribute::ViewKeyword,
-            input::FunctionAttribute::VirtualKeyword => output::FunctionAttribute::VirtualKeyword,
-        }
-    }
-    fn transform_function_attribute(
-        &mut self,
-        source: &input::FunctionAttribute,
-    ) -> output::FunctionAttribute {
-        self.default_transform_function_attribute(source)
-    }
-
     fn default_transform_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
@@ -2939,16 +2904,6 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_parameter(item))
-            .collect()
-    }
-
-    fn transform_function_attributes(
-        &mut self,
-        source: &input::FunctionAttributes,
-    ) -> output::FunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_function_attribute(item))
             .collect()
     }
 

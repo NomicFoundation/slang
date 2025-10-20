@@ -316,7 +316,6 @@ pub trait Rewriter {
 
     fn rewrite_function_definition(&mut self, source: &FunctionDefinition) -> FunctionDefinition {
         let parameters = self.rewrite_parameters(&source.parameters);
-        let attributes = self.rewrite_function_attributes(&source.attributes);
         let returns = source
             .returns
             .as_ref()
@@ -325,18 +324,24 @@ pub trait Rewriter {
         let visibility = self.rewrite_function_visibility(&source.visibility);
         let mutability = self.rewrite_function_mutability(&source.mutability);
         let virtual_keyword = source.virtual_keyword;
+        let override_specifier = source
+            .override_specifier
+            .as_ref()
+            .map(|value| self.rewrite_override_paths(value));
+        let modifier_invocations = self.rewrite_modifier_invocations(&source.modifier_invocations);
         let name = source.name.as_ref().map(Rc::clone);
         let body = source.body.as_ref().map(|value| self.rewrite_block(value));
 
         Rc::new(FunctionDefinitionStruct {
             node_id: source.node_id,
             parameters,
-            attributes,
             returns,
             kind,
             visibility,
             mutability,
             virtual_keyword,
+            override_specifier,
+            modifier_invocations,
             name,
             body,
         })
@@ -1670,36 +1675,6 @@ pub trait Rewriter {
         self.default_rewrite_state_variable_attribute(source)
     }
 
-    fn default_rewrite_function_attribute(
-        &mut self,
-        source: &FunctionAttribute,
-    ) -> FunctionAttribute {
-        match source {
-            FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                FunctionAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                FunctionAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            FunctionAttribute::ConstantKeyword => FunctionAttribute::ConstantKeyword,
-            FunctionAttribute::ExternalKeyword => FunctionAttribute::ExternalKeyword,
-            FunctionAttribute::InternalKeyword => FunctionAttribute::InternalKeyword,
-            FunctionAttribute::PayableKeyword => FunctionAttribute::PayableKeyword,
-            FunctionAttribute::PrivateKeyword => FunctionAttribute::PrivateKeyword,
-            FunctionAttribute::PublicKeyword => FunctionAttribute::PublicKeyword,
-            FunctionAttribute::PureKeyword => FunctionAttribute::PureKeyword,
-            FunctionAttribute::ViewKeyword => FunctionAttribute::ViewKeyword,
-            FunctionAttribute::VirtualKeyword => FunctionAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_function_attribute(&mut self, source: &FunctionAttribute) -> FunctionAttribute {
-        self.default_rewrite_function_attribute(source)
-    }
-
     fn default_rewrite_type_name(&mut self, source: &TypeName) -> TypeName {
         match source {
             TypeName::ArrayTypeName(ref array_type_name) => {
@@ -2498,13 +2473,6 @@ pub trait Rewriter {
             .collect()
     }
 
-    fn rewrite_function_attributes(&mut self, source: &FunctionAttributes) -> FunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_function_attribute(item))
-            .collect()
-    }
-
     fn rewrite_override_paths(&mut self, source: &OverridePaths) -> OverridePaths {
         source
             .iter()
@@ -2671,5 +2639,15 @@ pub trait Rewriter {
 
     fn rewrite_yul_path(&mut self, source: &YulPath) -> YulPath {
         source.iter().map(Rc::clone).collect()
+    }
+
+    fn rewrite_modifier_invocations(
+        &mut self,
+        source: &ModifierInvocations,
+    ) -> ModifierInvocations {
+        source
+            .iter()
+            .map(|item| self.rewrite_modifier_invocation(item))
+            .collect()
     }
 }

@@ -88,13 +88,15 @@ impl Transformer for Pass {
             input::FunctionName::FallbackKeyword => (None, output::FunctionKind::Fallback),
             input::FunctionName::ReceiveKeyword => (None, output::FunctionKind::Receive),
         };
-        let attributes = self.transform_function_attributes(&source.attributes);
         let visibility = self.function_visibility(&source.attributes);
         let mutability = Self::function_mutability(&source.attributes);
         let virtual_keyword = source
             .attributes
             .iter()
             .any(|attribute| matches!(attribute, input::FunctionAttribute::VirtualKeyword));
+        // TODO(validation): function definitions can have only a single override specifier
+        let override_specifier = self.function_override_specifier(&source.attributes);
+        let modifier_invocations = self.function_modifier_invocations(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
@@ -105,12 +107,13 @@ impl Transformer for Pass {
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
             parameters,
-            attributes,
             returns,
             kind,
             visibility,
             mutability,
             virtual_keyword,
+            override_specifier,
+            modifier_invocations,
             name,
             body,
         })
@@ -256,6 +259,48 @@ impl Pass {
         )
     }
 
+    fn transform_override_specifier_for_function(
+        &mut self,
+        override_specifier: &input::OverrideSpecifier,
+    ) -> output::OverridePaths {
+        override_specifier
+            .overridden
+            .as_ref()
+            .map_or(Vec::new(), |overriden| {
+                self.transform_override_paths(&overriden.paths)
+            })
+    }
+
+    fn function_override_specifier(
+        &mut self,
+        attributes: &input::FunctionAttributes,
+    ) -> Option<output::OverridePaths> {
+        attributes.iter().find_map(|attribute| {
+            if let input::FunctionAttribute::OverrideSpecifier(override_specifier) = attribute {
+                Some(self.transform_override_specifier_for_function(override_specifier))
+            } else {
+                None
+            }
+        })
+    }
+
+    fn function_modifier_invocations(
+        &mut self,
+        attributes: &input::FunctionAttributes,
+    ) -> output::ModifierInvocations {
+        attributes
+            .iter()
+            .filter_map(|attribute| {
+                if let input::FunctionAttribute::ModifierInvocation(modifier_invocation) = attribute
+                {
+                    Some(self.transform_modifier_invocation(modifier_invocation))
+                } else {
+                    None
+                }
+            })
+            .collect()
+    }
+
     fn transform_function_body(&mut self, source: &input::FunctionBody) -> Option<output::Block> {
         match source {
             input::FunctionBody::Block(block) => Some(self.transform_block(block)),
@@ -270,13 +315,14 @@ impl Pass {
         let node_id = source.node_id;
         let kind = output::FunctionKind::Constructor;
         let name = None;
-        let attributes = self.transform_constructor_attributes(&source.attributes);
         let visibility = Self::constructor_visibility(&source.attributes);
         let mutability = Self::constructor_mutability(&source.attributes);
         let virtual_keyword = source
             .attributes
             .iter()
             .any(|attribute| matches!(attribute, input::ConstructorAttribute::VirtualKeyword));
+        let override_specifier = Self::constructor_override_specifier(&source.attributes);
+        let modifier_invocations = self.constructor_modifier_invocations(&source.attributes);
         let body = Some(self.transform_block(&source.body));
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -284,12 +330,13 @@ impl Pass {
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
             parameters,
-            attributes,
             returns,
             kind,
             visibility,
             mutability,
             virtual_keyword,
+            override_specifier,
+            modifier_invocations,
             name,
             body,
         })
@@ -322,44 +369,34 @@ impl Pass {
         )
     }
 
-    fn transform_constructor_attributes(
-        &mut self,
-        source: &input::ConstructorAttributes,
-    ) -> output::FunctionAttributes {
-        source
-            .iter()
-            .filter_map(|item| self.transform_constructor_attribute(item))
-            .collect()
-    }
-
-    fn transform_constructor_attribute(
-        &mut self,
-        source: &input::ConstructorAttribute,
-    ) -> Option<output::FunctionAttribute> {
-        match source {
-            input::ConstructorAttribute::ModifierInvocation(modifier_invocation) => {
-                Some(output::FunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                ))
-            }
-            input::ConstructorAttribute::InternalKeyword => {
-                Some(output::FunctionAttribute::InternalKeyword)
-            }
-            input::ConstructorAttribute::OverrideKeyword => {
-                // `override` as a constructor attribute is useless; it was only
-                // enabled from 0.6.0 until 0.6.7
+    fn constructor_override_specifier(
+        attributes: &input::ConstructorAttributes,
+    ) -> Option<output::OverridePaths> {
+        attributes.iter().find_map(|attribute| {
+            if matches!(attribute, input::ConstructorAttribute::OverrideKeyword) {
+                Some(Vec::new())
+            } else {
                 None
             }
-            input::ConstructorAttribute::PayableKeyword => {
-                Some(output::FunctionAttribute::PayableKeyword)
-            }
-            input::ConstructorAttribute::PublicKeyword => {
-                Some(output::FunctionAttribute::PublicKeyword)
-            }
-            input::ConstructorAttribute::VirtualKeyword => {
-                Some(output::FunctionAttribute::VirtualKeyword)
-            }
-        }
+        })
+    }
+
+    fn constructor_modifier_invocations(
+        &mut self,
+        attributes: &input::ConstructorAttributes,
+    ) -> output::ModifierInvocations {
+        attributes
+            .iter()
+            .filter_map(|attribute| {
+                if let input::ConstructorAttribute::ModifierInvocation(modifier_invocation) =
+                    attribute
+                {
+                    Some(self.transform_modifier_invocation(modifier_invocation))
+                } else {
+                    None
+                }
+            })
+            .collect()
     }
 
     fn transform_unnamed_function_definition(
@@ -369,11 +406,12 @@ impl Pass {
         let node_id = source.node_id;
         let kind = output::FunctionKind::Unnamed;
         let name = None;
-        let attributes = self.transform_unnamed_function_attributes(&source.attributes);
         // TODO(validation): unnamed (aka fallback) functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         let mutability = Self::unnamed_function_mutability(&source.attributes);
         let virtual_keyword = false;
+        let override_specifier = None;
+        let modifier_invocations = self.unnamed_function_modifier_invocations(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -381,12 +419,13 @@ impl Pass {
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
             parameters,
-            attributes,
             returns,
             kind,
             visibility,
             mutability,
             virtual_keyword,
+            override_specifier,
+            modifier_invocations,
             name,
             body,
         })
@@ -409,47 +448,22 @@ impl Pass {
         )
     }
 
-    fn transform_unnamed_function_attributes(
+    fn unnamed_function_modifier_invocations(
         &mut self,
-        source: &input::UnnamedFunctionAttributes,
-    ) -> output::FunctionAttributes {
-        source
+        attributes: &input::UnnamedFunctionAttributes,
+    ) -> output::ModifierInvocations {
+        attributes
             .iter()
-            .map(|item| self.transform_unnamed_function_attribute(item))
+            .filter_map(|attribute| {
+                if let input::UnnamedFunctionAttribute::ModifierInvocation(modifier_invocation) =
+                    attribute
+                {
+                    Some(self.transform_modifier_invocation(modifier_invocation))
+                } else {
+                    None
+                }
+            })
             .collect()
-    }
-
-    fn transform_unnamed_function_attribute(
-        &mut self,
-        source: &input::UnnamedFunctionAttribute,
-    ) -> output::FunctionAttribute {
-        match source {
-            input::UnnamedFunctionAttribute::ModifierInvocation(modifier_invocation) => {
-                output::FunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::UnnamedFunctionAttribute::ConstantKeyword => {
-                output::FunctionAttribute::ConstantKeyword
-            }
-            input::UnnamedFunctionAttribute::ExternalKeyword => {
-                output::FunctionAttribute::ExternalKeyword
-            }
-            input::UnnamedFunctionAttribute::InternalKeyword => {
-                output::FunctionAttribute::InternalKeyword
-            }
-            input::UnnamedFunctionAttribute::PayableKeyword => {
-                output::FunctionAttribute::PayableKeyword
-            }
-            input::UnnamedFunctionAttribute::PrivateKeyword => {
-                output::FunctionAttribute::PrivateKeyword
-            }
-            input::UnnamedFunctionAttribute::PublicKeyword => {
-                output::FunctionAttribute::PublicKeyword
-            }
-            input::UnnamedFunctionAttribute::PureKeyword => output::FunctionAttribute::PureKeyword,
-            input::UnnamedFunctionAttribute::ViewKeyword => output::FunctionAttribute::ViewKeyword,
-        }
     }
 
     fn transform_fallback_function_definition(
@@ -459,7 +473,6 @@ impl Pass {
         let node_id = source.node_id;
         let kind = output::FunctionKind::Fallback;
         let name = None;
-        let attributes = self.transform_fallback_function_attributes(&source.attributes);
         // TODO(validation): fallback functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         let mutability = Self::fallback_function_mutability(&source.attributes);
@@ -467,6 +480,8 @@ impl Pass {
             .attributes
             .iter()
             .any(|attribute| matches!(attribute, input::FallbackFunctionAttribute::VirtualKeyword));
+        let override_specifier = self.fallback_function_override_specifier(&source.attributes);
+        let modifier_invocations = self.fallback_function_modifier_invocations(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
@@ -477,12 +492,13 @@ impl Pass {
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
             parameters,
-            attributes,
             returns,
             kind,
             visibility,
             mutability,
             virtual_keyword,
+            override_specifier,
+            modifier_invocations,
             name,
             body,
         })
@@ -504,43 +520,37 @@ impl Pass {
         )
     }
 
-    fn transform_fallback_function_attributes(
+    fn fallback_function_override_specifier(
         &mut self,
-        source: &input::FallbackFunctionAttributes,
-    ) -> output::FunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_fallback_function_attribute(item))
-            .collect()
+        attributes: &input::FallbackFunctionAttributes,
+    ) -> Option<output::OverridePaths> {
+        attributes.iter().find_map(|attribute| {
+            if let input::FallbackFunctionAttribute::OverrideSpecifier(override_specifier) =
+                attribute
+            {
+                Some(self.transform_override_specifier_for_function(override_specifier))
+            } else {
+                None
+            }
+        })
     }
 
-    fn transform_fallback_function_attribute(
+    fn fallback_function_modifier_invocations(
         &mut self,
-        source: &input::FallbackFunctionAttribute,
-    ) -> output::FunctionAttribute {
-        match source {
-            input::FallbackFunctionAttribute::ModifierInvocation(modifier_invocation) => {
-                output::FunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::FallbackFunctionAttribute::OverrideSpecifier(override_specifier) => {
-                output::FunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::FallbackFunctionAttribute::ExternalKeyword => {
-                output::FunctionAttribute::ExternalKeyword
-            }
-            input::FallbackFunctionAttribute::PayableKeyword => {
-                output::FunctionAttribute::PayableKeyword
-            }
-            input::FallbackFunctionAttribute::PureKeyword => output::FunctionAttribute::PureKeyword,
-            input::FallbackFunctionAttribute::ViewKeyword => output::FunctionAttribute::ViewKeyword,
-            input::FallbackFunctionAttribute::VirtualKeyword => {
-                output::FunctionAttribute::VirtualKeyword
-            }
-        }
+        attributes: &input::FallbackFunctionAttributes,
+    ) -> output::ModifierInvocations {
+        attributes
+            .iter()
+            .filter_map(|attribute| {
+                if let input::FallbackFunctionAttribute::ModifierInvocation(modifier_invocation) =
+                    attribute
+                {
+                    Some(self.transform_modifier_invocation(modifier_invocation))
+                } else {
+                    None
+                }
+            })
+            .collect()
     }
 
     fn transform_receive_function_definition(
@@ -550,7 +560,6 @@ impl Pass {
         let node_id = source.node_id;
         let kind = output::FunctionKind::Receive;
         let name = None;
-        let attributes = self.transform_receive_function_attributes(&source.attributes);
         // TODO(validation): receive functions *must* have an external visibility
         let visibility = output::FunctionVisibility::External;
         // TODO(validation): receive functions *must* be payable
@@ -559,6 +568,8 @@ impl Pass {
             .attributes
             .iter()
             .any(|attribute| matches!(attribute, input::ReceiveFunctionAttribute::VirtualKeyword));
+        let override_specifier = self.receive_function_override_specifier(&source.attributes);
+        let modifier_invocations = self.receive_function_modifier_invocations(&source.attributes);
         let body = self.transform_function_body(&source.body);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = None;
@@ -566,52 +577,49 @@ impl Pass {
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
             parameters,
-            attributes,
             returns,
             kind,
             visibility,
             mutability,
             virtual_keyword,
+            override_specifier,
+            modifier_invocations,
             name,
             body,
         })
     }
 
-    fn transform_receive_function_attributes(
+    fn receive_function_override_specifier(
         &mut self,
-        source: &input::ReceiveFunctionAttributes,
-    ) -> output::FunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_receive_function_attribute(item))
-            .collect()
+        attributes: &input::ReceiveFunctionAttributes,
+    ) -> Option<output::OverridePaths> {
+        attributes.iter().find_map(|attribute| {
+            if let input::ReceiveFunctionAttribute::OverrideSpecifier(override_specifier) =
+                attribute
+            {
+                Some(self.transform_override_specifier_for_function(override_specifier))
+            } else {
+                None
+            }
+        })
     }
 
-    fn transform_receive_function_attribute(
+    fn receive_function_modifier_invocations(
         &mut self,
-        source: &input::ReceiveFunctionAttribute,
-    ) -> output::FunctionAttribute {
-        match source {
-            input::ReceiveFunctionAttribute::ModifierInvocation(modifier_invocation) => {
-                output::FunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::ReceiveFunctionAttribute::OverrideSpecifier(override_specifier) => {
-                output::FunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::ReceiveFunctionAttribute::ExternalKeyword => {
-                output::FunctionAttribute::ExternalKeyword
-            }
-            input::ReceiveFunctionAttribute::PayableKeyword => {
-                output::FunctionAttribute::PayableKeyword
-            }
-            input::ReceiveFunctionAttribute::VirtualKeyword => {
-                output::FunctionAttribute::VirtualKeyword
-            }
-        }
+        attributes: &input::ReceiveFunctionAttributes,
+    ) -> output::ModifierInvocations {
+        attributes
+            .iter()
+            .filter_map(|attribute| {
+                if let input::ReceiveFunctionAttribute::ModifierInvocation(modifier_invocation) =
+                    attribute
+                {
+                    Some(self.transform_modifier_invocation(modifier_invocation))
+                } else {
+                    None
+                }
+            })
+            .collect()
     }
 
     fn transform_modifier_definition(
@@ -621,7 +629,6 @@ impl Pass {
         let node_id = source.node_id;
         let kind = output::FunctionKind::Modifier;
         let name = Some(Rc::clone(&source.name));
-        let attributes = self.transform_modifier_attributes(&source.attributes);
         let visibility = output::FunctionVisibility::Internal;
         // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
@@ -629,6 +636,8 @@ impl Pass {
             .attributes
             .iter()
             .any(|attribute| matches!(attribute, input::ModifierAttribute::VirtualKeyword));
+        let override_specifier = self.modifier_override_specifier(&source.attributes);
+        let modifier_invocations = Vec::new();
         let body = self.transform_function_body(&source.body);
         let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameters| {
             self.transform_parameters_declaration(parameters)
@@ -638,38 +647,28 @@ impl Pass {
         Rc::new(output::FunctionDefinitionStruct {
             node_id,
             parameters,
-            attributes,
             returns,
             kind,
             visibility,
             mutability,
             virtual_keyword,
+            override_specifier,
+            modifier_invocations,
             name,
             body,
         })
     }
 
-    fn transform_modifier_attributes(
+    fn modifier_override_specifier(
         &mut self,
-        source: &input::ModifierAttributes,
-    ) -> output::FunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_modifier_attribute(item))
-            .collect()
-    }
-
-    fn transform_modifier_attribute(
-        &mut self,
-        source: &input::ModifierAttribute,
-    ) -> output::FunctionAttribute {
-        match source {
-            input::ModifierAttribute::OverrideSpecifier(override_specifier) => {
-                output::FunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
+        attributes: &input::ModifierAttributes,
+    ) -> Option<output::OverridePaths> {
+        attributes.iter().find_map(|attribute| {
+            if let input::ModifierAttribute::OverrideSpecifier(override_specifier) = attribute {
+                Some(self.transform_override_specifier_for_function(override_specifier))
+            } else {
+                None
             }
-            input::ModifierAttribute::VirtualKeyword => output::FunctionAttribute::VirtualKeyword,
-        }
+        })
     }
 }
