@@ -98,7 +98,7 @@ impl Pass {
     fn type_of_elementary_type(elementary_type: &input_ir::ElementaryType) -> Type {
         match elementary_type {
             input_ir::ElementaryType::AddressType(address_type) => Type::Address {
-                payable: address_type.payable_keyword.is_some(),
+                payable: address_type.payable_keyword,
             },
             input_ir::ElementaryType::BytesKeyword(terminal) => {
                 Type::from_bytes_keyword(&terminal.unparse(), Some(DataLocation::Memory)).unwrap()

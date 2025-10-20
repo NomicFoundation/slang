@@ -37,7 +37,7 @@ impl Transformer for Pass {
         source: &input::ContractDefinition,
     ) -> output::ContractDefinition {
         let node_id = source.node_id;
-        let abstract_keyword = source.abstract_keyword.as_ref().map(Rc::clone);
+        let abstract_keyword = source.abstract_keyword;
         let name = Rc::clone(&source.name);
         let members = self.transform_contract_members(&source.members);
         let inheritance_types = source

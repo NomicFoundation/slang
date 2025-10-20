@@ -17,9 +17,15 @@
       pub node_id: NodeId,
       {%- for field in sequence.fields %}
         pub {{ field.label | snake_case }}:
-        {%- if field.type.is_terminal -%}
+        {%- if field.type.kind == "Terminal" -%}
           {%- if field.is_optional -%}
             Option<Rc<TerminalNode>>,
+          {%- else -%}
+            Rc<TerminalNode>,
+          {%- endif -%}
+        {%- elif field.type.kind == "UniqueTerminal" -%}
+          {%- if field.is_optional -%}
+            bool,
           {%- else -%}
             Rc<TerminalNode>,
           {%- endif -%}

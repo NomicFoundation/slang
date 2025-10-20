@@ -167,7 +167,7 @@ pub trait Transformer {
     ) -> output::UsingDirective {
         let clause = self.transform_using_clause(&source.clause);
         let target = self.transform_using_target(&source.target);
-        let global_keyword = source.global_keyword.as_ref().map(Rc::clone);
+        let global_keyword = source.global_keyword;
 
         Rc::new(output::UsingDirectiveStruct {
             node_id: source.node_id,
@@ -396,7 +396,7 @@ pub trait Transformer {
     ) -> output::EventDefinition {
         let name = Rc::clone(&source.name);
         let parameters = self.transform_event_parameters_declaration(&source.parameters);
-        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
+        let anonymous_keyword = source.anonymous_keyword;
 
         Rc::new(output::EventDefinitionStruct {
             node_id: source.node_id,
@@ -411,7 +411,7 @@ pub trait Transformer {
         source: &input::EventParameter,
     ) -> output::EventParameter {
         let type_name = self.transform_type_name(&source.type_name);
-        let indexed_keyword = source.indexed_keyword.as_ref().map(Rc::clone);
+        let indexed_keyword = source.indexed_keyword;
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(output::EventParameterStruct {
@@ -531,7 +531,7 @@ pub trait Transformer {
     }
 
     fn transform_address_type(&mut self, source: &input::AddressType) -> output::AddressType {
-        let payable_keyword = source.payable_keyword.as_ref().map(Rc::clone);
+        let payable_keyword = source.payable_keyword;
 
         Rc::new(output::AddressTypeStruct {
             node_id: source.node_id,
@@ -598,7 +598,7 @@ pub trait Transformer {
         &mut self,
         source: &input::TupleDeconstructionStatement,
     ) -> output::TupleDeconstructionStatement {
-        let var_keyword = source.var_keyword.as_ref().map(Rc::clone);
+        let var_keyword = source.var_keyword;
         let elements = self.transform_tuple_deconstruction_elements(&source.elements);
         let expression = self.transform_expression(&source.expression);
 

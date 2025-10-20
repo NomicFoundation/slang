@@ -25,8 +25,10 @@
             _ = helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?;
           {%- elif field.is_optional -%}
             let {{ field.label }} =
-              {%- if field.type.is_terminal -%}
+              {%- if field.type.kind == "Terminal" -%}
                 helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).map(terminal_node_cloned)
+              {%- elif field.type.kind == "UniqueTerminal" -%}
+                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).is_some()
               {%- else -%}
                 helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).and_then(|node|
                   build_{{ field.type.name | snake_case }}(nonterminal_node(node))

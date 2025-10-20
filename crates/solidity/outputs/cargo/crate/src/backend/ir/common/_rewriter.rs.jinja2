@@ -13,22 +13,23 @@
     {% for parent_type, sequence in target.sequences %}
       fn rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         {% for field in sequence.fields %}
+          let {{ field.label }} =
           {%- if field.is_optional -%}
-            let {{ field.label }} = source.{{ field.label }}.as_ref().map(
-              {%- if field.type.is_terminal -%}
-                Rc::clone
-              {%- else -%}
-                |value| self.rewrite_{{ field.type.name | snake_case }}(value)
-              {%- endif -%}
-            );
-          {%- else -%}
-            let {{ field.label }} =
-            {%- if field.type.is_terminal -%}
-              Rc::clone(&source.{{ field.label }})
+            {%- if field.type.kind == "Terminal" -%}
+              source.{{ field.label }}.as_ref().map(Rc::clone);
+            {%- elif field.type.kind == "UniqueTerminal" -%}
+              source.{{ field.label }};
             {%- else -%}
-              self.rewrite_{{ field.type.name | snake_case }}(&source.{{ field.label }})
+              source.{{ field.label }}.as_ref().map(
+                |value| self.rewrite_{{ field.type.name | snake_case }}(value)
+              );
             {%- endif -%}
-            ;
+          {%- else -%}
+            {%- if field.type.is_terminal -%}
+              Rc::clone(&source.{{ field.label }});
+            {%- else -%}
+              self.rewrite_{{ field.type.name | snake_case }}(&source.{{ field.label }});
+            {%- endif -%}
           {%- endif -%}
         {%- endfor %}
 

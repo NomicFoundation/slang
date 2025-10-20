@@ -305,7 +305,7 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
     ) {
-        if node.var_keyword.is_none() {
+        if !node.var_keyword {
             return;
         }
         // this handles adding type information to the `var` declarations in Solidity < 0.5.0
@@ -464,7 +464,7 @@ impl Visitor for Pass {
             }
         };
 
-        if node.global_keyword.is_some() {
+        if node.global_keyword {
             self.binder.insert_global_using_directive(directive);
         } else {
             // TODO(validation): `using` directives are not allowed in interfaces since 0.7.1
