@@ -252,8 +252,10 @@ impl IrModelMutator {
         let mut added_variants = Vec::new();
         for variant in variants {
             assert!(
-                self.terminals.insert((*variant).into(), true).is_none(),
-                "Attempt to insert an already existing unique terminal variant"
+                self.terminals
+                    .insert((*variant).into(), true)
+                    .is_none_or(|is_unique| is_unique),
+                "Attempt to insert an already existing terminal '{variant}' that is non-unique"
             );
             added_variants.push(NodeType::UniqueTerminal((*variant).into()));
         }

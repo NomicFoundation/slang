@@ -223,9 +223,11 @@ pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 pub struct StateVariableDefinitionStruct {
     pub node_id: NodeId,
     pub type_name: TypeName,
-    pub attributes: StateVariableAttributes,
     pub name: Rc<TerminalNode>,
     pub value: Option<Expression>,
+    pub visibility: StateVariableVisibility,
+    pub mutability: StateVariableMutability,
+    pub override_specifier: Option<OverridePaths>,
 }
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
@@ -334,8 +336,9 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 pub struct FunctionTypeStruct {
     pub node_id: NodeId,
     pub parameters: Parameters,
-    pub attributes: FunctionTypeAttributes,
     pub returns: Option<Parameters>,
+    pub visibility: FunctionVisibility,
+    pub mutability: FunctionMutability,
 }
 
 pub type MappingType = Rc<MappingTypeStruct>;
@@ -1087,35 +1090,12 @@ pub enum ContractMember {
 }
 
 #[derive(Debug)]
-pub enum StateVariableAttribute {
-    OverrideSpecifier(OverrideSpecifier),
-    ConstantKeyword,
-    InternalKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    ImmutableKeyword,
-    TransientKeyword,
-}
-
-#[derive(Debug)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
     MappingType(MappingType),
     ElementaryType(ElementaryType),
     IdentifierPath(IdentifierPath),
-}
-
-#[derive(Debug)]
-pub enum FunctionTypeAttribute {
-    InternalKeyword,
-    ExternalKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    ConstantKeyword,
-    PureKeyword,
-    ViewKeyword,
-    PayableKeyword,
 }
 
 #[derive(Debug)]
@@ -1354,6 +1334,21 @@ pub enum FunctionMutability {
     Payable,
 }
 
+#[derive(Debug)]
+pub enum StateVariableVisibility {
+    Public,
+    Private,
+    Internal,
+}
+
+#[derive(Debug)]
+pub enum StateVariableMutability {
+    Mutable,
+    Constant,
+    Immutable,
+    Transient,
+}
+
 //
 // Repeated & Separated
 //
@@ -1382,8 +1377,6 @@ pub type StructMembers = Vec<StructMember>;
 
 pub type EnumMembers = Vec<Rc<TerminalNode>>;
 
-pub type StateVariableAttributes = Vec<StateVariableAttribute>;
-
 pub type Parameters = Vec<Parameter>;
 
 pub type OverridePaths = Vec<IdentifierPath>;
@@ -1391,8 +1384,6 @@ pub type OverridePaths = Vec<IdentifierPath>;
 pub type EventParameters = Vec<EventParameter>;
 
 pub type ErrorParameters = Vec<ErrorParameter>;
-
-pub type FunctionTypeAttributes = Vec<FunctionTypeAttribute>;
 
 pub type Statements = Vec<Statement>;
 

@@ -65,6 +65,7 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     flatten_contract_specifiers(&mut mutator);
     unify_function_types(&mut mutator);
     flatten_function_attributes(&mut mutator);
+    flatten_state_variable_attributes(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
 
     mutator.into()
@@ -186,6 +187,49 @@ fn flatten_function_attributes(mutator: &mut IrModelMutator) {
     // And remove the list of attributes
     mutator.remove_type("FunctionAttributes");
     mutator.remove_type("FunctionAttribute");
+
+    // For `FunctionType` we need visibility and mutability
+    mutator.add_sequence_field("FunctionType", "visibility", "FunctionVisibility", false);
+    mutator.add_sequence_field("FunctionType", "mutability", "FunctionMutability", false);
+    mutator.remove_type("FunctionTypeAttributes");
+    mutator.remove_type("FunctionTypeAttribute");
+}
+
+fn flatten_state_variable_attributes(mutator: &mut IrModelMutator) {
+    // Function visibility, computed from a subset of the attributes
+    mutator.add_enum_type(
+        "StateVariableVisibility",
+        &["Public", "Private", "Internal"],
+    );
+
+    // Function mutability, computed from a subset of the attributes
+    mutator.add_enum_type(
+        "StateVariableMutability",
+        &["Mutable", "Constant", "Immutable", "Transient"],
+    );
+
+    mutator.add_sequence_field(
+        "StateVariableDefinition",
+        "visibility",
+        "StateVariableVisibility",
+        false,
+    );
+    mutator.add_sequence_field(
+        "StateVariableDefinition",
+        "mutability",
+        "StateVariableMutability",
+        false,
+    );
+    mutator.add_sequence_field(
+        "StateVariableDefinition",
+        "override_specifier",
+        "OverridePaths",
+        true,
+    );
+
+    // And remove the list of attributes
+    mutator.remove_type("StateVariableAttributes");
+    mutator.remove_type("StateVariableAttribute");
 }
 
 fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {

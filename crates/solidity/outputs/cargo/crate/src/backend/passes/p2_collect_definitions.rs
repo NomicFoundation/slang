@@ -4,9 +4,7 @@ use std::rc::Rc;
 use semver::Version;
 
 use super::p1_flatten_contracts::Output as Input;
-use crate::backend::binder::{
-    Binder, Definition, FileScope, ParametersScope, Scope, ScopeId, StateVariableVisibility,
-};
+use crate::backend::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::compilation::{CompilationUnit, File};
@@ -476,34 +474,14 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::StateVariableDefinition,
     ) -> bool {
-        let is_constant = node.attributes.iter().any(|attribute| {
-            matches!(attribute, input_ir::StateVariableAttribute::ConstantKeyword)
-        });
-        let is_public = node
-            .attributes
-            .iter()
-            .any(|attribute| matches!(attribute, input_ir::StateVariableAttribute::PublicKeyword));
+        let is_constant = matches!(node.mutability, input_ir::StateVariableMutability::Constant);
+        let is_public = matches!(node.visibility, input_ir::StateVariableVisibility::Public);
         // Public state variables define a getter, so we don't register them as
         // constants here
         let definition = if is_constant && !is_public {
             Definition::new_constant(node.node_id, &node.name)
         } else {
-            // TODO(validation): only one visibility keyword is allowed
-            let visibility = node.attributes.iter().fold(
-                StateVariableVisibility::Internal,
-                |previous, attribute| match attribute {
-                    input_ir::StateVariableAttribute::InternalKeyword => {
-                        StateVariableVisibility::Internal
-                    }
-                    input_ir::StateVariableAttribute::PrivateKeyword => {
-                        StateVariableVisibility::Private
-                    }
-                    input_ir::StateVariableAttribute::PublicKeyword => {
-                        StateVariableVisibility::Public
-                    }
-                    _ => previous,
-                },
-            );
+            let visibility = (&node.visibility).into();
             Definition::new_state_variable(node.node_id, &node.name, visibility)
         };
         self.insert_definition_in_current_scope(definition);

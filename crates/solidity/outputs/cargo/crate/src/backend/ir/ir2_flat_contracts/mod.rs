@@ -41,3 +41,13 @@ impl From<&FunctionMutability> for types::FunctionTypeKind {
         }
     }
 }
+
+impl From<&StateVariableVisibility> for binder::StateVariableVisibility {
+    fn from(value: &StateVariableVisibility) -> Self {
+        match value {
+            StateVariableVisibility::Public => Self::Public,
+            StateVariableVisibility::Private => Self::Private,
+            StateVariableVisibility::Internal => Self::Internal,
+        }
+    }
+}

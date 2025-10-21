@@ -155,18 +155,20 @@ impl Transformer for Pass {
 
     fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
         let node_id = source.node_id;
-        let attributes = self.transform_function_type_attributes(&source.attributes);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
             .returns
             .as_ref()
             .map(|returns| self.transform_returns_declaration(returns));
+        let visibility = Self::function_type_visibility(&source.attributes);
+        let mutability = Self::function_type_mutability(&source.attributes);
 
         Rc::new(output::FunctionTypeStruct {
             node_id,
             parameters,
-            attributes,
             returns,
+            visibility,
+            mutability,
         })
     }
 
@@ -215,6 +217,32 @@ impl Transformer for Pass {
             }
         }
     }
+
+    fn transform_state_variable_definition(
+        &mut self,
+        source: &input::StateVariableDefinition,
+    ) -> output::StateVariableDefinition {
+        let node_id = source.node_id;
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = Rc::clone(&source.name);
+        let value = source
+            .value
+            .as_ref()
+            .map(|value| self.transform_state_variable_definition_value(value));
+        let visibility = Self::state_variable_visibility(&source.attributes);
+        let mutability = Self::state_variable_mutability(&source.attributes);
+        let override_specifier = self.state_variable_override_specifier(&source.attributes);
+
+        Rc::new(output::StateVariableDefinitionStruct {
+            node_id,
+            type_name,
+            name,
+            value,
+            visibility,
+            mutability,
+            override_specifier,
+        })
+    }
 }
 
 impl Pass {
@@ -259,7 +287,7 @@ impl Pass {
         )
     }
 
-    fn transform_override_specifier_for_function(
+    fn transform_override_specifier_into_override_paths(
         &mut self,
         override_specifier: &input::OverrideSpecifier,
     ) -> output::OverridePaths {
@@ -277,7 +305,7 @@ impl Pass {
     ) -> Option<output::OverridePaths> {
         attributes.iter().find_map(|attribute| {
             if let input::FunctionAttribute::OverrideSpecifier(override_specifier) = attribute {
-                Some(self.transform_override_specifier_for_function(override_specifier))
+                Some(self.transform_override_specifier_into_override_paths(override_specifier))
             } else {
                 None
             }
@@ -306,6 +334,42 @@ impl Pass {
             input::FunctionBody::Block(block) => Some(self.transform_block(block)),
             input::FunctionBody::Semicolon => None,
         }
+    }
+
+    fn function_type_visibility(
+        attributes: &input::FunctionTypeAttributes,
+    ) -> output::FunctionVisibility {
+        // TODO(validation): only a single visibility keyword can be provided
+        attributes.iter().fold(
+            output::FunctionVisibility::Internal,
+            |visibility, attribute| match attribute {
+                input::FunctionTypeAttribute::ExternalKeyword => {
+                    output::FunctionVisibility::External
+                }
+                input::FunctionTypeAttribute::InternalKeyword => {
+                    output::FunctionVisibility::Internal
+                }
+                input::FunctionTypeAttribute::PrivateKeyword => output::FunctionVisibility::Private,
+                input::FunctionTypeAttribute::PublicKeyword => output::FunctionVisibility::Public,
+                _ => visibility,
+            },
+        )
+    }
+
+    fn function_type_mutability(
+        attributes: &input::FunctionTypeAttributes,
+    ) -> output::FunctionMutability {
+        // TODO(validation): only a single mutability keyword can be provided
+        attributes.iter().fold(
+            output::FunctionMutability::NonPayable,
+            |mutability, attribute| match attribute {
+                input::FunctionTypeAttribute::PayableKeyword => output::FunctionMutability::Payable,
+                input::FunctionTypeAttribute::PureKeyword => output::FunctionMutability::Pure,
+                input::FunctionTypeAttribute::ConstantKeyword
+                | input::FunctionTypeAttribute::ViewKeyword => output::FunctionMutability::View,
+                _ => mutability,
+            },
+        )
     }
 
     fn transform_constructor_definition(
@@ -528,7 +592,7 @@ impl Pass {
             if let input::FallbackFunctionAttribute::OverrideSpecifier(override_specifier) =
                 attribute
             {
-                Some(self.transform_override_specifier_for_function(override_specifier))
+                Some(self.transform_override_specifier_into_override_paths(override_specifier))
             } else {
                 None
             }
@@ -597,7 +661,7 @@ impl Pass {
             if let input::ReceiveFunctionAttribute::OverrideSpecifier(override_specifier) =
                 attribute
             {
-                Some(self.transform_override_specifier_for_function(override_specifier))
+                Some(self.transform_override_specifier_into_override_paths(override_specifier))
             } else {
                 None
             }
@@ -665,7 +729,64 @@ impl Pass {
     ) -> Option<output::OverridePaths> {
         attributes.iter().find_map(|attribute| {
             if let input::ModifierAttribute::OverrideSpecifier(override_specifier) = attribute {
-                Some(self.transform_override_specifier_for_function(override_specifier))
+                Some(self.transform_override_specifier_into_override_paths(override_specifier))
+            } else {
+                None
+            }
+        })
+    }
+
+    fn state_variable_visibility(
+        attributes: &input::StateVariableAttributes,
+    ) -> output::StateVariableVisibility {
+        // TODO(validation): only one visibility keyword is allowed
+        attributes.iter().fold(
+            output::StateVariableVisibility::Internal,
+            |visibility, attribute| match attribute {
+                input::StateVariableAttribute::InternalKeyword => {
+                    output::StateVariableVisibility::Internal
+                }
+                input::StateVariableAttribute::PrivateKeyword => {
+                    output::StateVariableVisibility::Private
+                }
+                input::StateVariableAttribute::PublicKeyword => {
+                    output::StateVariableVisibility::Public
+                }
+                _ => visibility,
+            },
+        )
+    }
+
+    fn state_variable_mutability(
+        attributes: &input::StateVariableAttributes,
+    ) -> output::StateVariableMutability {
+        // TODO(validation): only one mutability keyword is allowed
+        attributes.iter().fold(
+            output::StateVariableMutability::Mutable,
+            |mutability, attribute| match attribute {
+                input::StateVariableAttribute::ConstantKeyword => {
+                    output::StateVariableMutability::Constant
+                }
+                input::StateVariableAttribute::ImmutableKeyword => {
+                    output::StateVariableMutability::Immutable
+                }
+                input::StateVariableAttribute::TransientKeyword => {
+                    output::StateVariableMutability::Transient
+                }
+                _ => mutability,
+            },
+        )
+    }
+
+    fn state_variable_override_specifier(
+        &mut self,
+        attributes: &input::StateVariableAttributes,
+    ) -> Option<output::OverridePaths> {
+        // TODO(validation): only one override specifier is allowed
+        attributes.iter().find_map(|attribute| {
+            if let input::StateVariableAttribute::OverrideSpecifier(override_specifier) = attribute
+            {
+                Some(self.transform_override_specifier_into_override_paths(override_specifier))
             } else {
                 None
             }

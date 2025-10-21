@@ -6,7 +6,7 @@ use crate::backend::binder::{
     Reference, Resolution, ScopeId,
 };
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::backend::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
+use crate::backend::types::{DataLocation, FunctionType, Type, TypeId};
 
 impl Pass {
     // Resolves an IdentifierPath. It starts resolution at the "contract" scope
@@ -108,24 +108,11 @@ impl Pass {
                 } else {
                     self.types.void()
                 };
-                let mut kind = FunctionTypeKind::NonPayable;
-                let mut external = false;
-                for attribute in &function_type.attributes {
-                    match attribute {
-                        input_ir::FunctionTypeAttribute::ExternalKeyword
-                        | input_ir::FunctionTypeAttribute::PublicKeyword => external = true,
-                        input_ir::FunctionTypeAttribute::PureKeyword => {
-                            kind = FunctionTypeKind::Pure;
-                        }
-                        input_ir::FunctionTypeAttribute::ViewKeyword => {
-                            kind = FunctionTypeKind::View;
-                        }
-                        input_ir::FunctionTypeAttribute::PayableKeyword => {
-                            kind = FunctionTypeKind::Payable;
-                        }
-                        _ => {}
-                    }
-                }
+                let kind = (&function_type.mutability).into();
+                let external = matches!(
+                    function_type.visibility,
+                    input_ir::FunctionVisibility::External | input_ir::FunctionVisibility::Public
+                );
                 Some(self.types.register_type(Type::Function(FunctionType {
                     definition_id: None,
                     implicit_receiver_type: None,

@@ -623,20 +623,10 @@ pub trait Visitor {
     }
     fn leave_contract_member(&mut self, _node: &ContractMember) {}
 
-    fn enter_state_variable_attribute(&mut self, _node: &StateVariableAttribute) -> bool {
-        true
-    }
-    fn leave_state_variable_attribute(&mut self, _node: &StateVariableAttribute) {}
-
     fn enter_type_name(&mut self, _node: &TypeName) -> bool {
         true
     }
     fn leave_type_name(&mut self, _node: &TypeName) {}
-
-    fn enter_function_type_attribute(&mut self, _node: &FunctionTypeAttribute) -> bool {
-        true
-    }
-    fn leave_function_type_attribute(&mut self, _node: &FunctionTypeAttribute) {}
 
     fn enter_mapping_key_type(&mut self, _node: &MappingKeyType) -> bool {
         true
@@ -758,6 +748,16 @@ pub trait Visitor {
     }
     fn leave_function_mutability(&mut self, _node: &FunctionMutability) {}
 
+    fn enter_state_variable_visibility(&mut self, _node: &StateVariableVisibility) -> bool {
+        true
+    }
+    fn leave_state_variable_visibility(&mut self, _node: &StateVariableVisibility) {}
+
+    fn enter_state_variable_mutability(&mut self, _node: &StateVariableMutability) -> bool {
+        true
+    }
+    fn leave_state_variable_mutability(&mut self, _node: &StateVariableMutability) {}
+
     fn enter_source_unit_members(&mut self, _items: &SourceUnitMembers) -> bool {
         true
     }
@@ -821,11 +821,6 @@ pub trait Visitor {
     }
     fn leave_enum_members(&mut self, _items: &EnumMembers) {}
 
-    fn enter_state_variable_attributes(&mut self, _items: &StateVariableAttributes) -> bool {
-        true
-    }
-    fn leave_state_variable_attributes(&mut self, _items: &StateVariableAttributes) {}
-
     fn enter_parameters(&mut self, _items: &Parameters) -> bool {
         true
     }
@@ -845,11 +840,6 @@ pub trait Visitor {
         true
     }
     fn leave_error_parameters(&mut self, _items: &ErrorParameters) {}
-
-    fn enter_function_type_attributes(&mut self, _items: &FunctionTypeAttributes) -> bool {
-        true
-    }
-    fn leave_function_type_attributes(&mut self, _items: &FunctionTypeAttributes) {}
 
     fn enter_statements(&mut self, _items: &Statements) -> bool {
         true
@@ -1181,9 +1171,13 @@ pub fn accept_state_variable_definition(
         return;
     }
     accept_type_name(&node.type_name, visitor);
-    accept_state_variable_attributes(&node.attributes, visitor);
     if let Some(ref value) = node.value {
         accept_expression(value, visitor);
+    }
+    accept_state_variable_visibility(&node.visibility, visitor);
+    accept_state_variable_mutability(&node.mutability, visitor);
+    if let Some(ref override_specifier) = node.override_specifier {
+        accept_override_paths(override_specifier, visitor);
     }
     visitor.leave_state_variable_definition(node);
 }
@@ -1300,10 +1294,11 @@ pub fn accept_function_type(node: &FunctionType, visitor: &mut impl Visitor) {
         return;
     }
     accept_parameters(&node.parameters, visitor);
-    accept_function_type_attributes(&node.attributes, visitor);
     if let Some(ref returns) = node.returns {
         accept_parameters(returns, visitor);
     }
+    accept_function_visibility(&node.visibility, visitor);
+    accept_function_mutability(&node.mutability, visitor);
     visitor.leave_function_type(node);
 }
 
@@ -2188,24 +2183,6 @@ pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor)
     visitor.leave_contract_member(node);
 }
 
-pub fn accept_state_variable_attribute(node: &StateVariableAttribute, visitor: &mut impl Visitor) {
-    if !visitor.enter_state_variable_attribute(node) {
-        return;
-    }
-    match node {
-        StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
-        }
-        StateVariableAttribute::ConstantKeyword
-        | StateVariableAttribute::InternalKeyword
-        | StateVariableAttribute::PrivateKeyword
-        | StateVariableAttribute::PublicKeyword
-        | StateVariableAttribute::ImmutableKeyword
-        | StateVariableAttribute::TransientKeyword => {}
-    }
-    visitor.leave_state_variable_attribute(node);
-}
-
 pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
     if !visitor.enter_type_name(node) {
         return;
@@ -2229,8 +2206,6 @@ pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
     }
     visitor.leave_type_name(node);
 }
-
-pub fn accept_function_type_attribute(_node: &FunctionTypeAttribute, _visitor: &mut impl Visitor) {}
 
 pub fn accept_mapping_key_type(node: &MappingKeyType, visitor: &mut impl Visitor) {
     if !visitor.enter_mapping_key_type(node) {
@@ -2675,6 +2650,18 @@ pub fn accept_function_visibility(_node: &FunctionVisibility, _visitor: &mut imp
 
 pub fn accept_function_mutability(_node: &FunctionMutability, _visitor: &mut impl Visitor) {}
 
+pub fn accept_state_variable_visibility(
+    _node: &StateVariableVisibility,
+    _visitor: &mut impl Visitor,
+) {
+}
+
+pub fn accept_state_variable_mutability(
+    _node: &StateVariableMutability,
+    _visitor: &mut impl Visitor,
+) {
+}
+
 //
 // Repeated & Separated
 //
@@ -2810,20 +2797,6 @@ fn accept_enum_members(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor
 }
 
 #[inline]
-fn accept_state_variable_attributes(
-    items: &Vec<StateVariableAttribute>,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_state_variable_attributes(items) {
-        return;
-    }
-    for item in items {
-        accept_state_variable_attribute(item, visitor);
-    }
-    visitor.leave_state_variable_attributes(items);
-}
-
-#[inline]
 fn accept_parameters(items: &Vec<Parameter>, visitor: &mut impl Visitor) {
     if !visitor.enter_parameters(items) {
         return;
@@ -2865,17 +2838,6 @@ fn accept_error_parameters(items: &Vec<ErrorParameter>, visitor: &mut impl Visit
         accept_error_parameter(item, visitor);
     }
     visitor.leave_error_parameters(items);
-}
-
-#[inline]
-fn accept_function_type_attributes(items: &Vec<FunctionTypeAttribute>, visitor: &mut impl Visitor) {
-    if !visitor.enter_function_type_attributes(items) {
-        return;
-    }
-    for item in items {
-        accept_function_type_attribute(item, visitor);
-    }
-    visitor.leave_function_type_attributes(items);
 }
 
 #[inline]
