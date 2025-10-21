@@ -109,13 +109,13 @@ impl Transformer for Pass {
             parameters,
             returns,
             kind,
+            name,
+            body,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
-            name,
-            body,
         })
     }
 
@@ -332,13 +332,13 @@ impl Pass {
             parameters,
             returns,
             kind,
+            name,
+            body,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
-            name,
-            body,
         })
     }
 
@@ -421,13 +421,13 @@ impl Pass {
             parameters,
             returns,
             kind,
+            name,
+            body,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
-            name,
-            body,
         })
     }
 
@@ -494,13 +494,13 @@ impl Pass {
             parameters,
             returns,
             kind,
+            name,
+            body,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
-            name,
-            body,
         })
     }
 
@@ -579,13 +579,13 @@ impl Pass {
             parameters,
             returns,
             kind,
+            name,
+            body,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
-            name,
-            body,
         })
     }
 
@@ -649,13 +649,13 @@ impl Pass {
             parameters,
             returns,
             kind,
+            name,
+            body,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
-            name,
-            body,
         })
     }
 

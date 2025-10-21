@@ -64,6 +64,7 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
 
     flatten_contract_specifiers(&mut mutator);
     unify_function_types(&mut mutator);
+    flatten_function_attributes(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
 
     mutator.into()
@@ -99,6 +100,42 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
         ],
     );
 
+    // Add the kind to the FunctionDefinition type, which will now hold all kinds
+    mutator.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
+
+    // Then remove other specific function types and related attributes
+    mutator.remove_type("ConstructorDefinition");
+    mutator.remove_type("ConstructorAttributes");
+    mutator.remove_type("ConstructorAttribute");
+
+    mutator.remove_type("UnnamedFunctionDefinition");
+    mutator.remove_type("UnnamedFunctionAttributes");
+    mutator.remove_type("UnnamedFunctionAttribute");
+
+    mutator.remove_type("FallbackFunctionDefinition");
+    mutator.remove_type("FallbackFunctionAttributes");
+    mutator.remove_type("FallbackFunctionAttribute");
+
+    mutator.remove_type("ReceiveFunctionDefinition");
+    mutator.remove_type("ReceiveFunctionAttributes");
+    mutator.remove_type("ReceiveFunctionAttribute");
+
+    mutator.remove_type("ModifierDefinition");
+    mutator.remove_type("ModifierAttributes");
+    mutator.remove_type("ModifierAttribute");
+
+    // This also requires modifying the name and body fields
+    mutator.remove_sequence_field("FunctionDefinition", "name");
+    mutator.add_sequence_field("FunctionDefinition", "name", "Identifier", true);
+    mutator.remove_sequence_field("FunctionDefinition", "body");
+    mutator.add_sequence_field("FunctionDefinition", "body", "Block", true);
+
+    // We don't need FunctionName or FunctionBody anymore
+    mutator.remove_type("FunctionName");
+    mutator.remove_type("FunctionBody");
+}
+
+fn flatten_function_attributes(mutator: &mut IrModelMutator) {
     // Function visibility, computed from a subset of the attributes
     mutator.add_enum_type(
         "FunctionVisibility",
@@ -111,8 +148,6 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
         &["Pure", "View", "NonPayable", "Payable"],
     );
 
-    // Add the kind to the FunctionDefinition type, which will now hold all kinds
-    mutator.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
     mutator.add_sequence_field(
         "FunctionDefinition",
         "visibility",
@@ -151,37 +186,6 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     // And remove the list of attributes
     mutator.remove_type("FunctionAttributes");
     mutator.remove_type("FunctionAttribute");
-
-    // Then remove other specific function types and related attributes
-    mutator.remove_type("ConstructorDefinition");
-    mutator.remove_type("ConstructorAttributes");
-    mutator.remove_type("ConstructorAttribute");
-
-    mutator.remove_type("UnnamedFunctionDefinition");
-    mutator.remove_type("UnnamedFunctionAttributes");
-    mutator.remove_type("UnnamedFunctionAttribute");
-
-    mutator.remove_type("FallbackFunctionDefinition");
-    mutator.remove_type("FallbackFunctionAttributes");
-    mutator.remove_type("FallbackFunctionAttribute");
-
-    mutator.remove_type("ReceiveFunctionDefinition");
-    mutator.remove_type("ReceiveFunctionAttributes");
-    mutator.remove_type("ReceiveFunctionAttribute");
-
-    mutator.remove_type("ModifierDefinition");
-    mutator.remove_type("ModifierAttributes");
-    mutator.remove_type("ModifierAttribute");
-
-    // This also requires modifying the name and body fields
-    mutator.remove_sequence_field("FunctionDefinition", "name");
-    mutator.add_sequence_field("FunctionDefinition", "name", "Identifier", true);
-    mutator.remove_sequence_field("FunctionDefinition", "body");
-    mutator.add_sequence_field("FunctionDefinition", "body", "Block", true);
-
-    // We don't need FunctionName or FunctionBody anymore
-    mutator.remove_type("FunctionName");
-    mutator.remove_type("FunctionBody");
 }
 
 fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
