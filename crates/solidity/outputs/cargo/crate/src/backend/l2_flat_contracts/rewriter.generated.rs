@@ -92,19 +92,19 @@ pub trait Rewriter {
     }
 
     fn rewrite_path_import(&mut self, source: &PathImport) -> PathImport {
-        let path = self.rewrite_string_literal(&source.path);
         let alias = source.alias.as_ref().map(Rc::clone);
+        let path = Rc::clone(&source.path);
 
         Rc::new(PathImportStruct {
             node_id: source.node_id,
-            path,
             alias,
+            path,
         })
     }
 
     fn rewrite_named_import(&mut self, source: &NamedImport) -> NamedImport {
         let alias = Rc::clone(&source.alias);
-        let path = self.rewrite_string_literal(&source.path);
+        let path = Rc::clone(&source.path);
 
         Rc::new(NamedImportStruct {
             node_id: source.node_id,
@@ -118,7 +118,7 @@ pub trait Rewriter {
         source: &ImportDeconstruction,
     ) -> ImportDeconstruction {
         let symbols = self.rewrite_import_deconstruction_symbols(&source.symbols);
-        let path = self.rewrite_string_literal(&source.path);
+        let path = Rc::clone(&source.path);
 
         Rc::new(ImportDeconstructionStruct {
             node_id: source.node_id,
@@ -563,21 +563,15 @@ pub trait Rewriter {
     }
 
     fn rewrite_assembly_statement(&mut self, source: &AssemblyStatement) -> AssemblyStatement {
-        let label = source
-            .label
-            .as_ref()
-            .map(|value| self.rewrite_string_literal(value));
-        let flags = source
-            .flags
-            .as_ref()
-            .map(|value| self.rewrite_assembly_flags(value));
         let body = self.rewrite_yul_block(&source.body);
+        let flags = self.rewrite_assembly_flags(&source.flags);
+        let label = source.label.as_ref().map(Rc::clone);
 
         Rc::new(AssemblyStatementStruct {
             node_id: source.node_id,
-            label,
-            flags,
             body,
+            flags,
+            label,
         })
     }
 
@@ -1486,8 +1480,8 @@ pub trait Rewriter {
         source: &ExperimentalFeature,
     ) -> ExperimentalFeature {
         match source {
-            ExperimentalFeature::StringLiteral(ref string_literal) => {
-                ExperimentalFeature::StringLiteral(self.rewrite_string_literal(string_literal))
+            ExperimentalFeature::StringLiteral(node) => {
+                ExperimentalFeature::StringLiteral(Rc::clone(node))
             }
             ExperimentalFeature::ABIEncoderV2Keyword => ExperimentalFeature::ABIEncoderV2Keyword,
             ExperimentalFeature::SMTCheckerKeyword => ExperimentalFeature::SMTCheckerKeyword,
@@ -2043,82 +2037,19 @@ pub trait Rewriter {
 
     fn default_rewrite_string_expression(&mut self, source: &StringExpression) -> StringExpression {
         match source {
-            StringExpression::StringLiteral(ref string_literal) => {
-                StringExpression::StringLiteral(self.rewrite_string_literal(string_literal))
+            StringExpression::Strings(ref strings) => {
+                StringExpression::Strings(self.rewrite_strings(strings))
             }
-            StringExpression::StringLiterals(ref string_literals) => {
-                StringExpression::StringLiterals(self.rewrite_string_literals(string_literals))
+            StringExpression::HexStrings(ref hex_strings) => {
+                StringExpression::HexStrings(self.rewrite_hex_strings(hex_strings))
             }
-            StringExpression::HexStringLiteral(ref hex_string_literal) => {
-                StringExpression::HexStringLiteral(
-                    self.rewrite_hex_string_literal(hex_string_literal),
-                )
-            }
-            StringExpression::HexStringLiterals(ref hex_string_literals) => {
-                StringExpression::HexStringLiterals(
-                    self.rewrite_hex_string_literals(hex_string_literals),
-                )
-            }
-            StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
-                StringExpression::UnicodeStringLiterals(
-                    self.rewrite_unicode_string_literals(unicode_string_literals),
-                )
+            StringExpression::UnicodeStrings(ref unicode_strings) => {
+                StringExpression::UnicodeStrings(self.rewrite_unicode_strings(unicode_strings))
             }
         }
     }
     fn rewrite_string_expression(&mut self, source: &StringExpression) -> StringExpression {
         self.default_rewrite_string_expression(source)
-    }
-
-    fn default_rewrite_string_literal(&mut self, source: &StringLiteral) -> StringLiteral {
-        match source {
-            StringLiteral::SingleQuotedStringLiteral(node) => {
-                StringLiteral::SingleQuotedStringLiteral(Rc::clone(node))
-            }
-            StringLiteral::DoubleQuotedStringLiteral(node) => {
-                StringLiteral::DoubleQuotedStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn rewrite_string_literal(&mut self, source: &StringLiteral) -> StringLiteral {
-        self.default_rewrite_string_literal(source)
-    }
-
-    fn default_rewrite_hex_string_literal(
-        &mut self,
-        source: &HexStringLiteral,
-    ) -> HexStringLiteral {
-        match source {
-            HexStringLiteral::SingleQuotedHexStringLiteral(node) => {
-                HexStringLiteral::SingleQuotedHexStringLiteral(Rc::clone(node))
-            }
-            HexStringLiteral::DoubleQuotedHexStringLiteral(node) => {
-                HexStringLiteral::DoubleQuotedHexStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn rewrite_hex_string_literal(&mut self, source: &HexStringLiteral) -> HexStringLiteral {
-        self.default_rewrite_hex_string_literal(source)
-    }
-
-    fn default_rewrite_unicode_string_literal(
-        &mut self,
-        source: &UnicodeStringLiteral,
-    ) -> UnicodeStringLiteral {
-        match source {
-            UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(node) => {
-                UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(Rc::clone(node))
-            }
-            UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(node) => {
-                UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn rewrite_unicode_string_literal(
-        &mut self,
-        source: &UnicodeStringLiteral,
-    ) -> UnicodeStringLiteral {
-        self.default_rewrite_unicode_string_literal(source)
     }
 
     fn default_rewrite_yul_statement(&mut self, source: &YulStatement) -> YulStatement {
@@ -2261,14 +2192,10 @@ pub trait Rewriter {
 
     fn default_rewrite_yul_literal(&mut self, source: &YulLiteral) -> YulLiteral {
         match source {
-            YulLiteral::HexStringLiteral(ref hex_string_literal) => {
-                YulLiteral::HexStringLiteral(self.rewrite_hex_string_literal(hex_string_literal))
-            }
-            YulLiteral::StringLiteral(ref string_literal) => {
-                YulLiteral::StringLiteral(self.rewrite_string_literal(string_literal))
-            }
             YulLiteral::YulDecimalLiteral(node) => YulLiteral::YulDecimalLiteral(Rc::clone(node)),
             YulLiteral::YulHexLiteral(node) => YulLiteral::YulHexLiteral(Rc::clone(node)),
+            YulLiteral::StringLiteral(node) => YulLiteral::StringLiteral(Rc::clone(node)),
+            YulLiteral::HexStringLiteral(node) => YulLiteral::HexStringLiteral(Rc::clone(node)),
             YulLiteral::YulTrueKeyword => YulLiteral::YulTrueKeyword,
             YulLiteral::YulFalseKeyword => YulLiteral::YulFalseKeyword,
         }
@@ -2488,13 +2415,6 @@ pub trait Rewriter {
             .collect()
     }
 
-    fn rewrite_assembly_flags(&mut self, source: &AssemblyFlags) -> AssemblyFlags {
-        source
-            .iter()
-            .map(|item| self.rewrite_string_literal(item))
-            .collect()
-    }
-
     fn rewrite_tuple_deconstruction_elements(
         &mut self,
         source: &TupleDeconstructionElements,
@@ -2550,30 +2470,6 @@ pub trait Rewriter {
             .collect()
     }
 
-    fn rewrite_string_literals(&mut self, source: &StringLiterals) -> StringLiterals {
-        source
-            .iter()
-            .map(|item| self.rewrite_string_literal(item))
-            .collect()
-    }
-
-    fn rewrite_hex_string_literals(&mut self, source: &HexStringLiterals) -> HexStringLiterals {
-        source
-            .iter()
-            .map(|item| self.rewrite_hex_string_literal(item))
-            .collect()
-    }
-
-    fn rewrite_unicode_string_literals(
-        &mut self,
-        source: &UnicodeStringLiterals,
-    ) -> UnicodeStringLiterals {
-        source
-            .iter()
-            .map(|item| self.rewrite_unicode_string_literal(item))
-            .collect()
-    }
-
     fn rewrite_identifier_path(&mut self, source: &IdentifierPath) -> IdentifierPath {
         source.iter().map(Rc::clone).collect()
     }
@@ -2626,5 +2522,21 @@ pub trait Rewriter {
             .iter()
             .map(|item| self.rewrite_modifier_invocation(item))
             .collect()
+    }
+
+    fn rewrite_strings(&mut self, source: &Strings) -> Strings {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn rewrite_hex_strings(&mut self, source: &HexStrings) -> HexStrings {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn rewrite_unicode_strings(&mut self, source: &UnicodeStrings) -> UnicodeStrings {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn rewrite_assembly_flags(&mut self, source: &AssemblyFlags) -> AssemblyFlags {
+        source.iter().map(Rc::clone).collect()
     }
 }
