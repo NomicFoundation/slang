@@ -531,37 +531,29 @@ fn reference_node_id_for_expression(node: &input_ir::Expression) -> Option<NodeI
 impl Pass {
     pub(super) fn type_of_string_expression(node: &input_ir::StringExpression) -> Type {
         let kind = match node {
-            input_ir::StringExpression::StringLiteral(string_literal) => {
-                let size = Self::string_literal_size(string_literal);
-                LiteralKind::String {
-                    bytes: u32::try_from(size).unwrap(),
-                }
-            }
-            input_ir::StringExpression::StringLiterals(literals) => {
-                let size = literals.iter().fold(0usize, |acc, literal| {
-                    acc + Self::string_literal_size(literal)
+            input_ir::StringExpression::Strings(strings) => {
+                let size = strings.iter().fold(0usize, |acc, string| {
+                    // TODO: consider escaped characters
+                    acc + string.unparse().len() - 2
                 });
                 LiteralKind::String {
                     bytes: u32::try_from(size).unwrap(),
                 }
             }
-            input_ir::StringExpression::HexStringLiteral(hex_string_literal) => {
-                let size = Self::hex_string_literal_bytes_size(hex_string_literal);
-                LiteralKind::HexString {
-                    bytes: u32::try_from(size).unwrap(),
-                }
-            }
-            input_ir::StringExpression::HexStringLiterals(literals) => {
-                let size = literals.iter().fold(0usize, |acc, literal| {
-                    acc + Self::hex_string_literal_bytes_size(literal)
+            input_ir::StringExpression::HexStrings(hex_strings) => {
+                let size = hex_strings.iter().fold(0usize, |acc, hex_string| {
+                    // 5 is the length of the `hex` prefix plus the quotes
+                    acc + (hex_string.unparse().len() - 5) / 2
                 });
-                LiteralKind::HexString {
+                LiteralKind::String {
                     bytes: u32::try_from(size).unwrap(),
                 }
             }
-            input_ir::StringExpression::UnicodeStringLiterals(literals) => {
-                let size = literals.iter().fold(0usize, |acc, literal| {
-                    acc + Self::unicode_string_literal_size(literal)
+            input_ir::StringExpression::UnicodeStrings(unicode_strings) => {
+                let size = unicode_strings.iter().fold(0usize, |acc, unicode_string| {
+                    // TODO: actually parse the string
+                    // 9 is the length of the `unicode` prefix plus quotes
+                    acc + unicode_string.unparse().len() - 9
                 });
                 LiteralKind::String {
                     bytes: u32::try_from(size).unwrap(),
@@ -575,81 +567,9 @@ impl Pass {
         string_expression: &input_ir::StringExpression,
     ) -> NodeId {
         match string_expression {
-            input_ir::StringExpression::StringLiteral(string_literal) => {
-                Self::string_literal_node_id(string_literal)
-            }
-            input_ir::StringExpression::StringLiterals(string_literals) => {
-                Self::string_literal_node_id(&string_literals[0])
-            }
-            input_ir::StringExpression::HexStringLiteral(hex_string_literal) => {
-                Self::hex_string_literal_node_id(hex_string_literal)
-            }
-            input_ir::StringExpression::HexStringLiterals(hex_string_literals) => {
-                Self::hex_string_literal_node_id(&hex_string_literals[0])
-            }
-            input_ir::StringExpression::UnicodeStringLiterals(unicode_string_literals) => {
-                Self::unicode_string_literal_node_id(&unicode_string_literals[0])
-            }
-        }
-    }
-
-    fn string_literal_node_id(string_literal: &input_ir::StringLiteral) -> NodeId {
-        match string_literal {
-            input_ir::StringLiteral::SingleQuotedStringLiteral(terminal_node)
-            | input_ir::StringLiteral::DoubleQuotedStringLiteral(terminal_node) => {
-                terminal_node.id()
-            }
-        }
-    }
-
-    fn string_literal_size(string_literal: &input_ir::StringLiteral) -> usize {
-        match string_literal {
-            input_ir::StringLiteral::SingleQuotedStringLiteral(terminal_node)
-            | input_ir::StringLiteral::DoubleQuotedStringLiteral(terminal_node) => {
-                // TODO: consider escaped characters
-                terminal_node.unparse().len() - 2
-            }
-        }
-    }
-
-    fn hex_string_literal_node_id(hex_string_literal: &input_ir::HexStringLiteral) -> NodeId {
-        match hex_string_literal {
-            input_ir::HexStringLiteral::SingleQuotedHexStringLiteral(terminal_node)
-            | input_ir::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal_node) => {
-                terminal_node.id()
-            }
-        }
-    }
-
-    fn hex_string_literal_bytes_size(hex_string_literal: &input_ir::HexStringLiteral) -> usize {
-        match hex_string_literal {
-            input_ir::HexStringLiteral::SingleQuotedHexStringLiteral(terminal_node)
-            | input_ir::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal_node) => {
-                // 5 is the length of the `hex` prefix plus the quotes
-                (terminal_node.unparse().len() - 5) / 2
-            }
-        }
-    }
-
-    fn unicode_string_literal_node_id(
-        unicode_string_literal: &input_ir::UnicodeStringLiteral,
-    ) -> NodeId {
-        match unicode_string_literal {
-            input_ir::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal_node)
-            | input_ir::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal_node) => {
-                terminal_node.id()
-            }
-        }
-    }
-
-    fn unicode_string_literal_size(string_literal: &input_ir::UnicodeStringLiteral) -> usize {
-        match string_literal {
-            input_ir::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal_node)
-            | input_ir::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal_node) => {
-                // TODO: actually parse the string
-                // 9 is the length of the `unicode` prefix plus quotes
-                terminal_node.unparse().len() - 9
-            }
+            input_ir::StringExpression::Strings(strings) => strings[0].id(),
+            input_ir::StringExpression::HexStrings(hex_strings) => hex_strings[0].id(),
+            input_ir::StringExpression::UnicodeStrings(unicode_strings) => unicode_strings[0].id(),
         }
     }
 

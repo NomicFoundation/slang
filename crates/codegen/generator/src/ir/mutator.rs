@@ -417,4 +417,13 @@ impl IrModelMutator {
             },
         );
     }
+
+    pub fn add_non_unique_terminal(&mut self, identifier: &str) {
+        assert!(
+            self.terminals
+                .insert(identifier.into(), false)
+                .is_none_or(|unique| !unique),
+            "Existing terminal {identifier} is unique"
+        );
+    }
 }

@@ -688,21 +688,6 @@ pub trait Visitor {
     }
     fn leave_string_expression(&mut self, _node: &StringExpression) {}
 
-    fn enter_string_literal(&mut self, _node: &StringLiteral) -> bool {
-        true
-    }
-    fn leave_string_literal(&mut self, _node: &StringLiteral) {}
-
-    fn enter_hex_string_literal(&mut self, _node: &HexStringLiteral) -> bool {
-        true
-    }
-    fn leave_hex_string_literal(&mut self, _node: &HexStringLiteral) {}
-
-    fn enter_unicode_string_literal(&mut self, _node: &UnicodeStringLiteral) -> bool {
-        true
-    }
-    fn leave_unicode_string_literal(&mut self, _node: &UnicodeStringLiteral) {}
-
     fn enter_yul_statement(&mut self, _node: &YulStatement) -> bool {
         true
     }
@@ -846,11 +831,6 @@ pub trait Visitor {
     }
     fn leave_statements(&mut self, _items: &Statements) {}
 
-    fn enter_assembly_flags(&mut self, _items: &AssemblyFlags) -> bool {
-        true
-    }
-    fn leave_assembly_flags(&mut self, _items: &AssemblyFlags) {}
-
     fn enter_tuple_deconstruction_elements(
         &mut self,
         _items: &TupleDeconstructionElements,
@@ -888,21 +868,6 @@ pub trait Visitor {
         true
     }
     fn leave_array_values(&mut self, _items: &ArrayValues) {}
-
-    fn enter_string_literals(&mut self, _items: &StringLiterals) -> bool {
-        true
-    }
-    fn leave_string_literals(&mut self, _items: &StringLiterals) {}
-
-    fn enter_hex_string_literals(&mut self, _items: &HexStringLiterals) -> bool {
-        true
-    }
-    fn leave_hex_string_literals(&mut self, _items: &HexStringLiterals) {}
-
-    fn enter_unicode_string_literals(&mut self, _items: &UnicodeStringLiterals) -> bool {
-        true
-    }
-    fn leave_unicode_string_literals(&mut self, _items: &UnicodeStringLiterals) {}
 
     fn enter_identifier_path(&mut self, _items: &IdentifierPath) -> bool {
         true
@@ -948,6 +913,26 @@ pub trait Visitor {
         true
     }
     fn leave_modifier_invocations(&mut self, _items: &ModifierInvocations) {}
+
+    fn enter_strings(&mut self, _items: &Strings) -> bool {
+        true
+    }
+    fn leave_strings(&mut self, _items: &Strings) {}
+
+    fn enter_hex_strings(&mut self, _items: &HexStrings) -> bool {
+        true
+    }
+    fn leave_hex_strings(&mut self, _items: &HexStrings) {}
+
+    fn enter_unicode_strings(&mut self, _items: &UnicodeStrings) -> bool {
+        true
+    }
+    fn leave_unicode_strings(&mut self, _items: &UnicodeStrings) {}
+
+    fn enter_assembly_flags(&mut self, _items: &AssemblyFlags) -> bool {
+        true
+    }
+    fn leave_assembly_flags(&mut self, _items: &AssemblyFlags) {}
 }
 
 //
@@ -1026,7 +1011,6 @@ pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
     if !visitor.enter_path_import(node) {
         return;
     }
-    accept_string_literal(&node.path, visitor);
     visitor.leave_path_import(node);
 }
 
@@ -1034,7 +1018,6 @@ pub fn accept_named_import(node: &NamedImport, visitor: &mut impl Visitor) {
     if !visitor.enter_named_import(node) {
         return;
     }
-    accept_string_literal(&node.path, visitor);
     visitor.leave_named_import(node);
 }
 
@@ -1043,7 +1026,6 @@ pub fn accept_import_deconstruction(node: &ImportDeconstruction, visitor: &mut i
         return;
     }
     accept_import_deconstruction_symbols(&node.symbols, visitor);
-    accept_string_literal(&node.path, visitor);
     visitor.leave_import_deconstruction(node);
 }
 
@@ -1362,13 +1344,8 @@ pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Vi
     if !visitor.enter_assembly_statement(node) {
         return;
     }
-    if let Some(ref label) = node.label {
-        accept_string_literal(label, visitor);
-    }
-    if let Some(ref flags) = node.flags {
-        accept_assembly_flags(flags, visitor);
-    }
     accept_yul_block(&node.body, visitor);
+    accept_assembly_flags(&node.flags, visitor);
     visitor.leave_assembly_statement(node);
 }
 
@@ -2058,18 +2035,7 @@ pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
 
 pub fn accept_abicoder_version(_node: &AbicoderVersion, _visitor: &mut impl Visitor) {}
 
-pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut impl Visitor) {
-    if !visitor.enter_experimental_feature(node) {
-        return;
-    }
-    match node {
-        ExperimentalFeature::StringLiteral(ref string_literal) => {
-            accept_string_literal(string_literal, visitor);
-        }
-        ExperimentalFeature::ABIEncoderV2Keyword | ExperimentalFeature::SMTCheckerKeyword => {}
-    }
-    visitor.leave_experimental_feature(node);
-}
+pub fn accept_experimental_feature(_node: &ExperimentalFeature, _visitor: &mut impl Visitor) {}
 
 pub fn accept_version_expression(node: &VersionExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_version_expression(node) {
@@ -2492,30 +2458,18 @@ pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visi
         return;
     }
     match node {
-        StringExpression::StringLiteral(ref string_literal) => {
-            accept_string_literal(string_literal, visitor);
+        StringExpression::Strings(ref strings) => {
+            accept_strings(strings, visitor);
         }
-        StringExpression::StringLiterals(ref string_literals) => {
-            accept_string_literals(string_literals, visitor);
+        StringExpression::HexStrings(ref hex_strings) => {
+            accept_hex_strings(hex_strings, visitor);
         }
-        StringExpression::HexStringLiteral(ref hex_string_literal) => {
-            accept_hex_string_literal(hex_string_literal, visitor);
-        }
-        StringExpression::HexStringLiterals(ref hex_string_literals) => {
-            accept_hex_string_literals(hex_string_literals, visitor);
-        }
-        StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
-            accept_unicode_string_literals(unicode_string_literals, visitor);
+        StringExpression::UnicodeStrings(ref unicode_strings) => {
+            accept_unicode_strings(unicode_strings, visitor);
         }
     }
     visitor.leave_string_expression(node);
 }
-
-pub fn accept_string_literal(_node: &StringLiteral, _visitor: &mut impl Visitor) {}
-
-pub fn accept_hex_string_literal(_node: &HexStringLiteral, _visitor: &mut impl Visitor) {}
-
-pub fn accept_unicode_string_literal(_node: &UnicodeStringLiteral, _visitor: &mut impl Visitor) {}
 
 pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_statement(node) {
@@ -2627,22 +2581,7 @@ pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
     visitor.leave_yul_expression(node);
 }
 
-pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
-    if !visitor.enter_yul_literal(node) {
-        return;
-    }
-    match node {
-        YulLiteral::HexStringLiteral(ref hex_string_literal) => {
-            accept_hex_string_literal(hex_string_literal, visitor);
-        }
-        YulLiteral::StringLiteral(ref string_literal) => {
-            accept_string_literal(string_literal, visitor);
-        }
-        YulLiteral::YulDecimalLiteral(_) | YulLiteral::YulHexLiteral(_) => {}
-        YulLiteral::YulTrueKeyword | YulLiteral::YulFalseKeyword => {}
-    }
-    visitor.leave_yul_literal(node);
-}
+pub fn accept_yul_literal(_node: &YulLiteral, _visitor: &mut impl Visitor) {}
 
 pub fn accept_function_kind(_node: &FunctionKind, _visitor: &mut impl Visitor) {}
 
@@ -2852,17 +2791,6 @@ fn accept_statements(items: &Vec<Statement>, visitor: &mut impl Visitor) {
 }
 
 #[inline]
-fn accept_assembly_flags(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_assembly_flags(items) {
-        return;
-    }
-    for item in items {
-        accept_string_literal(item, visitor);
-    }
-    visitor.leave_assembly_flags(items);
-}
-
-#[inline]
 fn accept_tuple_deconstruction_elements(
     items: &Vec<TupleDeconstructionElement>,
     visitor: &mut impl Visitor,
@@ -2940,39 +2868,6 @@ fn accept_array_values(items: &Vec<Expression>, visitor: &mut impl Visitor) {
         accept_expression(item, visitor);
     }
     visitor.leave_array_values(items);
-}
-
-#[inline]
-fn accept_string_literals(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_string_literals(items) {
-        return;
-    }
-    for item in items {
-        accept_string_literal(item, visitor);
-    }
-    visitor.leave_string_literals(items);
-}
-
-#[inline]
-fn accept_hex_string_literals(items: &Vec<HexStringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_hex_string_literals(items) {
-        return;
-    }
-    for item in items {
-        accept_hex_string_literal(item, visitor);
-    }
-    visitor.leave_hex_string_literals(items);
-}
-
-#[inline]
-fn accept_unicode_string_literals(items: &Vec<UnicodeStringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_unicode_string_literals(items) {
-        return;
-    }
-    for item in items {
-        accept_unicode_string_literal(item, visitor);
-    }
-    visitor.leave_unicode_string_literals(items);
 }
 
 #[inline]
@@ -3056,4 +2951,32 @@ fn accept_modifier_invocations(items: &Vec<ModifierInvocation>, visitor: &mut im
         accept_modifier_invocation(item, visitor);
     }
     visitor.leave_modifier_invocations(items);
+}
+
+#[inline]
+fn accept_strings(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor) {
+    if visitor.enter_strings(items) {
+        visitor.leave_strings(items);
+    }
+}
+
+#[inline]
+fn accept_hex_strings(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor) {
+    if visitor.enter_hex_strings(items) {
+        visitor.leave_hex_strings(items);
+    }
+}
+
+#[inline]
+fn accept_unicode_strings(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor) {
+    if visitor.enter_unicode_strings(items) {
+        visitor.leave_unicode_strings(items);
+    }
+}
+
+#[inline]
+fn accept_assembly_flags(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor) {
+    if visitor.enter_assembly_flags(items) {
+        visitor.leave_assembly_flags(items);
+    }
 }

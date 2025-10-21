@@ -67,6 +67,7 @@ fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTr
     flatten_function_attributes(&mut mutator);
     flatten_state_variable_attributes(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
+    simplify_string_literals(&mut mutator);
 
     mutator.into()
 }
@@ -245,7 +246,6 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
     mutator.collapse_sequence("UsingAlias");
     mutator.collapse_sequence("StateVariableDefinitionValue");
     mutator.collapse_sequence("OverridePathsDeclaration");
-    mutator.collapse_sequence("AssemblyFlagsDeclaration");
     mutator.collapse_sequence("VariableDeclarationValue");
     mutator.collapse_sequence("NamedArgumentGroup");
 
@@ -260,4 +260,46 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
     mutator.remove_type("NamedArgumentsDeclaration");
     mutator.add_choice_variant("ArgumentsDeclaration", "PositionalArguments");
     mutator.add_choice_variant("ArgumentsDeclaration", "NamedArguments");
+}
+
+fn simplify_string_literals(mutator: &mut IrModelMutator) {
+    // Remove all existing types, as we will simplify them to 3 variants
+    mutator.remove_type("StringLiterals");
+    mutator.remove_type("StringLiteral");
+    mutator.remove_type("HexStringLiterals");
+    mutator.remove_type("HexStringLiteral");
+    mutator.remove_type("UnicodeStringLiterals");
+    mutator.remove_type("UnicodeStringLiteral");
+
+    // Re-declare `StringLiteral`, `HexStringLiteral` and `UnicodeStringLiteral`
+    // as non-unique terminals
+    mutator.add_non_unique_terminal("StringLiteral");
+    mutator.add_non_unique_terminal("HexStringLiteral");
+    mutator.add_non_unique_terminal("UnicodeStringLiteral");
+
+    // Create the collection types using the double-quoted variants.
+    // The choice is irrelevant because we only care that it's a non-unique
+    // terminal, which is represented by an `Rc<TerminalNode>` anyway.
+    mutator.add_collection_type("Strings", "StringLiteral");
+    mutator.add_collection_type("HexStrings", "HexStringLiteral");
+    mutator.add_collection_type("UnicodeStrings", "UnicodeStringLiteral");
+
+    // Now we add the variants to the expression type
+    mutator.add_choice_variant("StringExpression", "Strings");
+    mutator.add_choice_variant("StringExpression", "HexStrings");
+    mutator.add_choice_variant("StringExpression", "UnicodeStrings");
+
+    // Update other uses of StringLiteral
+    mutator.add_sequence_field("PathImport", "path", "StringLiteral", false);
+    mutator.add_sequence_field("NamedImport", "path", "StringLiteral", false);
+    mutator.add_sequence_field("ImportDeconstruction", "path", "StringLiteral", false);
+    mutator.add_choice_variant("ExperimentalFeature", "StringLiteral");
+    mutator.add_choice_variant("YulLiteral", "StringLiteral");
+    mutator.add_choice_variant("YulLiteral", "HexStringLiteral");
+
+    // For `AssemblyFlags`, also remove the enclosing declaration structure
+    mutator.remove_type("AssemblyFlagsDeclaration");
+    mutator.add_collection_type("AssemblyFlags", "StringLiteral");
+    mutator.add_sequence_field("AssemblyStatement", "flags", "AssemblyFlags", false);
+    mutator.add_sequence_field("AssemblyStatement", "label", "StringLiteral", true);
 }

@@ -105,44 +105,14 @@ pub trait Transformer {
         })
     }
 
-    fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
-        let path = self.transform_string_literal(&source.path);
-        let alias = source
-            .alias
-            .as_ref()
-            .map(|value| self.transform_import_alias(value));
+    fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport;
 
-        Rc::new(output::PathImportStruct {
-            node_id: source.node_id,
-            path,
-            alias,
-        })
-    }
-
-    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport {
-        let alias = self.transform_import_alias(&source.alias);
-        let path = self.transform_string_literal(&source.path);
-
-        Rc::new(output::NamedImportStruct {
-            node_id: source.node_id,
-            alias,
-            path,
-        })
-    }
+    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport;
 
     fn transform_import_deconstruction(
         &mut self,
         source: &input::ImportDeconstruction,
-    ) -> output::ImportDeconstruction {
-        let symbols = self.transform_import_deconstruction_symbols(&source.symbols);
-        let path = self.transform_string_literal(&source.path);
-
-        Rc::new(output::ImportDeconstructionStruct {
-            node_id: source.node_id,
-            symbols,
-            path,
-        })
-    }
+    ) -> output::ImportDeconstruction;
 
     fn transform_import_deconstruction_symbol(
         &mut self,
@@ -545,24 +515,7 @@ pub trait Transformer {
     fn transform_assembly_statement(
         &mut self,
         source: &input::AssemblyStatement,
-    ) -> output::AssemblyStatement {
-        let label = source
-            .label
-            .as_ref()
-            .map(|value| self.transform_string_literal(value));
-        let flags = source
-            .flags
-            .as_ref()
-            .map(|value| self.transform_assembly_flags_declaration(value));
-        let body = self.transform_yul_block(&source.body);
-
-        Rc::new(output::AssemblyStatementStruct {
-            node_id: source.node_id,
-            label,
-            flags,
-            body,
-        })
-    }
+    ) -> output::AssemblyStatement;
 
     fn transform_tuple_deconstruction_statement(
         &mut self,
@@ -1516,13 +1469,6 @@ pub trait Transformer {
         self.transform_override_paths(&source.paths)
     }
 
-    fn transform_assembly_flags_declaration(
-        &mut self,
-        source: &input::AssemblyFlagsDeclaration,
-    ) -> output::AssemblyFlags {
-        self.transform_assembly_flags(&source.flags)
-    }
-
     fn transform_variable_declaration_value(
         &mut self,
         source: &input::VariableDeclarationValue,
@@ -1670,17 +1616,13 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ExperimentalFeature::StringLiteral(ref string_literal) => {
-                output::ExperimentalFeature::StringLiteral(
-                    self.transform_string_literal(string_literal),
-                )
-            }
             input::ExperimentalFeature::ABIEncoderV2Keyword => {
                 output::ExperimentalFeature::ABIEncoderV2Keyword
             }
             input::ExperimentalFeature::SMTCheckerKeyword => {
                 output::ExperimentalFeature::SMTCheckerKeyword
             }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_experimental_feature(
@@ -2382,31 +2324,7 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::StringExpression::StringLiteral(ref string_literal) => {
-                output::StringExpression::StringLiteral(
-                    self.transform_string_literal(string_literal),
-                )
-            }
-            input::StringExpression::StringLiterals(ref string_literals) => {
-                output::StringExpression::StringLiterals(
-                    self.transform_string_literals(string_literals),
-                )
-            }
-            input::StringExpression::HexStringLiteral(ref hex_string_literal) => {
-                output::StringExpression::HexStringLiteral(
-                    self.transform_hex_string_literal(hex_string_literal),
-                )
-            }
-            input::StringExpression::HexStringLiterals(ref hex_string_literals) => {
-                output::StringExpression::HexStringLiterals(
-                    self.transform_hex_string_literals(hex_string_literals),
-                )
-            }
-            input::StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
-                output::StringExpression::UnicodeStringLiterals(
-                    self.transform_unicode_string_literals(unicode_string_literals),
-                )
-            }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_string_expression(
@@ -2414,69 +2332,6 @@ pub trait Transformer {
         source: &input::StringExpression,
     ) -> output::StringExpression {
         self.default_transform_string_expression(source)
-    }
-
-    fn default_transform_string_literal(
-        &mut self,
-        source: &input::StringLiteral,
-    ) -> output::StringLiteral {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::StringLiteral::SingleQuotedStringLiteral(node) => {
-                output::StringLiteral::SingleQuotedStringLiteral(Rc::clone(node))
-            }
-            input::StringLiteral::DoubleQuotedStringLiteral(node) => {
-                output::StringLiteral::DoubleQuotedStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn transform_string_literal(&mut self, source: &input::StringLiteral) -> output::StringLiteral {
-        self.default_transform_string_literal(source)
-    }
-
-    fn default_transform_hex_string_literal(
-        &mut self,
-        source: &input::HexStringLiteral,
-    ) -> output::HexStringLiteral {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::HexStringLiteral::SingleQuotedHexStringLiteral(node) => {
-                output::HexStringLiteral::SingleQuotedHexStringLiteral(Rc::clone(node))
-            }
-            input::HexStringLiteral::DoubleQuotedHexStringLiteral(node) => {
-                output::HexStringLiteral::DoubleQuotedHexStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn transform_hex_string_literal(
-        &mut self,
-        source: &input::HexStringLiteral,
-    ) -> output::HexStringLiteral {
-        self.default_transform_hex_string_literal(source)
-    }
-
-    fn default_transform_unicode_string_literal(
-        &mut self,
-        source: &input::UnicodeStringLiteral,
-    ) -> output::UnicodeStringLiteral {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(node) => {
-                output::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(Rc::clone(node))
-            }
-            input::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(node) => {
-                output::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn transform_unicode_string_literal(
-        &mut self,
-        source: &input::UnicodeStringLiteral,
-    ) -> output::UnicodeStringLiteral {
-        self.default_transform_unicode_string_literal(source)
     }
 
     fn default_transform_yul_statement(
@@ -2651,14 +2506,6 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulLiteral::HexStringLiteral(ref hex_string_literal) => {
-                output::YulLiteral::HexStringLiteral(
-                    self.transform_hex_string_literal(hex_string_literal),
-                )
-            }
-            input::YulLiteral::StringLiteral(ref string_literal) => {
-                output::YulLiteral::StringLiteral(self.transform_string_literal(string_literal))
-            }
             input::YulLiteral::YulDecimalLiteral(node) => {
                 output::YulLiteral::YulDecimalLiteral(Rc::clone(node))
             }
@@ -2667,6 +2514,7 @@ pub trait Transformer {
             }
             input::YulLiteral::YulTrueKeyword => output::YulLiteral::YulTrueKeyword,
             input::YulLiteral::YulFalseKeyword => output::YulLiteral::YulFalseKeyword,
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
@@ -2826,13 +2674,6 @@ pub trait Transformer {
             .collect()
     }
 
-    fn transform_assembly_flags(&mut self, source: &input::AssemblyFlags) -> output::AssemblyFlags {
-        source
-            .iter()
-            .map(|item| self.transform_string_literal(item))
-            .collect()
-    }
-
     fn transform_tuple_deconstruction_elements(
         &mut self,
         source: &input::TupleDeconstructionElements,
@@ -2888,36 +2729,6 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_expression(item))
-            .collect()
-    }
-
-    fn transform_string_literals(
-        &mut self,
-        source: &input::StringLiterals,
-    ) -> output::StringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_string_literal(item))
-            .collect()
-    }
-
-    fn transform_hex_string_literals(
-        &mut self,
-        source: &input::HexStringLiterals,
-    ) -> output::HexStringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_hex_string_literal(item))
-            .collect()
-    }
-
-    fn transform_unicode_string_literals(
-        &mut self,
-        source: &input::UnicodeStringLiterals,
-    ) -> output::UnicodeStringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_unicode_string_literal(item))
             .collect()
     }
 

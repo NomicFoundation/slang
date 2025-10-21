@@ -7,6 +7,7 @@ use super::p0_build_ast::Output as Input;
 use crate::backend::ir::ir2_flat_contracts::transformer::Transformer;
 use crate::backend::ir::ir2_flat_contracts::{self as output, input, SourceUnit};
 use crate::compilation::CompilationUnit;
+use crate::cst::TerminalNode;
 use crate::utils::versions::VERSION_0_5_0;
 
 pub struct Output {
@@ -242,6 +243,144 @@ impl Transformer for Pass {
             mutability,
             override_specifier,
         })
+    }
+
+    fn transform_string_expression(
+        &mut self,
+        source: &input::StringExpression,
+    ) -> output::StringExpression {
+        match source {
+            input::StringExpression::StringLiteral(string_literal) => {
+                output::StringExpression::Strings(vec![Self::string_literal_terminal_node(
+                    string_literal,
+                )])
+            }
+            input::StringExpression::StringLiterals(string_literals) => {
+                output::StringExpression::Strings(
+                    string_literals
+                        .iter()
+                        .map(Self::string_literal_terminal_node)
+                        .collect(),
+                )
+            }
+            input::StringExpression::HexStringLiteral(hex_string_literal) => {
+                output::StringExpression::HexStrings(vec![Self::hex_string_literal_terminal_node(
+                    hex_string_literal,
+                )])
+            }
+            input::StringExpression::HexStringLiterals(hex_string_literals) => {
+                output::StringExpression::HexStrings(
+                    hex_string_literals
+                        .iter()
+                        .map(Self::hex_string_literal_terminal_node)
+                        .collect(),
+                )
+            }
+            input::StringExpression::UnicodeStringLiterals(unicode_string_literals) => {
+                output::StringExpression::UnicodeStrings(
+                    unicode_string_literals
+                        .iter()
+                        .map(Self::unicode_string_literal_terminal_node)
+                        .collect(),
+                )
+            }
+        }
+    }
+
+    fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
+        let node_id = source.node_id;
+        let alias = source
+            .alias
+            .as_ref()
+            .map(|alias| self.transform_import_alias(alias));
+        let path = Self::string_literal_terminal_node(&source.path);
+
+        Rc::new(output::PathImportStruct {
+            node_id,
+            alias,
+            path,
+        })
+    }
+
+    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport {
+        let node_id = source.node_id;
+        let alias = self.transform_import_alias(&source.alias);
+        let path = Self::string_literal_terminal_node(&source.path);
+
+        Rc::new(output::NamedImportStruct {
+            node_id,
+            alias,
+            path,
+        })
+    }
+
+    fn transform_import_deconstruction(
+        &mut self,
+        source: &input::ImportDeconstruction,
+    ) -> output::ImportDeconstruction {
+        let node_id = source.node_id;
+        let symbols = self.transform_import_deconstruction_symbols(&source.symbols);
+        let path = Self::string_literal_terminal_node(&source.path);
+
+        Rc::new(output::ImportDeconstructionStruct {
+            node_id,
+            symbols,
+            path,
+        })
+    }
+
+    fn transform_assembly_statement(
+        &mut self,
+        source: &input::AssemblyStatement,
+    ) -> output::AssemblyStatement {
+        let node_id = source.node_id;
+        let flags = source.flags.as_ref().map_or(Vec::new(), |flags| {
+            flags
+                .flags
+                .iter()
+                .map(Self::string_literal_terminal_node)
+                .collect()
+        });
+        let body = self.transform_yul_block(&source.body);
+        let label = source
+            .label
+            .as_ref()
+            .map(Self::string_literal_terminal_node);
+
+        Rc::new(output::AssemblyStatementStruct {
+            node_id,
+            body,
+            flags,
+            label,
+        })
+    }
+
+    fn transform_experimental_feature(
+        &mut self,
+        source: &input::ExperimentalFeature,
+    ) -> output::ExperimentalFeature {
+        match source {
+            input::ExperimentalFeature::StringLiteral(string_literal) => {
+                output::ExperimentalFeature::StringLiteral(Self::string_literal_terminal_node(
+                    string_literal,
+                ))
+            }
+            _ => self.default_transform_experimental_feature(source),
+        }
+    }
+
+    fn transform_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
+        match source {
+            input::YulLiteral::HexStringLiteral(hex_string_literal) => {
+                output::YulLiteral::HexStringLiteral(Self::hex_string_literal_terminal_node(
+                    hex_string_literal,
+                ))
+            }
+            input::YulLiteral::StringLiteral(string_literal) => output::YulLiteral::StringLiteral(
+                Self::string_literal_terminal_node(string_literal),
+            ),
+            _ => self.default_transform_yul_literal(source),
+        }
     }
 }
 
@@ -791,5 +930,34 @@ impl Pass {
                 None
             }
         })
+    }
+
+    fn string_literal_terminal_node(value: &input::StringLiteral) -> Rc<TerminalNode> {
+        match value {
+            input::StringLiteral::SingleQuotedStringLiteral(terminal_node)
+            | input::StringLiteral::DoubleQuotedStringLiteral(terminal_node) => {
+                Rc::clone(terminal_node)
+            }
+        }
+    }
+
+    fn hex_string_literal_terminal_node(value: &input::HexStringLiteral) -> Rc<TerminalNode> {
+        match value {
+            input::HexStringLiteral::SingleQuotedHexStringLiteral(terminal_node)
+            | input::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal_node) => {
+                Rc::clone(terminal_node)
+            }
+        }
+    }
+
+    fn unicode_string_literal_terminal_node(
+        value: &input::UnicodeStringLiteral,
+    ) -> Rc<TerminalNode> {
+        match value {
+            input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal_node)
+            | input::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal_node) => {
+                Rc::clone(terminal_node)
+            }
+        }
     }
 }

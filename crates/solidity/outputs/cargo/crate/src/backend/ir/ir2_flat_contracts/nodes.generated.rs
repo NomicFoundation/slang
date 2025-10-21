@@ -82,8 +82,8 @@ pub type PathImport = Rc<PathImportStruct>;
 #[derive(Debug)]
 pub struct PathImportStruct {
     pub node_id: NodeId,
-    pub path: StringLiteral,
     pub alias: Option<Rc<TerminalNode>>,
+    pub path: Rc<TerminalNode>,
 }
 
 pub type NamedImport = Rc<NamedImportStruct>;
@@ -92,7 +92,7 @@ pub type NamedImport = Rc<NamedImportStruct>;
 pub struct NamedImportStruct {
     pub node_id: NodeId,
     pub alias: Rc<TerminalNode>,
-    pub path: StringLiteral,
+    pub path: Rc<TerminalNode>,
 }
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
@@ -101,7 +101,7 @@ pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 pub struct ImportDeconstructionStruct {
     pub node_id: NodeId,
     pub symbols: ImportDeconstructionSymbols,
-    pub path: StringLiteral,
+    pub path: Rc<TerminalNode>,
 }
 
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
@@ -405,9 +405,9 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
     pub node_id: NodeId,
-    pub label: Option<StringLiteral>,
-    pub flags: Option<AssemblyFlags>,
     pub body: YulBlock,
+    pub flags: AssemblyFlags,
+    pub label: Option<Rc<TerminalNode>>,
 }
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
@@ -1010,7 +1010,7 @@ pub enum AbicoderVersion {
 
 #[derive(Debug)]
 pub enum ExperimentalFeature {
-    StringLiteral(StringLiteral),
+    StringLiteral(Rc<TerminalNode>),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
 }
@@ -1231,29 +1231,9 @@ pub enum NumberUnit {
 
 #[derive(Debug)]
 pub enum StringExpression {
-    StringLiteral(StringLiteral),
-    StringLiterals(StringLiterals),
-    HexStringLiteral(HexStringLiteral),
-    HexStringLiterals(HexStringLiterals),
-    UnicodeStringLiterals(UnicodeStringLiterals),
-}
-
-#[derive(Debug)]
-pub enum StringLiteral {
-    SingleQuotedStringLiteral(Rc<TerminalNode>),
-    DoubleQuotedStringLiteral(Rc<TerminalNode>),
-}
-
-#[derive(Debug)]
-pub enum HexStringLiteral {
-    SingleQuotedHexStringLiteral(Rc<TerminalNode>),
-    DoubleQuotedHexStringLiteral(Rc<TerminalNode>),
-}
-
-#[derive(Debug)]
-pub enum UnicodeStringLiteral {
-    SingleQuotedUnicodeStringLiteral(Rc<TerminalNode>),
-    DoubleQuotedUnicodeStringLiteral(Rc<TerminalNode>),
+    Strings(Strings),
+    HexStrings(HexStrings),
+    UnicodeStrings(UnicodeStrings),
 }
 
 #[derive(Debug)]
@@ -1300,10 +1280,10 @@ pub enum YulExpression {
 
 #[derive(Debug)]
 pub enum YulLiteral {
-    HexStringLiteral(HexStringLiteral),
-    StringLiteral(StringLiteral),
     YulDecimalLiteral(Rc<TerminalNode>),
     YulHexLiteral(Rc<TerminalNode>),
+    StringLiteral(Rc<TerminalNode>),
+    HexStringLiteral(Rc<TerminalNode>),
     YulTrueKeyword,
     YulFalseKeyword,
 }
@@ -1387,8 +1367,6 @@ pub type ErrorParameters = Vec<ErrorParameter>;
 
 pub type Statements = Vec<Statement>;
 
-pub type AssemblyFlags = Vec<StringLiteral>;
-
 pub type TupleDeconstructionElements = Vec<TupleDeconstructionElement>;
 
 pub type CatchClauses = Vec<CatchClause>;
@@ -1402,12 +1380,6 @@ pub type CallOptions = Vec<NamedArgument>;
 pub type TupleValues = Vec<TupleValue>;
 
 pub type ArrayValues = Vec<Expression>;
-
-pub type StringLiterals = Vec<StringLiteral>;
-
-pub type HexStringLiterals = Vec<HexStringLiteral>;
-
-pub type UnicodeStringLiterals = Vec<UnicodeStringLiteral>;
 
 pub type IdentifierPath = Vec<Rc<TerminalNode>>;
 
@@ -1426,3 +1398,11 @@ pub type YulPaths = Vec<YulPath>;
 pub type YulPath = Vec<Rc<TerminalNode>>;
 
 pub type ModifierInvocations = Vec<ModifierInvocation>;
+
+pub type Strings = Vec<Rc<TerminalNode>>;
+
+pub type HexStrings = Vec<Rc<TerminalNode>>;
+
+pub type UnicodeStrings = Vec<Rc<TerminalNode>>;
+
+pub type AssemblyFlags = Vec<Rc<TerminalNode>>;
