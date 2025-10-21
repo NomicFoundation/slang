@@ -12,12 +12,12 @@ console = { workspace = true }
 indicatif = { workspace = true }
 infra_utils = { workspace = true }
 rayon = { workspace = true }
-reqwest = { workspace = true, features = ["json"] }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 slang_solidity = { workspace = true, features = [
   "__private_ariadne_errors",
+  "__private_backend_api",
   "__private_testing_utils",
 ] }
 solidity_testing_utils = { workspace = true }

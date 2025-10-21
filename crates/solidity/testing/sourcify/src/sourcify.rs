@@ -1,17 +1,17 @@
-use std::fs;
-use std::io::BufReader;
+use std::fs::{self, File};
 use std::path::{Path, PathBuf};
+use std::time::SystemTime;
 
 use anyhow::{anyhow, bail, Error, Result};
 use infra_utils::cargo::CargoWorkspace;
+use infra_utils::http::{request_download_if_modified, DownloadResult};
 use infra_utils::paths::PathExtensions;
-use reqwest::blocking::Client;
 use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
 use tar::Archive;
 
-use crate::command::{ChainId, ShardingOptions};
+use crate::command::{ArchiveOptions, ChainId, ShardingOptions};
 
 pub struct Manifest {
     /// Description of the archives that are available to fetch.
@@ -19,19 +19,13 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    pub fn new(chain_id: ChainId, options: &ShardingOptions) -> Result<Manifest> {
-        let client = Client::new();
-        let res = client
-            .get("https://repo-backup.sourcify.dev/manifest.json")
-            .send()?;
-
-        let status = res.status();
-        if !status.is_success() {
-            bail!("Error fetching manifest.json");
-        }
-
-        let obj: serde_json::Value = res.json()?;
-        let mut archive_descriptors: Vec<_> = obj
+    pub fn new(
+        chain_id: ChainId,
+        options: &ShardingOptions,
+        archive_options: &ArchiveOptions,
+    ) -> Result<Manifest> {
+        let manifest = Self::obtain_manifest(archive_options)?;
+        let mut archive_descriptors: Vec<_> = manifest
             .get("files")
             .and_then(|files| files.as_array())
             .map(|files| {
@@ -59,15 +53,47 @@ impl Manifest {
         })
     }
 
+    fn obtain_manifest(options: &ArchiveOptions) -> Result<serde_json::Value> {
+        let manifest_path = CargoWorkspace::locate_source_crate("solidity_testing_sourcify")
+            .unwrap_or_default()
+            .join("target/manifest.json");
+        fs::create_dir_all(manifest_path.parent().unwrap())?;
+
+        if options.offline {
+            if !fs::exists(&manifest_path)? {
+                bail!("Manifest does not exists and running in offline mode");
+            }
+        } else {
+            let manifest_url = "https://repo-backup.sourcify.dev/manifest.json";
+            match request_download_if_modified(manifest_url, &manifest_path) {
+                DownloadResult::Ok(mut response) => {
+                    println!("Downloading manifest from {manifest_url}");
+                    let mut writer = File::create(&manifest_path)?;
+                    std::io::copy(&mut response, &mut writer)?;
+                }
+                DownloadResult::NotModified => {
+                    println!("Manifest is up-to-date");
+                }
+                DownloadResult::Error(err) => {
+                    bail!("Error fetching manifest.json: {err}");
+                }
+            }
+        }
+
+        let manifest_contents = fs::read_to_string(manifest_path)?;
+        Ok(serde_json::from_str(&manifest_contents)?)
+    }
+
     /// Search for a specific contract and return it if found. Returns `None` if the contract can not
     /// be fetched for any reason (including if the `contract_id` is not parseable).
     pub fn fetch_contract(&self, contract_id: &str) -> Option<Contract> {
+        let options = ArchiveOptions { offline: false };
         u8::from_str_radix(contract_id.get(2..4).unwrap(), 16)
             .ok()
             .and_then(|contract_prefix| {
                 self.archives()
                     .filter(|desc| desc.prefix == contract_prefix)
-                    .flat_map(ContractArchive::fetch)
+                    .flat_map(|path| ContractArchive::fetch(path, &options))
                     .find_map(|archive| archive.get_contract(contract_id).ok())
             })
     }
@@ -187,23 +213,38 @@ pub struct ContractArchive {
 }
 
 impl ContractArchive {
-    pub fn fetch(desc: &ArchiveDescriptor) -> Result<ContractArchive> {
-        let client = Client::new();
-        let res = client.get(&desc.url).send()?;
+    pub fn fetch(desc: &ArchiveDescriptor, options: &ArchiveOptions) -> Result<ContractArchive> {
+        let contracts_path = desc.contracts_dir();
+        if options.offline {
+            if !fs::exists(&contracts_path)? {
+                bail!("Shard archive directory does not exists and running in offline mode");
+            }
+        } else {
+            match request_download_if_modified(&desc.url, &contracts_path) {
+                DownloadResult::Ok(response) => {
+                    println!("Downloading shard archive from {url}", url = desc.url);
+                    let archive_dir = desc.archive_dir();
 
-        let status = res.status();
-        if !status.is_success() {
-            bail!("Could not fetch source tarball");
+                    let mut archive = Archive::new(response);
+                    archive.unpack(&archive_dir)?;
+
+                    // explicitly touch the contracts path mtime to avoid downloading
+                    // again if sufficiently up-to-date
+                    fs::File::open(&contracts_path)?.set_modified(SystemTime::now())?;
+                }
+                DownloadResult::NotModified => {
+                    println!(
+                        "Shard archive in {path} is up-to-date",
+                        path = contracts_path.to_string_lossy()
+                    );
+                }
+                DownloadResult::Error(err) => {
+                    bail!("Could not fetch source tarball: {err}");
+                }
+            }
         }
 
-        let archive_dir = desc.archive_dir();
-
-        let mut archive = Archive::new(res);
-        archive.unpack(&archive_dir)?;
-
-        Ok(ContractArchive {
-            contracts_path: desc.contracts_dir(),
-        })
+        Ok(ContractArchive { contracts_path })
     }
 
     pub fn contracts(&self) -> impl Iterator<Item = Contract> {
@@ -226,10 +267,6 @@ impl ContractArchive {
         fs::read_dir(&self.contracts_path)
             .map(|i| i.count())
             .unwrap_or(0)
-    }
-
-    pub fn clean(self) {
-        fs::remove_dir_all(&self.contracts_path).unwrap();
     }
 
     pub fn display_path(&self) -> String {
@@ -261,10 +298,8 @@ impl Contract {
             .to_str()
             .ok_or(Error::msg("Could not get contract directory name"))?;
 
-        let metadata_file = fs::File::open(contract_path.join("metadata.json"))?;
-        let reader = BufReader::new(metadata_file);
-
-        let metadata_val: serde_json::Value = serde_json::from_reader(reader)?;
+        let metadata_contents = fs::read_to_string(contract_path.join("metadata.json"))?;
+        let metadata_val: serde_json::Value = serde_json::from_str(&metadata_contents)?;
 
         let version = metadata_val
             .get("compiler")

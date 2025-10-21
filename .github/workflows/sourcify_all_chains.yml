@@ -3,23 +3,28 @@ name: "sourcify_all_chains"
 on:
   workflow_dispatch:
     inputs:
-      check_bindings:
-        description: "Check name bindings on contracts, failing if there's any unresolved symbol."
-        type: "boolean"
-        required: false
-        default: false
       check_infer_version:
         description: "Check that we can infer the correct language version based on the available version pragmas."
         type: "boolean"
         required: false
         default: false
+      check_binder:
+        description: "Check name bindings on contracts reporting if there's any unresolved symbol."
+        type: "choice"
+        required: true
+        default: "none"
+        options:
+          - "none"
+          - "v1"
+          - "v2"
+          - "compare"
 jobs:
   run_tests:
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
       chain_id: "${{ matrix.chain_id }}"
-      check_bindings: "${{ inputs.check_bindings }}"
       check_infer_version: "${{ inputs.check_infer_version }}"
+      check_binder: "${{ inputs.check_binder }}"
     strategy:
       fail-fast: false
       matrix:

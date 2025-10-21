@@ -13,7 +13,6 @@ const MAX_PRINTED_FAILURES: u64 = 1000;
 pub enum TestOutcome {
     Passed,
     Failed,
-    Unresolved,
     Incompatible,
 }
 
@@ -25,10 +24,13 @@ pub struct Events {
 
     source_files: ProgressBar,
 
-    passed: ProgressBar,
-    failed: ProgressBar,
-    unresolved: ProgressBar,
-    incompatible: ProgressBar,
+    passed_contracts: ProgressBar,
+    failed_contracts: ProgressBar,
+    incompatible_contracts: ProgressBar,
+
+    total_definitions: ProgressBar,
+    total_references: ProgressBar,
+    unresolved_references: ProgressBar,
 }
 
 impl Events {
@@ -47,10 +49,14 @@ impl Events {
         reporter.add_blank();
         reporter.add_label("Contract Stats:");
 
-        let passed = reporter.add_counter("✅ Passed", Color::Green, 0);
-        let failed = reporter.add_counter("❌ Failed", Color::Red, 0);
-        let unresolved = reporter.add_counter("❔ Unresolved", Color::White, 0);
-        let incompatible = reporter.add_counter("❕ Incompatible", Color::White, 0);
+        let passed_contracts = reporter.add_counter("✅ Passed contracts", Color::Green, 0);
+        let failed_contracts = reporter.add_counter("❌ Failed contracts", Color::Red, 0);
+        let incompatible_contracts =
+            reporter.add_counter("❕ Incompatible contracts", Color::White, 0);
+
+        let total_definitions = reporter.add_counter("Total definitions", Color::White, 0);
+        let total_references = reporter.add_counter("Total references", Color::White, 0);
+        let unresolved_references = reporter.add_counter("Unresolved references", Color::White, 0);
 
         reporter.add_blank();
 
@@ -62,16 +68,19 @@ impl Events {
 
             source_files,
 
-            passed,
-            failed,
-            unresolved,
-            incompatible,
+            passed_contracts,
+            failed_contracts,
+            incompatible_contracts,
+
+            total_definitions,
+            total_references,
+            unresolved_references,
         }
     }
 
     #[allow(clippy::cast_possible_truncation)]
     pub fn failure_count(&self) -> usize {
-        self.failed.position() as usize
+        self.failed_contracts.position() as usize
     }
 
     pub fn start_archive(&mut self, contract_count: usize) {
@@ -89,6 +98,18 @@ impl Events {
         self.source_files.inc(files_processed as u64);
     }
 
+    pub fn inc_definitions(&self, value: usize) {
+        self.total_definitions.inc(value as u64);
+    }
+
+    pub fn inc_references(&self, value: usize) {
+        self.total_references.inc(value as u64);
+    }
+
+    pub fn inc_unresolved_references(&self, value: usize) {
+        self.unresolved_references.inc(value as u64);
+    }
+
     pub fn finish_archive(&mut self) {
         self.all_archives.inc(1);
 
@@ -102,21 +123,19 @@ impl Events {
     pub fn test(&self, outcome: TestOutcome) {
         self.current_archive.inc(1);
 
-        self.passed.inc_length(1);
-        self.failed.inc_length(1);
-        self.unresolved.inc_length(1);
-        self.incompatible.inc_length(1);
+        self.passed_contracts.inc_length(1);
+        self.failed_contracts.inc_length(1);
+        self.incompatible_contracts.inc_length(1);
 
         match outcome {
-            TestOutcome::Passed => self.passed.inc(1),
-            TestOutcome::Failed => self.failed.inc(1),
-            TestOutcome::Unresolved => self.unresolved.inc(1),
-            TestOutcome::Incompatible => self.incompatible.inc(1),
+            TestOutcome::Passed => self.passed_contracts.inc(1),
+            TestOutcome::Failed => self.failed_contracts.inc(1),
+            TestOutcome::Incompatible => self.incompatible_contracts.inc(1),
         }
     }
 
     fn test_error(&self, message: impl AsRef<str>) {
-        match self.failed.position().cmp(&MAX_PRINTED_FAILURES) {
+        match self.failed_contracts.position().cmp(&MAX_PRINTED_FAILURES) {
             cmp::Ordering::Less => {
                 self.reporter.println(message);
             }
@@ -150,10 +169,9 @@ impl Events {
     pub fn to_results(&self) -> ShardResults {
         ShardResults {
             source_files: self.source_files.position(),
-            passed: self.passed.position(),
-            failed: self.failed.position(),
-            unresolved: self.unresolved.position(),
-            incompatible: self.incompatible.position(),
+            passed: self.passed_contracts.position(),
+            failed: self.failed_contracts.position(),
+            incompatible: self.incompatible_contracts.position(),
             elapsed: self.all_archives.elapsed(),
         }
     }
