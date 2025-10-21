@@ -208,3 +208,4 @@ collection_is_never_read = "warn" # Lint against collections not used after crea
 equatable_if_let = "warn"         # Prefer regular `==` checks over Yoda `if let $pat = $value`
 useless_let_if_seq = "warn"       # Use idiomatic direct assignment of `let $val = if $cond { .. } else { .. };`
 redundant_else = "warn"           # Warn about redundant `else` blocks
+self_named_module_files = "warn"  # Checks that module layout uses only mod.rs files
