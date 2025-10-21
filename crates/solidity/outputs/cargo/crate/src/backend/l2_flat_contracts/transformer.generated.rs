@@ -319,23 +319,7 @@ pub trait Transformer {
     fn transform_state_variable_definition(
         &mut self,
         source: &input::StateVariableDefinition,
-    ) -> output::StateVariableDefinition {
-        let type_name = self.transform_type_name(&source.type_name);
-        let attributes = self.transform_state_variable_attributes(&source.attributes);
-        let name = Rc::clone(&source.name);
-        let value = source
-            .value
-            .as_ref()
-            .map(|value| self.transform_state_variable_definition_value(value));
-
-        Rc::new(output::StateVariableDefinitionStruct {
-            node_id: source.node_id,
-            type_name,
-            attributes,
-            name,
-            value,
-        })
-    }
+    ) -> output::StateVariableDefinition;
 
     fn transform_function_definition(
         &mut self,
@@ -481,21 +465,7 @@ pub trait Transformer {
         })
     }
 
-    fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_function_type_attributes(&source.attributes);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_returns_declaration(value));
-
-        Rc::new(output::FunctionTypeStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            returns,
-        })
-    }
+    fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType;
 
     fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
         let key_type = self.transform_mapping_key(&source.key_type);
@@ -1941,45 +1911,6 @@ pub trait Transformer {
         self.default_transform_contract_member(source)
     }
 
-    fn default_transform_state_variable_attribute(
-        &mut self,
-        source: &input::StateVariableAttribute,
-    ) -> output::StateVariableAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::StateVariableAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::StateVariableAttribute::ConstantKeyword => {
-                output::StateVariableAttribute::ConstantKeyword
-            }
-            input::StateVariableAttribute::InternalKeyword => {
-                output::StateVariableAttribute::InternalKeyword
-            }
-            input::StateVariableAttribute::PrivateKeyword => {
-                output::StateVariableAttribute::PrivateKeyword
-            }
-            input::StateVariableAttribute::PublicKeyword => {
-                output::StateVariableAttribute::PublicKeyword
-            }
-            input::StateVariableAttribute::ImmutableKeyword => {
-                output::StateVariableAttribute::ImmutableKeyword
-            }
-            input::StateVariableAttribute::TransientKeyword => {
-                output::StateVariableAttribute::TransientKeyword
-            }
-        }
-    }
-    fn transform_state_variable_attribute(
-        &mut self,
-        source: &input::StateVariableAttribute,
-    ) -> output::StateVariableAttribute {
-        self.default_transform_state_variable_attribute(source)
-    }
-
     fn default_transform_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
@@ -2003,42 +1934,6 @@ pub trait Transformer {
     }
     fn transform_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
         self.default_transform_type_name(source)
-    }
-
-    fn default_transform_function_type_attribute(
-        &mut self,
-        source: &input::FunctionTypeAttribute,
-    ) -> output::FunctionTypeAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::FunctionTypeAttribute::InternalKeyword => {
-                output::FunctionTypeAttribute::InternalKeyword
-            }
-            input::FunctionTypeAttribute::ExternalKeyword => {
-                output::FunctionTypeAttribute::ExternalKeyword
-            }
-            input::FunctionTypeAttribute::PrivateKeyword => {
-                output::FunctionTypeAttribute::PrivateKeyword
-            }
-            input::FunctionTypeAttribute::PublicKeyword => {
-                output::FunctionTypeAttribute::PublicKeyword
-            }
-            input::FunctionTypeAttribute::ConstantKeyword => {
-                output::FunctionTypeAttribute::ConstantKeyword
-            }
-            input::FunctionTypeAttribute::PureKeyword => output::FunctionTypeAttribute::PureKeyword,
-            input::FunctionTypeAttribute::ViewKeyword => output::FunctionTypeAttribute::ViewKeyword,
-            input::FunctionTypeAttribute::PayableKeyword => {
-                output::FunctionTypeAttribute::PayableKeyword
-            }
-        }
-    }
-    fn transform_function_type_attribute(
-        &mut self,
-        source: &input::FunctionTypeAttribute,
-    ) -> output::FunctionTypeAttribute {
-        self.default_transform_function_type_attribute(source)
     }
 
     fn default_transform_mapping_key_type(
@@ -2890,16 +2785,6 @@ pub trait Transformer {
         source.iter().map(Rc::clone).collect()
     }
 
-    fn transform_state_variable_attributes(
-        &mut self,
-        source: &input::StateVariableAttributes,
-    ) -> output::StateVariableAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_state_variable_attribute(item))
-            .collect()
-    }
-
     fn transform_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
         source
             .iter()
@@ -2931,16 +2816,6 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_error_parameter(item))
-            .collect()
-    }
-
-    fn transform_function_type_attributes(
-        &mut self,
-        source: &input::FunctionTypeAttributes,
-    ) -> output::FunctionTypeAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_function_type_attribute(item))
             .collect()
     }
 

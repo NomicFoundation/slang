@@ -298,19 +298,26 @@ pub trait Rewriter {
         source: &StateVariableDefinition,
     ) -> StateVariableDefinition {
         let type_name = self.rewrite_type_name(&source.type_name);
-        let attributes = self.rewrite_state_variable_attributes(&source.attributes);
         let name = Rc::clone(&source.name);
         let value = source
             .value
             .as_ref()
             .map(|value| self.rewrite_expression(value));
+        let visibility = self.rewrite_state_variable_visibility(&source.visibility);
+        let mutability = self.rewrite_state_variable_mutability(&source.mutability);
+        let override_specifier = source
+            .override_specifier
+            .as_ref()
+            .map(|value| self.rewrite_override_paths(value));
 
         Rc::new(StateVariableDefinitionStruct {
             node_id: source.node_id,
             type_name,
-            attributes,
             name,
             value,
+            visibility,
+            mutability,
+            override_specifier,
         })
     }
 
@@ -467,17 +474,19 @@ pub trait Rewriter {
 
     fn rewrite_function_type(&mut self, source: &FunctionType) -> FunctionType {
         let parameters = self.rewrite_parameters(&source.parameters);
-        let attributes = self.rewrite_function_type_attributes(&source.attributes);
         let returns = source
             .returns
             .as_ref()
             .map(|value| self.rewrite_parameters(value));
+        let visibility = self.rewrite_function_visibility(&source.visibility);
+        let mutability = self.rewrite_function_mutability(&source.mutability);
 
         Rc::new(FunctionTypeStruct {
             node_id: source.node_id,
             parameters,
-            attributes,
             returns,
+            visibility,
+            mutability,
         })
     }
 
@@ -1650,31 +1659,6 @@ pub trait Rewriter {
         self.default_rewrite_contract_member(source)
     }
 
-    fn default_rewrite_state_variable_attribute(
-        &mut self,
-        source: &StateVariableAttribute,
-    ) -> StateVariableAttribute {
-        match source {
-            StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
-                StateVariableAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            StateVariableAttribute::ConstantKeyword => StateVariableAttribute::ConstantKeyword,
-            StateVariableAttribute::InternalKeyword => StateVariableAttribute::InternalKeyword,
-            StateVariableAttribute::PrivateKeyword => StateVariableAttribute::PrivateKeyword,
-            StateVariableAttribute::PublicKeyword => StateVariableAttribute::PublicKeyword,
-            StateVariableAttribute::ImmutableKeyword => StateVariableAttribute::ImmutableKeyword,
-            StateVariableAttribute::TransientKeyword => StateVariableAttribute::TransientKeyword,
-        }
-    }
-    fn rewrite_state_variable_attribute(
-        &mut self,
-        source: &StateVariableAttribute,
-    ) -> StateVariableAttribute {
-        self.default_rewrite_state_variable_attribute(source)
-    }
-
     fn default_rewrite_type_name(&mut self, source: &TypeName) -> TypeName {
         match source {
             TypeName::ArrayTypeName(ref array_type_name) => {
@@ -1696,28 +1680,6 @@ pub trait Rewriter {
     }
     fn rewrite_type_name(&mut self, source: &TypeName) -> TypeName {
         self.default_rewrite_type_name(source)
-    }
-
-    fn default_rewrite_function_type_attribute(
-        &mut self,
-        source: &FunctionTypeAttribute,
-    ) -> FunctionTypeAttribute {
-        match source {
-            FunctionTypeAttribute::InternalKeyword => FunctionTypeAttribute::InternalKeyword,
-            FunctionTypeAttribute::ExternalKeyword => FunctionTypeAttribute::ExternalKeyword,
-            FunctionTypeAttribute::PrivateKeyword => FunctionTypeAttribute::PrivateKeyword,
-            FunctionTypeAttribute::PublicKeyword => FunctionTypeAttribute::PublicKeyword,
-            FunctionTypeAttribute::ConstantKeyword => FunctionTypeAttribute::ConstantKeyword,
-            FunctionTypeAttribute::PureKeyword => FunctionTypeAttribute::PureKeyword,
-            FunctionTypeAttribute::ViewKeyword => FunctionTypeAttribute::ViewKeyword,
-            FunctionTypeAttribute::PayableKeyword => FunctionTypeAttribute::PayableKeyword,
-        }
-    }
-    fn rewrite_function_type_attribute(
-        &mut self,
-        source: &FunctionTypeAttribute,
-    ) -> FunctionTypeAttribute {
-        self.default_rewrite_function_type_attribute(source)
     }
 
     fn default_rewrite_mapping_key_type(&mut self, source: &MappingKeyType) -> MappingKeyType {
@@ -2359,6 +2321,41 @@ pub trait Rewriter {
         self.default_rewrite_function_mutability(source)
     }
 
+    fn default_rewrite_state_variable_visibility(
+        &mut self,
+        source: &StateVariableVisibility,
+    ) -> StateVariableVisibility {
+        match source {
+            StateVariableVisibility::Public => StateVariableVisibility::Public,
+            StateVariableVisibility::Private => StateVariableVisibility::Private,
+            StateVariableVisibility::Internal => StateVariableVisibility::Internal,
+        }
+    }
+    fn rewrite_state_variable_visibility(
+        &mut self,
+        source: &StateVariableVisibility,
+    ) -> StateVariableVisibility {
+        self.default_rewrite_state_variable_visibility(source)
+    }
+
+    fn default_rewrite_state_variable_mutability(
+        &mut self,
+        source: &StateVariableMutability,
+    ) -> StateVariableMutability {
+        match source {
+            StateVariableMutability::Mutable => StateVariableMutability::Mutable,
+            StateVariableMutability::Constant => StateVariableMutability::Constant,
+            StateVariableMutability::Immutable => StateVariableMutability::Immutable,
+            StateVariableMutability::Transient => StateVariableMutability::Transient,
+        }
+    }
+    fn rewrite_state_variable_mutability(
+        &mut self,
+        source: &StateVariableMutability,
+    ) -> StateVariableMutability {
+        self.default_rewrite_state_variable_mutability(source)
+    }
+
     //
     // Repeated & Separated
     //
@@ -2456,16 +2453,6 @@ pub trait Rewriter {
         source.iter().map(Rc::clone).collect()
     }
 
-    fn rewrite_state_variable_attributes(
-        &mut self,
-        source: &StateVariableAttributes,
-    ) -> StateVariableAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_state_variable_attribute(item))
-            .collect()
-    }
-
     fn rewrite_parameters(&mut self, source: &Parameters) -> Parameters {
         source
             .iter()
@@ -2491,16 +2478,6 @@ pub trait Rewriter {
         source
             .iter()
             .map(|item| self.rewrite_error_parameter(item))
-            .collect()
-    }
-
-    fn rewrite_function_type_attributes(
-        &mut self,
-        source: &FunctionTypeAttributes,
-    ) -> FunctionTypeAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_function_type_attribute(item))
             .collect()
     }
 

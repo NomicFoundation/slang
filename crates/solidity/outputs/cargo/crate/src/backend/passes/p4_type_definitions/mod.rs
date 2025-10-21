@@ -98,9 +98,10 @@ impl Pass {
                 else {
                     continue;
                 };
-                if state_var_definition.attributes.iter().all(|attribute| {
-                    !matches!(attribute, input_ir::StateVariableAttribute::PublicKeyword)
-                }) {
+                if !matches!(
+                    state_var_definition.visibility,
+                    input_ir::StateVariableVisibility::Public
+                ) {
                     continue;
                 }
 
