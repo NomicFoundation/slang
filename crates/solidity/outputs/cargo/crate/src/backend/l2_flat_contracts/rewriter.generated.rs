@@ -321,6 +321,8 @@ pub trait Rewriter {
             .as_ref()
             .map(|value| self.rewrite_parameters(value));
         let kind = self.rewrite_function_kind(&source.kind);
+        let name = source.name.as_ref().map(Rc::clone);
+        let body = source.body.as_ref().map(|value| self.rewrite_block(value));
         let visibility = self.rewrite_function_visibility(&source.visibility);
         let mutability = self.rewrite_function_mutability(&source.mutability);
         let virtual_keyword = source.virtual_keyword;
@@ -329,21 +331,19 @@ pub trait Rewriter {
             .as_ref()
             .map(|value| self.rewrite_override_paths(value));
         let modifier_invocations = self.rewrite_modifier_invocations(&source.modifier_invocations);
-        let name = source.name.as_ref().map(Rc::clone);
-        let body = source.body.as_ref().map(|value| self.rewrite_block(value));
 
         Rc::new(FunctionDefinitionStruct {
             node_id: source.node_id,
             parameters,
             returns,
             kind,
+            name,
+            body,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
-            name,
-            body,
         })
     }
 

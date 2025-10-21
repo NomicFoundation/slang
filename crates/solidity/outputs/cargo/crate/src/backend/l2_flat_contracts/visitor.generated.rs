@@ -1197,15 +1197,15 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
         accept_parameters(returns, visitor);
     }
     accept_function_kind(&node.kind, visitor);
+    if let Some(ref body) = node.body {
+        accept_block(body, visitor);
+    }
     accept_function_visibility(&node.visibility, visitor);
     accept_function_mutability(&node.mutability, visitor);
     if let Some(ref override_specifier) = node.override_specifier {
         accept_override_paths(override_specifier, visitor);
     }
     accept_modifier_invocations(&node.modifier_invocations, visitor);
-    if let Some(ref body) = node.body {
-        accept_block(body, visitor);
-    }
     visitor.leave_function_definition(node);
 }
 

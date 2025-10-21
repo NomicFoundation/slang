@@ -236,13 +236,13 @@ pub struct FunctionDefinitionStruct {
     pub parameters: Parameters,
     pub returns: Option<Parameters>,
     pub kind: FunctionKind,
+    pub name: Option<Rc<TerminalNode>>,
+    pub body: Option<Block>,
     pub visibility: FunctionVisibility,
     pub mutability: FunctionMutability,
     pub virtual_keyword: bool,
     pub override_specifier: Option<OverridePaths>,
     pub modifier_invocations: ModifierInvocations,
-    pub name: Option<Rc<TerminalNode>>,
-    pub body: Option<Block>,
 }
 
 pub type Parameter = Rc<ParameterStruct>;
