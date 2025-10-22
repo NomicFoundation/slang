@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-// Transformer from previous language implementation `l1_structured_ast`
+// Transformer from previous language implementation
 #![allow(clippy::too_many_lines)]
 
 use std::rc::Rc;

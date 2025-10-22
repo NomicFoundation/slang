@@ -1,6 +1,8 @@
 mod diff;
 mod model;
 
+pub mod passes;
+
 use diff::IrModelDiff;
 pub use model::IrModel;
 use serde::Serialize;

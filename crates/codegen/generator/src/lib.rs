@@ -5,12 +5,13 @@ mod parser;
 
 pub mod ir;
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
+use ir::passes::{build_languages, GenericModel};
 use language_definition::model::Language;
 use semver::Version;
 use serde::Serialize;
@@ -44,6 +45,8 @@ struct RuntimeModel {
     bindings: BindingsModel,
     kinds: KindsModel,
     parser: ParserModel,
+
+    ir_languages: BTreeMap<String, GenericModel>,
 }
 
 impl RuntimeModel {
@@ -58,22 +61,8 @@ impl RuntimeModel {
             bindings: BindingsModel::from_language(language)?,
             parser: ParserModel::from_language(language),
             kinds: KindsModel::from_language(language),
+
+            ir_languages: build_languages(language),
         })
-    }
-}
-
-impl Default for RuntimeModel {
-    fn default() -> Self {
-        Self {
-            slang_version: Version::new(0, 0, 0),
-            language_name: "CodegenRuntime".to_string(),
-            all_language_versions: BTreeSet::from([Version::new(0, 0, 0)]),
-            breaking_language_versions: BTreeSet::from([Version::new(0, 0, 0)]),
-
-            ast: AstModel::default(),
-            bindings: BindingsModel::default(),
-            kinds: KindsModel::default(),
-            parser: ParserModel::default(),
-        }
     }
 }
