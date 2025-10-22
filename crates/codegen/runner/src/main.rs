@@ -1,5 +1,3 @@
-mod passes;
-
 use anyhow::Result;
 use codegen_generator::RuntimeGenerator;
 use codegen_spec::Spec;
@@ -9,8 +7,6 @@ use infra_utils::codegen::CodegenFileSystem;
 use language_definition::model::Language;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use solidity_language::SolidityDefinition;
-
-use crate::passes::generate_passes;
 
 fn main() {
     // TODO(#1286):
@@ -28,8 +24,6 @@ fn main() {
             generate_in_place(&mut fs, &language, "slang_solidity")?;
 
             generate_builtins(&mut fs, &language, "slang_solidity")?;
-
-            generate_passes(&mut fs, &language, "slang_solidity")?;
 
             Ok(())
         },

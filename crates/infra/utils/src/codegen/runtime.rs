@@ -39,30 +39,6 @@ impl CodegenRuntime {
         Ok(())
     }
 
-    pub fn render_ir(
-        fs: &mut CodegenFileSystem,
-        input_dir: impl Into<PathBuf>,
-        output_dir: impl AsRef<Path>,
-        model: impl Serialize,
-    ) -> Result<()> {
-        let input_dir = input_dir.into();
-        let output_dir = output_dir.as_ref();
-
-        let tera = TeraWrapper::new(&input_dir)?;
-        let context = tera::Context::from_serialize(model)?;
-
-        for template_path in tera.find_all_templates()? {
-            let path = Self::get_in_place_path(&template_path);
-            let rendered_path = path.replace_prefix(&input_dir, output_dir);
-
-            let rendered = tera.render(&template_path, &context)?;
-
-            fs.write_file_formatted(&rendered_path, rendered)?;
-        }
-
-        Ok(())
-    }
-
     fn get_in_place_path(template_path: &Path) -> PathBuf {
         assert_eq!(template_path.extension(), Some(OsStr::new("jinja2")));
 

@@ -1,42 +1,39 @@
-use anyhow::Result;
-use codegen_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
-use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
-use language_definition::model::Language;
+use std::collections::BTreeMap;
 
-pub fn generate_passes(
-    fs: &mut CodegenFileSystem,
-    language: &Language,
-    crate_name: &str,
-) -> Result<()> {
-    let crate_path = CargoWorkspace::locate_source_crate(crate_name)?;
-    let ir_input_dir = crate_path.join("src/ir");
-    let ir_output_dir = crate_path.join("src/backend");
+use language_definition::model::Language;
+use serde::Serialize;
+
+use super::{IrModel, ModelWithBuilder, ModelWithTransformer};
+
+#[derive(Serialize)]
+#[serde(untagged)]
+pub enum GenericModel {
+    ModelWithBuilder(ModelWithBuilder),
+    ModelWithTransformer(ModelWithTransformer),
+}
+
+pub fn build_languages(language: &Language) -> BTreeMap<String, GenericModel> {
+    let mut languages = BTreeMap::new();
 
     // L0: CST:
     let cst_model = IrModel::from_language("cst", language);
 
     // L1: structured AST:
     let l1_structured_ast_model = build_l1_structured_ast_model(&cst_model);
-    let l1_structured_ast_output_dir = ir_output_dir.join(&l1_structured_ast_model.target.name);
-    CodegenRuntime::render_ir(
-        fs,
-        &ir_input_dir,
-        &l1_structured_ast_output_dir,
-        &l1_structured_ast_model,
-    )?;
 
     // L2: flat contract specifiers:
     let l2_flat_contracts_model = build_l2_flat_contracts_model(&l1_structured_ast_model.target);
-    let l2_flat_contracts_output_dir = ir_output_dir.join(&l2_flat_contracts_model.target.name);
-    CodegenRuntime::render_ir(
-        fs,
-        &ir_input_dir,
-        &l2_flat_contracts_output_dir,
-        &l2_flat_contracts_model,
-    )?;
 
-    Ok(())
+    languages.insert(
+        "l1_structured_ast".to_string(),
+        GenericModel::ModelWithBuilder(l1_structured_ast_model),
+    );
+    languages.insert(
+        "l2_flat_contracts".to_string(),
+        GenericModel::ModelWithTransformer(l2_flat_contracts_model),
+    );
+
+    languages
 }
 
 fn build_l1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {

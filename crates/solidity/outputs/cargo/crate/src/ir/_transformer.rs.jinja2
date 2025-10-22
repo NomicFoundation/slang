@@ -1,7 +1,7 @@
-{%- if not transformer -%}
-  // Not rendering transformer for first Intermediate Language
-{%- else -%}
-  // Transformer from previous language implementation `{{ transformer.source_name }}`
+{% macro render_transformer(language) -%}
+  {%- set transformer = model.ir_languages[language].transformer -%}
+  {%- set target = model.ir_languages[language].target -%}
+  // Transformer from previous language implementation
   #![allow(clippy::too_many_lines)]
 
   use std::rc::Rc;
@@ -95,4 +95,5 @@
       }
     {% endfor %}
   }
-{%- endif -%}
+
+{% endmacro render_transformer %}

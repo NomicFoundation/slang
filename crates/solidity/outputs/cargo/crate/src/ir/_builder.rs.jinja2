@@ -1,6 +1,5 @@
-{%- if not builder -%}
-  // Not rendering builder for Intermediate Language
-{%- else -%}
+{% macro render_builder(language) -%}
+  {%- set builder = model.ir_languages[language].builder -%}
   #![allow(clippy::too_many_lines)]
 
   use std::rc::Rc;
@@ -192,4 +191,4 @@
     }
   }
 
-{%- endif %}
+{% endmacro render_builder %}
