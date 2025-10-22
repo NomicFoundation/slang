@@ -16,7 +16,7 @@ pub fn build_languages(language: &Language) -> BTreeMap<String, GenericModel> {
     let mut languages = BTreeMap::new();
 
     // L0: CST:
-    let cst_model = IrModel::from_language("cst", language);
+    let cst_model = IrModel::from_language(language);
 
     // L1: structured AST:
     let l1_structured_ast_model = build_l1_structured_ast_model(&cst_model);
@@ -37,7 +37,7 @@ pub fn build_languages(language: &Language) -> BTreeMap<String, GenericModel> {
 }
 
 fn build_l1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
-    let mut l1_structured_ast_model = IrModel::from_model("l1_structured_ast", cst_model);
+    let mut l1_structured_ast_model = IrModel::from_model(cst_model);
 
     // remove fields from sequences that contain redundant terminal nodes
     for (_, sequence) in &mut l1_structured_ast_model.sequences {
@@ -59,8 +59,7 @@ fn build_l1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
 }
 
 fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTransformer {
-    let mut l2_flat_contracts_model =
-        IrModel::from_model("l2_flat_contracts", structured_ast_model);
+    let mut l2_flat_contracts_model = IrModel::from_model(structured_ast_model);
 
     // L2 is for now only a proof of concept for rendering transfomation code
     // from previous trees. Therefore, the following modifications are (a
