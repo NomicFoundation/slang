@@ -92,22 +92,19 @@ pub trait Rewriter {
     }
 
     fn rewrite_path_import(&mut self, source: &PathImport) -> PathImport {
-        let path = self.rewrite_string_literal(&source.path);
-        let alias = source
-            .alias
-            .as_ref()
-            .map(|value| self.rewrite_import_alias(value));
+        let alias = source.alias.as_ref().map(Rc::clone);
+        let path = Rc::clone(&source.path);
 
         Rc::new(PathImportStruct {
             node_id: source.node_id,
-            path,
             alias,
+            path,
         })
     }
 
     fn rewrite_named_import(&mut self, source: &NamedImport) -> NamedImport {
-        let alias = self.rewrite_import_alias(&source.alias);
-        let path = self.rewrite_string_literal(&source.path);
+        let alias = Rc::clone(&source.alias);
+        let path = Rc::clone(&source.path);
 
         Rc::new(NamedImportStruct {
             node_id: source.node_id,
@@ -121,7 +118,7 @@ pub trait Rewriter {
         source: &ImportDeconstruction,
     ) -> ImportDeconstruction {
         let symbols = self.rewrite_import_deconstruction_symbols(&source.symbols);
-        let path = self.rewrite_string_literal(&source.path);
+        let path = Rc::clone(&source.path);
 
         Rc::new(ImportDeconstructionStruct {
             node_id: source.node_id,
@@ -135,10 +132,7 @@ pub trait Rewriter {
         source: &ImportDeconstructionSymbol,
     ) -> ImportDeconstructionSymbol {
         let name = Rc::clone(&source.name);
-        let alias = source
-            .alias
-            .as_ref()
-            .map(|value| self.rewrite_import_alias(value));
+        let alias = source.alias.as_ref().map(Rc::clone);
 
         Rc::new(ImportDeconstructionSymbolStruct {
             node_id: source.node_id,
@@ -147,19 +141,10 @@ pub trait Rewriter {
         })
     }
 
-    fn rewrite_import_alias(&mut self, source: &ImportAlias) -> ImportAlias {
-        let identifier = Rc::clone(&source.identifier);
-
-        Rc::new(ImportAliasStruct {
-            node_id: source.node_id,
-            identifier,
-        })
-    }
-
     fn rewrite_using_directive(&mut self, source: &UsingDirective) -> UsingDirective {
         let clause = self.rewrite_using_clause(&source.clause);
         let target = self.rewrite_using_target(&source.target);
-        let global_keyword = source.global_keyword.as_ref().map(Rc::clone);
+        let global_keyword = source.global_keyword;
 
         Rc::new(UsingDirectiveStruct {
             node_id: source.node_id,
@@ -189,7 +174,7 @@ pub trait Rewriter {
         let alias = source
             .alias
             .as_ref()
-            .map(|value| self.rewrite_using_alias(value));
+            .map(|value| self.rewrite_using_operator(value));
 
         Rc::new(UsingDeconstructionSymbolStruct {
             node_id: source.node_id,
@@ -198,24 +183,15 @@ pub trait Rewriter {
         })
     }
 
-    fn rewrite_using_alias(&mut self, source: &UsingAlias) -> UsingAlias {
-        let operator = self.rewrite_using_operator(&source.operator);
-
-        Rc::new(UsingAliasStruct {
-            node_id: source.node_id,
-            operator,
-        })
-    }
-
     fn rewrite_contract_definition(&mut self, source: &ContractDefinition) -> ContractDefinition {
-        let abstract_keyword = source.abstract_keyword.as_ref().map(Rc::clone);
+        let abstract_keyword = source.abstract_keyword;
         let name = Rc::clone(&source.name);
         let members = self.rewrite_contract_members(&source.members);
         let inheritance_types = self.rewrite_inheritance_types(&source.inheritance_types);
         let storage_layout = source
             .storage_layout
             .as_ref()
-            .map(|value| self.rewrite_storage_layout_specifier(value));
+            .map(|value| self.rewrite_expression(value));
 
         Rc::new(ContractDefinitionStruct {
             node_id: source.node_id,
@@ -224,18 +200,6 @@ pub trait Rewriter {
             members,
             inheritance_types,
             storage_layout,
-        })
-    }
-
-    fn rewrite_inheritance_specifier(
-        &mut self,
-        source: &InheritanceSpecifier,
-    ) -> InheritanceSpecifier {
-        let types = self.rewrite_inheritance_types(&source.types);
-
-        Rc::new(InheritanceSpecifierStruct {
-            node_id: source.node_id,
-            types,
         })
     }
 
@@ -253,18 +217,6 @@ pub trait Rewriter {
         })
     }
 
-    fn rewrite_storage_layout_specifier(
-        &mut self,
-        source: &StorageLayoutSpecifier,
-    ) -> StorageLayoutSpecifier {
-        let expression = self.rewrite_expression(&source.expression);
-
-        Rc::new(StorageLayoutSpecifierStruct {
-            node_id: source.node_id,
-            expression,
-        })
-    }
-
     fn rewrite_interface_definition(
         &mut self,
         source: &InterfaceDefinition,
@@ -273,7 +225,7 @@ pub trait Rewriter {
         let inheritance = source
             .inheritance
             .as_ref()
-            .map(|value| self.rewrite_inheritance_specifier(value));
+            .map(|value| self.rewrite_inheritance_types(value));
         let members = self.rewrite_interface_members(&source.members);
 
         Rc::new(InterfaceDefinitionStruct {
@@ -346,63 +298,59 @@ pub trait Rewriter {
         source: &StateVariableDefinition,
     ) -> StateVariableDefinition {
         let type_name = self.rewrite_type_name(&source.type_name);
-        let attributes = self.rewrite_state_variable_attributes(&source.attributes);
         let name = Rc::clone(&source.name);
         let value = source
             .value
             .as_ref()
-            .map(|value| self.rewrite_state_variable_definition_value(value));
+            .map(|value| self.rewrite_expression(value));
+        let visibility = self.rewrite_state_variable_visibility(&source.visibility);
+        let mutability = self.rewrite_state_variable_mutability(&source.mutability);
+        let override_specifier = source
+            .override_specifier
+            .as_ref()
+            .map(|value| self.rewrite_override_paths(value));
 
         Rc::new(StateVariableDefinitionStruct {
             node_id: source.node_id,
             type_name,
-            attributes,
             name,
             value,
-        })
-    }
-
-    fn rewrite_state_variable_definition_value(
-        &mut self,
-        source: &StateVariableDefinitionValue,
-    ) -> StateVariableDefinitionValue {
-        let value = self.rewrite_expression(&source.value);
-
-        Rc::new(StateVariableDefinitionValueStruct {
-            node_id: source.node_id,
-            value,
+            visibility,
+            mutability,
+            override_specifier,
         })
     }
 
     fn rewrite_function_definition(&mut self, source: &FunctionDefinition) -> FunctionDefinition {
-        let name = self.rewrite_function_name(&source.name);
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
-        let attributes = self.rewrite_function_attributes(&source.attributes);
+        let parameters = self.rewrite_parameters(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_returns_declaration(value));
-        let body = self.rewrite_function_body(&source.body);
+            .map(|value| self.rewrite_parameters(value));
+        let kind = self.rewrite_function_kind(&source.kind);
+        let name = source.name.as_ref().map(Rc::clone);
+        let body = source.body.as_ref().map(|value| self.rewrite_block(value));
+        let visibility = self.rewrite_function_visibility(&source.visibility);
+        let mutability = self.rewrite_function_mutability(&source.mutability);
+        let virtual_keyword = source.virtual_keyword;
+        let override_specifier = source
+            .override_specifier
+            .as_ref()
+            .map(|value| self.rewrite_override_paths(value));
+        let modifier_invocations = self.rewrite_modifier_invocations(&source.modifier_invocations);
 
         Rc::new(FunctionDefinitionStruct {
             node_id: source.node_id,
-            name,
             parameters,
-            attributes,
             returns,
+            kind,
+            name,
             body,
-        })
-    }
-
-    fn rewrite_parameters_declaration(
-        &mut self,
-        source: &ParametersDeclaration,
-    ) -> ParametersDeclaration {
-        let parameters = self.rewrite_parameters(&source.parameters);
-
-        Rc::new(ParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
+            visibility,
+            mutability,
+            virtual_keyword,
+            override_specifier,
+            modifier_invocations,
         })
     }
 
@@ -426,119 +374,11 @@ pub trait Rewriter {
         let overridden = source
             .overridden
             .as_ref()
-            .map(|value| self.rewrite_override_paths_declaration(value));
+            .map(|value| self.rewrite_override_paths(value));
 
         Rc::new(OverrideSpecifierStruct {
             node_id: source.node_id,
             overridden,
-        })
-    }
-
-    fn rewrite_override_paths_declaration(
-        &mut self,
-        source: &OverridePathsDeclaration,
-    ) -> OverridePathsDeclaration {
-        let paths = self.rewrite_override_paths(&source.paths);
-
-        Rc::new(OverridePathsDeclarationStruct {
-            node_id: source.node_id,
-            paths,
-        })
-    }
-
-    fn rewrite_returns_declaration(&mut self, source: &ReturnsDeclaration) -> ReturnsDeclaration {
-        let variables = self.rewrite_parameters_declaration(&source.variables);
-
-        Rc::new(ReturnsDeclarationStruct {
-            node_id: source.node_id,
-            variables,
-        })
-    }
-
-    fn rewrite_constructor_definition(
-        &mut self,
-        source: &ConstructorDefinition,
-    ) -> ConstructorDefinition {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
-        let attributes = self.rewrite_constructor_attributes(&source.attributes);
-        let body = self.rewrite_block(&source.body);
-
-        Rc::new(ConstructorDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
-
-    fn rewrite_unnamed_function_definition(
-        &mut self,
-        source: &UnnamedFunctionDefinition,
-    ) -> UnnamedFunctionDefinition {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
-        let attributes = self.rewrite_unnamed_function_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
-
-        Rc::new(UnnamedFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
-
-    fn rewrite_fallback_function_definition(
-        &mut self,
-        source: &FallbackFunctionDefinition,
-    ) -> FallbackFunctionDefinition {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
-        let attributes = self.rewrite_fallback_function_attributes(&source.attributes);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.rewrite_returns_declaration(value));
-        let body = self.rewrite_function_body(&source.body);
-
-        Rc::new(FallbackFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            returns,
-            body,
-        })
-    }
-
-    fn rewrite_receive_function_definition(
-        &mut self,
-        source: &ReceiveFunctionDefinition,
-    ) -> ReceiveFunctionDefinition {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
-        let attributes = self.rewrite_receive_function_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
-
-        Rc::new(ReceiveFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
-
-    fn rewrite_modifier_definition(&mut self, source: &ModifierDefinition) -> ModifierDefinition {
-        let name = Rc::clone(&source.name);
-        let parameters = source
-            .parameters
-            .as_ref()
-            .map(|value| self.rewrite_parameters_declaration(value));
-        let attributes = self.rewrite_modifier_attributes(&source.attributes);
-        let body = self.rewrite_function_body(&source.body);
-
-        Rc::new(ModifierDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            attributes,
-            body,
         })
     }
 
@@ -558,8 +398,8 @@ pub trait Rewriter {
 
     fn rewrite_event_definition(&mut self, source: &EventDefinition) -> EventDefinition {
         let name = Rc::clone(&source.name);
-        let parameters = self.rewrite_event_parameters_declaration(&source.parameters);
-        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
+        let parameters = self.rewrite_event_parameters(&source.parameters);
+        let anonymous_keyword = source.anonymous_keyword;
 
         Rc::new(EventDefinitionStruct {
             node_id: source.node_id,
@@ -569,21 +409,9 @@ pub trait Rewriter {
         })
     }
 
-    fn rewrite_event_parameters_declaration(
-        &mut self,
-        source: &EventParametersDeclaration,
-    ) -> EventParametersDeclaration {
-        let parameters = self.rewrite_event_parameters(&source.parameters);
-
-        Rc::new(EventParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
-
     fn rewrite_event_parameter(&mut self, source: &EventParameter) -> EventParameter {
         let type_name = self.rewrite_type_name(&source.type_name);
-        let indexed_keyword = source.indexed_keyword.as_ref().map(Rc::clone);
+        let indexed_keyword = source.indexed_keyword;
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(EventParameterStruct {
@@ -610,24 +438,12 @@ pub trait Rewriter {
 
     fn rewrite_error_definition(&mut self, source: &ErrorDefinition) -> ErrorDefinition {
         let name = Rc::clone(&source.name);
-        let members = self.rewrite_error_parameters_declaration(&source.members);
+        let members = self.rewrite_error_parameters(&source.members);
 
         Rc::new(ErrorDefinitionStruct {
             node_id: source.node_id,
             name,
             members,
-        })
-    }
-
-    fn rewrite_error_parameters_declaration(
-        &mut self,
-        source: &ErrorParametersDeclaration,
-    ) -> ErrorParametersDeclaration {
-        let parameters = self.rewrite_error_parameters(&source.parameters);
-
-        Rc::new(ErrorParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
         })
     }
 
@@ -657,18 +473,20 @@ pub trait Rewriter {
     }
 
     fn rewrite_function_type(&mut self, source: &FunctionType) -> FunctionType {
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
-        let attributes = self.rewrite_function_type_attributes(&source.attributes);
+        let parameters = self.rewrite_parameters(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_returns_declaration(value));
+            .map(|value| self.rewrite_parameters(value));
+        let visibility = self.rewrite_function_visibility(&source.visibility);
+        let mutability = self.rewrite_function_mutability(&source.mutability);
 
         Rc::new(FunctionTypeStruct {
             node_id: source.node_id,
             parameters,
-            attributes,
             returns,
+            visibility,
+            mutability,
         })
     }
 
@@ -706,7 +524,7 @@ pub trait Rewriter {
     }
 
     fn rewrite_address_type(&mut self, source: &AddressType) -> AddressType {
-        let payable_keyword = source.payable_keyword.as_ref().map(Rc::clone);
+        let payable_keyword = source.payable_keyword;
 
         Rc::new(AddressTypeStruct {
             node_id: source.node_id,
@@ -745,33 +563,15 @@ pub trait Rewriter {
     }
 
     fn rewrite_assembly_statement(&mut self, source: &AssemblyStatement) -> AssemblyStatement {
-        let label = source
-            .label
-            .as_ref()
-            .map(|value| self.rewrite_string_literal(value));
-        let flags = source
-            .flags
-            .as_ref()
-            .map(|value| self.rewrite_assembly_flags_declaration(value));
         let body = self.rewrite_yul_block(&source.body);
+        let flags = self.rewrite_assembly_flags(&source.flags);
+        let label = source.label.as_ref().map(Rc::clone);
 
         Rc::new(AssemblyStatementStruct {
             node_id: source.node_id,
-            label,
-            flags,
             body,
-        })
-    }
-
-    fn rewrite_assembly_flags_declaration(
-        &mut self,
-        source: &AssemblyFlagsDeclaration,
-    ) -> AssemblyFlagsDeclaration {
-        let flags = self.rewrite_assembly_flags(&source.flags);
-
-        Rc::new(AssemblyFlagsDeclarationStruct {
-            node_id: source.node_id,
             flags,
+            label,
         })
     }
 
@@ -779,7 +579,7 @@ pub trait Rewriter {
         &mut self,
         source: &TupleDeconstructionStatement,
     ) -> TupleDeconstructionStatement {
-        let var_keyword = source.var_keyword.as_ref().map(Rc::clone);
+        let var_keyword = source.var_keyword;
         let elements = self.rewrite_tuple_deconstruction_elements(&source.elements);
         let expression = self.rewrite_expression(&source.expression);
 
@@ -849,7 +649,7 @@ pub trait Rewriter {
         let value = source
             .value
             .as_ref()
-            .map(|value| self.rewrite_variable_declaration_value(value));
+            .map(|value| self.rewrite_expression(value));
 
         Rc::new(VariableDeclarationStatementStruct {
             node_id: source.node_id,
@@ -860,40 +660,19 @@ pub trait Rewriter {
         })
     }
 
-    fn rewrite_variable_declaration_value(
-        &mut self,
-        source: &VariableDeclarationValue,
-    ) -> VariableDeclarationValue {
-        let expression = self.rewrite_expression(&source.expression);
-
-        Rc::new(VariableDeclarationValueStruct {
-            node_id: source.node_id,
-            expression,
-        })
-    }
-
     fn rewrite_if_statement(&mut self, source: &IfStatement) -> IfStatement {
         let condition = self.rewrite_expression(&source.condition);
         let body = self.rewrite_statement(&source.body);
         let else_branch = source
             .else_branch
             .as_ref()
-            .map(|value| self.rewrite_else_branch(value));
+            .map(|value| self.rewrite_statement(value));
 
         Rc::new(IfStatementStruct {
             node_id: source.node_id,
             condition,
             body,
             else_branch,
-        })
-    }
-
-    fn rewrite_else_branch(&mut self, source: &ElseBranch) -> ElseBranch {
-        let body = self.rewrite_statement(&source.body);
-
-        Rc::new(ElseBranchStruct {
-            node_id: source.node_id,
-            body,
         })
     }
 
@@ -977,7 +756,7 @@ pub trait Rewriter {
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_returns_declaration(value));
+            .map(|value| self.rewrite_parameters(value));
         let body = self.rewrite_block(&source.body);
         let catch_clauses = self.rewrite_catch_clauses(&source.catch_clauses);
 
@@ -1006,7 +785,7 @@ pub trait Rewriter {
 
     fn rewrite_catch_clause_error(&mut self, source: &CatchClauseError) -> CatchClauseError {
         let name = source.name.as_ref().map(Rc::clone);
-        let parameters = self.rewrite_parameters_declaration(&source.parameters);
+        let parameters = self.rewrite_parameters(&source.parameters);
 
         Rc::new(CatchClauseErrorStruct {
             node_id: source.node_id,
@@ -1294,61 +1073,13 @@ pub trait Rewriter {
         let end = source
             .end
             .as_ref()
-            .map(|value| self.rewrite_index_access_end(value));
+            .map(|value| self.rewrite_expression(value));
 
         Rc::new(IndexAccessExpressionStruct {
             node_id: source.node_id,
             operand,
             start,
             end,
-        })
-    }
-
-    fn rewrite_index_access_end(&mut self, source: &IndexAccessEnd) -> IndexAccessEnd {
-        let end = source
-            .end
-            .as_ref()
-            .map(|value| self.rewrite_expression(value));
-
-        Rc::new(IndexAccessEndStruct {
-            node_id: source.node_id,
-            end,
-        })
-    }
-
-    fn rewrite_positional_arguments_declaration(
-        &mut self,
-        source: &PositionalArgumentsDeclaration,
-    ) -> PositionalArgumentsDeclaration {
-        let arguments = self.rewrite_positional_arguments(&source.arguments);
-
-        Rc::new(PositionalArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
-    fn rewrite_named_arguments_declaration(
-        &mut self,
-        source: &NamedArgumentsDeclaration,
-    ) -> NamedArgumentsDeclaration {
-        let arguments = source
-            .arguments
-            .as_ref()
-            .map(|value| self.rewrite_named_argument_group(value));
-
-        Rc::new(NamedArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
-    fn rewrite_named_argument_group(&mut self, source: &NamedArgumentGroup) -> NamedArgumentGroup {
-        let arguments = self.rewrite_named_arguments(&source.arguments);
-
-        Rc::new(NamedArgumentGroupStruct {
-            node_id: source.node_id,
-            arguments,
         })
     }
 
@@ -1459,11 +1190,11 @@ pub trait Rewriter {
         source: &YulFunctionDefinition,
     ) -> YulFunctionDefinition {
         let name = Rc::clone(&source.name);
-        let parameters = self.rewrite_yul_parameters_declaration(&source.parameters);
+        let parameters = self.rewrite_yul_parameters(&source.parameters);
         let returns = source
             .returns
             .as_ref()
-            .map(|value| self.rewrite_yul_returns_declaration(value));
+            .map(|value| self.rewrite_yul_variable_names(value));
         let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(YulFunctionDefinitionStruct {
@@ -1472,30 +1203,6 @@ pub trait Rewriter {
             parameters,
             returns,
             body,
-        })
-    }
-
-    fn rewrite_yul_parameters_declaration(
-        &mut self,
-        source: &YulParametersDeclaration,
-    ) -> YulParametersDeclaration {
-        let parameters = self.rewrite_yul_parameters(&source.parameters);
-
-        Rc::new(YulParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
-
-    fn rewrite_yul_returns_declaration(
-        &mut self,
-        source: &YulReturnsDeclaration,
-    ) -> YulReturnsDeclaration {
-        let variables = self.rewrite_yul_variable_names(&source.variables);
-
-        Rc::new(YulReturnsDeclarationStruct {
-            node_id: source.node_id,
-            variables,
         })
     }
 
@@ -1773,8 +1480,8 @@ pub trait Rewriter {
         source: &ExperimentalFeature,
     ) -> ExperimentalFeature {
         match source {
-            ExperimentalFeature::StringLiteral(ref string_literal) => {
-                ExperimentalFeature::StringLiteral(self.rewrite_string_literal(string_literal))
+            ExperimentalFeature::StringLiteral(node) => {
+                ExperimentalFeature::StringLiteral(Rc::clone(node))
             }
             ExperimentalFeature::ABIEncoderV2Keyword => ExperimentalFeature::ABIEncoderV2Keyword,
             ExperimentalFeature::SMTCheckerKeyword => ExperimentalFeature::SMTCheckerKeyword,
@@ -1908,27 +1615,6 @@ pub trait Rewriter {
         self.default_rewrite_using_target(source)
     }
 
-    fn default_rewrite_contract_specifier(
-        &mut self,
-        source: &ContractSpecifier,
-    ) -> ContractSpecifier {
-        match source {
-            ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
-                ContractSpecifier::InheritanceSpecifier(
-                    self.rewrite_inheritance_specifier(inheritance_specifier),
-                )
-            }
-            ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
-                ContractSpecifier::StorageLayoutSpecifier(
-                    self.rewrite_storage_layout_specifier(storage_layout_specifier),
-                )
-            }
-        }
-    }
-    fn rewrite_contract_specifier(&mut self, source: &ContractSpecifier) -> ContractSpecifier {
-        self.default_rewrite_contract_specifier(source)
-    }
-
     fn default_rewrite_contract_member(&mut self, source: &ContractMember) -> ContractMember {
         match source {
             ContractMember::UsingDirective(ref using_directive) => {
@@ -1937,31 +1623,6 @@ pub trait Rewriter {
             ContractMember::FunctionDefinition(ref function_definition) => {
                 ContractMember::FunctionDefinition(
                     self.rewrite_function_definition(function_definition),
-                )
-            }
-            ContractMember::ConstructorDefinition(ref constructor_definition) => {
-                ContractMember::ConstructorDefinition(
-                    self.rewrite_constructor_definition(constructor_definition),
-                )
-            }
-            ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
-                ContractMember::ReceiveFunctionDefinition(
-                    self.rewrite_receive_function_definition(receive_function_definition),
-                )
-            }
-            ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
-                ContractMember::FallbackFunctionDefinition(
-                    self.rewrite_fallback_function_definition(fallback_function_definition),
-                )
-            }
-            ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
-                ContractMember::UnnamedFunctionDefinition(
-                    self.rewrite_unnamed_function_definition(unnamed_function_definition),
-                )
-            }
-            ContractMember::ModifierDefinition(ref modifier_definition) => {
-                ContractMember::ModifierDefinition(
-                    self.rewrite_modifier_definition(modifier_definition),
                 )
             }
             ContractMember::StructDefinition(ref struct_definition) => {
@@ -1992,208 +1653,6 @@ pub trait Rewriter {
         self.default_rewrite_contract_member(source)
     }
 
-    fn default_rewrite_state_variable_attribute(
-        &mut self,
-        source: &StateVariableAttribute,
-    ) -> StateVariableAttribute {
-        match source {
-            StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
-                StateVariableAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            StateVariableAttribute::ConstantKeyword => StateVariableAttribute::ConstantKeyword,
-            StateVariableAttribute::InternalKeyword => StateVariableAttribute::InternalKeyword,
-            StateVariableAttribute::PrivateKeyword => StateVariableAttribute::PrivateKeyword,
-            StateVariableAttribute::PublicKeyword => StateVariableAttribute::PublicKeyword,
-            StateVariableAttribute::ImmutableKeyword => StateVariableAttribute::ImmutableKeyword,
-            StateVariableAttribute::TransientKeyword => StateVariableAttribute::TransientKeyword,
-        }
-    }
-    fn rewrite_state_variable_attribute(
-        &mut self,
-        source: &StateVariableAttribute,
-    ) -> StateVariableAttribute {
-        self.default_rewrite_state_variable_attribute(source)
-    }
-
-    fn default_rewrite_function_name(&mut self, source: &FunctionName) -> FunctionName {
-        match source {
-            FunctionName::Identifier(node) => FunctionName::Identifier(Rc::clone(node)),
-            FunctionName::FallbackKeyword => FunctionName::FallbackKeyword,
-            FunctionName::ReceiveKeyword => FunctionName::ReceiveKeyword,
-        }
-    }
-    fn rewrite_function_name(&mut self, source: &FunctionName) -> FunctionName {
-        self.default_rewrite_function_name(source)
-    }
-
-    fn default_rewrite_function_attribute(
-        &mut self,
-        source: &FunctionAttribute,
-    ) -> FunctionAttribute {
-        match source {
-            FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                FunctionAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                FunctionAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            FunctionAttribute::ConstantKeyword => FunctionAttribute::ConstantKeyword,
-            FunctionAttribute::ExternalKeyword => FunctionAttribute::ExternalKeyword,
-            FunctionAttribute::InternalKeyword => FunctionAttribute::InternalKeyword,
-            FunctionAttribute::PayableKeyword => FunctionAttribute::PayableKeyword,
-            FunctionAttribute::PrivateKeyword => FunctionAttribute::PrivateKeyword,
-            FunctionAttribute::PublicKeyword => FunctionAttribute::PublicKeyword,
-            FunctionAttribute::PureKeyword => FunctionAttribute::PureKeyword,
-            FunctionAttribute::ViewKeyword => FunctionAttribute::ViewKeyword,
-            FunctionAttribute::VirtualKeyword => FunctionAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_function_attribute(&mut self, source: &FunctionAttribute) -> FunctionAttribute {
-        self.default_rewrite_function_attribute(source)
-    }
-
-    fn default_rewrite_function_body(&mut self, source: &FunctionBody) -> FunctionBody {
-        match source {
-            FunctionBody::Block(ref block) => FunctionBody::Block(self.rewrite_block(block)),
-            FunctionBody::Semicolon => FunctionBody::Semicolon,
-        }
-    }
-    fn rewrite_function_body(&mut self, source: &FunctionBody) -> FunctionBody {
-        self.default_rewrite_function_body(source)
-    }
-
-    fn default_rewrite_constructor_attribute(
-        &mut self,
-        source: &ConstructorAttribute,
-    ) -> ConstructorAttribute {
-        match source {
-            ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
-                ConstructorAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            ConstructorAttribute::InternalKeyword => ConstructorAttribute::InternalKeyword,
-            ConstructorAttribute::OverrideKeyword => ConstructorAttribute::OverrideKeyword,
-            ConstructorAttribute::PayableKeyword => ConstructorAttribute::PayableKeyword,
-            ConstructorAttribute::PublicKeyword => ConstructorAttribute::PublicKeyword,
-            ConstructorAttribute::VirtualKeyword => ConstructorAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_constructor_attribute(
-        &mut self,
-        source: &ConstructorAttribute,
-    ) -> ConstructorAttribute {
-        self.default_rewrite_constructor_attribute(source)
-    }
-
-    fn default_rewrite_unnamed_function_attribute(
-        &mut self,
-        source: &UnnamedFunctionAttribute,
-    ) -> UnnamedFunctionAttribute {
-        match source {
-            UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                UnnamedFunctionAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            UnnamedFunctionAttribute::ConstantKeyword => UnnamedFunctionAttribute::ConstantKeyword,
-            UnnamedFunctionAttribute::ExternalKeyword => UnnamedFunctionAttribute::ExternalKeyword,
-            UnnamedFunctionAttribute::InternalKeyword => UnnamedFunctionAttribute::InternalKeyword,
-            UnnamedFunctionAttribute::PayableKeyword => UnnamedFunctionAttribute::PayableKeyword,
-            UnnamedFunctionAttribute::PrivateKeyword => UnnamedFunctionAttribute::PrivateKeyword,
-            UnnamedFunctionAttribute::PublicKeyword => UnnamedFunctionAttribute::PublicKeyword,
-            UnnamedFunctionAttribute::PureKeyword => UnnamedFunctionAttribute::PureKeyword,
-            UnnamedFunctionAttribute::ViewKeyword => UnnamedFunctionAttribute::ViewKeyword,
-        }
-    }
-    fn rewrite_unnamed_function_attribute(
-        &mut self,
-        source: &UnnamedFunctionAttribute,
-    ) -> UnnamedFunctionAttribute {
-        self.default_rewrite_unnamed_function_attribute(source)
-    }
-
-    fn default_rewrite_fallback_function_attribute(
-        &mut self,
-        source: &FallbackFunctionAttribute,
-    ) -> FallbackFunctionAttribute {
-        match source {
-            FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                FallbackFunctionAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                FallbackFunctionAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            FallbackFunctionAttribute::ExternalKeyword => {
-                FallbackFunctionAttribute::ExternalKeyword
-            }
-            FallbackFunctionAttribute::PayableKeyword => FallbackFunctionAttribute::PayableKeyword,
-            FallbackFunctionAttribute::PureKeyword => FallbackFunctionAttribute::PureKeyword,
-            FallbackFunctionAttribute::ViewKeyword => FallbackFunctionAttribute::ViewKeyword,
-            FallbackFunctionAttribute::VirtualKeyword => FallbackFunctionAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_fallback_function_attribute(
-        &mut self,
-        source: &FallbackFunctionAttribute,
-    ) -> FallbackFunctionAttribute {
-        self.default_rewrite_fallback_function_attribute(source)
-    }
-
-    fn default_rewrite_receive_function_attribute(
-        &mut self,
-        source: &ReceiveFunctionAttribute,
-    ) -> ReceiveFunctionAttribute {
-        match source {
-            ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                ReceiveFunctionAttribute::ModifierInvocation(
-                    self.rewrite_modifier_invocation(modifier_invocation),
-                )
-            }
-            ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                ReceiveFunctionAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            ReceiveFunctionAttribute::ExternalKeyword => ReceiveFunctionAttribute::ExternalKeyword,
-            ReceiveFunctionAttribute::PayableKeyword => ReceiveFunctionAttribute::PayableKeyword,
-            ReceiveFunctionAttribute::VirtualKeyword => ReceiveFunctionAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_receive_function_attribute(
-        &mut self,
-        source: &ReceiveFunctionAttribute,
-    ) -> ReceiveFunctionAttribute {
-        self.default_rewrite_receive_function_attribute(source)
-    }
-
-    fn default_rewrite_modifier_attribute(
-        &mut self,
-        source: &ModifierAttribute,
-    ) -> ModifierAttribute {
-        match source {
-            ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
-                ModifierAttribute::OverrideSpecifier(
-                    self.rewrite_override_specifier(override_specifier),
-                )
-            }
-            ModifierAttribute::VirtualKeyword => ModifierAttribute::VirtualKeyword,
-        }
-    }
-    fn rewrite_modifier_attribute(&mut self, source: &ModifierAttribute) -> ModifierAttribute {
-        self.default_rewrite_modifier_attribute(source)
-    }
-
     fn default_rewrite_type_name(&mut self, source: &TypeName) -> TypeName {
         match source {
             TypeName::ArrayTypeName(ref array_type_name) => {
@@ -2215,28 +1674,6 @@ pub trait Rewriter {
     }
     fn rewrite_type_name(&mut self, source: &TypeName) -> TypeName {
         self.default_rewrite_type_name(source)
-    }
-
-    fn default_rewrite_function_type_attribute(
-        &mut self,
-        source: &FunctionTypeAttribute,
-    ) -> FunctionTypeAttribute {
-        match source {
-            FunctionTypeAttribute::InternalKeyword => FunctionTypeAttribute::InternalKeyword,
-            FunctionTypeAttribute::ExternalKeyword => FunctionTypeAttribute::ExternalKeyword,
-            FunctionTypeAttribute::PrivateKeyword => FunctionTypeAttribute::PrivateKeyword,
-            FunctionTypeAttribute::PublicKeyword => FunctionTypeAttribute::PublicKeyword,
-            FunctionTypeAttribute::ConstantKeyword => FunctionTypeAttribute::ConstantKeyword,
-            FunctionTypeAttribute::PureKeyword => FunctionTypeAttribute::PureKeyword,
-            FunctionTypeAttribute::ViewKeyword => FunctionTypeAttribute::ViewKeyword,
-            FunctionTypeAttribute::PayableKeyword => FunctionTypeAttribute::PayableKeyword,
-        }
-    }
-    fn rewrite_function_type_attribute(
-        &mut self,
-        source: &FunctionTypeAttribute,
-    ) -> FunctionTypeAttribute {
-        self.default_rewrite_function_type_attribute(source)
     }
 
     fn default_rewrite_mapping_key_type(&mut self, source: &MappingKeyType) -> MappingKeyType {
@@ -2562,15 +1999,13 @@ pub trait Rewriter {
         source: &ArgumentsDeclaration,
     ) -> ArgumentsDeclaration {
         match source {
-            ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                ref positional_arguments_declaration,
-            ) => ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                self.rewrite_positional_arguments_declaration(positional_arguments_declaration),
-            ),
-            ArgumentsDeclaration::NamedArgumentsDeclaration(ref named_arguments_declaration) => {
-                ArgumentsDeclaration::NamedArgumentsDeclaration(
-                    self.rewrite_named_arguments_declaration(named_arguments_declaration),
+            ArgumentsDeclaration::PositionalArguments(ref positional_arguments) => {
+                ArgumentsDeclaration::PositionalArguments(
+                    self.rewrite_positional_arguments(positional_arguments),
                 )
+            }
+            ArgumentsDeclaration::NamedArguments(ref named_arguments) => {
+                ArgumentsDeclaration::NamedArguments(self.rewrite_named_arguments(named_arguments))
             }
         }
     }
@@ -2602,82 +2037,19 @@ pub trait Rewriter {
 
     fn default_rewrite_string_expression(&mut self, source: &StringExpression) -> StringExpression {
         match source {
-            StringExpression::StringLiteral(ref string_literal) => {
-                StringExpression::StringLiteral(self.rewrite_string_literal(string_literal))
+            StringExpression::Strings(ref strings) => {
+                StringExpression::Strings(self.rewrite_strings(strings))
             }
-            StringExpression::StringLiterals(ref string_literals) => {
-                StringExpression::StringLiterals(self.rewrite_string_literals(string_literals))
+            StringExpression::HexStrings(ref hex_strings) => {
+                StringExpression::HexStrings(self.rewrite_hex_strings(hex_strings))
             }
-            StringExpression::HexStringLiteral(ref hex_string_literal) => {
-                StringExpression::HexStringLiteral(
-                    self.rewrite_hex_string_literal(hex_string_literal),
-                )
-            }
-            StringExpression::HexStringLiterals(ref hex_string_literals) => {
-                StringExpression::HexStringLiterals(
-                    self.rewrite_hex_string_literals(hex_string_literals),
-                )
-            }
-            StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
-                StringExpression::UnicodeStringLiterals(
-                    self.rewrite_unicode_string_literals(unicode_string_literals),
-                )
+            StringExpression::UnicodeStrings(ref unicode_strings) => {
+                StringExpression::UnicodeStrings(self.rewrite_unicode_strings(unicode_strings))
             }
         }
     }
     fn rewrite_string_expression(&mut self, source: &StringExpression) -> StringExpression {
         self.default_rewrite_string_expression(source)
-    }
-
-    fn default_rewrite_string_literal(&mut self, source: &StringLiteral) -> StringLiteral {
-        match source {
-            StringLiteral::SingleQuotedStringLiteral(node) => {
-                StringLiteral::SingleQuotedStringLiteral(Rc::clone(node))
-            }
-            StringLiteral::DoubleQuotedStringLiteral(node) => {
-                StringLiteral::DoubleQuotedStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn rewrite_string_literal(&mut self, source: &StringLiteral) -> StringLiteral {
-        self.default_rewrite_string_literal(source)
-    }
-
-    fn default_rewrite_hex_string_literal(
-        &mut self,
-        source: &HexStringLiteral,
-    ) -> HexStringLiteral {
-        match source {
-            HexStringLiteral::SingleQuotedHexStringLiteral(node) => {
-                HexStringLiteral::SingleQuotedHexStringLiteral(Rc::clone(node))
-            }
-            HexStringLiteral::DoubleQuotedHexStringLiteral(node) => {
-                HexStringLiteral::DoubleQuotedHexStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn rewrite_hex_string_literal(&mut self, source: &HexStringLiteral) -> HexStringLiteral {
-        self.default_rewrite_hex_string_literal(source)
-    }
-
-    fn default_rewrite_unicode_string_literal(
-        &mut self,
-        source: &UnicodeStringLiteral,
-    ) -> UnicodeStringLiteral {
-        match source {
-            UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(node) => {
-                UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(Rc::clone(node))
-            }
-            UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(node) => {
-                UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn rewrite_unicode_string_literal(
-        &mut self,
-        source: &UnicodeStringLiteral,
-    ) -> UnicodeStringLiteral {
-        self.default_rewrite_unicode_string_literal(source)
     }
 
     fn default_rewrite_yul_statement(&mut self, source: &YulStatement) -> YulStatement {
@@ -2820,20 +2192,95 @@ pub trait Rewriter {
 
     fn default_rewrite_yul_literal(&mut self, source: &YulLiteral) -> YulLiteral {
         match source {
-            YulLiteral::HexStringLiteral(ref hex_string_literal) => {
-                YulLiteral::HexStringLiteral(self.rewrite_hex_string_literal(hex_string_literal))
-            }
-            YulLiteral::StringLiteral(ref string_literal) => {
-                YulLiteral::StringLiteral(self.rewrite_string_literal(string_literal))
-            }
             YulLiteral::YulDecimalLiteral(node) => YulLiteral::YulDecimalLiteral(Rc::clone(node)),
             YulLiteral::YulHexLiteral(node) => YulLiteral::YulHexLiteral(Rc::clone(node)),
+            YulLiteral::StringLiteral(node) => YulLiteral::StringLiteral(Rc::clone(node)),
+            YulLiteral::HexStringLiteral(node) => YulLiteral::HexStringLiteral(Rc::clone(node)),
             YulLiteral::YulTrueKeyword => YulLiteral::YulTrueKeyword,
             YulLiteral::YulFalseKeyword => YulLiteral::YulFalseKeyword,
         }
     }
     fn rewrite_yul_literal(&mut self, source: &YulLiteral) -> YulLiteral {
         self.default_rewrite_yul_literal(source)
+    }
+
+    fn default_rewrite_function_kind(&mut self, source: &FunctionKind) -> FunctionKind {
+        match source {
+            FunctionKind::Regular => FunctionKind::Regular,
+            FunctionKind::Constructor => FunctionKind::Constructor,
+            FunctionKind::Unnamed => FunctionKind::Unnamed,
+            FunctionKind::Fallback => FunctionKind::Fallback,
+            FunctionKind::Receive => FunctionKind::Receive,
+            FunctionKind::Modifier => FunctionKind::Modifier,
+        }
+    }
+    fn rewrite_function_kind(&mut self, source: &FunctionKind) -> FunctionKind {
+        self.default_rewrite_function_kind(source)
+    }
+
+    fn default_rewrite_function_visibility(
+        &mut self,
+        source: &FunctionVisibility,
+    ) -> FunctionVisibility {
+        match source {
+            FunctionVisibility::Public => FunctionVisibility::Public,
+            FunctionVisibility::Private => FunctionVisibility::Private,
+            FunctionVisibility::Internal => FunctionVisibility::Internal,
+            FunctionVisibility::External => FunctionVisibility::External,
+        }
+    }
+    fn rewrite_function_visibility(&mut self, source: &FunctionVisibility) -> FunctionVisibility {
+        self.default_rewrite_function_visibility(source)
+    }
+
+    fn default_rewrite_function_mutability(
+        &mut self,
+        source: &FunctionMutability,
+    ) -> FunctionMutability {
+        match source {
+            FunctionMutability::Pure => FunctionMutability::Pure,
+            FunctionMutability::View => FunctionMutability::View,
+            FunctionMutability::NonPayable => FunctionMutability::NonPayable,
+            FunctionMutability::Payable => FunctionMutability::Payable,
+        }
+    }
+    fn rewrite_function_mutability(&mut self, source: &FunctionMutability) -> FunctionMutability {
+        self.default_rewrite_function_mutability(source)
+    }
+
+    fn default_rewrite_state_variable_visibility(
+        &mut self,
+        source: &StateVariableVisibility,
+    ) -> StateVariableVisibility {
+        match source {
+            StateVariableVisibility::Public => StateVariableVisibility::Public,
+            StateVariableVisibility::Private => StateVariableVisibility::Private,
+            StateVariableVisibility::Internal => StateVariableVisibility::Internal,
+        }
+    }
+    fn rewrite_state_variable_visibility(
+        &mut self,
+        source: &StateVariableVisibility,
+    ) -> StateVariableVisibility {
+        self.default_rewrite_state_variable_visibility(source)
+    }
+
+    fn default_rewrite_state_variable_mutability(
+        &mut self,
+        source: &StateVariableMutability,
+    ) -> StateVariableMutability {
+        match source {
+            StateVariableMutability::Mutable => StateVariableMutability::Mutable,
+            StateVariableMutability::Constant => StateVariableMutability::Constant,
+            StateVariableMutability::Immutable => StateVariableMutability::Immutable,
+            StateVariableMutability::Transient => StateVariableMutability::Transient,
+        }
+    }
+    fn rewrite_state_variable_mutability(
+        &mut self,
+        source: &StateVariableMutability,
+    ) -> StateVariableMutability {
+        self.default_rewrite_state_variable_mutability(source)
     }
 
     //
@@ -2933,16 +2380,6 @@ pub trait Rewriter {
         source.iter().map(Rc::clone).collect()
     }
 
-    fn rewrite_state_variable_attributes(
-        &mut self,
-        source: &StateVariableAttributes,
-    ) -> StateVariableAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_state_variable_attribute(item))
-            .collect()
-    }
-
     fn rewrite_parameters(&mut self, source: &Parameters) -> Parameters {
         source
             .iter()
@@ -2950,64 +2387,10 @@ pub trait Rewriter {
             .collect()
     }
 
-    fn rewrite_function_attributes(&mut self, source: &FunctionAttributes) -> FunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_function_attribute(item))
-            .collect()
-    }
-
     fn rewrite_override_paths(&mut self, source: &OverridePaths) -> OverridePaths {
         source
             .iter()
             .map(|item| self.rewrite_identifier_path(item))
-            .collect()
-    }
-
-    fn rewrite_constructor_attributes(
-        &mut self,
-        source: &ConstructorAttributes,
-    ) -> ConstructorAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_constructor_attribute(item))
-            .collect()
-    }
-
-    fn rewrite_unnamed_function_attributes(
-        &mut self,
-        source: &UnnamedFunctionAttributes,
-    ) -> UnnamedFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_unnamed_function_attribute(item))
-            .collect()
-    }
-
-    fn rewrite_fallback_function_attributes(
-        &mut self,
-        source: &FallbackFunctionAttributes,
-    ) -> FallbackFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_fallback_function_attribute(item))
-            .collect()
-    }
-
-    fn rewrite_receive_function_attributes(
-        &mut self,
-        source: &ReceiveFunctionAttributes,
-    ) -> ReceiveFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_receive_function_attribute(item))
-            .collect()
-    }
-
-    fn rewrite_modifier_attributes(&mut self, source: &ModifierAttributes) -> ModifierAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_modifier_attribute(item))
             .collect()
     }
 
@@ -3025,27 +2408,10 @@ pub trait Rewriter {
             .collect()
     }
 
-    fn rewrite_function_type_attributes(
-        &mut self,
-        source: &FunctionTypeAttributes,
-    ) -> FunctionTypeAttributes {
-        source
-            .iter()
-            .map(|item| self.rewrite_function_type_attribute(item))
-            .collect()
-    }
-
     fn rewrite_statements(&mut self, source: &Statements) -> Statements {
         source
             .iter()
             .map(|item| self.rewrite_statement(item))
-            .collect()
-    }
-
-    fn rewrite_assembly_flags(&mut self, source: &AssemblyFlags) -> AssemblyFlags {
-        source
-            .iter()
-            .map(|item| self.rewrite_string_literal(item))
             .collect()
     }
 
@@ -3104,30 +2470,6 @@ pub trait Rewriter {
             .collect()
     }
 
-    fn rewrite_string_literals(&mut self, source: &StringLiterals) -> StringLiterals {
-        source
-            .iter()
-            .map(|item| self.rewrite_string_literal(item))
-            .collect()
-    }
-
-    fn rewrite_hex_string_literals(&mut self, source: &HexStringLiterals) -> HexStringLiterals {
-        source
-            .iter()
-            .map(|item| self.rewrite_hex_string_literal(item))
-            .collect()
-    }
-
-    fn rewrite_unicode_string_literals(
-        &mut self,
-        source: &UnicodeStringLiterals,
-    ) -> UnicodeStringLiterals {
-        source
-            .iter()
-            .map(|item| self.rewrite_unicode_string_literal(item))
-            .collect()
-    }
-
     fn rewrite_identifier_path(&mut self, source: &IdentifierPath) -> IdentifierPath {
         source.iter().map(Rc::clone).collect()
     }
@@ -3169,6 +2511,32 @@ pub trait Rewriter {
     }
 
     fn rewrite_yul_path(&mut self, source: &YulPath) -> YulPath {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn rewrite_modifier_invocations(
+        &mut self,
+        source: &ModifierInvocations,
+    ) -> ModifierInvocations {
+        source
+            .iter()
+            .map(|item| self.rewrite_modifier_invocation(item))
+            .collect()
+    }
+
+    fn rewrite_strings(&mut self, source: &Strings) -> Strings {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn rewrite_hex_strings(&mut self, source: &HexStrings) -> HexStrings {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn rewrite_unicode_strings(&mut self, source: &UnicodeStrings) -> UnicodeStrings {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn rewrite_assembly_flags(&mut self, source: &AssemblyFlags) -> AssemblyFlags {
         source.iter().map(Rc::clone).collect()
     }
 }
