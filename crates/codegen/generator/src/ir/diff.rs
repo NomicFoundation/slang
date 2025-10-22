@@ -6,8 +6,6 @@ use super::model::{Choice, Collection, IrModel, Sequence};
 
 #[derive(Default, Serialize)]
 pub struct IrModelDiff {
-    pub source_name: String,
-
     pub sequences: IndexMap<model::Identifier, SequenceDiff>,
     pub choices: IndexMap<model::Identifier, ChoiceDiff>,
     pub collections: IndexMap<model::Identifier, Collection>,
@@ -39,8 +37,6 @@ pub struct ChoiceDiff {
 
 impl IrModelDiff {
     pub fn diff(source: &IrModel, target: &IrModel) -> Self {
-        let source_name = source.name.clone();
-
         let sequences = source
             .sequences
             .iter()
@@ -76,7 +72,6 @@ impl IrModelDiff {
             .collect();
 
         IrModelDiff {
-            source_name,
             sequences,
             choices,
             collections,
