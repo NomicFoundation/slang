@@ -26,7 +26,8 @@ set -euo pipefail
 }
 
 #
-# This installs the minimal profile of the '$RUST_STABLE_VERSION' toolchain.
+# This checks if the rust '$RUST_STABLE_VERSION' toolchain is already installed.
+# If not, it will install the minimal profile of that toolchain.
 # Any additional toolchains, or optional components, should be installed
 # during 'infra setup cargo' step instead of here, as this is the hot path
 # for every other command.
@@ -35,7 +36,10 @@ set -euo pipefail
 # $REPO_ROOT/crates/infra/cli/src/commands/setup/cargo/mod.rs
 #
 
-if ! output=$(
+if cargo --version | grep -zq "${RUST_STABLE_VERSION:?}"; then
+  # Already installed. Do nothing.
+  true
+elif ! output=$(
   rustup install --no-self-update --profile "minimal" "${RUST_STABLE_VERSION:?}" \
     && rustup default "${RUST_STABLE_VERSION:?}" \
       2>&1
