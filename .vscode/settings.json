@@ -38,8 +38,9 @@
     "**/package-lock.json": true,
     "**/Pipfile.lock": true
   },
+  "triggerTaskOnSave.restart": true,
   "triggerTaskOnSave.tasks": {
-    "Run Rust Analyzer Checks": ["**/*.jinja2"]
+    "Regenerate Jinja Templates": ["**/*.jinja2"]
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
