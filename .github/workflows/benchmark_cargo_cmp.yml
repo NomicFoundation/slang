@@ -1,4 +1,4 @@
-name: "benchmark_cargo"
+name: "benchmark_cargo_cmp"
 
 on:
   # Run using manual triggers from GitHub UI:
