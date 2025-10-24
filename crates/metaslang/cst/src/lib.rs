@@ -7,3 +7,7 @@ pub mod kinds;
 pub mod nodes;
 pub mod query;
 pub mod text_index;
+
+#[cfg(feature = "syntax")]
+#[allow(missing_docs)]
+pub mod syntax;
