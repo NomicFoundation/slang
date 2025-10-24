@@ -2,6 +2,20 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Regenerate Jinja Templates",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Run 'infra check codegen'", "Run Rust Analyzer Checks"]
+    },
+    {
+      "label": "Run 'infra check codegen'",
+      "command": "${workspaceFolder}/scripts/bin/infra",
+      "args": ["check", "codegen"],
+      "presentation": {
+        "reveal": "silent",
+        "clear": true
+      }
+    },
+    {
       "label": "Run Rust Analyzer Checks",
       "command": "${command:rust-analyzer.runFlycheck}"
     }
