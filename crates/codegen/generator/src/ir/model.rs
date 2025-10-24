@@ -4,8 +4,6 @@ use serde::Serialize;
 
 #[derive(Default, Serialize)]
 pub struct IrModel {
-    pub name: String,
-
     // set of non-unique terminals, ie. the value depends on the node contents, eg. Identifier
     #[serde(skip)]
     pub non_unique_terminals: IndexSet<model::Identifier>,
@@ -53,12 +51,10 @@ pub struct Collection {
 
 // Construction
 impl IrModel {
-    pub fn from_language(name: &str, language: &model::Language) -> Self {
+    pub fn from_language(language: &model::Language) -> Self {
         let builder = IrModelBuilder::create(language);
 
         Self {
-            name: name.to_owned(),
-
             non_unique_terminals: builder.non_unique_terminals,
             unique_terminals: builder.unique_terminals,
 
@@ -68,10 +64,8 @@ impl IrModel {
         }
     }
 
-    pub fn from_model(name: &str, model: &Self) -> Self {
+    pub fn from_model(model: &Self) -> Self {
         Self {
-            name: name.to_owned(),
-
             non_unique_terminals: model.non_unique_terminals.clone(),
             unique_terminals: model.unique_terminals.clone(),
 
