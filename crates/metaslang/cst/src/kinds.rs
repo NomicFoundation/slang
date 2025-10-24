@@ -1,6 +1,6 @@
 //! The base types for every node in the CST.
 
-/// Convertion methods from kinds to/from `str`.
+/// Conversion methods from kinds to/from `str`.
 pub trait BaseKind: Sized + std::fmt::Debug + Copy + PartialEq + Eq + serde::Serialize {
     /// Returns the `&str` representation of `self`.
     fn as_static_str(&self) -> &'static str;

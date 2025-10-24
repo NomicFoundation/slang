@@ -262,7 +262,7 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
-    /// Returns true if this node is a nonterminal, or if it's a temrinal with a valid kind (that is, any valid token of
+    /// Returns true if this node is a nonterminal, or if it's a terminal with a valid kind (that is, any valid token of
     /// the language).
     pub fn is_valid(&self) -> bool {
         match self {
