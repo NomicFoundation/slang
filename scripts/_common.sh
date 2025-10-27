@@ -36,7 +36,7 @@ set -euo pipefail
 # $REPO_ROOT/crates/infra/cli/src/commands/setup/cargo/mod.rs
 #
 
-if cargo --version | grep -zq "${RUST_STABLE_VERSION:?}"; then
+if (cargo --version | grep -zq "${RUST_STABLE_VERSION:?}") > /dev/null 2>&1; then
   # Already installed. Do nothing.
   true
 elif ! output=$(
