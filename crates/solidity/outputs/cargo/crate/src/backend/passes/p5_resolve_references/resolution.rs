@@ -5,7 +5,7 @@ use super::{Pass, ScopeFrame};
 use crate::backend::binder::{
     Definition, EitherIter, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
 };
-use crate::backend::l2_flat_contracts::{self as input_ir};
+use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{FunctionType, Type, TypeId};
 use crate::cst::NodeId;
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_7_0};

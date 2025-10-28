@@ -3,7 +3,7 @@ use std::rc::Rc;
 use super::Pass;
 use crate::backend::binder::{Definition, Resolution, Typing};
 use crate::backend::built_ins::BuiltIn;
-use crate::backend::l2_flat_contracts::{self as input_ir};
+use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 use crate::cst::{NodeId, TerminalNode};
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_8_0};

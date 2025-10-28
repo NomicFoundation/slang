@@ -1,0 +1,71 @@
+{% macro render_nodes(language) -%}
+  {%- set target = model.ir_languages[language].target -%}
+  use std::rc::Rc;
+  use std::vec::Vec;
+  use crate::cst::TerminalNode;
+  use metaslang_cst::nodes::NodeId;
+
+  //
+  // Sequences:
+  //
+
+  {% for parent_type, sequence in target.sequences %}
+    pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+    #[derive(Debug)]
+    pub struct {{ parent_type }}Struct {
+      pub node_id: NodeId,
+      {%- for field in sequence.fields %}
+        pub {{ field.label | snake_case }}:
+        {%- if field.is_terminal -%}
+          {%- if field.is_optional -%}
+            Option<Rc<TerminalNode>>,
+          {%- else -%}
+            Rc<TerminalNode>,
+          {%- endif -%}
+        {%- else -%}
+          {%- if field.is_optional -%}
+            Option<{{ field.type }}>,
+          {%- else -%}
+            {{ field.type }},
+          {%- endif -%}
+        {%- endif -%}
+      {% endfor -%}
+    }
+
+  {% endfor %}
+
+  //
+  // Choices:
+  //
+
+  {% for parent_type, choice in target.choices %}
+    #[derive(Debug)]
+    pub enum {{ parent_type }} {
+      {% for nonterminal in choice.nonterminal_types -%}
+        {{ nonterminal }}({{ nonterminal }}),
+      {%- endfor -%}
+      {% for terminal in choice.non_unique_terminal_types -%}
+        {{ terminal }}(Rc<TerminalNode>),
+      {%- endfor -%}
+      {% for terminal in choice.unique_terminal_types -%}
+        {{ terminal }},
+      {%- endfor -%}
+    }
+  {% endfor %}
+
+  //
+  // Repeated & Separated
+  //
+
+  {% for parent_type, collection in target.collections %}
+    pub type {{ parent_type }} = Vec<
+      {%- if collection.is_terminal -%}
+        Rc<TerminalNode>
+      {%- else -%}
+        {{ collection.item_type }}
+      {%- endif -%}
+    >;
+  {% endfor %}
+
+{% endmacro render_nodes %}

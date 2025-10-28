@@ -1,2 +1,2 @@
-mod l1_structured_ast;
+mod ir;
 mod passes;

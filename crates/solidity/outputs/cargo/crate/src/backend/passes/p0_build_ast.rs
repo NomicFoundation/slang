@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::backend::l1_structured_ast::{builder, SourceUnit};
+use crate::backend::ir::ir1_structured_ast::{builder, SourceUnit};
 use crate::compilation::CompilationUnit;
 
 pub struct Output {

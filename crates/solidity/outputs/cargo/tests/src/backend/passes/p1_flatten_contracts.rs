@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity::backend::l2_flat_contracts;
+use slang_solidity::backend::ir::ir2_flat_contracts;
 use slang_solidity::backend::passes::{p0_build_ast, p1_flatten_contracts};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity::utils::LanguageFacts;
@@ -42,7 +42,7 @@ contract Test is Base layout at 0 {}
 
     assert_eq!(2, l2.members.len());
 
-    let l2_flat_contracts::SourceUnitMember::ContractDefinition(base_contract) = &l2.members[0]
+    let ir2_flat_contracts::SourceUnitMember::ContractDefinition(base_contract) = &l2.members[0]
     else {
         panic!("Expected ContractDefinition");
     };
@@ -50,7 +50,7 @@ contract Test is Base layout at 0 {}
     assert!(base_contract.inheritance_types.is_empty());
     assert!(base_contract.storage_layout.is_none());
 
-    let l2_flat_contracts::SourceUnitMember::ContractDefinition(test_contract) = &l2.members[1]
+    let ir2_flat_contracts::SourceUnitMember::ContractDefinition(test_contract) = &l2.members[1]
     else {
         panic!("Expected ContractDefinition");
     };

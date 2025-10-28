@@ -1,6 +1,6 @@
 use super::{storage_location_to_data_location, Pass};
 use crate::backend::binder::{Definition, Scope};
-use crate::backend::l2_flat_contracts::{self as input_ir};
+use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
 use crate::cst::NodeId;
 
