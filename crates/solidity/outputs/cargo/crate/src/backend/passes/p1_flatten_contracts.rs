@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::p0_build_ast::Output as Input;
-use crate::backend::l2_flat_contracts::transformer::Transformer;
-use crate::backend::l2_flat_contracts::{
+use crate::backend::ir::ir2_flat_contracts::transformer::Transformer;
+use crate::backend::ir::ir2_flat_contracts::{
     input, ContractDefinition, ContractDefinitionStruct, SourceUnit,
 };
 use crate::compilation::CompilationUnit;

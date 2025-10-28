@@ -5,7 +5,7 @@ use semver::Version;
 use super::p4_type_definitions::Output as Input;
 use crate::backend::binder::{Binder, Scope, ScopeId};
 use crate::backend::built_ins::BuiltInsResolver;
-use crate::backend::l2_flat_contracts::{self as input_ir};
+use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::TypeRegistry;
 use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;

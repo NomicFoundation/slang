@@ -1,6 +1,6 @@
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::backend::l1_structured_ast;
+use slang_solidity::backend::ir::ir1_structured_ast;
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 
@@ -25,25 +25,25 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let ast = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    let ast = ir1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
     assert_eq!(2, ast.members.len());
     assert!(matches!(
         ast.members[0],
-        l1_structured_ast::SourceUnitMember::PragmaDirective(_)
+        ir1_structured_ast::SourceUnitMember::PragmaDirective(_)
     ));
     assert!(matches!(
         ast.members[1],
-        l1_structured_ast::SourceUnitMember::ContractDefinition(_)
+        ir1_structured_ast::SourceUnitMember::ContractDefinition(_)
     ));
 
-    let l1_structured_ast::SourceUnitMember::ContractDefinition(ref contract) = ast.members[1]
+    let ir1_structured_ast::SourceUnitMember::ContractDefinition(ref contract) = ast.members[1]
     else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("MyContract", contract.name.unparse());
     assert_eq!(3, contract.members.len());
 
-    let l1_structured_ast::ContractMember::StateVariableDefinition(ref state_var) =
+    let ir1_structured_ast::ContractMember::StateVariableDefinition(ref state_var) =
         contract.members[0]
     else {
         panic!("Expected StateVariableDefinition");
@@ -51,20 +51,20 @@ contract MyContract {
     assert_eq!("owner", state_var.name.unparse());
     assert!(matches!(
         state_var.type_name,
-        l1_structured_ast::TypeName::ElementaryType(_)
+        ir1_structured_ast::TypeName::ElementaryType(_)
     ));
 
-    let l1_structured_ast::ContractMember::ConstructorDefinition(ref ctor) = contract.members[1]
+    let ir1_structured_ast::ContractMember::ConstructorDefinition(ref ctor) = contract.members[1]
     else {
         panic!("Expected ConstructorDefinition");
     };
     assert_eq!(1, ctor.body.statements.len());
 
-    let l1_structured_ast::ContractMember::FunctionDefinition(ref function) = contract.members[2]
+    let ir1_structured_ast::ContractMember::FunctionDefinition(ref function) = contract.members[2]
     else {
         panic!("Expected FunctionDefinition");
     };
-    let l1_structured_ast::FunctionName::Identifier(ref name) = function.name else {
+    let ir1_structured_ast::FunctionName::Identifier(ref name) = function.name else {
         panic!("Expected identifier in FunctionName");
     };
     assert_eq!("test", name.unparse());
@@ -83,9 +83,9 @@ contract MyContract {
     );
     assert!(matches!(
         function.body,
-        l1_structured_ast::FunctionBody::Block(_)
+        ir1_structured_ast::FunctionBody::Block(_)
     ));
-    let l1_structured_ast::FunctionBody::Block(ref block) = function.body else {
+    let ir1_structured_ast::FunctionBody::Block(ref block) = function.body else {
         panic!("Expected Block");
     };
     assert_eq!(1, block.statements.len());
@@ -106,24 +106,24 @@ contract Test {
     assert!(!output.is_valid());
     assert_eq!(output.errors().len(), 1);
 
-    let ast = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    let ast = ir1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
     assert_eq!(1, ast.members.len());
     assert!(matches!(
         ast.members[0],
-        l1_structured_ast::SourceUnitMember::ContractDefinition(_)
+        ir1_structured_ast::SourceUnitMember::ContractDefinition(_)
     ));
 
-    let l1_structured_ast::SourceUnitMember::ContractDefinition(ref contract) = ast.members[0]
+    let ir1_structured_ast::SourceUnitMember::ContractDefinition(ref contract) = ast.members[0]
     else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!(1, contract.members.len());
     assert!(matches!(
         contract.members[0],
-        l1_structured_ast::ContractMember::FunctionDefinition(_)
+        ir1_structured_ast::ContractMember::FunctionDefinition(_)
     ));
 
-    let l1_structured_ast::ContractMember::FunctionDefinition(ref function) = contract.members[0]
+    let ir1_structured_ast::ContractMember::FunctionDefinition(ref function) = contract.members[0]
     else {
         panic!("Expected FunctionDefinition");
     };
@@ -134,11 +134,11 @@ contract Test {
     assert!(parameter.name.is_none());
 
     // but the parameter type can
-    let l1_structured_ast::TypeName::ElementaryType(ref parameter_type) = parameter.type_name
+    let ir1_structured_ast::TypeName::ElementaryType(ref parameter_type) = parameter.type_name
     else {
         panic!("Expected ElementaryType");
     };
-    let l1_structured_ast::ElementaryType::AddressType(ref address_type) = parameter_type else {
+    let ir1_structured_ast::ElementaryType::AddressType(ref address_type) = parameter_type else {
         panic!("Expected AddressType");
     };
     assert!(address_type.payable_keyword.is_none());
@@ -157,7 +157,7 @@ contract Test {
     assert!(!output.is_valid());
     assert_eq!(output.errors().len(), 1);
 
-    let ast = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    let ast = ir1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
     // the contract definition cannot be parsed fully
     assert_eq!(0, ast.members.len());
 

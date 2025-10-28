@@ -5,7 +5,7 @@ use crate::backend::binder::{
     ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, LibraryDefinition,
     Reference, Resolution, ScopeId,
 };
-use crate::backend::l2_flat_contracts::{self as input_ir};
+use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
 
 impl Pass {

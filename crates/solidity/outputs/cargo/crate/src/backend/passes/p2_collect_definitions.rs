@@ -8,8 +8,8 @@ use crate::backend::binder::{
     Binder, Definition, FileScope, FunctionVisibility, ParametersScope, Scope, ScopeId,
     StateVariableVisibility,
 };
-use crate::backend::l2_flat_contracts::visitor::Visitor;
-use crate::backend::l2_flat_contracts::{self as input_ir};
+use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
+use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::compilation::{CompilationUnit, File};
 use crate::cst::NodeId;
 use crate::utils::versions::VERSION_0_5_0;

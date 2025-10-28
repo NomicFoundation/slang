@@ -4,7 +4,7 @@ use semver::Version;
 
 use super::p3_linearise_contracts::Output as Input;
 use crate::backend::binder::{Binder, Definition, Scope, ScopeId};
-use crate::backend::l2_flat_contracts::{self as input_ir};
+use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;

@@ -7,4 +7,4 @@ pub mod transformer;
 #[path = "visitor.generated.rs"]
 pub mod visitor;
 
-pub use super::l1_structured_ast as input;
+pub use super::ir1_structured_ast as input;
