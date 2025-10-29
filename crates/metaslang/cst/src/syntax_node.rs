@@ -1,10 +1,8 @@
 use std::rc::Rc;
 
-use crate::{
-    kinds::{KindTypes, NodeKind},
-    nodes::{Node, NodeId, NonterminalNode, TerminalNode},
-    text_index::TextIndex,
-};
+use crate::kinds::{KindTypes, NodeKind};
+use crate::nodes::{Node, NodeId, NonterminalNode, TerminalNode};
+use crate::text_index::TextIndex;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SyntaxNode<T: KindTypes> {

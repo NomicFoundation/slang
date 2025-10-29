@@ -79,7 +79,9 @@ impl<T: KindTypes + 'static> ASTNode<T> {
         match self {
             Self::Capture(matcher) => matcher.child.can_match_syntax(cursor),
             Self::NodeMatch(matcher) => cursor.matches_node_selector(&matcher.node_selector),
-            Self::Alternatives(matcher) => matcher.children.iter().any(|c| c.can_match_syntax(cursor)),
+            Self::Alternatives(matcher) => {
+                matcher.children.iter().any(|c| c.can_match_syntax(cursor))
+            }
             Self::Sequence(matcher) => matcher.children[0].can_match_syntax(cursor),
             Self::OneOrMore(matcher) => matcher.child.can_match_syntax(cursor),
             Self::Optional(_) => true,
@@ -112,7 +114,11 @@ impl<T: KindTypes + 'static> ASTNode<T> {
     // to consume an arbitrary number of nodes, we reduce the returned matches
     // to a single one.
     //
-    fn create_syntax_matcher(&self, cursor: SyntaxCursor<T>, require_explicit_match: bool) -> MatcherRef<T> {
+    fn create_syntax_matcher(
+        &self,
+        cursor: SyntaxCursor<T>,
+        require_explicit_match: bool,
+    ) -> MatcherRef<T> {
         match self {
             Self::Capture(matcher) => Box::new(CaptureMatcher::<T>::new(
                 Rc::clone(matcher),
@@ -584,8 +590,10 @@ impl<T: KindTypes + 'static> Matcher<T> for AlternativesMatcher<T> {
                 // `require_explicit_match` flag, or give up if we have no more
                 match self.matcher.children.get(self.next_child_number) {
                     Some(child) => {
-                        let child =
-                            child.create_syntax_matcher(self.cursor.clone(), self.require_explicit_match);
+                        let child = child.create_syntax_matcher(
+                            self.cursor.clone(),
+                            self.require_explicit_match,
+                        );
                         self.child = Some(child);
                         self.next_child_number += 1;
                     }

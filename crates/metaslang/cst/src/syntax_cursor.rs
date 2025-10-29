@@ -64,7 +64,7 @@ impl<T: KindTypes> SyntaxCursor<T> {
 
     /// Returns the currently pointed to [`Node`].
     pub fn node(&self) -> Rc<SyntaxNode<T>> {
-        self.node.clone()
+        Rc::clone(&self.node)
     }
 
     /// Returns the text offset that corresponds to the beginning of the currently pointed to node.
@@ -115,7 +115,7 @@ impl<T: KindTypes> SyntaxCursor<T> {
 
     /// Returns an iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
     pub fn ancestors(&self) -> AncestorsIterator<T> {
-        let current = self.node.clone();
+        let current = Rc::clone(&self.node);
 
         AncestorsIterator { current }
     }
