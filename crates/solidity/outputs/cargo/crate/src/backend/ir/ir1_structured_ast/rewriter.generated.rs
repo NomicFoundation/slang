@@ -16,7 +16,7 @@ pub trait Rewriter {
         let members = self.rewrite_source_unit_members(&source.members);
 
         Rc::new(SourceUnitStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             members,
         })
     }
@@ -25,7 +25,7 @@ pub trait Rewriter {
         let pragma = self.rewrite_pragma(&source.pragma);
 
         Rc::new(PragmaDirectiveStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             pragma,
         })
     }
@@ -34,7 +34,7 @@ pub trait Rewriter {
         let version = self.rewrite_abicoder_version(&source.version);
 
         Rc::new(AbicoderPragmaStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             version,
         })
     }
@@ -43,7 +43,7 @@ pub trait Rewriter {
         let feature = self.rewrite_experimental_feature(&source.feature);
 
         Rc::new(ExperimentalPragmaStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             feature,
         })
     }
@@ -52,7 +52,7 @@ pub trait Rewriter {
         let sets = self.rewrite_version_expression_sets(&source.sets);
 
         Rc::new(VersionPragmaStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             sets,
         })
     }
@@ -62,7 +62,7 @@ pub trait Rewriter {
         let end = self.rewrite_version_literal(&source.end);
 
         Rc::new(VersionRangeStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             start,
             end,
         })
@@ -76,7 +76,7 @@ pub trait Rewriter {
         let literal = self.rewrite_version_literal(&source.literal);
 
         Rc::new(VersionTermStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operator,
             literal,
         })
@@ -86,7 +86,7 @@ pub trait Rewriter {
         let clause = self.rewrite_import_clause(&source.clause);
 
         Rc::new(ImportDirectiveStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             clause,
         })
     }
@@ -99,7 +99,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_import_alias(value));
 
         Rc::new(PathImportStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             path,
             alias,
         })
@@ -110,7 +110,7 @@ pub trait Rewriter {
         let path = self.rewrite_string_literal(&source.path);
 
         Rc::new(NamedImportStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             alias,
             path,
         })
@@ -124,7 +124,7 @@ pub trait Rewriter {
         let path = self.rewrite_string_literal(&source.path);
 
         Rc::new(ImportDeconstructionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             symbols,
             path,
         })
@@ -141,7 +141,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_import_alias(value));
 
         Rc::new(ImportDeconstructionSymbolStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             alias,
         })
@@ -151,7 +151,7 @@ pub trait Rewriter {
         let identifier = Rc::clone(&source.identifier);
 
         Rc::new(ImportAliasStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             identifier,
         })
     }
@@ -162,7 +162,7 @@ pub trait Rewriter {
         let global_keyword = source.global_keyword;
 
         Rc::new(UsingDirectiveStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             clause,
             target,
             global_keyword,
@@ -176,7 +176,7 @@ pub trait Rewriter {
         let symbols = self.rewrite_using_deconstruction_symbols(&source.symbols);
 
         Rc::new(UsingDeconstructionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             symbols,
         })
     }
@@ -192,7 +192,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_using_alias(value));
 
         Rc::new(UsingDeconstructionSymbolStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             alias,
         })
@@ -202,7 +202,7 @@ pub trait Rewriter {
         let operator = self.rewrite_using_operator(&source.operator);
 
         Rc::new(UsingAliasStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operator,
         })
     }
@@ -214,7 +214,7 @@ pub trait Rewriter {
         let members = self.rewrite_contract_members(&source.members);
 
         Rc::new(ContractDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             abstract_keyword,
             name,
             specifiers,
@@ -229,7 +229,7 @@ pub trait Rewriter {
         let types = self.rewrite_inheritance_types(&source.types);
 
         Rc::new(InheritanceSpecifierStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             types,
         })
     }
@@ -242,7 +242,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_arguments_declaration(value));
 
         Rc::new(InheritanceTypeStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             arguments,
         })
@@ -255,7 +255,7 @@ pub trait Rewriter {
         let expression = self.rewrite_expression(&source.expression);
 
         Rc::new(StorageLayoutSpecifierStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             expression,
         })
     }
@@ -272,7 +272,7 @@ pub trait Rewriter {
         let members = self.rewrite_interface_members(&source.members);
 
         Rc::new(InterfaceDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             inheritance,
             members,
@@ -284,7 +284,7 @@ pub trait Rewriter {
         let members = self.rewrite_library_members(&source.members);
 
         Rc::new(LibraryDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             members,
         })
@@ -295,7 +295,7 @@ pub trait Rewriter {
         let members = self.rewrite_struct_members(&source.members);
 
         Rc::new(StructDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             members,
         })
@@ -306,7 +306,7 @@ pub trait Rewriter {
         let name = Rc::clone(&source.name);
 
         Rc::new(StructMemberStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             name,
         })
@@ -317,7 +317,7 @@ pub trait Rewriter {
         let members = self.rewrite_enum_members(&source.members);
 
         Rc::new(EnumDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             members,
         })
@@ -329,7 +329,7 @@ pub trait Rewriter {
         let value = self.rewrite_expression(&source.value);
 
         Rc::new(ConstantDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             name,
             value,
@@ -349,7 +349,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_state_variable_definition_value(value));
 
         Rc::new(StateVariableDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             attributes,
             name,
@@ -364,7 +364,7 @@ pub trait Rewriter {
         let value = self.rewrite_expression(&source.value);
 
         Rc::new(StateVariableDefinitionValueStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             value,
         })
     }
@@ -380,7 +380,7 @@ pub trait Rewriter {
         let body = self.rewrite_function_body(&source.body);
 
         Rc::new(FunctionDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             parameters,
             attributes,
@@ -396,7 +396,7 @@ pub trait Rewriter {
         let parameters = self.rewrite_parameters(&source.parameters);
 
         Rc::new(ParametersDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
         })
     }
@@ -410,7 +410,7 @@ pub trait Rewriter {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(ParameterStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             storage_location,
             name,
@@ -424,7 +424,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_override_paths_declaration(value));
 
         Rc::new(OverrideSpecifierStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             overridden,
         })
     }
@@ -436,7 +436,7 @@ pub trait Rewriter {
         let paths = self.rewrite_override_paths(&source.paths);
 
         Rc::new(OverridePathsDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             paths,
         })
     }
@@ -445,7 +445,7 @@ pub trait Rewriter {
         let variables = self.rewrite_parameters_declaration(&source.variables);
 
         Rc::new(ReturnsDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             variables,
         })
     }
@@ -459,7 +459,7 @@ pub trait Rewriter {
         let body = self.rewrite_block(&source.body);
 
         Rc::new(ConstructorDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
             attributes,
             body,
@@ -475,7 +475,7 @@ pub trait Rewriter {
         let body = self.rewrite_function_body(&source.body);
 
         Rc::new(UnnamedFunctionDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
             attributes,
             body,
@@ -495,7 +495,7 @@ pub trait Rewriter {
         let body = self.rewrite_function_body(&source.body);
 
         Rc::new(FallbackFunctionDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
             attributes,
             returns,
@@ -512,7 +512,7 @@ pub trait Rewriter {
         let body = self.rewrite_function_body(&source.body);
 
         Rc::new(ReceiveFunctionDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
             attributes,
             body,
@@ -529,7 +529,7 @@ pub trait Rewriter {
         let body = self.rewrite_function_body(&source.body);
 
         Rc::new(ModifierDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             parameters,
             attributes,
@@ -545,7 +545,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_arguments_declaration(value));
 
         Rc::new(ModifierInvocationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             arguments,
         })
@@ -557,7 +557,7 @@ pub trait Rewriter {
         let anonymous_keyword = source.anonymous_keyword;
 
         Rc::new(EventDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             parameters,
             anonymous_keyword,
@@ -571,7 +571,7 @@ pub trait Rewriter {
         let parameters = self.rewrite_event_parameters(&source.parameters);
 
         Rc::new(EventParametersDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
         })
     }
@@ -582,7 +582,7 @@ pub trait Rewriter {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(EventParameterStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             indexed_keyword,
             name,
@@ -597,7 +597,7 @@ pub trait Rewriter {
         let value_type = self.rewrite_elementary_type(&source.value_type);
 
         Rc::new(UserDefinedValueTypeDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             value_type,
         })
@@ -608,7 +608,7 @@ pub trait Rewriter {
         let members = self.rewrite_error_parameters_declaration(&source.members);
 
         Rc::new(ErrorDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             members,
         })
@@ -621,7 +621,7 @@ pub trait Rewriter {
         let parameters = self.rewrite_error_parameters(&source.parameters);
 
         Rc::new(ErrorParametersDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
         })
     }
@@ -631,7 +631,7 @@ pub trait Rewriter {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(ErrorParameterStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             name,
         })
@@ -645,7 +645,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_expression(value));
 
         Rc::new(ArrayTypeNameStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operand,
             index,
         })
@@ -660,7 +660,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_returns_declaration(value));
 
         Rc::new(FunctionTypeStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
             attributes,
             returns,
@@ -672,7 +672,7 @@ pub trait Rewriter {
         let value_type = self.rewrite_mapping_value(&source.value_type);
 
         Rc::new(MappingTypeStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             key_type,
             value_type,
         })
@@ -683,7 +683,7 @@ pub trait Rewriter {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(MappingKeyStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             key_type,
             name,
         })
@@ -694,7 +694,7 @@ pub trait Rewriter {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(MappingValueStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             name,
         })
@@ -704,7 +704,7 @@ pub trait Rewriter {
         let payable_keyword = source.payable_keyword;
 
         Rc::new(AddressTypeStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             payable_keyword,
         })
     }
@@ -713,7 +713,7 @@ pub trait Rewriter {
         let statements = self.rewrite_statements(&source.statements);
 
         Rc::new(BlockStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             statements,
         })
     }
@@ -722,7 +722,7 @@ pub trait Rewriter {
         let block = self.rewrite_block(&source.block);
 
         Rc::new(UncheckedBlockStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             block,
         })
     }
@@ -734,7 +734,7 @@ pub trait Rewriter {
         let expression = self.rewrite_expression(&source.expression);
 
         Rc::new(ExpressionStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             expression,
         })
     }
@@ -751,7 +751,7 @@ pub trait Rewriter {
         let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(AssemblyStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             label,
             flags,
             body,
@@ -765,7 +765,7 @@ pub trait Rewriter {
         let flags = self.rewrite_assembly_flags(&source.flags);
 
         Rc::new(AssemblyFlagsDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             flags,
         })
     }
@@ -779,7 +779,7 @@ pub trait Rewriter {
         let expression = self.rewrite_expression(&source.expression);
 
         Rc::new(TupleDeconstructionStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             var_keyword,
             elements,
             expression,
@@ -796,7 +796,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_tuple_member(value));
 
         Rc::new(TupleDeconstructionElementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             member,
         })
     }
@@ -810,7 +810,7 @@ pub trait Rewriter {
         let name = Rc::clone(&source.name);
 
         Rc::new(TypedTupleMemberStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
             storage_location,
             name,
@@ -825,7 +825,7 @@ pub trait Rewriter {
         let name = Rc::clone(&source.name);
 
         Rc::new(UntypedTupleMemberStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             storage_location,
             name,
         })
@@ -847,7 +847,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_variable_declaration_value(value));
 
         Rc::new(VariableDeclarationStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             variable_type,
             storage_location,
             name,
@@ -862,7 +862,7 @@ pub trait Rewriter {
         let expression = self.rewrite_expression(&source.expression);
 
         Rc::new(VariableDeclarationValueStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             expression,
         })
     }
@@ -876,7 +876,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_else_branch(value));
 
         Rc::new(IfStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             condition,
             body,
             else_branch,
@@ -887,7 +887,7 @@ pub trait Rewriter {
         let body = self.rewrite_statement(&source.body);
 
         Rc::new(ElseBranchStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             body,
         })
     }
@@ -902,7 +902,7 @@ pub trait Rewriter {
         let body = self.rewrite_statement(&source.body);
 
         Rc::new(ForStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             initialization,
             condition,
             iterator,
@@ -915,7 +915,7 @@ pub trait Rewriter {
         let body = self.rewrite_statement(&source.body);
 
         Rc::new(WhileStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             condition,
             body,
         })
@@ -926,7 +926,7 @@ pub trait Rewriter {
         let condition = self.rewrite_expression(&source.condition);
 
         Rc::new(DoWhileStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             body,
             condition,
         })
@@ -934,13 +934,13 @@ pub trait Rewriter {
 
     fn rewrite_continue_statement(&mut self, source: &ContinueStatement) -> ContinueStatement {
         Rc::new(ContinueStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
         })
     }
 
     fn rewrite_break_statement(&mut self, source: &BreakStatement) -> BreakStatement {
         Rc::new(BreakStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
         })
     }
 
@@ -951,7 +951,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_expression(value));
 
         Rc::new(ReturnStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             expression,
         })
     }
@@ -961,7 +961,7 @@ pub trait Rewriter {
         let arguments = self.rewrite_arguments_declaration(&source.arguments);
 
         Rc::new(EmitStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             event,
             arguments,
         })
@@ -977,7 +977,7 @@ pub trait Rewriter {
         let catch_clauses = self.rewrite_catch_clauses(&source.catch_clauses);
 
         Rc::new(TryStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             expression,
             returns,
             body,
@@ -993,7 +993,7 @@ pub trait Rewriter {
         let body = self.rewrite_block(&source.body);
 
         Rc::new(CatchClauseStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             error,
             body,
         })
@@ -1004,7 +1004,7 @@ pub trait Rewriter {
         let parameters = self.rewrite_parameters_declaration(&source.parameters);
 
         Rc::new(CatchClauseErrorStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             parameters,
         })
@@ -1018,7 +1018,7 @@ pub trait Rewriter {
         let arguments = self.rewrite_arguments_declaration(&source.arguments);
 
         Rc::new(RevertStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             error,
             arguments,
         })
@@ -1026,7 +1026,7 @@ pub trait Rewriter {
 
     fn rewrite_throw_statement(&mut self, source: &ThrowStatement) -> ThrowStatement {
         Rc::new(ThrowStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
         })
     }
 
@@ -1039,7 +1039,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(AssignmentExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             operator,
             right_operand,
@@ -1055,7 +1055,7 @@ pub trait Rewriter {
         let false_expression = self.rewrite_expression(&source.false_expression);
 
         Rc::new(ConditionalExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operand,
             true_expression,
             false_expression,
@@ -1067,7 +1067,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(OrExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             right_operand,
         })
@@ -1078,7 +1078,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(AndExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             right_operand,
         })
@@ -1090,7 +1090,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(EqualityExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             operator,
             right_operand,
@@ -1106,7 +1106,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(InequalityExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             operator,
             right_operand,
@@ -1121,7 +1121,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(BitwiseOrExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             right_operand,
         })
@@ -1135,7 +1135,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(BitwiseXorExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             right_operand,
         })
@@ -1149,7 +1149,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(BitwiseAndExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             right_operand,
         })
@@ -1161,7 +1161,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(ShiftExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             operator,
             right_operand,
@@ -1174,7 +1174,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(AdditiveExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             operator,
             right_operand,
@@ -1190,7 +1190,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(MultiplicativeExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             operator,
             right_operand,
@@ -1206,7 +1206,7 @@ pub trait Rewriter {
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(ExponentiationExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             left_operand,
             operator,
             right_operand,
@@ -1218,7 +1218,7 @@ pub trait Rewriter {
         let operator = Rc::clone(&source.operator);
 
         Rc::new(PostfixExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operand,
             operator,
         })
@@ -1229,7 +1229,7 @@ pub trait Rewriter {
         let operand = self.rewrite_expression(&source.operand);
 
         Rc::new(PrefixExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operator,
             operand,
         })
@@ -1243,7 +1243,7 @@ pub trait Rewriter {
         let arguments = self.rewrite_arguments_declaration(&source.arguments);
 
         Rc::new(FunctionCallExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operand,
             arguments,
         })
@@ -1257,7 +1257,7 @@ pub trait Rewriter {
         let options = self.rewrite_call_options(&source.options);
 
         Rc::new(CallOptionsExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operand,
             options,
         })
@@ -1271,7 +1271,7 @@ pub trait Rewriter {
         let member = Rc::clone(&source.member);
 
         Rc::new(MemberAccessExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operand,
             member,
         })
@@ -1292,7 +1292,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_index_access_end(value));
 
         Rc::new(IndexAccessExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operand,
             start,
             end,
@@ -1306,7 +1306,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_expression(value));
 
         Rc::new(IndexAccessEndStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             end,
         })
     }
@@ -1318,7 +1318,7 @@ pub trait Rewriter {
         let arguments = self.rewrite_positional_arguments(&source.arguments);
 
         Rc::new(PositionalArgumentsDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             arguments,
         })
     }
@@ -1333,7 +1333,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_named_argument_group(value));
 
         Rc::new(NamedArgumentsDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             arguments,
         })
     }
@@ -1342,7 +1342,7 @@ pub trait Rewriter {
         let arguments = self.rewrite_named_arguments(&source.arguments);
 
         Rc::new(NamedArgumentGroupStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             arguments,
         })
     }
@@ -1352,7 +1352,7 @@ pub trait Rewriter {
         let value = self.rewrite_expression(&source.value);
 
         Rc::new(NamedArgumentStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             value,
         })
@@ -1362,7 +1362,7 @@ pub trait Rewriter {
         let type_name = self.rewrite_type_name(&source.type_name);
 
         Rc::new(TypeExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
         })
     }
@@ -1371,7 +1371,7 @@ pub trait Rewriter {
         let type_name = self.rewrite_type_name(&source.type_name);
 
         Rc::new(NewExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             type_name,
         })
     }
@@ -1380,7 +1380,7 @@ pub trait Rewriter {
         let items = self.rewrite_tuple_values(&source.items);
 
         Rc::new(TupleExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             items,
         })
     }
@@ -1392,7 +1392,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_expression(value));
 
         Rc::new(TupleValueStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             expression,
         })
     }
@@ -1401,7 +1401,7 @@ pub trait Rewriter {
         let items = self.rewrite_array_values(&source.items);
 
         Rc::new(ArrayExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             items,
         })
     }
@@ -1417,7 +1417,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_number_unit(value));
 
         Rc::new(HexNumberExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             literal,
             unit,
         })
@@ -1434,7 +1434,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_number_unit(value));
 
         Rc::new(DecimalNumberExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             literal,
             unit,
         })
@@ -1444,7 +1444,7 @@ pub trait Rewriter {
         let statements = self.rewrite_yul_statements(&source.statements);
 
         Rc::new(YulBlockStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             statements,
         })
     }
@@ -1462,7 +1462,7 @@ pub trait Rewriter {
         let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(YulFunctionDefinitionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             name,
             parameters,
             returns,
@@ -1477,7 +1477,7 @@ pub trait Rewriter {
         let parameters = self.rewrite_yul_parameters(&source.parameters);
 
         Rc::new(YulParametersDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             parameters,
         })
     }
@@ -1489,7 +1489,7 @@ pub trait Rewriter {
         let variables = self.rewrite_yul_variable_names(&source.variables);
 
         Rc::new(YulReturnsDeclarationStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             variables,
         })
     }
@@ -1505,7 +1505,7 @@ pub trait Rewriter {
             .map(|value| self.rewrite_yul_variable_declaration_value(value));
 
         Rc::new(YulVariableDeclarationStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             variables,
             value,
         })
@@ -1519,7 +1519,7 @@ pub trait Rewriter {
         let expression = self.rewrite_yul_expression(&source.expression);
 
         Rc::new(YulVariableDeclarationValueStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             assignment,
             expression,
         })
@@ -1534,7 +1534,7 @@ pub trait Rewriter {
         let expression = self.rewrite_yul_expression(&source.expression);
 
         Rc::new(YulVariableAssignmentStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             variables,
             assignment,
             expression,
@@ -1543,7 +1543,7 @@ pub trait Rewriter {
 
     fn rewrite_yul_colon_and_equal(&mut self, source: &YulColonAndEqual) -> YulColonAndEqual {
         Rc::new(YulColonAndEqualStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
         })
     }
 
@@ -1555,7 +1555,7 @@ pub trait Rewriter {
         let variable = Rc::clone(&source.variable);
 
         Rc::new(YulStackAssignmentStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             assignment,
             variable,
         })
@@ -1563,7 +1563,7 @@ pub trait Rewriter {
 
     fn rewrite_yul_equal_and_colon(&mut self, source: &YulEqualAndColon) -> YulEqualAndColon {
         Rc::new(YulEqualAndColonStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
         })
     }
 
@@ -1572,7 +1572,7 @@ pub trait Rewriter {
         let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(YulIfStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             condition,
             body,
         })
@@ -1585,7 +1585,7 @@ pub trait Rewriter {
         let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(YulForStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             initialization,
             condition,
             iterator,
@@ -1598,7 +1598,7 @@ pub trait Rewriter {
         let cases = self.rewrite_yul_switch_cases(&source.cases);
 
         Rc::new(YulSwitchStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             expression,
             cases,
         })
@@ -1608,7 +1608,7 @@ pub trait Rewriter {
         let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(YulDefaultCaseStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             body,
         })
     }
@@ -1618,7 +1618,7 @@ pub trait Rewriter {
         let body = self.rewrite_yul_block(&source.body);
 
         Rc::new(YulValueCaseStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             value,
             body,
         })
@@ -1626,13 +1626,13 @@ pub trait Rewriter {
 
     fn rewrite_yul_leave_statement(&mut self, source: &YulLeaveStatement) -> YulLeaveStatement {
         Rc::new(YulLeaveStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
         })
     }
 
     fn rewrite_yul_break_statement(&mut self, source: &YulBreakStatement) -> YulBreakStatement {
         Rc::new(YulBreakStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
         })
     }
 
@@ -1641,7 +1641,7 @@ pub trait Rewriter {
         source: &YulContinueStatement,
     ) -> YulContinueStatement {
         Rc::new(YulContinueStatementStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
         })
     }
 
@@ -1649,7 +1649,7 @@ pub trait Rewriter {
         let label = Rc::clone(&source.label);
 
         Rc::new(YulLabelStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             label,
         })
     }
@@ -1662,7 +1662,7 @@ pub trait Rewriter {
         let arguments = self.rewrite_yul_arguments(&source.arguments);
 
         Rc::new(YulFunctionCallExpressionStruct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             operand,
             arguments,
         })

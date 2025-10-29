@@ -44,7 +44,7 @@ impl Transformer for Pass {
         &mut self,
         source: &input::ContractDefinition,
     ) -> output::ContractDefinition {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let abstract_keyword = source.abstract_keyword;
         let name = Rc::clone(&source.name);
         let members = self.transform_contract_members(&source.members);
@@ -68,7 +68,7 @@ impl Transformer for Pass {
         });
 
         Rc::new(output::ContractDefinitionStruct {
-            node_id,
+            node,
             abstract_keyword,
             name,
             members,
@@ -81,7 +81,7 @@ impl Transformer for Pass {
         &mut self,
         source: &input::FunctionDefinition,
     ) -> output::FunctionDefinition {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let (name, kind) = match &source.name {
             input::FunctionName::Identifier(identifier) => {
                 (Some(Rc::clone(identifier)), output::FunctionKind::Regular)
@@ -106,7 +106,7 @@ impl Transformer for Pass {
             .map(|returns| self.transform_returns_declaration(returns));
 
         Rc::new(output::FunctionDefinitionStruct {
-            node_id,
+            node,
             parameters,
             returns,
             kind,
@@ -155,7 +155,7 @@ impl Transformer for Pass {
     }
 
     fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let parameters = self.transform_parameters_declaration(&source.parameters);
         let returns = source
             .returns
@@ -165,7 +165,7 @@ impl Transformer for Pass {
         let mutability = Self::function_type_mutability(&source.attributes);
 
         Rc::new(output::FunctionTypeStruct {
-            node_id,
+            node,
             parameters,
             returns,
             visibility,
@@ -177,7 +177,7 @@ impl Transformer for Pass {
         &mut self,
         source: &input::IndexAccessExpression,
     ) -> output::IndexAccessExpression {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let operand = self.transform_expression(&source.operand);
         let start = source
             .start
@@ -189,7 +189,7 @@ impl Transformer for Pass {
             .and_then(|end| end.end.as_ref().map(|end| self.transform_expression(end)));
 
         Rc::new(output::IndexAccessExpressionStruct {
-            node_id,
+            node,
             operand,
             start,
             end,
@@ -223,7 +223,7 @@ impl Transformer for Pass {
         &mut self,
         source: &input::StateVariableDefinition,
     ) -> output::StateVariableDefinition {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let type_name = self.transform_type_name(&source.type_name);
         let name = Rc::clone(&source.name);
         let value = source
@@ -235,7 +235,7 @@ impl Transformer for Pass {
         let override_specifier = self.state_variable_override_specifier(&source.attributes);
 
         Rc::new(output::StateVariableDefinitionStruct {
-            node_id,
+            node,
             type_name,
             name,
             value,
@@ -288,42 +288,34 @@ impl Transformer for Pass {
     }
 
     fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let alias = source
             .alias
             .as_ref()
             .map(|alias| self.transform_import_alias(alias));
         let path = Self::string_literal_terminal_node(&source.path);
 
-        Rc::new(output::PathImportStruct {
-            node_id,
-            alias,
-            path,
-        })
+        Rc::new(output::PathImportStruct { node, alias, path })
     }
 
     fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let alias = self.transform_import_alias(&source.alias);
         let path = Self::string_literal_terminal_node(&source.path);
 
-        Rc::new(output::NamedImportStruct {
-            node_id,
-            alias,
-            path,
-        })
+        Rc::new(output::NamedImportStruct { node, alias, path })
     }
 
     fn transform_import_deconstruction(
         &mut self,
         source: &input::ImportDeconstruction,
     ) -> output::ImportDeconstruction {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let symbols = self.transform_import_deconstruction_symbols(&source.symbols);
         let path = Self::string_literal_terminal_node(&source.path);
 
         Rc::new(output::ImportDeconstructionStruct {
-            node_id,
+            node,
             symbols,
             path,
         })
@@ -333,7 +325,7 @@ impl Transformer for Pass {
         &mut self,
         source: &input::AssemblyStatement,
     ) -> output::AssemblyStatement {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let flags = source.flags.as_ref().map_or(Vec::new(), |flags| {
             flags
                 .flags
@@ -348,7 +340,7 @@ impl Transformer for Pass {
             .map(Self::string_literal_terminal_node);
 
         Rc::new(output::AssemblyStatementStruct {
-            node_id,
+            node,
             body,
             flags,
             label,
@@ -515,7 +507,7 @@ impl Pass {
         &mut self,
         source: &input::ConstructorDefinition,
     ) -> output::FunctionDefinition {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let kind = output::FunctionKind::Constructor;
         let name = None;
         let visibility = Self::constructor_visibility(&source.attributes);
@@ -531,7 +523,7 @@ impl Pass {
         let returns = None;
 
         Rc::new(output::FunctionDefinitionStruct {
-            node_id,
+            node,
             parameters,
             returns,
             kind,
@@ -606,7 +598,7 @@ impl Pass {
         &mut self,
         source: &input::UnnamedFunctionDefinition,
     ) -> output::FunctionDefinition {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let kind = output::FunctionKind::Unnamed;
         let name = None;
         // TODO(validation): unnamed (aka fallback) functions *must* have external visibility
@@ -620,7 +612,7 @@ impl Pass {
         let returns = None;
 
         Rc::new(output::FunctionDefinitionStruct {
-            node_id,
+            node,
             parameters,
             returns,
             kind,
@@ -673,7 +665,7 @@ impl Pass {
         &mut self,
         source: &input::FallbackFunctionDefinition,
     ) -> output::FunctionDefinition {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let kind = output::FunctionKind::Fallback;
         let name = None;
         // TODO(validation): fallback functions *must* have external visibility
@@ -693,7 +685,7 @@ impl Pass {
             .map(|returns| self.transform_returns_declaration(returns));
 
         Rc::new(output::FunctionDefinitionStruct {
-            node_id,
+            node,
             parameters,
             returns,
             kind,
@@ -760,7 +752,7 @@ impl Pass {
         &mut self,
         source: &input::ReceiveFunctionDefinition,
     ) -> output::FunctionDefinition {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let kind = output::FunctionKind::Receive;
         let name = None;
         // TODO(validation): receive functions *must* have an external visibility
@@ -778,7 +770,7 @@ impl Pass {
         let returns = None;
 
         Rc::new(output::FunctionDefinitionStruct {
-            node_id,
+            node,
             parameters,
             returns,
             kind,
@@ -829,7 +821,7 @@ impl Pass {
         &mut self,
         source: &input::ModifierDefinition,
     ) -> output::FunctionDefinition {
-        let node_id = source.node_id;
+        let node = Rc::clone(&source.node);
         let kind = output::FunctionKind::Modifier;
         let name = Some(Rc::clone(&source.name));
         let visibility = output::FunctionVisibility::Internal;
@@ -848,7 +840,7 @@ impl Pass {
         let returns = None;
 
         Rc::new(output::FunctionDefinitionStruct {
-            node_id,
+            node,
             parameters,
             returns,
             kind,

@@ -12,10 +12,10 @@ impl Pass {
     pub(super) fn typing_of_expression(&self, node: &input_ir::Expression) -> Typing {
         match node {
             input_ir::Expression::AssignmentExpression(assignment_expression) => {
-                self.binder.node_typing(assignment_expression.node_id)
+                self.binder.node_typing(assignment_expression.id())
             }
             input_ir::Expression::ConditionalExpression(conditional_expression) => {
-                self.binder.node_typing(conditional_expression.node_id)
+                self.binder.node_typing(conditional_expression.id())
             }
             input_ir::Expression::OrExpression(_)
             | input_ir::Expression::AndExpression(_)
@@ -24,61 +24,61 @@ impl Pass {
             | input_ir::Expression::TrueKeyword
             | input_ir::Expression::FalseKeyword => Typing::Resolved(self.types.boolean()),
             input_ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
-                self.binder.node_typing(bitwise_or_expression.node_id)
+                self.binder.node_typing(bitwise_or_expression.id())
             }
             input_ir::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
-                self.binder.node_typing(bitwise_xor_expression.node_id)
+                self.binder.node_typing(bitwise_xor_expression.id())
             }
             input_ir::Expression::BitwiseAndExpression(bitwise_and_expression) => {
-                self.binder.node_typing(bitwise_and_expression.node_id)
+                self.binder.node_typing(bitwise_and_expression.id())
             }
             input_ir::Expression::ShiftExpression(shift_expression) => {
-                self.binder.node_typing(shift_expression.node_id)
+                self.binder.node_typing(shift_expression.id())
             }
             input_ir::Expression::AdditiveExpression(additive_expression) => {
-                self.binder.node_typing(additive_expression.node_id)
+                self.binder.node_typing(additive_expression.id())
             }
             input_ir::Expression::MultiplicativeExpression(multiplicative_expression) => {
-                self.binder.node_typing(multiplicative_expression.node_id)
+                self.binder.node_typing(multiplicative_expression.id())
             }
             input_ir::Expression::ExponentiationExpression(exponentiation_expression) => {
-                self.binder.node_typing(exponentiation_expression.node_id)
+                self.binder.node_typing(exponentiation_expression.id())
             }
             input_ir::Expression::PostfixExpression(postfix_expression) => {
-                self.binder.node_typing(postfix_expression.node_id)
+                self.binder.node_typing(postfix_expression.id())
             }
             input_ir::Expression::PrefixExpression(prefix_expression) => {
-                self.binder.node_typing(prefix_expression.node_id)
+                self.binder.node_typing(prefix_expression.id())
             }
             input_ir::Expression::FunctionCallExpression(function_call_expression) => {
-                self.binder.node_typing(function_call_expression.node_id)
+                self.binder.node_typing(function_call_expression.id())
             }
             input_ir::Expression::CallOptionsExpression(call_options_expression) => {
-                self.binder.node_typing(call_options_expression.node_id)
+                self.binder.node_typing(call_options_expression.id())
             }
             input_ir::Expression::MemberAccessExpression(member_access_expression) => {
-                self.binder.node_typing(member_access_expression.node_id)
+                self.binder.node_typing(member_access_expression.id())
             }
             input_ir::Expression::IndexAccessExpression(index_access_expression) => {
-                self.binder.node_typing(index_access_expression.node_id)
+                self.binder.node_typing(index_access_expression.id())
             }
             input_ir::Expression::NewExpression(new_expression) => {
-                self.binder.node_typing(new_expression.node_id)
+                self.binder.node_typing(new_expression.id())
             }
             input_ir::Expression::TupleExpression(tuple_expression) => {
-                self.binder.node_typing(tuple_expression.node_id)
+                self.binder.node_typing(tuple_expression.id())
             }
             input_ir::Expression::TypeExpression(type_expression) => {
-                self.binder.node_typing(type_expression.node_id)
+                self.binder.node_typing(type_expression.id())
             }
             input_ir::Expression::ArrayExpression(array_expression) => {
-                self.binder.node_typing(array_expression.node_id)
+                self.binder.node_typing(array_expression.id())
             }
             input_ir::Expression::HexNumberExpression(hex_number_expression) => {
-                self.binder.node_typing(hex_number_expression.node_id)
+                self.binder.node_typing(hex_number_expression.id())
             }
             input_ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
-                self.binder.node_typing(decimal_number_expression.node_id)
+                self.binder.node_typing(decimal_number_expression.id())
             }
             input_ir::Expression::StringExpression(string_expression) => self
                 .binder

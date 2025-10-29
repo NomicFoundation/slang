@@ -89,7 +89,7 @@ contract Counter is Ownable {
     );
     assert!(output.is_valid());
 
-    let ast = ir1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    let ast = ir1_structured_ast::builder::build_source_unit(&output.syntax_tree()).unwrap();
 
     let mut visitor = CounterVisitor::new(true);
     ir1_structured_ast::visitor::accept_source_unit(&ast, &mut visitor);

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::cst::{Cursor, NonterminalNode, TextIndex};
+use crate::cst::{Cursor, Node, NonterminalNode, SyntaxNode, TextIndex};
 use crate::parser::ParseError;
 
 /// The result of parsing source code using [`Parser`][`crate::parser::Parser`].
@@ -47,5 +47,10 @@ impl ParseOutput {
     /// Creates a cursor that starts at the root of the parse tree.
     pub fn create_tree_cursor(&self) -> Cursor {
         Rc::clone(&self.tree).create_cursor(TextIndex::ZERO)
+    }
+
+    /// Returns the root syntax node of the parse tree.
+    pub fn syntax_tree(&self) -> Rc<SyntaxNode> {
+        SyntaxNode::create_root(Node::Nonterminal(Rc::clone(&self.tree)))
     }
 }

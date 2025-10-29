@@ -55,7 +55,7 @@ impl Pass {
     fn visit_file_collect_bases(&mut self, source_unit: &input_ir::SourceUnit) {
         let scope_id = self
             .binder
-            .scope_id_for_node_id(source_unit.node_id)
+            .scope_id_for_node_id(source_unit.id())
             .expect("source unit should have a defined scope");
         for member in &source_unit.members {
             match member {
@@ -77,8 +77,8 @@ impl Pass {
     ) {
         let resolved_bases = self.resolve_inheritance_types(&node.inheritance_types, scope_id);
 
-        let Definition::Contract(definition) = self.binder.get_definition_mut(node.node_id) else {
-            unreachable!("{node_id:?} should be a contract", node_id = node.node_id);
+        let Definition::Contract(definition) = self.binder.get_definition_mut(node.id()) else {
+            unreachable!("{node_id:?} should be a contract", node_id = node.id());
         };
         definition.bases = Some(resolved_bases);
     }
@@ -93,8 +93,8 @@ impl Pass {
             resolved_bases = self.resolve_inheritance_types(inheritance_types, scope_id);
         }
 
-        let Definition::Interface(definition) = self.binder.get_definition_mut(node.node_id) else {
-            unreachable!("{node_id:?} should be an interface", node_id = node.node_id);
+        let Definition::Interface(definition) = self.binder.get_definition_mut(node.id()) else {
+            unreachable!("{node_id:?} should be an interface", node_id = node.id());
         };
         definition.bases = Some(resolved_bases);
     }
@@ -175,10 +175,10 @@ impl Pass {
         for member in &source_unit.members {
             let node_id = match member {
                 input_ir::SourceUnitMember::ContractDefinition(contract_definition) => {
-                    contract_definition.node_id
+                    contract_definition.id()
                 }
                 input_ir::SourceUnitMember::InterfaceDefinition(interface_definition) => {
-                    interface_definition.node_id
+                    interface_definition.id()
                 }
                 _ => continue,
             };

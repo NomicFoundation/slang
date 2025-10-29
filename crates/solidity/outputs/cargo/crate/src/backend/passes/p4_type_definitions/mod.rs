@@ -90,7 +90,7 @@ impl Pass {
                 continue;
             };
             let receiver_type_id = self.types.register_type(Type::Contract {
-                definition_id: contract_definition.node_id,
+                definition_id: contract_definition.id(),
             });
             for contract_member in &contract_definition.members {
                 let input_ir::ContractMember::StateVariableDefinition(state_var_definition) =
@@ -105,7 +105,7 @@ impl Pass {
                     continue;
                 }
 
-                let node_id = state_var_definition.node_id;
+                let node_id = state_var_definition.id();
                 let Some(type_id) = self.binder.node_typing(node_id).as_type_id() else {
                     continue;
                 };

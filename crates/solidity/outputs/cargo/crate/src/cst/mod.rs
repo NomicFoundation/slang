@@ -59,6 +59,9 @@ pub type TerminalNode = metaslang_cst::nodes::TerminalNode<KindTypes>;
 /// Represents a connection between nodes in the syntax tree.
 pub type Edge = metaslang_cst::nodes::Edge<KindTypes>;
 
+/// A node reference that can be navigated to the parent or its children
+pub type SyntaxNode = metaslang_cst::syntax_node::SyntaxNode<KindTypes>;
+
 /// A cursor that can traverse a CST.
 ///
 /// Nodes are visited in a DFS pre-order traversal.

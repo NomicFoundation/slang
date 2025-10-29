@@ -32,7 +32,7 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let source = ir1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    let source = ir1_structured_ast::builder::build_source_unit(&output.syntax_tree()).unwrap();
 
     let mut cloner = Cloner {};
     let ast = cloner.rewrite_source_unit(&source);
@@ -130,7 +130,7 @@ impl Rewriter for ConstantFolder {
                 let result = left_decimal.literal.unparse().parse::<f64>().unwrap()
                     * right_decimal.literal.unparse().parse::<f64>().unwrap();
                 let number = Rc::new(ir1_structured_ast::DecimalNumberExpressionStruct {
-                    node_id: multiplicative_expression.node_id,
+                    node: Rc::clone(&multiplicative_expression.node),
                     literal: Rc::new(TerminalNode {
                         kind: TerminalKind::DecimalLiteral,
                         text: format!("{result}"),
@@ -141,7 +141,7 @@ impl Rewriter for ConstantFolder {
             } else {
                 ir1_structured_ast::Expression::MultiplicativeExpression(Rc::new(
                     ir1_structured_ast::MultiplicativeExpressionStruct {
-                        node_id: multiplicative_expression.node_id,
+                        node: Rc::clone(&multiplicative_expression.node),
                         operator: Rc::clone(&multiplicative_expression.operator),
                         left_operand,
                         right_operand,
@@ -166,7 +166,7 @@ function weeksToSeconds(uint _weeks) returns (uint) {
     );
     assert!(output.is_valid());
 
-    let source = ir1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    let source = ir1_structured_ast::builder::build_source_unit(&output.syntax_tree()).unwrap();
 
     let mut constant_folder = ConstantFolder {};
     let ast = constant_folder.rewrite_source_unit(&source);

@@ -11,7 +11,7 @@ pub struct Output {
 pub fn run(input: CompilationUnit) -> Output {
     let mut files = HashMap::new();
     for file in &input.files() {
-        if let Some(source_unit) = builder::build_source_unit(file.tree()) {
+        if let Some(source_unit) = builder::build_source_unit(&file.syntax_tree()) {
             files.insert(file.id().into(), source_unit);
         }
     }

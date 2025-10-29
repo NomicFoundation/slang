@@ -7,7 +7,7 @@
   #[allow(clippy::wildcard_imports)]
   use super::nodes::*;
   use crate::cst::{
-    Edge, EdgeLabel, Node, NodeKind, NonterminalKind, NonterminalNode, TerminalKind, TerminalNode,
+    EdgeLabel, NodeKind, NonterminalKind, SyntaxNode, TerminalKind, TerminalNode,
   };
 
   //
@@ -16,10 +16,10 @@
 
   {% for parent_type, sequence in builder.sequences %}
     {% if not sequence.has_added_fields %}
-      pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Option<{{ parent_type }}>
+      pub fn build_{{ parent_type | snake_case }}(node: &Rc<SyntaxNode>) -> Option<{{ parent_type }}>
       {
         assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
-        let mut helper = ChildrenHelper::new(&node.children);
+        let mut helper = ChildrenHelper::new(node.children());
         {% for field in sequence.fields %}
           {%- if field.is_removed -%}
             _ = helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?;
@@ -30,8 +30,8 @@
               {%- elif field.type.kind == "UniqueTerminal" -%}
                 helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).is_some()
               {%- else -%}
-                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).and_then(|node|
-                  build_{{ field.type.name | snake_case }}(nonterminal_node(node))
+                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).and_then(
+                  build_{{ field.type.name | snake_case }}
                 )
               {%- endif -%}
             ;
@@ -41,7 +41,7 @@
               terminal_node_cloned(helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?);
             {%- else -%}
               build_{{ field.type.name | snake_case }}(
-                nonterminal_node(helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?),
+                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
               )?;
             {%- endif -%}
           {%- endif -%}
@@ -51,7 +51,7 @@
         }
 
         Some(Rc::new({{ parent_type }}Struct {
-          node_id: node.id(),
+          node: Rc::clone(node),
           {%- for field in sequence.fields -%}
             {%- if not field.is_removed -%}
               {{ field.label }},
@@ -67,13 +67,13 @@
   //
 
   {% for parent_type, choice in builder.choices %}
-    pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Option<{{ parent_type }}> {
+    pub fn build_{{ parent_type | snake_case }}(node: &Rc<SyntaxNode>) -> Option<{{ parent_type }}> {
       assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
-      let mut helper = ChildrenHelper::new(&node.children);
+      let mut helper = ChildrenHelper::new(node.children());
       let variant = helper.accept_label(EdgeLabel::Variant)?;
       let item = match variant.kind() {
         {% for type in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-          NodeKind::Nonterminal(NonterminalKind::{{ type.name }}) => {{ parent_type }}::{{ type.name }}(build_{{ type.name | snake_case }}(nonterminal_node(variant))?),
+          NodeKind::Nonterminal(NonterminalKind::{{ type.name }}) => {{ parent_type }}::{{ type.name }}(build_{{ type.name | snake_case }}(variant)?),
         {%- endfor -%}
 
         {% for type in choice.variants | filter(attribute="kind", value="Terminal") -%}
@@ -105,15 +105,15 @@
   //
 
   {% for parent_type, collection in builder.collections %}
-    pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Option<{{ parent_type }}> {
+    pub fn build_{{ parent_type | snake_case }}(node: &Rc<SyntaxNode>) -> Option<{{ parent_type }}> {
       assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
       let mut items = {{ parent_type }}::new();
-      let mut helper = ChildrenHelper::new(&node.children);
+      let mut helper = ChildrenHelper::new(node.children());
       while let Some(child) = helper.accept_label(EdgeLabel::Item) {
         {%- if collection.item_type.is_terminal -%}
           items.push(terminal_node_cloned(child));
         {%- else -%}
-          if let Some(item) = build_{{ collection.item_type.name | snake_case }}(nonterminal_node(child)) {
+          if let Some(item) = build_{{ collection.item_type.name | snake_case }}(child) {
             items.push(item);
           }
         {%- endif -%}
@@ -132,29 +132,23 @@
 
   #[allow(dead_code)]
   #[inline]
-  fn assert_nonterminal_kind(node: &Rc<NonterminalNode>, kind: NonterminalKind) {
-    assert_eq!(node.kind, kind, "expected non-terminal of kind {kind}, got {node:?}");
+  fn assert_nonterminal_kind(node: &Rc<SyntaxNode>, kind: NonterminalKind) {
+    assert_eq!(node.kind(), NodeKind::Nonterminal(kind), "expected non-terminal of kind {kind}, got {node:?}");
   }
 
   #[allow(dead_code)]
   #[inline]
-  fn terminal_node_cloned(node: &Node) -> Rc<TerminalNode> {
+  fn terminal_node_cloned(node: &Rc<SyntaxNode>) -> Rc<TerminalNode> {
     node.as_terminal().map(Rc::clone).expect("expected terminal node")
   }
 
-  #[allow(dead_code)]
-  #[inline]
-  fn nonterminal_node(node: &Node) -> &Rc<NonterminalNode> {
-    node.as_nonterminal().expect("expected non-terminal node")
-  }
-
-  struct ChildrenHelper<'a> {
-    children: &'a Vec<Edge>,
+  struct ChildrenHelper {
+    children: Vec<Rc<SyntaxNode>>,
     index: usize,
   }
 
-  impl<'a> ChildrenHelper<'a> {
-    fn new(children: &'a Vec<Edge>) -> Self {
+  impl ChildrenHelper {
+    fn new(children: Vec<Rc<SyntaxNode>>) -> Self {
       let mut index = 0;
       while index < children.len() {
         if !children[index].is_trivia() && children[index].is_valid() {
@@ -165,12 +159,12 @@
       Self { children, index }
     }
 
-    fn accept_label(&mut self, label: EdgeLabel) -> Option<&Node> {
-      if self.index >= self.children.len() || self.children[self.index].label != label {
+    fn accept_label(&mut self, label: EdgeLabel) -> Option<&Rc<SyntaxNode>> {
+      if self.index >= self.children.len() || self.children[self.index].label() != label {
         return None;
       }
 
-      let node = &self.children[self.index].node;
+      let node = &self.children[self.index];
       loop {
         self.index += 1;
         if self.index >= self.children.len() ||

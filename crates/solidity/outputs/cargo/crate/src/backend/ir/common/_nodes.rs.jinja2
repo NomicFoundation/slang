@@ -2,6 +2,7 @@
   {%- set target = model.ir_languages[language].target -%}
   use std::rc::Rc;
   use std::vec::Vec;
+  use crate::cst::SyntaxNode;
   use crate::cst::TerminalNode;
   use metaslang_cst::nodes::NodeId;
 
@@ -14,7 +15,7 @@
 
     #[derive(Debug)]
     pub struct {{ parent_type }}Struct {
-      pub node_id: NodeId,
+      pub node: Rc<SyntaxNode>,
       {%- for field in sequence.fields %}
         pub {{ field.label | snake_case }}:
         {%- if field.type.kind == "Terminal" -%}
@@ -37,6 +38,12 @@
           {%- endif -%}
         {%- endif -%}
       {% endfor -%}
+    }
+
+    impl {{ parent_type }}Struct {
+      pub fn id(&self) -> NodeId {
+        self.node.id()
+      }
     }
 
   {% endfor %}

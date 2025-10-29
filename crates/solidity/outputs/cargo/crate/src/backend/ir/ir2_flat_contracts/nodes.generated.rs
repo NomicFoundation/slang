@@ -5,7 +5,7 @@ use std::vec::Vec;
 
 use metaslang_cst::nodes::NodeId;
 
-use crate::cst::TerminalNode;
+use crate::cst::{SyntaxNode, TerminalNode};
 
 //
 // Sequences:
@@ -15,136 +15,226 @@ pub type SourceUnit = Rc<SourceUnitStruct>;
 
 #[derive(Debug)]
 pub struct SourceUnitStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub members: SourceUnitMembers,
+}
+
+impl SourceUnitStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct PragmaDirectiveStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub pragma: Pragma,
+}
+
+impl PragmaDirectiveStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
 #[derive(Debug)]
 pub struct AbicoderPragmaStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub version: AbicoderVersion,
+}
+
+impl AbicoderPragmaStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
 #[derive(Debug)]
 pub struct ExperimentalPragmaStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub feature: ExperimentalFeature,
+}
+
+impl ExperimentalPragmaStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type VersionPragma = Rc<VersionPragmaStruct>;
 
 #[derive(Debug)]
 pub struct VersionPragmaStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub sets: VersionExpressionSets,
+}
+
+impl VersionPragmaStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type VersionRange = Rc<VersionRangeStruct>;
 
 #[derive(Debug)]
 pub struct VersionRangeStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub start: VersionLiteral,
     pub end: VersionLiteral,
+}
+
+impl VersionRangeStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type VersionTerm = Rc<VersionTermStruct>;
 
 #[derive(Debug)]
 pub struct VersionTermStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operator: Option<VersionOperator>,
     pub literal: VersionLiteral,
+}
+
+impl VersionTermStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ImportDirective = Rc<ImportDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct ImportDirectiveStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub clause: ImportClause,
+}
+
+impl ImportDirectiveStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type PathImport = Rc<PathImportStruct>;
 
 #[derive(Debug)]
 pub struct PathImportStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub alias: Option<Rc<TerminalNode>>,
     pub path: Rc<TerminalNode>,
+}
+
+impl PathImportStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type NamedImport = Rc<NamedImportStruct>;
 
 #[derive(Debug)]
 pub struct NamedImportStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub alias: Rc<TerminalNode>,
     pub path: Rc<TerminalNode>,
+}
+
+impl NamedImportStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub symbols: ImportDeconstructionSymbols,
     pub path: Rc<TerminalNode>,
+}
+
+impl ImportDeconstructionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionSymbolStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub alias: Option<Rc<TerminalNode>>,
+}
+
+impl ImportDeconstructionSymbolStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct UsingDirectiveStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub clause: UsingClause,
     pub target: UsingTarget,
     pub global_keyword: bool,
+}
+
+impl UsingDirectiveStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub symbols: UsingDeconstructionSymbols,
+}
+
+impl UsingDeconstructionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionSymbolStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: IdentifierPath,
     pub alias: Option<UsingOperator>,
+}
+
+impl UsingDeconstructionSymbolStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ContractDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub abstract_keyword: bool,
     pub name: Rc<TerminalNode>,
     pub members: ContractMembers,
@@ -152,76 +242,124 @@ pub struct ContractDefinitionStruct {
     pub storage_layout: Option<Expression>,
 }
 
+impl ContractDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
 #[derive(Debug)]
 pub struct InheritanceTypeStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
+}
+
+impl InheritanceTypeStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct InterfaceDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub inheritance: Option<InheritanceTypes>,
     pub members: InterfaceMembers,
+}
+
+impl InterfaceDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct LibraryDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub members: LibraryMembers,
+}
+
+impl LibraryDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type StructDefinition = Rc<StructDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct StructDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub members: StructMembers,
+}
+
+impl StructDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type StructMember = Rc<StructMemberStruct>;
 
 #[derive(Debug)]
 pub struct StructMemberStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
+}
+
+impl StructMemberStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EnumDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub members: EnumMembers,
+}
+
+impl EnumDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ConstantDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
     pub value: Expression,
+}
+
+impl ConstantDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct StateVariableDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
     pub value: Option<Expression>,
@@ -230,11 +368,17 @@ pub struct StateVariableDefinitionStruct {
     pub override_specifier: Option<OverridePaths>,
 }
 
+impl StateVariableDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub parameters: Parameters,
     pub returns: Option<Parameters>,
     pub kind: FunctionKind,
@@ -247,731 +391,1223 @@ pub struct FunctionDefinitionStruct {
     pub modifier_invocations: ModifierInvocations,
 }
 
+impl FunctionDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type Parameter = Rc<ParameterStruct>;
 
 #[derive(Debug)]
 pub struct ParameterStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Option<Rc<TerminalNode>>,
+}
+
+impl ParameterStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
 #[derive(Debug)]
 pub struct OverrideSpecifierStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub overridden: Option<OverridePaths>,
+}
+
+impl OverrideSpecifierStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
 #[derive(Debug)]
 pub struct ModifierInvocationStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
+}
+
+impl ModifierInvocationStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type EventDefinition = Rc<EventDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EventDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub parameters: EventParameters,
     pub anonymous_keyword: bool,
+}
+
+impl EventDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type EventParameter = Rc<EventParameterStruct>;
 
 #[derive(Debug)]
 pub struct EventParameterStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
     pub indexed_keyword: bool,
     pub name: Option<Rc<TerminalNode>>,
+}
+
+impl EventParameterStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct UserDefinedValueTypeDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub value_type: ElementaryType,
+}
+
+impl UserDefinedValueTypeDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ErrorDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub members: ErrorParameters,
+}
+
+impl ErrorDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ErrorParameter = Rc<ErrorParameterStruct>;
 
 #[derive(Debug)]
 pub struct ErrorParameterStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
     pub name: Option<Rc<TerminalNode>>,
+}
+
+impl ErrorParameterStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
 #[derive(Debug)]
 pub struct ArrayTypeNameStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operand: TypeName,
     pub index: Option<Expression>,
+}
+
+impl ArrayTypeNameStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type FunctionType = Rc<FunctionTypeStruct>;
 
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub parameters: Parameters,
     pub returns: Option<Parameters>,
     pub visibility: FunctionVisibility,
     pub mutability: FunctionMutability,
 }
 
+impl FunctionTypeStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type MappingType = Rc<MappingTypeStruct>;
 
 #[derive(Debug)]
 pub struct MappingTypeStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub key_type: MappingKey,
     pub value_type: MappingValue,
+}
+
+impl MappingTypeStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type MappingKey = Rc<MappingKeyStruct>;
 
 #[derive(Debug)]
 pub struct MappingKeyStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub key_type: MappingKeyType,
     pub name: Option<Rc<TerminalNode>>,
+}
+
+impl MappingKeyStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type MappingValue = Rc<MappingValueStruct>;
 
 #[derive(Debug)]
 pub struct MappingValueStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
     pub name: Option<Rc<TerminalNode>>,
+}
+
+impl MappingValueStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type AddressType = Rc<AddressTypeStruct>;
 
 #[derive(Debug)]
 pub struct AddressTypeStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub payable_keyword: bool,
+}
+
+impl AddressTypeStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type Block = Rc<BlockStruct>;
 
 #[derive(Debug)]
 pub struct BlockStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub statements: Statements,
+}
+
+impl BlockStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
 #[derive(Debug)]
 pub struct UncheckedBlockStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub block: Block,
+}
+
+impl UncheckedBlockStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
 #[derive(Debug)]
 pub struct ExpressionStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub expression: Expression,
+}
+
+impl ExpressionStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub body: YulBlock,
     pub flags: AssemblyFlags,
     pub label: Option<Rc<TerminalNode>>,
+}
+
+impl AssemblyStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub var_keyword: bool,
     pub elements: TupleDeconstructionElements,
     pub expression: Expression,
+}
+
+impl TupleDeconstructionStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
 
 #[derive(Debug)]
 pub struct TupleDeconstructionElementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub member: Option<TupleMember>,
+}
+
+impl TupleDeconstructionElementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
 
 #[derive(Debug)]
 pub struct TypedTupleMemberStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
+}
+
+impl TypedTupleMemberStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
 
 #[derive(Debug)]
 pub struct UntypedTupleMemberStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
+}
+
+impl UntypedTupleMemberStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
     pub value: Option<Expression>,
 }
 
+impl VariableDeclarationStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type IfStatement = Rc<IfStatementStruct>;
 
 #[derive(Debug)]
 pub struct IfStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub condition: Expression,
     pub body: Statement,
     pub else_branch: Option<Statement>,
+}
+
+impl IfStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ForStatement = Rc<ForStatementStruct>;
 
 #[derive(Debug)]
 pub struct ForStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub initialization: ForStatementInitialization,
     pub condition: ForStatementCondition,
     pub iterator: Option<Expression>,
     pub body: Statement,
 }
 
+impl ForStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type WhileStatement = Rc<WhileStatementStruct>;
 
 #[derive(Debug)]
 pub struct WhileStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub condition: Expression,
     pub body: Statement,
+}
+
+impl WhileStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
 #[derive(Debug)]
 pub struct DoWhileStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub body: Statement,
     pub condition: Expression,
+}
+
+impl DoWhileStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct ContinueStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
+}
+
+impl ContinueStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct BreakStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
+}
+
+impl BreakStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
 #[derive(Debug)]
 pub struct ReturnStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub expression: Option<Expression>,
+}
+
+impl ReturnStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type EmitStatement = Rc<EmitStatementStruct>;
 
 #[derive(Debug)]
 pub struct EmitStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub event: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
+}
+
+impl EmitStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type TryStatement = Rc<TryStatementStruct>;
 
 #[derive(Debug)]
 pub struct TryStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub expression: Expression,
     pub returns: Option<Parameters>,
     pub body: Block,
     pub catch_clauses: CatchClauses,
 }
 
+impl TryStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type CatchClause = Rc<CatchClauseStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub error: Option<CatchClauseError>,
     pub body: Block,
+}
+
+impl CatchClauseStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseErrorStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Option<Rc<TerminalNode>>,
     pub parameters: Parameters,
+}
+
+impl CatchClauseErrorStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
 
 #[derive(Debug)]
 pub struct RevertStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub error: Option<IdentifierPath>,
     pub arguments: ArgumentsDeclaration,
+}
+
+impl RevertStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ThrowStatement = Rc<ThrowStatementStruct>;
 
 #[derive(Debug)]
 pub struct ThrowStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
+}
+
+impl ThrowStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AssignmentExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
+}
+
+impl AssignmentExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ConditionalExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operand: Expression,
     pub true_expression: Expression,
     pub false_expression: Expression,
+}
+
+impl ConditionalExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type OrExpression = Rc<OrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct OrExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub right_operand: Expression,
+}
+
+impl OrExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type AndExpression = Rc<AndExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AndExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub right_operand: Expression,
+}
+
+impl AndExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
 #[derive(Debug)]
 pub struct EqualityExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
+}
+
+impl EqualityExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
 #[derive(Debug)]
 pub struct InequalityExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
+}
+
+impl InequalityExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseOrExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub right_operand: Expression,
+}
+
+impl BitwiseOrExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseXorExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub right_operand: Expression,
+}
+
+impl BitwiseXorExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseAndExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub right_operand: Expression,
+}
+
+impl BitwiseAndExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ShiftExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
+}
+
+impl ShiftExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AdditiveExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
+}
+
+impl AdditiveExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MultiplicativeExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
+}
+
+impl MultiplicativeExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ExponentiationExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
+}
+
+impl ExponentiationExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
 #[derive(Debug)]
 pub struct PostfixExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operand: Expression,
     pub operator: Rc<TerminalNode>,
+}
+
+impl PostfixExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
 #[derive(Debug)]
 pub struct PrefixExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operator: Rc<TerminalNode>,
     pub operand: Expression,
+}
+
+impl PrefixExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionCallExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operand: Expression,
     pub arguments: ArgumentsDeclaration,
+}
+
+impl FunctionCallExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
 #[derive(Debug)]
 pub struct CallOptionsExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operand: Expression,
     pub options: CallOptions,
+}
+
+impl CallOptionsExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MemberAccessExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operand: Expression,
     pub member: Rc<TerminalNode>,
+}
+
+impl MemberAccessExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct IndexAccessExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operand: Expression,
     pub start: Option<Expression>,
     pub end: Option<Expression>,
+}
+
+impl IndexAccessExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
 
 #[derive(Debug)]
 pub struct NamedArgumentStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub value: Expression,
+}
+
+impl NamedArgumentStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type TypeExpression = Rc<TypeExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TypeExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
+}
+
+impl TypeExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type NewExpression = Rc<NewExpressionStruct>;
 
 #[derive(Debug)]
 pub struct NewExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
+}
+
+impl NewExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type TupleExpression = Rc<TupleExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TupleExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub items: TupleValues,
+}
+
+impl TupleExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type TupleValue = Rc<TupleValueStruct>;
 
 #[derive(Debug)]
 pub struct TupleValueStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub expression: Option<Expression>,
+}
+
+impl TupleValueStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ArrayExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub items: ArrayValues,
+}
+
+impl ArrayExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct HexNumberExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub literal: Rc<TerminalNode>,
     pub unit: Option<NumberUnit>,
+}
+
+impl HexNumberExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct DecimalNumberExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub literal: Rc<TerminalNode>,
     pub unit: Option<NumberUnit>,
+}
+
+impl DecimalNumberExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulBlock = Rc<YulBlockStruct>;
 
 #[derive(Debug)]
 pub struct YulBlockStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub statements: YulStatements,
+}
+
+impl YulBlockStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionDefinitionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub name: Rc<TerminalNode>,
     pub parameters: YulParameters,
     pub returns: Option<YulVariableNames>,
     pub body: YulBlock,
 }
 
+impl YulFunctionDefinitionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub variables: YulVariableNames,
     pub value: Option<YulVariableDeclarationValue>,
+}
+
+impl YulVariableDeclarationStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationValueStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub assignment: YulAssignmentOperator,
     pub expression: YulExpression,
+}
+
+impl YulVariableDeclarationValueStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableAssignmentStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub variables: YulPaths,
     pub assignment: YulAssignmentOperator,
     pub expression: YulExpression,
+}
+
+impl YulVariableAssignmentStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
 
 #[derive(Debug)]
 pub struct YulColonAndEqualStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
+}
+
+impl YulColonAndEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulStackAssignmentStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub assignment: YulStackAssignmentOperator,
     pub variable: Rc<TerminalNode>,
+}
+
+impl YulStackAssignmentStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
 
 #[derive(Debug)]
 pub struct YulEqualAndColonStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
+}
+
+impl YulEqualAndColonStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulIfStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub condition: YulExpression,
     pub body: YulBlock,
+}
+
+impl YulIfStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulForStatement = Rc<YulForStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulForStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub initialization: YulBlock,
     pub condition: YulExpression,
     pub iterator: YulBlock,
     pub body: YulBlock,
 }
 
+impl YulForStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
+}
+
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulSwitchStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub expression: YulExpression,
     pub cases: YulSwitchCases,
+}
+
+impl YulSwitchStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulDefaultCaseStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub body: YulBlock,
+}
+
+impl YulDefaultCaseStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulValueCase = Rc<YulValueCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulValueCaseStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub value: YulLiteral,
     pub body: YulBlock,
+}
+
+impl YulValueCaseStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulLeaveStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
+}
+
+impl YulLeaveStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulBreakStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
+}
+
+impl YulBreakStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulContinueStatementStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
+}
+
+impl YulContinueStatementStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulLabel = Rc<YulLabelStruct>;
 
 #[derive(Debug)]
 pub struct YulLabelStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub label: Rc<TerminalNode>,
+}
+
+impl YulLabelStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionCallExpressionStruct {
-    pub node_id: NodeId,
+    pub node: Rc<SyntaxNode>,
     pub operand: YulExpression,
     pub arguments: YulArguments,
+}
+
+impl YulFunctionCallExpressionStruct {
+    pub fn id(&self) -> NodeId {
+        self.node.id()
+    }
 }
 
 //

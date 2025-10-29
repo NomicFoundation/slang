@@ -70,7 +70,7 @@ impl Pass {
     ) -> Option<Vec<TypeId>> {
         let mut parameter_types = Vec::new();
         for parameter in parameters {
-            let parameter_type_id = self.binder.node_typing(parameter.node_id).as_type_id()?;
+            let parameter_type_id = self.binder.node_typing(parameter.id()).as_type_id()?;
             parameter_types.push(parameter_type_id);
         }
         Some(parameter_types)

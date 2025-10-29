@@ -41,7 +41,7 @@
           {%- endfor %}
 
           Rc::new(output::{{ parent_type }}Struct {
-            node_id: source.node_id,
+            node: Rc::clone(&source.node),
             {%- for field in sequence.fields -%}
               {%- if not field.is_removed -%}
                 {{ field.label }},
