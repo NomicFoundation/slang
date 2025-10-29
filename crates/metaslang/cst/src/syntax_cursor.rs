@@ -16,19 +16,16 @@ pub struct SyntaxCursor<T: KindTypes> {
     /// The index of the current child node in the parent's children.
     // Required to go to the next/previous sibling.
     child_index: usize,
-    /// Text offset that corresponds to the beginning of the currently pointed to node.
-    text_offset: TextIndex,
     /// Whether the cursor is completed, i.e. at the root node as a result of traversal (or when `complete`d).
     /// If `true`, the cursor cannot be moved.
     is_completed: bool,
 }
 
 impl<T: KindTypes> SyntaxCursor<T> {
-    pub fn create(node: Rc<SyntaxNode<T>>, text_offset: TextIndex) -> Self {
+    pub fn create(node: Rc<SyntaxNode<T>>) -> Self {
         Self {
             node,
             child_index: 0,
-            text_offset,
             is_completed: false,
         }
     }
@@ -57,7 +54,6 @@ impl<T: KindTypes> SyntaxCursor<T> {
             is_completed: false,
             node: self.node.erase_root(),
             child_index: 0,
-            text_offset: self.text_offset,
         }
     }
 
@@ -73,12 +69,12 @@ impl<T: KindTypes> SyntaxCursor<T> {
 
     /// Returns the text offset that corresponds to the beginning of the currently pointed to node.
     pub fn text_offset(&self) -> TextIndex {
-        self.text_offset
+        self.node.text_offset()
     }
 
     /// Returns the text range that corresponds to the currently pointed to node.
     pub fn text_range(&self) -> TextRange {
-        let start = self.text_offset;
+        let start = self.text_offset();
         let end = start + self.node.text_len();
         start..end
     }
@@ -221,9 +217,6 @@ impl<T: KindTypes> SyntaxCursor<T> {
 
         self.child_index = children.len() - 1;
         self.node = children.remove(self.child_index);
-        for child in &children {
-            self.text_offset += child.text_len();
-        }
 
         true
     }
@@ -241,9 +234,6 @@ impl<T: KindTypes> SyntaxCursor<T> {
             return false;
         }
 
-        for i in 0..child_index {
-            self.text_offset += children[i].text_len();
-        }
         self.node = children.remove(child_index);
         self.child_index = child_index;
 
@@ -270,7 +260,6 @@ impl<T: KindTypes> SyntaxCursor<T> {
         if index + 1 >= siblings.len() {
             return false;
         }
-        self.text_offset += self.node.text_len();
         self.child_index = index + 1;
         self.node = siblings.remove(index + 1);
 
@@ -297,8 +286,6 @@ impl<T: KindTypes> SyntaxCursor<T> {
         if index == 0 {
             return false;
         }
-        // FIXME: recalculating the text_offset is more complicated here
-        //self.text_offset -= self.node.text_len();
         self.child_index = index - 1;
         self.node = siblings.remove(index - 1);
 
