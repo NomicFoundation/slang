@@ -6,6 +6,7 @@ use crate::{
     text_index::TextIndex,
 };
 
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SyntaxNode<T: KindTypes> {
     parent: Option<Rc<SyntaxNode<T>>>,
     label: T::EdgeLabel,
@@ -21,6 +22,14 @@ impl<T: KindTypes> SyntaxNode<T> {
         })
     }
 
+    pub(crate) fn erase_root(&self) -> Rc<Self> {
+        Rc::new(Self {
+            parent: None,
+            label: self.label,
+            green: self.green.clone(),
+        })
+    }
+
     /// Returns a unique identifier of the node. It is not reproducible over parses
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(&self) -> NodeId {
@@ -29,6 +38,10 @@ impl<T: KindTypes> SyntaxNode<T> {
 
     pub fn parent(&self) -> Option<Rc<SyntaxNode<T>>> {
         self.parent.as_ref().map(Rc::clone)
+    }
+
+    pub fn parent_ref(&self) -> Option<&Rc<SyntaxNode<T>>> {
+        self.parent.as_ref()
     }
 
     /// The kind of the node.
@@ -46,14 +59,14 @@ impl<T: KindTypes> SyntaxNode<T> {
     }
 
     /// Returns the list of child edges directly connected to this node.
-    pub fn children(self: &Rc<Self>) -> impl Iterator<Item = Rc<Self>> + use<'_, T> {
+    pub fn children(self: &Rc<Self>) -> Vec<Rc<Self>> {
         self.green.children().iter().map(|edge| {
             Rc::new(SyntaxNode {
                 parent: Some(Rc::clone(self)),
                 label: edge.label,
                 green: edge.node.clone(),
             })
-        })
+        }).collect()
     }
 
     /// Reconstructs the original source code from the node and its sub-tree.
