@@ -7,7 +7,7 @@
   use std::rc::Rc;
   use super::{input, nodes as output};
   #[allow(unused)]
-  use crate::cst::TerminalNode;
+  use crate::cst::SyntaxNode;
 
   pub trait Transformer {
     //
@@ -60,7 +60,7 @@
     {% for parent_type, collapsed in transformer.collapsed_sequences %}
       fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) ->
       {%- if collapsed.target_type.is_terminal -%}
-        Rc<TerminalNode>
+        Rc<SyntaxNode>
       {%- else -%}
         output::{{ collapsed.target_type.name }}
       {%- endif -%}

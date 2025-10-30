@@ -7,7 +7,7 @@ use super::p0_build_ast::Output as Input;
 use crate::backend::ir::ir2_flat_contracts::transformer::Transformer;
 use crate::backend::ir::ir2_flat_contracts::{self as output, input, SourceUnit};
 use crate::compilation::CompilationUnit;
-use crate::cst::TerminalNode;
+use crate::cst::SyntaxNode;
 use crate::utils::versions::VERSION_0_5_0;
 
 pub struct Output {
@@ -924,7 +924,7 @@ impl Pass {
         })
     }
 
-    fn string_literal_terminal_node(value: &input::StringLiteral) -> Rc<TerminalNode> {
+    fn string_literal_terminal_node(value: &input::StringLiteral) -> Rc<SyntaxNode> {
         match value {
             input::StringLiteral::SingleQuotedStringLiteral(terminal_node)
             | input::StringLiteral::DoubleQuotedStringLiteral(terminal_node) => {
@@ -933,7 +933,7 @@ impl Pass {
         }
     }
 
-    fn hex_string_literal_terminal_node(value: &input::HexStringLiteral) -> Rc<TerminalNode> {
+    fn hex_string_literal_terminal_node(value: &input::HexStringLiteral) -> Rc<SyntaxNode> {
         match value {
             input::HexStringLiteral::SingleQuotedHexStringLiteral(terminal_node)
             | input::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal_node) => {
@@ -942,9 +942,7 @@ impl Pass {
         }
     }
 
-    fn unicode_string_literal_terminal_node(
-        value: &input::UnicodeStringLiteral,
-    ) -> Rc<TerminalNode> {
+    fn unicode_string_literal_terminal_node(value: &input::UnicodeStringLiteral) -> Rc<SyntaxNode> {
         match value {
             input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal_node)
             | input::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal_node) => {

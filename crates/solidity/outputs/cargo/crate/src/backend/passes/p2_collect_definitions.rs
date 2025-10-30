@@ -8,7 +8,7 @@ use crate::backend::binder::{Binder, Definition, FileScope, ParametersScope, Sco
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::compilation::{CompilationUnit, File};
-use crate::cst::{NodeId, TerminalNode};
+use crate::cst::{NodeId, SyntaxNode};
 use crate::utils::versions::VERSION_0_5_0;
 
 pub struct Output {
@@ -150,7 +150,7 @@ impl Pass {
             .insert_definition_in_scope(definition, self.current_scope_id());
     }
 
-    fn resolve_import_path(&self, import_path: &Rc<TerminalNode>) -> Option<String> {
+    fn resolve_import_path(&self, import_path: &Rc<SyntaxNode>) -> Option<String> {
         let import_path_node_id = import_path.id();
         let current_file = self
             .current_file

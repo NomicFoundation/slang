@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use super::ScopeId;
 use crate::backend::types::TypeId;
-use crate::cst::{NodeId, TerminalNode};
+use crate::cst::{NodeId, SyntaxNode};
 
 //////////////////////////////////////////////////////////////////////////////
 // Definitions
@@ -37,13 +37,13 @@ pub enum Definition {
 #[derive(Debug)]
 pub struct ConstantDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct ContractDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub bases: Option<Vec<NodeId>>,
     pub constructor_parameters_scope_id: Option<ScopeId>,
 }
@@ -51,26 +51,26 @@ pub struct ContractDefinition {
 #[derive(Debug)]
 pub struct EnumDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct EnumMemberDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct ErrorDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct EventDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub parameters_scope_id: ScopeId,
 }
 
@@ -85,7 +85,7 @@ pub enum FunctionVisibility {
 #[derive(Debug)]
 pub struct FunctionDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub parameters_scope_id: ScopeId,
     pub visibility: FunctionVisibility,
 }
@@ -93,14 +93,14 @@ pub struct FunctionDefinition {
 #[derive(Debug)]
 pub struct ImportDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub resolved_file_id: Option<String>,
 }
 
 #[derive(Debug)]
 pub struct ImportedSymbolDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub symbol: String,
     pub resolved_file_id: Option<String>,
 }
@@ -108,26 +108,26 @@ pub struct ImportedSymbolDefinition {
 #[derive(Debug)]
 pub struct InterfaceDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub bases: Option<Vec<NodeId>>,
 }
 
 #[derive(Debug)]
 pub struct LibraryDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct ModifierDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct ParameterDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -140,7 +140,7 @@ pub enum StateVariableVisibility {
 #[derive(Debug)]
 pub struct StateVariableDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub getter_type_id: Option<TypeId>,
     pub visibility: StateVariableVisibility,
 }
@@ -148,56 +148,56 @@ pub struct StateVariableDefinition {
 #[derive(Debug)]
 pub struct StructDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct StructMemberDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct TypeParameterDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct UserDefinedValueTypeDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub target_type_id: Option<TypeId>,
 }
 
 #[derive(Debug)]
 pub struct VariableDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct YulLabelDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct YulFunctionDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct YulParameterDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 #[derive(Debug)]
 pub struct YulVariableDefinition {
     pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
 }
 
 impl Definition {
@@ -229,7 +229,7 @@ impl Definition {
         }
     }
 
-    pub fn identifier(&self) -> &Rc<TerminalNode> {
+    pub fn identifier(&self) -> &Rc<SyntaxNode> {
         match self {
             Self::Constant(constant_definition) => &constant_definition.identifier,
             Self::Contract(contract_definition) => &contract_definition.identifier,
@@ -291,14 +291,14 @@ impl Definition {
         }
     }
 
-    pub(crate) fn new_constant(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_constant(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Constant(ConstantDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_contract(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_contract(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Contract(ContractDefinition {
             node_id,
             identifier: Rc::clone(identifier),
@@ -307,14 +307,14 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_enum(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_enum(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Enum(EnumDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_enum_member(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_enum_member(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::EnumMember(EnumMemberDefinition {
             node_id,
             identifier: Rc::clone(identifier),
@@ -323,7 +323,7 @@ impl Definition {
 
     pub(crate) fn new_error(
         node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        identifier: &Rc<SyntaxNode>,
         parameters_scope_id: ScopeId,
     ) -> Self {
         Self::Error(ErrorDefinition {
@@ -335,7 +335,7 @@ impl Definition {
 
     pub(crate) fn new_event(
         node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        identifier: &Rc<SyntaxNode>,
         parameters_scope_id: ScopeId,
     ) -> Self {
         Self::Event(EventDefinition {
@@ -347,7 +347,7 @@ impl Definition {
 
     pub(crate) fn new_function(
         node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        identifier: &Rc<SyntaxNode>,
         parameters_scope_id: ScopeId,
         visibility: FunctionVisibility,
     ) -> Self {
@@ -361,7 +361,7 @@ impl Definition {
 
     pub(crate) fn new_import(
         node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        identifier: &Rc<SyntaxNode>,
         resolved_file_id: Option<String>,
     ) -> Self {
         Self::Import(ImportDefinition {
@@ -373,7 +373,7 @@ impl Definition {
 
     pub(crate) fn new_imported_symbol(
         node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        identifier: &Rc<SyntaxNode>,
         symbol: String,
         resolved_file_id: Option<String>,
     ) -> Self {
@@ -385,7 +385,7 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_interface(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_interface(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Interface(InterfaceDefinition {
             node_id,
             identifier: Rc::clone(identifier),
@@ -393,21 +393,21 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_library(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_library(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Library(LibraryDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_modifier(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_modifier(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Modifier(ModifierDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_parameter(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Parameter(ParameterDefinition {
             node_id,
             identifier: Rc::clone(identifier),
@@ -416,7 +416,7 @@ impl Definition {
 
     pub(crate) fn new_state_variable(
         node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        identifier: &Rc<SyntaxNode>,
         visibility: StateVariableVisibility,
     ) -> Self {
         Self::StateVariable(StateVariableDefinition {
@@ -427,21 +427,21 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_struct(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_struct(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Struct(StructDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_struct_member(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_struct_member(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::StructMember(StructMemberDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_type_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_type_parameter(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::TypeParameter(TypeParameterDefinition {
             node_id,
             identifier: Rc::clone(identifier),
@@ -450,7 +450,7 @@ impl Definition {
 
     pub(crate) fn new_user_defined_value_type(
         node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        identifier: &Rc<SyntaxNode>,
     ) -> Self {
         Self::UserDefinedValueType(UserDefinedValueTypeDefinition {
             node_id,
@@ -459,35 +459,35 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_variable(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::Variable(VariableDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_yul_function(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_yul_function(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::YulFunction(YulFunctionDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_yul_label(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_yul_label(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::YulLabel(YulLabelDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_yul_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_yul_parameter(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::YulParameter(YulParameterDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub(crate) fn new_yul_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_yul_variable(node_id: NodeId, identifier: &Rc<SyntaxNode>) -> Self {
         Self::YulVariable(YulVariableDefinition {
             node_id,
             identifier: Rc::clone(identifier),

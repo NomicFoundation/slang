@@ -4,7 +4,7 @@ use std::rc::Rc;
 use super::definitions::Definition;
 use super::ScopeId;
 use crate::backend::types::TypeId;
-use crate::cst::{NodeId, TerminalKind, TerminalNode};
+use crate::cst::{NodeId, SyntaxNode, TerminalKind};
 
 //////////////////////////////////////////////////////////////////////////////
 // Scopes - types
@@ -328,7 +328,7 @@ impl ParametersScope {
         }
     }
 
-    pub(crate) fn add_parameter(&mut self, identifier: Option<&Rc<TerminalNode>>, node_id: NodeId) {
+    pub(crate) fn add_parameter(&mut self, identifier: Option<&Rc<SyntaxNode>>, node_id: NodeId) {
         self.parameters.push(ParameterDefinition {
             name: identifier.map(|name| name.unparse()),
             node_id,

@@ -1,14 +1,14 @@
 use std::rc::Rc;
 
 use crate::backend::built_ins::BuiltIn;
-use crate::cst::{NodeId, TerminalNode};
+use crate::cst::{NodeId, SyntaxNode};
 
 //////////////////////////////////////////////////////////////////////////////
 // References
 
 #[derive(Debug)]
 pub struct Reference {
-    pub identifier: Rc<TerminalNode>,
+    pub identifier: Rc<SyntaxNode>,
     pub resolution: Resolution,
 }
 
@@ -38,7 +38,7 @@ impl Reference {
         self.identifier.id()
     }
 
-    pub(crate) fn new(identifier: Rc<TerminalNode>, resolution: Resolution) -> Self {
+    pub(crate) fn new(identifier: Rc<SyntaxNode>, resolution: Resolution) -> Self {
         Self {
             identifier,
             resolution,

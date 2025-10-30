@@ -3,7 +3,7 @@ use std::rc::Rc;
 use anyhow::Result;
 use slang_solidity::backend::ir::ir1_structured_ast;
 use slang_solidity::backend::ir::ir1_structured_ast::rewriter::Rewriter;
-use slang_solidity::cst::{TerminalKind, TerminalNode};
+use slang_solidity::cst::{Node, SyntaxNode, TerminalKind, TerminalNode};
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 
@@ -129,12 +129,15 @@ impl Rewriter for ConstantFolder {
                 // also, any decimal number should be parseable as a 64-bit floating point
                 let result = left_decimal.literal.unparse().parse::<f64>().unwrap()
                     * right_decimal.literal.unparse().parse::<f64>().unwrap();
+                let literal_terminal = Rc::new(TerminalNode {
+                    kind: TerminalKind::DecimalLiteral,
+                    text: format!("{result}"),
+                });
+                // FIXME: this creates an isolated tree, not connected to the expression node
+                let literal = SyntaxNode::create_root(Node::Terminal(literal_terminal));
                 let number = Rc::new(ir1_structured_ast::DecimalNumberExpressionStruct {
                     node: Rc::clone(&multiplicative_expression.node),
-                    literal: Rc::new(TerminalNode {
-                        kind: TerminalKind::DecimalLiteral,
-                        text: format!("{result}"),
-                    }),
+                    literal,
                     unit: None,
                 });
                 ir1_structured_ast::Expression::DecimalNumberExpression(number)

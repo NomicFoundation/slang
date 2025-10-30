@@ -6,7 +6,7 @@ use std::rc::Rc;
 
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
-use crate::cst::{EdgeLabel, NodeKind, NonterminalKind, SyntaxNode, TerminalKind, TerminalNode};
+use crate::cst::{EdgeLabel, NodeKind, NonterminalKind, SyntaxNode, TerminalKind};
 
 //
 // Sequences:
@@ -4549,10 +4549,9 @@ fn assert_nonterminal_kind(node: &Rc<SyntaxNode>, kind: NonterminalKind) {
 
 #[allow(dead_code)]
 #[inline]
-fn terminal_node_cloned(node: &Rc<SyntaxNode>) -> Rc<TerminalNode> {
-    node.as_terminal()
-        .map(Rc::clone)
-        .expect("expected terminal node")
+fn terminal_node_cloned(node: &Rc<SyntaxNode>) -> Rc<SyntaxNode> {
+    assert!(node.is_terminal(), "expected terminal node");
+    Rc::clone(node)
 }
 
 struct ChildrenHelper {

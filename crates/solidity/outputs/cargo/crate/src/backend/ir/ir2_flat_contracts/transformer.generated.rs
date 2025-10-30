@@ -7,7 +7,7 @@ use std::rc::Rc;
 
 use super::{input, nodes as output};
 #[allow(unused)]
-use crate::cst::TerminalNode;
+use crate::cst::SyntaxNode;
 
 pub trait Transformer {
     //
@@ -1443,7 +1443,7 @@ pub trait Transformer {
         self.transform_error_parameters(&source.parameters)
     }
 
-    fn transform_import_alias(&mut self, source: &input::ImportAlias) -> Rc<TerminalNode> {
+    fn transform_import_alias(&mut self, source: &input::ImportAlias) -> Rc<SyntaxNode> {
         Rc::clone(&source.identifier)
     }
 

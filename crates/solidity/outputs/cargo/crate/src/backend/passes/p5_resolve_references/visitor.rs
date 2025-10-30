@@ -5,7 +5,7 @@ use crate::backend::binder::{Reference, Resolution, Typing};
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, LiteralKind, Type};
-use crate::cst::TerminalKind;
+use crate::cst::{NodeKind, TerminalKind};
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_7_0};
 
 impl Visitor for Pass {
@@ -271,20 +271,22 @@ impl Visitor for Pass {
     }
 
     fn leave_prefix_expression(&mut self, node: &input_ir::PrefixExpression) {
-        let type_id = match node.operator.kind {
-            TerminalKind::PlusPlus
-            | TerminalKind::Plus
-            | TerminalKind::MinusMinus
-            | TerminalKind::Minus
-            | TerminalKind::Tilde => {
+        let type_id = match node.operator.kind() {
+            NodeKind::Terminal(
+                TerminalKind::PlusPlus
+                | TerminalKind::Plus
+                | TerminalKind::MinusMinus
+                | TerminalKind::Minus
+                | TerminalKind::Tilde,
+            ) => {
                 // TODO(validation): check that the operand is integer
                 self.typing_of_expression(&node.operand).as_type_id()
             }
-            TerminalKind::Bang => {
+            NodeKind::Terminal(TerminalKind::Bang) => {
                 // TODO(validation): check that the operand is boolean
                 Some(self.types.boolean())
             }
-            TerminalKind::DeleteKeyword => Some(self.types.void()),
+            NodeKind::Terminal(TerminalKind::DeleteKeyword) => Some(self.types.void()),
             _ => None,
         };
         self.binder.set_node_type(node.id(), type_id);

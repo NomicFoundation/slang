@@ -5,7 +5,7 @@ use crate::backend::binder::{Definition, Resolution, Typing};
 use crate::backend::built_ins::BuiltIn;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
-use crate::cst::{NodeId, TerminalNode};
+use crate::cst::{NodeId, SyntaxNode};
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_8_0};
 
 impl Pass {
@@ -138,7 +138,7 @@ impl Pass {
         }
     }
 
-    fn typing_of_identifier(&self, identifier: &Rc<TerminalNode>) -> Typing {
+    fn typing_of_identifier(&self, identifier: &Rc<SyntaxNode>) -> Typing {
         let resolution = self
             .binder
             .find_reference_by_identifier_node_id(identifier.id())

@@ -4,7 +4,7 @@ use std::rc::Rc;
 use slang_solidity::backend::binder::Resolution;
 use slang_solidity::backend::build_binder_output;
 use slang_solidity::compilation::CompilationUnit;
-use slang_solidity::cst::{Cursor, NodeId, TerminalKind, TerminalNode};
+use slang_solidity::cst::{Cursor, NodeId, SyntaxNode, TerminalKind};
 
 use super::BindingError;
 use crate::events::{Events, TestOutcome};
@@ -62,7 +62,7 @@ pub(super) fn run(
 fn find_cursor_for_identifier(
     cursor_cache: &mut HashMap<NodeId, (Cursor, String)>,
     compilation_unit: &CompilationUnit,
-    identifier: &Rc<TerminalNode>,
+    identifier: &Rc<SyntaxNode>,
 ) -> Option<(Cursor, String)> {
     if cursor_cache.is_empty() {
         for file in &compilation_unit.files() {
