@@ -1,6 +1,6 @@
 #![deny(missing_docs)]
 
-//! `metaslang` contains the core utilites that make Slang.
+//! `metaslang` contains the core utilities that make Slang.
 
 pub mod cursor;
 pub mod kinds;

@@ -12,7 +12,7 @@ export class LoggingRewriter extends BaseRewriter {
     this.parser = Parser.create(LanguageFacts.latestVersion());
   }
 
-  // collect the name of the function being travered
+  // collect the name of the function being traversed
   public override rewriteFunctionDefinition(node: NonterminalNode): Node | undefined {
     const name = node.children().find((edge) => edge.label == EdgeLabel.Name);
     if (!name) {
