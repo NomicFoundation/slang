@@ -1,3 +1,4 @@
+pub mod binder;
 pub mod bindings_build;
 pub mod bindings_resolve;
 pub mod cursor;
