@@ -244,9 +244,7 @@ pub fn build_using_directive(node: &Rc<NonterminalNode>) -> Option<UsingDirectiv
     let clause = build_using_clause(nonterminal_node(helper.accept_label(EdgeLabel::Clause)?))?;
     _ = helper.accept_label(EdgeLabel::ForKeyword)?;
     let target = build_using_target(nonterminal_node(helper.accept_label(EdgeLabel::Target)?))?;
-    let global_keyword = helper
-        .accept_label(EdgeLabel::GlobalKeyword)
-        .map(terminal_node_cloned);
+    let global_keyword = helper.accept_label(EdgeLabel::GlobalKeyword).is_some();
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
     if !helper.finalize() {
         return None;
@@ -317,9 +315,7 @@ pub fn build_using_alias(node: &Rc<NonterminalNode>) -> Option<UsingAlias> {
 pub fn build_contract_definition(node: &Rc<NonterminalNode>) -> Option<ContractDefinition> {
     assert_nonterminal_kind(node, NonterminalKind::ContractDefinition);
     let mut helper = ChildrenHelper::new(&node.children);
-    let abstract_keyword = helper
-        .accept_label(EdgeLabel::AbstractKeyword)
-        .map(terminal_node_cloned);
+    let abstract_keyword = helper.accept_label(EdgeLabel::AbstractKeyword).is_some();
     _ = helper.accept_label(EdgeLabel::ContractKeyword)?;
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
     let specifiers = build_contract_specifiers(nonterminal_node(
@@ -833,9 +829,7 @@ pub fn build_event_definition(node: &Rc<NonterminalNode>) -> Option<EventDefinit
     let parameters = build_event_parameters_declaration(nonterminal_node(
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
-    let anonymous_keyword = helper
-        .accept_label(EdgeLabel::AnonymousKeyword)
-        .map(terminal_node_cloned);
+    let anonymous_keyword = helper.accept_label(EdgeLabel::AnonymousKeyword).is_some();
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
     if !helper.finalize() {
         return None;
@@ -873,9 +867,7 @@ pub fn build_event_parameter(node: &Rc<NonterminalNode>) -> Option<EventParamete
     assert_nonterminal_kind(node, NonterminalKind::EventParameter);
     let mut helper = ChildrenHelper::new(&node.children);
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
-    let indexed_keyword = helper
-        .accept_label(EdgeLabel::IndexedKeyword)
-        .map(terminal_node_cloned);
+    let indexed_keyword = helper.accept_label(EdgeLabel::IndexedKeyword).is_some();
     let name = helper
         .accept_label(EdgeLabel::Name)
         .map(terminal_node_cloned);
@@ -1078,9 +1070,7 @@ pub fn build_address_type(node: &Rc<NonterminalNode>) -> Option<AddressType> {
     assert_nonterminal_kind(node, NonterminalKind::AddressType);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::AddressKeyword)?;
-    let payable_keyword = helper
-        .accept_label(EdgeLabel::PayableKeyword)
-        .map(terminal_node_cloned);
+    let payable_keyword = helper.accept_label(EdgeLabel::PayableKeyword).is_some();
     if !helper.finalize() {
         return None;
     }
@@ -1187,9 +1177,7 @@ pub fn build_tuple_deconstruction_statement(
 ) -> Option<TupleDeconstructionStatement> {
     assert_nonterminal_kind(node, NonterminalKind::TupleDeconstructionStatement);
     let mut helper = ChildrenHelper::new(&node.children);
-    let var_keyword = helper
-        .accept_label(EdgeLabel::VarKeyword)
-        .map(terminal_node_cloned);
+    let var_keyword = helper.accept_label(EdgeLabel::VarKeyword).is_some();
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let elements = build_tuple_deconstruction_elements(nonterminal_node(
         helper.accept_label(EdgeLabel::Elements)?,

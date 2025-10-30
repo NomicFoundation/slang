@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use super::{storage_location_to_data_location, Pass};
+use super::Pass;
 use crate::backend::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
 use crate::backend::built_ins::BuiltIn;
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
@@ -92,7 +92,7 @@ impl Visitor for Pass {
     fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
         for symbol in &node.symbols {
             let target_symbol = if let Some(alias) = &symbol.alias {
-                &alias.identifier
+                alias
             } else {
                 &symbol.name
             };
@@ -109,13 +109,10 @@ impl Visitor for Pass {
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
         let default_location = if self.language_version < VERSION_0_5_0 {
-            if node.attributes.iter().any(|attribute| {
-                matches!(
-                    attribute,
-                    input_ir::FunctionAttribute::ExternalKeyword
-                        | input_ir::FunctionAttribute::PublicKeyword
-                )
-            }) {
+            if matches!(
+                node.visibility,
+                input_ir::FunctionVisibility::External | input_ir::FunctionVisibility::Public
+            ) {
                 Some(DataLocation::Calldata)
             } else {
                 Some(DataLocation::Memory)
@@ -125,92 +122,54 @@ impl Visitor for Pass {
         };
 
         // type parameters and return variables
-        self.visit_parameters(&node.parameters.parameters, default_location);
+        self.visit_parameters(&node.parameters, default_location);
         if let Some(returns) = &node.returns {
-            self.visit_parameters(&returns.variables.parameters, default_location);
+            self.visit_parameters(returns, default_location);
         }
 
         // now we can compute the function type
         let type_id = self.type_of_function_definition(node, self.current_receiver_type);
         self.binder.set_node_type(node.node_id, type_id);
 
-        // fill-in parameter types in parameters scope
-        let parameter_types: Vec<_> = node
-            .parameters
-            .parameters
-            .iter()
-            .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
-            .collect();
+        if !matches!(node.kind, input_ir::FunctionKind::Modifier) && node.name.is_some() {
+            // for non-modifier *named* functions, fill-in parameter types in
+            // parameters scope for overload disambiguation in p5
+            let parameter_types: Vec<_> = node
+                .parameters
+                .iter()
+                .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
+                .collect();
 
-        let Some(parameters_scope_id) = self
-            .binder
-            .get_parameters_scope_for_definition(node.node_id)
-        else {
-            unreachable!("FunctionDefinition does not have associated parameters scope");
-        };
-        let Scope::Parameters(ref mut parameters_scope) =
-            self.binder.get_scope_mut(parameters_scope_id)
-        else {
-            unreachable!("scope is not a ParametersScope");
-        };
-        parameters_scope.set_parameter_types(&parameter_types);
+            let Some(parameters_scope_id) = self
+                .binder
+                .get_parameters_scope_for_definition(node.node_id)
+            else {
+                unreachable!("FunctionDefinition does not have associated parameters scope");
+            };
+            let Scope::Parameters(ref mut parameters_scope) =
+                self.binder.get_scope_mut(parameters_scope_id)
+            else {
+                unreachable!("scope is not a ParametersScope");
+            };
+            parameters_scope.set_parameter_types(&parameter_types);
+        }
     }
 
     fn leave_function_type(&mut self, node: &input_ir::FunctionType) {
-        self.visit_parameters(&node.parameters.parameters, None);
+        self.visit_parameters(&node.parameters, None);
         if let Some(returns) = &node.returns {
-            self.visit_parameters(&returns.variables.parameters, None);
-        }
-    }
-
-    fn leave_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) {
-        let default_location = if self.language_version < VERSION_0_5_0 {
-            Some(DataLocation::Calldata)
-        } else {
-            None
-        };
-        self.visit_parameters(&node.parameters.parameters, default_location);
-    }
-
-    fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
-        let default_location = if self.language_version < VERSION_0_5_0 {
-            Some(DataLocation::Calldata)
-        } else {
-            None
-        };
-        self.visit_parameters(&node.parameters.parameters, default_location);
-    }
-
-    fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
-        self.visit_parameters(&node.parameters.parameters, None);
-        if let Some(returns) = &node.returns {
-            self.visit_parameters(&returns.variables.parameters, None);
-        }
-    }
-
-    fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
-        self.visit_parameters(&node.parameters.parameters, None);
-    }
-
-    fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
-        if let Some(parameters) = &node.parameters {
-            let default_location = if self.language_version < VERSION_0_5_0 {
-                Some(DataLocation::Memory)
-            } else {
-                None
-            };
-            self.visit_parameters(&parameters.parameters, default_location);
+            self.visit_parameters(returns, None);
         }
     }
 
     fn leave_try_statement(&mut self, node: &input_ir::TryStatement) {
         if let Some(returns) = &node.returns {
-            self.visit_parameters(&returns.variables.parameters, None);
+            self.visit_parameters(returns, None);
         }
     }
 
     fn leave_catch_clause_error(&mut self, node: &input_ir::CatchClauseError) {
-        self.visit_parameters(&node.parameters.parameters, None);
+        self.visit_parameters(&node.parameters, None);
     }
 
     fn enter_type_name(&mut self, node: &input_ir::TypeName) -> bool {
@@ -242,7 +201,6 @@ impl Visitor for Pass {
         self.binder.mark_user_meta_type_node(node.node_id);
 
         let parameter_types: Vec<_> = node
-            .parameters
             .parameters
             .iter()
             .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
@@ -302,17 +260,14 @@ impl Visitor for Pass {
             if let input_ir::VariableDeclarationType::TypeName(type_name) = &node.variable_type {
                 self.resolve_type_name(
                     type_name,
-                    node.storage_location
-                        .as_ref()
-                        .map(storage_location_to_data_location)
-                        .or_else(|| {
-                            if self.language_version < VERSION_0_5_0 {
-                                // default data location is storage for variables
-                                Some(DataLocation::Storage)
-                            } else {
-                                None
-                            }
-                        }),
+                    node.storage_location.as_ref().map(Into::into).or_else(|| {
+                        if self.language_version < VERSION_0_5_0 {
+                            // default data location is storage for variables
+                            Some(DataLocation::Storage)
+                        } else {
+                            None
+                        }
+                    }),
                 )
             } else {
                 // this is for `var` variables (in Solidity < 0.5.0) we cannot
@@ -325,17 +280,14 @@ impl Visitor for Pass {
     fn leave_typed_tuple_member(&mut self, node: &input_ir::TypedTupleMember) {
         let type_id = self.resolve_type_name(
             &node.type_name,
-            node.storage_location
-                .as_ref()
-                .map(storage_location_to_data_location)
-                .or_else(|| {
-                    if self.language_version < VERSION_0_5_0 {
-                        // default data location is storage for variables
-                        Some(DataLocation::Storage)
-                    } else {
-                        None
-                    }
-                }),
+            node.storage_location.as_ref().map(Into::into).or_else(|| {
+                if self.language_version < VERSION_0_5_0 {
+                    // default data location is storage for variables
+                    Some(DataLocation::Storage)
+                } else {
+                    None
+                }
+            }),
         );
         self.binder.set_node_type(node.node_id, type_id);
     }
@@ -344,7 +296,7 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
     ) {
-        if node.var_keyword.is_none() {
+        if !node.var_keyword {
             return;
         }
         // this handles adding type information to the `var` declarations in Solidity < 0.5.0
@@ -447,8 +399,8 @@ impl Visitor for Pass {
 
                             symbols.insert(symbol_name.unparse(), definition_ids);
 
-                            if let Some(alias) = &symbol.alias {
-                                let terminal = match alias.operator {
+                            if let Some(operator) = &symbol.alias {
+                                let terminal = match operator {
                                     input_ir::UsingOperator::Ampersand => TerminalKind::Ampersand,
                                     input_ir::UsingOperator::Asterisk => TerminalKind::Asterisk,
                                     input_ir::UsingOperator::BangEqual => TerminalKind::BangEqual,
@@ -503,7 +455,7 @@ impl Visitor for Pass {
             }
         };
 
-        if node.global_keyword.is_some() {
+        if node.global_keyword {
             self.binder.insert_global_using_directive(directive);
         } else {
             // TODO(validation): `using` directives are not allowed in interfaces since 0.7.1

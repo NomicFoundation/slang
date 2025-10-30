@@ -6,7 +6,7 @@ use crate::backend::binder::{
     Reference, Resolution, ScopeId,
 };
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::backend::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
+use crate::backend::types::{DataLocation, FunctionType, Type, TypeId};
 
 impl Pass {
     // Resolves an IdentifierPath. It starts resolution at the "contract" scope
@@ -95,11 +95,9 @@ impl Pass {
             }
             input_ir::TypeName::FunctionType(function_type) => {
                 // NOTE: Keep in sync with `type_of_function_definition`
-                let parameter_types =
-                    self.resolve_parameter_types(&function_type.parameters.parameters)?;
+                let parameter_types = self.resolve_parameter_types(&function_type.parameters)?;
                 let return_type = if let Some(returns) = &function_type.returns {
-                    let return_types =
-                        self.resolve_parameter_types(&returns.variables.parameters)?;
+                    let return_types = self.resolve_parameter_types(returns)?;
                     if return_types.len() == 1 {
                         return_types.first().copied().unwrap()
                     } else {
@@ -110,24 +108,11 @@ impl Pass {
                 } else {
                     self.types.void()
                 };
-                let mut kind = FunctionTypeKind::NonPayable;
-                let mut external = false;
-                for attribute in &function_type.attributes {
-                    match attribute {
-                        input_ir::FunctionTypeAttribute::ExternalKeyword
-                        | input_ir::FunctionTypeAttribute::PublicKeyword => external = true,
-                        input_ir::FunctionTypeAttribute::PureKeyword => {
-                            kind = FunctionTypeKind::Pure;
-                        }
-                        input_ir::FunctionTypeAttribute::ViewKeyword => {
-                            kind = FunctionTypeKind::View;
-                        }
-                        input_ir::FunctionTypeAttribute::PayableKeyword => {
-                            kind = FunctionTypeKind::Payable;
-                        }
-                        _ => {}
-                    }
-                }
+                let kind = (&function_type.mutability).into();
+                let external = matches!(
+                    function_type.visibility,
+                    input_ir::FunctionVisibility::External | input_ir::FunctionVisibility::Public
+                );
                 Some(self.types.register_type(Type::Function(FunctionType {
                     definition_id: None,
                     implicit_receiver_type: None,
