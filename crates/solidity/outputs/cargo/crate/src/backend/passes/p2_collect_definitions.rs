@@ -171,7 +171,7 @@ impl Pass {
         for parameter in parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.id());
             if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.id(), name);
+                let definition = Definition::new_parameter(&parameter.node, name);
                 self.binder.insert_definition_no_scope(definition);
             }
         }
@@ -184,7 +184,7 @@ impl Pass {
         for parameter in parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.id());
             if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.id(), name);
+                let definition = Definition::new_parameter(&parameter.node, name);
                 self.binder.insert_definition_no_scope(definition);
             }
         }
@@ -197,7 +197,7 @@ impl Pass {
         for parameter in parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.id());
             if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.id(), name);
+                let definition = Definition::new_parameter(&parameter.node, name);
                 self.binder.insert_definition_no_scope(definition);
             }
         }
@@ -214,7 +214,7 @@ impl Pass {
     ) {
         for parameter in parameters {
             if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.id(), name);
+                let definition = Definition::new_parameter(&parameter.node, name);
                 self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }
@@ -249,7 +249,7 @@ impl Visitor for Pass {
     }
 
     fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
-        let definition = Definition::new_contract(node.id(), &node.name);
+        let definition = Definition::new_contract(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
 
         let scope = Scope::new_contract(node.id(), self.current_scope_id());
@@ -263,7 +263,7 @@ impl Visitor for Pass {
     }
 
     fn enter_library_definition(&mut self, node: &input_ir::LibraryDefinition) -> bool {
-        let definition = Definition::new_library(node.id(), &node.name);
+        let definition = Definition::new_library(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
 
         let scope = Scope::new_contract(node.id(), self.current_scope_id());
@@ -277,7 +277,7 @@ impl Visitor for Pass {
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
-        let definition = Definition::new_interface(node.id(), &node.name);
+        let definition = Definition::new_interface(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
 
         let scope = Scope::new_contract(node.id(), self.current_scope_id());
@@ -294,7 +294,7 @@ impl Visitor for Pass {
         let imported_file_id = self.resolve_import_path(&node.path);
 
         if let Some(alias) = &node.alias {
-            let definition = Definition::new_import(node.id(), alias, imported_file_id);
+            let definition = Definition::new_import(&node.node, alias, imported_file_id);
             self.insert_definition_in_current_scope(definition);
         } else if let Some(imported_file_id) = imported_file_id {
             self.current_file_scope()
@@ -307,7 +307,7 @@ impl Visitor for Pass {
     fn enter_named_import(&mut self, node: &input_ir::NamedImport) -> bool {
         let imported_file_id = self.resolve_import_path(&node.path);
 
-        let definition = Definition::new_import(node.id(), &node.alias, imported_file_id);
+        let definition = Definition::new_import(&node.node, &node.alias, imported_file_id);
         self.insert_definition_in_current_scope(definition);
 
         false
@@ -323,7 +323,7 @@ impl Visitor for Pass {
                 &symbol.name
             };
             let definition = Definition::new_imported_symbol(
-                symbol.id(),
+                &symbol.node,
                 identifier,
                 symbol.name.unparse(),
                 imported_file_id.clone(),
@@ -346,7 +346,7 @@ impl Visitor for Pass {
                 if let Some(name) = &node.name {
                     let visibility = (&node.visibility).into();
                     let definition =
-                        Definition::new_function(node.id(), name, parameters_scope_id, visibility);
+                        Definition::new_function(&node.node, name, parameters_scope_id, visibility);
 
                     let current_scope_node_id = self.current_scope().node_id();
                     let enclosing_definition =
@@ -398,7 +398,7 @@ impl Visitor for Pass {
                     unreachable!("expected a name for the modifier");
                 };
 
-                let definition = Definition::new_modifier(node.id(), name);
+                let definition = Definition::new_modifier(&node.node, name);
                 self.insert_definition_in_current_scope(definition);
 
                 let modifier_scope = Scope::new_modifier(node.id(), self.current_scope_id());
@@ -414,13 +414,13 @@ impl Visitor for Pass {
     }
 
     fn enter_enum_definition(&mut self, node: &input_ir::EnumDefinition) -> bool {
-        let definition = Definition::new_enum(node.id(), &node.name);
+        let definition = Definition::new_enum(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
 
         let enum_scope = Scope::new_enum(node.id());
         let enum_scope_id = self.binder.insert_scope(enum_scope);
         for member in &node.members {
-            let definition = Definition::new_enum_member(member.id(), member);
+            let definition = Definition::new_enum_member(member);
             self.binder
                 .insert_definition_in_scope(definition, enum_scope_id);
         }
@@ -429,13 +429,13 @@ impl Visitor for Pass {
     }
 
     fn enter_struct_definition(&mut self, node: &input_ir::StructDefinition) -> bool {
-        let definition = Definition::new_struct(node.id(), &node.name);
+        let definition = Definition::new_struct(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
 
         let struct_scope = Scope::new_struct(node.id());
         let struct_scope_id = self.binder.insert_scope(struct_scope);
         for member in &node.members {
-            let definition = Definition::new_struct_member(member.id(), &member.name);
+            let definition = Definition::new_struct_member(&member.node, &member.name);
             self.binder
                 .insert_definition_in_scope(definition, struct_scope_id);
         }
@@ -445,7 +445,7 @@ impl Visitor for Pass {
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
         let parameters_scope_id = self.collect_error_parameters(&node.members);
-        let definition = Definition::new_error(node.id(), &node.name, parameters_scope_id);
+        let definition = Definition::new_error(&node.node, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
         false
@@ -453,7 +453,7 @@ impl Visitor for Pass {
 
     fn enter_event_definition(&mut self, node: &input_ir::EventDefinition) -> bool {
         let parameters_scope_id = self.collect_event_parameters(&node.parameters);
-        let definition = Definition::new_event(node.id(), &node.name, parameters_scope_id);
+        let definition = Definition::new_event(&node.node, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
         false
@@ -468,10 +468,10 @@ impl Visitor for Pass {
         // Public state variables define a getter, so we don't register them as
         // constants here
         let definition = if is_constant && !is_public {
-            Definition::new_constant(node.id(), &node.name)
+            Definition::new_constant(&node.node, &node.name)
         } else {
             let visibility = (&node.visibility).into();
-            Definition::new_state_variable(node.id(), &node.name, visibility)
+            Definition::new_state_variable(&node.node, &node.name, visibility)
         };
         self.insert_definition_in_current_scope(definition);
 
@@ -481,7 +481,7 @@ impl Visitor for Pass {
     }
 
     fn enter_constant_definition(&mut self, node: &input_ir::ConstantDefinition) -> bool {
-        let definition = Definition::new_constant(node.id(), &node.name);
+        let definition = Definition::new_constant(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
 
         false
@@ -491,7 +491,7 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::UserDefinedValueTypeDefinition,
     ) -> bool {
-        let definition = Definition::new_user_defined_value_type(node.id(), &node.name);
+        let definition = Definition::new_user_defined_value_type(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
 
         false
@@ -509,7 +509,7 @@ impl Visitor for Pass {
             self.replace_scope(scope);
         }
 
-        let definition = Definition::new_variable(node.id(), &node.name);
+        let definition = Definition::new_variable(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
     }
 
@@ -532,13 +532,13 @@ impl Visitor for Pass {
             };
             let definition = match tuple_member {
                 input_ir::TupleMember::TypedTupleMember(typed_tuple_member) => {
-                    Definition::new_variable(typed_tuple_member.id(), &typed_tuple_member.name)
+                    Definition::new_variable(&typed_tuple_member.node, &typed_tuple_member.name)
                 }
                 input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
                     if !is_untyped_declaration {
                         continue;
                     }
-                    Definition::new_variable(untyped_tuple_member.id(), &untyped_tuple_member.name)
+                    Definition::new_variable(&untyped_tuple_member.node, &untyped_tuple_member.name)
                 }
             };
             self.insert_definition_in_current_scope(definition);
@@ -599,11 +599,11 @@ impl Visitor for Pass {
 
     fn enter_mapping_type(&mut self, node: &input_ir::MappingType) -> bool {
         if let Some(name) = &node.key_type.name {
-            let definition = Definition::new_type_parameter(node.key_type.id(), name);
+            let definition = Definition::new_type_parameter(&node.key_type.node, name);
             self.binder.insert_definition_no_scope(definition);
         }
         if let Some(name) = &node.value_type.name {
-            let definition = Definition::new_type_parameter(node.value_type.id(), name);
+            let definition = Definition::new_type_parameter(&node.value_type.node, name);
             self.binder.insert_definition_no_scope(definition);
         }
 
@@ -613,14 +613,14 @@ impl Visitor for Pass {
     fn enter_function_type(&mut self, node: &input_ir::FunctionType) -> bool {
         for parameter in &node.parameters {
             if let Some(name) = &parameter.name {
-                let definition = Definition::new_type_parameter(parameter.id(), name);
+                let definition = Definition::new_type_parameter(&parameter.node, name);
                 self.binder.insert_definition_no_scope(definition);
             }
         }
         if let Some(returns) = &node.returns {
             for parameter in returns {
                 if let Some(name) = &parameter.name {
-                    let definition = Definition::new_type_parameter(parameter.id(), name);
+                    let definition = Definition::new_type_parameter(&parameter.node, name);
                     self.binder.insert_definition_no_scope(definition);
                 }
             }
@@ -641,19 +641,19 @@ impl Visitor for Pass {
     }
 
     fn enter_yul_function_definition(&mut self, node: &input_ir::YulFunctionDefinition) -> bool {
-        let definition = Definition::new_yul_function(node.id(), &node.name);
+        let definition = Definition::new_yul_function(&node.node, &node.name);
         self.insert_definition_in_current_scope(definition);
 
         let scope = Scope::new_yul_function(node.id(), self.current_scope_id());
         let scope_id = self.enter_scope(scope);
 
         for parameter in &node.parameters {
-            let definition = Definition::new_yul_parameter(parameter.id(), parameter);
+            let definition = Definition::new_yul_parameter(parameter);
             self.binder.insert_definition_in_scope(definition, scope_id);
         }
         if let Some(returns) = &node.returns {
             for parameter in returns {
-                let definition = Definition::new_yul_variable(parameter.id(), parameter);
+                let definition = Definition::new_yul_variable(parameter);
                 self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }
@@ -666,7 +666,7 @@ impl Visitor for Pass {
     }
 
     fn enter_yul_label(&mut self, node: &input_ir::YulLabel) -> bool {
-        let definition = Definition::new_yul_label(node.id(), &node.label);
+        let definition = Definition::new_yul_label(&node.node, &node.label);
         self.insert_definition_in_current_scope(definition);
 
         false
@@ -677,7 +677,7 @@ impl Visitor for Pass {
         node: &input_ir::YulVariableDeclarationStatement,
     ) -> bool {
         for variable in &node.variables {
-            let definition = Definition::new_yul_variable(variable.id(), variable);
+            let definition = Definition::new_yul_variable(variable);
             self.insert_definition_in_current_scope(definition);
         }
         // TODO: we maybe want to enter a new scope here, but that should be

@@ -50,11 +50,11 @@ impl Pass {
                     }) => resolved_file_id.as_ref().and_then(|resolved_file_id| {
                         self.binder.scope_id_for_file_id(resolved_file_id)
                     }),
-                    Definition::Contract(ContractDefinition { node_id, .. })
-                    | Definition::Interface(InterfaceDefinition { node_id, .. })
-                    | Definition::Library(LibraryDefinition { node_id, .. }) => {
+                    Definition::Contract(ContractDefinition { node, .. })
+                    | Definition::Interface(InterfaceDefinition { node, .. })
+                    | Definition::Library(LibraryDefinition { node, .. }) => {
                         use_lexical_resolution = false;
-                        self.binder.scope_id_for_node_id(*node_id)
+                        self.binder.scope_id_for_node_id(node.id())
                     }
                     _ => None,
                 });

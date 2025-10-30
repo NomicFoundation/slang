@@ -462,8 +462,8 @@ impl<'a> BuiltInsResolver<'a> {
             },
             Definition::UserDefinedValueType(udvt) if self.language_version >= VERSION_0_8_8 => {
                 match symbol {
-                    "wrap" => Some(BuiltIn::Wrap(udvt.node_id)),
-                    "unwrap" => Some(BuiltIn::Unwrap(udvt.node_id)),
+                    "wrap" => Some(BuiltIn::Wrap(udvt.node.id())),
+                    "unwrap" => Some(BuiltIn::Unwrap(udvt.node.id())),
                     _ => None,
                 }
             }
