@@ -17,6 +17,14 @@ pub fn cleanup_setup(project: &str) -> BinderOutput {
 }
 
 pub fn run(unit: CompilationUnit) -> BinderOutput {
+    inner_run(unit).0
+}
+
+pub fn test(unit: CompilationUnit) -> usize {
+    inner_run(unit).1
+}
+
+fn inner_run(unit: CompilationUnit) -> (BinderOutput, usize) {
     let data = build_binder_output(unit);
 
     let mut ids = 0;
@@ -50,7 +58,5 @@ pub fn run(unit: CompilationUnit) -> BinderOutput {
             }
         }
     }
-    assert_ne!(ids, 0);
-
-    data
+    (data, ids)
 }
