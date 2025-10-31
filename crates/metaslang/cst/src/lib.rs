@@ -11,7 +11,3 @@ pub mod text_index;
 #[cfg(feature = "syntax")]
 #[allow(missing_docs)]
 pub mod syntax_node;
-
-#[cfg(feature = "syntax")]
-#[allow(missing_docs)]
-pub mod syntax_cursor;

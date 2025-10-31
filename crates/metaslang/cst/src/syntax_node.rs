@@ -8,7 +8,6 @@ use crate::text_index::TextIndex;
 pub struct SyntaxNode<T: KindTypes> {
     parent: Option<Rc<SyntaxNode<T>>>,
     label: T::EdgeLabel,
-    text_offset: TextIndex,
     green: Node<T>,
 }
 
@@ -17,17 +16,7 @@ impl<T: KindTypes> SyntaxNode<T> {
         Rc::new(Self {
             parent: None,
             label: T::EdgeLabel::default(),
-            text_offset: TextIndex::ZERO,
             green: node,
-        })
-    }
-
-    pub(crate) fn erase_root(&self) -> Rc<Self> {
-        Rc::new(Self {
-            parent: None,
-            label: self.label,
-            text_offset: self.text_offset,
-            green: self.green.clone(),
         })
     }
 
@@ -59,22 +48,15 @@ impl<T: KindTypes> SyntaxNode<T> {
         self.green.text_len()
     }
 
-    pub fn text_offset(&self) -> TextIndex {
-        self.text_offset
-    }
-
     /// Returns the list of child edges directly connected to this node.
     pub fn children(self: &Rc<Self>) -> Vec<Rc<Self>> {
         let mut children = Vec::with_capacity(self.green.children().len());
-        let mut text_offset = self.text_offset;
         for edge in self.green.children() {
             children.push(Rc::new(SyntaxNode {
                 parent: Some(Rc::clone(self)),
                 label: edge.label,
-                text_offset,
                 green: edge.node.clone(),
             }));
-            text_offset += edge.node.text_len();
         }
         children
     }
