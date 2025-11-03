@@ -1,0 +1,95 @@
+{% macro render_index(language) -%}
+  {%- set target = model.ir_languages[language].target -%}
+  use std::rc::Rc;
+  use std::collections::HashMap;
+  use crate::cst::SyntaxNode;
+  use crate::cst::NodeId;
+  #[allow(clippy::wildcard_imports)]
+  use super::nodes::*;
+
+  pub enum NodeType {
+    {%- for parent_type, sequence in target.sequences -%}
+      {{ parent_type }}({{ parent_type }}),
+    {% endfor -%}
+  }
+
+  pub type TreeIndex = HashMap<NodeId, NodeType>;
+
+  //
+  // Sequences:
+  //
+
+  {% for parent_type, sequence in target.sequences %}
+    pub fn register_{{ parent_type | snake_case }}(node: &{{ parent_type }}, tree: &mut TreeIndex) {
+      tree.insert(node.id(), NodeType::{{ parent_type }}(Rc::clone(node)));
+      {% for field in sequence.fields -%}
+        {%- if not field.type.is_terminal -%}
+          {%- if field.is_optional -%}
+            if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
+              register_{{ field.type.name | snake_case }}({{ field.label }}, tree);
+            }
+          {% else -%}
+            register_{{ field.type.name | snake_case }}(&node.{{ field.label }}, tree);
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    }
+
+  {% endfor %}
+
+  //
+  // Choices:
+  //
+
+  {% for parent_type, choice in target.choices %}
+    {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+    {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+    {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
+    {% if nonterminals | length == 0 %}
+      pub fn register_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _tree: &mut TreeIndex) {}
+    {% else %}
+      pub fn register_{{ parent_type | snake_case }}(node: &{{ parent_type }}, tree: &mut TreeIndex) {
+        match node {
+          {% for nonterminal in nonterminals -%}
+            {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+              register_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}, tree);
+            }
+          {%- endfor %}
+          {%- if non_unique_terminals | length > 0 %}
+            {%- for terminal in non_unique_terminals -%}
+              {%- if not loop.first -%} | {%- endif -%}
+              {{ parent_type }}::{{ terminal.name }}(_)
+            {%- endfor -%}
+            => {}
+          {% endif -%}
+          {%- if unique_terminals | length > 0 %}
+            {%- for terminal in unique_terminals -%}
+              {%- if not loop.first -%} | {%- endif -%}
+              {{ parent_type }}::{{ terminal.name }}
+            {%- endfor -%}
+            => {}
+          {% endif -%}
+        }
+      }
+    {% endif %}
+  {% endfor %}
+
+  //
+  // Repeated & Separated
+  //
+
+  {% for parent_type, collection in target.collections -%}
+    {%- if collection.item_type.is_terminal %}
+      #[inline]
+      fn register_{{ parent_type | snake_case }}(_items: &[Rc<SyntaxNode>], _tree: &mut TreeIndex) {}
+    {% else %}
+      #[inline]
+      fn register_{{ parent_type | snake_case }}(items: &[{{ collection.item_type.name }}], tree: &mut TreeIndex) {
+        for item in items {
+          register_{{ collection.item_type.name | snake_case }}(item, tree);
+        }
+      }
+    {% endif -%}
+  {% endfor %}
+
+{% endmacro render_index %}

@@ -2,6 +2,8 @@
 mod nodes;
 pub use nodes::*;
 
+#[path = "index.generated.rs"]
+pub mod index;
 #[path = "transformer.generated.rs"]
 pub mod transformer;
 #[path = "visitor.generated.rs"]
