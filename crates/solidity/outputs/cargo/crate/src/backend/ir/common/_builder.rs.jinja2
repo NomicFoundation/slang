@@ -16,13 +16,13 @@
 
   {% for parent_type, sequence in builder.sequences %}
     {% if not sequence.has_added_fields %}
-      pub fn build_{{ parent_type | snake_case }}(node: &Rc<SyntaxNode>) -> Option<{{ parent_type }}>
+      pub fn build_{{ parent_type | snake_case }}(node: Rc<SyntaxNode>) -> Option<{{ parent_type }}>
       {
-        assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
-        let mut helper = ChildrenHelper::new(node.children());
+        assert_nonterminal_kind(&node, NonterminalKind::{{ parent_type }});
+        let mut helper = ChildrenHelper::new(&node);
         {% for field in sequence.fields %}
           {%- if field.is_removed -%}
-            _ = helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?;
+            helper.skip_label(EdgeLabel::{{ field.label | pascal_case }})?;
           {%- elif field.is_optional -%}
             let {{ field.label }} =
               {%- if field.type.kind == "Terminal" -%}
@@ -51,7 +51,7 @@
         }
 
         Some(Rc::new({{ parent_type }}Struct {
-          node: Rc::clone(node),
+          node,
           {%- for field in sequence.fields -%}
             {%- if not field.is_removed -%}
               {{ field.label }},
@@ -67,9 +67,10 @@
   //
 
   {% for parent_type, choice in builder.choices %}
-    pub fn build_{{ parent_type | snake_case }}(node: &Rc<SyntaxNode>) -> Option<{{ parent_type }}> {
-      assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
-      let mut helper = ChildrenHelper::new(node.children());
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn build_{{ parent_type | snake_case }}(node: Rc<SyntaxNode>) -> Option<{{ parent_type }}> {
+      assert_nonterminal_kind(&node, NonterminalKind::{{ parent_type }});
+      let mut helper = ChildrenHelper::new(&node);
       let variant = helper.accept_label(EdgeLabel::Variant)?;
       let item = match variant.kind() {
         {% for type in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
@@ -105,10 +106,11 @@
   //
 
   {% for parent_type, collection in builder.collections %}
-    pub fn build_{{ parent_type | snake_case }}(node: &Rc<SyntaxNode>) -> Option<{{ parent_type }}> {
-      assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn build_{{ parent_type | snake_case }}(node: Rc<SyntaxNode>) -> Option<{{ parent_type }}> {
+      assert_nonterminal_kind(&node, NonterminalKind::{{ parent_type }});
       let mut items = {{ parent_type }}::new();
-      let mut helper = ChildrenHelper::new(node.children());
+      let mut helper = ChildrenHelper::new(&node);
       while let Some(child) = helper.accept_label(EdgeLabel::Item) {
         {%- if collection.item_type.is_terminal -%}
           items.push(terminal_node_cloned(child));
@@ -117,7 +119,7 @@
             items.push(item);
           }
         {%- endif -%}
-        _ = helper.accept_label(EdgeLabel::Separator);
+        helper.skip_label(EdgeLabel::Separator);
       }
       if !helper.finalize() {
         return None;
@@ -138,21 +140,21 @@
 
   #[allow(dead_code)]
   #[inline]
-  fn terminal_node_cloned(node: &Rc<SyntaxNode>) -> Rc<SyntaxNode> {
+  fn terminal_node_cloned(node: Rc<SyntaxNode>) -> Rc<SyntaxNode> {
     assert!(node.is_terminal(), "expected terminal node");
-    Rc::clone(node)
+    node
   }
 
-  struct ChildrenHelper {
-    children: Vec<Rc<SyntaxNode>>,
+  struct ChildrenHelper<'a> {
+    children: &'a Rc<SyntaxNode>,
     index: usize,
   }
 
-  impl ChildrenHelper {
-    fn new(children: Vec<Rc<SyntaxNode>>) -> Self {
+  impl<'a> ChildrenHelper<'a> {
+    fn new(children: &'a Rc<SyntaxNode>) -> Self {
       let mut index = 0;
-      while index < children.len() {
-        if !children[index].is_trivia() && children[index].is_valid() {
+      while index < children.children_count() {
+        if children.child_is_valid_and_not_trivia(index) {
           break;
         }
         index += 1;
@@ -160,26 +162,31 @@
       Self { children, index }
     }
 
-    fn accept_label(&mut self, label: EdgeLabel) -> Option<&Rc<SyntaxNode>> {
-      if self.index >= self.children.len() || self.children[self.index].label() != label {
+    fn skip_label(&mut self, label: EdgeLabel) -> Option<usize> {
+      if self.index >= self.children.children_count() || self.children.child_label(self.index) != label {
         return None;
       }
 
-      let node = &self.children[self.index];
+      let result = self.index;
       loop {
         self.index += 1;
-        if self.index >= self.children.len() ||
-          (!self.children[self.index].is_trivia() && self.children[self.index].is_valid()) {
+        if self.index >= self.children.children_count() ||
+          self.children.child_is_valid_and_not_trivia(self.index) {
           break;
         }
       }
-      Some(node)
+      Some(result)
+    }
+
+    fn accept_label(&mut self, label: EdgeLabel) -> Option<Rc<SyntaxNode>> {
+      let index = self.skip_label(label)?;
+      Some(self.children.nth_child(index))
     }
 
     fn finalize(mut self) -> bool {
       // skip over trailing trivia and unrecognized nodes
-      while self.index < self.children.len() {
-        if !self.children[self.index].is_trivia() && self.children[self.index].is_valid() {
+      while self.index < self.children.children_count() {
+        if self.children.child_is_valid_and_not_trivia(self.index) {
           return false;
         }
         self.index += 1;

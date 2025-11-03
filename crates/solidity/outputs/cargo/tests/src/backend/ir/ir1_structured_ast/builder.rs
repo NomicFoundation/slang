@@ -25,7 +25,7 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let ast = ir1_structured_ast::builder::build_source_unit(&output.syntax_tree()).unwrap();
+    let ast = ir1_structured_ast::builder::build_source_unit(output.syntax_tree()).unwrap();
     assert_eq!(2, ast.members.len());
     assert!(matches!(
         ast.members[0],
@@ -106,7 +106,7 @@ contract Test {
     assert!(!output.is_valid());
     assert_eq!(output.errors().len(), 1);
 
-    let ast = ir1_structured_ast::builder::build_source_unit(&output.syntax_tree()).unwrap();
+    let ast = ir1_structured_ast::builder::build_source_unit(output.syntax_tree()).unwrap();
     assert_eq!(1, ast.members.len());
     assert!(matches!(
         ast.members[0],
@@ -157,7 +157,7 @@ contract Test {
     assert!(!output.is_valid());
     assert_eq!(output.errors().len(), 1);
 
-    let ast = ir1_structured_ast::builder::build_source_unit(&output.syntax_tree()).unwrap();
+    let ast = ir1_structured_ast::builder::build_source_unit(output.syntax_tree()).unwrap();
     // the contract definition cannot be parsed fully
     assert_eq!(0, ast.members.len());
 

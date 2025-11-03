@@ -61,6 +61,36 @@ impl<T: KindTypes> SyntaxNode<T> {
         children
     }
 
+    /// Returns the number of child nodes
+    #[inline]
+    pub fn children_count(&self) -> usize {
+        self.green.children().len()
+    }
+
+    /// Returns the label of the nth child. Panics if the given index is out of bounds.
+    #[inline]
+    pub fn child_label(&self, index: usize) -> T::EdgeLabel {
+        self.green.children()[index].label
+    }
+
+    /// Check that the nth child is a valid node and is not trivia
+    #[inline]
+    pub fn child_is_valid_and_not_trivia(&self, index: usize) -> bool {
+        let node = &self.green.children()[index].node;
+        node.is_valid() && !node.is_trivia()
+    }
+
+    /// Returns the `SyntaxNode` for the nth-child
+    #[inline]
+    pub fn nth_child(self: &Rc<Self>, index: usize) -> Rc<Self> {
+        let edge = &self.green.children()[index];
+        Rc::new(SyntaxNode {
+            parent: Some(Rc::clone(self)),
+            label: edge.label,
+            green: edge.node.clone(),
+        })
+    }
+
     /// Reconstructs the original source code from the node and its sub-tree.
     pub fn unparse(&self) -> String {
         self.green.unparse()
