@@ -8,7 +8,7 @@ pub mod ir;
 pub mod passes;
 pub mod types;
 
-pub type BinderOutput = passes::p5_resolve_references::Output;
+pub type BinderOutput = passes::p6_index_tree::Output;
 
 pub fn build_binder_output(compilation_unit: CompilationUnit) -> BinderOutput {
     let data = passes::p0_build_ast::run(compilation_unit);
@@ -16,5 +16,6 @@ pub fn build_binder_output(compilation_unit: CompilationUnit) -> BinderOutput {
     let data = passes::p2_collect_definitions::run(data);
     let data = passes::p3_linearise_contracts::run(data);
     let data = passes::p4_type_definitions::run(data);
-    passes::p5_resolve_references::run(data)
+    let data = passes::p5_resolve_references::run(data);
+    passes::p6_index_tree::run(data)
 }
