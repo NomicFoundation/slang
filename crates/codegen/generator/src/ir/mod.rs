@@ -1,7 +1,7 @@
 mod model;
 mod mutator;
 
-pub mod passes;
+pub mod builders;
 
 pub use model::IrModel;
 pub use mutator::IrModelMutator;

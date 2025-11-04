@@ -11,7 +11,7 @@ use std::path::Path;
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
-use ir::passes::{build_languages, GenericModel};
+use ir::builders::{build_ir_models, GenericModel};
 use language_definition::model::Language;
 use semver::Version;
 use serde::Serialize;
@@ -62,7 +62,7 @@ impl RuntimeModel {
             parser: ParserModel::from_language(language),
             kinds: KindsModel::from_language(language),
 
-            ir_languages: build_languages(language),
+            ir_languages: build_ir_models(language),
         })
     }
 }

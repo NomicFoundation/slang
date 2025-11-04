@@ -1,65 +1,6 @@
-use std::collections::BTreeMap;
+use crate::ir::{IrModel, IrModelMutator, ModelWithTransformer};
 
-use language_definition::model::Language;
-use serde::Serialize;
-
-use super::{IrModel, IrModelMutator, ModelWithBuilder, ModelWithTransformer};
-
-#[derive(Serialize)]
-#[serde(untagged)]
-pub enum GenericModel {
-    ModelWithBuilder(ModelWithBuilder),
-    ModelWithTransformer(ModelWithTransformer),
-}
-
-pub fn build_languages(language: &Language) -> BTreeMap<String, GenericModel> {
-    let mut languages = BTreeMap::new();
-
-    // IR0: CST:
-    let cst_model = IrModel::from_language(language);
-
-    // IR1: structured AST:
-    let ir1_structured_ast_model = build_ir1_structured_ast_model(&cst_model);
-
-    // IR2: flat contract specifiers:
-    let ir2_flat_contracts_model = build_ir2_flat_contracts_model(&ir1_structured_ast_model.target);
-
-    languages.insert(
-        "ir1_structured_ast".to_string(),
-        GenericModel::ModelWithBuilder(ir1_structured_ast_model),
-    );
-    languages.insert(
-        "ir2_flat_contracts".to_string(),
-        GenericModel::ModelWithTransformer(ir2_flat_contracts_model),
-    );
-
-    languages
-}
-
-fn build_ir1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
-    let mut mutator = IrModelMutator::create_from(cst_model);
-
-    // remove fields from sequences that contain redundant terminal nodes
-    for (sequence_id, sequence) in &cst_model.sequences {
-        if sequence.multiple_operators {
-            // don't remove terminals if the sequence is modelling a precedence
-            // expression with multiple variant operators
-            continue;
-        }
-        for field in &sequence.fields {
-            if !field.is_optional
-                && field.r#type.is_terminal()
-                && cst_model.terminals[field.r#type.as_identifier()]
-            {
-                mutator.remove_sequence_field(sequence_id, &field.label);
-            }
-        }
-    }
-
-    mutator.into()
-}
-
-fn build_ir2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTransformer {
+pub(super) fn build_from(structured_ast_model: &IrModel) -> ModelWithTransformer {
     let mut mutator = IrModelMutator::create_from(structured_ast_model);
 
     flatten_contract_specifiers(&mut mutator);
