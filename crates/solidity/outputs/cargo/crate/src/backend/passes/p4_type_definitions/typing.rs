@@ -188,7 +188,7 @@ impl Pass {
                         .scope_id_for_node_id(*definition_id)
                         .expect("definition in struct type has no associated scope");
                     let Scope::Struct(struct_scope) = self.binder.get_scope_by_id(scope_id) else {
-                        unreachable!("definition in struct type has no invalid scope");
+                        unreachable!("definition in struct type has no valid scope");
                     };
                     let mut types = Vec::new();
                     for member_id in struct_scope.definitions.values() {

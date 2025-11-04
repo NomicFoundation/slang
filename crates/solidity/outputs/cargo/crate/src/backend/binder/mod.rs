@@ -165,20 +165,22 @@ impl Binder {
 
         if let Scope::File(file_scope) = &scope {
             let file_id = &file_scope.file_id;
-            if self.scopes_by_file_id.contains_key(file_id) {
+            if self
+                .scopes_by_file_id
+                .insert(file_id.clone(), scope_id)
+                .is_some()
+            {
                 unreachable!("attempt to insert duplicate file scope for {file_id}");
             }
-            self.scopes_by_file_id.insert(file_id.clone(), scope_id);
         }
 
         if let Scope::Parameters(_) = &scope {
             // parameters scope don't have an associated node ID
         } else {
             let node_id = scope.node_id();
-            if self.scopes_by_node_id.contains_key(&node_id) {
+            if self.scopes_by_node_id.insert(node_id, scope_id).is_some() {
                 unreachable!("attempt to insert duplicate file scope for node {node_id:?}");
             }
-            self.scopes_by_node_id.insert(node_id, scope_id);
         }
 
         self.scopes.push(scope);
