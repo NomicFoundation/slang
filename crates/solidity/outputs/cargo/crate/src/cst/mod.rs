@@ -71,6 +71,15 @@ pub type CursorIterator = metaslang_cst::cursor::CursorIterator<KindTypes>;
 /// Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
 pub type AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<KindTypes>;
 
+/// A cursor that can traverse a CST using `SyntaxNodes`.
+///
+/// Nodes are visited in a DFS pre-order traversal.
+pub type SyntaxCursor = metaslang_cst::syntax_cursor::SyntaxCursor<KindTypes>;
+/// Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+pub type SyntaxCursorIterator = metaslang_cst::syntax_cursor::SyntaxCursorIterator<KindTypes>;
+/// Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
+pub type SyntaxAncestorsIterator = metaslang_cst::syntax_cursor::SyntaxAncestorsIterator<KindTypes>;
+
 /// The declarative `Query` API is a convenient alternative to the [`Cursor`][`metaslang_cst::cursor::Cursor`]
 /// API for navigating the CST.
 ///

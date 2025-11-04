@@ -20,6 +20,14 @@ impl<T: KindTypes> SyntaxNode<T> {
         })
     }
 
+    pub(crate) fn erase_root(&self) -> Rc<Self> {
+        Rc::new(Self {
+            parent: None,
+            label: self.label,
+            green: self.green.clone(),
+        })
+    }
+
     /// Returns a unique identifier of the node. It is not reproducible over parses
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(&self) -> NodeId {
