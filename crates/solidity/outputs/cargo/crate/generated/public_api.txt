@@ -33,6 +33,7 @@ impl slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::create_tree_cursor(&self) -> slang_solidity::cst::Cursor
 pub fn slang_solidity::compilation::File::errors(&self) -> &alloc::vec::Vec<slang_solidity::parser::ParseError>
 pub fn slang_solidity::compilation::File::id(&self) -> &str
+pub fn slang_solidity::compilation::File::syntax_tree(&self) -> alloc::rc::Rc<slang_solidity::cst::SyntaxNode>
 pub fn slang_solidity::compilation::File::tree(&self) -> &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>
 impl core::clone::Clone for slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::clone(&self) -> slang_solidity::compilation::File
@@ -1358,6 +1359,7 @@ pub type slang_solidity::cst::NonterminalNode = metaslang_cst::nodes::Nontermina
 pub type slang_solidity::cst::Query = metaslang_cst::query::model::Query<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::QueryMatch = metaslang_cst::query::engine::QueryMatch<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::QueryMatchIterator = metaslang_cst::query::engine::QueryMatchIterator<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cst::SyntaxNode = metaslang_cst::syntax_node::SyntaxNode<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::TerminalNode = metaslang_cst::nodes::TerminalNode<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::TextIndex = metaslang_cst::text_index::TextIndex
 pub type slang_solidity::cst::TextRange = metaslang_cst::text_index::TextRange
@@ -1388,6 +1390,7 @@ impl slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::ParseOutput::create_tree_cursor(&self) -> slang_solidity::cst::Cursor
 pub fn slang_solidity::parser::ParseOutput::errors(&self) -> &alloc::vec::Vec<slang_solidity::parser::ParseError>
 pub fn slang_solidity::parser::ParseOutput::is_valid(&self) -> bool
+pub fn slang_solidity::parser::ParseOutput::syntax_tree(&self) -> alloc::rc::Rc<slang_solidity::cst::SyntaxNode>
 pub fn slang_solidity::parser::ParseOutput::tree(&self) -> &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>
 impl core::clone::Clone for slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::ParseOutput::clone(&self) -> slang_solidity::parser::ParseOutput
