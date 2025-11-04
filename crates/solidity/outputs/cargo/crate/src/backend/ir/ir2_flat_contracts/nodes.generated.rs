@@ -82,8 +82,8 @@ pub type PathImport = Rc<PathImportStruct>;
 #[derive(Debug)]
 pub struct PathImportStruct {
     pub node_id: NodeId,
-    pub path: StringLiteral,
-    pub alias: Option<ImportAlias>,
+    pub alias: Option<Rc<TerminalNode>>,
+    pub path: Rc<TerminalNode>,
 }
 
 pub type NamedImport = Rc<NamedImportStruct>;
@@ -91,8 +91,8 @@ pub type NamedImport = Rc<NamedImportStruct>;
 #[derive(Debug)]
 pub struct NamedImportStruct {
     pub node_id: NodeId,
-    pub alias: ImportAlias,
-    pub path: StringLiteral,
+    pub alias: Rc<TerminalNode>,
+    pub path: Rc<TerminalNode>,
 }
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
@@ -101,7 +101,7 @@ pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 pub struct ImportDeconstructionStruct {
     pub node_id: NodeId,
     pub symbols: ImportDeconstructionSymbols,
-    pub path: StringLiteral,
+    pub path: Rc<TerminalNode>,
 }
 
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
@@ -110,15 +110,7 @@ pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 pub struct ImportDeconstructionSymbolStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub alias: Option<ImportAlias>,
-}
-
-pub type ImportAlias = Rc<ImportAliasStruct>;
-
-#[derive(Debug)]
-pub struct ImportAliasStruct {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub alias: Option<Rc<TerminalNode>>,
 }
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
@@ -128,7 +120,7 @@ pub struct UsingDirectiveStruct {
     pub node_id: NodeId,
     pub clause: UsingClause,
     pub target: UsingTarget,
-    pub global_keyword: Option<Rc<TerminalNode>>,
+    pub global_keyword: bool,
 }
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
@@ -145,15 +137,7 @@ pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 pub struct UsingDeconstructionSymbolStruct {
     pub node_id: NodeId,
     pub name: IdentifierPath,
-    pub alias: Option<UsingAlias>,
-}
-
-pub type UsingAlias = Rc<UsingAliasStruct>;
-
-#[derive(Debug)]
-pub struct UsingAliasStruct {
-    pub node_id: NodeId,
-    pub operator: UsingOperator,
+    pub alias: Option<UsingOperator>,
 }
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
@@ -161,19 +145,11 @@ pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 #[derive(Debug)]
 pub struct ContractDefinitionStruct {
     pub node_id: NodeId,
-    pub abstract_keyword: Option<Rc<TerminalNode>>,
+    pub abstract_keyword: bool,
     pub name: Rc<TerminalNode>,
     pub members: ContractMembers,
     pub inheritance_types: InheritanceTypes,
-    pub storage_layout: Option<StorageLayoutSpecifier>,
-}
-
-pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
-
-#[derive(Debug)]
-pub struct InheritanceSpecifierStruct {
-    pub node_id: NodeId,
-    pub types: InheritanceTypes,
+    pub storage_layout: Option<Expression>,
 }
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
@@ -185,21 +161,13 @@ pub struct InheritanceTypeStruct {
     pub arguments: Option<ArgumentsDeclaration>,
 }
 
-pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
-
-#[derive(Debug)]
-pub struct StorageLayoutSpecifierStruct {
-    pub node_id: NodeId,
-    pub expression: Expression,
-}
-
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct InterfaceDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub inheritance: Option<InheritanceSpecifier>,
+    pub inheritance: Option<InheritanceTypes>,
     pub members: InterfaceMembers,
 }
 
@@ -255,17 +223,11 @@ pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 pub struct StateVariableDefinitionStruct {
     pub node_id: NodeId,
     pub type_name: TypeName,
-    pub attributes: StateVariableAttributes,
     pub name: Rc<TerminalNode>,
-    pub value: Option<StateVariableDefinitionValue>,
-}
-
-pub type StateVariableDefinitionValue = Rc<StateVariableDefinitionValueStruct>;
-
-#[derive(Debug)]
-pub struct StateVariableDefinitionValueStruct {
-    pub node_id: NodeId,
-    pub value: Expression,
+    pub value: Option<Expression>,
+    pub visibility: StateVariableVisibility,
+    pub mutability: StateVariableMutability,
+    pub override_specifier: Option<OverridePaths>,
 }
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
@@ -273,19 +235,16 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
     pub node_id: NodeId,
-    pub name: FunctionName,
-    pub parameters: ParametersDeclaration,
-    pub attributes: FunctionAttributes,
-    pub returns: Option<ReturnsDeclaration>,
-    pub body: FunctionBody,
-}
-
-pub type ParametersDeclaration = Rc<ParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: Parameters,
+    pub returns: Option<Parameters>,
+    pub kind: FunctionKind,
+    pub name: Option<Rc<TerminalNode>>,
+    pub body: Option<Block>,
+    pub visibility: FunctionVisibility,
+    pub mutability: FunctionMutability,
+    pub virtual_keyword: bool,
+    pub override_specifier: Option<OverridePaths>,
+    pub modifier_invocations: ModifierInvocations,
 }
 
 pub type Parameter = Rc<ParameterStruct>;
@@ -303,75 +262,7 @@ pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 #[derive(Debug)]
 pub struct OverrideSpecifierStruct {
     pub node_id: NodeId,
-    pub overridden: Option<OverridePathsDeclaration>,
-}
-
-pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct OverridePathsDeclarationStruct {
-    pub node_id: NodeId,
-    pub paths: OverridePaths,
-}
-
-pub type ReturnsDeclaration = Rc<ReturnsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ReturnsDeclarationStruct {
-    pub node_id: NodeId,
-    pub variables: ParametersDeclaration,
-}
-
-pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ConstructorDefinitionStruct {
-    pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: ConstructorAttributes,
-    pub body: Block,
-}
-
-pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct UnnamedFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: UnnamedFunctionAttributes,
-    pub body: FunctionBody,
-}
-
-pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct FallbackFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: FallbackFunctionAttributes,
-    pub returns: Option<ReturnsDeclaration>,
-    pub body: FunctionBody,
-}
-
-pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ReceiveFunctionDefinitionStruct {
-    pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: ReceiveFunctionAttributes,
-    pub body: FunctionBody,
-}
-
-pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct ModifierDefinitionStruct {
-    pub node_id: NodeId,
-    pub name: Rc<TerminalNode>,
-    pub parameters: Option<ParametersDeclaration>,
-    pub attributes: ModifierAttributes,
-    pub body: FunctionBody,
+    pub overridden: Option<OverridePaths>,
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
@@ -389,16 +280,8 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 pub struct EventDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: EventParametersDeclaration,
-    pub anonymous_keyword: Option<Rc<TerminalNode>>,
-}
-
-pub type EventParametersDeclaration = Rc<EventParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct EventParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: EventParameters,
+    pub anonymous_keyword: bool,
 }
 
 pub type EventParameter = Rc<EventParameterStruct>;
@@ -407,7 +290,7 @@ pub type EventParameter = Rc<EventParameterStruct>;
 pub struct EventParameterStruct {
     pub node_id: NodeId,
     pub type_name: TypeName,
-    pub indexed_keyword: Option<Rc<TerminalNode>>,
+    pub indexed_keyword: bool,
     pub name: Option<Rc<TerminalNode>>,
 }
 
@@ -426,15 +309,7 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 pub struct ErrorDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub members: ErrorParametersDeclaration,
-}
-
-pub type ErrorParametersDeclaration = Rc<ErrorParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct ErrorParametersDeclarationStruct {
-    pub node_id: NodeId,
-    pub parameters: ErrorParameters,
+    pub members: ErrorParameters,
 }
 
 pub type ErrorParameter = Rc<ErrorParameterStruct>;
@@ -460,9 +335,10 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
     pub node_id: NodeId,
-    pub parameters: ParametersDeclaration,
-    pub attributes: FunctionTypeAttributes,
-    pub returns: Option<ReturnsDeclaration>,
+    pub parameters: Parameters,
+    pub returns: Option<Parameters>,
+    pub visibility: FunctionVisibility,
+    pub mutability: FunctionMutability,
 }
 
 pub type MappingType = Rc<MappingTypeStruct>;
@@ -497,7 +373,7 @@ pub type AddressType = Rc<AddressTypeStruct>;
 #[derive(Debug)]
 pub struct AddressTypeStruct {
     pub node_id: NodeId,
-    pub payable_keyword: Option<Rc<TerminalNode>>,
+    pub payable_keyword: bool,
 }
 
 pub type Block = Rc<BlockStruct>;
@@ -529,17 +405,9 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
     pub node_id: NodeId,
-    pub label: Option<StringLiteral>,
-    pub flags: Option<AssemblyFlagsDeclaration>,
     pub body: YulBlock,
-}
-
-pub type AssemblyFlagsDeclaration = Rc<AssemblyFlagsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct AssemblyFlagsDeclarationStruct {
-    pub node_id: NodeId,
     pub flags: AssemblyFlags,
+    pub label: Option<Rc<TerminalNode>>,
 }
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
@@ -547,7 +415,7 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
     pub node_id: NodeId,
-    pub var_keyword: Option<Rc<TerminalNode>>,
+    pub var_keyword: bool,
     pub elements: TupleDeconstructionElements,
     pub expression: Expression,
 }
@@ -587,15 +455,7 @@ pub struct VariableDeclarationStatementStruct {
     pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
-    pub value: Option<VariableDeclarationValue>,
-}
-
-pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
-
-#[derive(Debug)]
-pub struct VariableDeclarationValueStruct {
-    pub node_id: NodeId,
-    pub expression: Expression,
+    pub value: Option<Expression>,
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -605,15 +465,7 @@ pub struct IfStatementStruct {
     pub node_id: NodeId,
     pub condition: Expression,
     pub body: Statement,
-    pub else_branch: Option<ElseBranch>,
-}
-
-pub type ElseBranch = Rc<ElseBranchStruct>;
-
-#[derive(Debug)]
-pub struct ElseBranchStruct {
-    pub node_id: NodeId,
-    pub body: Statement,
+    pub else_branch: Option<Statement>,
 }
 
 pub type ForStatement = Rc<ForStatementStruct>;
@@ -682,7 +534,7 @@ pub type TryStatement = Rc<TryStatementStruct>;
 pub struct TryStatementStruct {
     pub node_id: NodeId,
     pub expression: Expression,
-    pub returns: Option<ReturnsDeclaration>,
+    pub returns: Option<Parameters>,
     pub body: Block,
     pub catch_clauses: CatchClauses,
 }
@@ -702,7 +554,7 @@ pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 pub struct CatchClauseErrorStruct {
     pub node_id: NodeId,
     pub name: Option<Rc<TerminalNode>>,
-    pub parameters: ParametersDeclaration,
+    pub parameters: Parameters,
 }
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
@@ -898,39 +750,7 @@ pub struct IndexAccessExpressionStruct {
     pub node_id: NodeId,
     pub operand: Expression,
     pub start: Option<Expression>,
-    pub end: Option<IndexAccessEnd>,
-}
-
-pub type IndexAccessEnd = Rc<IndexAccessEndStruct>;
-
-#[derive(Debug)]
-pub struct IndexAccessEndStruct {
-    pub node_id: NodeId,
     pub end: Option<Expression>,
-}
-
-pub type PositionalArgumentsDeclaration = Rc<PositionalArgumentsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct PositionalArgumentsDeclarationStruct {
-    pub node_id: NodeId,
-    pub arguments: PositionalArguments,
-}
-
-pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct NamedArgumentsDeclarationStruct {
-    pub node_id: NodeId,
-    pub arguments: Option<NamedArgumentGroup>,
-}
-
-pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;
-
-#[derive(Debug)]
-pub struct NamedArgumentGroupStruct {
-    pub node_id: NodeId,
-    pub arguments: NamedArguments,
 }
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
@@ -1014,25 +834,9 @@ pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 pub struct YulFunctionDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: YulParametersDeclaration,
-    pub returns: Option<YulReturnsDeclaration>,
-    pub body: YulBlock,
-}
-
-pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct YulParametersDeclarationStruct {
-    pub node_id: NodeId,
     pub parameters: YulParameters,
-}
-
-pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
-
-#[derive(Debug)]
-pub struct YulReturnsDeclarationStruct {
-    pub node_id: NodeId,
-    pub variables: YulVariableNames,
+    pub returns: Option<YulVariableNames>,
+    pub body: YulBlock,
 }
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
@@ -1206,7 +1010,7 @@ pub enum AbicoderVersion {
 
 #[derive(Debug)]
 pub enum ExperimentalFeature {
-    StringLiteral(StringLiteral),
+    StringLiteral(Rc<TerminalNode>),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
 }
@@ -1274,20 +1078,9 @@ pub enum UsingTarget {
 }
 
 #[derive(Debug)]
-pub enum ContractSpecifier {
-    InheritanceSpecifier(InheritanceSpecifier),
-    StorageLayoutSpecifier(StorageLayoutSpecifier),
-}
-
-#[derive(Debug)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
-    ConstructorDefinition(ConstructorDefinition),
-    ReceiveFunctionDefinition(ReceiveFunctionDefinition),
-    FallbackFunctionDefinition(FallbackFunctionDefinition),
-    UnnamedFunctionDefinition(UnnamedFunctionDefinition),
-    ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
     EventDefinition(EventDefinition),
@@ -1297,112 +1090,12 @@ pub enum ContractMember {
 }
 
 #[derive(Debug)]
-pub enum StateVariableAttribute {
-    OverrideSpecifier(OverrideSpecifier),
-    ConstantKeyword,
-    InternalKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    ImmutableKeyword,
-    TransientKeyword,
-}
-
-#[derive(Debug)]
-pub enum FunctionName {
-    Identifier(Rc<TerminalNode>),
-    FallbackKeyword,
-    ReceiveKeyword,
-}
-
-#[derive(Debug)]
-pub enum FunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    OverrideSpecifier(OverrideSpecifier),
-    ConstantKeyword,
-    ExternalKeyword,
-    InternalKeyword,
-    PayableKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    PureKeyword,
-    ViewKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum FunctionBody {
-    Block(Block),
-    Semicolon,
-}
-
-#[derive(Debug)]
-pub enum ConstructorAttribute {
-    ModifierInvocation(ModifierInvocation),
-    InternalKeyword,
-    OverrideKeyword,
-    PayableKeyword,
-    PublicKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum UnnamedFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    ConstantKeyword,
-    ExternalKeyword,
-    InternalKeyword,
-    PayableKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    PureKeyword,
-    ViewKeyword,
-}
-
-#[derive(Debug)]
-pub enum FallbackFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    OverrideSpecifier(OverrideSpecifier),
-    ExternalKeyword,
-    PayableKeyword,
-    PureKeyword,
-    ViewKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum ReceiveFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    OverrideSpecifier(OverrideSpecifier),
-    ExternalKeyword,
-    PayableKeyword,
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
-pub enum ModifierAttribute {
-    OverrideSpecifier(OverrideSpecifier),
-    VirtualKeyword,
-}
-
-#[derive(Debug)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
     MappingType(MappingType),
     ElementaryType(ElementaryType),
     IdentifierPath(IdentifierPath),
-}
-
-#[derive(Debug)]
-pub enum FunctionTypeAttribute {
-    InternalKeyword,
-    ExternalKeyword,
-    PrivateKeyword,
-    PublicKeyword,
-    ConstantKeyword,
-    PureKeyword,
-    ViewKeyword,
-    PayableKeyword,
 }
 
 #[derive(Debug)]
@@ -1517,8 +1210,8 @@ pub enum Expression {
 
 #[derive(Debug)]
 pub enum ArgumentsDeclaration {
-    PositionalArgumentsDeclaration(PositionalArgumentsDeclaration),
-    NamedArgumentsDeclaration(NamedArgumentsDeclaration),
+    PositionalArguments(PositionalArguments),
+    NamedArguments(NamedArguments),
 }
 
 #[derive(Debug)]
@@ -1538,29 +1231,9 @@ pub enum NumberUnit {
 
 #[derive(Debug)]
 pub enum StringExpression {
-    StringLiteral(StringLiteral),
-    StringLiterals(StringLiterals),
-    HexStringLiteral(HexStringLiteral),
-    HexStringLiterals(HexStringLiterals),
-    UnicodeStringLiterals(UnicodeStringLiterals),
-}
-
-#[derive(Debug)]
-pub enum StringLiteral {
-    SingleQuotedStringLiteral(Rc<TerminalNode>),
-    DoubleQuotedStringLiteral(Rc<TerminalNode>),
-}
-
-#[derive(Debug)]
-pub enum HexStringLiteral {
-    SingleQuotedHexStringLiteral(Rc<TerminalNode>),
-    DoubleQuotedHexStringLiteral(Rc<TerminalNode>),
-}
-
-#[derive(Debug)]
-pub enum UnicodeStringLiteral {
-    SingleQuotedUnicodeStringLiteral(Rc<TerminalNode>),
-    DoubleQuotedUnicodeStringLiteral(Rc<TerminalNode>),
+    Strings(Strings),
+    HexStrings(HexStrings),
+    UnicodeStrings(UnicodeStrings),
 }
 
 #[derive(Debug)]
@@ -1607,12 +1280,53 @@ pub enum YulExpression {
 
 #[derive(Debug)]
 pub enum YulLiteral {
-    HexStringLiteral(HexStringLiteral),
-    StringLiteral(StringLiteral),
     YulDecimalLiteral(Rc<TerminalNode>),
     YulHexLiteral(Rc<TerminalNode>),
+    StringLiteral(Rc<TerminalNode>),
+    HexStringLiteral(Rc<TerminalNode>),
     YulTrueKeyword,
     YulFalseKeyword,
+}
+
+#[derive(Debug)]
+pub enum FunctionKind {
+    Regular,
+    Constructor,
+    Unnamed,
+    Fallback,
+    Receive,
+    Modifier,
+}
+
+#[derive(Debug)]
+pub enum FunctionVisibility {
+    Public,
+    Private,
+    Internal,
+    External,
+}
+
+#[derive(Debug)]
+pub enum FunctionMutability {
+    Pure,
+    View,
+    NonPayable,
+    Payable,
+}
+
+#[derive(Debug)]
+pub enum StateVariableVisibility {
+    Public,
+    Private,
+    Internal,
+}
+
+#[derive(Debug)]
+pub enum StateVariableMutability {
+    Mutable,
+    Constant,
+    Immutable,
+    Transient,
 }
 
 //
@@ -1643,33 +1357,15 @@ pub type StructMembers = Vec<StructMember>;
 
 pub type EnumMembers = Vec<Rc<TerminalNode>>;
 
-pub type StateVariableAttributes = Vec<StateVariableAttribute>;
-
 pub type Parameters = Vec<Parameter>;
 
-pub type FunctionAttributes = Vec<FunctionAttribute>;
-
 pub type OverridePaths = Vec<IdentifierPath>;
-
-pub type ConstructorAttributes = Vec<ConstructorAttribute>;
-
-pub type UnnamedFunctionAttributes = Vec<UnnamedFunctionAttribute>;
-
-pub type FallbackFunctionAttributes = Vec<FallbackFunctionAttribute>;
-
-pub type ReceiveFunctionAttributes = Vec<ReceiveFunctionAttribute>;
-
-pub type ModifierAttributes = Vec<ModifierAttribute>;
 
 pub type EventParameters = Vec<EventParameter>;
 
 pub type ErrorParameters = Vec<ErrorParameter>;
 
-pub type FunctionTypeAttributes = Vec<FunctionTypeAttribute>;
-
 pub type Statements = Vec<Statement>;
-
-pub type AssemblyFlags = Vec<StringLiteral>;
 
 pub type TupleDeconstructionElements = Vec<TupleDeconstructionElement>;
 
@@ -1684,12 +1380,6 @@ pub type CallOptions = Vec<NamedArgument>;
 pub type TupleValues = Vec<TupleValue>;
 
 pub type ArrayValues = Vec<Expression>;
-
-pub type StringLiterals = Vec<StringLiteral>;
-
-pub type HexStringLiterals = Vec<HexStringLiteral>;
-
-pub type UnicodeStringLiterals = Vec<UnicodeStringLiteral>;
 
 pub type IdentifierPath = Vec<Rc<TerminalNode>>;
 
@@ -1706,3 +1396,13 @@ pub type YulArguments = Vec<YulExpression>;
 pub type YulPaths = Vec<YulPath>;
 
 pub type YulPath = Vec<Rc<TerminalNode>>;
+
+pub type ModifierInvocations = Vec<ModifierInvocation>;
+
+pub type Strings = Vec<Rc<TerminalNode>>;
+
+pub type HexStrings = Vec<Rc<TerminalNode>>;
+
+pub type UnicodeStrings = Vec<Rc<TerminalNode>>;
+
+pub type AssemblyFlags = Vec<Rc<TerminalNode>>;

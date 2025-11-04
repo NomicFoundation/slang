@@ -6,6 +6,8 @@
 use std::rc::Rc;
 
 use super::{input, nodes as output};
+#[allow(unused)]
+use crate::cst::TerminalNode;
 
 pub trait Transformer {
     //
@@ -103,44 +105,14 @@ pub trait Transformer {
         })
     }
 
-    fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
-        let path = self.transform_string_literal(&source.path);
-        let alias = source
-            .alias
-            .as_ref()
-            .map(|value| self.transform_import_alias(value));
+    fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport;
 
-        Rc::new(output::PathImportStruct {
-            node_id: source.node_id,
-            path,
-            alias,
-        })
-    }
-
-    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport {
-        let alias = self.transform_import_alias(&source.alias);
-        let path = self.transform_string_literal(&source.path);
-
-        Rc::new(output::NamedImportStruct {
-            node_id: source.node_id,
-            alias,
-            path,
-        })
-    }
+    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport;
 
     fn transform_import_deconstruction(
         &mut self,
         source: &input::ImportDeconstruction,
-    ) -> output::ImportDeconstruction {
-        let symbols = self.transform_import_deconstruction_symbols(&source.symbols);
-        let path = self.transform_string_literal(&source.path);
-
-        Rc::new(output::ImportDeconstructionStruct {
-            node_id: source.node_id,
-            symbols,
-            path,
-        })
-    }
+    ) -> output::ImportDeconstruction;
 
     fn transform_import_deconstruction_symbol(
         &mut self,
@@ -159,22 +131,13 @@ pub trait Transformer {
         })
     }
 
-    fn transform_import_alias(&mut self, source: &input::ImportAlias) -> output::ImportAlias {
-        let identifier = Rc::clone(&source.identifier);
-
-        Rc::new(output::ImportAliasStruct {
-            node_id: source.node_id,
-            identifier,
-        })
-    }
-
     fn transform_using_directive(
         &mut self,
         source: &input::UsingDirective,
     ) -> output::UsingDirective {
         let clause = self.transform_using_clause(&source.clause);
         let target = self.transform_using_target(&source.target);
-        let global_keyword = source.global_keyword.as_ref().map(Rc::clone);
+        let global_keyword = source.global_keyword;
 
         Rc::new(output::UsingDirectiveStruct {
             node_id: source.node_id,
@@ -213,31 +176,10 @@ pub trait Transformer {
         })
     }
 
-    fn transform_using_alias(&mut self, source: &input::UsingAlias) -> output::UsingAlias {
-        let operator = self.transform_using_operator(&source.operator);
-
-        Rc::new(output::UsingAliasStruct {
-            node_id: source.node_id,
-            operator,
-        })
-    }
-
     fn transform_contract_definition(
         &mut self,
         source: &input::ContractDefinition,
     ) -> output::ContractDefinition;
-
-    fn transform_inheritance_specifier(
-        &mut self,
-        source: &input::InheritanceSpecifier,
-    ) -> output::InheritanceSpecifier {
-        let types = self.transform_inheritance_types(&source.types);
-
-        Rc::new(output::InheritanceSpecifierStruct {
-            node_id: source.node_id,
-            types,
-        })
-    }
 
     fn transform_inheritance_type(
         &mut self,
@@ -253,18 +195,6 @@ pub trait Transformer {
             node_id: source.node_id,
             type_name,
             arguments,
-        })
-    }
-
-    fn transform_storage_layout_specifier(
-        &mut self,
-        source: &input::StorageLayoutSpecifier,
-    ) -> output::StorageLayoutSpecifier {
-        let expression = self.transform_expression(&source.expression);
-
-        Rc::new(output::StorageLayoutSpecifierStruct {
-            node_id: source.node_id,
-            expression,
         })
     }
 
@@ -359,70 +289,12 @@ pub trait Transformer {
     fn transform_state_variable_definition(
         &mut self,
         source: &input::StateVariableDefinition,
-    ) -> output::StateVariableDefinition {
-        let type_name = self.transform_type_name(&source.type_name);
-        let attributes = self.transform_state_variable_attributes(&source.attributes);
-        let name = Rc::clone(&source.name);
-        let value = source
-            .value
-            .as_ref()
-            .map(|value| self.transform_state_variable_definition_value(value));
-
-        Rc::new(output::StateVariableDefinitionStruct {
-            node_id: source.node_id,
-            type_name,
-            attributes,
-            name,
-            value,
-        })
-    }
-
-    fn transform_state_variable_definition_value(
-        &mut self,
-        source: &input::StateVariableDefinitionValue,
-    ) -> output::StateVariableDefinitionValue {
-        let value = self.transform_expression(&source.value);
-
-        Rc::new(output::StateVariableDefinitionValueStruct {
-            node_id: source.node_id,
-            value,
-        })
-    }
+    ) -> output::StateVariableDefinition;
 
     fn transform_function_definition(
         &mut self,
         source: &input::FunctionDefinition,
-    ) -> output::FunctionDefinition {
-        let name = self.transform_function_name(&source.name);
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_function_attributes(&source.attributes);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_returns_declaration(value));
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::FunctionDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            attributes,
-            returns,
-            body,
-        })
-    }
-
-    fn transform_parameters_declaration(
-        &mut self,
-        source: &input::ParametersDeclaration,
-    ) -> output::ParametersDeclaration {
-        let parameters = self.transform_parameters(&source.parameters);
-
-        Rc::new(output::ParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
+    ) -> output::FunctionDefinition;
 
     fn transform_parameter(&mut self, source: &input::Parameter) -> output::Parameter {
         let type_name = self.transform_type_name(&source.type_name);
@@ -455,120 +327,6 @@ pub trait Transformer {
         })
     }
 
-    fn transform_override_paths_declaration(
-        &mut self,
-        source: &input::OverridePathsDeclaration,
-    ) -> output::OverridePathsDeclaration {
-        let paths = self.transform_override_paths(&source.paths);
-
-        Rc::new(output::OverridePathsDeclarationStruct {
-            node_id: source.node_id,
-            paths,
-        })
-    }
-
-    fn transform_returns_declaration(
-        &mut self,
-        source: &input::ReturnsDeclaration,
-    ) -> output::ReturnsDeclaration {
-        let variables = self.transform_parameters_declaration(&source.variables);
-
-        Rc::new(output::ReturnsDeclarationStruct {
-            node_id: source.node_id,
-            variables,
-        })
-    }
-
-    fn transform_constructor_definition(
-        &mut self,
-        source: &input::ConstructorDefinition,
-    ) -> output::ConstructorDefinition {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_constructor_attributes(&source.attributes);
-        let body = self.transform_block(&source.body);
-
-        Rc::new(output::ConstructorDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
-
-    fn transform_unnamed_function_definition(
-        &mut self,
-        source: &input::UnnamedFunctionDefinition,
-    ) -> output::UnnamedFunctionDefinition {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_unnamed_function_attributes(&source.attributes);
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::UnnamedFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
-
-    fn transform_fallback_function_definition(
-        &mut self,
-        source: &input::FallbackFunctionDefinition,
-    ) -> output::FallbackFunctionDefinition {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_fallback_function_attributes(&source.attributes);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_returns_declaration(value));
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::FallbackFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            returns,
-            body,
-        })
-    }
-
-    fn transform_receive_function_definition(
-        &mut self,
-        source: &input::ReceiveFunctionDefinition,
-    ) -> output::ReceiveFunctionDefinition {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_receive_function_attributes(&source.attributes);
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::ReceiveFunctionDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
-
-    fn transform_modifier_definition(
-        &mut self,
-        source: &input::ModifierDefinition,
-    ) -> output::ModifierDefinition {
-        let name = Rc::clone(&source.name);
-        let parameters = source
-            .parameters
-            .as_ref()
-            .map(|value| self.transform_parameters_declaration(value));
-        let attributes = self.transform_modifier_attributes(&source.attributes);
-        let body = self.transform_function_body(&source.body);
-
-        Rc::new(output::ModifierDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            attributes,
-            body,
-        })
-    }
-
     fn transform_modifier_invocation(
         &mut self,
         source: &input::ModifierInvocation,
@@ -592,7 +350,7 @@ pub trait Transformer {
     ) -> output::EventDefinition {
         let name = Rc::clone(&source.name);
         let parameters = self.transform_event_parameters_declaration(&source.parameters);
-        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
+        let anonymous_keyword = source.anonymous_keyword;
 
         Rc::new(output::EventDefinitionStruct {
             node_id: source.node_id,
@@ -602,24 +360,12 @@ pub trait Transformer {
         })
     }
 
-    fn transform_event_parameters_declaration(
-        &mut self,
-        source: &input::EventParametersDeclaration,
-    ) -> output::EventParametersDeclaration {
-        let parameters = self.transform_event_parameters(&source.parameters);
-
-        Rc::new(output::EventParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
-
     fn transform_event_parameter(
         &mut self,
         source: &input::EventParameter,
     ) -> output::EventParameter {
         let type_name = self.transform_type_name(&source.type_name);
-        let indexed_keyword = source.indexed_keyword.as_ref().map(Rc::clone);
+        let indexed_keyword = source.indexed_keyword;
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(output::EventParameterStruct {
@@ -658,18 +404,6 @@ pub trait Transformer {
         })
     }
 
-    fn transform_error_parameters_declaration(
-        &mut self,
-        source: &input::ErrorParametersDeclaration,
-    ) -> output::ErrorParametersDeclaration {
-        let parameters = self.transform_error_parameters(&source.parameters);
-
-        Rc::new(output::ErrorParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
-
     fn transform_error_parameter(
         &mut self,
         source: &input::ErrorParameter,
@@ -701,21 +435,7 @@ pub trait Transformer {
         })
     }
 
-    fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
-        let parameters = self.transform_parameters_declaration(&source.parameters);
-        let attributes = self.transform_function_type_attributes(&source.attributes);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.transform_returns_declaration(value));
-
-        Rc::new(output::FunctionTypeStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            returns,
-        })
-    }
+    fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType;
 
     fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
         let key_type = self.transform_mapping_key(&source.key_type);
@@ -751,7 +471,7 @@ pub trait Transformer {
     }
 
     fn transform_address_type(&mut self, source: &input::AddressType) -> output::AddressType {
-        let payable_keyword = source.payable_keyword.as_ref().map(Rc::clone);
+        let payable_keyword = source.payable_keyword;
 
         Rc::new(output::AddressTypeStruct {
             node_id: source.node_id,
@@ -795,42 +515,13 @@ pub trait Transformer {
     fn transform_assembly_statement(
         &mut self,
         source: &input::AssemblyStatement,
-    ) -> output::AssemblyStatement {
-        let label = source
-            .label
-            .as_ref()
-            .map(|value| self.transform_string_literal(value));
-        let flags = source
-            .flags
-            .as_ref()
-            .map(|value| self.transform_assembly_flags_declaration(value));
-        let body = self.transform_yul_block(&source.body);
-
-        Rc::new(output::AssemblyStatementStruct {
-            node_id: source.node_id,
-            label,
-            flags,
-            body,
-        })
-    }
-
-    fn transform_assembly_flags_declaration(
-        &mut self,
-        source: &input::AssemblyFlagsDeclaration,
-    ) -> output::AssemblyFlagsDeclaration {
-        let flags = self.transform_assembly_flags(&source.flags);
-
-        Rc::new(output::AssemblyFlagsDeclarationStruct {
-            node_id: source.node_id,
-            flags,
-        })
-    }
+    ) -> output::AssemblyStatement;
 
     fn transform_tuple_deconstruction_statement(
         &mut self,
         source: &input::TupleDeconstructionStatement,
     ) -> output::TupleDeconstructionStatement {
-        let var_keyword = source.var_keyword.as_ref().map(Rc::clone);
+        let var_keyword = source.var_keyword;
         let elements = self.transform_tuple_deconstruction_elements(&source.elements);
         let expression = self.transform_expression(&source.expression);
 
@@ -917,18 +608,6 @@ pub trait Transformer {
         })
     }
 
-    fn transform_variable_declaration_value(
-        &mut self,
-        source: &input::VariableDeclarationValue,
-    ) -> output::VariableDeclarationValue {
-        let expression = self.transform_expression(&source.expression);
-
-        Rc::new(output::VariableDeclarationValueStruct {
-            node_id: source.node_id,
-            expression,
-        })
-    }
-
     fn transform_if_statement(&mut self, source: &input::IfStatement) -> output::IfStatement {
         let condition = self.transform_expression(&source.condition);
         let body = self.transform_statement(&source.body);
@@ -942,15 +621,6 @@ pub trait Transformer {
             condition,
             body,
             else_branch,
-        })
-    }
-
-    fn transform_else_branch(&mut self, source: &input::ElseBranch) -> output::ElseBranch {
-        let body = self.transform_statement(&source.body);
-
-        Rc::new(output::ElseBranchStruct {
-            node_id: source.node_id,
-            body,
         })
     }
 
@@ -1381,78 +1051,7 @@ pub trait Transformer {
     fn transform_index_access_expression(
         &mut self,
         source: &input::IndexAccessExpression,
-    ) -> output::IndexAccessExpression {
-        let operand = self.transform_expression(&source.operand);
-        let start = source
-            .start
-            .as_ref()
-            .map(|value| self.transform_expression(value));
-        let end = source
-            .end
-            .as_ref()
-            .map(|value| self.transform_index_access_end(value));
-
-        Rc::new(output::IndexAccessExpressionStruct {
-            node_id: source.node_id,
-            operand,
-            start,
-            end,
-        })
-    }
-
-    fn transform_index_access_end(
-        &mut self,
-        source: &input::IndexAccessEnd,
-    ) -> output::IndexAccessEnd {
-        let end = source
-            .end
-            .as_ref()
-            .map(|value| self.transform_expression(value));
-
-        Rc::new(output::IndexAccessEndStruct {
-            node_id: source.node_id,
-            end,
-        })
-    }
-
-    fn transform_positional_arguments_declaration(
-        &mut self,
-        source: &input::PositionalArgumentsDeclaration,
-    ) -> output::PositionalArgumentsDeclaration {
-        let arguments = self.transform_positional_arguments(&source.arguments);
-
-        Rc::new(output::PositionalArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
-    fn transform_named_arguments_declaration(
-        &mut self,
-        source: &input::NamedArgumentsDeclaration,
-    ) -> output::NamedArgumentsDeclaration {
-        let arguments = source
-            .arguments
-            .as_ref()
-            .map(|value| self.transform_named_argument_group(value));
-
-        Rc::new(output::NamedArgumentsDeclarationStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
-
-    fn transform_named_argument_group(
-        &mut self,
-        source: &input::NamedArgumentGroup,
-    ) -> output::NamedArgumentGroup {
-        let arguments = self.transform_named_arguments(&source.arguments);
-
-        Rc::new(output::NamedArgumentGroupStruct {
-            node_id: source.node_id,
-            arguments,
-        })
-    }
+    ) -> output::IndexAccessExpression;
 
     fn transform_named_argument(&mut self, source: &input::NamedArgument) -> output::NamedArgument {
         let name = Rc::clone(&source.name);
@@ -1583,30 +1182,6 @@ pub trait Transformer {
             parameters,
             returns,
             body,
-        })
-    }
-
-    fn transform_yul_parameters_declaration(
-        &mut self,
-        source: &input::YulParametersDeclaration,
-    ) -> output::YulParametersDeclaration {
-        let parameters = self.transform_yul_parameters(&source.parameters);
-
-        Rc::new(output::YulParametersDeclarationStruct {
-            node_id: source.node_id,
-            parameters,
-        })
-    }
-
-    fn transform_yul_returns_declaration(
-        &mut self,
-        source: &input::YulReturnsDeclaration,
-    ) -> output::YulReturnsDeclaration {
-        let variables = self.transform_yul_variable_names(&source.variables);
-
-        Rc::new(output::YulReturnsDeclarationStruct {
-            node_id: source.node_id,
-            variables,
         })
     }
 
@@ -1809,6 +1384,106 @@ pub trait Transformer {
     }
 
     //
+    // Collapsed sequences:
+    //
+
+    fn transform_inheritance_specifier(
+        &mut self,
+        source: &input::InheritanceSpecifier,
+    ) -> output::InheritanceTypes {
+        self.transform_inheritance_types(&source.types)
+    }
+
+    fn transform_storage_layout_specifier(
+        &mut self,
+        source: &input::StorageLayoutSpecifier,
+    ) -> output::Expression {
+        self.transform_expression(&source.expression)
+    }
+
+    fn transform_parameters_declaration(
+        &mut self,
+        source: &input::ParametersDeclaration,
+    ) -> output::Parameters {
+        self.transform_parameters(&source.parameters)
+    }
+
+    fn transform_returns_declaration(
+        &mut self,
+        source: &input::ReturnsDeclaration,
+    ) -> output::Parameters {
+        self.transform_parameters_declaration(&source.variables)
+    }
+
+    fn transform_yul_parameters_declaration(
+        &mut self,
+        source: &input::YulParametersDeclaration,
+    ) -> output::YulParameters {
+        self.transform_yul_parameters(&source.parameters)
+    }
+
+    fn transform_yul_returns_declaration(
+        &mut self,
+        source: &input::YulReturnsDeclaration,
+    ) -> output::YulVariableNames {
+        self.transform_yul_variable_names(&source.variables)
+    }
+
+    fn transform_event_parameters_declaration(
+        &mut self,
+        source: &input::EventParametersDeclaration,
+    ) -> output::EventParameters {
+        self.transform_event_parameters(&source.parameters)
+    }
+
+    fn transform_error_parameters_declaration(
+        &mut self,
+        source: &input::ErrorParametersDeclaration,
+    ) -> output::ErrorParameters {
+        self.transform_error_parameters(&source.parameters)
+    }
+
+    fn transform_import_alias(&mut self, source: &input::ImportAlias) -> Rc<TerminalNode> {
+        Rc::clone(&source.identifier)
+    }
+
+    fn transform_else_branch(&mut self, source: &input::ElseBranch) -> output::Statement {
+        self.transform_statement(&source.body)
+    }
+
+    fn transform_using_alias(&mut self, source: &input::UsingAlias) -> output::UsingOperator {
+        self.transform_using_operator(&source.operator)
+    }
+
+    fn transform_state_variable_definition_value(
+        &mut self,
+        source: &input::StateVariableDefinitionValue,
+    ) -> output::Expression {
+        self.transform_expression(&source.value)
+    }
+
+    fn transform_override_paths_declaration(
+        &mut self,
+        source: &input::OverridePathsDeclaration,
+    ) -> output::OverridePaths {
+        self.transform_override_paths(&source.paths)
+    }
+
+    fn transform_variable_declaration_value(
+        &mut self,
+        source: &input::VariableDeclarationValue,
+    ) -> output::Expression {
+        self.transform_expression(&source.expression)
+    }
+
+    fn transform_named_argument_group(
+        &mut self,
+        source: &input::NamedArgumentGroup,
+    ) -> output::NamedArguments {
+        self.transform_named_arguments(&source.arguments)
+    }
+
+    //
     // Choices:
     //
 
@@ -1817,6 +1492,7 @@ pub trait Transformer {
         source: &input::SourceUnitMember,
     ) -> output::SourceUnitMember {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::SourceUnitMember::PragmaDirective(ref pragma_directive) => {
                 output::SourceUnitMember::PragmaDirective(
@@ -1896,6 +1572,7 @@ pub trait Transformer {
 
     fn default_transform_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::Pragma::VersionPragma(ref version_pragma) => {
                 output::Pragma::VersionPragma(self.transform_version_pragma(version_pragma))
@@ -1919,6 +1596,7 @@ pub trait Transformer {
         source: &input::AbicoderVersion,
     ) -> output::AbicoderVersion {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::AbicoderVersion::AbicoderV1Keyword => output::AbicoderVersion::AbicoderV1Keyword,
             input::AbicoderVersion::AbicoderV2Keyword => output::AbicoderVersion::AbicoderV2Keyword,
@@ -1936,18 +1614,15 @@ pub trait Transformer {
         source: &input::ExperimentalFeature,
     ) -> output::ExperimentalFeature {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
-            input::ExperimentalFeature::StringLiteral(ref string_literal) => {
-                output::ExperimentalFeature::StringLiteral(
-                    self.transform_string_literal(string_literal),
-                )
-            }
             input::ExperimentalFeature::ABIEncoderV2Keyword => {
                 output::ExperimentalFeature::ABIEncoderV2Keyword
             }
             input::ExperimentalFeature::SMTCheckerKeyword => {
                 output::ExperimentalFeature::SMTCheckerKeyword
             }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_experimental_feature(
@@ -1962,6 +1637,7 @@ pub trait Transformer {
         source: &input::VersionExpression,
     ) -> output::VersionExpression {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::VersionExpression::VersionRange(ref version_range) => {
                 output::VersionExpression::VersionRange(self.transform_version_range(version_range))
@@ -1983,6 +1659,7 @@ pub trait Transformer {
         source: &input::VersionOperator,
     ) -> output::VersionOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::VersionOperator::Caret => output::VersionOperator::Caret,
             input::VersionOperator::Tilde => output::VersionOperator::Tilde,
@@ -2005,6 +1682,7 @@ pub trait Transformer {
         source: &input::VersionLiteral,
     ) -> output::VersionLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
                 output::VersionLiteral::SimpleVersionLiteral(
@@ -2031,6 +1709,7 @@ pub trait Transformer {
         source: &input::ImportClause,
     ) -> output::ImportClause {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ImportClause::PathImport(ref path_import) => {
                 output::ImportClause::PathImport(self.transform_path_import(path_import))
@@ -2054,6 +1733,7 @@ pub trait Transformer {
         source: &input::UsingClause,
     ) -> output::UsingClause {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::UsingClause::IdentifierPath(ref identifier_path) => {
                 output::UsingClause::IdentifierPath(self.transform_identifier_path(identifier_path))
@@ -2074,6 +1754,7 @@ pub trait Transformer {
         source: &input::UsingOperator,
     ) -> output::UsingOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::UsingOperator::Ampersand => output::UsingOperator::Ampersand,
             input::UsingOperator::Asterisk => output::UsingOperator::Asterisk,
@@ -2101,6 +1782,7 @@ pub trait Transformer {
         source: &input::UsingTarget,
     ) -> output::UsingTarget {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::UsingTarget::TypeName(ref type_name) => {
                 output::UsingTarget::TypeName(self.transform_type_name(type_name))
@@ -2112,36 +1794,12 @@ pub trait Transformer {
         self.default_transform_using_target(source)
     }
 
-    fn default_transform_contract_specifier(
-        &mut self,
-        source: &input::ContractSpecifier,
-    ) -> output::ContractSpecifier {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
-                output::ContractSpecifier::InheritanceSpecifier(
-                    self.transform_inheritance_specifier(inheritance_specifier),
-                )
-            }
-            input::ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
-                output::ContractSpecifier::StorageLayoutSpecifier(
-                    self.transform_storage_layout_specifier(storage_layout_specifier),
-                )
-            }
-        }
-    }
-    fn transform_contract_specifier(
-        &mut self,
-        source: &input::ContractSpecifier,
-    ) -> output::ContractSpecifier {
-        self.default_transform_contract_specifier(source)
-    }
-
     fn default_transform_contract_member(
         &mut self,
         source: &input::ContractMember,
     ) -> output::ContractMember {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ContractMember::UsingDirective(ref using_directive) => {
                 output::ContractMember::UsingDirective(
@@ -2151,31 +1809,6 @@ pub trait Transformer {
             input::ContractMember::FunctionDefinition(ref function_definition) => {
                 output::ContractMember::FunctionDefinition(
                     self.transform_function_definition(function_definition),
-                )
-            }
-            input::ContractMember::ConstructorDefinition(ref constructor_definition) => {
-                output::ContractMember::ConstructorDefinition(
-                    self.transform_constructor_definition(constructor_definition),
-                )
-            }
-            input::ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
-                output::ContractMember::ReceiveFunctionDefinition(
-                    self.transform_receive_function_definition(receive_function_definition),
-                )
-            }
-            input::ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
-                output::ContractMember::FallbackFunctionDefinition(
-                    self.transform_fallback_function_definition(fallback_function_definition),
-                )
-            }
-            input::ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
-                output::ContractMember::UnnamedFunctionDefinition(
-                    self.transform_unnamed_function_definition(unnamed_function_definition),
-                )
-            }
-            input::ContractMember::ModifierDefinition(ref modifier_definition) => {
-                output::ContractMember::ModifierDefinition(
-                    self.transform_modifier_definition(modifier_definition),
                 )
             }
             input::ContractMember::StructDefinition(ref struct_definition) => {
@@ -2210,6 +1843,7 @@ pub trait Transformer {
                     self.transform_state_variable_definition(state_variable_definition),
                 )
             }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_contract_member(
@@ -2219,287 +1853,9 @@ pub trait Transformer {
         self.default_transform_contract_member(source)
     }
 
-    fn default_transform_state_variable_attribute(
-        &mut self,
-        source: &input::StateVariableAttribute,
-    ) -> output::StateVariableAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::StateVariableAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::StateVariableAttribute::ConstantKeyword => {
-                output::StateVariableAttribute::ConstantKeyword
-            }
-            input::StateVariableAttribute::InternalKeyword => {
-                output::StateVariableAttribute::InternalKeyword
-            }
-            input::StateVariableAttribute::PrivateKeyword => {
-                output::StateVariableAttribute::PrivateKeyword
-            }
-            input::StateVariableAttribute::PublicKeyword => {
-                output::StateVariableAttribute::PublicKeyword
-            }
-            input::StateVariableAttribute::ImmutableKeyword => {
-                output::StateVariableAttribute::ImmutableKeyword
-            }
-            input::StateVariableAttribute::TransientKeyword => {
-                output::StateVariableAttribute::TransientKeyword
-            }
-        }
-    }
-    fn transform_state_variable_attribute(
-        &mut self,
-        source: &input::StateVariableAttribute,
-    ) -> output::StateVariableAttribute {
-        self.default_transform_state_variable_attribute(source)
-    }
-
-    fn default_transform_function_name(
-        &mut self,
-        source: &input::FunctionName,
-    ) -> output::FunctionName {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::FunctionName::Identifier(node) => {
-                output::FunctionName::Identifier(Rc::clone(node))
-            }
-            input::FunctionName::FallbackKeyword => output::FunctionName::FallbackKeyword,
-            input::FunctionName::ReceiveKeyword => output::FunctionName::ReceiveKeyword,
-        }
-    }
-    fn transform_function_name(&mut self, source: &input::FunctionName) -> output::FunctionName {
-        self.default_transform_function_name(source)
-    }
-
-    fn default_transform_function_attribute(
-        &mut self,
-        source: &input::FunctionAttribute,
-    ) -> output::FunctionAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::FunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::FunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::FunctionAttribute::ConstantKeyword => output::FunctionAttribute::ConstantKeyword,
-            input::FunctionAttribute::ExternalKeyword => output::FunctionAttribute::ExternalKeyword,
-            input::FunctionAttribute::InternalKeyword => output::FunctionAttribute::InternalKeyword,
-            input::FunctionAttribute::PayableKeyword => output::FunctionAttribute::PayableKeyword,
-            input::FunctionAttribute::PrivateKeyword => output::FunctionAttribute::PrivateKeyword,
-            input::FunctionAttribute::PublicKeyword => output::FunctionAttribute::PublicKeyword,
-            input::FunctionAttribute::PureKeyword => output::FunctionAttribute::PureKeyword,
-            input::FunctionAttribute::ViewKeyword => output::FunctionAttribute::ViewKeyword,
-            input::FunctionAttribute::VirtualKeyword => output::FunctionAttribute::VirtualKeyword,
-        }
-    }
-    fn transform_function_attribute(
-        &mut self,
-        source: &input::FunctionAttribute,
-    ) -> output::FunctionAttribute {
-        self.default_transform_function_attribute(source)
-    }
-
-    fn default_transform_function_body(
-        &mut self,
-        source: &input::FunctionBody,
-    ) -> output::FunctionBody {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::FunctionBody::Block(ref block) => {
-                output::FunctionBody::Block(self.transform_block(block))
-            }
-            input::FunctionBody::Semicolon => output::FunctionBody::Semicolon,
-        }
-    }
-    fn transform_function_body(&mut self, source: &input::FunctionBody) -> output::FunctionBody {
-        self.default_transform_function_body(source)
-    }
-
-    fn default_transform_constructor_attribute(
-        &mut self,
-        source: &input::ConstructorAttribute,
-    ) -> output::ConstructorAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::ConstructorAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::ConstructorAttribute::InternalKeyword => {
-                output::ConstructorAttribute::InternalKeyword
-            }
-            input::ConstructorAttribute::OverrideKeyword => {
-                output::ConstructorAttribute::OverrideKeyword
-            }
-            input::ConstructorAttribute::PayableKeyword => {
-                output::ConstructorAttribute::PayableKeyword
-            }
-            input::ConstructorAttribute::PublicKeyword => {
-                output::ConstructorAttribute::PublicKeyword
-            }
-            input::ConstructorAttribute::VirtualKeyword => {
-                output::ConstructorAttribute::VirtualKeyword
-            }
-        }
-    }
-    fn transform_constructor_attribute(
-        &mut self,
-        source: &input::ConstructorAttribute,
-    ) -> output::ConstructorAttribute {
-        self.default_transform_constructor_attribute(source)
-    }
-
-    fn default_transform_unnamed_function_attribute(
-        &mut self,
-        source: &input::UnnamedFunctionAttribute,
-    ) -> output::UnnamedFunctionAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::UnnamedFunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::UnnamedFunctionAttribute::ConstantKeyword => {
-                output::UnnamedFunctionAttribute::ConstantKeyword
-            }
-            input::UnnamedFunctionAttribute::ExternalKeyword => {
-                output::UnnamedFunctionAttribute::ExternalKeyword
-            }
-            input::UnnamedFunctionAttribute::InternalKeyword => {
-                output::UnnamedFunctionAttribute::InternalKeyword
-            }
-            input::UnnamedFunctionAttribute::PayableKeyword => {
-                output::UnnamedFunctionAttribute::PayableKeyword
-            }
-            input::UnnamedFunctionAttribute::PrivateKeyword => {
-                output::UnnamedFunctionAttribute::PrivateKeyword
-            }
-            input::UnnamedFunctionAttribute::PublicKeyword => {
-                output::UnnamedFunctionAttribute::PublicKeyword
-            }
-            input::UnnamedFunctionAttribute::PureKeyword => {
-                output::UnnamedFunctionAttribute::PureKeyword
-            }
-            input::UnnamedFunctionAttribute::ViewKeyword => {
-                output::UnnamedFunctionAttribute::ViewKeyword
-            }
-        }
-    }
-    fn transform_unnamed_function_attribute(
-        &mut self,
-        source: &input::UnnamedFunctionAttribute,
-    ) -> output::UnnamedFunctionAttribute {
-        self.default_transform_unnamed_function_attribute(source)
-    }
-
-    fn default_transform_fallback_function_attribute(
-        &mut self,
-        source: &input::FallbackFunctionAttribute,
-    ) -> output::FallbackFunctionAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::FallbackFunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::FallbackFunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::FallbackFunctionAttribute::ExternalKeyword => {
-                output::FallbackFunctionAttribute::ExternalKeyword
-            }
-            input::FallbackFunctionAttribute::PayableKeyword => {
-                output::FallbackFunctionAttribute::PayableKeyword
-            }
-            input::FallbackFunctionAttribute::PureKeyword => {
-                output::FallbackFunctionAttribute::PureKeyword
-            }
-            input::FallbackFunctionAttribute::ViewKeyword => {
-                output::FallbackFunctionAttribute::ViewKeyword
-            }
-            input::FallbackFunctionAttribute::VirtualKeyword => {
-                output::FallbackFunctionAttribute::VirtualKeyword
-            }
-        }
-    }
-    fn transform_fallback_function_attribute(
-        &mut self,
-        source: &input::FallbackFunctionAttribute,
-    ) -> output::FallbackFunctionAttribute {
-        self.default_transform_fallback_function_attribute(source)
-    }
-
-    fn default_transform_receive_function_attribute(
-        &mut self,
-        source: &input::ReceiveFunctionAttribute,
-    ) -> output::ReceiveFunctionAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                output::ReceiveFunctionAttribute::ModifierInvocation(
-                    self.transform_modifier_invocation(modifier_invocation),
-                )
-            }
-            input::ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::ReceiveFunctionAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::ReceiveFunctionAttribute::ExternalKeyword => {
-                output::ReceiveFunctionAttribute::ExternalKeyword
-            }
-            input::ReceiveFunctionAttribute::PayableKeyword => {
-                output::ReceiveFunctionAttribute::PayableKeyword
-            }
-            input::ReceiveFunctionAttribute::VirtualKeyword => {
-                output::ReceiveFunctionAttribute::VirtualKeyword
-            }
-        }
-    }
-    fn transform_receive_function_attribute(
-        &mut self,
-        source: &input::ReceiveFunctionAttribute,
-    ) -> output::ReceiveFunctionAttribute {
-        self.default_transform_receive_function_attribute(source)
-    }
-
-    fn default_transform_modifier_attribute(
-        &mut self,
-        source: &input::ModifierAttribute,
-    ) -> output::ModifierAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
-                output::ModifierAttribute::OverrideSpecifier(
-                    self.transform_override_specifier(override_specifier),
-                )
-            }
-            input::ModifierAttribute::VirtualKeyword => output::ModifierAttribute::VirtualKeyword,
-        }
-    }
-    fn transform_modifier_attribute(
-        &mut self,
-        source: &input::ModifierAttribute,
-    ) -> output::ModifierAttribute {
-        self.default_transform_modifier_attribute(source)
-    }
-
     fn default_transform_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::TypeName::ArrayTypeName(ref array_type_name) => {
                 output::TypeName::ArrayTypeName(self.transform_array_type_name(array_type_name))
@@ -2522,46 +1878,12 @@ pub trait Transformer {
         self.default_transform_type_name(source)
     }
 
-    fn default_transform_function_type_attribute(
-        &mut self,
-        source: &input::FunctionTypeAttribute,
-    ) -> output::FunctionTypeAttribute {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::FunctionTypeAttribute::InternalKeyword => {
-                output::FunctionTypeAttribute::InternalKeyword
-            }
-            input::FunctionTypeAttribute::ExternalKeyword => {
-                output::FunctionTypeAttribute::ExternalKeyword
-            }
-            input::FunctionTypeAttribute::PrivateKeyword => {
-                output::FunctionTypeAttribute::PrivateKeyword
-            }
-            input::FunctionTypeAttribute::PublicKeyword => {
-                output::FunctionTypeAttribute::PublicKeyword
-            }
-            input::FunctionTypeAttribute::ConstantKeyword => {
-                output::FunctionTypeAttribute::ConstantKeyword
-            }
-            input::FunctionTypeAttribute::PureKeyword => output::FunctionTypeAttribute::PureKeyword,
-            input::FunctionTypeAttribute::ViewKeyword => output::FunctionTypeAttribute::ViewKeyword,
-            input::FunctionTypeAttribute::PayableKeyword => {
-                output::FunctionTypeAttribute::PayableKeyword
-            }
-        }
-    }
-    fn transform_function_type_attribute(
-        &mut self,
-        source: &input::FunctionTypeAttribute,
-    ) -> output::FunctionTypeAttribute {
-        self.default_transform_function_type_attribute(source)
-    }
-
     fn default_transform_mapping_key_type(
         &mut self,
         source: &input::MappingKeyType,
     ) -> output::MappingKeyType {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::MappingKeyType::ElementaryType(ref elementary_type) => {
                 output::MappingKeyType::ElementaryType(
@@ -2587,6 +1909,7 @@ pub trait Transformer {
         source: &input::ElementaryType,
     ) -> output::ElementaryType {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ElementaryType::AddressType(ref address_type) => {
                 output::ElementaryType::AddressType(self.transform_address_type(address_type))
@@ -2620,6 +1943,7 @@ pub trait Transformer {
 
     fn default_transform_statement(&mut self, source: &input::Statement) -> output::Statement {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::Statement::IfStatement(ref if_statement) => {
                 output::Statement::IfStatement(self.transform_if_statement(if_statement))
@@ -2699,6 +2023,7 @@ pub trait Transformer {
         source: &input::TupleMember,
     ) -> output::TupleMember {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::TupleMember::TypedTupleMember(ref typed_tuple_member) => {
                 output::TupleMember::TypedTupleMember(
@@ -2721,6 +2046,7 @@ pub trait Transformer {
         source: &input::VariableDeclarationType,
     ) -> output::VariableDeclarationType {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::VariableDeclarationType::TypeName(ref type_name) => {
                 output::VariableDeclarationType::TypeName(self.transform_type_name(type_name))
@@ -2742,6 +2068,7 @@ pub trait Transformer {
         source: &input::StorageLocation,
     ) -> output::StorageLocation {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::StorageLocation::MemoryKeyword => output::StorageLocation::MemoryKeyword,
             input::StorageLocation::StorageKeyword => output::StorageLocation::StorageKeyword,
@@ -2760,6 +2087,7 @@ pub trait Transformer {
         source: &input::ForStatementInitialization,
     ) -> output::ForStatementInitialization {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ForStatementInitialization::TupleDeconstructionStatement(
                 ref tuple_deconstruction_statement,
@@ -2793,6 +2121,7 @@ pub trait Transformer {
         source: &input::ForStatementCondition,
     ) -> output::ForStatementCondition {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::ForStatementCondition::ExpressionStatement(ref expression_statement) => {
                 output::ForStatementCondition::ExpressionStatement(
@@ -2811,6 +2140,7 @@ pub trait Transformer {
 
     fn default_transform_expression(&mut self, source: &input::Expression) -> output::Expression {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::Expression::AssignmentExpression(ref assignment_expression) => {
                 output::Expression::AssignmentExpression(
@@ -2954,17 +2284,9 @@ pub trait Transformer {
         source: &input::ArgumentsDeclaration,
     ) -> output::ArgumentsDeclaration {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
-            input::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                ref positional_arguments_declaration,
-            ) => output::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                self.transform_positional_arguments_declaration(positional_arguments_declaration),
-            ),
-            input::ArgumentsDeclaration::NamedArgumentsDeclaration(
-                ref named_arguments_declaration,
-            ) => output::ArgumentsDeclaration::NamedArgumentsDeclaration(
-                self.transform_named_arguments_declaration(named_arguments_declaration),
-            ),
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_arguments_declaration(
@@ -2976,6 +2298,7 @@ pub trait Transformer {
 
     fn default_transform_number_unit(&mut self, source: &input::NumberUnit) -> output::NumberUnit {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::NumberUnit::WeiKeyword => output::NumberUnit::WeiKeyword,
             input::NumberUnit::GweiKeyword => output::NumberUnit::GweiKeyword,
@@ -2999,32 +2322,9 @@ pub trait Transformer {
         source: &input::StringExpression,
     ) -> output::StringExpression {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
-            input::StringExpression::StringLiteral(ref string_literal) => {
-                output::StringExpression::StringLiteral(
-                    self.transform_string_literal(string_literal),
-                )
-            }
-            input::StringExpression::StringLiterals(ref string_literals) => {
-                output::StringExpression::StringLiterals(
-                    self.transform_string_literals(string_literals),
-                )
-            }
-            input::StringExpression::HexStringLiteral(ref hex_string_literal) => {
-                output::StringExpression::HexStringLiteral(
-                    self.transform_hex_string_literal(hex_string_literal),
-                )
-            }
-            input::StringExpression::HexStringLiterals(ref hex_string_literals) => {
-                output::StringExpression::HexStringLiterals(
-                    self.transform_hex_string_literals(hex_string_literals),
-                )
-            }
-            input::StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
-                output::StringExpression::UnicodeStringLiterals(
-                    self.transform_unicode_string_literals(unicode_string_literals),
-                )
-            }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_string_expression(
@@ -3034,71 +2334,12 @@ pub trait Transformer {
         self.default_transform_string_expression(source)
     }
 
-    fn default_transform_string_literal(
-        &mut self,
-        source: &input::StringLiteral,
-    ) -> output::StringLiteral {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::StringLiteral::SingleQuotedStringLiteral(node) => {
-                output::StringLiteral::SingleQuotedStringLiteral(Rc::clone(node))
-            }
-            input::StringLiteral::DoubleQuotedStringLiteral(node) => {
-                output::StringLiteral::DoubleQuotedStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn transform_string_literal(&mut self, source: &input::StringLiteral) -> output::StringLiteral {
-        self.default_transform_string_literal(source)
-    }
-
-    fn default_transform_hex_string_literal(
-        &mut self,
-        source: &input::HexStringLiteral,
-    ) -> output::HexStringLiteral {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::HexStringLiteral::SingleQuotedHexStringLiteral(node) => {
-                output::HexStringLiteral::SingleQuotedHexStringLiteral(Rc::clone(node))
-            }
-            input::HexStringLiteral::DoubleQuotedHexStringLiteral(node) => {
-                output::HexStringLiteral::DoubleQuotedHexStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn transform_hex_string_literal(
-        &mut self,
-        source: &input::HexStringLiteral,
-    ) -> output::HexStringLiteral {
-        self.default_transform_hex_string_literal(source)
-    }
-
-    fn default_transform_unicode_string_literal(
-        &mut self,
-        source: &input::UnicodeStringLiteral,
-    ) -> output::UnicodeStringLiteral {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        match source {
-            input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(node) => {
-                output::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(Rc::clone(node))
-            }
-            input::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(node) => {
-                output::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(Rc::clone(node))
-            }
-        }
-    }
-    fn transform_unicode_string_literal(
-        &mut self,
-        source: &input::UnicodeStringLiteral,
-    ) -> output::UnicodeStringLiteral {
-        self.default_transform_unicode_string_literal(source)
-    }
-
     fn default_transform_yul_statement(
         &mut self,
         source: &input::YulStatement,
     ) -> output::YulStatement {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulStatement::YulBlock(ref yul_block) => {
                 output::YulStatement::YulBlock(self.transform_yul_block(yul_block))
@@ -3172,6 +2413,7 @@ pub trait Transformer {
         source: &input::YulAssignmentOperator,
     ) -> output::YulAssignmentOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulAssignmentOperator::YulColonAndEqual(ref yul_colon_and_equal) => {
                 output::YulAssignmentOperator::YulColonAndEqual(
@@ -3193,6 +2435,7 @@ pub trait Transformer {
         source: &input::YulStackAssignmentOperator,
     ) -> output::YulStackAssignmentOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulStackAssignmentOperator::YulEqualAndColon(ref yul_equal_and_colon) => {
                 output::YulStackAssignmentOperator::YulEqualAndColon(
@@ -3216,6 +2459,7 @@ pub trait Transformer {
         source: &input::YulSwitchCase,
     ) -> output::YulSwitchCase {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
                 output::YulSwitchCase::YulDefaultCase(
@@ -3239,6 +2483,7 @@ pub trait Transformer {
         source: &input::YulExpression,
     ) -> output::YulExpression {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
             input::YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
                 output::YulExpression::YulFunctionCallExpression(
@@ -3259,15 +2504,8 @@ pub trait Transformer {
 
     fn default_transform_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
         match source {
-            input::YulLiteral::HexStringLiteral(ref hex_string_literal) => {
-                output::YulLiteral::HexStringLiteral(
-                    self.transform_hex_string_literal(hex_string_literal),
-                )
-            }
-            input::YulLiteral::StringLiteral(ref string_literal) => {
-                output::YulLiteral::StringLiteral(self.transform_string_literal(string_literal))
-            }
             input::YulLiteral::YulDecimalLiteral(node) => {
                 output::YulLiteral::YulDecimalLiteral(Rc::clone(node))
             }
@@ -3276,6 +2514,7 @@ pub trait Transformer {
             }
             input::YulLiteral::YulTrueKeyword => output::YulLiteral::YulTrueKeyword,
             input::YulLiteral::YulFalseKeyword => output::YulLiteral::YulFalseKeyword,
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
@@ -3394,16 +2633,6 @@ pub trait Transformer {
         source.iter().map(Rc::clone).collect()
     }
 
-    fn transform_state_variable_attributes(
-        &mut self,
-        source: &input::StateVariableAttributes,
-    ) -> output::StateVariableAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_state_variable_attribute(item))
-            .collect()
-    }
-
     fn transform_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
         source
             .iter()
@@ -3411,70 +2640,10 @@ pub trait Transformer {
             .collect()
     }
 
-    fn transform_function_attributes(
-        &mut self,
-        source: &input::FunctionAttributes,
-    ) -> output::FunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_function_attribute(item))
-            .collect()
-    }
-
     fn transform_override_paths(&mut self, source: &input::OverridePaths) -> output::OverridePaths {
         source
             .iter()
             .map(|item| self.transform_identifier_path(item))
-            .collect()
-    }
-
-    fn transform_constructor_attributes(
-        &mut self,
-        source: &input::ConstructorAttributes,
-    ) -> output::ConstructorAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_constructor_attribute(item))
-            .collect()
-    }
-
-    fn transform_unnamed_function_attributes(
-        &mut self,
-        source: &input::UnnamedFunctionAttributes,
-    ) -> output::UnnamedFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_unnamed_function_attribute(item))
-            .collect()
-    }
-
-    fn transform_fallback_function_attributes(
-        &mut self,
-        source: &input::FallbackFunctionAttributes,
-    ) -> output::FallbackFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_fallback_function_attribute(item))
-            .collect()
-    }
-
-    fn transform_receive_function_attributes(
-        &mut self,
-        source: &input::ReceiveFunctionAttributes,
-    ) -> output::ReceiveFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_receive_function_attribute(item))
-            .collect()
-    }
-
-    fn transform_modifier_attributes(
-        &mut self,
-        source: &input::ModifierAttributes,
-    ) -> output::ModifierAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_modifier_attribute(item))
             .collect()
     }
 
@@ -3498,27 +2667,10 @@ pub trait Transformer {
             .collect()
     }
 
-    fn transform_function_type_attributes(
-        &mut self,
-        source: &input::FunctionTypeAttributes,
-    ) -> output::FunctionTypeAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_function_type_attribute(item))
-            .collect()
-    }
-
     fn transform_statements(&mut self, source: &input::Statements) -> output::Statements {
         source
             .iter()
             .map(|item| self.transform_statement(item))
-            .collect()
-    }
-
-    fn transform_assembly_flags(&mut self, source: &input::AssemblyFlags) -> output::AssemblyFlags {
-        source
-            .iter()
-            .map(|item| self.transform_string_literal(item))
             .collect()
     }
 
@@ -3577,36 +2729,6 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_expression(item))
-            .collect()
-    }
-
-    fn transform_string_literals(
-        &mut self,
-        source: &input::StringLiterals,
-    ) -> output::StringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_string_literal(item))
-            .collect()
-    }
-
-    fn transform_hex_string_literals(
-        &mut self,
-        source: &input::HexStringLiterals,
-    ) -> output::HexStringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_hex_string_literal(item))
-            .collect()
-    }
-
-    fn transform_unicode_string_literals(
-        &mut self,
-        source: &input::UnicodeStringLiterals,
-    ) -> output::UnicodeStringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_unicode_string_literal(item))
             .collect()
     }
 

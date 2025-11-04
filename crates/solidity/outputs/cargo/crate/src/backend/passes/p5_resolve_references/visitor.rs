@@ -32,7 +32,7 @@ impl Visitor for Pass {
             input_ir::visitor::accept_inheritance_type(inheritance_type, self);
         }
         if let Some(ref storage_layout) = node.storage_layout {
-            input_ir::visitor::accept_storage_layout_specifier(storage_layout, self);
+            input_ir::visitor::accept_expression(storage_layout, self);
         }
 
         // We already visited the contract definition's children above to be
@@ -59,11 +59,11 @@ impl Visitor for Pass {
     }
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::FunctionAttribute::ModifierInvocation(modifier_invocation) = attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
+        // TODO(validation): for modifier kind, they are not allowed inside
+        // interfaces since 0.8.8
+
+        for modifier_invocation in &node.modifier_invocations {
+            self.resolve_modifier_invocation(modifier_invocation);
         }
 
         self.enter_scope_for_node_id(node.node_id);
@@ -71,93 +71,6 @@ impl Visitor for Pass {
     }
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
-        // TODO(validation): modifiers are not allowed inside interfaces since 0.8.8
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::ConstructorAttribute::ModifierInvocation(modifier_invocation) =
-                attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
-        }
-
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_fallback_function_definition(
-        &mut self,
-        node: &input_ir::FallbackFunctionDefinition,
-    ) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::FallbackFunctionAttribute::ModifierInvocation(modifier_invocation) =
-                attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
-        }
-
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_receive_function_definition(
-        &mut self,
-        node: &input_ir::ReceiveFunctionDefinition,
-    ) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::ReceiveFunctionAttribute::ModifierInvocation(modifier_invocation) =
-                attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
-        }
-
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
-    }
-
-    fn enter_unnamed_function_definition(
-        &mut self,
-        node: &input_ir::UnnamedFunctionDefinition,
-    ) -> bool {
-        for attribute in &node.attributes {
-            if let input_ir::UnnamedFunctionAttribute::ModifierInvocation(modifier_invocation) =
-                attribute
-            {
-                self.resolve_modifier_invocation(modifier_invocation);
-            }
-        }
-
-        self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
         self.leave_scope_for_node_id(node.node_id);
     }
 
@@ -533,21 +446,11 @@ impl Visitor for Pass {
 
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let typing = match &node.arguments {
-            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                positional_arguments,
-            ) => self.typing_of_function_call_with_positional_arguments(
-                node,
-                &positional_arguments.arguments,
-            ),
-            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments) => {
-                if let Some(named_arguments) = &named_arguments.arguments {
-                    self.typing_of_function_call_with_named_arguments(
-                        node,
-                        &named_arguments.arguments,
-                    )
-                } else {
-                    self.typing_of_function_call_with_named_arguments(node, &[])
-                }
+            input_ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
+                self.typing_of_function_call_with_positional_arguments(node, positional_arguments)
+            }
+            input_ir::ArgumentsDeclaration::NamedArguments(named_arguments) => {
+                self.typing_of_function_call_with_named_arguments(node, named_arguments)
             }
         };
         self.binder.set_node_typing(node.node_id, typing);
@@ -661,7 +564,7 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
     ) -> bool {
-        if node.var_keyword.is_some() {
+        if node.var_keyword {
             // this is a (deprecated) variable declaration, not assignment
             return true;
         }
@@ -696,13 +599,11 @@ impl Visitor for Pass {
             .find_reference_by_identifier_node_id(event_reference_id)
             .map(|reference| &reference.resolution);
         match &node.arguments {
-            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                positional_arguments,
-            ) => {
+            input_ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
                 // For positional arguments, resolve ambiguity of overloads only
                 if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
                     let argument_typings =
-                        self.collect_positional_argument_typings(&positional_arguments.arguments);
+                        self.collect_positional_argument_typings(positional_arguments);
                     if let Some(candidate) = self.lookup_event_matching_positional_arguments(
                         definition_ids,
                         &argument_typings,
@@ -713,60 +614,44 @@ impl Visitor for Pass {
                     }
                 }
             }
-            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments) => {
+            input_ir::ArgumentsDeclaration::NamedArguments(named_arguments) => {
                 // For named arguments, we need to resolve ambiguity and the named arguments
-                if let Some(named_arguments) = &named_arguments.arguments {
-                    let definition_id = match event_resolution {
-                        Some(Resolution::Ambiguous(definition_ids)) => {
-                            let argument_typings =
-                                self.collect_named_argument_typings(&named_arguments.arguments);
-                            let candidate = self.lookup_event_matching_named_arguments(
-                                definition_ids,
-                                &argument_typings,
+                let definition_id = match event_resolution {
+                    Some(Resolution::Ambiguous(definition_ids)) => {
+                        let argument_typings = self.collect_named_argument_typings(named_arguments);
+                        let candidate = self.lookup_event_matching_named_arguments(
+                            definition_ids,
+                            &argument_typings,
+                        );
+                        if let Some(candidate) = candidate {
+                            // update resolved definition
+                            self.binder.fixup_reference(
+                                event_reference_id,
+                                Resolution::Definition(candidate),
                             );
-                            if let Some(candidate) = candidate {
-                                // update resolved definition
-                                self.binder.fixup_reference(
-                                    event_reference_id,
-                                    Resolution::Definition(candidate),
-                                );
-                            }
-                            candidate
                         }
-                        Some(Resolution::Definition(definition_id)) => Some(*definition_id),
-                        _ => None,
-                    };
-                    // resolve names in named arguments
-                    self.resolve_named_arguments(&named_arguments.arguments, definition_id);
-                } else if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
-                    if let Some(candidate) =
-                        self.lookup_event_matching_positional_arguments(definition_ids, &[])
-                    {
-                        // update resolved definition
-                        self.binder
-                            .fixup_reference(event_reference_id, Resolution::Definition(candidate));
+                        candidate
                     }
-                }
+                    Some(Resolution::Definition(definition_id)) => Some(*definition_id),
+                    _ => None,
+                };
+                // resolve names in named arguments
+                self.resolve_named_arguments(named_arguments, definition_id);
             }
         }
     }
 
     fn leave_revert_statement(&mut self, node: &input_ir::RevertStatement) {
-        if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
-            named_arguments_declaration,
-        ) = &node.arguments
-        {
-            if let Some(named_arguments) = &named_arguments_declaration.arguments {
-                let definition_id = node
-                    .error
-                    .as_ref()
-                    .and_then(|error| {
-                        self.binder
-                            .find_reference_by_identifier_node_id(error.last().unwrap().id())
-                    })
-                    .and_then(|reference| reference.resolution.as_definition_id());
-                self.resolve_named_arguments(&named_arguments.arguments, definition_id);
-            }
+        if let input_ir::ArgumentsDeclaration::NamedArguments(named_arguments) = &node.arguments {
+            let definition_id = node
+                .error
+                .as_ref()
+                .and_then(|error| {
+                    self.binder
+                        .find_reference_by_identifier_node_id(error.last().unwrap().id())
+                })
+                .and_then(|reference| reference.resolution.as_definition_id());
+            self.resolve_named_arguments(named_arguments, definition_id);
         }
     }
 
@@ -788,7 +673,7 @@ impl Visitor for Pass {
             // update the type of the variable with the type of the expression (if available)
             if let Some(value) = &node.value {
                 let typing = self
-                    .typing_of_expression(&value.expression)
+                    .typing_of_expression(value)
                     .as_type_id()
                     .map_or(Typing::Unresolved, |type_id| {
                         Typing::Resolved(self.types.reified_type(type_id))
@@ -809,7 +694,7 @@ impl Visitor for Pass {
             // NOTE: ensure following code does not need to perform resolution
         }
 
-        if node.var_keyword.is_none() {
+        if !node.var_keyword {
             return;
         }
 

@@ -81,7 +81,6 @@ pub(crate) struct ParameterDefinition {
 }
 
 pub(crate) struct ParametersScope {
-    pub(crate) node_id: NodeId,
     pub(crate) parameters: Vec<ParameterDefinition>,
 }
 
@@ -119,7 +118,7 @@ impl Scope {
             Self::File(file_scope) => file_scope.node_id,
             Self::Function(function_scope) => function_scope.node_id,
             Self::Modifier(modifier_scope) => modifier_scope.node_id,
-            Self::Parameters(parameters_scope) => parameters_scope.node_id,
+            Self::Parameters(_) => unreachable!("parameters scope don't have a node ID"),
             Self::Struct(struct_scope) => struct_scope.node_id,
             Self::Using(using_scope) => using_scope.node_id,
             Self::YulBlock(yul_block_scope) => yul_block_scope.node_id,
@@ -323,9 +322,8 @@ impl ModifierScope {
 }
 
 impl ParametersScope {
-    pub(crate) fn new(node_id: NodeId) -> Self {
+    pub(crate) fn new() -> Self {
         Self {
-            node_id,
             parameters: Vec::new(),
         }
     }

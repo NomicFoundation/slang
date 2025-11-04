@@ -1,37 +1,40 @@
-mod diff;
 mod model;
+mod mutator;
 
-pub mod passes;
+pub mod builders;
 
-use diff::IrModelDiff;
 pub use model::IrModel;
+pub use mutator::IrModelMutator;
 use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct ModelWithBuilder {
     pub target: IrModel,
-    pub builder: IrModelDiff,
+    pub builder: IrModelMutator,
 }
 
-impl ModelWithBuilder {
-    pub fn new(source: &IrModel, target: IrModel) -> Self {
-        let builder = IrModelDiff::diff(source, &target);
-        Self { target, builder }
+impl From<IrModelMutator> for ModelWithBuilder {
+    fn from(mutator: IrModelMutator) -> Self {
+        let target = mutator.build_target();
+        Self {
+            target,
+            builder: mutator,
+        }
     }
 }
 
 #[derive(Serialize)]
 pub struct ModelWithTransformer {
     pub target: IrModel,
-    pub transformer: IrModelDiff,
+    pub transformer: IrModelMutator,
 }
 
-impl ModelWithTransformer {
-    pub fn new(source: &IrModel, target: IrModel) -> Self {
-        let transformer = IrModelDiff::diff(source, &target);
+impl From<IrModelMutator> for ModelWithTransformer {
+    fn from(mutator: IrModelMutator) -> Self {
+        let target = mutator.build_target();
         Self {
             target,
-            transformer,
+            transformer: mutator,
         }
     }
 }

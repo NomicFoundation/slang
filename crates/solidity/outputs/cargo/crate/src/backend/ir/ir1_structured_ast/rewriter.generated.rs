@@ -159,7 +159,7 @@ pub trait Rewriter {
     fn rewrite_using_directive(&mut self, source: &UsingDirective) -> UsingDirective {
         let clause = self.rewrite_using_clause(&source.clause);
         let target = self.rewrite_using_target(&source.target);
-        let global_keyword = source.global_keyword.as_ref().map(Rc::clone);
+        let global_keyword = source.global_keyword;
 
         Rc::new(UsingDirectiveStruct {
             node_id: source.node_id,
@@ -208,7 +208,7 @@ pub trait Rewriter {
     }
 
     fn rewrite_contract_definition(&mut self, source: &ContractDefinition) -> ContractDefinition {
-        let abstract_keyword = source.abstract_keyword.as_ref().map(Rc::clone);
+        let abstract_keyword = source.abstract_keyword;
         let name = Rc::clone(&source.name);
         let specifiers = self.rewrite_contract_specifiers(&source.specifiers);
         let members = self.rewrite_contract_members(&source.members);
@@ -554,7 +554,7 @@ pub trait Rewriter {
     fn rewrite_event_definition(&mut self, source: &EventDefinition) -> EventDefinition {
         let name = Rc::clone(&source.name);
         let parameters = self.rewrite_event_parameters_declaration(&source.parameters);
-        let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
+        let anonymous_keyword = source.anonymous_keyword;
 
         Rc::new(EventDefinitionStruct {
             node_id: source.node_id,
@@ -578,7 +578,7 @@ pub trait Rewriter {
 
     fn rewrite_event_parameter(&mut self, source: &EventParameter) -> EventParameter {
         let type_name = self.rewrite_type_name(&source.type_name);
-        let indexed_keyword = source.indexed_keyword.as_ref().map(Rc::clone);
+        let indexed_keyword = source.indexed_keyword;
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(EventParameterStruct {
@@ -701,7 +701,7 @@ pub trait Rewriter {
     }
 
     fn rewrite_address_type(&mut self, source: &AddressType) -> AddressType {
-        let payable_keyword = source.payable_keyword.as_ref().map(Rc::clone);
+        let payable_keyword = source.payable_keyword;
 
         Rc::new(AddressTypeStruct {
             node_id: source.node_id,
@@ -774,7 +774,7 @@ pub trait Rewriter {
         &mut self,
         source: &TupleDeconstructionStatement,
     ) -> TupleDeconstructionStatement {
-        let var_keyword = source.var_keyword.as_ref().map(Rc::clone);
+        let var_keyword = source.var_keyword;
         let elements = self.rewrite_tuple_deconstruction_elements(&source.elements);
         let expression = self.rewrite_expression(&source.expression);
 

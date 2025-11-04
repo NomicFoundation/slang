@@ -1,4 +1,4 @@
-use super::{storage_location_to_data_location, Pass};
+use super::Pass;
 use crate::backend::binder::{Definition, Scope};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
@@ -79,7 +79,7 @@ impl Pass {
         match elementary_type {
             input_ir::ElementaryType::AddressType(address_type) => {
                 Some(self.types.register_type(Type::Address {
-                    payable: address_type.payable_keyword.is_some(),
+                    payable: address_type.payable_keyword,
                 }))
             }
             input_ir::ElementaryType::BytesKeyword(bytes_keyword) => {
@@ -120,10 +120,9 @@ impl Pass {
         implicit_receiver_type: Option<TypeId>,
     ) -> Option<TypeId> {
         // NOTE: Keep in sync with function types in `resolve_type_name` in `super::resolution`
-        let parameter_types =
-            self.resolve_parameter_types(&function_definition.parameters.parameters)?;
+        let parameter_types = self.resolve_parameter_types(&function_definition.parameters)?;
         let return_type = if let Some(returns) = &function_definition.returns {
-            let return_types = self.resolve_parameter_types(&returns.variables.parameters)?;
+            let return_types = self.resolve_parameter_types(returns)?;
             if return_types.len() == 1 {
                 // TODO: I think this is more correct, but we may decide to
                 // always return a tuple instead; this will require changing the
@@ -137,24 +136,11 @@ impl Pass {
         } else {
             self.types.void()
         };
-        let mut kind = FunctionTypeKind::NonPayable;
-        let mut external = false;
-        for attribute in &function_definition.attributes {
-            match attribute {
-                input_ir::FunctionAttribute::ExternalKeyword
-                | input_ir::FunctionAttribute::PublicKeyword => external = true,
-                input_ir::FunctionAttribute::PureKeyword => {
-                    kind = FunctionTypeKind::Pure;
-                }
-                input_ir::FunctionAttribute::ViewKeyword => {
-                    kind = FunctionTypeKind::View;
-                }
-                input_ir::FunctionAttribute::PayableKeyword => {
-                    kind = FunctionTypeKind::Payable;
-                }
-                _ => {}
-            }
-        }
+        let kind = (&function_definition.mutability).into();
+        let external = matches!(
+            function_definition.visibility,
+            input_ir::FunctionVisibility::External | input_ir::FunctionVisibility::Public
+        );
         Some(self.types.register_type(Type::Function(FunctionType {
             definition_id: Some(function_definition.node_id),
             implicit_receiver_type,
@@ -202,7 +188,7 @@ impl Pass {
                         .scope_id_for_node_id(*definition_id)
                         .expect("definition in struct type has no associated scope");
                     let Scope::Struct(struct_scope) = self.binder.get_scope_by_id(scope_id) else {
-                        unreachable!("definition in struct type has no invalid scope");
+                        unreachable!("definition in struct type has no valid scope");
                     };
                     let mut types = Vec::new();
                     for member_id in struct_scope.definitions.values() {
@@ -269,7 +255,7 @@ impl Pass {
                 parameter
                     .storage_location
                     .as_ref()
-                    .map(storage_location_to_data_location)
+                    .map(Into::into)
                     .or(default_location),
             );
             self.binder.set_node_type(parameter.node_id, type_id);
