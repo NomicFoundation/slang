@@ -15,6 +15,24 @@
 
   pub type TreeIndex = HashMap<NodeId, NodeType>;
 
+  pub trait IntoIr<T> {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<T>;
+  }
+
+  {% for parent_type, sequence in target.sequences %}
+    impl IntoIr<{{ parent_type }}> for {{ parent_type }} {
+      fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+          if let NodeType::{{ parent_type }}(ir_node) = ir_node {
+            Some(Rc::clone(ir_node))
+          } else {
+            None
+          }
+        })
+      }
+    }
+  {% endfor %}
+
   //
   // Sequences:
   //

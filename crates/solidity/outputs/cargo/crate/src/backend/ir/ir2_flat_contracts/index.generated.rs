@@ -118,6 +118,1282 @@ pub enum NodeType {
 
 pub type TreeIndex = HashMap<NodeId, NodeType>;
 
+pub trait IntoIr<T> {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<T>;
+}
+
+impl IntoIr<SourceUnit> for SourceUnit {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::SourceUnit(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<PragmaDirective> for PragmaDirective {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::PragmaDirective(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<AbicoderPragma> for AbicoderPragma {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::AbicoderPragma(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ExperimentalPragma> for ExperimentalPragma {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ExperimentalPragma(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<VersionPragma> for VersionPragma {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::VersionPragma(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<VersionRange> for VersionRange {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::VersionRange(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<VersionTerm> for VersionTerm {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::VersionTerm(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ImportDirective> for ImportDirective {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ImportDirective(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<PathImport> for PathImport {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::PathImport(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<NamedImport> for NamedImport {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::NamedImport(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ImportDeconstruction> for ImportDeconstruction {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ImportDeconstruction(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ImportDeconstructionSymbol> for ImportDeconstructionSymbol {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ImportDeconstructionSymbol(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<UsingDirective> for UsingDirective {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::UsingDirective(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<UsingDeconstruction> for UsingDeconstruction {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::UsingDeconstruction(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<UsingDeconstructionSymbol> for UsingDeconstructionSymbol {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::UsingDeconstructionSymbol(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ContractDefinition> for ContractDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ContractDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<InheritanceType> for InheritanceType {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::InheritanceType(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<InterfaceDefinition> for InterfaceDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::InterfaceDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<LibraryDefinition> for LibraryDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::LibraryDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<StructDefinition> for StructDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::StructDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<StructMember> for StructMember {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::StructMember(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<EnumDefinition> for EnumDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::EnumDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ConstantDefinition> for ConstantDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ConstantDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<StateVariableDefinition> for StateVariableDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::StateVariableDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<FunctionDefinition> for FunctionDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::FunctionDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<Parameter> for Parameter {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::Parameter(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<OverrideSpecifier> for OverrideSpecifier {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::OverrideSpecifier(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ModifierInvocation> for ModifierInvocation {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ModifierInvocation(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<EventDefinition> for EventDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::EventDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<EventParameter> for EventParameter {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::EventParameter(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<UserDefinedValueTypeDefinition> for UserDefinedValueTypeDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::UserDefinedValueTypeDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ErrorDefinition> for ErrorDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ErrorDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ErrorParameter> for ErrorParameter {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ErrorParameter(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ArrayTypeName> for ArrayTypeName {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ArrayTypeName(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<FunctionType> for FunctionType {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::FunctionType(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<MappingType> for MappingType {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::MappingType(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<MappingKey> for MappingKey {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::MappingKey(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<MappingValue> for MappingValue {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::MappingValue(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<AddressType> for AddressType {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::AddressType(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<Block> for Block {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::Block(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<UncheckedBlock> for UncheckedBlock {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::UncheckedBlock(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ExpressionStatement> for ExpressionStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ExpressionStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<AssemblyStatement> for AssemblyStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::AssemblyStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<TupleDeconstructionStatement> for TupleDeconstructionStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::TupleDeconstructionStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<TupleDeconstructionElement> for TupleDeconstructionElement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::TupleDeconstructionElement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<TypedTupleMember> for TypedTupleMember {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::TypedTupleMember(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<UntypedTupleMember> for UntypedTupleMember {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::UntypedTupleMember(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<VariableDeclarationStatement> for VariableDeclarationStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::VariableDeclarationStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<IfStatement> for IfStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::IfStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ForStatement> for ForStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ForStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<WhileStatement> for WhileStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::WhileStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<DoWhileStatement> for DoWhileStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::DoWhileStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ContinueStatement> for ContinueStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ContinueStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<BreakStatement> for BreakStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::BreakStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ReturnStatement> for ReturnStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ReturnStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<EmitStatement> for EmitStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::EmitStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<TryStatement> for TryStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::TryStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<CatchClause> for CatchClause {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::CatchClause(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<CatchClauseError> for CatchClauseError {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::CatchClauseError(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<RevertStatement> for RevertStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::RevertStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ThrowStatement> for ThrowStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ThrowStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<AssignmentExpression> for AssignmentExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::AssignmentExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ConditionalExpression> for ConditionalExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ConditionalExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<OrExpression> for OrExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::OrExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<AndExpression> for AndExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::AndExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<EqualityExpression> for EqualityExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::EqualityExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<InequalityExpression> for InequalityExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::InequalityExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<BitwiseOrExpression> for BitwiseOrExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::BitwiseOrExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<BitwiseXorExpression> for BitwiseXorExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::BitwiseXorExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<BitwiseAndExpression> for BitwiseAndExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::BitwiseAndExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ShiftExpression> for ShiftExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ShiftExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<AdditiveExpression> for AdditiveExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::AdditiveExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<MultiplicativeExpression> for MultiplicativeExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::MultiplicativeExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ExponentiationExpression> for ExponentiationExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ExponentiationExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<PostfixExpression> for PostfixExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::PostfixExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<PrefixExpression> for PrefixExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::PrefixExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<FunctionCallExpression> for FunctionCallExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::FunctionCallExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<CallOptionsExpression> for CallOptionsExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::CallOptionsExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<MemberAccessExpression> for MemberAccessExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::MemberAccessExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<IndexAccessExpression> for IndexAccessExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::IndexAccessExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<NamedArgument> for NamedArgument {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::NamedArgument(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<TypeExpression> for TypeExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::TypeExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<NewExpression> for NewExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::NewExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<TupleExpression> for TupleExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::TupleExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<TupleValue> for TupleValue {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::TupleValue(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<ArrayExpression> for ArrayExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::ArrayExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<HexNumberExpression> for HexNumberExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::HexNumberExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<DecimalNumberExpression> for DecimalNumberExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::DecimalNumberExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulBlock> for YulBlock {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulBlock(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulFunctionDefinition> for YulFunctionDefinition {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulFunctionDefinition(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulVariableDeclarationStatement> for YulVariableDeclarationStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulVariableDeclarationStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulVariableDeclarationValue> for YulVariableDeclarationValue {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulVariableDeclarationValue(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulVariableAssignmentStatement> for YulVariableAssignmentStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulVariableAssignmentStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulColonAndEqual> for YulColonAndEqual {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulColonAndEqual(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulStackAssignmentStatement> for YulStackAssignmentStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulStackAssignmentStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulEqualAndColon> for YulEqualAndColon {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulEqualAndColon(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulIfStatement> for YulIfStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulIfStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulForStatement> for YulForStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulForStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulSwitchStatement> for YulSwitchStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulSwitchStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulDefaultCase> for YulDefaultCase {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulDefaultCase(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulValueCase> for YulValueCase {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulValueCase(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulLeaveStatement> for YulLeaveStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulLeaveStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulBreakStatement> for YulBreakStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulBreakStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulContinueStatement> for YulContinueStatement {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulContinueStatement(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulLabel> for YulLabel {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulLabel(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl IntoIr<YulFunctionCallExpression> for YulFunctionCallExpression {
+    fn into_ir(node: &Rc<SyntaxNode>, index: &TreeIndex) -> Option<Self> {
+        index.get(&node.id()).and_then(|ir_node| {
+            if let NodeType::YulFunctionCallExpression(ir_node) = ir_node {
+                Some(Rc::clone(ir_node))
+            } else {
+                None
+            }
+        })
+    }
+}
+
 //
 // Sequences:
 //
