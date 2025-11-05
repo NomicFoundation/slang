@@ -161,6 +161,7 @@ impl<T: KindTypes> SyntaxCursor<T> {
     pub fn go_to_parent(&mut self) -> bool {
         if let Some(parent) = self.node.parent() {
             self.node = parent;
+            self.child_index = self.node.index_in_parent().unwrap_or(0);
 
             true
         } else {
