@@ -183,8 +183,8 @@ impl<T: KindTypes> SyntaxQueryMatch<T> {
         self.query().capture_quantifiers().keys()
     }
 
-    /// Returns an iterator over all of the captures matched by this query. Each [`Capture`] contains the capture name,
-    /// and a list of [`Cursor`]s to the location of each captured node in the parse tree.
+    /// Returns an iterator over all of the captures matched by this query. Each [`SyntaxCapture`] contains the capture name,
+    /// and a list of [`SyntaxCursor`]s to the location of each captured node in the parse tree.
     pub fn captures(&self) -> impl Iterator<Item = SyntaxCapture<'_, T>> {
         self.query().capture_quantifiers().keys().map(|name| {
             let cursors = match self.captures.get(name) {
@@ -198,8 +198,8 @@ impl<T: KindTypes> SyntaxQueryMatch<T> {
 
     /// Try to find a single capture matched by this query.
     /// If no captures exist with the name `name`, this will return `None`.
-    /// If a capture does exist, then this will return a [`Capture`] containing the capture name,
-    /// and a list of [`Cursor`]s to the location of each captured node in the parse tree.
+    /// If a capture does exist, then this will return a [`SyntaxCapture`] containing the capture name,
+    /// and a list of [`SyntaxCursor`]s to the location of each captured node in the parse tree.
     pub fn capture(&self, name: &str) -> Option<SyntaxCapture<'_, T>> {
         let name = self
             .query()
@@ -217,7 +217,7 @@ impl<T: KindTypes> SyntaxQueryMatch<T> {
 }
 
 /// A single capture matched by a query, containing the capture name,
-/// and a list of [`Cursor`]s to the location of each captured node in the parse tree.
+/// and a list of [`SyntaxCursor`]s to the location of each captured node in the parse tree.
 pub struct SyntaxCapture<'a, T: KindTypes> {
     name: &'a str,
     cursors: &'a [SyntaxCursor<T>],

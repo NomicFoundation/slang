@@ -62,7 +62,7 @@ impl<T: KindTypes> SyntaxCursor<T> {
         self.is_completed
     }
 
-    /// Returns the currently pointed to [`Node`].
+    /// Returns the currently pointed to [`SyntaxNode`].
     pub fn node(&self) -> Rc<SyntaxNode<T>> {
         Rc::clone(&self.node)
     }
