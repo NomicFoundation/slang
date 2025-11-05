@@ -59,9 +59,6 @@ pub type TerminalNode = metaslang_cst::nodes::TerminalNode<KindTypes>;
 /// Represents a connection between nodes in the syntax tree.
 pub type Edge = metaslang_cst::nodes::Edge<KindTypes>;
 
-/// A node reference that can be navigated to the parent or its children
-pub type SyntaxNode = metaslang_cst::syntax_node::SyntaxNode<KindTypes>;
-
 /// A cursor that can traverse a CST.
 ///
 /// Nodes are visited in a DFS pre-order traversal.
@@ -71,13 +68,17 @@ pub type CursorIterator = metaslang_cst::cursor::CursorIterator<KindTypes>;
 /// Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
 pub type AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<KindTypes>;
 
+/// A node reference that can be navigated to the parent or its children
+#[cfg(feature = "__private_backend_api")]
+pub type SyntaxNode = metaslang_cst::syntax_node::SyntaxNode<KindTypes>;
 /// A cursor that can traverse a CST using `SyntaxNodes`.
-///
-/// Nodes are visited in a DFS pre-order traversal.
+#[cfg(feature = "__private_backend_api")]
 pub type SyntaxCursor = metaslang_cst::syntax_cursor::SyntaxCursor<KindTypes>;
 /// Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+#[cfg(feature = "__private_backend_api")]
 pub type SyntaxCursorIterator = metaslang_cst::syntax_cursor::SyntaxCursorIterator<KindTypes>;
 /// Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
+#[cfg(feature = "__private_backend_api")]
 pub type SyntaxAncestorsIterator = metaslang_cst::syntax_cursor::SyntaxAncestorsIterator<KindTypes>;
 
 /// The declarative `Query` API is a convenient alternative to the [`Cursor`][`metaslang_cst::cursor::Cursor`]
