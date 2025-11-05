@@ -20,12 +20,16 @@ impl<T: KindTypes> SyntaxNode<T> {
         })
     }
 
-    pub(crate) fn erase_root(&self) -> Rc<Self> {
-        Rc::new(Self {
-            parent: None,
-            label: self.label,
-            green: self.green.clone(),
-        })
+    pub(crate) fn erase_root(self: &Rc<Self>) -> Rc<Self> {
+        if self.parent.is_some() {
+            Rc::new(Self {
+                parent: None,
+                label: self.label,
+                green: self.green.clone(),
+            })
+        } else {
+            Rc::clone(self)
+        }
     }
 
     /// Returns a unique identifier of the node. It is not reproducible over parses
@@ -97,6 +101,19 @@ impl<T: KindTypes> SyntaxNode<T> {
             label: edge.label,
             green: edge.node.clone(),
         })
+    }
+
+    pub fn child_index(&self, node_id: NodeId) -> Option<usize> {
+        self.green
+            .children()
+            .iter()
+            .position(|edge| edge.node.id() == node_id)
+    }
+
+    pub fn index_in_parent(&self) -> Option<usize> {
+        self.parent
+            .as_ref()
+            .and_then(|parent| parent.child_index(self.id()))
     }
 
     /// Reconstructs the original source code from the node and its sub-tree.

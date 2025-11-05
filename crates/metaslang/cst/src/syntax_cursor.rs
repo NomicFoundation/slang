@@ -21,10 +21,11 @@ pub struct SyntaxCursor<T: KindTypes> {
 }
 
 impl<T: KindTypes> SyntaxCursor<T> {
-    pub fn create(node: Rc<SyntaxNode<T>>) -> Self {
+    pub fn create_from(node: Rc<SyntaxNode<T>>) -> Self {
+        let child_index = node.index_in_parent().unwrap_or(0usize);
         Self {
             node,
-            child_index: 0,
+            child_index,
             is_completed: false,
         }
     }
@@ -178,15 +179,13 @@ impl<T: KindTypes> SyntaxCursor<T> {
         }
 
         // If the current cursor is a node and it has children, go to first children
-        let mut children = self.node.children();
-        if !children.is_empty() {
-            self.node = children.remove(0);
-            self.child_index = 0;
-
-            return true;
+        if self.node.children_count() == 0 {
+            return false;
         }
 
-        false
+        self.node = self.node.nth_child(0);
+        self.child_index = 0;
+        true
     }
 
     /// Attempts to go to current node's last child.
@@ -197,13 +196,13 @@ impl<T: KindTypes> SyntaxCursor<T> {
             return false;
         }
 
-        let mut children = self.node.children();
-        if children.is_empty() {
+        let children_count = self.node.children_count();
+        if children_count == 0 {
             return false;
         }
 
-        self.child_index = children.len() - 1;
-        self.node = children.remove(self.child_index);
+        self.child_index = children_count - 1;
+        self.node = self.node.nth_child(self.child_index);
 
         true
     }
@@ -216,12 +215,11 @@ impl<T: KindTypes> SyntaxCursor<T> {
             return false;
         }
 
-        let mut children = self.node.children();
-        if child_index + 1 > children.len() {
+        if child_index + 1 > self.node.children_count() {
             return false;
         }
 
-        self.node = children.remove(child_index);
+        self.node = self.node.nth_child(child_index);
         self.child_index = child_index;
 
         false
@@ -239,16 +237,12 @@ impl<T: KindTypes> SyntaxCursor<T> {
             return false;
         };
 
-        let mut siblings = parent.children();
-        let index = siblings
-            .iter()
-            .position(|parent_child| *parent_child == self.node)
-            .expect("did not find node in parent's children");
-        if index + 1 >= siblings.len() {
+        if self.child_index + 1 >= parent.children_count() {
             return false;
         }
-        self.child_index = index + 1;
-        self.node = siblings.remove(index + 1);
+
+        self.child_index += 1;
+        self.node = parent.nth_child(self.child_index);
 
         true
     }
@@ -265,16 +259,12 @@ impl<T: KindTypes> SyntaxCursor<T> {
             return false;
         };
 
-        let mut siblings = parent.children();
-        let index = siblings
-            .iter()
-            .position(|parent_child| *parent_child == self.node)
-            .expect("did not find node in parent's children");
-        if index == 0 {
+        if self.child_index == 0 {
             return false;
         }
-        self.child_index = index - 1;
-        self.node = siblings.remove(index - 1);
+
+        self.child_index -= 1;
+        self.node = parent.nth_child(self.child_index);
 
         true
     }
