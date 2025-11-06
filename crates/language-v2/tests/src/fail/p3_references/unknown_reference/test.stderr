@@ -1,5 +1,5 @@
 error: Reference to unknown item 'Unknown'.
-  --> src/fail/p3_references/unknown_reference/test.rs:17:75
+  --> src/fail/p3_references/unknown_reference/test.rs:18:75
    |
-17 |                     fields = (field_1 = Required(Baz), field_2 = Required(Unknown))
+18 |                     fields = (field_1 = Required(Baz), field_2 = Required(Unknown))
    |                                                                           ^^^^^^^

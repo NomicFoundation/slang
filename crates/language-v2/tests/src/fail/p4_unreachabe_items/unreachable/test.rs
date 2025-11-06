@@ -11,6 +11,7 @@ language_v2_macros::compile!(Language(
         title = "Section One",
         topics = [Topic(
             title = "Topic One",
+            lexical_context = Foo,
             items = [
                 // reachable (from root)
                 Struct(name = Bar1, fields = (field = Required(Bar2))),

@@ -168,10 +168,7 @@ impl Section {
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Topic {
     pub title: String,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub lexical_context: Option<Identifier>,
-
+    pub lexical_context: Identifier,
     pub items: Vec<Item>,
 }
 
