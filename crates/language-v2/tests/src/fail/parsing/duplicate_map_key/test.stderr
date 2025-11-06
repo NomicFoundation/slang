@@ -1,5 +1,0 @@
-error: Duplicate map key.
-  --> src/fail/parsing/duplicate_map_key/test.rs:19:25
-   |
-19 |                         field_1 = Required(Baz),
-   |                         ^^^^^^^

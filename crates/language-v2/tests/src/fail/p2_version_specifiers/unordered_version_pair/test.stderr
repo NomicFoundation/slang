@@ -1,0 +1,5 @@
+error: Version '3.0.0' must be less than corresponding version '2.0.0'.
+  --> src/fail/p2_version_specifiers/unordered_version_pair/test.rs:20:52
+   |
+20 | ...                   enabled = Range(from = "3.0.0", till = "2.0.0")
+   |                                              ^^^^^^^

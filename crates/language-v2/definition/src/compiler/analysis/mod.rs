@@ -1,17 +1,15 @@
-mod definitions;
-mod reachability;
-mod references;
-mod utils;
+mod p1_definitions;
+mod p2_version_specifiers;
+mod p3_references;
+mod p4_unreachabe_items;
+mod p5_unused_versions;
 
 use std::rc::Rc;
 
 use indexmap::IndexMap;
 use proc_macro2::Span;
 
-use crate::compiler::analysis::definitions::analyze_definitions;
-use crate::compiler::analysis::reachability::analyze_reachability;
-use crate::compiler::analysis::references::analyze_references;
-use crate::compiler::version_set::VersionSet;
+use crate::compiler::utils::version_set::VersionSet;
 use crate::internals::{ErrorsCollection, ParseOutput, Spanned};
 use crate::model::{Identifier, SpannedItem, SpannedLanguage};
 
@@ -42,26 +40,20 @@ impl Analysis {
             metadata: IndexMap::new(),
         };
 
-        // Early return if there are already errors, to prevent producing noise from later analysis:
-        if analysis.errors.has_errors() {
-            return analysis;
+        for pass in &[
+            p1_definitions::run,
+            p2_version_specifiers::run,
+            p3_references::run,
+            p4_unreachabe_items::run,
+            p5_unused_versions::run,
+        ] {
+            // Early return if there are already errors, to prevent producing noise from later analysis:
+            if analysis.errors.has_errors() {
+                return analysis;
+            }
+
+            pass(&mut analysis);
         }
-
-        analyze_definitions(&mut analysis);
-
-        // Early return if there are already errors, to prevent producing noise from later analysis:
-        if analysis.errors.has_errors() {
-            return analysis;
-        }
-
-        analyze_references(&mut analysis);
-
-        // Early return if there are already errors, to prevent producing noise from later analysis:
-        if analysis.errors.has_errors() {
-            return analysis;
-        }
-
-        analyze_reachability(&mut analysis);
 
         analysis
     }

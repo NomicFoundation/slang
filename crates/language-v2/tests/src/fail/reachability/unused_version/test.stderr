@@ -1,5 +1,0 @@
-error: Item 'Baz' is not used in versions: 1.0.0..2.0.0
-  --> src/fail/reachability/unused_version/test.rs:20:28
-   |
-20 |                     name = Baz,
-   |                            ^^^

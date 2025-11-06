@@ -1,5 +1,5 @@
 [package]
-name = "language_tests_v2"
+name = "language_v2_tests"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

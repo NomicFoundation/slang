@@ -16,7 +16,7 @@ fn run_trybuild() {
         std::env::set_var("TRYBUILD", "overwrite");
     }
 
-    let crate_dir = &CargoWorkspace::locate_source_crate("language_tests").unwrap();
+    let crate_dir = &CargoWorkspace::locate_source_crate(env!("CARGO_PKG_NAME")).unwrap();
 
     let tests = FileWalker::from_directory(crate_dir)
         .find(["src/fail/**/test.rs"])
