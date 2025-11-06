@@ -6,6 +6,7 @@ use crate::model::Identifier;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+#[serde(tag = "type")]
 pub enum Scanner {
     Sequence {
         scanners: Vec<Scanner>,

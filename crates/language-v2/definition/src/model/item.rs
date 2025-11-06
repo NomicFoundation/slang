@@ -11,6 +11,7 @@ use crate::model::{
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, EnumDiscriminants, ParseInputTokens, WriteOutputTokens)]
+#[serde(tag = "type")]
 pub enum Item {
     Struct { item: Rc<StructItem> },
     Enum { item: Rc<EnumItem> },
