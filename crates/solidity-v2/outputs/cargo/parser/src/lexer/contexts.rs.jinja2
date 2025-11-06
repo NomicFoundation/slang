@@ -1,0 +1,124 @@
+use logos::{Lexer, Logos};
+use semver::Version;
+
+use crate::lexer::lexemes::{Lexeme, LexemeKind};
+
+#[derive(Clone, Copy, Debug)]
+pub enum ContextKind {
+    {%- for context in model.parser.lexer.contexts %}
+        {{ context.name }},
+    {%- endfor -%}
+}
+
+#[derive(Clone)]
+pub struct ContextExtras {
+    pub language_version: Version,
+}
+
+#[derive(Clone)]
+pub enum ContextWrapper<'source> {
+    {%- for context in model.parser.lexer.contexts %}
+        {{ context.name }}(Lexer<'source, {{ context.name }}Context>),
+    {%- endfor -%}
+}
+
+impl<'source> ContextWrapper<'source> {
+    pub fn new(kind: ContextKind, source: &'source str, extras: ContextExtras) -> Self {
+        match kind {
+            {% for context in model.parser.lexer.contexts %}
+                ContextKind::{{ context.name }} => Self::{{ context.name }}(
+                    {{ context.name }}Context::lexer_with_extras(source, extras)
+                ),
+            {%- endfor -%}
+        }
+    }
+
+    pub fn source(&self) -> &'source str {
+        match self {
+            {%- for context in model.parser.lexer.contexts %}
+                Self::{{ context.name }}(lexer) => lexer.source(),
+            {%- endfor -%}
+        }
+    }
+
+    pub fn bump(&mut self, n: usize) {
+        match self {
+            {%- for context in model.parser.lexer.contexts %}
+                Self::{{ context.name }}(lexer) => lexer.bump(n),
+            {%- endfor -%}
+        }
+    }
+
+    #[must_use]
+    pub fn morph(self, kind: ContextKind) -> Self {
+        match self {
+            {%- for old_context in model.parser.lexer.contexts %}
+                Self::{{ old_context.name }}(lexer) => match kind {
+                    {%- for new_context in model.parser.lexer.contexts %}
+                        ContextKind::{{ new_context.name }} => {
+                            {%- if old_context.name == new_context.name -%}
+                                Self::{{ new_context.name }}(lexer)
+                            {%- else -%}
+                                Self::{{ new_context.name }}(lexer.morph())
+                            {%- endif -%}
+                        },
+                    {%- endfor -%}
+                },
+            {%- endfor -%}
+        }
+    }
+
+    pub fn next_lexeme(&mut self) -> Option<Lexeme> {
+        let (kind, range) = match self {
+            {%- for context in model.parser.lexer.contexts %}
+                Self::{{ context.name }}(lexer) => match lexer.next() {
+                    Some(Ok({{ context.name }}Context::Lexeme(kind))) => (kind, lexer.span()),
+                    Some(Err(())) => (LexemeKind::UNRECOGNIZED, lexer.span()),
+                    None => return None,
+                },
+            {%- endfor -%}
+        };
+
+        Some(Lexeme { kind, range } )
+    }
+}
+
+{% for context in model.parser.lexer.contexts %}
+    #[derive(Clone, Debug, Logos)]
+    #[logos(extras = ContextExtras)]
+    pub enum {{ context.name }}Context {
+        {% for lexeme in context.lexemes -%}
+            {%- if lexeme.type == "Trivia" -%}
+                #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 1000000 + loop.index }})]
+            {%- elif lexeme.type == "Token" -%}
+                #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 2000000 + loop.index }})]
+            {%- elif lexeme.type == "Keyword" -%}
+                #[regex(r#"{{ lexeme.regex }}"#,
+                    {{- " " -}}
+                    {#-
+                        // TODO(v2): rather than repeated `semver::Version` comparisons during lexing,
+                        // we should define an `enum SupportedVersions` with `derive(Ord)` and use it here:
+                    -#}
+                    {%- if lexeme.reserved.type -%}
+                        {%- if lexeme.reserved.type == "Never" -%}
+                            |_| { LexemeKind::{{ lexeme.kind }}_Unreserved }
+                        {%- elif lexeme.reserved.type == "From" -%}
+                            |lexer| { if Version::parse("{{ lexeme.reserved.from }}").unwrap() <= lexer.extras.language_version { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
+                        {%- elif lexeme.reserved.type == "Till" -%}
+                            |lexer| { if lexer.extras.language_version < Version::parse("{{ lexeme.reserved.till }}").unwrap() { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
+                        {%- elif lexeme.reserved.type == "Range" -%}
+                            |lexer| { if Version::parse("{{ lexeme.reserved.from }}").unwrap() <= lexer.extras.language_version && lexer.extras.language_version < Version::parse("{{ lexeme.reserved.till }}").unwrap() { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
+                        {%- else -%}
+                            {{ throw(message = "Unrecognized lexeme.reserved type: " ~ lexeme.reserved.type) }}
+                        {%- endif -%}
+                    {%- else -%}
+                        |_| { LexemeKind::{{ lexeme.kind }}_Reserved }
+                    {%- endif -%}
+                , priority = {{ 3000000 + loop.index }})]
+            {%- else -%}
+                {{ throw(message = "Unrecognized lexeme type: " ~ lexeme.type) }}
+            {%- endif -%}
+        {%- endfor %}
+        Lexeme(LexemeKind),
+    }
+{% endfor %}

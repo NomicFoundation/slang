@@ -5,8 +5,10 @@ use codegen_testing::TestingGeneratorExtensions;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use language_definition::model::Language;
+use language_v2_definition::model::Language as LanguageV2;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use solidity_language::SolidityDefinition;
+use solidity_v2_language::SolidityDefinition as SolidityDefinitionV2;
 
 fn main() {
     // TODO(#1286):
@@ -39,6 +41,13 @@ fn main() {
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
                 "solidity_npm_package",
+            )
+        },
+        || {
+            generate_in_place_v2(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinitionV2::create(),
+                "slang_solidity_v2_parser",
             )
         },
     ]
@@ -87,6 +96,16 @@ fn generate_in_place(
     let the_crate = CargoWorkspace::locate_source_crate(crate_name)?;
 
     RuntimeGenerator::generate_templates_in_place(language, fs, &the_crate)
+}
+
+fn generate_in_place_v2(
+    fs: &mut CodegenFileSystem,
+    language: &LanguageV2,
+    crate_name: &str,
+) -> Result<()> {
+    let crate_dir = CargoWorkspace::locate_source_crate(crate_name)?;
+
+    RuntimeGenerator::generate_templates_in_place_v2(language, fs, &crate_dir)
 }
 
 fn generate_builtins(
