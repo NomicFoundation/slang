@@ -420,26 +420,21 @@ language_v2_macros::compile!(Language(
                         ),
                         Trivia(
                             name = SingleLineComment,
-                            scanner = Sequence([
-                                TrailingContext(scanner = Atom("//"), not_followed_by = Atom("/")),
-                                ZeroOrMore(Not(['\r', '\n']))
-                            ])
+                            scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
                         ),
                         Trivia(
                             name = MultiLineComment,
+                            // https://stackoverflow.com/a/36328890
                             scanner = Sequence([
-                                TrailingContext(
-                                    scanner = Atom("/*"),
-                                    not_followed_by = Sequence([Atom("*"), Not(['/'])])
-                                ),
-                                ZeroOrMore(Choice([
-                                    Not(['*']),
-                                    TrailingContext(
-                                        scanner = Atom("*"),
-                                        not_followed_by = Atom("/")
-                                    )
+                                Atom("/*"),
+                                ZeroOrMore(Not(['*'])),
+                                OneOrMore(Atom("*")),
+                                ZeroOrMore(Sequence([
+                                    Not(['/', '*']),
+                                    ZeroOrMore(Not(['*'])),
+                                    OneOrMore(Atom("*"))
                                 ])),
-                                Atom("*/")
+                                Atom("/")
                             ])
                         ),
                         Trivia(
@@ -448,16 +443,17 @@ language_v2_macros::compile!(Language(
                         ),
                         Trivia(
                             name = MultiLineNatSpecComment,
+                            // https://stackoverflow.com/a/36328890
                             scanner = Sequence([
-                                TrailingContext(scanner = Atom("/**"), not_followed_by = Atom("/")),
-                                ZeroOrMore(Choice([
-                                    Not(['*']),
-                                    TrailingContext(
-                                        scanner = Atom("*"),
-                                        not_followed_by = Atom("/")
-                                    )
+                                Atom("/**"),
+                                ZeroOrMore(Not(['*'])),
+                                OneOrMore(Atom("*")),
+                                ZeroOrMore(Sequence([
+                                    Not(['/', '*']),
+                                    ZeroOrMore(Not(['*'])),
+                                    OneOrMore(Atom("*"))
                                 ])),
-                                Atom("*/")
+                                Atom("/")
                             ])
                         )
                     ]
@@ -2118,12 +2114,7 @@ language_v2_macros::compile!(Language(
                         ),
                         Token(
                             name = Slash,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("/"),
-                                    not_followed_by = Choice([Atom("*"), Atom("/"), Atom("=")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("/"))]
                         ),
                         Token(
                             name = SlashEqual,
@@ -3834,105 +3825,45 @@ language_v2_macros::compile!(Language(
                             definitions = [
                                 // Lowercase "0x" enabled in all versions:
                                 TokenDefinition(
-                                    scanner = TrailingContext(
-                                        scanner = Sequence([
-                                            Atom("0x"),
-                                            OneOrMore(Fragment(HexCharacter)),
-                                            ZeroOrMore(Sequence([
-                                                Atom("_"),
-                                                OneOrMore(Fragment(HexCharacter))
-                                            ]))
-                                        ]),
-                                        not_followed_by = Fragment(IdentifierStart)
-                                    )
+                                    scanner = Sequence([
+                                        Atom("0x"),
+                                        OneOrMore(Fragment(HexCharacter)),
+                                        ZeroOrMore(Sequence([
+                                            Atom("_"),
+                                            OneOrMore(Fragment(HexCharacter))
+                                        ]))
+                                    ])
                                 ),
                                 // Uppercase "0X" only enabled before "0.5.0":
                                 TokenDefinition(
                                     enabled = Till("0.5.0"),
-                                    scanner = TrailingContext(
-                                        scanner = Sequence([
-                                            Atom("0X"),
-                                            OneOrMore(Fragment(HexCharacter)),
-                                            ZeroOrMore(Sequence([
-                                                Atom("_"),
-                                                OneOrMore(Fragment(HexCharacter))
-                                            ]))
-                                        ]),
-                                        not_followed_by = Fragment(IdentifierStart)
-                                    )
+                                    scanner = Sequence([
+                                        Atom("0X"),
+                                        OneOrMore(Fragment(HexCharacter)),
+                                        ZeroOrMore(Sequence([
+                                            Atom("_"),
+                                            OneOrMore(Fragment(HexCharacter))
+                                        ]))
+                                    ])
                                 )
                             ]
                         ),
                         Token(
                             name = DecimalLiteral,
                             definitions = [
-                                // A dot and a fraction (without an integer) is enabled in all versions:
                                 TokenDefinition(
-                                    scanner = TrailingContext(
-                                        scanner = Sequence([
-                                            Atom("."),
-                                            Fragment(DecimalDigits),
-                                            Optional(Fragment(DecimalExponent))
-                                        ]),
-                                        not_followed_by = Fragment(IdentifierStart)
-                                    )
+                                    scanner = Sequence([
+                                        Fragment(DecimalDigits),
+                                        Optional(Sequence([Atom("."), Fragment(DecimalDigits)])),
+                                        Optional(Fragment(DecimalExponent))
+                                    ])
                                 ),
-                                // A bare integer (without a dot or a fraction) is enabled in all versions:
                                 TokenDefinition(
-                                    scanner = TrailingContext(
-                                        scanner = Sequence([
-                                            TrailingContext(
-                                                scanner = Fragment(DecimalDigits),
-                                                not_followed_by = Atom(".")
-                                            ),
-                                            Optional(Fragment(DecimalExponent))
-                                        ]),
-                                        not_followed_by = Fragment(IdentifierStart)
-                                    )
-                                ),
-                                // Till 0.5.0, the following lone dot was considered a part of the literal:
-                                TokenDefinition(
-                                    enabled = Till("0.5.0"),
-                                    scanner = TrailingContext(
-                                        scanner = Sequence([
-                                            TrailingContext(
-                                                scanner =
-                                                    Sequence([Fragment(DecimalDigits), Atom(".")]),
-                                                not_followed_by = Fragment(DecimalDigits)
-                                            ),
-                                            Optional(Fragment(DecimalExponent))
-                                        ]),
-                                        not_followed_by = Fragment(IdentifierStart)
-                                    )
-                                ),
-                                // As well as the full form of digits followed by a dot followed by digits...
-                                TokenDefinition(
-                                    enabled = Till("0.5.0"),
-                                    scanner = TrailingContext(
-                                        scanner = Sequence([
-                                            Fragment(DecimalDigits),
-                                            Atom("."),
-                                            Fragment(DecimalDigits),
-                                            Optional(Fragment(DecimalExponent))
-                                        ]),
-                                        not_followed_by = Fragment(IdentifierStart)
-                                    )
-                                ),
-                                // ...both of which was subsumed by a more general form that only included
-                                // the dot if it was followed by a fraction:
-                                TokenDefinition(
-                                    enabled = From("0.5.0"),
-                                    scanner = TrailingContext(
-                                        scanner = Sequence([
-                                            Fragment(DecimalDigits),
-                                            Optional(Sequence([
-                                                Atom("."),
-                                                Fragment(DecimalDigits)
-                                            ])),
-                                            Optional(Fragment(DecimalExponent))
-                                        ]),
-                                        not_followed_by = Fragment(IdentifierStart)
-                                    )
+                                    scanner = Sequence([
+                                        Atom("."),
+                                        Fragment(DecimalDigits),
+                                        Optional(Fragment(DecimalExponent))
+                                    ])
                                 )
                             ]
                         ),
@@ -4565,29 +4496,22 @@ language_v2_macros::compile!(Language(
                         Token(
                             name = YulDecimalLiteral,
                             definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Choice([
-                                        Atom("0"),
-                                        Sequence([
-                                            Range(inclusive_start = '1', inclusive_end = '9'),
-                                            ZeroOrMore(Range(
-                                                inclusive_start = '0',
-                                                inclusive_end = '9'
-                                            ))
-                                        ])
-                                    ]),
-                                    not_followed_by = Fragment(IdentifierStart)
-                                )
+                                scanner = Choice([
+                                    Atom("0"),
+                                    Sequence([
+                                        Range(inclusive_start = '1', inclusive_end = '9'),
+                                        ZeroOrMore(Range(
+                                            inclusive_start = '0',
+                                            inclusive_end = '9'
+                                        ))
+                                    ])
+                                ])
                             )]
                         ),
                         Token(
                             name = YulHexLiteral,
                             definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner =
-                                        Sequence([Atom("0x"), OneOrMore(Fragment(HexCharacter))]),
-                                    not_followed_by = Fragment(IdentifierStart)
-                                )
+                                scanner = Sequence([Atom("0x"), OneOrMore(Fragment(HexCharacter))])
                             )]
                         )
                     ]
