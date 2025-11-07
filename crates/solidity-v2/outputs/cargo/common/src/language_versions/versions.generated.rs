@@ -3,6 +3,7 @@
 use std::convert::TryFrom;
 
 use semver::Version;
+use thiserror::Error;
 
 /// All supported versions of `Solidity`.
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -94,9 +95,16 @@ pub enum LanguageVersion {
     Version0_8_30,
 }
 
+#[derive(Debug, Error, PartialEq)]
+pub enum FromVersionErrors {
+    #[error("version '{0}' is not supported")]
+    UnsupportedVersion(Version),
+    #[error("versions with pre-release or build metadata are not supported")]
+    PreReleaseOrBuildMetadata,
+}
+
 impl TryFrom<Version> for LanguageVersion {
-    // TODO: Actually use an error type
-    type Error = String;
+    type Error = FromVersionErrors;
 
     fn try_from(version: Version) -> Result<Self, Self::Error> {
         let Version {
@@ -105,10 +113,10 @@ impl TryFrom<Version> for LanguageVersion {
             patch,
             pre,
             build,
-        } = version;
+        } = &version;
 
         if !pre.is_empty() || !build.is_empty() {
-            return Err("Pre-release and build metadata are not supported".to_string());
+            return Err(FromVersionErrors::PreReleaseOrBuildMetadata);
         }
 
         Ok(match (major, minor, patch) {
@@ -197,7 +205,7 @@ impl TryFrom<Version> for LanguageVersion {
             (0, 8, 28) => LanguageVersion::Version0_8_28,
             (0, 8, 29) => LanguageVersion::Version0_8_29,
             (0, 8, 30) => LanguageVersion::Version0_8_30,
-            _ => return Err("Unsupported version".to_string()),
+            _ => return Err(FromVersionErrors::UnsupportedVersion(version)),
         })
     }
 }

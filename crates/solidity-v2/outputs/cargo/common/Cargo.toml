@@ -20,6 +20,7 @@ categories = ["compilers", "utilities"]
 
 [dependencies]
 semver = { workspace = true }
+thiserror = { workspace = true }
 
 [lints]
 workspace = true
