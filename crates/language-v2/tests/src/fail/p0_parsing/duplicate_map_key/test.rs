@@ -11,6 +11,7 @@ language_v2_macros::compile!(Language(
         title = "Section One",
         topics = [Topic(
             title = "Topic One",
+            lexical_context = Foo,
             items = [
                 Struct(
                     name = Bar,

@@ -15,6 +15,7 @@ language_v2_macros::compile!(Language(
         title = "Section One",
         topics = [Topic(
             title = "Topic One",
+            lexical_context = Tiny,
             items = [
                 Struct(
                     name = Foo,
@@ -58,7 +59,7 @@ fn definition() {
                 title: "Section One".into(),
                 topics: vec![Topic {
                     title: "Topic One".into(),
-                    lexical_context: None,
+                    lexical_context: "Tiny".into(),
                     items: [
                         Item::Struct {
                             item: StructItem {

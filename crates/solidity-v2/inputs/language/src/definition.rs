@@ -35,6 +35,7 @@ language_v2_macros::compile!(Language(
             topics = [
                 Topic(
                     title = "Source Unit",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = SourceUnit,
@@ -242,6 +243,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Import Directives",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = ImportDirective,
@@ -313,6 +315,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Using Directives",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = UsingDirective,
@@ -404,6 +407,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Trivia",
+                    lexical_context = Solidity,
                     items = [
                         Trivia(
                             name = Whitespace,
@@ -460,6 +464,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Keywords",
+                    lexical_context = Solidity,
                     items = [
                         Keyword(
                             name = AbicoderKeyword,
@@ -1938,6 +1943,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Punctuation",
+                    lexical_context = Solidity,
                     items = [
                         Token(
                             name = OpenParen,
@@ -2160,6 +2166,7 @@ language_v2_macros::compile!(Language(
             topics = [
                 Topic(
                     title = "Contracts",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = ContractDefinition,
@@ -2263,6 +2270,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Interfaces",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = InterfaceDefinition,
@@ -2288,6 +2296,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Libraries",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = LibraryDefinition,
@@ -2312,6 +2321,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Structs",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = StructDefinition,
@@ -2345,6 +2355,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Enums",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = EnumDefinition,
@@ -2370,6 +2381,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Constants",
+                    lexical_context = Solidity,
                     items = [Struct(
                         name = ConstantDefinition,
                         enabled = From("0.7.4"),
@@ -2386,6 +2398,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "State Variables",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = StateVariableDefinition,
@@ -2423,6 +2436,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Functions",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = FunctionDefinition,
@@ -2663,6 +2677,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Modifiers",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = ModifierDefinition,
@@ -2697,6 +2712,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Events",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = EventDefinition,
@@ -2739,6 +2755,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "User Defined Value Types",
+                    lexical_context = Solidity,
                     items = [Struct(
                         name = UserDefinedValueTypeDefinition,
                         enabled = From("0.8.8"),
@@ -2754,6 +2771,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Errors",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = ErrorDefinition,
@@ -2803,6 +2821,7 @@ language_v2_macros::compile!(Language(
             topics = [
                 Topic(
                     title = "Advanced Types",
+                    lexical_context = Solidity,
                     items = [
                         Precedence(
                             name = TypeName,
@@ -2897,6 +2916,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Elementary Types",
+                    lexical_context = Solidity,
                     items = [
                         Enum(
                             name = ElementaryType,
@@ -2929,6 +2949,7 @@ language_v2_macros::compile!(Language(
             topics = [
                 Topic(
                     title = "Blocks",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = Block,
@@ -3016,6 +3037,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Declaration Statements",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = TupleDeconstructionStatement,
@@ -3100,6 +3122,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Control Statements",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = IfStatement,
@@ -3226,6 +3249,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Error Handling",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = TryStatement,
@@ -3289,6 +3313,7 @@ language_v2_macros::compile!(Language(
             topics = [
                 Topic(
                     title = "Base Expressions",
+                    lexical_context = Solidity,
                     items = [
                         Precedence(
                             name = Expression,
@@ -3646,6 +3671,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Function Calls",
+                    lexical_context = Solidity,
                     items = [
                         Enum(
                             name = ArgumentsDeclaration,
@@ -3722,6 +3748,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Primary Expressions",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = TypeExpression,
@@ -3786,6 +3813,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Numbers",
+                    lexical_context = Solidity,
                     items = [
                         Struct(
                             name = HexNumberExpression,
@@ -3951,6 +3979,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Strings",
+                    lexical_context = Solidity,
                     items = [
                         Enum(
                             name = StringExpression,
@@ -4218,6 +4247,7 @@ language_v2_macros::compile!(Language(
                 ),
                 Topic(
                     title = "Identifiers",
+                    lexical_context = Solidity,
                     items = [
                         Separated(
                             name = IdentifierPath,
