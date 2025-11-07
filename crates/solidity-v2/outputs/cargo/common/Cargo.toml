@@ -1,0 +1,25 @@
+[package]
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+name = "slang_solidity_v2_common"
+description = "Common utilities for the [slang_solidity](https://crates.io/crates/slang_solidity) crate."
+homepage = "https://nomicfoundation.github.io/slang/"
+repository = "https://github.com/NomicFoundation/slang/"
+authors = [
+    "Slang Team <slang@nomic.foundation>",
+    "Nomic Foundation <packages@nomic.foundation>",
+]
+
+readme = "README.md"
+license = "MIT"
+keywords = ["utilities"]
+categories = ["compilers", "utilities"]
+
+[dependencies]
+semver = { workspace = true }
+
+[lints]
+workspace = true

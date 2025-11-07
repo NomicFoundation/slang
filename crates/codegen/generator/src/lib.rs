@@ -82,12 +82,15 @@ impl RuntimeModel {
 #[derive(Serialize)]
 struct RuntimeModelV2 {
     parser: ParserModelV2,
+
+    language: LanguageV2,
 }
 
 impl RuntimeModelV2 {
     fn from_language(language: &LanguageV2) -> Self {
         Self {
             parser: ParserModelV2::from_language(language),
+            language: language.clone(),
         }
     }
 }

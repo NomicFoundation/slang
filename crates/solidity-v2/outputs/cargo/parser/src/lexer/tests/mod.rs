@@ -18,7 +18,7 @@ fn test_lexer_output(
     version: Version,
     kind: ContextKind,
 ) {
-    let mut lexer = Lexer::new(kind, source, version);
+    let mut lexer = Lexer::new(kind, source, version.try_into().unwrap());
 
     let actual: Vec<_> = std::iter::from_fn(|| {
         lexer
