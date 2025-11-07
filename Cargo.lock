@@ -2098,18 +2098,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "language_tests_v2"
-version = "1.3.0"
-dependencies = [
- "infra_utils",
- "language_v2_definition",
- "language_v2_macros",
- "rayon",
- "semver 1.0.26",
- "trybuild",
-]
-
-[[package]]
 name = "language_v2_definition"
 version = "1.3.0"
 dependencies = [
@@ -2143,6 +2131,18 @@ name = "language_v2_macros"
 version = "1.3.0"
 dependencies = [
  "language_v2_definition",
+]
+
+[[package]]
+name = "language_v2_tests"
+version = "1.3.0"
+dependencies = [
+ "infra_utils",
+ "language_v2_definition",
+ "language_v2_macros",
+ "rayon",
+ "semver 1.0.26",
+ "trybuild",
 ]
 
 [[package]]

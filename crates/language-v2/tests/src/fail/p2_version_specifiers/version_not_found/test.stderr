@@ -1,0 +1,5 @@
+error: Version '3.0.0' does not exist in the language definition.
+  --> src/fail/p2_version_specifiers/version_not_found/test.rs:18:76
+   |
+18 |                         field_1 = Optional(reference = Two, enabled = From("3.0.0")),
+   |                                                                            ^^^^^^^

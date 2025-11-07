@@ -1,0 +1,5 @@
+error: Expected a non-empty string.
+  --> src/fail/p0_parsing/empty_string/test.rs:16:63
+   |
+16 |                 definitions = [TokenDefinition(scanner = Atom(""))]
+   |                                                               ^^

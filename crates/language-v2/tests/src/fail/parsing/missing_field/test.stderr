@@ -1,5 +1,0 @@
-error: Expected field: 'title'.
-  --> src/fail/parsing/missing_field/test.rs:12:9
-   |
-12 |         topics = []
-   |         ^^^^^^
