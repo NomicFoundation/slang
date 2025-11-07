@@ -5,6 +5,7 @@ use crate::model::{Identifier, Scanner};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+#[serde(tag = "type")]
 pub enum TriviaParser {
     Sequence { parsers: Vec<TriviaParser> },
     Choice { parsers: Vec<TriviaParser> },

@@ -37,6 +37,7 @@ pub struct KeywordDefinition {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+#[serde(tag = "type")]
 pub enum KeywordValue {
     Sequence { values: Vec<KeywordValue> },
     Optional { value: Box<KeywordValue> },
