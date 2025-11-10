@@ -83,7 +83,7 @@ impl CargoController {
         Self::install_from_apt("graphviz");
 
         // dot prints its version to stderr, using the help page instead
-        match Command::new("dot").arg("--help").evaluate() {
+        match Command::new("dot").flag("-?").evaluate() {
             Ok(output) if output.starts_with("Usage: dot") => {
                 // graphviz is available
             }
@@ -120,10 +120,7 @@ impl CargoController {
     }
 
     fn install_gprof2dot() {
-        Command::new("pip3")
-            .args(["install", "gprof2dot"])
-            .flag("--yes")
-            .run();
+        Command::new("pip3").args(["install", "gprof2dot"]).run();
 
         match Command::new("gprof2dot").flag("--help").evaluate() {
             Ok(output) if output.starts_with("Usage:") => {
