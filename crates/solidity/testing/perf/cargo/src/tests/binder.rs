@@ -8,14 +8,6 @@ pub fn setup(project: &str) -> CompilationUnit {
     project.build_compilation_unit().unwrap()
 }
 
-pub fn cleanup_setup(project: &str) -> BinderOutput {
-    build_binder_output(
-        super::setup::setup(project)
-            .build_compilation_unit()
-            .unwrap(),
-    )
-}
-
 pub fn run(unit: CompilationUnit) -> BinderOutput {
     inner_run(unit).0
 }

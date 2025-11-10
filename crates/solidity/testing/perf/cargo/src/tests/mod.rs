@@ -1,4 +1,5 @@
 pub mod binder;
+pub mod binder_cleanup;
 pub mod bindings_build;
 pub mod bindings_resolve;
 pub mod cursor;
