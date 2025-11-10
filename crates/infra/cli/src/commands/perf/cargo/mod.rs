@@ -172,7 +172,12 @@ Reports/Logs: {reports_dir:?}
         for callgrind_output in callgrind_outputs.unwrap() {
             let callgrind_output_name = callgrind_output.file_name().unwrap().to_str().unwrap();
 
-            let callgraph_output = callgrind_output
+            let dot_file = callgrind_output
+                .parent()
+                .unwrap()
+                .join(format!("{callgrind_output_name}.dot"));
+
+            let svg_file = callgrind_output
                 .parent()
                 .unwrap()
                 .join(format!("{callgrind_output_name}.svg"));
@@ -181,12 +186,16 @@ Reports/Logs: {reports_dir:?}
             Command::new("gprof2dot")
                 .arg("-f")
                 .arg("callgrind")
+                .arg("-o")
+                .arg(dot_file.to_str().unwrap())
                 .arg(callgrind_output.to_str().unwrap())
-                .arg("|")
-                .arg("dot")
+                .run();
+
+            Command::new("dot")
                 .arg("-Tsvg")
                 .arg("-o")
-                .arg(callgraph_output.to_str().unwrap())
+                .arg(svg_file.to_str().unwrap())
+                .arg(dot_file.to_str().unwrap())
                 .run();
         }
     }
