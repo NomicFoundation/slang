@@ -175,12 +175,12 @@ Reports/Logs: {reports_dir:?}
             let dot_file = callgrind_output
                 .parent()
                 .unwrap()
-                .join(format!("{callgrind_output_name}.dot"));
+                .join(format!("{callgrind_output_name}.callgraph.dot"));
 
             let svg_file = callgrind_output
                 .parent()
                 .unwrap()
-                .join(format!("{callgrind_output_name}.svg"));
+                .join(format!("{callgrind_output_name}.callgraph.svg"));
 
             //gprof2dot -f callgrind callgrind.slang_merkle_proof.test.out | dot -Tsvg -o output.svg
             Command::new("gprof2dot")
