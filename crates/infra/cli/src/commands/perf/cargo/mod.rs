@@ -21,6 +21,8 @@ pub struct CargoController {
     dry_run: DryRun,
     #[arg(long)]
     no_deps: bool,
+    #[arg(long, default_value_t = false)]
+    callgraph: bool,
 }
 
 #[derive(Clone, Debug, Subcommand)]
@@ -37,6 +39,10 @@ impl CargoController {
             Self::install_valgrind();
             CargoWorkspace::install_binary("iai-callgrind-runner")?;
             CargoWorkspace::install_binary("bencher_cli")?;
+            if self.callgraph {
+                Self::install_graphviz();
+                Self::install_gprof2dot();
+            }
         }
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
@@ -57,11 +63,45 @@ impl CargoController {
     }
 
     fn install_valgrind() {
+        Self::install_from_apt("valgrind");
+
+        match Command::new("valgrind").flag("--version").evaluate() {
+            Ok(output) if output.starts_with("valgrind-") => {
+                // Valgrind is available
+            }
+            other => {
+                panic!(
+                    "valgrind needs to be installed on this machine to run perf tests.
+                    Supported Platforms: https://valgrind.org/downloads/current.html
+                    {other:?}"
+                );
+            }
+        }
+    }
+
+    fn install_graphviz() {
+        Self::install_from_apt("graphviz");
+
+        match Command::new("dot").flag("--version").evaluate() {
+            Ok(output) if output.starts_with("dot - graphviz version") => {
+                // graphviz is available
+            }
+            other => {
+                panic!(
+                    "graphviz needs to be installed on this machine to generate callgraphs.
+                    Supported Platforms: https://graphviz.org/download/
+                    {other:?}"
+                );
+            }
+        }
+    }
+
+    fn install_from_apt(package_name: &str) {
         if GitHub::is_running_in_ci() {
             Command::new("sudo").args(["apt", "update"]).run();
 
             Command::new("sudo")
-                .args(["apt", "install", "valgrind"])
+                .args(["apt", "install", package_name])
                 .flag("--yes")
                 .run();
 
@@ -72,21 +112,26 @@ impl CargoController {
             Command::new("sudo").args(["apt-get", "update"]).run();
 
             Command::new("sudo")
-                .args(["apt-get", "install", "valgrind"])
+                .args(["apt-get", "install", package_name])
                 .flag("--yes")
                 .run();
-
-            return;
         }
+    }
 
-        match Command::new("valgrind").flag("--version").evaluate() {
-            Ok(output) if output.starts_with("valgrind-") => {
-                // Valgrind is available
+    fn install_gprof2dot() {
+        Command::new("pip3")
+            .args(["install", "gprof2dot"])
+            .flag("--yes")
+            .run();
+
+        match Command::new("gprof2dot").flag("--help").evaluate() {
+            Ok(output) if output.starts_with("Usage:") => {
+                // gprof2dot is available
             }
             other => {
                 panic!(
-                    "valgrind needs to be installed on this machine to run perf tests.
-                    Supported Platforms: https://valgrind.org/downloads/current.html
+                    "gprof2dot needs to be installed on this machine to generate callgraphs.
+                    Supported Platforms: https://github.com/jrfonseca/gprof2dot?tab=readme-ov-file#download
                     {other:?}"
                 );
             }
