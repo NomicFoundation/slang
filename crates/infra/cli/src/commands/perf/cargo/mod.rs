@@ -153,7 +153,7 @@ impl CargoController {
             .join(bench_name);
 
         if self.callgraph {
-            Self::generate_callgraph(reports_dir);
+            Self::generate_callgraph(reports_dir.clone());
         }
 
         println!("
@@ -181,12 +181,12 @@ Reports/Logs: {reports_dir:?}
             Command::new("gprof2dot")
                 .arg("-f")
                 .arg("callgrind")
-                .arg(callgrind_output)
+                .arg(callgrind_output.to_str().unwrap())
                 .arg("|")
                 .arg("dot")
                 .arg("-Tsvg")
                 .arg("-o")
-                .arg(callgraph_output)
+                .arg(callgraph_output.to_str().unwrap())
                 .run();
         }
     }
