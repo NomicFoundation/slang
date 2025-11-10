@@ -7,7 +7,7 @@ use thiserror::Error;
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum LanguageVersion {
     {% for version in model.language.versions %}    
-        Version{{ version | split(pat=".") | join(sep="_") }},
+        V{{ version | split(pat=".") | join(sep="_") }},
     {%- endfor -%}
 }
 
@@ -38,7 +38,7 @@ impl TryFrom<Version> for LanguageVersion {
         Ok(match (major, minor, patch) {
             {%- for version in model.language.versions %}
                 ({{ version | split(pat=".") | join(sep=", ") }}) => {
-                    LanguageVersion::Version{{ version | split(pat=".") | join(sep="_") }}
+                    LanguageVersion::V{{ version | split(pat=".") | join(sep="_") }}
                 }
             {%- endfor %}
             _ => return Err(FromVersionErrors::UnsupportedVersion(version)),

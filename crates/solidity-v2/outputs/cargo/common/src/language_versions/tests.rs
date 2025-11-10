@@ -3,7 +3,7 @@ use crate::language_versions::versions::{FromVersionErrors, LanguageVersion};
 #[test]
 fn test_correct_version() {
     let version = LanguageVersion::try_from(semver::Version::new(0, 4, 11));
-    assert_eq!(version, Ok(LanguageVersion::Version0_4_11));
+    assert_eq!(version, Ok(LanguageVersion::V0_4_11));
 }
 
 #[test]

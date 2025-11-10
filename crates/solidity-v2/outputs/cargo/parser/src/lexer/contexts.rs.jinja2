@@ -99,11 +99,11 @@ impl<'source> ContextWrapper<'source> {
                         {%- if lexeme.reserved.type == "Never" -%}
                             |_| { LexemeKind::{{ lexeme.kind }}_Unreserved }
                         {%- elif lexeme.reserved.type == "From" -%}
-                            |lexer| { if LanguageVersion::Version{{ lexeme.reserved.from | split(pat=".") | join(sep="_") }} <= lexer.extras.language_version { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
+                            |lexer| { if LanguageVersion::V{{ lexeme.reserved.from | split(pat=".") | join(sep="_") }} <= lexer.extras.language_version { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
                         {%- elif lexeme.reserved.type == "Till" -%}
-                            |lexer| { if lexer.extras.language_version < LanguageVersion::Version{{ lexeme.reserved.till | split(pat=".") | join(sep="_") }} { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
+                            |lexer| { if lexer.extras.language_version < LanguageVersion::V{{ lexeme.reserved.till | split(pat=".") | join(sep="_") }} { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
                         {%- elif lexeme.reserved.type == "Range" -%}
-                            |lexer| { if LanguageVersion::Version{{ lexeme.reserved.from | split(pat=".") | join(sep="_") }} <= lexer.extras.language_version && lexer.extras.language_version < LanguageVersion::Version{{ lexeme.reserved.till | split(pat=".") | join(sep="_") }} { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
+                            |lexer| { if LanguageVersion::V{{ lexeme.reserved.from | split(pat=".") | join(sep="_") }} <= lexer.extras.language_version && lexer.extras.language_version < LanguageVersion::V{{ lexeme.reserved.till | split(pat=".") | join(sep="_") }} { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
                         {%- else -%}
                             {{ throw(message = "Unrecognized lexeme.reserved type: " ~ lexeme.reserved.type) }}
                         {%- endif -%}

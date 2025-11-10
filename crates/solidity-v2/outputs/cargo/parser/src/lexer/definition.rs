@@ -67,7 +67,7 @@ impl Lexer<'_> {
             Lexeme(LexemeKind),
         }
 
-        if self.language_version < LanguageVersion::Version0_5_0 {
+        if self.language_version < LanguageVersion::V0_5_0 {
             return Some(original);
         }
 
@@ -103,8 +103,8 @@ impl Lexer<'_> {
             Lexeme(LexemeKind),
         }
 
-        if LanguageVersion::Version0_5_8 <= self.language_version
-            && self.language_version < LanguageVersion::Version0_7_0
+        if LanguageVersion::V0_5_8 <= self.language_version
+            && self.language_version < LanguageVersion::V0_7_0
         {
             return Some(original);
         }
