@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
-use infra_utils::paths::PathExtensions;
+use infra_utils::paths::{FileWalker, PathExtensions};
 
 use crate::toolchains::bencher::run_bench;
 use crate::utils::DryRun;
@@ -152,6 +152,10 @@ impl CargoController {
             .join(package_name)
             .join(bench_name);
 
+        if self.callgraph {
+            Self::generate_callgraph(reports_dir);
+        }
+
         println!("
 
 Reports/Logs: {reports_dir:?}
@@ -159,5 +163,31 @@ Reports/Logs: {reports_dir:?}
 - DHAT traces (dhat.*.out) can be viewed using the [dhat/dh_view.html] tool from the Valgrind release [https://valgrind.org/downloads/].
 
 ");
+    }
+
+    fn generate_callgraph(reports_dir: std::path::PathBuf) {
+        let callgrind_outputs =
+            FileWalker::from_directory(reports_dir).find(["**/callgrind.*.out"]);
+
+        for callgrind_output in callgrind_outputs.unwrap() {
+            let callgrind_output_name = callgrind_output.file_name().unwrap().to_str().unwrap();
+
+            let callgraph_output = callgrind_output
+                .parent()
+                .unwrap()
+                .join(format!("{callgrind_output_name}.svg"));
+
+            //gprof2dot -f callgrind callgrind.slang_merkle_proof.test.out | dot -Tsvg -o output.svg
+            Command::new("gprof2dot")
+                .arg("-f")
+                .arg("callgrind")
+                .arg(callgrind_output)
+                .arg("|")
+                .arg("dot")
+                .arg("-Tsvg")
+                .arg("-o")
+                .arg(callgraph_output)
+                .run();
+        }
     }
 }
