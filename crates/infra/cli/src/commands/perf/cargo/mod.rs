@@ -82,8 +82,9 @@ impl CargoController {
     fn install_graphviz() {
         Self::install_from_apt("graphviz");
 
-        match Command::new("dot").flag("--version").evaluate() {
-            Ok(output) if output.starts_with("dot - graphviz version") => {
+        // dot prints its version to stderr, using the help page instead
+        match Command::new("dot").arg("--help").evaluate() {
+            Ok(output) if output.starts_with("Usage: dot") => {
                 // graphviz is available
             }
             other => {
