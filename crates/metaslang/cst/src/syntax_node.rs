@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use crate::cursor::Cursor;
 use crate::kinds::{KindTypes, NodeKind};
 use crate::nodes::{Node, NodeId, NonterminalNode, TerminalNode};
 use crate::text_index::TextIndex;
@@ -215,5 +216,15 @@ impl<T: KindTypes> SyntaxNode<T> {
     /// the language).
     pub fn is_valid(&self) -> bool {
         self.green.is_valid()
+    }
+
+    /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
+    pub fn create_cursor(&self, text_offset: TextIndex) -> Cursor<T> {
+        match &self.green {
+            Node::Nonterminal(nonterminal_node) => {
+                Rc::clone(nonterminal_node).create_cursor(text_offset)
+            }
+            Node::Terminal(terminal_node) => Rc::clone(terminal_node).create_cursor(text_offset),
+        }
     }
 }
