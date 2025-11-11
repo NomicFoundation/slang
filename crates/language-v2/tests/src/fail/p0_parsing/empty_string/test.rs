@@ -12,10 +12,7 @@ language_v2_macros::compile!(Language(
         topics = [Topic(
             title = "Topic One",
             lexical_context = Foo,
-            items = [Token(
-                name = Bar,
-                definitions = [TokenDefinition(scanner = Atom(""))]
-            )]
+            items = [Token(name = Bar, definitions = [TokenDefinition(Atom(""))])]
         )]
     )],
     built_ins = []

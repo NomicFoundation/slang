@@ -12,11 +12,10 @@ use crate::model::SpannedItemDiscriminants::{
 use crate::model::{
     Identifier, SpannedBuiltIn, SpannedBuiltInField, SpannedBuiltInFunction, SpannedBuiltInType,
     SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem, SpannedItem,
-    SpannedKeywordDefinition, SpannedKeywordItem, SpannedPrecedenceExpression,
-    SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
-    SpannedRepeatedItem, SpannedScanner, SpannedSeparatedItem, SpannedStructItem,
-    SpannedTokenDefinition, SpannedTokenItem, SpannedTriviaItem, SpannedTriviaParser,
-    SpannedVersionSpecifier,
+    SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
+    SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedScanner,
+    SpannedSeparatedItem, SpannedStructItem, SpannedTokenDefinition, SpannedTokenItem,
+    SpannedTriviaItem, SpannedTriviaParser, SpannedVersionSpecifier,
 };
 
 pub(crate) fn run(analysis: &mut Analysis) {
@@ -299,29 +298,26 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement:
     let SpannedKeywordItem {
         name,
         identifier,
-        definitions,
+        enabled,
+        definitions: _,
     } = item;
 
-    check_reference(analysis, Some(name), identifier, enablement, &[Token]);
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
-    for definition in definitions {
-        let SpannedKeywordDefinition {
-            enabled,
-            reserved: _,
-            value: _,
-        } = definition;
-
-        let _ = update_enablement(analysis, enablement, enabled.as_ref());
-    }
+    check_reference(analysis, Some(name), identifier, &enablement, &[Token]);
 }
 
 fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem, enablement: &VersionSet) {
-    let SpannedTokenItem { name, definitions } = item;
+    let SpannedTokenItem {
+        name,
+        enabled,
+        definitions,
+    } = item;
+
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     for definition in definitions {
-        let SpannedTokenDefinition { enabled, scanner } = definition;
-
-        let enablement = update_enablement(analysis, enablement, enabled.as_ref());
+        let SpannedTokenDefinition { scanner } = definition;
 
         check_scanner(analysis, Some(name), scanner, &enablement);
     }
