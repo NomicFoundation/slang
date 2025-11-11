@@ -364,13 +364,6 @@ fn check_scanner(
         | SpannedScanner::Atom { atom: _ } => {
             // Nothing to check for now.
         }
-        SpannedScanner::TrailingContext {
-            scanner,
-            not_followed_by,
-        } => {
-            check_scanner(analysis, source, scanner, enablement);
-            check_scanner(analysis, source, not_followed_by, enablement);
-        }
         SpannedScanner::Fragment { reference } => {
             check_reference(analysis, source, reference, enablement, &[Fragment]);
         }
