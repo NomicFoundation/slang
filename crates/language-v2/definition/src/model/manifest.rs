@@ -88,15 +88,13 @@ impl Language {
                     }
                 }
                 Item::Keyword { item } => {
+                    add_spec(&item.enabled);
                     for definition in &item.definitions {
-                        add_spec(&definition.enabled);
                         add_spec(&definition.reserved);
                     }
                 }
                 Item::Token { item } => {
-                    for definition in &item.definitions {
-                        add_spec(&definition.enabled);
-                    }
+                    add_spec(&item.enabled);
                 }
                 Item::Fragment { item } => add_spec(&item.enabled),
                 Item::Trivia { .. } => {}

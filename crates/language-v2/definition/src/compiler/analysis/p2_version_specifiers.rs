@@ -11,8 +11,8 @@ use crate::model::{
     SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem, SpannedItem,
     SpannedKeywordDefinition, SpannedKeywordItem, SpannedPrecedenceExpression,
     SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
-    SpannedRepeatedItem, SpannedSeparatedItem, SpannedStructItem, SpannedTokenDefinition,
-    SpannedTokenItem, SpannedVersionSpecifier,
+    SpannedRepeatedItem, SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem,
+    SpannedVersionSpecifier,
 };
 
 pub(crate) fn run(analysis: &mut Analysis) {
@@ -169,17 +169,15 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem) {
     let SpannedKeywordItem {
         name: _,
         identifier: _,
+        enabled,
         definitions,
     } = item;
 
-    for definition in definitions {
-        let SpannedKeywordDefinition {
-            enabled,
-            reserved,
-            value: _,
-        } = definition;
+    check_version_specifier(analysis, enabled.as_ref());
 
-        check_version_specifier(analysis, enabled.as_ref());
+    for definition in definitions {
+        let SpannedKeywordDefinition { reserved, value: _ } = definition;
+
         check_version_specifier(analysis, reserved.as_ref());
     }
 }
@@ -187,17 +185,11 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem) {
 fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem) {
     let SpannedTokenItem {
         name: _,
-        definitions,
+        enabled,
+        definitions: _,
     } = item;
 
-    for definition in definitions {
-        let SpannedTokenDefinition {
-            enabled,
-            scanner: _,
-        } = definition;
-
-        check_version_specifier(analysis, enabled.as_ref());
-    }
+    check_version_specifier(analysis, enabled.as_ref());
 }
 
 fn check_fragment(analysis: &mut Analysis, item: &SpannedFragmentItem) {

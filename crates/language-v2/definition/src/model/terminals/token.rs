@@ -8,6 +8,9 @@ use crate::model::{Identifier, Scanner, VersionSpecifier};
 pub struct TokenItem {
     pub name: Identifier,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub enabled: Option<VersionSpecifier>,
+
     pub definitions: Vec<TokenDefinition>,
 }
 
@@ -22,9 +25,6 @@ impl TokenItem {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct TokenDefinition {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub enabled: Option<VersionSpecifier>,
-
     pub scanner: Scanner,
 }
 

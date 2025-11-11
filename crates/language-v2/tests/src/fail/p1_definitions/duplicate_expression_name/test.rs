@@ -40,10 +40,7 @@ language_v2_macros::compile!(Language(
                     ],
                     primary_expressions = [PrimaryExpression(reference = Baz)]
                 ),
-                Token(
-                    name = Baz,
-                    definitions = [TokenDefinition(scanner = Atom("baz"))]
-                )
+                Token(name = Baz, definitions = [TokenDefinition(Atom("baz"))])
             ]
         )]
     )],

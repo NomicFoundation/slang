@@ -17,10 +17,7 @@ language_v2_macros::compile!(Language(
                     name = Bar,
                     fields = (field_1 = Optional(reference = Baz, enabled = From("2.0.0")))
                 ),
-                Token(
-                    name = Baz,
-                    definitions = [TokenDefinition(scanner = Atom("baz"))]
-                )
+                Token(name = Baz, definitions = [TokenDefinition(Atom("baz"))])
             ]
         )]
     )],

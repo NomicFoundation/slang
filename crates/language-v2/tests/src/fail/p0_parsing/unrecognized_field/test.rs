@@ -14,7 +14,7 @@ language_v2_macros::compile!(Language(
             lexical_context = Foo,
             items = [Token(
                 name = Bar,
-                definitions = [TokenDefinition(scanner = Atom("bar"))]
+                definitions = [TokenDefinition(Atom("bar"))]
             )],
             unrecognized_field = true
         )]

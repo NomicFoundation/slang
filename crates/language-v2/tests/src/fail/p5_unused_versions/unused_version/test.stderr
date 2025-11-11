@@ -1,5 +1,5 @@
 error: Item 'Baz' is not used in versions: 1.0.0..2.0.0
-  --> src/fail/p5_unused_versions/unused_version/test.rs:21:28
+  --> src/fail/p5_unused_versions/unused_version/test.rs:20:30
    |
-21 |                     name = Baz,
-   |                            ^^^
+20 |                 Token(name = Baz, definitions = [TokenDefinition(Atom("baz"))])
+   |                              ^^^

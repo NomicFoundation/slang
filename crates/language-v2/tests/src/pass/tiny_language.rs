@@ -25,14 +25,8 @@ language_v2_macros::compile!(Language(
                         baz_again = Required(Baz)
                     )
                 ),
-                Token(
-                    name = Bar,
-                    definitions = [TokenDefinition(scanner = Atom("bar"))]
-                ),
-                Token(
-                    name = Baz,
-                    definitions = [TokenDefinition(scanner = Atom("baz"))]
-                )
+                Token(name = Bar, definitions = [TokenDefinition(Atom("bar"))]),
+                Token(name = Baz, definitions = [TokenDefinition(Atom("baz"))])
             ]
         )]
     )],
@@ -93,8 +87,8 @@ fn definition() {
                         Item::Token {
                             item: TokenItem {
                                 name: "Bar".into(),
+                                enabled: None,
                                 definitions: [TokenDefinition {
-                                    enabled: None,
                                     scanner: Scanner::Atom { atom: "bar".into() }
                                 }]
                                 .into()
@@ -104,8 +98,8 @@ fn definition() {
                         Item::Token {
                             item: TokenItem {
                                 name: "Baz".into(),
+                                enabled: None,
                                 definitions: [TokenDefinition {
-                                    enabled: None,
                                     scanner: Scanner::Atom { atom: "baz".into() }
                                 }]
                                 .into()

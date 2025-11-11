@@ -196,39 +196,33 @@ language_v2_macros::compile!(Language(
                         Token(
                             // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
                             name = VersionSpecifier,
-                            definitions = [TokenDefinition(
-                                scanner = Fragment(VersionSpecifierFragment)
-                            )]
+                            definitions = [TokenDefinition(Fragment(VersionSpecifierFragment))]
                         ),
                         Token(
                             // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
                             name = SingleQuotedVersionLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Atom("'"),
-                                    Fragment(VersionSpecifierFragment),
-                                    ZeroOrMore(Sequence([
-                                        Atom("."),
-                                        Fragment(VersionSpecifierFragment)
-                                    ])),
-                                    Atom("'")
-                                ])
-                            )]
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("'"),
+                                Fragment(VersionSpecifierFragment),
+                                ZeroOrMore(Sequence([
+                                    Atom("."),
+                                    Fragment(VersionSpecifierFragment)
+                                ])),
+                                Atom("'")
+                            ]))]
                         ),
                         Token(
                             // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
                             name = DoubleQuotedVersionLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Atom("\""),
-                                    Fragment(VersionSpecifierFragment),
-                                    ZeroOrMore(Sequence([
-                                        Atom("."),
-                                        Fragment(VersionSpecifierFragment)
-                                    ])),
-                                    Atom("\"")
-                                ])
-                            )]
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("\""),
+                                Fragment(VersionSpecifierFragment),
+                                ZeroOrMore(Sequence([
+                                    Atom("."),
+                                    Fragment(VersionSpecifierFragment)
+                                ])),
+                                Atom("\"")
+                            ]))]
                         ),
                         Fragment(
                             name = VersionSpecifierFragment,
@@ -465,8 +459,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = AbicoderKeyword,
                             identifier = Identifier,
+                            enabled = From("0.7.5"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.7.5"),
                                 reserved = Never,
                                 value = Atom("abicoder")
                             )]
@@ -474,26 +468,20 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = AbicoderV1Keyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.7.5"),
-                                reserved = Never,
-                                value = Atom("v1")
-                            )]
+                            enabled = From("0.7.5"),
+                            definitions = [KeywordDefinition(reserved = Never, value = Atom("v1"))]
                         ),
                         Keyword(
                             name = AbicoderV2Keyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.7.5"),
-                                reserved = Never,
-                                value = Atom("v2")
-                            )]
+                            enabled = From("0.7.5"),
+                            definitions = [KeywordDefinition(reserved = Never, value = Atom("v2"))]
                         ),
                         Keyword(
                             name = ABIEncoderV2Keyword,
                             identifier = Identifier,
+                            enabled = From("0.4.16"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.4.16"),
                                 reserved = Never,
                                 value = Atom("ABIEncoderV2")
                             )]
@@ -501,10 +489,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = AbstractKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.6.0"),
-                                value = Atom("abstract")
-                            )]
+                            enabled = From("0.6.0"),
+                            definitions = [KeywordDefinition(value = Atom("abstract"))]
                         ),
                         Keyword(
                             name = AddressKeyword,
@@ -515,14 +501,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = AfterKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("after"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("after"))]
                         ),
                         Keyword(
                             name = AliasKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("alias")
                             )]
@@ -535,8 +521,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ApplyKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("apply")
                             )]
@@ -554,17 +540,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = AtKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.29"),
-                                reserved = Never,
-                                value = Atom("at")
-                            )]
+                            enabled = From("0.8.29"),
+                            definitions = [KeywordDefinition(reserved = Never, value = Atom("at"))]
                         ),
                         Keyword(
                             name = AutoKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("auto")
                             )]
@@ -582,10 +565,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ByteKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Till("0.8.0"),
-                                value = Atom("byte")
-                            )]
+                            enabled = Till("0.8.0"),
+                            definitions = [KeywordDefinition(value = Atom("byte"))]
                         ),
                         Keyword(
                             name = BytesKeyword,
@@ -633,8 +614,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = CallDataKeyword,
                             identifier = Identifier,
+                            enabled = From("0.5.0"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.5.0"),
                                 reserved = From("0.5.0"),
                                 value = Atom("calldata")
                             )]
@@ -642,16 +623,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = CaseKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("case"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("case"))]
                         ),
                         Keyword(
                             name = CatchKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.6.0"),
-                                value = Atom("catch")
-                            )]
+                            enabled = From("0.6.0"),
+                            definitions = [KeywordDefinition(value = Atom("catch"))]
                         ),
                         Keyword(
                             name = ConstantKeyword,
@@ -661,8 +640,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ConstructorKeyword,
                             identifier = Identifier,
+                            enabled = From("0.4.22"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.4.22"),
                                 reserved = From("0.5.0"),
                                 value = Atom("constructor")
                             )]
@@ -680,8 +659,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = CopyOfKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("copyof")
                             )]
@@ -694,14 +673,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = DefaultKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("default"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("default"))]
                         ),
                         Keyword(
                             name = DefineKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("define")
                             )]
@@ -724,8 +703,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = EmitKeyword,
                             identifier = Identifier,
+                            enabled = From("0.4.21"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.4.21"),
                                 reserved = From("0.5.0"),
                                 value = Atom("emit")
                             )]
@@ -738,11 +717,9 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ErrorKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.4"),
-                                reserved = Never,
-                                value = Atom("error")
-                            )]
+                            enabled = From("0.8.4"),
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("error"))]
                         ),
                         Keyword(
                             name = EtherKeyword,
@@ -757,8 +734,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ExperimentalKeyword,
                             identifier = Identifier,
+                            enabled = From("0.4.16"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.4.16"),
                                 reserved = Never,
                                 value = Atom("experimental")
                             )]
@@ -784,14 +761,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = FinalKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("final"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("final"))]
                         ),
                         Keyword(
                             name = FinneyKeyword,
                             identifier = Identifier,
+                            enabled = Till("0.7.0"),
                             definitions = [KeywordDefinition(
-                                enabled = Till("0.7.0"),
                                 reserved = Till("0.7.0"),
                                 value = Atom("finney")
                             )]
@@ -1093,17 +1070,15 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = GlobalKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.13"),
-                                reserved = Never,
-                                value = Atom("global")
-                            )]
+                            enabled = From("0.8.13"),
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("global"))]
                         ),
                         Keyword(
                             name = GweiKeyword,
                             identifier = Identifier,
+                            enabled = From("0.6.11"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.6.11"),
                                 reserved = From("0.7.0"),
                                 value = Atom("gwei")
                             )]
@@ -1111,7 +1086,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = HexKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(enabled = Never, value = Atom("hex"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("hex"))]
                         ),
                         Keyword(
                             name = HoursKeyword,
@@ -1126,8 +1102,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ImmutableKeyword,
                             identifier = Identifier,
+                            enabled = From("0.6.5"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.6.5"),
                                 reserved = From("0.5.0"),
                                 value = Atom("immutable")
                             )]
@@ -1135,8 +1111,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ImplementsKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("implements")
                             )]
@@ -1154,13 +1130,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = InKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(enabled = Never, value = Atom("in"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("in"))]
                         ),
                         Keyword(
                             name = InlineKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("inline"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("inline"))]
                         ),
                         Keyword(
                             name = InterfaceKeyword,
@@ -1223,16 +1200,15 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = LayoutKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.29"),
-                                reserved = Never,
-                                value = Atom("layout")
-                            )]
+                            enabled = From("0.8.29"),
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("layout"))]
                         ),
                         Keyword(
                             name = LetKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(enabled = Never, value = Atom("let"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("let"))]
                         ),
                         Keyword(
                             name = LibraryKeyword,
@@ -1242,8 +1218,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = MacroKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("macro")
                             )]
@@ -1256,8 +1232,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = MatchKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("match"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("match"))]
                         ),
                         Keyword(
                             name = MemoryKeyword,
@@ -1277,8 +1253,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = MutableKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("mutable")
                             )]
@@ -1291,19 +1267,20 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = NullKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("null"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("null"))]
                         ),
                         Keyword(
                             name = OfKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(enabled = Never, value = Atom("of"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("of"))]
                         ),
                         Keyword(
                             name = OverrideKeyword,
                             identifier = Identifier,
+                            enabled = From("0.6.0"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.6.0"),
                                 reserved = From("0.5.0"),
                                 value = Atom("override")
                             )]
@@ -1311,8 +1288,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = PartialKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("partial")
                             )]
@@ -1335,8 +1312,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = PromiseKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("promise")
                             )]
@@ -1349,10 +1326,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = PureKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.16"),
-                                value = Atom("pure")
-                            )]
+                            enabled = From("0.4.16"),
+                            definitions = [KeywordDefinition(value = Atom("pure"))]
                         ),
                         Keyword(
                             name = ReceiveKeyword,
@@ -1365,8 +1340,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ReferenceKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("reference")
                             )]
@@ -1374,10 +1349,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = RelocatableKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Never,
-                                value = Atom("relocatable")
-                            )]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("relocatable"))]
                         ),
                         Keyword(
                             name = ReturnKeyword,
@@ -1392,17 +1365,15 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = RevertKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.4"),
-                                reserved = Never,
-                                value = Atom("revert")
-                            )]
+                            enabled = From("0.8.4"),
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("revert"))]
                         ),
                         Keyword(
                             name = SealedKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("sealed")
                             )]
@@ -1415,8 +1386,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = SizeOfKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("sizeof")
                             )]
@@ -1424,8 +1395,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = SMTCheckerKeyword,
                             identifier = Identifier,
+                            enabled = From("0.4.16"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.4.16"),
                                 reserved = Never,
                                 value = Atom("SMTChecker")
                             )]
@@ -1441,8 +1412,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = StaticKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("static"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("static"))]
                         ),
                         Keyword(
                             name = StorageKeyword,
@@ -1470,8 +1441,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = SupportsKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("supports")
                             )]
@@ -1479,14 +1450,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = SwitchKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("switch"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("switch"))]
                         ),
                         Keyword(
                             name = SzaboKeyword,
                             identifier = Identifier,
+                            enabled = Till("0.7.0"),
                             definitions = [KeywordDefinition(
-                                enabled = Till("0.7.0"),
                                 reserved = Till("0.7.0"),
                                 value = Atom("szabo")
                             )]
@@ -1502,16 +1473,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = ThrowKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Till("0.5.0"),
-                                value = Atom("throw")
-                            )]
+                            enabled = Till("0.5.0"),
+                            definitions = [KeywordDefinition(value = Atom("throw"))]
                         ),
                         Keyword(
                             name = TransientKeyword,
                             identifier = Identifier,
+                            enabled = From("0.8.27"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.8.27"),
                                 reserved = Never,
                                 value = Atom("transient")
                             )]
@@ -1524,16 +1493,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = TryKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.6.0"),
-                                value = Atom("try")
-                            )]
+                            enabled = From("0.6.0"),
+                            definitions = [KeywordDefinition(value = Atom("try"))]
                         ),
                         Keyword(
                             name = TypeDefKeyword,
                             identifier = Identifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("typedef")
                             )]
@@ -1541,16 +1508,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = TypeKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.5.3"),
-                                value = Atom("type")
-                            )]
+                            enabled = From("0.5.3"),
+                            definitions = [KeywordDefinition(value = Atom("type"))]
                         ),
                         Keyword(
                             name = TypeOfKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("typeof"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("typeof"))]
                         ),
                         Keyword(
                             name = UfixedKeyword,
@@ -1876,8 +1841,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = UncheckedKeyword,
                             identifier = Identifier,
+                            enabled = From("0.8.0"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.8.0"),
                                 reserved = From("0.5.0"),
                                 value = Atom("unchecked")
                             )]
@@ -1890,24 +1855,20 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = VarKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Till("0.5.0"),
-                                value = Atom("var")
-                            )]
+                            enabled = Till("0.5.0"),
+                            definitions = [KeywordDefinition(value = Atom("var"))]
                         ),
                         Keyword(
                             name = ViewKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.16"),
-                                value = Atom("view")
-                            )]
+                            enabled = From("0.4.16"),
+                            definitions = [KeywordDefinition(value = Atom("view"))]
                         ),
                         Keyword(
                             name = VirtualKeyword,
                             identifier = Identifier,
+                            enabled = From("0.6.0"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.6.0"),
                                 reserved = From("0.6.0"),
                                 value = Atom("virtual")
                             )]
@@ -1930,10 +1891,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YearsKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Till("0.5.0"),
-                                value = Atom("years")
-                            )]
+                            enabled = Till("0.5.0"),
+                            definitions = [KeywordDefinition(value = Atom("years"))]
                         )
                     ]
                 ),
@@ -1941,213 +1900,148 @@ language_v2_macros::compile!(Language(
                     title = "Punctuation",
                     lexical_context = Solidity,
                     items = [
-                        Token(
-                            name = OpenParen,
-                            definitions = [TokenDefinition(scanner = Atom("("))]
-                        ),
+                        Token(name = OpenParen, definitions = [TokenDefinition(Atom("("))]),
                         Token(
                             name = CloseParen,
-                            definitions = [TokenDefinition(scanner = Atom(")"))]
+                            definitions = [TokenDefinition(Atom(")"))]
                         ),
                         Token(
                             name = OpenBracket,
-                            definitions = [TokenDefinition(scanner = Atom("["))]
+                            definitions = [TokenDefinition(Atom("["))]
                         ),
                         Token(
                             name = CloseBracket,
-                            definitions = [TokenDefinition(scanner = Atom("]"))]
+                            definitions = [TokenDefinition(Atom("]"))]
                         ),
-                        Token(
-                            name = OpenBrace,
-                            definitions = [TokenDefinition(scanner = Atom("{"))]
-                        ),
+                        Token(name = OpenBrace, definitions = [TokenDefinition(Atom("{"))]),
                         Token(
                             name = CloseBrace,
-                            definitions = [TokenDefinition(scanner = Atom("}"))]
+                            definitions = [TokenDefinition(Atom("}"))]
                         ),
-                        Token(
-                            name = Comma,
-                            definitions = [TokenDefinition(scanner = Atom(","))]
-                        ),
-                        Token(
-                            name = Period,
-                            definitions = [TokenDefinition(scanner = Atom("."))]
-                        ),
+                        Token(name = Comma, definitions = [TokenDefinition(Atom(","))]),
+                        Token(name = Period, definitions = [TokenDefinition(Atom("."))]),
                         Token(
                             name = QuestionMark,
-                            definitions = [TokenDefinition(scanner = Atom("?"))]
+                            definitions = [TokenDefinition(Atom("?"))]
                         ),
-                        Token(
-                            name = Semicolon,
-                            definitions = [TokenDefinition(scanner = Atom(";"))]
-                        ),
-                        Token(
-                            name = Colon,
-                            definitions = [TokenDefinition(scanner = Atom(":"))]
-                        ),
+                        Token(name = Semicolon, definitions = [TokenDefinition(Atom(";"))]),
+                        Token(name = Colon, definitions = [TokenDefinition(Atom(":"))]),
                         Token(
                             name = ColonEqual,
-                            definitions = [TokenDefinition(scanner = Atom(":="))]
+                            definitions = [TokenDefinition(Atom(":="))]
                         ),
-                        Token(
-                            name = Equal,
-                            definitions = [TokenDefinition(scanner = Atom("="))]
-                        ),
+                        Token(name = Equal, definitions = [TokenDefinition(Atom("="))]),
                         Token(
                             name = EqualColon,
-                            definitions = [TokenDefinition(
-                                enabled = Till("0.5.0"),
-                                scanner = Atom("=:")
-                            )]
+                            enabled = Till("0.5.0"),
+                            definitions = [TokenDefinition(Atom("=:"))]
                         ),
                         Token(
                             name = EqualEqual,
-                            definitions = [TokenDefinition(scanner = Atom("=="))]
+                            definitions = [TokenDefinition(Atom("=="))]
                         ),
                         Token(
                             name = EqualGreaterThan,
-                            definitions = [TokenDefinition(scanner = Atom("=>"))]
+                            definitions = [TokenDefinition(Atom("=>"))]
                         ),
-                        Token(
-                            name = Asterisk,
-                            definitions = [TokenDefinition(scanner = Atom("*"))]
-                        ),
+                        Token(name = Asterisk, definitions = [TokenDefinition(Atom("*"))]),
                         Token(
                             name = AsteriskEqual,
-                            definitions = [TokenDefinition(scanner = Atom("*="))]
+                            definitions = [TokenDefinition(Atom("*="))]
                         ),
                         Token(
                             name = AsteriskAsterisk,
-                            definitions = [TokenDefinition(scanner = Atom("**"))]
+                            definitions = [TokenDefinition(Atom("**"))]
                         ),
-                        Token(
-                            name = Bar,
-                            definitions = [TokenDefinition(scanner = Atom("|"))]
-                        ),
-                        Token(
-                            name = BarEqual,
-                            definitions = [TokenDefinition(scanner = Atom("|="))]
-                        ),
-                        Token(
-                            name = BarBar,
-                            definitions = [TokenDefinition(scanner = Atom("||"))]
-                        ),
-                        Token(
-                            name = Ampersand,
-                            definitions = [TokenDefinition(scanner = Atom("&"))]
-                        ),
+                        Token(name = Bar, definitions = [TokenDefinition(Atom("|"))]),
+                        Token(name = BarEqual, definitions = [TokenDefinition(Atom("|="))]),
+                        Token(name = BarBar, definitions = [TokenDefinition(Atom("||"))]),
+                        Token(name = Ampersand, definitions = [TokenDefinition(Atom("&"))]),
                         Token(
                             name = AmpersandEqual,
-                            definitions = [TokenDefinition(scanner = Atom("&="))]
+                            definitions = [TokenDefinition(Atom("&="))]
                         ),
                         Token(
                             name = AmpersandAmpersand,
-                            definitions = [TokenDefinition(scanner = Atom("&&"))]
+                            definitions = [TokenDefinition(Atom("&&"))]
                         ),
-                        Token(
-                            name = LessThan,
-                            definitions = [TokenDefinition(scanner = Atom("<"))]
-                        ),
+                        Token(name = LessThan, definitions = [TokenDefinition(Atom("<"))]),
                         Token(
                             name = LessThanEqual,
-                            definitions = [TokenDefinition(scanner = Atom("<="))]
+                            definitions = [TokenDefinition(Atom("<="))]
                         ),
                         Token(
                             name = LessThanLessThan,
-                            definitions = [TokenDefinition(scanner = Atom("<<"))]
+                            definitions = [TokenDefinition(Atom("<<"))]
                         ),
                         Token(
                             name = LessThanLessThanEqual,
-                            definitions = [TokenDefinition(scanner = Atom("<<="))]
+                            definitions = [TokenDefinition(Atom("<<="))]
                         ),
                         Token(
                             name = GreaterThan,
-                            definitions = [TokenDefinition(scanner = Atom(">"))]
+                            definitions = [TokenDefinition(Atom(">"))]
                         ),
                         Token(
                             name = GreaterThanEqual,
-                            definitions = [TokenDefinition(scanner = Atom(">="))]
+                            definitions = [TokenDefinition(Atom(">="))]
                         ),
                         Token(
                             name = GreaterThanGreaterThan,
-                            definitions = [TokenDefinition(scanner = Atom(">>"))]
+                            definitions = [TokenDefinition(Atom(">>"))]
                         ),
                         Token(
                             name = GreaterThanGreaterThanEqual,
-                            definitions = [TokenDefinition(scanner = Atom(">>="))]
+                            definitions = [TokenDefinition(Atom(">>="))]
                         ),
                         Token(
                             name = GreaterThanGreaterThanGreaterThan,
-                            definitions = [TokenDefinition(scanner = Atom(">>>"))]
+                            definitions = [TokenDefinition(Atom(">>>"))]
                         ),
                         Token(
                             name = GreaterThanGreaterThanGreaterThanEqual,
-                            definitions = [TokenDefinition(scanner = Atom(">>>="))]
+                            definitions = [TokenDefinition(Atom(">>>="))]
                         ),
-                        Token(
-                            name = Plus,
-                            definitions = [TokenDefinition(scanner = Atom("+"))]
-                        ),
+                        Token(name = Plus, definitions = [TokenDefinition(Atom("+"))]),
                         Token(
                             name = PlusEqual,
-                            definitions = [TokenDefinition(scanner = Atom("+="))]
+                            definitions = [TokenDefinition(Atom("+="))]
                         ),
-                        Token(
-                            name = PlusPlus,
-                            definitions = [TokenDefinition(scanner = Atom("++"))]
-                        ),
-                        Token(
-                            name = Minus,
-                            definitions = [TokenDefinition(scanner = Atom("-"))]
-                        ),
+                        Token(name = PlusPlus, definitions = [TokenDefinition(Atom("++"))]),
+                        Token(name = Minus, definitions = [TokenDefinition(Atom("-"))]),
                         Token(
                             name = MinusEqual,
-                            definitions = [TokenDefinition(scanner = Atom("-="))]
+                            definitions = [TokenDefinition(Atom("-="))]
                         ),
                         Token(
                             name = MinusMinus,
-                            definitions = [TokenDefinition(scanner = Atom("--"))]
+                            definitions = [TokenDefinition(Atom("--"))]
                         ),
                         Token(
                             name = MinusGreaterThan,
-                            definitions = [TokenDefinition(scanner = Atom("->"))]
+                            definitions = [TokenDefinition(Atom("->"))]
                         ),
-                        Token(
-                            name = Slash,
-                            definitions = [TokenDefinition(scanner = Atom("/"))]
-                        ),
+                        Token(name = Slash, definitions = [TokenDefinition(Atom("/"))]),
                         Token(
                             name = SlashEqual,
-                            definitions = [TokenDefinition(scanner = Atom("/="))]
+                            definitions = [TokenDefinition(Atom("/="))]
                         ),
-                        Token(
-                            name = Percent,
-                            definitions = [TokenDefinition(scanner = Atom("%"))]
-                        ),
+                        Token(name = Percent, definitions = [TokenDefinition(Atom("%"))]),
                         Token(
                             name = PercentEqual,
-                            definitions = [TokenDefinition(scanner = Atom("%="))]
+                            definitions = [TokenDefinition(Atom("%="))]
                         ),
-                        Token(
-                            name = Bang,
-                            definitions = [TokenDefinition(scanner = Atom("!"))]
-                        ),
+                        Token(name = Bang, definitions = [TokenDefinition(Atom("!"))]),
                         Token(
                             name = BangEqual,
-                            definitions = [TokenDefinition(scanner = Atom("!="))]
+                            definitions = [TokenDefinition(Atom("!="))]
                         ),
-                        Token(
-                            name = Caret,
-                            definitions = [TokenDefinition(scanner = Atom("^"))]
-                        ),
+                        Token(name = Caret, definitions = [TokenDefinition(Atom("^"))]),
                         Token(
                             name = CaretEqual,
-                            definitions = [TokenDefinition(scanner = Atom("^="))]
+                            definitions = [TokenDefinition(Atom("^="))]
                         ),
-                        Token(
-                            name = Tilde,
-                            definitions = [TokenDefinition(scanner = Atom("~"))]
-                        )
+                        Token(name = Tilde, definitions = [TokenDefinition(Atom("~"))])
                     ]
                 )
             ]
@@ -3822,49 +3716,32 @@ language_v2_macros::compile!(Language(
                         ),
                         Token(
                             name = HexLiteral,
-                            definitions = [
-                                // Lowercase "0x" enabled in all versions:
-                                TokenDefinition(
-                                    scanner = Sequence([
-                                        Atom("0x"),
-                                        OneOrMore(Fragment(HexCharacter)),
-                                        ZeroOrMore(Sequence([
-                                            Atom("_"),
-                                            OneOrMore(Fragment(HexCharacter))
-                                        ]))
-                                    ])
-                                ),
-                                // Uppercase "0X" only enabled before "0.5.0":
-                                TokenDefinition(
-                                    enabled = Till("0.5.0"),
-                                    scanner = Sequence([
-                                        Atom("0X"),
-                                        OneOrMore(Fragment(HexCharacter)),
-                                        ZeroOrMore(Sequence([
-                                            Atom("_"),
-                                            OneOrMore(Fragment(HexCharacter))
-                                        ]))
-                                    ])
-                                )
-                            ]
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("0"),
+                                Choice([Atom("x"), Atom("X")]),
+                                OneOrMore(Fragment(HexCharacter)),
+                                ZeroOrMore(Sequence([
+                                    Atom("_"),
+                                    OneOrMore(Fragment(HexCharacter))
+                                ]))
+                            ]))]
                         ),
                         Token(
                             name = DecimalLiteral,
                             definitions = [
-                                TokenDefinition(
-                                    scanner = Sequence([
-                                        Fragment(DecimalDigits),
-                                        Optional(Sequence([Atom("."), Fragment(DecimalDigits)])),
-                                        Optional(Fragment(DecimalExponent))
-                                    ])
-                                ),
-                                TokenDefinition(
-                                    scanner = Sequence([
+                                TokenDefinition(Sequence([
+                                    Fragment(DecimalDigits),
+                                    Optional(Sequence([
                                         Atom("."),
-                                        Fragment(DecimalDigits),
-                                        Optional(Fragment(DecimalExponent))
-                                    ])
-                                )
+                                        Optional(Fragment(DecimalDigits))
+                                    ])),
+                                    Optional(Fragment(DecimalExponent))
+                                ])),
+                                TokenDefinition(Sequence([
+                                    Atom("."),
+                                    Fragment(DecimalDigits),
+                                    Optional(Fragment(DecimalExponent))
+                                ]))
                             ]
                         ),
                         Fragment(
@@ -3942,87 +3819,36 @@ language_v2_macros::compile!(Language(
                         ),
                         Token(
                             name = SingleQuotedStringLiteral,
-                            definitions = [
-                                // Allows unicode characters and arbitrary escape sequences:
-                                TokenDefinition(
-                                    enabled = Till("0.4.25"),
-                                    scanner = Sequence([
-                                        Atom("'"),
-                                        ZeroOrMore(Choice([
-                                            Fragment(EscapeSequenceArbitrary),
-                                            Not(['\'', '\\', '\r', '\n'])
-                                        ])),
-                                        Atom("'")
-                                    ])
-                                ),
-                                // Allows unicode characters but allows only known ASCII escape sequences:
-                                TokenDefinition(
-                                    enabled = Range(from = "0.4.25", till = "0.7.0"),
-                                    scanner = Sequence([
-                                        Atom("'"),
-                                        ZeroOrMore(Choice([
-                                            Fragment(EscapeSequence),
-                                            Not(['\'', '\\', '\r', '\n'])
-                                        ])),
-                                        Atom("'")
-                                    ])
-                                ),
-                                // Rejects unicode characters:
-                                TokenDefinition(
-                                    scanner = Sequence([
-                                        Atom("'"),
-                                        ZeroOrMore(Choice([
-                                            Fragment(EscapeSequence),
-                                            Range(inclusive_start = ' ', inclusive_end = '&'),
-                                            Range(inclusive_start = '(', inclusive_end = '['),
-                                            Range(inclusive_start = ']', inclusive_end = '~')
-                                        ])),
-                                        Atom("'")
-                                    ])
-                                )
-                            ]
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("'"),
+                                ZeroOrMore(Choice([
+                                    Fragment(EscapeSequence),
+                                    Not(['\'', '\\', '\r', '\n'])
+                                ])),
+                                Atom("'")
+                            ]))]
                         ),
                         Token(
                             name = DoubleQuotedStringLiteral,
-                            definitions = [
-                                // Allows unicode characters and arbitrary escape sequences:
-                                TokenDefinition(
-                                    enabled = Till("0.4.25"),
-                                    scanner = Sequence([
-                                        Atom("\""),
-                                        ZeroOrMore(Choice([
-                                            Fragment(EscapeSequenceArbitrary),
-                                            Not(['"', '\\', '\r', '\n'])
-                                        ])),
-                                        Atom("\"")
-                                    ])
-                                ),
-                                // Allows unicode characters but allows only known ASCII escape sequences:
-                                TokenDefinition(
-                                    enabled = Range(from = "0.4.25", till = "0.7.0"),
-                                    scanner = Sequence([
-                                        Atom("\""),
-                                        ZeroOrMore(Choice([
-                                            Fragment(EscapeSequence),
-                                            Not(['"', '\\', '\r', '\n'])
-                                        ])),
-                                        Atom("\"")
-                                    ])
-                                ),
-                                // Rejects unicode characters:
-                                TokenDefinition(
-                                    scanner = Sequence([
-                                        Atom("\""),
-                                        ZeroOrMore(Choice([
-                                            Fragment(EscapeSequence),
-                                            Range(inclusive_start = ' ', inclusive_end = '!'),
-                                            Range(inclusive_start = '#', inclusive_end = '['),
-                                            Range(inclusive_start = ']', inclusive_end = '~')
-                                        ])),
-                                        Atom("\"")
-                                    ])
-                                )
-                            ]
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("\""),
+                                ZeroOrMore(Choice([
+                                    Fragment(EscapeSequence),
+                                    Not(['"', '\\', '\r', '\n'])
+                                ])),
+                                Atom("\"")
+                            ]))]
+                        ),
+                        Fragment(
+                            name = EscapeSequence,
+                            scanner = Sequence([
+                                Atom("\\"),
+                                Choice([
+                                    Not(['x', 'u']),
+                                    Fragment(HexByteEscape),
+                                    Fragment(UnicodeEscape)
+                                ])
+                            ])
                         ),
                         Repeated(
                             name = HexStringLiterals,
@@ -4038,23 +3864,19 @@ language_v2_macros::compile!(Language(
                         ),
                         Token(
                             name = SingleQuotedHexStringLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Atom("hex'"),
-                                    Optional(Fragment(HexStringContents)),
-                                    Atom("'")
-                                ])
-                            )]
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("hex'"),
+                                Optional(Fragment(HexStringContents)),
+                                Atom("'")
+                            ]))]
                         ),
                         Token(
                             name = DoubleQuotedHexStringLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Atom("hex\""),
-                                    Optional(Fragment(HexStringContents)),
-                                    Atom("\"")
-                                ])
-                            )]
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("hex\""),
+                                Optional(Fragment(HexStringContents)),
+                                Atom("\"")
+                            ]))]
                         ),
                         Fragment(
                             name = HexStringContents,
@@ -4091,34 +3913,31 @@ language_v2_macros::compile!(Language(
                         ),
                         Token(
                             name = SingleQuotedUnicodeStringLiteral,
-                            definitions = [TokenDefinition(
-                                enabled = From("0.7.0"),
-                                scanner = Sequence([
-                                    Atom("unicode'"),
-                                    ZeroOrMore(Choice([
-                                        Fragment(EscapeSequence),
-                                        Not(['\'', '\\', '\r', '\n'])
-                                    ])),
-                                    Atom("'")
-                                ])
-                            )]
+                            enabled = From("0.7.0"),
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("unicode'"),
+                                ZeroOrMore(Choice([
+                                    Fragment(UnicodeEscapeSequence),
+                                    Not(['\'', '\\', '\r', '\n'])
+                                ])),
+                                Atom("'")
+                            ]))]
                         ),
                         Token(
                             name = DoubleQuotedUnicodeStringLiteral,
-                            definitions = [TokenDefinition(
-                                enabled = From("0.7.0"),
-                                scanner = Sequence([
-                                    Atom("unicode\""),
-                                    ZeroOrMore(Choice([
-                                        Fragment(EscapeSequence),
-                                        Not(['"', '\\', '\r', '\n'])
-                                    ])),
-                                    Atom("\"")
-                                ])
-                            )]
+                            enabled = From("0.7.0"),
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("unicode\""),
+                                ZeroOrMore(Choice([
+                                    Fragment(UnicodeEscapeSequence),
+                                    Not(['"', '\\', '\r', '\n'])
+                                ])),
+                                Atom("\"")
+                            ]))]
                         ),
                         Fragment(
-                            name = EscapeSequence,
+                            name = UnicodeEscapeSequence,
+                            enabled = From("0.7.0"),
                             scanner = Sequence([
                                 Atom("\\"),
                                 Choice([
@@ -4129,21 +3948,8 @@ language_v2_macros::compile!(Language(
                             ])
                         ),
                         Fragment(
-                            name = EscapeSequenceArbitrary,
-                            enabled = Till("0.4.25"),
-                            scanner = Sequence([
-                                Atom("\\"),
-                                Choice([
-                                    // Prior to 0.4.25, it was legal to "escape" any character (incl. unicode),
-                                    // however only the ones from `AsciiEscape` were escaped in practice.
-                                    Not(['x', 'u']),
-                                    Fragment(HexByteEscape),
-                                    Fragment(UnicodeEscape)
-                                ])
-                            ])
-                        ),
-                        Fragment(
                             name = AsciiEscape,
+                            enabled = From("0.7.0"),
                             scanner = Choice([
                                 Atom("n"),
                                 Atom("r"),
@@ -4187,12 +3993,10 @@ language_v2_macros::compile!(Language(
                         ),
                         Token(
                             name = Identifier,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Fragment(IdentifierStart),
-                                    ZeroOrMore(Fragment(IdentifierPart))
-                                ])
-                            )]
+                            definitions = [TokenDefinition(Sequence([
+                                Fragment(IdentifierStart),
+                                ZeroOrMore(Fragment(IdentifierPart))
+                            ]))]
                         ),
                         Fragment(
                             name = IdentifierStart,
@@ -4464,23 +4268,10 @@ language_v2_macros::compile!(Language(
                         ),
                         Token(
                             name = YulIdentifier,
-                            definitions = [
-                                // Dots were allowed specifically between these versions:
-                                TokenDefinition(
-                                    enabled = Range(from = "0.5.8", till = "0.7.0"),
-                                    scanner = Sequence([
-                                        Fragment(IdentifierStart),
-                                        ZeroOrMore(Choice([Fragment(IdentifierPart), Atom(".")]))
-                                    ])
-                                ),
-                                // Otherwise, parse as a regular identifier:
-                                TokenDefinition(
-                                    scanner = Sequence([
-                                        Fragment(IdentifierStart),
-                                        ZeroOrMore(Fragment(IdentifierPart))
-                                    ])
-                                )
-                            ]
+                            definitions = [TokenDefinition(Sequence([
+                                Fragment(IdentifierStart),
+                                ZeroOrMore(Choice([Fragment(IdentifierPart), Atom(".")]))
+                            ]))]
                         ),
                         Enum(
                             name = YulLiteral,
@@ -4495,24 +4286,20 @@ language_v2_macros::compile!(Language(
                         ),
                         Token(
                             name = YulDecimalLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Choice([
-                                    Atom("0"),
-                                    Sequence([
-                                        Range(inclusive_start = '1', inclusive_end = '9'),
-                                        ZeroOrMore(Range(
-                                            inclusive_start = '0',
-                                            inclusive_end = '9'
-                                        ))
-                                    ])
+                            definitions = [TokenDefinition(Choice([
+                                Atom("0"),
+                                Sequence([
+                                    Range(inclusive_start = '1', inclusive_end = '9'),
+                                    ZeroOrMore(Range(inclusive_start = '0', inclusive_end = '9'))
                                 ])
-                            )]
+                            ]))]
                         ),
                         Token(
                             name = YulHexLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([Atom("0x"), OneOrMore(Fragment(HexCharacter))])
-                            )]
+                            definitions = [TokenDefinition(Sequence([
+                                Atom("0x"),
+                                OneOrMore(Fragment(HexCharacter))
+                            ]))]
                         )
                     ]
                 ),
@@ -4523,8 +4310,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulAbstractKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("abstract")
                             )]
@@ -4532,8 +4319,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulAfterKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("after")
                             )]
@@ -4541,8 +4328,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulAliasKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("alias")
                             )]
@@ -4550,8 +4337,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulAnonymousKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("anonymous")
                             )]
@@ -4559,8 +4346,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulApplyKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("apply")
                             )]
@@ -4568,8 +4355,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulAsKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("as")
                             )]
@@ -4577,8 +4364,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulAssemblyKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("assembly")
                             )]
@@ -4586,8 +4373,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulAutoKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("auto")
                             )]
@@ -4595,8 +4382,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulBoolKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.5.10"),
                                 value = Atom("bool")
                             )]
@@ -4609,8 +4396,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulBytesKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Sequence([
                                     Atom("bytes"),
@@ -4654,8 +4441,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulCallDataKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("calldata")
                             )]
@@ -4668,8 +4455,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulCatchKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("catch")
                             )]
@@ -4677,8 +4464,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulConstantKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("constant")
                             )]
@@ -4686,8 +4473,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulConstructorKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("constructor")
                             )]
@@ -4700,8 +4487,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulContractKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("contract")
                             )]
@@ -4709,8 +4496,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulCopyOfKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("copyof")
                             )]
@@ -4718,8 +4505,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulDaysKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("days")
                             )]
@@ -4732,8 +4519,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulDefineKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("define")
                             )]
@@ -4741,8 +4528,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulDeleteKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("delete")
                             )]
@@ -4750,8 +4537,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulDoKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("do")
                             )]
@@ -4759,8 +4546,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulElseKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("else")
                             )]
@@ -4768,8 +4555,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulEmitKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("emit")
                             )]
@@ -4777,8 +4564,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulEnumKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("enum")
                             )]
@@ -4786,8 +4573,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulEtherKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("ether")
                             )]
@@ -4795,8 +4582,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulEventKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("event")
                             )]
@@ -4804,8 +4591,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulExternalKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("external")
                             )]
@@ -4813,8 +4600,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulFallbackKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.6.0", till = "0.7.1"),
                                 value = Atom("fallback")
                             )]
@@ -4822,16 +4609,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulFalseKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.6.2"),
-                                value = Atom("false")
-                            )]
+                            enabled = From("0.6.2"),
+                            definitions = [KeywordDefinition(value = Atom("false"))]
                         ),
                         Keyword(
                             name = YulFinalKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("final")
                             )]
@@ -4839,8 +4624,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulFinneyKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.0"),
                                 value = Atom("finney")
                             )]
@@ -4848,14 +4633,10 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulFixedKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [
+                                KeywordDefinition(reserved = Till("0.7.1"), value = Atom("fixed")),
                                 KeywordDefinition(
-                                    enabled = Never,
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("fixed")
-                                ),
-                                KeywordDefinition(
-                                    enabled = Never,
                                     reserved = Till("0.7.1"),
                                     value = Sequence([
                                         Atom("fixed"),
@@ -4899,7 +4680,6 @@ language_v2_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    enabled = Never,
                                     reserved = Till("0.7.1"),
                                     value = Sequence([
                                         Atom("fixed"),
@@ -4953,7 +4733,6 @@ language_v2_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    enabled = Never,
                                     reserved = Range(from = "0.4.14", till = "0.7.1"),
                                     value = Sequence([
                                         Atom("fixed"),
@@ -5017,7 +4796,6 @@ language_v2_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    enabled = Never,
                                     reserved = Range(from = "0.4.14", till = "0.7.1"),
                                     value = Sequence([
                                         Atom("fixed"),
@@ -5146,8 +4924,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulGweiKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.7.0", till = "0.7.1"),
                                 value = Atom("gwei")
                             )]
@@ -5155,13 +4933,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulHexKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(enabled = Never, value = Atom("hex"))]
+                            enabled = Never,
+                            definitions = [KeywordDefinition(value = Atom("hex"))]
                         ),
                         Keyword(
                             name = YulHoursKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("hours")
                             )]
@@ -5174,8 +4953,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulImmutableKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("immutable")
                             )]
@@ -5183,8 +4962,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulImplementsKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("implements")
                             )]
@@ -5192,8 +4971,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulImportKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("import")
                             )]
@@ -5201,8 +4980,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulIndexedKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("indexed")
                             )]
@@ -5210,8 +4989,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulInKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.6.8"),
                                 value = Atom("in")
                             )]
@@ -5219,8 +4998,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulInlineKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("inline")
                             )]
@@ -5228,8 +5007,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulInterfaceKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("interface")
                             )]
@@ -5237,8 +5016,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulInternalKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("internal")
                             )]
@@ -5246,8 +5025,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulIntKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Sequence([
                                     Atom("int"),
@@ -5291,8 +5070,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulIsKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("is")
                             )]
@@ -5300,8 +5079,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulLeaveKeyword,
                             identifier = YulIdentifier,
+                            enabled = From("0.6.0"),
                             definitions = [KeywordDefinition(
-                                enabled = From("0.6.0"),
                                 reserved = From("0.7.1"),
                                 value = Atom("leave")
                             )]
@@ -5314,8 +5093,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulLibraryKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("library")
                             )]
@@ -5323,8 +5102,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulMacroKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("macro")
                             )]
@@ -5332,8 +5111,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulMappingKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("mapping")
                             )]
@@ -5341,8 +5120,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulMatchKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("match")
                             )]
@@ -5350,8 +5129,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulMemoryKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("memory")
                             )]
@@ -5359,8 +5138,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulMinutesKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("minutes")
                             )]
@@ -5368,8 +5147,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulModifierKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("modifier")
                             )]
@@ -5377,8 +5156,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulMutableKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("mutable")
                             )]
@@ -5386,8 +5165,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulNewKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("new")
                             )]
@@ -5395,8 +5174,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulNullKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("null")
                             )]
@@ -5404,8 +5183,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulOfKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("of")
                             )]
@@ -5413,8 +5192,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulOverrideKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("override")
                             )]
@@ -5422,8 +5201,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulPartialKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("partial")
                             )]
@@ -5431,8 +5210,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulPayableKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("payable")
                             )]
@@ -5440,8 +5219,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulPragmaKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("pragma")
                             )]
@@ -5449,8 +5228,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulPrivateKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("private")
                             )]
@@ -5458,8 +5237,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulPromiseKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("promise")
                             )]
@@ -5467,8 +5246,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulPublicKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("public")
                             )]
@@ -5476,8 +5255,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulPureKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("pure")
                             )]
@@ -5485,8 +5264,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulReceiveKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.6.0", till = "0.7.1"),
                                 value = Atom("receive")
                             )]
@@ -5494,8 +5273,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulReferenceKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("reference")
                             )]
@@ -5503,8 +5282,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulRelocatableKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("relocatable")
                             )]
@@ -5512,8 +5291,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulReturnsKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("returns")
                             )]
@@ -5521,8 +5300,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulSealedKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("sealed")
                             )]
@@ -5530,8 +5309,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulSecondsKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("seconds")
                             )]
@@ -5539,8 +5318,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulSizeOfKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("sizeof")
                             )]
@@ -5548,8 +5327,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulStaticKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("static")
                             )]
@@ -5557,8 +5336,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulStorageKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("storage")
                             )]
@@ -5566,8 +5345,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulStringKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("string")
                             )]
@@ -5575,8 +5354,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulStructKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("struct")
                             )]
@@ -5584,8 +5363,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulSuperKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.8.0"),
                                 value = Atom("super")
                             )]
@@ -5593,8 +5372,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulSupportsKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("supports")
                             )]
@@ -5607,8 +5386,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulSzaboKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.0"),
                                 value = Atom("szabo")
                             )]
@@ -5616,8 +5395,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulThisKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = From("0.8.0"),
                                 value = Atom("this")
                             )]
@@ -5625,8 +5404,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulThrowKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("throw")
                             )]
@@ -5634,16 +5413,14 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulTrueKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.6.2"),
-                                value = Atom("true")
-                            )]
+                            enabled = From("0.6.2"),
+                            definitions = [KeywordDefinition(value = Atom("true"))]
                         ),
                         Keyword(
                             name = YulTryKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("try")
                             )]
@@ -5651,8 +5428,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulTypeDefKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("typedef")
                             )]
@@ -5660,8 +5437,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulTypeKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("type")
                             )]
@@ -5669,8 +5446,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulTypeOfKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("typeof")
                             )]
@@ -5678,14 +5455,10 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulUfixedKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [
+                                KeywordDefinition(reserved = Till("0.7.1"), value = Atom("ufixed")),
                                 KeywordDefinition(
-                                    enabled = Never,
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("ufixed")
-                                ),
-                                KeywordDefinition(
-                                    enabled = Never,
                                     reserved = Till("0.7.1"),
                                     value = Sequence([
                                         Atom("ufixed"),
@@ -5729,7 +5502,6 @@ language_v2_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    enabled = Never,
                                     reserved = Till("0.7.1"),
                                     value = Sequence([
                                         Atom("ufixed"),
@@ -5783,7 +5555,6 @@ language_v2_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    enabled = Never,
                                     reserved = Range(from = "0.4.14", till = "0.7.1"),
                                     value = Sequence([
                                         Atom("ufixed"),
@@ -5847,7 +5618,6 @@ language_v2_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    enabled = Never,
                                     reserved = Range(from = "0.4.14", till = "0.7.1"),
                                     value = Sequence([
                                         Atom("ufixed"),
@@ -5966,8 +5736,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulUintKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Sequence([
                                     Atom("uint"),
@@ -6011,8 +5781,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulUncheckedKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("unchecked")
                             )]
@@ -6020,8 +5790,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulUsingKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("using")
                             )]
@@ -6029,8 +5799,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulVarKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.6.5"),
                                 value = Atom("var")
                             )]
@@ -6038,8 +5808,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulViewKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("view")
                             )]
@@ -6047,8 +5817,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulVirtualKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Range(from = "0.6.0", till = "0.7.1"),
                                 value = Atom("virtual")
                             )]
@@ -6056,8 +5826,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulWeeksKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("weeks")
                             )]
@@ -6065,8 +5835,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulWeiKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("wei")
                             )]
@@ -6074,8 +5844,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulWhileKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("while")
                             )]
@@ -6083,8 +5853,8 @@ language_v2_macros::compile!(Language(
                         Keyword(
                             name = YulYearsKeyword,
                             identifier = YulIdentifier,
+                            enabled = Never,
                             definitions = [KeywordDefinition(
-                                enabled = Never,
                                 reserved = Till("0.7.1"),
                                 value = Atom("years")
                             )]
