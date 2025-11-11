@@ -56,7 +56,7 @@ pub fn find_unused_definitions<'a>(
         }
     }
 
-    unused_definitions.values().map(|def| *def).collect()
+    unused_definitions.values().copied().collect()
 }
 
 pub(crate) fn find_contract_by_name<'a>(

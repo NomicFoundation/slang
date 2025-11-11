@@ -649,6 +649,8 @@ impl Binder {
         }
     }
 
+    // Given the node id of an identifier, it tries to find the unique definition it references.
+    // Returns `None` if it's not a reference, or it's not to a unique definition.
     pub fn navigate_to(&self, node_id: NodeId) -> Option<&Definition> {
         self.find_reference_by_identifier_node_id(node_id)
             .and_then(|reference| reference.resolution.as_definition_id())
