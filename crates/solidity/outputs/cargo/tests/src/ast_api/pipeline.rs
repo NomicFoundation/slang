@@ -53,7 +53,8 @@ pub(crate) fn one_file_backend_pipeline(content: &str) -> Result<CompilationOutp
     let data = passes::p3_linearise_contracts::run(data);
     let data = passes::p4_type_definitions::run(data);
     let data = passes::p5_resolve_references::run(data);
+    let data = passes::p6_index_tree::run(data);
+
     assert_eq!(1, data.files.len());
-    let data = CompilationOutput::from_passes(data);
     Ok(data)
 }

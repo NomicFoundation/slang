@@ -13,7 +13,7 @@ pub fn follow_all_references<'a>(binder: &'a Binder, root: &Cursor) -> Vec<&'a D
             continue;
         }
 
-        if let Some(definition) = binder.naviagate_to(node.id()) {
+        if let Some(definition) = binder.navigate_to(node.id()) {
             referenced_definitions.push(definition);
         }
     }

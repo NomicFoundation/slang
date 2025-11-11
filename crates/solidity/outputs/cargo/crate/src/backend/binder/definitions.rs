@@ -198,6 +198,40 @@ pub struct YulVariableDefinition {
 }
 
 impl Definition {
+    pub fn node(&self) -> Rc<SyntaxNode> {
+        match self {
+            Self::Constant(constant_definition) => Rc::clone(&constant_definition.node),
+            Self::Contract(contract_definition) => Rc::clone(&contract_definition.node),
+            Self::Enum(enum_definition) => Rc::clone(&enum_definition.node),
+            Self::EnumMember(enum_member_definition) => Rc::clone(&enum_member_definition.node),
+            Self::Error(error_definition) => Rc::clone(&error_definition.node),
+            Self::Event(event_definition) => Rc::clone(&event_definition.node),
+            Self::Function(function_definition) => Rc::clone(&function_definition.node),
+            Self::Import(import_definition) => Rc::clone(&import_definition.node),
+            Self::ImportedSymbol(imported_symbol_definition) => {
+                Rc::clone(&imported_symbol_definition.node)
+            }
+            Self::Interface(interface_definition) => Rc::clone(&interface_definition.node),
+            Self::Library(library_definition) => Rc::clone(&library_definition.node),
+            Self::Modifier(modifier_definition) => Rc::clone(&modifier_definition.node),
+            Self::Parameter(parameter_definition) => Rc::clone(&parameter_definition.node),
+            Self::StateVariable(state_variable_definition) => {
+                Rc::clone(&state_variable_definition.node)
+            }
+            Self::Struct(struct_definition) => Rc::clone(&struct_definition.node),
+            Self::StructMember(struct_member_definition) => {
+                Rc::clone(&struct_member_definition.node)
+            }
+            Self::TypeParameter(parameter_definition) => Rc::clone(&parameter_definition.node),
+            Self::UserDefinedValueType(udvt_definition) => Rc::clone(&udvt_definition.node),
+            Self::Variable(variable_definition) => Rc::clone(&variable_definition.node),
+            Self::YulFunction(function_definition) => Rc::clone(&function_definition.node),
+            Self::YulLabel(label_definition) => Rc::clone(&label_definition.node),
+            Self::YulParameter(parameter_definition) => Rc::clone(&parameter_definition.node),
+            Self::YulVariable(variable_definition) => Rc::clone(&variable_definition.node),
+        }
+    }
+
     pub fn node_id(&self) -> NodeId {
         match self {
             Self::Constant(constant_definition) => constant_definition.node.id(),

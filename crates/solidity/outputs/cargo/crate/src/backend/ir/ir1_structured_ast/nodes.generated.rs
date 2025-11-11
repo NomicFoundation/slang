@@ -13,7 +13,7 @@ use crate::cst::SyntaxNode;
 
 pub type SourceUnit = Rc<SourceUnitStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SourceUnitStruct {
     pub node: Rc<SyntaxNode>,
     pub members: SourceUnitMembers,
@@ -27,7 +27,7 @@ impl SourceUnitStruct {
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaDirectiveStruct {
     pub node: Rc<SyntaxNode>,
     pub pragma: Pragma,
@@ -41,7 +41,7 @@ impl PragmaDirectiveStruct {
 
 pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AbicoderPragmaStruct {
     pub node: Rc<SyntaxNode>,
     pub version: AbicoderVersion,
@@ -55,7 +55,7 @@ impl AbicoderPragmaStruct {
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ExperimentalPragmaStruct {
     pub node: Rc<SyntaxNode>,
     pub feature: ExperimentalFeature,
@@ -69,7 +69,7 @@ impl ExperimentalPragmaStruct {
 
 pub type VersionPragma = Rc<VersionPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VersionPragmaStruct {
     pub node: Rc<SyntaxNode>,
     pub sets: VersionExpressionSets,
@@ -83,7 +83,7 @@ impl VersionPragmaStruct {
 
 pub type VersionRange = Rc<VersionRangeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VersionRangeStruct {
     pub node: Rc<SyntaxNode>,
     pub start: VersionLiteral,
@@ -98,7 +98,7 @@ impl VersionRangeStruct {
 
 pub type VersionTerm = Rc<VersionTermStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VersionTermStruct {
     pub node: Rc<SyntaxNode>,
     pub operator: Option<VersionOperator>,
@@ -113,7 +113,7 @@ impl VersionTermStruct {
 
 pub type ImportDirective = Rc<ImportDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDirectiveStruct {
     pub node: Rc<SyntaxNode>,
     pub clause: ImportClause,
@@ -127,7 +127,7 @@ impl ImportDirectiveStruct {
 
 pub type PathImport = Rc<PathImportStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PathImportStruct {
     pub node: Rc<SyntaxNode>,
     pub path: StringLiteral,
@@ -142,7 +142,7 @@ impl PathImportStruct {
 
 pub type NamedImport = Rc<NamedImportStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct NamedImportStruct {
     pub node: Rc<SyntaxNode>,
     pub alias: ImportAlias,
@@ -157,7 +157,7 @@ impl NamedImportStruct {
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDeconstructionStruct {
     pub node: Rc<SyntaxNode>,
     pub symbols: ImportDeconstructionSymbols,
@@ -172,7 +172,7 @@ impl ImportDeconstructionStruct {
 
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDeconstructionSymbolStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -187,7 +187,7 @@ impl ImportDeconstructionSymbolStruct {
 
 pub type ImportAlias = Rc<ImportAliasStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ImportAliasStruct {
     pub node: Rc<SyntaxNode>,
     pub identifier: Rc<SyntaxNode>,
@@ -201,7 +201,7 @@ impl ImportAliasStruct {
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDirectiveStruct {
     pub node: Rc<SyntaxNode>,
     pub clause: UsingClause,
@@ -217,7 +217,7 @@ impl UsingDirectiveStruct {
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDeconstructionStruct {
     pub node: Rc<SyntaxNode>,
     pub symbols: UsingDeconstructionSymbols,
@@ -231,7 +231,7 @@ impl UsingDeconstructionStruct {
 
 pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDeconstructionSymbolStruct {
     pub node: Rc<SyntaxNode>,
     pub name: IdentifierPath,
@@ -246,7 +246,7 @@ impl UsingDeconstructionSymbolStruct {
 
 pub type UsingAlias = Rc<UsingAliasStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UsingAliasStruct {
     pub node: Rc<SyntaxNode>,
     pub operator: UsingOperator,
@@ -260,7 +260,7 @@ impl UsingAliasStruct {
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ContractDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub abstract_keyword: bool,
@@ -277,7 +277,7 @@ impl ContractDefinitionStruct {
 
 pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InheritanceSpecifierStruct {
     pub node: Rc<SyntaxNode>,
     pub types: InheritanceTypes,
@@ -291,7 +291,7 @@ impl InheritanceSpecifierStruct {
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InheritanceTypeStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: IdentifierPath,
@@ -306,7 +306,7 @@ impl InheritanceTypeStruct {
 
 pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StorageLayoutSpecifierStruct {
     pub node: Rc<SyntaxNode>,
     pub expression: Expression,
@@ -320,7 +320,7 @@ impl StorageLayoutSpecifierStruct {
 
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InterfaceDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -336,7 +336,7 @@ impl InterfaceDefinitionStruct {
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LibraryDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -351,7 +351,7 @@ impl LibraryDefinitionStruct {
 
 pub type StructDefinition = Rc<StructDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StructDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -366,7 +366,7 @@ impl StructDefinitionStruct {
 
 pub type StructMember = Rc<StructMemberStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StructMemberStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -381,7 +381,7 @@ impl StructMemberStruct {
 
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EnumDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -396,7 +396,7 @@ impl EnumDefinitionStruct {
 
 pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ConstantDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -412,7 +412,7 @@ impl ConstantDefinitionStruct {
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StateVariableDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -429,7 +429,7 @@ impl StateVariableDefinitionStruct {
 
 pub type StateVariableDefinitionValue = Rc<StateVariableDefinitionValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StateVariableDefinitionValueStruct {
     pub node: Rc<SyntaxNode>,
     pub value: Expression,
@@ -443,7 +443,7 @@ impl StateVariableDefinitionValueStruct {
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: FunctionName,
@@ -461,7 +461,7 @@ impl FunctionDefinitionStruct {
 
 pub type ParametersDeclaration = Rc<ParametersDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ParametersDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: Parameters,
@@ -475,7 +475,7 @@ impl ParametersDeclarationStruct {
 
 pub type Parameter = Rc<ParameterStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ParameterStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -491,7 +491,7 @@ impl ParameterStruct {
 
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OverrideSpecifierStruct {
     pub node: Rc<SyntaxNode>,
     pub overridden: Option<OverridePathsDeclaration>,
@@ -505,7 +505,7 @@ impl OverrideSpecifierStruct {
 
 pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OverridePathsDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub paths: OverridePaths,
@@ -519,7 +519,7 @@ impl OverridePathsDeclarationStruct {
 
 pub type ReturnsDeclaration = Rc<ReturnsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnsDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub variables: ParametersDeclaration,
@@ -533,7 +533,7 @@ impl ReturnsDeclarationStruct {
 
 pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ConstructorDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: ParametersDeclaration,
@@ -549,7 +549,7 @@ impl ConstructorDefinitionStruct {
 
 pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UnnamedFunctionDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: ParametersDeclaration,
@@ -565,7 +565,7 @@ impl UnnamedFunctionDefinitionStruct {
 
 pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FallbackFunctionDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: ParametersDeclaration,
@@ -582,7 +582,7 @@ impl FallbackFunctionDefinitionStruct {
 
 pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ReceiveFunctionDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: ParametersDeclaration,
@@ -598,7 +598,7 @@ impl ReceiveFunctionDefinitionStruct {
 
 pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ModifierDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -615,7 +615,7 @@ impl ModifierDefinitionStruct {
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ModifierInvocationStruct {
     pub node: Rc<SyntaxNode>,
     pub name: IdentifierPath,
@@ -630,7 +630,7 @@ impl ModifierInvocationStruct {
 
 pub type EventDefinition = Rc<EventDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EventDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -646,7 +646,7 @@ impl EventDefinitionStruct {
 
 pub type EventParametersDeclaration = Rc<EventParametersDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EventParametersDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: EventParameters,
@@ -660,7 +660,7 @@ impl EventParametersDeclarationStruct {
 
 pub type EventParameter = Rc<EventParameterStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EventParameterStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -676,7 +676,7 @@ impl EventParameterStruct {
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UserDefinedValueTypeDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -691,7 +691,7 @@ impl UserDefinedValueTypeDefinitionStruct {
 
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -706,7 +706,7 @@ impl ErrorDefinitionStruct {
 
 pub type ErrorParametersDeclaration = Rc<ErrorParametersDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorParametersDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: ErrorParameters,
@@ -720,7 +720,7 @@ impl ErrorParametersDeclarationStruct {
 
 pub type ErrorParameter = Rc<ErrorParameterStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorParameterStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -735,7 +735,7 @@ impl ErrorParameterStruct {
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ArrayTypeNameStruct {
     pub node: Rc<SyntaxNode>,
     pub operand: TypeName,
@@ -750,7 +750,7 @@ impl ArrayTypeNameStruct {
 
 pub type FunctionType = Rc<FunctionTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionTypeStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: ParametersDeclaration,
@@ -766,7 +766,7 @@ impl FunctionTypeStruct {
 
 pub type MappingType = Rc<MappingTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MappingTypeStruct {
     pub node: Rc<SyntaxNode>,
     pub key_type: MappingKey,
@@ -781,7 +781,7 @@ impl MappingTypeStruct {
 
 pub type MappingKey = Rc<MappingKeyStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MappingKeyStruct {
     pub node: Rc<SyntaxNode>,
     pub key_type: MappingKeyType,
@@ -796,7 +796,7 @@ impl MappingKeyStruct {
 
 pub type MappingValue = Rc<MappingValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MappingValueStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -811,7 +811,7 @@ impl MappingValueStruct {
 
 pub type AddressType = Rc<AddressTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AddressTypeStruct {
     pub node: Rc<SyntaxNode>,
     pub payable_keyword: bool,
@@ -825,7 +825,7 @@ impl AddressTypeStruct {
 
 pub type Block = Rc<BlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BlockStruct {
     pub node: Rc<SyntaxNode>,
     pub statements: Statements,
@@ -839,7 +839,7 @@ impl BlockStruct {
 
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UncheckedBlockStruct {
     pub node: Rc<SyntaxNode>,
     pub block: Block,
@@ -853,7 +853,7 @@ impl UncheckedBlockStruct {
 
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ExpressionStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub expression: Expression,
@@ -867,7 +867,7 @@ impl ExpressionStatementStruct {
 
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AssemblyStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub label: Option<StringLiteral>,
@@ -883,7 +883,7 @@ impl AssemblyStatementStruct {
 
 pub type AssemblyFlagsDeclaration = Rc<AssemblyFlagsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AssemblyFlagsDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub flags: AssemblyFlags,
@@ -897,7 +897,7 @@ impl AssemblyFlagsDeclarationStruct {
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TupleDeconstructionStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub var_keyword: bool,
@@ -913,7 +913,7 @@ impl TupleDeconstructionStatementStruct {
 
 pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TupleDeconstructionElementStruct {
     pub node: Rc<SyntaxNode>,
     pub member: Option<TupleMember>,
@@ -927,7 +927,7 @@ impl TupleDeconstructionElementStruct {
 
 pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TypedTupleMemberStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -943,7 +943,7 @@ impl TypedTupleMemberStruct {
 
 pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UntypedTupleMemberStruct {
     pub node: Rc<SyntaxNode>,
     pub storage_location: Option<StorageLocation>,
@@ -958,7 +958,7 @@ impl UntypedTupleMemberStruct {
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VariableDeclarationStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub variable_type: VariableDeclarationType,
@@ -975,7 +975,7 @@ impl VariableDeclarationStatementStruct {
 
 pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VariableDeclarationValueStruct {
     pub node: Rc<SyntaxNode>,
     pub expression: Expression,
@@ -989,7 +989,7 @@ impl VariableDeclarationValueStruct {
 
 pub type IfStatement = Rc<IfStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct IfStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub condition: Expression,
@@ -1005,7 +1005,7 @@ impl IfStatementStruct {
 
 pub type ElseBranch = Rc<ElseBranchStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ElseBranchStruct {
     pub node: Rc<SyntaxNode>,
     pub body: Statement,
@@ -1019,7 +1019,7 @@ impl ElseBranchStruct {
 
 pub type ForStatement = Rc<ForStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ForStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub initialization: ForStatementInitialization,
@@ -1036,7 +1036,7 @@ impl ForStatementStruct {
 
 pub type WhileStatement = Rc<WhileStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct WhileStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub condition: Expression,
@@ -1051,7 +1051,7 @@ impl WhileStatementStruct {
 
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DoWhileStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub body: Statement,
@@ -1066,7 +1066,7 @@ impl DoWhileStatementStruct {
 
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ContinueStatementStruct {
     pub node: Rc<SyntaxNode>,
 }
@@ -1079,7 +1079,7 @@ impl ContinueStatementStruct {
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BreakStatementStruct {
     pub node: Rc<SyntaxNode>,
 }
@@ -1092,7 +1092,7 @@ impl BreakStatementStruct {
 
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub expression: Option<Expression>,
@@ -1106,7 +1106,7 @@ impl ReturnStatementStruct {
 
 pub type EmitStatement = Rc<EmitStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EmitStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub event: IdentifierPath,
@@ -1121,7 +1121,7 @@ impl EmitStatementStruct {
 
 pub type TryStatement = Rc<TryStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TryStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub expression: Expression,
@@ -1138,7 +1138,7 @@ impl TryStatementStruct {
 
 pub type CatchClause = Rc<CatchClauseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CatchClauseStruct {
     pub node: Rc<SyntaxNode>,
     pub error: Option<CatchClauseError>,
@@ -1153,7 +1153,7 @@ impl CatchClauseStruct {
 
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CatchClauseErrorStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Option<Rc<SyntaxNode>>,
@@ -1168,7 +1168,7 @@ impl CatchClauseErrorStruct {
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct RevertStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub error: Option<IdentifierPath>,
@@ -1183,7 +1183,7 @@ impl RevertStatementStruct {
 
 pub type ThrowStatement = Rc<ThrowStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ThrowStatementStruct {
     pub node: Rc<SyntaxNode>,
 }
@@ -1196,7 +1196,7 @@ impl ThrowStatementStruct {
 
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AssignmentExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1212,7 +1212,7 @@ impl AssignmentExpressionStruct {
 
 pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ConditionalExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub operand: Expression,
@@ -1228,7 +1228,7 @@ impl ConditionalExpressionStruct {
 
 pub type OrExpression = Rc<OrExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OrExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1243,7 +1243,7 @@ impl OrExpressionStruct {
 
 pub type AndExpression = Rc<AndExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AndExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1258,7 +1258,7 @@ impl AndExpressionStruct {
 
 pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EqualityExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1274,7 +1274,7 @@ impl EqualityExpressionStruct {
 
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InequalityExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1290,7 +1290,7 @@ impl InequalityExpressionStruct {
 
 pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseOrExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1305,7 +1305,7 @@ impl BitwiseOrExpressionStruct {
 
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseXorExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1320,7 +1320,7 @@ impl BitwiseXorExpressionStruct {
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseAndExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1335,7 +1335,7 @@ impl BitwiseAndExpressionStruct {
 
 pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ShiftExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1351,7 +1351,7 @@ impl ShiftExpressionStruct {
 
 pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AdditiveExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1367,7 +1367,7 @@ impl AdditiveExpressionStruct {
 
 pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MultiplicativeExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1383,7 +1383,7 @@ impl MultiplicativeExpressionStruct {
 
 pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ExponentiationExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub left_operand: Expression,
@@ -1399,7 +1399,7 @@ impl ExponentiationExpressionStruct {
 
 pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PostfixExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub operand: Expression,
@@ -1414,7 +1414,7 @@ impl PostfixExpressionStruct {
 
 pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PrefixExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub operator: Rc<SyntaxNode>,
@@ -1429,7 +1429,7 @@ impl PrefixExpressionStruct {
 
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionCallExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub operand: Expression,
@@ -1444,7 +1444,7 @@ impl FunctionCallExpressionStruct {
 
 pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CallOptionsExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub operand: Expression,
@@ -1459,7 +1459,7 @@ impl CallOptionsExpressionStruct {
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MemberAccessExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub operand: Expression,
@@ -1474,7 +1474,7 @@ impl MemberAccessExpressionStruct {
 
 pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct IndexAccessExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub operand: Expression,
@@ -1490,7 +1490,7 @@ impl IndexAccessExpressionStruct {
 
 pub type IndexAccessEnd = Rc<IndexAccessEndStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct IndexAccessEndStruct {
     pub node: Rc<SyntaxNode>,
     pub end: Option<Expression>,
@@ -1504,7 +1504,7 @@ impl IndexAccessEndStruct {
 
 pub type PositionalArgumentsDeclaration = Rc<PositionalArgumentsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PositionalArgumentsDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub arguments: PositionalArguments,
@@ -1518,7 +1518,7 @@ impl PositionalArgumentsDeclarationStruct {
 
 pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArgumentsDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub arguments: Option<NamedArgumentGroup>,
@@ -1532,7 +1532,7 @@ impl NamedArgumentsDeclarationStruct {
 
 pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArgumentGroupStruct {
     pub node: Rc<SyntaxNode>,
     pub arguments: NamedArguments,
@@ -1546,7 +1546,7 @@ impl NamedArgumentGroupStruct {
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArgumentStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -1561,7 +1561,7 @@ impl NamedArgumentStruct {
 
 pub type TypeExpression = Rc<TypeExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TypeExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -1575,7 +1575,7 @@ impl TypeExpressionStruct {
 
 pub type NewExpression = Rc<NewExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct NewExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub type_name: TypeName,
@@ -1589,7 +1589,7 @@ impl NewExpressionStruct {
 
 pub type TupleExpression = Rc<TupleExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TupleExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub items: TupleValues,
@@ -1603,7 +1603,7 @@ impl TupleExpressionStruct {
 
 pub type TupleValue = Rc<TupleValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TupleValueStruct {
     pub node: Rc<SyntaxNode>,
     pub expression: Option<Expression>,
@@ -1617,7 +1617,7 @@ impl TupleValueStruct {
 
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ArrayExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub items: ArrayValues,
@@ -1631,7 +1631,7 @@ impl ArrayExpressionStruct {
 
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct HexNumberExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub literal: Rc<SyntaxNode>,
@@ -1646,7 +1646,7 @@ impl HexNumberExpressionStruct {
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DecimalNumberExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub literal: Rc<SyntaxNode>,
@@ -1661,7 +1661,7 @@ impl DecimalNumberExpressionStruct {
 
 pub type YulBlock = Rc<YulBlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulBlockStruct {
     pub node: Rc<SyntaxNode>,
     pub statements: YulStatements,
@@ -1675,7 +1675,7 @@ impl YulBlockStruct {
 
 pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulFunctionDefinitionStruct {
     pub node: Rc<SyntaxNode>,
     pub name: Rc<SyntaxNode>,
@@ -1692,7 +1692,7 @@ impl YulFunctionDefinitionStruct {
 
 pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulParametersDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub parameters: YulParameters,
@@ -1706,7 +1706,7 @@ impl YulParametersDeclarationStruct {
 
 pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulReturnsDeclarationStruct {
     pub node: Rc<SyntaxNode>,
     pub variables: YulVariableNames,
@@ -1720,7 +1720,7 @@ impl YulReturnsDeclarationStruct {
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableDeclarationStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub variables: YulVariableNames,
@@ -1735,7 +1735,7 @@ impl YulVariableDeclarationStatementStruct {
 
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableDeclarationValueStruct {
     pub node: Rc<SyntaxNode>,
     pub assignment: YulAssignmentOperator,
@@ -1750,7 +1750,7 @@ impl YulVariableDeclarationValueStruct {
 
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableAssignmentStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub variables: YulPaths,
@@ -1766,7 +1766,7 @@ impl YulVariableAssignmentStatementStruct {
 
 pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulColonAndEqualStruct {
     pub node: Rc<SyntaxNode>,
 }
@@ -1779,7 +1779,7 @@ impl YulColonAndEqualStruct {
 
 pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulStackAssignmentStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub assignment: YulStackAssignmentOperator,
@@ -1794,7 +1794,7 @@ impl YulStackAssignmentStatementStruct {
 
 pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulEqualAndColonStruct {
     pub node: Rc<SyntaxNode>,
 }
@@ -1807,7 +1807,7 @@ impl YulEqualAndColonStruct {
 
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulIfStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub condition: YulExpression,
@@ -1822,7 +1822,7 @@ impl YulIfStatementStruct {
 
 pub type YulForStatement = Rc<YulForStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulForStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub initialization: YulBlock,
@@ -1839,7 +1839,7 @@ impl YulForStatementStruct {
 
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulSwitchStatementStruct {
     pub node: Rc<SyntaxNode>,
     pub expression: YulExpression,
@@ -1854,7 +1854,7 @@ impl YulSwitchStatementStruct {
 
 pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulDefaultCaseStruct {
     pub node: Rc<SyntaxNode>,
     pub body: YulBlock,
@@ -1868,7 +1868,7 @@ impl YulDefaultCaseStruct {
 
 pub type YulValueCase = Rc<YulValueCaseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulValueCaseStruct {
     pub node: Rc<SyntaxNode>,
     pub value: YulLiteral,
@@ -1883,7 +1883,7 @@ impl YulValueCaseStruct {
 
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulLeaveStatementStruct {
     pub node: Rc<SyntaxNode>,
 }
@@ -1896,7 +1896,7 @@ impl YulLeaveStatementStruct {
 
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulBreakStatementStruct {
     pub node: Rc<SyntaxNode>,
 }
@@ -1909,7 +1909,7 @@ impl YulBreakStatementStruct {
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulContinueStatementStruct {
     pub node: Rc<SyntaxNode>,
 }
@@ -1922,7 +1922,7 @@ impl YulContinueStatementStruct {
 
 pub type YulLabel = Rc<YulLabelStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulLabelStruct {
     pub node: Rc<SyntaxNode>,
     pub label: Rc<SyntaxNode>,
@@ -1936,7 +1936,7 @@ impl YulLabelStruct {
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulFunctionCallExpressionStruct {
     pub node: Rc<SyntaxNode>,
     pub operand: YulExpression,
@@ -1953,7 +1953,7 @@ impl YulFunctionCallExpressionStruct {
 // Choices:
 //
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ImportDirective(ImportDirective),
@@ -1970,33 +1970,33 @@ pub enum SourceUnitMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum VersionOperator {
     Caret,
     Tilde,
@@ -2007,27 +2007,27 @@ pub enum VersionOperator {
     GreaterThanEqual,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     SingleQuotedVersionLiteral(Rc<SyntaxNode>),
     DoubleQuotedVersionLiteral(Rc<SyntaxNode>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ImportClause {
     PathImport(PathImport),
     NamedImport(NamedImport),
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -2046,19 +2046,19 @@ pub enum UsingOperator {
     Tilde,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ContractSpecifier {
     InheritanceSpecifier(InheritanceSpecifier),
     StorageLayoutSpecifier(StorageLayoutSpecifier),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -2075,7 +2075,7 @@ pub enum ContractMember {
     StateVariableDefinition(StateVariableDefinition),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum StateVariableAttribute {
     OverrideSpecifier(OverrideSpecifier),
     ConstantKeyword,
@@ -2086,14 +2086,14 @@ pub enum StateVariableAttribute {
     TransientKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum FunctionName {
     Identifier(Rc<SyntaxNode>),
     FallbackKeyword,
     ReceiveKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -2108,13 +2108,13 @@ pub enum FunctionAttribute {
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum FunctionBody {
     Block(Block),
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ConstructorAttribute {
     ModifierInvocation(ModifierInvocation),
     InternalKeyword,
@@ -2124,7 +2124,7 @@ pub enum ConstructorAttribute {
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum UnnamedFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     ConstantKeyword,
@@ -2137,7 +2137,7 @@ pub enum UnnamedFunctionAttribute {
     ViewKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum FallbackFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -2148,7 +2148,7 @@ pub enum FallbackFunctionAttribute {
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ReceiveFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -2157,13 +2157,13 @@ pub enum ReceiveFunctionAttribute {
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ModifierAttribute {
     OverrideSpecifier(OverrideSpecifier),
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -2172,7 +2172,7 @@ pub enum TypeName {
     IdentifierPath(IdentifierPath),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum FunctionTypeAttribute {
     InternalKeyword,
     ExternalKeyword,
@@ -2184,13 +2184,13 @@ pub enum FunctionTypeAttribute {
     PayableKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum MappingKeyType {
     ElementaryType(ElementaryType),
     IdentifierPath(IdentifierPath),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ElementaryType {
     AddressType(AddressType),
     BytesKeyword(Rc<SyntaxNode>),
@@ -2203,7 +2203,7 @@ pub enum ElementaryType {
     StringKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -2224,26 +2224,26 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum TupleMember {
     TypedTupleMember(TypedTupleMember),
     UntypedTupleMember(UntypedTupleMember),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum VariableDeclarationType {
     TypeName(TypeName),
     VarKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
     CallDataKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ForStatementInitialization {
     TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
@@ -2251,13 +2251,13 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -2294,13 +2294,13 @@ pub enum Expression {
     FalseKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ArgumentsDeclaration {
     PositionalArgumentsDeclaration(PositionalArgumentsDeclaration),
     NamedArgumentsDeclaration(NamedArgumentsDeclaration),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -2315,7 +2315,7 @@ pub enum NumberUnit {
     YearsKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum StringExpression {
     StringLiteral(StringLiteral),
     StringLiterals(StringLiterals),
@@ -2324,25 +2324,25 @@ pub enum StringExpression {
     UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum StringLiteral {
     SingleQuotedStringLiteral(Rc<SyntaxNode>),
     DoubleQuotedStringLiteral(Rc<SyntaxNode>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum HexStringLiteral {
     SingleQuotedHexStringLiteral(Rc<SyntaxNode>),
     DoubleQuotedHexStringLiteral(Rc<SyntaxNode>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum UnicodeStringLiteral {
     SingleQuotedUnicodeStringLiteral(Rc<SyntaxNode>),
     DoubleQuotedUnicodeStringLiteral(Rc<SyntaxNode>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -2359,32 +2359,32 @@ pub enum YulStatement {
     YulExpression(YulExpression),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum YulAssignmentOperator {
     YulColonAndEqual(YulColonAndEqual),
     ColonEqual,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum YulStackAssignmentOperator {
     YulEqualAndColon(YulEqualAndColon),
     EqualColon,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
     YulPath(YulPath),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum YulLiteral {
     HexStringLiteral(HexStringLiteral),
     StringLiteral(StringLiteral),

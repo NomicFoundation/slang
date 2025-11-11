@@ -1,37 +1,23 @@
 use std::collections::{HashMap, VecDeque};
 
-use anyhow::{bail, Result};
-use slang_solidity::backend::binder::definitions::FunctionVisibility;
-use slang_solidity::backend::binder::Definition::{self, Function};
-use slang_solidity::cst::TextIndex;
+use anyhow::{anyhow, Result};
+use slang_solidity::backend::binder::Definition;
+use slang_solidity::cst::{NodeId, TextIndex};
 
-use crate::ast_api::collect_definitions::{collect_all_definitions, collect_definitions};
-use crate::ast_api::visit_definition::visit_definition_from_cursor;
+use crate::ast_api::collect_definitions::collect_definitions;
+use crate::ast_api::visit_definition::visit_definition;
 use crate::ast_api::CompilationOutput;
 
 pub fn find_unused_definitions<'a>(
     compilation_output: &'a CompilationOutput,
     starting_contract_name: &str,
 ) -> Vec<&'a Definition> {
-    fn is_private_function(def: &Definition) -> bool {
-        !matches!(def, Function(_))
-            || matches!(def, Function(fundef) if matches!(fundef.visibility, FunctionVisibility::Private) || matches!(fundef.visibility, FunctionVisibility::Internal))
-    }
-
-    let all_definitions = collect_all_definitions(
-        &compilation_output.compilation_unit,
-        &compilation_output.binder,
-    );
-
-    // Only consider functions with private visibility as unused candidates
-    let mut unused_definitions: HashMap<_, _> = all_definitions
-        .iter()
-        .map(|def| (def.node_id(), *def))
-        .filter(|(_, def)| is_private_function(def))
-        .collect();
+    let all_definitions = compilation_output.binder.definitions();
+    let mut unused_definitions: HashMap<NodeId, _> =
+        all_definitions.iter().map(|(id, def)| (*id, def)).collect();
 
     let mut visit_queue = VecDeque::new();
-    if let Ok(contract) = find_contract_by_name(&all_definitions, starting_contract_name) {
+    if let Ok(contract) = find_contract_by_name(all_definitions, starting_contract_name) {
         visit_queue.push_back(contract);
     }
 
@@ -42,23 +28,8 @@ pub fn find_unused_definitions<'a>(
         }
         unused_definitions.remove(&node_id);
 
-        let definiens_definition = compilation_output
-            .binder
-            .find_definition_by_id(node_id)
-            .unwrap();
-
-        // TODO: missing way to obtain location from definition
-        // assert_user_file_location(definiens_location);
-
-        let node = compilation_output
-            .cst_map
-            .get(&definiens_definition.node_id())
-            .expect("The definiens_location to be in the nodes map");
-        let followed = visit_definition_from_cursor(
-            &compilation_output.binder,
-            &node.clone().create_cursor(TextIndex::ZERO),
-        );
-        for def in followed {
+        let definitions = visit_definition(compilation_output, to_visit);
+        for def in definitions {
             visit_queue.push_back(def);
         }
     }
@@ -66,21 +37,16 @@ pub fn find_unused_definitions<'a>(
     // For remaining unused definitions, remove any nested definitions inside them
     // to prevent reporting eg. a function and all its parameters
     for def in unused_definitions.values() {
-        visit_queue.push_back(*def);
+        visit_queue.push_back(def);
     }
     while let Some(to_visit) = visit_queue.pop_front() {
         if !unused_definitions.contains_key(&to_visit.node_id()) {
             continue;
         }
 
-        // assert_user_file_location(definiens_location);
-        let node = compilation_output
-            .cst_map
-            .get(&to_visit.node_id())
-            .expect("to_visit to be in the nodes map");
         let inner_definitions = collect_definitions(
             &compilation_output.binder,
-            &node.clone().create_cursor(TextIndex::ZERO),
+            &to_visit.node().create_cursor(TextIndex::ZERO),
         );
         for inner in inner_definitions {
             if inner.node_id() == to_visit.node_id() {
@@ -90,28 +56,18 @@ pub fn find_unused_definitions<'a>(
         }
     }
 
-    unused_definitions.values().copied().collect()
+    unused_definitions.values().map(|def| *def).collect()
 }
 
 pub(crate) fn find_contract_by_name<'a>(
-    definitions: &Vec<&'a Definition>,
-    name: &'a str,
+    definitions: &'a HashMap<NodeId, Definition>,
+    name: &str,
 ) -> Result<&'a Definition> {
-    let matching_name: Vec<_> = definitions
-        .iter()
-        .filter(|def| {
-            if matches!(def, Definition::Contract(_)) {
-                def.identifier().text == name
-            } else {
-                false
-            }
-        })
-        .collect();
-    match matching_name.len() {
-        0 => bail!("No contract matches name {name}"),
-        1 => Ok(matching_name.first().unwrap()),
-        _ => bail!("{name} is ambiguous"),
-    }
+    definitions
+        .values()
+        .find(
+            |def| matches!(def, Definition::Contract(contract) if contract.identifier.unparse() == name),
+        ).ok_or_else(|| anyhow!("Can't find a contract {name}"))
 }
 
 #[test]
@@ -124,8 +80,7 @@ contract Test {
   "#;
     let output = crate::ast_api::pipeline::one_file_backend_pipeline(FILE_CONTENT).unwrap();
     let result = find_unused_definitions(&output, "Test");
-    assert_eq!(result.len(), 1);
-    assert_eq!(result[0].identifier().text, "test".to_owned());
+    assert_eq_defs!(result, ["test"]);
 }
 
 #[test]

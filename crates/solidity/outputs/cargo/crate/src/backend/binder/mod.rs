@@ -8,9 +8,8 @@ mod definitions;
 mod references;
 mod scopes;
 
-pub use definitions::Definition;
-pub(crate) use definitions::{
-    ContractDefinition, FunctionVisibility, ImportDefinition, InterfaceDefinition,
+pub use definitions::{
+    ContractDefinition, Definition, FunctionVisibility, ImportDefinition, InterfaceDefinition,
     LibraryDefinition, StateVariableVisibility,
 };
 pub use references::{Reference, Resolution};
@@ -648,5 +647,11 @@ impl Binder {
             Definition::Struct(_) => self.scope_id_for_node_id(definition_id),
             _ => None,
         }
+    }
+
+    pub fn navigate_to(&self, node_id: NodeId) -> Option<&Definition> {
+        self.find_reference_by_identifier_node_id(node_id)
+            .and_then(|reference| reference.resolution.as_definition_id())
+            .and_then(|def_node_id| self.find_definition_by_id(def_node_id))
     }
 }
