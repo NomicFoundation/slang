@@ -21,8 +21,6 @@ pub struct CargoController {
     dry_run: DryRun,
     #[arg(long)]
     no_deps: bool,
-    #[arg(long, default_value_t = false)]
-    callgraph: bool,
 }
 
 #[derive(Clone, Debug, Subcommand)]
@@ -39,10 +37,9 @@ impl CargoController {
             Self::install_valgrind();
             CargoWorkspace::install_binary("iai-callgrind-runner")?;
             CargoWorkspace::install_binary("bencher_cli")?;
-            if self.callgraph {
-                Self::install_graphviz();
-                Self::install_gprof2dot();
-            }
+
+            Self::install_graphviz();
+            Self::install_gprof2dot();
         }
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
@@ -152,9 +149,7 @@ impl CargoController {
             .join(package_name)
             .join(bench_name);
 
-        if self.callgraph {
-            Self::generate_callgraph(reports_dir.clone());
-        }
+        Self::generate_callgraph(reports_dir.clone());
 
         println!("
 
