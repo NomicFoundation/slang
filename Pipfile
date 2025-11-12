@@ -17,3 +17,6 @@ mkdocs-pymdownx-material-extras = "==2.8"
 
 # Used by 'infra lint':
 yamllint = "==1.37.0"
+
+# Used by 'infra perf cargo':
+gprof2dot = "==2025.4.14"
