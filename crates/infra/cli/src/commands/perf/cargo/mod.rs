@@ -8,6 +8,7 @@ use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
 use crate::toolchains::bencher::run_bench;
+use crate::toolchains::pipenv::PipEnv;
 use crate::utils::DryRun;
 
 const DEFAULT_BENCHER_PROJECT_CMP: &str = "slang-dashboard-cargo-cmp";
@@ -39,7 +40,6 @@ impl CargoController {
             CargoWorkspace::install_binary("bencher_cli")?;
 
             Self::install_graphviz();
-            Self::install_gprof2dot();
         }
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
@@ -60,7 +60,7 @@ impl CargoController {
     }
 
     fn install_valgrind() {
-        Self::install_from_apt("valgrind");
+        Self::install_from_apt("valgrind", "1:3.18.1-1ubuntu2");
 
         match Command::new("valgrind").flag("--version").evaluate() {
             Ok(output) if output.starts_with("valgrind-") => {
@@ -77,7 +77,7 @@ impl CargoController {
     }
 
     fn install_graphviz() {
-        Self::install_from_apt("graphviz");
+        Self::install_from_apt("graphviz", "2.42.2-6ubuntu0.1");
 
         // dot prints its version to stderr, using the help page instead
         match Command::new("dot").flag("-?").evaluate() {
@@ -94,12 +94,13 @@ impl CargoController {
         }
     }
 
-    fn install_from_apt(package_name: &str) {
+    fn install_from_apt(package_name: &str, version: &str) {
         if GitHub::is_running_in_ci() {
             Command::new("sudo").args(["apt", "update"]).run();
 
             Command::new("sudo")
-                .args(["apt", "install", package_name])
+                .args(["apt", "install"])
+                .arg(format!("{package_name}={version}"))
                 .flag("--yes")
                 .run();
 
@@ -110,26 +111,10 @@ impl CargoController {
             Command::new("sudo").args(["apt-get", "update"]).run();
 
             Command::new("sudo")
-                .args(["apt-get", "install", package_name])
+                .args(["apt-get", "install"])
+                .arg(format!("{package_name}={version}"))
                 .flag("--yes")
                 .run();
-        }
-    }
-
-    fn install_gprof2dot() {
-        Command::new("pip3").args(["install", "gprof2dot"]).run();
-
-        match Command::new("gprof2dot").flag("--help").evaluate() {
-            Ok(output) if output.starts_with("Usage:") => {
-                // gprof2dot is available
-            }
-            other => {
-                panic!(
-                    "gprof2dot needs to be installed on this machine to generate callgraphs.
-                    Supported Platforms: https://github.com/jrfonseca/gprof2dot?tab=readme-ov-file#download
-                    {other:?}"
-                );
-            }
         }
     }
 
@@ -165,32 +150,27 @@ Reports/Logs: {reports_dir:?}
             FileWalker::from_directory(reports_dir).find(["**/callgrind.*.out"]);
 
         for callgrind_output in callgrind_outputs.unwrap() {
-            let callgrind_output_name = callgrind_output.file_name().unwrap().to_str().unwrap();
+            let callgrind_output_name = callgrind_output.unwrap_name();
 
             let dot_file = callgrind_output
-                .parent()
-                .unwrap()
+                .unwrap_parent()
                 .join(format!("{callgrind_output_name}.callgraph.dot"));
 
             let svg_file = callgrind_output
-                .parent()
-                .unwrap()
+                .unwrap_parent()
                 .join(format!("{callgrind_output_name}.callgraph.svg"));
 
             //gprof2dot -f callgrind callgrind.slang_merkle_proof.test.out | dot -Tsvg -o output.svg
-            Command::new("gprof2dot")
-                .arg("-f")
-                .arg("callgrind")
-                .arg("-o")
-                .arg(dot_file.to_str().unwrap())
-                .arg(callgrind_output.to_str().unwrap())
+            PipEnv::run("gprof2dot")
+                .property("-f", "callgrind")
+                .property("-o", dot_file.unwrap_str())
+                .arg(callgrind_output.unwrap_str())
                 .run();
 
             Command::new("dot")
                 .arg("-Tsvg")
-                .arg("-o")
-                .arg(svg_file.to_str().unwrap())
-                .arg(dot_file.to_str().unwrap())
+                .property("-o", svg_file.unwrap_str())
+                .arg(dot_file.unwrap_str())
                 .run();
         }
     }
