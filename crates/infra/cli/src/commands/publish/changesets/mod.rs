@@ -53,13 +53,6 @@ impl ChangesetsController {
             .property("--write", package_dir.unwrap_str())
             .run();
 
-        // Update NPM lock file:
-
-        Command::new("npm")
-            .arg("install")
-            .flag("--package-lock-only")
-            .run();
-
         // Update Cargo workspace:
 
         println!("Updating Cargo workspace version.");

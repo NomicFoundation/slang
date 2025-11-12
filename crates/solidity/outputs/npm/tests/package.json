@@ -2,14 +2,7 @@
   "name": "@slang-private/solidity-npm-tests",
   "private": true,
   "type": "module",
-  "dependencies": {
-    "@nomicfoundation/slang": "file:../package"
-  },
   "devDependencies": {
-    "@types/jest": "29.5.14",
-    "jest": "29.7.0",
-    "ts-jest": "29.3.4",
-    "ts-jest-resolver": "2.0.1",
-    "ts-node": "10.9.2"
+    "@nomicfoundation/slang": "workspace:"
   }
 }

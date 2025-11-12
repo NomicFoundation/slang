@@ -199,7 +199,7 @@ fn run_yamllint() -> Result<()> {
     let config_file = Path::repo_path(".yamllint.yml");
 
     let yaml_files = FileWalker::from_repo_root()
-        .find(["**/*.yml"])?
+        .find(["**/*.yml", "**/*.yaml", "!pnpm-lock.yaml"])?
         .inspect(|path| println!("{}", path.display()));
 
     PipEnv::run("yamllint")

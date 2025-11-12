@@ -2,17 +2,13 @@
   "name": "@slang-private/solidity-testing-perf-npm",
   "private": true,
   "type": "module",
-  "dependencies": {
-    "@nomicfoundation/slang": "file:../../../outputs/npm/package/",
-    "@openzeppelin/contracts": "^5.2.0",
-    "@solidity-parser/parser": "^0.20.1",
-    "command-line-args": "^6.0.1",
-    "command-line-usage": "^7.0.3",
-    "solc": "^0.8.29"
-  },
   "devDependencies": {
-    "@types/command-line-args": "^5.2.3",
-    "@types/command-line-usage": "^5.0.4",
-    "@types/node": "^22.15.17"
+    "@nomicfoundation/slang": "workspace:",
+    "@openzeppelin/contracts": "catalog:",
+    "@solidity-parser/parser": "catalog:",
+    "@types/command-line-args": "catalog:",
+    "@types/command-line-usage": "catalog:",
+    "command-line-args": "catalog:",
+    "command-line-usage": "catalog:"
   }
 }
