@@ -2,11 +2,11 @@ use std::collections::{HashMap, VecDeque};
 
 use anyhow::{anyhow, Result};
 use slang_solidity::backend::binder::Definition;
+use slang_solidity::backend::passes::CompilationOutput;
 use slang_solidity::cst::{NodeId, TextIndex};
 
 use crate::ast_api::collect_definitions::collect_definitions;
 use crate::ast_api::visit_definition::visit_definition;
-use crate::ast_api::CompilationOutput;
 
 pub fn find_unused_definitions<'a>(
     compilation_output: &'a CompilationOutput,
@@ -78,7 +78,7 @@ contract Test {
   }
 }
   "#;
-    let output = crate::ast_api::pipeline::one_file_backend_pipeline(FILE_CONTENT).unwrap();
+    let output = crate::ast_api::pipeline::compile_one_file(FILE_CONTENT).unwrap();
     let result = find_unused_definitions(&output, "Test");
     assert_eq_defs!(result, ["test"]);
 }
@@ -95,7 +95,7 @@ contract Test {
   }
 }
   "#;
-    let output = crate::ast_api::pipeline::one_file_backend_pipeline(FILE_CONTENT).unwrap();
+    let output = crate::ast_api::pipeline::compile_one_file(FILE_CONTENT).unwrap();
     let result = find_unused_definitions(&output, "Test");
     assert_eq_defs!(result, ["_unused"]);
 }

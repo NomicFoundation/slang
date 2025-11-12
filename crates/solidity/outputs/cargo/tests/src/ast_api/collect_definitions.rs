@@ -1,6 +1,7 @@
 use slang_solidity::backend::binder::{Binder, Definition};
 use slang_solidity::cst::{Cursor, TerminalKindExtensions};
 
+// Collects all the definitions from a given cursor, by navigating the identifiers that appear.
 pub(crate) fn collect_definitions<'a>(binder: &'a Binder, root: &Cursor) -> Vec<&'a Definition> {
     let mut cursor = root.spawn();
     let mut definitions = Vec::new();

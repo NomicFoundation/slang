@@ -1,5 +1,5 @@
-type CompilationOutput = slang_solidity::backend::passes::p6_index_tree::Output;
-
+// Takes a vec of strings and a slice of str and checks they are permutations one another.
+// Used in tests.
 macro_rules! assert_eq_defs {
     ($xs:expr, $ys:expr) => {
         assert_eq!(

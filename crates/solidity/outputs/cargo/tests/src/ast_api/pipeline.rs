@@ -1,9 +1,10 @@
 use anyhow::{bail, Result};
-use slang_solidity::backend::passes;
+use slang_solidity::backend::passes::{compile, CompilationOutput};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use slang_solidity::utils::LanguageFacts;
 
-use crate::ast_api::CompilationOutput;
+// This module allows to easily build a one-file compilation unit from a str,
+// and generates the compilation output from the backend pipeline.
 
 const MAIN_ID: &str = "MAIN-ID";
 
@@ -45,16 +46,9 @@ pub(crate) fn build_one_file_compilation_unit(content: &str) -> Result<Compilati
     Ok(builder.build())
 }
 
-pub(crate) fn one_file_backend_pipeline(content: &str) -> Result<CompilationOutput> {
+pub(crate) fn compile_one_file(content: &str) -> Result<CompilationOutput> {
     let unit = build_one_file_compilation_unit(content)?;
-    let data = passes::p0_build_ast::run(unit);
-    let data = passes::p1_flatten_contracts::run(data);
-    let data = passes::p2_collect_definitions::run(data);
-    let data = passes::p3_linearise_contracts::run(data);
-    let data = passes::p4_type_definitions::run(data);
-    let data = passes::p5_resolve_references::run(data);
-    let data = passes::p6_index_tree::run(data);
-
+    let data = compile(unit);
     assert_eq!(1, data.files.len());
     Ok(data)
 }

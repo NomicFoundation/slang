@@ -39,7 +39,7 @@ contract Counter is Ownable {
 
 #[test]
 fn test_find_unused_definitions() {
-    let unit = pipeline::one_file_backend_pipeline(MAIN_SOL_CONTENTS).unwrap();
+    let unit = pipeline::compile_one_file(MAIN_SOL_CONTENTS).unwrap();
 
     let unused = find_unused_definitions(&unit, "Counter");
 

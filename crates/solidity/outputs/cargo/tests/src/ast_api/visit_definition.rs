@@ -1,13 +1,13 @@
 use std::rc::Rc;
 
 use slang_solidity::backend::binder::{ContractDefinition, Definition};
-use slang_solidity::backend::ir::ir2_flat_contracts::index::IntoIr;
-use slang_solidity::backend::ir::ir2_flat_contracts::{self, ContractMember};
+use slang_solidity::backend::passes::ast::index::IntoIr;
+use slang_solidity::backend::passes::ast::{self, ContractMember};
+use slang_solidity::backend::passes::CompilationOutput;
 use slang_solidity::cst::TextIndex;
 
 use crate::ast_api::collect_definitions::collect_definitions;
 use crate::ast_api::follow_all_references::follow_all_references;
-use crate::ast_api::CompilationOutput;
 
 pub fn visit_definition<'a>(
     compilation_output: &'a CompilationOutput,
@@ -15,21 +15,37 @@ pub fn visit_definition<'a>(
 ) -> Vec<&'a Definition> {
     match definition {
         Definition::Contract(contract_definition) => {
+            // special case contracts; see below
             visit_contract(compilation_output, contract_definition)
         }
-        Definition::Struct(_) | Definition::Library(_) | Definition::Enum(_) => vec![],
-        Definition::Function(definition) => follow_all_references(
-            &compilation_output.binder,
-            &definition.node.create_cursor(TextIndex::ZERO),
-        ),
-        Definition::Modifier(definition) => follow_all_references(
-            &compilation_output.binder,
-            &definition.node.create_cursor(TextIndex::ZERO),
-        ),
-        _ => collect_definitions(
-            &compilation_output.binder,
-            &definition.node().create_cursor(TextIndex::ZERO),
-        ),
+        Definition::Struct(_) | Definition::Library(_) | Definition::Enum(_) => {
+            // members must be explicitly referenced
+            vec![]
+        }
+        Definition::Function(definition) => {
+            // follow any references inside, but don't automatically reference any new
+            // definitions (eg. a parameter)
+            follow_all_references(
+                &compilation_output.binder,
+                &definition.node.create_cursor(TextIndex::ZERO),
+            )
+        }
+        Definition::Modifier(definition) => {
+            // ditto
+            follow_all_references(
+                &compilation_output.binder,
+                &definition.node.create_cursor(TextIndex::ZERO),
+            )
+        }
+        _ => {
+            // anything else (events, errors, interfaces) should be considered fully
+            // referenced (including inner definitions) and we need to follow any
+            // references inside them
+            collect_definitions(
+                &compilation_output.binder,
+                &definition.node().create_cursor(TextIndex::ZERO),
+            )
+        }
     }
 }
 
@@ -40,27 +56,25 @@ fn visit_contract<'a>(
     // for a contract, we need to explicitly follow inheritance specifiers and constructors,
     // and visit state variables and public functions
 
-    let contract = ir2_flat_contracts::ContractDefinition::into_ir(
-        &contract_definition.node,
-        &compilation_output.index,
-    )
-    .expect("Contract to be defined");
+    let contract =
+        ast::ContractDefinition::into_ir(&contract_definition.node, &compilation_output.index)
+            .expect("Contract to be defined");
 
     let inheritance_nodes = contract
         .inheritance_types
         .iter()
         .map(|f| Rc::clone(&f.node));
 
+    // Special functions (receiver, fallback, unnamed, constructors)
     let function_nodes = contract.members.iter().filter_map(|member| match member {
-        ir2_flat_contracts::ContractMember::FunctionDefinition(f)
-            if f.kind != ir2_flat_contracts::FunctionKind::Regular =>
-        {
+        ast::ContractMember::FunctionDefinition(f) if f.kind != ast::FunctionKind::Regular => {
             Some(Rc::clone(&f.node))
         }
 
         _ => None,
     });
 
+    // For special functions and bases, we follow each reference
     let follow_all_references = inheritance_nodes
         .chain(function_nodes)
         .map(|node| node.create_cursor(TextIndex::ZERO))
@@ -68,7 +82,7 @@ fn visit_contract<'a>(
 
     let public_state_vars_ids = contract.members.iter().filter_map(|member| match member {
         ContractMember::StateVariableDefinition(sv_def)
-            if sv_def.visibility == ir2_flat_contracts::StateVariableVisibility::Public =>
+            if sv_def.visibility == ast::StateVariableVisibility::Public =>
         {
             Some(sv_def.name.id())
         }
@@ -77,9 +91,9 @@ fn visit_contract<'a>(
     });
 
     let public_functions_ids = contract.members.iter().filter_map(|member| match member {
-        ir2_flat_contracts::ContractMember::FunctionDefinition(f)
-            if f.kind == ir2_flat_contracts::FunctionKind::Regular
-                && f.visibility == ir2_flat_contracts::FunctionVisibility::Public =>
+        ast::ContractMember::FunctionDefinition(f)
+            if f.kind == ast::FunctionKind::Regular
+                && f.visibility == ast::FunctionVisibility::Public =>
         {
             f.name.as_ref().map(|node| node.id())
         }
@@ -87,6 +101,8 @@ fn visit_contract<'a>(
         _ => None,
     });
 
+    // For public functions and state vars we add their definition to the list, to recursively
+    // consider them
     let public_definitions = public_state_vars_ids
         .chain(public_functions_ids)
         .filter_map(|id| {
@@ -103,7 +119,7 @@ fn test_no_references() {
     const FILE_CONTENT: &str = r#"
 contract Ownable {
 }"#;
-    let output = crate::ast_api::pipeline::one_file_backend_pipeline(FILE_CONTENT).unwrap();
+    let output = crate::ast_api::pipeline::compile_one_file(FILE_CONTENT).unwrap();
     let defs = output.binder.definitions();
     assert_eq!(defs.len(), 1);
     assert_eq!(
@@ -123,7 +139,7 @@ contract Ownable {
   function test() {
   }
 }"#;
-    let output = crate::ast_api::pipeline::one_file_backend_pipeline(FILE_CONTENT).unwrap();
+    let output = crate::ast_api::pipeline::compile_one_file(FILE_CONTENT).unwrap();
     let defs = output.binder.definitions();
     let (_, contract) = defs
         .iter()
@@ -140,7 +156,7 @@ contract Ownable {
   function test() public {
   }
 }"#;
-    let output = crate::ast_api::pipeline::one_file_backend_pipeline(FILE_CONTENT).unwrap();
+    let output = crate::ast_api::pipeline::compile_one_file(FILE_CONTENT).unwrap();
     let defs = output.binder.definitions();
     let (_, contract) = defs
         .iter()
