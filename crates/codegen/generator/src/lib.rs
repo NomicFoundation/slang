@@ -10,6 +10,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use codegen_v2_parser::ParserModel as ParserModelV2;
+use indexmap::IndexSet;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use ir::builders::{build_ir_models, GenericModel};
@@ -80,14 +81,32 @@ impl RuntimeModel {
 }
 
 #[derive(Serialize)]
+struct LanguageModelV2 {
+    name: String,
+    versions: IndexSet<Version>,
+}
+
+impl LanguageModelV2 {
+    fn from_language(language: &LanguageV2) -> Self {
+        Self {
+            name: language.name.to_string(),
+            versions: language.versions.clone(),
+        }
+    }
+}
+
+#[derive(Serialize)]
 struct RuntimeModelV2 {
     parser: ParserModelV2,
+
+    language: LanguageModelV2,
 }
 
 impl RuntimeModelV2 {
     fn from_language(language: &LanguageV2) -> Self {
         Self {
             parser: ParserModelV2::from_language(language),
+            language: LanguageModelV2::from_language(language),
         }
     }
 }

@@ -50,6 +50,13 @@ fn main() {
                 "slang_solidity_v2_parser",
             )
         },
+        || {
+            generate_in_place_v2(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinitionV2::create(),
+                "slang_solidity_v2_common",
+            )
+        },
     ]
     .par_iter()
     .for_each(|op| op().unwrap());
