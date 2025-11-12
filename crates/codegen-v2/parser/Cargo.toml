@@ -1,0 +1,14 @@
+[package]
+name = "codegen_v2_parser"
+description = "Utilities to generate a parser from a language definition."
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+language_v2_definition = { workspace = true }
+serde = { workspace = true }
+
+[lints]
+workspace = true
