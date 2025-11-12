@@ -4,6 +4,7 @@ use std::rc::Rc;
 use semver::Version;
 
 use self::ast::{create_contract_definition, create_source_unit, ContractDefinition, Definition};
+use super::abi::ContractAbi;
 use crate::backend::binder::Binder;
 pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
 use crate::backend::types::TypeRegistry;
@@ -194,5 +195,20 @@ impl SemanticAnalysis {
     // Returns `None` if the information is not available.
     pub(crate) fn get_text_offset_by_node_id(&self, node_id: NodeId) -> Option<TextIndex> {
         self.text_offsets.get(&node_id).copied()
+    }
+
+    pub fn get_contracts_abi(self: &Rc<Self>) -> Vec<ContractAbi> {
+        let mut contracts = Vec::new();
+        for file in self.files.values() {
+            let source_unit = create_source_unit(file.ir_root(), self);
+            for contract in source_unit.contracts() {
+                if contract.abstract_keyword() {
+                    continue;
+                }
+                let contract = contract.abi_with_file_id(file.id());
+                contracts.push(contract);
+            }
+        }
+        contracts
     }
 }
