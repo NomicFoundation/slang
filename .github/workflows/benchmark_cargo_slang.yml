@@ -39,7 +39,7 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
-      - name: "infra setup cargo"
+      - name: "infra setup cargo pipenv"
         run: "./scripts/bin/infra setup cargo pipenv"
 
       - name: "Set bencher project"
