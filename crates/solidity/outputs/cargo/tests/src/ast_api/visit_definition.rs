@@ -3,14 +3,14 @@ use std::rc::Rc;
 use slang_solidity::backend::binder::{ContractDefinition, Definition};
 use slang_solidity::backend::passes::ast::index::IntoIr;
 use slang_solidity::backend::passes::ast::{self, ContractMember};
-use slang_solidity::backend::passes::CompilationOutput;
+use slang_solidity::backend::BinderOutput;
 use slang_solidity::cst::TextIndex;
 
 use crate::ast_api::collect_definitions::collect_definitions;
 use crate::ast_api::follow_all_references::follow_all_references;
 
 pub fn visit_definition<'a>(
-    compilation_output: &'a CompilationOutput,
+    compilation_output: &'a BinderOutput,
     definition: &'a Definition,
 ) -> Vec<&'a Definition> {
     match definition {
@@ -50,7 +50,7 @@ pub fn visit_definition<'a>(
 }
 
 fn visit_contract<'a>(
-    compilation_output: &'a CompilationOutput,
+    compilation_output: &'a BinderOutput,
     contract_definition: &ContractDefinition,
 ) -> Vec<&'a Definition> {
     // for a contract, we need to explicitly follow inheritance specifiers and constructors,

@@ -1,5 +1,5 @@
 use anyhow::{bail, Result};
-use slang_solidity::backend::passes::{compile, CompilationOutput};
+use slang_solidity::backend::{build_binder_output, BinderOutput};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use slang_solidity::utils::LanguageFacts;
 
@@ -46,9 +46,9 @@ pub(crate) fn build_one_file_compilation_unit(content: &str) -> Result<Compilati
     Ok(builder.build())
 }
 
-pub(crate) fn compile_one_file(content: &str) -> Result<CompilationOutput> {
+pub(crate) fn compile_one_file(content: &str) -> Result<BinderOutput> {
     let unit = build_one_file_compilation_unit(content)?;
-    let data = compile(unit);
+    let data = build_binder_output(unit);
     assert_eq!(1, data.files.len());
     Ok(data)
 }

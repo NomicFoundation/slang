@@ -2,14 +2,14 @@ use std::collections::{HashMap, VecDeque};
 
 use anyhow::{anyhow, Result};
 use slang_solidity::backend::binder::Definition;
-use slang_solidity::backend::passes::CompilationOutput;
+use slang_solidity::backend::BinderOutput;
 use slang_solidity::cst::{NodeId, TextIndex};
 
 use crate::ast_api::collect_definitions::collect_definitions;
 use crate::ast_api::visit_definition::visit_definition;
 
 pub fn find_unused_definitions<'a>(
-    compilation_output: &'a CompilationOutput,
+    compilation_output: &'a BinderOutput,
     starting_contract_name: &str,
 ) -> Vec<&'a Definition> {
     let all_definitions = compilation_output.binder.definitions();
