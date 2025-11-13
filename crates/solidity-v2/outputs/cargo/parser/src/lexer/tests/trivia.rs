@@ -34,10 +34,10 @@ fn multi_line_comment() {
         &[
             // TODO(v2): lexer is greedy, and tries to match the longest possible token by default.
             // Grammar should be fixed to consider this input as two separate comments with whitespace in between:
-            // (L::MultiLineComment, 0..4),
-            // (L::Whitespace, 4..5),
-            // (L::MultiLineComment, 5..9),
-            (L::MultiLineNatSpecComment, 0..9),
+            (L::MultiLineComment, 0..4),
+            (L::Whitespace, 4..5),
+            (L::MultiLineComment, 5..9),
+            // (L::MultiLineNatSpecComment, 0..9),
         ],
     );
 
