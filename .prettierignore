@@ -20,3 +20,4 @@ documentation/overrides/**/*.html
 # Generated Artifacts
 **/target/
 **/Pipfile.lock
+**/pnpm-lock.yaml

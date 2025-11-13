@@ -35,8 +35,8 @@
     "**/target/": true,
     // Lock Files
     "**/Cargo.lock": true,
-    "**/package-lock.json": true,
-    "**/Pipfile.lock": true
+    "**/Pipfile.lock": true,
+    "**/pnpm-lock.yaml": true
   },
   "triggerTaskOnSave.restart": true,
   "triggerTaskOnSave.tasks": {

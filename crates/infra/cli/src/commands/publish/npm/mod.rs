@@ -33,7 +33,7 @@ impl NpmController {
             return Ok(());
         }
 
-        let mut command = Command::new("npm")
+        let mut command = Command::new("pnpm")
             .args(["publish", package_dir.unwrap_str()])
             .flag("--provenance")
             .property("--access", "public");

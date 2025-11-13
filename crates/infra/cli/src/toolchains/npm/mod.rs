@@ -25,7 +25,7 @@ impl Npm {
     pub fn published_version(package_dir: impl AsRef<Path>) -> Result<Version> {
         let package = load_package(package_dir.as_ref())?;
 
-        let version = Command::new("npm")
+        let version = Command::new("pnpm")
             .args(["view", package.name.as_str(), "version"])
             .evaluate()?;
 

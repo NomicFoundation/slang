@@ -45,6 +45,6 @@
     "./utils": "./target/utils/index.mjs"
   },
   "dependencies": {
-    "@bytecodealliance/preview2-shim": "0.17.2"
+    "@bytecodealliance/preview2-shim": "catalog:"
   }
 }
