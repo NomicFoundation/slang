@@ -67,7 +67,9 @@ fn visit_contract<'a>(
 
     // Special functions (receiver, fallback, unnamed, constructors)
     let function_nodes = contract.members.iter().filter_map(|member| match member {
-        ast::ContractMember::FunctionDefinition(f) if f.kind != ast::FunctionKind::Regular => {
+        ast::ContractMember::FunctionDefinition(f)
+            if !matches!(f.kind, ast::FunctionKind::Regular) =>
+        {
             Some(Rc::clone(&f.node))
         }
 
@@ -82,7 +84,7 @@ fn visit_contract<'a>(
 
     let public_state_vars_ids = contract.members.iter().filter_map(|member| match member {
         ContractMember::StateVariableDefinition(sv_def)
-            if sv_def.visibility == ast::StateVariableVisibility::Public =>
+            if matches!(sv_def.visibility, ast::StateVariableVisibility::Public) =>
         {
             Some(sv_def.name.id())
         }
@@ -92,8 +94,8 @@ fn visit_contract<'a>(
 
     let public_functions_ids = contract.members.iter().filter_map(|member| match member {
         ast::ContractMember::FunctionDefinition(f)
-            if f.kind == ast::FunctionKind::Regular
-                && f.visibility == ast::FunctionVisibility::Public =>
+            if matches!(f.kind, ast::FunctionKind::Regular)
+                && matches!(f.visibility, ast::FunctionVisibility::Public) =>
         {
             f.name.as_ref().map(|node| node.id())
         }
