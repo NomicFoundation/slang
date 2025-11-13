@@ -440,7 +440,7 @@ language_v2_macros::compile!(Language(
                             // https://stackoverflow.com/a/36328890
                             scanner = Sequence([
                                 Atom("/**"),
-                                ZeroOrMore(Not(['*'])),
+                                Optional(Sequence([Not(['/', '*']), ZeroOrMore(Not(['*']))])),
                                 OneOrMore(Atom("*")),
                                 ZeroOrMore(Sequence([
                                     Not(['/', '*']),

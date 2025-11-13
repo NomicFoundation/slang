@@ -106,7 +106,7 @@ pub enum PragmaContext {
     #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000006)]
     #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000007)]
     #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000008)]
-    #[regex(r#"/\*\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000009)]
+    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000009)]
     Lexeme(LexemeKind),
 }
 
@@ -308,7 +308,7 @@ pub enum SolidityContext {
     #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000193)]
     #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000194)]
     #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000195)]
-    #[regex(r#"/\*\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000196)]
+    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000196)]
     Lexeme(LexemeKind),
 }
 
@@ -436,6 +436,6 @@ pub enum YulContext {
     #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000119)]
     #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000120)]
     #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000121)]
-    #[regex(r#"/\*\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000122)]
+    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000122)]
     Lexeme(LexemeKind),
 }
