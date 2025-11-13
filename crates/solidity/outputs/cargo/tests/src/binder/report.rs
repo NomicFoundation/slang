@@ -5,8 +5,7 @@ use std::ops::Range;
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity::backend::binder::Resolution;
-use slang_solidity::backend::BinderOutput;
-use slang_solidity::compilation::File;
+use slang_solidity::backend::{SemanticAnalysis, SemanticFile};
 use slang_solidity::cst::{Cursor, NodeId};
 use slang_solidity::diagnostic;
 
@@ -22,7 +21,7 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     let mut report = String::new();
 
     let ReportData {
-        binder_output,
+        semantic_analysis,
         all_definitions,
         all_references,
         unbound_identifiers,
@@ -30,12 +29,12 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     } = report_data;
 
     if report_data.has_parse_errors() {
-        report_parse_errors(&mut report, binder_output)?;
+        report_parse_errors(&mut report, semantic_analysis)?;
 
         writeln!(report, "{SEPARATOR}")?;
     }
 
-    report_all_definitions(&mut report, binder_output, all_definitions)?;
+    report_all_definitions(&mut report, semantic_analysis, all_definitions)?;
 
     writeln!(report, "{SEPARATOR}")?;
 
@@ -45,7 +44,7 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
 
     report_unbound_identifiers(&mut report, unbound_identifiers)?;
 
-    for file in &binder_output.compilation_unit.files() {
+    for file in &semantic_analysis.files() {
         writeln!(report, "{SEPARATOR}")?;
 
         render_bindings_for_file(
@@ -61,9 +60,9 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     Ok(report)
 }
 
-fn report_parse_errors(report: &mut String, binder_output: &BinderOutput) -> Result<()> {
+fn report_parse_errors(report: &mut String, semantic_analysis: &SemanticAnalysis) -> Result<()> {
     writeln!(report, "Parse errors:")?;
-    for file in &binder_output.compilation_unit.files() {
+    for file in &semantic_analysis.files() {
         let source_id = file.id();
         let source = file.tree().unparse();
         for error in file.errors() {
@@ -79,7 +78,7 @@ fn report_parse_errors(report: &mut String, binder_output: &BinderOutput) -> Res
 
 fn report_all_definitions(
     report: &mut String,
-    binder_output: &BinderOutput,
+    semantic_analysis: &SemanticAnalysis,
     all_definitions: &[CollectedDefinition],
 ) -> Result<()> {
     writeln!(
@@ -91,7 +90,7 @@ fn report_all_definitions(
         writeln!(
             report,
             "- {definition}",
-            definition = definition.display(binder_output)
+            definition = definition.display(semantic_analysis)
         )?;
     }
     Ok(())
@@ -138,7 +137,7 @@ fn report_unbound_identifiers(
 
 fn render_bindings_for_file(
     report: &mut String,
-    file: &File,
+    file: &SemanticFile,
     all_definitions: &[CollectedDefinition],
     all_references: &[CollectedReference],
     unbound_identifiers: &[UnboundIdentifier],

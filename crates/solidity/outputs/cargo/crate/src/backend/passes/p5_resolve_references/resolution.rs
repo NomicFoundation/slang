@@ -11,7 +11,7 @@ use crate::cst::NodeId;
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_7_0};
 
 /// Lexical style resolution of symbols
-impl Pass {
+impl Pass<'_> {
     // This is a "top-level" (ie. not a member access) resolution method
     pub(super) fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);

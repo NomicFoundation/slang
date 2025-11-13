@@ -79,10 +79,10 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                         test_outcome = binder_v1_check::run(contract, &unit, events);
                     }
                     Some(CheckBinderMode::V2) => {
-                        test_outcome = binder_v2_check::run(contract, unit, events);
+                        test_outcome = binder_v2_check::run(contract, &unit, events);
                     }
                     Some(CheckBinderMode::Compare) => {
-                        test_outcome = compare_binders::run(contract, unit, events);
+                        test_outcome = compare_binders::run(contract, &unit, events);
                     }
                     _ => {}
                 }

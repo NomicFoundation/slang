@@ -1,55 +1,35 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
     LibraryDefinition, Reference, Resolution, ScopeId,
 };
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::compilation::CompilationUnit;
+use crate::backend::semantic::SemanticAnalysis;
 use crate::cst::NodeId;
 
 mod c3;
 
-pub struct Output {
-    pub compilation_unit: CompilationUnit,
-    pub files: HashMap<String, input_ir::SourceUnit>,
-    pub binder: Binder,
-}
-
 /// In this pass we collect all bases of contracts and interfaces and then
 /// compute the linearisation for each of them.
-pub fn run(input: Input) -> Output {
-    let files = input.files;
-    let mut pass = Pass::new(input.compilation_unit, input.binder);
-    for source_unit in files.values() {
-        pass.visit_file_collect_bases(source_unit);
+pub fn run(semantic_analysis: &mut SemanticAnalysis) {
+    let mut pass = Pass::new(&mut semantic_analysis.binder);
+    for semantic_file in semantic_analysis.files.values() {
+        pass.visit_file_collect_bases(semantic_file.ir_root());
     }
-    for source_unit in files.values() {
-        pass.visit_file_linearise_contracts(source_unit);
-    }
-
-    let compilation_unit = pass.compilation_unit;
-    let binder = pass.binder;
-    Output {
-        compilation_unit,
-        files,
-        binder,
+    for semantic_file in semantic_analysis.files.values() {
+        pass.visit_file_linearise_contracts(semantic_file.ir_root());
     }
 }
 
-pub struct Pass {
-    pub compilation_unit: CompilationUnit,
-    pub binder: Binder,
+pub struct Pass<'a> {
+    pub binder: &'a mut Binder,
 }
 
-impl Pass {
-    pub fn new(compilation_unit: CompilationUnit, binder: Binder) -> Self {
-        Self {
-            compilation_unit,
-            binder,
-        }
+impl<'a> Pass<'a> {
+    pub fn new(binder: &'a mut Binder) -> Self {
+        Self { binder }
     }
 
     fn visit_file_collect_bases(&mut self, source_unit: &input_ir::SourceUnit) {

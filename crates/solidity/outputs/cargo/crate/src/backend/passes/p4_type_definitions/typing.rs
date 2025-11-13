@@ -4,7 +4,7 @@ use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
 use crate::cst::NodeId;
 
-impl Pass {
+impl Pass<'_> {
     pub(super) fn type_of_identifier_path(
         &mut self,
         identifier_path: &input_ir::IdentifierPath,
