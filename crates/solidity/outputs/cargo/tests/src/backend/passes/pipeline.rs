@@ -1,5 +1,6 @@
+use std::rc::Rc;
+
 use anyhow::Result;
-use slang_solidity::backend::build_binder_output;
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use slang_solidity::utils::LanguageFacts;
 
@@ -84,19 +85,19 @@ impl CompilationBuilderConfig for Config {
     }
 }
 
-fn build_compilation_unit() -> Result<CompilationUnit> {
+fn build_compilation_unit() -> Result<Rc<CompilationUnit>> {
     let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, Config {})?;
 
     builder.add_file(MAIN_ID)?;
 
-    Ok(builder.build())
+    Ok(Rc::new(builder.build()))
 }
 
 #[test]
 fn test_backend_pipeline() -> Result<()> {
     let unit = build_compilation_unit()?;
-    let data = build_binder_output(unit);
-    assert_eq!(2, data.files.len());
+    let semantic_analysis = unit.semantic_analysis();
+    assert_eq!(2, semantic_analysis.files().len());
 
     Ok(())
 }

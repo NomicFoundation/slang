@@ -1,24 +1,14 @@
-use std::collections::HashMap;
-
 use semver::Version;
 
-use super::p3_linearise_contracts::Output as Input;
 use crate::backend::binder::{Binder, Definition, Scope, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
+use crate::backend::semantic::SemanticAnalysis;
 use crate::backend::types::{Type, TypeId, TypeRegistry};
-use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;
 
 mod resolution;
 mod typing;
 mod visitor;
-
-pub struct Output {
-    pub compilation_unit: CompilationUnit,
-    pub files: HashMap<String, input_ir::SourceUnit>,
-    pub binder: Binder,
-    pub types: TypeRegistry,
-}
 
 /// This pass will determine and assign typing information to all the
 /// definitions collected in the earlier pass and as a result register most
@@ -29,42 +19,35 @@ pub struct Output {
 /// Finally, public state variables will be assigned an equivalent getter
 /// function type. This happens after the main typing pass to ensure all types
 /// are already registered.
-pub fn run(input: Input) -> Output {
-    let files = input.files;
-    let compilation_unit = input.compilation_unit;
-    let mut pass = Pass::new(input.binder, compilation_unit.language_version());
-    for source_unit in files.values() {
-        pass.visit_file(source_unit);
+pub fn run(semantic_analysis: &mut SemanticAnalysis) {
+    let mut pass = Pass::new(
+        semantic_analysis.language_version().clone(),
+        &mut semantic_analysis.binder,
+        &mut semantic_analysis.types,
+    );
+    for semantic_file in semantic_analysis.files.values() {
+        pass.visit_file(semantic_file.ir_root());
     }
-    for source_unit in files.values() {
-        pass.visit_file_type_getters(source_unit);
-    }
-    let binder = pass.binder;
-    let types = pass.types;
-
-    Output {
-        compilation_unit,
-        files,
-        binder,
-        types,
+    for semantic_file in semantic_analysis.files.values() {
+        pass.visit_file_type_getters(semantic_file.ir_root());
     }
 }
 
-struct Pass {
+struct Pass<'a> {
     language_version: Version,
     scope_stack: Vec<ScopeId>,
-    binder: Binder,
-    types: TypeRegistry,
+    binder: &'a mut Binder,
+    types: &'a mut TypeRegistry,
     current_receiver_type: Option<TypeId>,
 }
 
-impl Pass {
-    fn new(binder: Binder, language_version: &Version) -> Self {
+impl<'a> Pass<'a> {
+    fn new(language_version: Version, binder: &'a mut Binder, types: &'a mut TypeRegistry) -> Self {
         Self {
-            language_version: language_version.clone(),
+            language_version,
             scope_stack: Vec::new(),
             binder,
-            types: TypeRegistry::new(language_version.clone()),
+            types,
             current_receiver_type: None,
         }
     }

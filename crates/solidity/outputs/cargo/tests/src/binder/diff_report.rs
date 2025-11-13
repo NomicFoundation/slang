@@ -1,18 +1,23 @@
 use std::collections::{BTreeSet, HashMap};
 use std::fmt::Write;
+use std::rc::Rc;
 
 use anyhow::Result;
 use slang_solidity::backend::binder::Resolution;
-use slang_solidity::backend::BinderOutput;
+use slang_solidity::backend::SemanticAnalysis;
+use slang_solidity::bindings::BindingGraph;
 use slang_solidity::cst::NodeId;
 
 use super::report_data::{CollectedDefinition, CollectedReference, ReportData};
 
-pub(crate) fn binding_graph_diff_report(report_data: &'_ ReportData<'_>) -> Result<(String, bool)> {
+pub(crate) fn binding_graph_diff_report(
+    report_data: &'_ ReportData<'_>,
+    binding_graph: &Rc<BindingGraph>,
+) -> Result<(String, bool)> {
     let mut report = String::new();
 
     let ReportData {
-        binder_output,
+        semantic_analysis,
         all_definitions,
         all_references,
         definitions_by_id,
@@ -21,12 +26,13 @@ pub(crate) fn binding_graph_diff_report(report_data: &'_ ReportData<'_>) -> Resu
 
     let has_diff = diff_binding_graph_definitions(
         &mut report,
-        binder_output,
+        semantic_analysis,
+        binding_graph,
         all_definitions,
         definitions_by_id,
     )? || diff_binding_graph_references(
         &mut report,
-        binder_output,
+        binding_graph,
         all_references,
         definitions_by_id,
     )?;
@@ -50,12 +56,12 @@ pub(crate) fn binding_graph_diff_report(report_data: &'_ ReportData<'_>) -> Resu
 
 fn diff_binding_graph_definitions(
     report: &mut String,
-    binder_output: &BinderOutput,
+    semantic_analysis: &SemanticAnalysis,
+    binding_graph: &Rc<BindingGraph>,
     all_definitions: &[CollectedDefinition],
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<bool> {
     let mut has_diff = false;
-    let binding_graph = binder_output.compilation_unit.binding_graph();
     let mut binder_definitions = definitions_by_id
         .keys()
         .copied()
@@ -79,7 +85,7 @@ fn diff_binding_graph_definitions(
         writeln!(
             report,
             "{definition} not found in stack graph output",
-            definition = definition.display(binder_output),
+            definition = definition.display(semantic_analysis),
         )?;
         has_diff = true;
     }
@@ -89,12 +95,11 @@ fn diff_binding_graph_definitions(
 
 fn diff_binding_graph_references(
     report: &mut String,
-    binder_output: &BinderOutput,
+    binding_graph: &Rc<BindingGraph>,
     all_references: &[CollectedReference],
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<bool> {
     let mut has_diff = false;
-    let binding_graph = binder_output.compilation_unit.binding_graph();
     let mut binder_references = all_references
         .iter()
         .map(|reference| (reference.cursor.node().id(), reference))

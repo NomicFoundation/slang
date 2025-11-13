@@ -1,38 +1,17 @@
-use std::collections::HashMap;
 use std::rc::Rc;
 
 use semver::Version;
 
-use super::p0_build_ast::Output as Input;
 use crate::backend::ir::ir2_flat_contracts::transformer::Transformer;
-use crate::backend::ir::ir2_flat_contracts::{self as output, input, SourceUnit};
-use crate::compilation::CompilationUnit;
+use crate::backend::ir::ir2_flat_contracts::{self as output, input};
 use crate::cst::TerminalNode;
 use crate::utils::versions::VERSION_0_5_0;
 
-pub struct Output {
-    pub compilation_unit: CompilationUnit,
-    pub files: HashMap<String, SourceUnit>,
-}
-
-/// This pass is reserved to make ergonomic changes to the AST in order to make
-/// it easier to use. For now, it will only flatten contract specifiers:
-/// inheritance and storage layout specifiers. In the future, more
-/// transformations will be added.
-pub fn run(input: Input) -> Output {
+pub fn run_file(language_version: &Version, source_unit: &input::SourceUnit) -> output::SourceUnit {
     let mut pass = Pass {
-        language_version: input.compilation_unit.language_version().clone(),
+        language_version: language_version.clone(),
     };
-    let files = input
-        .files
-        .iter()
-        .map(|(file_id, source_unit)| (file_id.clone(), pass.transform_source_unit(source_unit)))
-        .collect();
-    let compilation_unit = input.compilation_unit;
-    Output {
-        compilation_unit,
-        files,
-    }
+    pass.transform_source_unit(source_unit)
 }
 
 struct Pass {

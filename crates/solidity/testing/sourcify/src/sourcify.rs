@@ -1,5 +1,6 @@
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 use std::time::SystemTime;
 
 use anyhow::{anyhow, bail, Error, Result};
@@ -339,7 +340,7 @@ impl Contract {
     /// Create a `CompilationUnit` for this contract. This includes all available source files and resolves
     /// imports, accounting for file remapping/renaming. The resulting `CompilationUnit` is ready to check for
     /// errors.
-    pub fn create_compilation_unit(&self) -> Result<CompilationUnit> {
+    pub fn create_compilation_unit(&self) -> Result<Rc<CompilationUnit>> {
         let name = self.name.clone();
         let entrypoint = self.entrypoint().ok_or(Error::msg(format!(
             "Entrypoint not found in contract {name}"
@@ -349,7 +350,7 @@ impl Contract {
             CompilationBuilder::create(self.version.clone(), ContractConfig { contract: self })?;
 
         builder.add_file(&entrypoint).map_err(|e| anyhow!(e))?;
-        Ok(builder.build())
+        Ok(Rc::new(builder.build()))
     }
 
     pub fn entrypoint(&self) -> Option<String> {

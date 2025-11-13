@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use slang_solidity::backend::binder::Resolution;
-use slang_solidity::backend::build_binder_output;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{Cursor, NodeId, TerminalKind, TerminalNode};
 
@@ -12,18 +11,18 @@ use crate::sourcify::Contract;
 
 pub(super) fn run(
     contract: &Contract,
-    compilation_unit: CompilationUnit,
+    compilation_unit: &CompilationUnit,
     events: &Events,
 ) -> TestOutcome {
-    let data = build_binder_output(compilation_unit);
+    let semantic_analysis = compilation_unit.semantic_analysis();
 
     let mut test_outcome = TestOutcome::Passed;
     let mut cursor_cache: HashMap<NodeId, (Cursor, String)> = HashMap::new();
 
-    events.inc_definitions(data.binder.definitions().len());
+    events.inc_definitions(semantic_analysis.binder().definitions().len());
     let mut references = 0;
     let mut unresolved = 0;
-    for reference in data.binder.references().values() {
+    for reference in semantic_analysis.binder().references().values() {
         references += 1;
         if !matches!(reference.resolution, Resolution::Unresolved) {
             continue;
@@ -31,17 +30,14 @@ pub(super) fn run(
         unresolved += 1;
         test_outcome = TestOutcome::Failed;
 
-        let (cursor, ref_file_id) = find_cursor_for_identifier(
-            &mut cursor_cache,
-            &data.compilation_unit,
-            &reference.identifier,
-        )
-        .unwrap_or_else(|| {
-            unreachable!(
-                "cannot find Cursor pointing to {identifier:?}",
-                identifier = reference.identifier
-            )
-        });
+        let (cursor, ref_file_id) =
+            find_cursor_for_identifier(&mut cursor_cache, compilation_unit, &reference.identifier)
+                .unwrap_or_else(|| {
+                    unreachable!(
+                        "cannot find Cursor pointing to {identifier:?}",
+                        identifier = reference.identifier
+                    )
+                });
 
         let source = contract.read_file(&ref_file_id).unwrap_or_default();
 

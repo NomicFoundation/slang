@@ -3,13 +3,13 @@ use std::fmt::Display;
 
 use slang_solidity::backend::binder::{Definition, Resolution, Typing};
 use slang_solidity::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
-use slang_solidity::backend::BinderOutput;
+use slang_solidity::backend::SemanticAnalysis;
 use slang_solidity::cst::{Cursor, NodeId, NodeKind, TerminalKindExtensions};
 
 // Types
 
 pub(crate) struct ReportData<'a> {
-    pub(crate) binder_output: &'a BinderOutput,
+    pub(crate) semantic_analysis: &'a SemanticAnalysis,
     pub(crate) all_definitions: Vec<CollectedDefinition>,
     pub(crate) all_references: Vec<CollectedReference>,
     pub(crate) unbound_identifiers: Vec<UnboundIdentifier>,
@@ -37,16 +37,16 @@ pub(crate) struct UnboundIdentifier {
 // Implementation
 
 impl<'a> ReportData<'a> {
-    pub(crate) fn prepare(binder_output: &'a BinderOutput) -> Self {
+    pub(crate) fn prepare(semantic_analysis: &'a SemanticAnalysis) -> Self {
         let (all_definitions, all_references, unbound_identifiers) =
-            collect_all_definitions_and_references(binder_output);
+            collect_all_definitions_and_references(semantic_analysis);
         let definitions_by_id = all_definitions
             .iter()
             .map(|definition| (definition.definition_id, definition.report_id))
             .collect::<HashMap<NodeId, usize>>();
 
         Self {
-            binder_output,
+            semantic_analysis,
             all_definitions,
             all_references,
             unbound_identifiers,
@@ -63,8 +63,7 @@ impl<'a> ReportData<'a> {
     }
 
     pub(crate) fn has_parse_errors(&self) -> bool {
-        self.binder_output
-            .compilation_unit
+        self.semantic_analysis
             .files()
             .iter()
             .any(|file| !file.errors().is_empty())
@@ -72,7 +71,7 @@ impl<'a> ReportData<'a> {
 }
 
 fn collect_all_definitions_and_references(
-    binder_output: &BinderOutput,
+    semantic_analysis: &SemanticAnalysis,
 ) -> (
     Vec<CollectedDefinition>,
     Vec<CollectedReference>,
@@ -82,7 +81,7 @@ fn collect_all_definitions_and_references(
     let mut all_references = Vec::new();
     let mut unbound_identifiers = Vec::new();
 
-    for file in &binder_output.compilation_unit.files() {
+    for file in &semantic_analysis.files() {
         let mut cursor = file.create_tree_cursor();
         while cursor.go_to_next_terminal() {
             if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
@@ -91,8 +90,8 @@ fn collect_all_definitions_and_references(
 
             let mut bound = false;
             let node_id = cursor.node().id();
-            if let Some(definition) = binder_output
-                .binder
+            if let Some(definition) = semantic_analysis
+                .binder()
                 .find_definition_by_identifier_node_id(node_id)
             {
                 all_definitions.push(CollectedDefinition {
@@ -103,8 +102,8 @@ fn collect_all_definitions_and_references(
                 });
                 bound = true;
             }
-            if let Some(reference) = binder_output
-                .binder
+            if let Some(reference) = semantic_analysis
+                .binder()
                 .find_reference_by_identifier_node_id(node_id)
             {
                 all_references.push(CollectedReference {
@@ -130,18 +129,18 @@ fn collect_all_definitions_and_references(
 impl CollectedDefinition {
     pub(crate) fn display<'a>(
         &'a self,
-        binder_output: &'a BinderOutput,
+        semantic_analysis: &'a SemanticAnalysis,
     ) -> CollectedDefinitionDisplay<'a> {
         CollectedDefinitionDisplay {
             definition: self,
-            binder_output,
+            semantic_analysis,
         }
     }
 }
 
 pub(crate) struct CollectedDefinitionDisplay<'a> {
     definition: &'a CollectedDefinition,
-    binder_output: &'a BinderOutput,
+    semantic_analysis: &'a SemanticAnalysis,
 }
 
 impl Display for CollectedDefinitionDisplay<'_> {
@@ -162,8 +161,8 @@ impl Display for CollectedDefinitionDisplay<'_> {
 impl CollectedDefinitionDisplay<'_> {
     fn definition_type(&self) -> String {
         if let Some(definition) = self
-            .binder_output
-            .binder
+            .semantic_analysis
+            .binder()
             .find_definition_by_id(self.definition.definition_id)
         {
             match definition {
@@ -214,7 +213,7 @@ impl CollectedDefinitionDisplay<'_> {
 
     fn definition_type_display(&self) -> String {
         let node_id = self.definition.definition_id;
-        let typing = self.binder_output.binder.node_typing(node_id);
+        let typing = self.semantic_analysis.binder().node_typing(node_id);
         match typing {
             Typing::Unresolved => "unresolved".to_string(),
             Typing::Resolved(type_id) => self.type_display(type_id),
@@ -232,7 +231,7 @@ impl CollectedDefinitionDisplay<'_> {
 
     #[allow(clippy::too_many_lines)]
     fn type_display(&self, type_id: TypeId) -> String {
-        match self.binder_output.types.get_type_by_id(type_id) {
+        match self.semantic_analysis.types().get_type_by_id(type_id) {
             Type::Address { payable } => {
                 if *payable {
                     "address payable".to_string()
@@ -338,8 +337,8 @@ impl CollectedDefinitionDisplay<'_> {
     }
 
     fn definition_name(&self, definition_id: NodeId) -> String {
-        self.binder_output
-            .binder
+        self.semantic_analysis
+            .binder()
             .find_definition_by_id(definition_id)
             .unwrap()
             .identifier()

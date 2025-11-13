@@ -4,7 +4,7 @@ use crate::backend::types::{FunctionType, Type, TypeId};
 use crate::cst::NodeId;
 
 /// Disambiguation functions that require typing (aka overload resolution)
-impl Pass {
+impl Pass<'_> {
     fn get_function_definition_parameters(
         &self,
         definition_id: Option<NodeId>,
