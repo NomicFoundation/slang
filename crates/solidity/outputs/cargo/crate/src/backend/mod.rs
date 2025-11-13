@@ -8,6 +8,8 @@ pub mod ir;
 pub mod passes;
 pub mod types;
 
+pub use crate::backend::ir::ir2_flat_contracts as ast;
+
 pub type BinderOutput = passes::p6_index_tree::Output;
 
 pub fn build_binder_output(compilation_unit: CompilationUnit) -> BinderOutput {

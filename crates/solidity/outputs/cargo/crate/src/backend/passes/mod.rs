@@ -5,5 +5,3 @@ pub mod p3_linearise_contracts;
 pub mod p4_type_definitions;
 pub mod p5_resolve_references;
 pub mod p6_index_tree;
-
-pub use crate::backend::ir::ir2_flat_contracts as ast;

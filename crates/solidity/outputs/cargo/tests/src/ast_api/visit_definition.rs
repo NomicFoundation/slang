@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
+use slang_solidity::backend::ast::index::IntoIr;
+use slang_solidity::backend::ast::{self, ContractMember};
 use slang_solidity::backend::binder::{ContractDefinition, Definition};
-use slang_solidity::backend::passes::ast::index::IntoIr;
-use slang_solidity::backend::passes::ast::{self, ContractMember};
 use slang_solidity::backend::BinderOutput;
 use slang_solidity::cst::TextIndex;
 
