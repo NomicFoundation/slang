@@ -12,23 +12,23 @@ use crate::utils::versions::VERSION_0_5_0;
 
 impl Visitor for Pass {
     fn enter_source_unit(&mut self, node: &input_ir::SourceUnit) -> bool {
-        self.enter_scope_for_node_id(node.node_id);
+        self.enter_scope_for_node_id(node.id());
         true
     }
 
     fn leave_source_unit(&mut self, node: &input_ir::SourceUnit) {
-        self.leave_scope_for_node_id(node.node_id);
+        self.leave_scope_for_node_id(node.id());
     }
 
     fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
-        self.enter_scope_for_node_id(node.node_id);
+        self.enter_scope_for_node_id(node.id());
 
         let type_id = self.types.register_type(Type::Contract {
-            definition_id: node.node_id,
+            definition_id: node.id(),
         });
         self.current_receiver_type = Some(type_id);
 
-        if let Some(bases) = self.binder.get_linearised_bases(node.node_id) {
+        if let Some(bases) = self.binder.get_linearised_bases(node.id()) {
             if !bases.is_empty() {
                 self.register_super_types(type_id, &bases.clone());
             }
@@ -38,21 +38,21 @@ impl Visitor for Pass {
     }
 
     fn leave_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
+        self.leave_scope_for_node_id(node.id());
 
         self.current_receiver_type = None;
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
-        self.enter_scope_for_node_id(node.node_id);
+        self.enter_scope_for_node_id(node.id());
 
         let type_id = self.types.register_type(Type::Interface {
-            definition_id: node.node_id,
+            definition_id: node.id(),
         });
         self.current_receiver_type = Some(type_id);
 
-        if let Some(bases) = self.binder.get_linearised_bases(node.node_id) {
+        if let Some(bases) = self.binder.get_linearised_bases(node.id()) {
             if !bases.is_empty() {
                 self.register_super_types(type_id, &bases.clone());
             }
@@ -62,31 +62,31 @@ impl Visitor for Pass {
     }
 
     fn leave_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
+        self.leave_scope_for_node_id(node.id());
 
         self.current_receiver_type = None;
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
     }
 
     fn enter_library_definition(&mut self, node: &input_ir::LibraryDefinition) -> bool {
-        self.enter_scope_for_node_id(node.node_id);
+        self.enter_scope_for_node_id(node.id());
         true
     }
 
     fn leave_library_definition(&mut self, node: &input_ir::LibraryDefinition) {
-        self.leave_scope_for_node_id(node.node_id);
+        self.leave_scope_for_node_id(node.id());
 
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
     }
 
     fn leave_path_import(&mut self, node: &input_ir::PathImport) {
         if node.alias.is_some() {
-            self.binder.mark_user_meta_type_node(node.node_id);
+            self.binder.mark_user_meta_type_node(node.id());
         }
     }
 
     fn leave_named_import(&mut self, node: &input_ir::NamedImport) {
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
     }
 
     fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
@@ -129,7 +129,7 @@ impl Visitor for Pass {
 
         // now we can compute the function type
         let type_id = self.type_of_function_definition(node, self.current_receiver_type);
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
 
         if !matches!(node.kind, input_ir::FunctionKind::Modifier) && node.name.is_some() {
             // for non-modifier *named* functions, fill-in parameter types in
@@ -137,12 +137,11 @@ impl Visitor for Pass {
             let parameter_types: Vec<_> = node
                 .parameters
                 .iter()
-                .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
+                .map(|parameter| self.binder.node_typing(parameter.id()).as_type_id())
                 .collect();
 
-            let Some(parameters_scope_id) = self
-                .binder
-                .get_parameters_scope_for_definition(node.node_id)
+            let Some(parameters_scope_id) =
+                self.binder.get_parameters_scope_for_definition(node.id())
             else {
                 unreachable!("FunctionDefinition does not have associated parameters scope");
             };
@@ -198,17 +197,15 @@ impl Visitor for Pass {
     }
 
     fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
 
         let parameter_types: Vec<_> = node
             .parameters
             .iter()
-            .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
+            .map(|parameter| self.binder.node_typing(parameter.id()).as_type_id())
             .collect();
 
-        let Some(parameters_scope_id) = self
-            .binder
-            .get_parameters_scope_for_definition(node.node_id)
+        let Some(parameters_scope_id) = self.binder.get_parameters_scope_for_definition(node.id())
         else {
             unreachable!("EventDefinition does not have associated parameters scope");
         };
@@ -225,11 +222,11 @@ impl Visitor for Pass {
         // and structs are allowed as event parameters and they won't type if we
         // pass None here
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_error_definition(&mut self, node: &input_ir::ErrorDefinition) {
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
     }
 
     fn leave_error_parameter(&mut self, node: &input_ir::ErrorParameter) {
@@ -237,19 +234,19 @@ impl Visitor for Pass {
         // and structs are allowed as error parameters and they won't type if we
         // pass None here
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_state_variable_definition(&mut self, node: &input_ir::StateVariableDefinition) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Storage));
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
         // if required, we will compute the type of the getter after all
         // definitions have been typed
     }
 
     fn leave_constant_definition(&mut self, node: &input_ir::ConstantDefinition) {
         let type_id = self.resolve_type_name(&node.type_name, None);
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_variable_declaration_statement(
@@ -274,7 +271,7 @@ impl Visitor for Pass {
                 // resolve the type at this point (will fixup in p5)
                 None
             };
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_typed_tuple_member(&mut self, node: &input_ir::TypedTupleMember) {
@@ -289,7 +286,7 @@ impl Visitor for Pass {
                 }
             }),
         );
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_tuple_deconstruction_statement(
@@ -308,40 +305,39 @@ impl Visitor for Pass {
                 // the variable types cannot be typed at this point, but we
                 // should be able to infer it after typing the initialization
                 // value
-                self.binder
-                    .set_node_type(untyped_tuple_member.node_id, None);
+                self.binder.set_node_type(untyped_tuple_member.id(), None);
             }
         }
     }
 
     fn leave_struct_definition(&mut self, node: &input_ir::StructDefinition) {
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
     }
 
     fn leave_struct_member(&mut self, node: &input_ir::StructMember) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Inherited));
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_enum_definition(&mut self, node: &input_ir::EnumDefinition) {
         let type_id = self.types.register_type(Type::Enum {
-            definition_id: node.node_id,
+            definition_id: node.id(),
         });
         for member in &node.members {
             self.binder.set_node_type(member.id(), Some(type_id));
         }
 
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
     }
 
     fn leave_user_defined_value_type_definition(
         &mut self,
         node: &input_ir::UserDefinedValueTypeDefinition,
     ) {
-        self.binder.mark_user_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.id());
 
         let target_type_id = self.type_of_elementary_type(&node.value_type, None);
-        let Definition::UserDefinedValueType(udvt) = self.binder.get_definition_mut(node.node_id)
+        let Definition::UserDefinedValueType(udvt) = self.binder.get_definition_mut(node.id())
         else {
             unreachable!("definition in UDVT node is not a UDVT");
         };
@@ -427,7 +423,7 @@ impl Visitor for Pass {
                             }
                         }
 
-                        let scope = Scope::new_using(node.node_id, symbols);
+                        let scope = Scope::new_using(node.id(), symbols);
                         let scope_id = self.binder.insert_scope(scope);
 
                         if operators.is_empty() {
@@ -475,7 +471,7 @@ impl Visitor for Pass {
     fn leave_revert_statement(&mut self, node: &input_ir::RevertStatement) {
         if let Some(identifier_path) = &node.error {
             let type_id = self.type_of_identifier_path(identifier_path, None);
-            self.binder.set_node_type(node.node_id, type_id);
+            self.binder.set_node_type(node.id(), type_id);
         }
     }
 
@@ -486,7 +482,7 @@ impl Visitor for Pass {
 
     fn leave_emit_statement(&mut self, node: &input_ir::EmitStatement) {
         let type_id = self.type_of_identifier_path(&node.event, None);
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn enter_catch_clause_error(&mut self, node: &input_ir::CatchClauseError) -> bool {
@@ -504,7 +500,7 @@ impl Visitor for Pass {
     fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
         let typing = type_id.map_or(Typing::Unresolved, Typing::NewExpression);
-        self.binder.set_node_typing(node.node_id, typing);
+        self.binder.set_node_typing(node.id(), typing);
     }
 
     fn leave_type_expression(&mut self, node: &input_ir::TypeExpression) {
@@ -512,6 +508,6 @@ impl Visitor for Pass {
         let typing = type_id.map_or(Typing::Unresolved, |type_id| {
             Typing::BuiltIn(BuiltIn::Type(type_id))
         });
-        self.binder.set_node_typing(node.node_id, typing);
+        self.binder.set_node_typing(node.id(), typing);
     }
 }

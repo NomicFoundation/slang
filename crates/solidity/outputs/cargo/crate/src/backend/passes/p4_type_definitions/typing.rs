@@ -142,7 +142,7 @@ impl Pass {
             input_ir::FunctionVisibility::External | input_ir::FunctionVisibility::Public
         );
         Some(self.types.register_type(Type::Function(FunctionType {
-            definition_id: Some(function_definition.node_id),
+            definition_id: Some(function_definition.id()),
             implicit_receiver_type,
             parameter_types,
             return_type,
@@ -258,7 +258,7 @@ impl Pass {
                     .map(Into::into)
                     .or(default_location),
             );
-            self.binder.set_node_type(parameter.node_id, type_id);
+            self.binder.set_node_type(parameter.id(), type_id);
         }
     }
 

@@ -1,5 +1,7 @@
 use std::rc::Rc;
 
+#[cfg(feature = "__private_backend_api")]
+use crate::cst::SyntaxNode;
 use crate::cst::{Cursor, NonterminalNode, TextIndex};
 use crate::parser::ParseError;
 
@@ -47,5 +49,11 @@ impl ParseOutput {
     /// Creates a cursor that starts at the root of the parse tree.
     pub fn create_tree_cursor(&self) -> Cursor {
         Rc::clone(&self.tree).create_cursor(TextIndex::ZERO)
+    }
+
+    /// Returns the root syntax node of the parse tree.
+    #[cfg(feature = "__private_backend_api")]
+    pub fn syntax_tree(&self) -> Rc<SyntaxNode> {
+        SyntaxNode::create_root(crate::cst::Node::Nonterminal(Rc::clone(&self.tree)))
     }
 }
