@@ -14,16 +14,16 @@ test("slang works", async () => {
   let subject = new SlangSubject();
   let result = await testSubject(subject);
   expect(result.get("slang_total")).toBeDefined();
-}, 1000);
+});
 
 test("solc works", async () => {
   let subject = new SolcSubject();
   let result = await testSubject(subject);
   expect(result.get("solc_build_ast_duration")).toBeDefined();
-}, 1000);
+});
 
 test("solidity-parser works", async () => {
   let subject = new AntlrSubject();
   let result = await testSubject(subject);
   expect(result.get("antlr_build_ast_duration")).toBeDefined();
-}, 1000);
+});
