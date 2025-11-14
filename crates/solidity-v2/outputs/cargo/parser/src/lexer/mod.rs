@@ -1,8 +1,8 @@
 #[path = "contexts.generated.rs"]
-mod contexts;
-mod definition;
+pub mod contexts;
+pub mod definition;
 #[path = "lexemes.generated.rs"]
-mod lexemes;
+pub mod lexemes;
 
 #[cfg(test)]
 mod tests;

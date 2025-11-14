@@ -1,0 +1,21 @@
+use std::str::FromStr;
+use crate::lexer::lexemes;
+
+grammar;
+
+// pub Term: i32 = {
+//     <n:Num> => n,
+//     "(" <t:Term> ")" => t,
+// };
+
+pub Num: i32 = <s:DecimalLiteral> => 33;
+
+
+extern {
+    type Location = usize;
+    type Error = ();
+
+    enum lexemes::LexemeKind {
+        DecimalLiteral => lexemes::LexemeKind::DecimalLiteral,
+    }
+}

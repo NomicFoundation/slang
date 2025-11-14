@@ -132,3 +132,14 @@ impl Lexer<'_> {
         first_part
     }
 }
+
+pub type Spanned<Tok, Loc, Error> = Result<(Loc, Tok, Loc), Error>;
+
+impl Iterator for Lexer<'_> {
+    type Item = Spanned<LexemeKind, usize, ()>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next_lexeme()
+            .map(|Lexeme { kind, range }| Ok((range.start, kind, range.end)))
+    }
+}
