@@ -73,6 +73,14 @@ export class SolidityProject {
     return new SolidityProject(sources, compilation, importResolver);
   }
 
+  public static mockProject(): SolidityProject {
+    return new SolidityProject(
+      new Map([["MockContract.sol", "pragma solidity ^0.8.0;\ncontract MockContract { function foo() public {} }"]]),
+      new SolidityCompilation("0.8.26+commit.8a97fa7a", "MockContract.sol:MockContract", { remappings: [] }),
+      new ImportResolver([], [new SourceMap("MockContract.sol", "MockContract.sol")]),
+    );
+  }
+
   public fileContents(file: string): string {
     const content = this.sources.get(file);
     if (content) {

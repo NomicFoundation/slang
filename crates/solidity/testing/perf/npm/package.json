@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/command-line-args": "^5.2.3",
     "@types/command-line-usage": "^5.0.4",
+    "@types/jest": "29.5.14",
     "@types/node": "^22.15.17"
   }
 }
