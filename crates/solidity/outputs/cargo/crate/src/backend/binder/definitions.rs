@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use super::ScopeId;
+use crate::backend::ir::ir2_flat_contracts as output_ir;
 use crate::backend::types::TypeId;
 use crate::cst::{NodeId, TerminalNode};
 
@@ -147,8 +148,7 @@ pub struct StateVariableDefinition {
 
 #[derive(Debug)]
 pub struct StructDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::StructDefinition,
 }
 
 #[derive(Debug)]
@@ -217,7 +217,7 @@ impl Definition {
             Self::Modifier(modifier_definition) => modifier_definition.node_id,
             Self::Parameter(parameter_definition) => parameter_definition.node_id,
             Self::StateVariable(state_variable_definition) => state_variable_definition.node_id,
-            Self::Struct(struct_definition) => struct_definition.node_id,
+            Self::Struct(struct_definition) => struct_definition.ir_node.node_id,
             Self::StructMember(struct_member_definition) => struct_member_definition.node_id,
             Self::TypeParameter(parameter_definition) => parameter_definition.node_id,
             Self::UserDefinedValueType(udvt_definition) => udvt_definition.node_id,
@@ -245,7 +245,7 @@ impl Definition {
             Self::Modifier(modifier_definition) => &modifier_definition.identifier,
             Self::Parameter(parameter_definition) => &parameter_definition.identifier,
             Self::StateVariable(state_variable_definition) => &state_variable_definition.identifier,
-            Self::Struct(struct_definition) => &struct_definition.identifier,
+            Self::Struct(struct_definition) => &struct_definition.ir_node.name,
             Self::StructMember(struct_member_definition) => &struct_member_definition.identifier,
             Self::TypeParameter(parameter_definition) => &parameter_definition.identifier,
             Self::UserDefinedValueType(udvt_definition) => &udvt_definition.identifier,
@@ -427,10 +427,9 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_struct(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_struct(node: &output_ir::StructDefinition) -> Self {
         Self::Struct(StructDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(node),
         })
     }
 
