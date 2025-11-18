@@ -384,7 +384,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_struct_definition(&mut self, node: &input_ir::StructDefinition) -> bool {
-        let definition = Definition::new_struct(node.node_id, &node.name);
+        let definition = Definition::new_struct(node);
         self.insert_definition_in_current_scope(definition);
 
         let struct_scope = Scope::new_struct(node.node_id);
