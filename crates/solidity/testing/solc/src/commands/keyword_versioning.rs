@@ -12,7 +12,7 @@ use solidity_language::SolidityDefinition;
 
 use crate::utils::{Binary, CliInput, InputSource, LanguageSelector};
 
-/// Makes sure all Solidity definition keywords have the corrent version specifiers.
+/// Makes sure all Solidity definition keywords have the correct version specifiers.
 #[derive(Debug, Parser)]
 pub struct KeywordVersioningCommand {
     /// By default, all keyword variations are tested:
