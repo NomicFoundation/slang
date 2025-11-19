@@ -17,6 +17,9 @@ edit_uri: "edit/main/documentation/public"
 
 docs_dir: "./public"
 site_dir: "./target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
+exclude_docs: |
+  /user-guide/node_modules
+  /user-guide/target
 
 validation:
   nav:

@@ -1,6 +1,7 @@
 import * as wasm from "../../wasm/index.mjs";
 
-export { CompilationBuilder, CompilationBuilderConfig } from "./builder.mjs";
+export { CompilationBuilder } from "./builder.mjs";
+export type { CompilationBuilderConfig } from "./builder.mjs";
 
 /** {@inheritDoc wasm.compilation.CompilationUnit} */
 export const CompilationUnit = wasm.compilation.CompilationUnit;

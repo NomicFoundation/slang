@@ -60,6 +60,7 @@
     /* Interop Constraints */
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "isolatedModules": true,
 
     /* Language and Environment */
     "target": "ES6",

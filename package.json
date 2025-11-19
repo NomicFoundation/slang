@@ -1,15 +1,28 @@
 {
   "name": "@slang-private/workspace",
   "private": true,
-  "workspaces": [
-    "crates/infra/cli",
-    "crates/solidity/outputs/npm/package",
-    "crates/solidity/outputs/npm/tests",
-    "crates/solidity/testing/perf",
-    "crates/solidity/testing/perf/npm",
-    "documentation/public/user-guide"
-  ],
+  "packageManager": "pnpm@10.20.0",
+  "engines": {
+    "node": "24.11.0",
+    "pnpm": "10.20.0"
+  },
   "devDependencies": {
-    "tsx": "^4.19.4"
+    "@changesets/changelog-github": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@ignored/slang-jco": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "cspell": "catalog:",
+    "jest": "catalog:",
+    "markdown-link-check": "catalog:",
+    "markdownlint-cli": "catalog:",
+    "prettier-plugin-sh": "catalog:",
+    "prettier": "catalog:",
+    "solc": "catalog:",
+    "ts-jest-resolver": "catalog:",
+    "ts-jest": "catalog:",
+    "tsx": "catalog:",
+    "typedoc": "catalog:",
+    "typescript": "catalog:"
   }
 }
