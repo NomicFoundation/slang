@@ -96,15 +96,15 @@ pub enum LanguageVersion {
 }
 
 #[derive(Debug, Error, PartialEq)]
-pub enum FromVersionErrors {
-    #[error("version '{0}' is not supported")]
-    UnsupportedVersion(Version),
+pub enum FromSemverError {
+    #[error("provided version is not supported")]
+    UnsupportedVersion,
     #[error("versions with pre-release or build metadata are not supported")]
-    PreReleaseOrBuildMetadata,
+    UnexpectedMetadata,
 }
 
 impl TryFrom<Version> for LanguageVersion {
-    type Error = FromVersionErrors;
+    type Error = FromSemverError;
 
     fn try_from(version: Version) -> Result<Self, Self::Error> {
         let Version {
@@ -116,7 +116,7 @@ impl TryFrom<Version> for LanguageVersion {
         } = &version;
 
         if !pre.is_empty() || !build.is_empty() {
-            return Err(FromVersionErrors::PreReleaseOrBuildMetadata);
+            return Err(FromSemverError::UnexpectedMetadata);
         }
 
         Ok(match (major, minor, patch) {
@@ -205,7 +205,7 @@ impl TryFrom<Version> for LanguageVersion {
             (0, 8, 28) => LanguageVersion::V0_8_28,
             (0, 8, 29) => LanguageVersion::V0_8_29,
             (0, 8, 30) => LanguageVersion::V0_8_30,
-            _ => return Err(FromVersionErrors::UnsupportedVersion(version)),
+            _ => return Err(FromSemverError::UnsupportedVersion),
         })
     }
 }

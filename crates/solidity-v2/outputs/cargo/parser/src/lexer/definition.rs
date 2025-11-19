@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use logos::Logos;
-use slang_solidity_v2_common::language_versions::LanguageVersion;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::{ContextExtras, ContextKind, ContextWrapper};
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
