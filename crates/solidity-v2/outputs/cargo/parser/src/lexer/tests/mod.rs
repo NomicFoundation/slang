@@ -1,5 +1,6 @@
 mod keywords;
 mod numbers;
+mod pragma;
 mod strings;
 mod trivia;
 mod yul;

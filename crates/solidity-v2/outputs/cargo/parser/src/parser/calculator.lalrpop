@@ -1,14 +1,72 @@
 use std::str::FromStr;
 use crate::lexer::lexemes;
 
-grammar;
+grammar<'source>(source: &'source str);
 
 // pub Term: i32 = {
 //     <n:Num> => n,
 //     "(" <t:Term> ")" => t,
 // };
 
-pub Num: i32 = <s:DecimalLiteral> => 33;
+pub Num: i32 = {
+    <l:@L> <s:DecimalLiteral> <r:@R> => i32::from_str(source[dbg!(l)..dbg!(r)].trim()).unwrap(),
+}
+
+pub PragmaDirective: String = {
+    PragmaKeyword_Reserved <p:Pragma> Semicolon => p,
+}
+
+Pragma: String = {
+    <v:VersionPragma> => v,
+    // AbicoderPragma
+    // ExperimentalPragma
+}
+
+VersionPragma: String = {
+    SolidityKeyword_Unreserved <v:VersionExpressionSets> => v,
+}
+
+VersionExpressionSets: String = {
+    <mut v:(<VersionExpressionSet> BarBar)*> <e:VersionExpressionSet> => {
+        v.push(e);
+        v.join(" || ")
+    }
+}
+
+VersionExpressionSet: String = {
+    <v: (<VersionExpression>)*> => v.join(" && "),
+}
+
+VersionExpression: String = {
+    // VersionRange,
+    <v:VersionTerm> => v,
+}
+
+VersionTerm: String = {
+    <vOp: VersionOperator?> <v:VersionLiteral> => vOp.unwrap_or_default() + &v,
+}
+
+VersionOperator: String = {
+    Caret => String::from("^"),
+    Tilde => String::from("~"),
+}
+
+VersionLiteral: String = {
+    <v:SimpleVersionLiteral> => v,
+    // SingleQuotedVersionLiteral,
+    // DoubleQuotedVersionLiteral,
+}
+
+SimpleVersionLiteral: String = {
+    <mut v: (<VersionSpecifier> Period)*> <s:VersionSpecifier> => {
+        v.push(s);
+        v.join(".")
+    }
+}
+
+VersionSpecifier: String = {
+    <l:@L> VersionSpecifierLex <r:@R> => source[l..r].to_string(),
+}
 
 
 extern {
@@ -17,5 +75,14 @@ extern {
 
     enum lexemes::LexemeKind {
         DecimalLiteral => lexemes::LexemeKind::DecimalLiteral,
+        PragmaKeyword_Reserved => lexemes::LexemeKind::PragmaKeyword_Reserved,
+        Semicolon => lexemes::LexemeKind::Semicolon,
+        SolidityKeyword_Unreserved => lexemes::LexemeKind::SolidityKeyword_Unreserved,
+        BarBar => lexemes::LexemeKind::BarBar,
+        Caret => lexemes::LexemeKind::Caret,
+        Tilde => lexemes::LexemeKind::Tilde,
+        Period => lexemes::LexemeKind::Period,
+        VersionSpecifierLex => lexemes::LexemeKind::VersionSpecifier,
+
     }
 }
