@@ -1,7 +1,7 @@
 mod p1_definitions;
 mod p2_version_specifiers;
 mod p3_references;
-mod p4_unreachabe_items;
+mod p4_unreachable_items;
 mod p5_unused_versions;
 
 use std::rc::Rc;
@@ -41,10 +41,15 @@ impl Analysis {
         };
 
         for pass in &[
+            // This pass creates `ItemMetadata` definitions for all language `Item` entries, and verifies they are correct/unique.
             p1_definitions::run,
+            // This pass checks all version ranges in the grammar for correctness.
             p2_version_specifiers::run,
+            // This pass collects all references between items, making sure they conform to their enabled version ranges.
             p3_references::run,
-            p4_unreachabe_items::run,
+            // This pass makes sure all items are reachable from the grammar root.
+            p4_unreachable_items::run,
+            // This pass makes sure that all items are used in all the versions they are enabled in.
             p5_unused_versions::run,
         ] {
             // Early return if there are already errors, to prevent producing noise from later analysis:
