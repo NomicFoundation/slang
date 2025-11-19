@@ -1,0 +1,47 @@
+use std::convert::TryFrom;
+
+use semver::Version;
+use thiserror::Error;
+
+/// All supported versions of `{{ model.language.name }}`. 
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub enum LanguageVersion {
+    {% for version in model.language.versions %}    
+        V{{ version | split(pat=".") | join(sep="_") }},
+    {%- endfor -%}
+}
+
+#[derive(Debug, Error, PartialEq)]
+pub enum FromSemverError {
+    #[error("provided version is not supported")]
+    UnsupportedVersion,
+    #[error("versions with pre-release or build metadata are not supported")]
+    UnexpectedMetadata,
+}
+
+impl TryFrom<Version> for LanguageVersion {
+    type Error = FromSemverError;
+
+    fn try_from(version: Version) -> Result<Self, Self::Error> {
+        let Version {
+            major,
+            minor,
+            patch,
+            pre,
+            build,
+        } = &version;
+
+        if !pre.is_empty() || !build.is_empty() {
+            return Err(FromSemverError::UnexpectedMetadata);
+        }
+
+        Ok(match (major, minor, patch) {
+            {%- for version in model.language.versions %}
+                ({{ version | split(pat=".") | join(sep=", ") }}) => {
+                    LanguageVersion::V{{ version | split(pat=".") | join(sep="_") }}
+                }
+            {%- endfor %}
+            _ => return Err(FromSemverError::UnsupportedVersion),
+        })
+    }
+}

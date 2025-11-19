@@ -6,7 +6,7 @@ mod yul;
 
 use std::ops::Range;
 
-use semver::Version;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
 use crate::lexer::definition::Lexer;
@@ -15,7 +15,7 @@ use crate::lexer::lexemes::LexemeKind;
 fn test_lexer_output(
     source: &str,
     expected: &[(LexemeKind, Range<usize>)],
-    version: Version,
+    version: LanguageVersion,
     kind: ContextKind,
 ) {
     let mut lexer = Lexer::new(kind, source, version);

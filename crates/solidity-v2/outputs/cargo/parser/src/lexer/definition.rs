@@ -1,22 +1,20 @@
 use std::collections::VecDeque;
 
 use logos::Logos;
-use semver::Version;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::{ContextExtras, ContextKind, ContextWrapper};
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
 pub struct Lexer<'source> {
-    language_version: Version,
+    language_version: LanguageVersion,
     context: ContextWrapper<'source>,
     queue: VecDeque<Lexeme>,
 }
 
 impl<'source> Lexer<'source> {
-    pub fn new(kind: ContextKind, source: &'source str, language_version: Version) -> Self {
-        let extras = ContextExtras {
-            language_version: language_version.clone(),
-        };
+    pub fn new(kind: ContextKind, source: &'source str, language_version: LanguageVersion) -> Self {
+        let extras = ContextExtras { language_version };
 
         let context = ContextWrapper::new(kind, source, extras);
 
@@ -69,7 +67,7 @@ impl Lexer<'_> {
             Lexeme(LexemeKind),
         }
 
-        if self.language_version < Version::new(0, 5, 0) {
+        if self.language_version < LanguageVersion::V0_5_0 {
             return Some(original);
         }
 
@@ -105,8 +103,8 @@ impl Lexer<'_> {
             Lexeme(LexemeKind),
         }
 
-        if Version::new(0, 5, 8) <= self.language_version
-            && self.language_version < Version::new(0, 7, 0)
+        if LanguageVersion::V0_5_8 <= self.language_version
+            && self.language_version < LanguageVersion::V0_7_0
         {
             return Some(original);
         }

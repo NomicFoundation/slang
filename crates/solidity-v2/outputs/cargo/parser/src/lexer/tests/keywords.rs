@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use semver::Version;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
 use crate::lexer::lexemes::LexemeKind as L;
@@ -41,14 +41,14 @@ fn test(
     test_lexer_output(
         source,
         expected_legacy,
-        Version::new(0, 4, 11),
+        LanguageVersion::V0_4_11,
         ContextKind::Solidity,
     );
 
     test_lexer_output(
         source,
         expected_modern,
-        Version::new(0, 8, 0),
+        LanguageVersion::V0_8_0,
         ContextKind::Solidity,
     );
 }

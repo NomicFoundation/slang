@@ -39,7 +39,11 @@ impl<'source> Comparator<'source> {
         root_cursor: Cursor,
     ) -> Vec<Error> {
         let mut instance = Self {
-            lexer: Lexer::new(ContextKind::Solidity, source, language_version),
+            lexer: Lexer::new(
+                ContextKind::Solidity,
+                source,
+                language_version.try_into().unwrap(),
+            ),
             cursor: root_cursor,
             errors: vec![],
         };
