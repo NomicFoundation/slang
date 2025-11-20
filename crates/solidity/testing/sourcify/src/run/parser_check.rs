@@ -1,3 +1,4 @@
+use semver::Version;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::diagnostic::Diagnostic;
 
@@ -27,6 +28,18 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
             print_errors(contract, events, file.id(), &v2_errors);
             test_outcome = TestOutcome::Failed;
             continue;
+        }
+
+        if contract.version == Version::new(0, 8, 30) {
+            let v2_errors = slang_solidity_v2_parser::temp_cst_output::compare_with_v1_cursor(
+                source,
+                file.create_tree_cursor(),
+            );
+            if !v2_errors.is_empty() {
+                print_errors(contract, events, file.id(), &v2_errors);
+                test_outcome = TestOutcome::Failed;
+                continue;
+            }
         }
     }
 

@@ -118,7 +118,7 @@ pub enum SolidityContext {
     #[regex(r#"v2"#, |_| { LexemeKind::AbicoderV2Keyword_Unreserved }, priority = 3000003)]
     #[regex(r#"ABIEncoderV2"#, |_| { LexemeKind::ABIEncoderV2Keyword_Unreserved }, priority = 3000004)]
     #[regex(r#"abstract"#, |_| { LexemeKind::AbstractKeyword_Reserved }, priority = 3000005)]
-    #[regex(r#"address"#, |_| { LexemeKind::AddressKeyword_Unreserved }, priority = 3000006)]
+    #[regex(r#"address"#, |_| { LexemeKind::AddressKeyword_Reserved }, priority = 3000006)]
     #[regex(r#"after"#, |_| { LexemeKind::AfterKeyword_Reserved }, priority = 3000007)]
     #[regex(r#"alias"#, |lexer| { if LanguageVersion::V0_5_0 <= lexer.extras.language_version { LexemeKind::AliasKeyword_Reserved } else { LexemeKind::AliasKeyword_Unreserved } }, priority = 3000008)]
     #[regex(r#"anonymous"#, |_| { LexemeKind::AnonymousKeyword_Reserved }, priority = 3000009)]

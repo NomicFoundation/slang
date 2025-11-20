@@ -39,7 +39,8 @@ language_v2_macros::compile!(Language(
                     items = [
                         Struct(
                             name = SourceUnit,
-                            fields = (members = Required(SourceUnitMembers))
+                            fields = (members = Required(SourceUnitMembers)),
+                            parser_options = ParserOptions(inline = false, pubb = true)
                         ),
                         Repeated(
                             name = SourceUnitMembers,
@@ -86,7 +87,16 @@ language_v2_macros::compile!(Language(
                                 pragma_keyword = Required(PragmaKeyword),
                                 pragma = Required(Pragma),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            // TODO(v2): Until the lexer can perform context switching, we ignore pragmas
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+PragmaDirective: PragmaDirective<'arena> = {
+    <_pragma_keyword: PragmaKeyword>  ! <_semicolon: Semicolon>  => {
+    let abicoder = new_pragma_abicoder_pragma(arena, new_abicoder_pragma(arena, new_abicoder_keyword(arena, 0, 0, source), new_abicoder_version_abicoder_v1_keyword(arena, new_abicoder_v1_keyword(arena, 0, 0, source))));
+    new_pragma_directive(arena, _pragma_keyword, abicoder , _semicolon)
+    }
+};
+"#)
                         ),
                         Enum(
                             name = Pragma,
@@ -496,7 +506,10 @@ language_v2_macros::compile!(Language(
                             name = AddressKeyword,
                             identifier = Identifier,
                             definitions =
-                                [KeywordDefinition(reserved = Never, value = Atom("address"))]
+                            // TODO(v2): I made it reserved, in an attempt to find errors with using these as identifiers:
+                            //
+                            // I think this is only not a keyword since it can be used as a member access, maybe a special case there is better?
+                                [KeywordDefinition(value = Atom("address"))]
                         ),
                         Keyword(
                             name = AfterKeyword,
@@ -2068,12 +2081,65 @@ language_v2_macros::compile!(Language(
                                 open_brace = Required(OpenBrace),
                                 members = Required(ContractMembers),
                                 close_brace = Required(CloseBrace)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = true, verbatim = "
+// A ContractDefinition's specifiers can conflict with the trailing block, since a block and an option calls
+// have the same prefix (an open brace).
+//
+// For the case with specifiers, we parse the specifiers first, and steal the members from the last specifier.
+pub ContractDefinition: ContractDefinition<'arena> = {
+    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  => {
+        let (specifiers, (_open_brace, _members, _close_brace)) = _specifiers;
+        new_contract_definition(arena, _abstract_keyword, _contract_keyword, _name, specifiers, _open_brace, _members, _close_brace)
+    },
+    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        new_contract_definition(arena, _abstract_keyword, _contract_keyword, _name, new_contract_specifiers(arena, Vec::new_in(arena)), _open_brace, _members, _close_brace)
+    },
+
+};
+")
                         ),
                         Repeated(
                             name = ContractSpecifiers,
                             reference = ContractSpecifier,
-                            allow_empty = true
+                            allow_empty = true,
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = "
+// The specifiers need to be at least one, and the last one must capture the members
+ContractSpecifiers: (ContractSpecifiers<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+    <mut _ContractSpecifier: Rep<<ContractSpecifier>>> <_tail: ContractSpecifierDM>  => {
+        let (specifier, tail) = _tail;
+        _ContractSpecifier.push(specifier);
+        (new_contract_specifiers(arena, _ContractSpecifier), tail)
+    },
+};
+ContractSpecifierDM: (ContractSpecifier<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+    <_InheritanceSpecifier: InheritanceSpecifier> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (new_contract_specifier_inheritance_specifier(arena, _InheritanceSpecifier), (_open_brace, _members, _close_brace))
+    },
+    <_StorageLayoutSpecifier: StorageLayoutSpecifierDM>  => {
+        let (storage_layout_specifier, tail) = _StorageLayoutSpecifier;
+        (new_contract_specifier_storage_layout_specifier(arena, storage_layout_specifier), tail)
+    },
+};
+
+StorageLayoutSpecifierDM: (StorageLayoutSpecifier<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+    <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: ExpressionTrailingMembers>  => {
+        let (expr, tail) = _expression;
+        (new_storage_layout_specifier(arena, _layout_keyword, _at_keyword, expr), tail)
+    },
+};
+
+// An expression followed by contract members
+ExpressionTrailingMembers: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+        <Expression: Expression19<BracedContractMembers>>  => <>,
+};
+BracedContractMembers: (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>) = {
+    <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (_open_brace, _members, _close_brace)
+    },
+};
+
+")
                         ),
                         Enum(
                             name = ContractSpecifier,
@@ -2294,7 +2360,58 @@ language_v2_macros::compile!(Language(
                                 name = Required(Identifier),
                                 value = Optional(reference = StateVariableDefinitionValue),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// State variable definitions have a conflict when used with function types, since some attributes
+// can be both function type attributes and state variable attributes.
+// For example in `function (uint a) internal internal foo;`, the first `internal` is a function type attribute,
+// while the second `internal` is a state variable attribute.
+//
+// To disambiguate in these cases we need to count, everything from the second attribute onwards
+// belongs to the state variable. This is very hard to do in LR(1) grammars, so we resort to letting
+// the function type capture all attributes, and then extract the trailing ones to use them in the state variable.
+// 
+// This is done by splitting the state variable rules into two cases, one where any type is allowed, except function types
+// that do not specify a return; and one where only function types without return are allowed.
+StateVariableDefinition: StateVariableDefinition<'arena> = {
+    // If we're not using functions without return, then we can have all attributes
+        <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
+        <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon> => {
+            let identifier = new_identifier(arena, l, r, source);
+            let iap = new_index_access_path_from_identifier_path(arena, new_identifier_path(arena, identifier, None));
+            let type_name = new_type_name_index_access_path(arena, iap);
+
+            new_state_variable_definition(arena, type_name, _attributes, _name, _value, _semicolon)
+        },
+
+
+        // If there is no return, then we need a single special attribute to disambiguate and to post process the attributes
+        <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
+            let (function_type, mut extra_attributes) = extract_extra_attributes(arena, _type_name);
+            if let Some(special_attributes) = special_attributes {
+                extra_attributes.push(special_attributes.0);
+                extra_attributes.extend(special_attributes.1.elements);
+            }
+            new_state_variable_definition(arena, new_type_name_function_type(arena, function_type), new_state_variable_attributes(arena, extra_attributes), _name, _value, _semicolon)
+        },
+};
+
+IdentifierPathNoError: IdentifierPath<'arena> = {
+    // We either have any identifier with a tail (ie a period)
+    <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
+    // or a single identifier that is not `revert`
+    <_head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
+};
+
+// These are the attributes that can appear in a state variable but not a function,
+// they can work as a limit between these definitions.
+#[inline]
+SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
+        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
+        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(arena, <>),
+        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(arena, <>),
+};
+"#)
                         ),
                         Struct(
                             name = StateVariableDefinitionValue,
@@ -2303,7 +2420,8 @@ language_v2_macros::compile!(Language(
                         Repeated(
                             name = StateVariableAttributes,
                             reference = StateVariableAttribute,
-                            allow_empty = true
+                            allow_empty = true,
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Enum(
                             name = StateVariableAttribute,
@@ -2315,7 +2433,8 @@ language_v2_macros::compile!(Language(
                                 EnumVariant(reference = PublicKeyword),
                                 EnumVariant(reference = ImmutableKeyword, enabled = From("0.6.5")),
                                 EnumVariant(reference = TransientKeyword, enabled = From("0.8.27"))
-                            ]
+                            ],
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         )
                     ]
                 ),
@@ -2667,7 +2786,8 @@ language_v2_macros::compile!(Language(
                                 name = Required(Identifier),
                                 members = Required(ErrorParametersDeclaration),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Struct(
                             name = ErrorParametersDeclaration,
@@ -2732,7 +2852,40 @@ language_v2_macros::compile!(Language(
                                 PrimaryExpression(reference = MappingType),
                                 PrimaryExpression(reference = ElementaryType),
                                 PrimaryExpression(reference = IdentifierPath)
-                            ]
+                            ],
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = "
+                            
+// TypeName has two peculiarities:
+// 1. We need to parametrize the FunctionRule to allow StateVariableDefinition to disable FunctionTypes without returns
+// 2. A TypeName that can be represented as an `IndexAccessPath` can conflict with a `MemberAccess`, for example
+//    `a.b[c]` can be either a member access over an identifier path, or array type, depending on what comes next.
+//    This means we need to treat these constructs as IAPs for as long as possible, and only convert them to TypeNames
+//    when it's certainly a type. `new_type_name_index_access_path` transforms an IAP into a TypeName.
+//    However, since a IAP and an array type conflict, we need to make sure that array types are only matched against
+//    base types that are not IAPs, hence the parametric IAPRule.
+    TypeName0<FunctionRule, IAPRule>: TypeName<'arena> = {
+            <_FunctionType: FunctionRule> => new_type_name_function_type(arena, <>),
+            <_MappingType: MappingType>  => new_type_name_mapping_type(arena, <>),
+            <_IndexAccessPath: IAPRule> => new_type_name_index_access_path(arena, <>),
+    };
+    TypeName1<FunctionRule, IAPRule>: TypeName<'arena> = {
+            <_TypeName: ArrayTypeName>  => new_type_name_array_type_name(arena, <>),
+            <TypeName: TypeName0<FunctionRule, IAPRule>>  => <>,
+    };
+    TypeName: TypeName<'arena> = {
+            // A regular type can have any function type and an IAP
+            <TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
+    };
+    
+        #[inline]
+    ArrayTypeName: ArrayTypeName<'arena> = {
+            // The base expression shouldn't end in a trailing IAP
+            <_TypeName: TypeName1<FunctionType, NoIndexAccessPath>>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
+    };
+
+    // An empty rule to disable IAPs
+    NoIndexAccessPath: IndexAccessPath<'arena> = {};
+")
                         ),
                         Struct(
                             name = FunctionType,
@@ -2741,7 +2894,25 @@ language_v2_macros::compile!(Language(
                                 parameters = Required(ParametersDeclaration),
                                 attributes = Required(FunctionTypeAttributes),
                                 returns = Optional(reference = ReturnsDeclaration)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = "
+
+// The only reason to split FunctionType into two rules is to allow StateVariableDefinition
+// to choose whether to allow FunctionTypes without returns or not.
+// Note: This could be solved with macros, but is short enough to be explicit
+    FunctionType: FunctionType<'arena> = {
+        FunctionTypeInternalNoReturn => <>,
+        FunctionTypeInternalReturn => <>,
+    };
+
+    FunctionTypeInternalNoReturn: FunctionType<'arena> = {
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(arena, _function_keyword, _parameters, _attributes, None),
+    };
+    FunctionTypeInternalReturn: FunctionType<'arena> = {
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(arena, _function_keyword, _parameters, _attributes, Some(_returns)),
+        
+    };
+")
                         ),
                         Repeated(
                             name = FunctionTypeAttributes,
@@ -2869,7 +3040,67 @@ language_v2_macros::compile!(Language(
                                 EnumVariant(reference = TupleDeconstructionStatement),
                                 EnumVariant(reference = VariableDeclarationStatement),
                                 EnumVariant(reference = ExpressionStatement)
-                            ]
+                            ],
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// This is a common problem in grammars[1]. To not reinvent the wheel we follow advice from
+// LALRPOP community[2].
+// Briefly, we parametrize statements on whether they allow a trailing else or not, forcing `else`s to attach to
+// the innermost `if`` possible.
+//
+// [1]: https://en.wikipedia.org/wiki/Dangling_else
+// [2]: https://github.com/lalrpop/lalrpop/issues/67#issuecomment-188951041
+_Statement<TrailingElse>: Statement<'arena> = {
+    <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(arena, <>),
+    <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(arena, <>),
+    <_WhileStatement: WhileStatement<TrailingElse>>  => new_statement_while_statement(arena, <>),
+    <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(arena, <>),
+    <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(arena, <>),
+    <_BreakStatement: BreakStatement>  => new_statement_break_statement(arena, <>),
+    <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(arena, <>),
+    <_EmitStatement: EmitStatement>  => new_statement_emit_statement(arena, <>),
+    <_TryStatement: TryStatement>  => new_statement_try_statement(arena, <>),
+    <_RevertStatement: RevertStatement>  => new_statement_revert_statement(arena, <>),
+    <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(arena, <>),
+    <_Block: Block>  => new_statement_block(arena, <>),
+    <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(arena, <>),
+    <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(arena, <>),
+    <_VariableDeclarationStatement: VariableDeclarationStatementNoRevert>  => new_statement_variable_declaration_statement(arena, <>),
+    <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(arena, <>),
+};
+
+// By default statements allos dangling `else`s
+Statement = _Statement<"True">;
+
+
+// A VariableDeclarationStatement that has a `revert` type as a special case, this allows
+// to disambiguate between a revert statement and a variable declaration with type `revert`
+//
+// Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
+#[inline]
+VariableDeclarationStatementNoRevert: VariableDeclarationStatement<'arena> = {
+    <_variable_declaration: VariableDeclarationNoRevert>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(arena, <>),
+};
+#[inline]
+VariableDeclarationNoRevert: VariableDeclaration<'arena> = {
+    <_variable_type: VariableDeclarationTypeNoRevert>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(arena, <>),
+};
+#[inline]
+VariableDeclarationTypeNoRevert: VariableDeclarationType<'arena> = {
+    <_TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  => new_variable_declaration_type_type_name(arena, <>),
+    <l:@L> L_RevertKeyword_Unreserved <r:@R> => {
+        let identifier = new_identifier(arena, l, r, source);
+        let iap = new_index_access_path_from_identifier_path(arena, new_identifier_path(arena, identifier, None));
+        let type_name = new_type_name_index_access_path(arena, iap);
+        new_variable_declaration_type_type_name(arena, type_name)
+    }
+};
+IdentifierPathNoRevert: IdentifierPath<'arena> = {
+    // We either have any identifier with a tail (ie a period)
+    <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
+    // or a single identifier that is not `revert`
+    <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
+};
+"#)
                         ),
                         Struct(
                             name = UncheckedBlock,
@@ -2940,7 +3171,71 @@ language_v2_macros::compile!(Language(
                                 equal = Required(Equal),
                                 expression = Required(Expression),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// Tuple expressions and tuple declarations can conflict in some situations, for example if the parser sees `(a, b` 
+// it doesn't know whether it's parsing a tuple expression with two identifiers inside, or a tuple pattern/declaration.
+// We solve this by delaying the decision, and parsing common prefixes as ProtoTuples.
+// ProtoTuples are marked with a boolean generic on whether they are tuples (ie, expressions) or patterns (ie, declarations).
+//
+// Note: One caveat of this is that an assignemnt over a tuple (ie, `(a, b) = foo();`) is parsed as an expression.
+// 
+// Note: the solidity grammar chooses to allow tuple expressions to not have any expressions (ie `(,,)` is valid),
+// and then the difference between an assignemtn with a lhs being a tuple expression and a tuple deconstruction statement
+// is whether it has any declaration within itself.
+// We follow a different path, the reason may make a difference in the future when `var` declarations are allowed
+// (`var (a, b) = foo();`), but for now it's mostly a design choice.
+//
+// TODO: Empty tuples are considered patterns, I'm not sure if that's actually allowed
+// TODO: maybe we could get rid of this if we use a right-recursive rules for tuples, but I'm not 100% sure
+ProtoTuple<Tuple>: ProtoTuple<'arena> = {
+    <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(arena, _open_paren, _elements, _close_paren),
+}
+
+ProtoTupleElements<Tuple>: Vec<'arena, ProtoTupleElement<'arena>> = {
+    // A single element can be a tuple or a pattern
+    <_elem: TupleElementExpression> if Tuple == "True" => bumpalo::vec![in arena; <>],
+    <_elem: TupleElementPattern> if Tuple == "False" => bumpalo::vec![in arena; <>],
+    
+    // A ProtoTuple only ProtoTupleElements<True> is a Tuple expression
+    <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementExpression> if Tuple == "True" => {
+        _elems.push(_elem);
+        _elems
+    },
+    
+    // But we can mix and match with patterns
+    <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
+        _elems.push(_elem);
+        _elems
+    },
+    
+    <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
+        _elems.push(_elem);
+        _elems
+    },
+    
+    <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementExpression> if Tuple == "False" => {
+        _elems.push(_elem);
+        _elems
+    },
+};
+
+TupleElementExpression: ProtoTupleElement<'arena> = {
+    // A Tuple expression must be present and only be an identifier
+    <_name: Expression> => new_proto_tuple_element_expression(arena, _name),
+};
+
+TupleElementPattern: ProtoTupleElement<'arena> = {
+    <_decl: VariableDeclaration>  => new_proto_tuple_element_declaration(arena, _decl),
+    <_storage_location: StorageLocation> <_name: Identifier>  => new_proto_tuple_element_storage_location(arena, _storage_location, _name),
+    () => new_proto_tuple_element_empty(arena),
+};
+
+// TupleDeconstructionStatement uses a ProtoTuple with patterns only
+TupleDeconstructionStatement: TupleDeconstructionStatement<'arena> = {
+        // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
+        <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => new_tuple_deconstruction_statement_from_proto_tuple(arena, <>),
+};"#)
                         ),
                         Separated(
                             name = TupleDeconstructionElements,
@@ -2977,11 +3272,19 @@ language_v2_macros::compile!(Language(
                             name = VariableDeclarationStatement,
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
-                                variable_type = Required(VariableDeclarationType),
-                                storage_location = Optional(reference = StorageLocation),
-                                name = Required(Identifier),
+                                variable_declaration = Required(VariableDeclaration),
                                 value = Optional(reference = VariableDeclarationValue),
                                 semicolon = Required(Semicolon)
+                            )
+                        ),
+                        // This is reused on the ProtoTuple construct
+                        // It's useful to have it split
+                        Struct(
+                            name = VariableDeclaration,
+                            fields = (
+                                variable_type = Required(VariableDeclarationType),
+                                storage_location = Optional(reference = StorageLocation),
+                                name = Required(Identifier)
                             )
                         ),
                         Enum(
@@ -3022,7 +3325,15 @@ language_v2_macros::compile!(Language(
                                 close_paren = Required(CloseParen),
                                 body = Required(Statement),
                                 else_branch = Optional(reference = ElseBranch)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+IfStatement<TrailingElse>: IfStatement<'arena> = {
+    // IfStatement only allows dangling `if`s (ie without an else) if TrailingElse == "True"
+    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(arena, <>, None),
+    // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
+    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<TrailingElse>>  => new_if_statement(arena, _if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(arena, _else_keyword, _else_branch))),
+};
+"#)
                         ),
                         Struct(
                             name = ElseBranch,
@@ -3045,7 +3356,11 @@ language_v2_macros::compile!(Language(
                                 iterator = Optional(reference = Expression),
                                 close_paren = Required(CloseParen),
                                 body = Required(Statement)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+ForStatement<TrailingElse>: ForStatement<'arena> = {
+        <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_for_statement(arena, <>),
+};"#)
                         ),
                         Enum(
                             name = ForStatementInitialization,
@@ -3075,7 +3390,12 @@ language_v2_macros::compile!(Language(
                                 condition = Required(Expression),
                                 close_paren = Required(CloseParen),
                                 body = Required(Statement)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+WhileStatement<TrailingElse>: WhileStatement<'arena> = {
+        <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_while_statement(arena, <>),
+};"#)
+
                         ),
                         Struct(
                             name = DoWhileStatement,
@@ -3145,7 +3465,30 @@ language_v2_macros::compile!(Language(
                                 returns = Optional(reference = ReturnsDeclaration),
                                 body = Required(Block),
                                 catch_clauses = Required(CatchClauses)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
+// at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
+// start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
+//
+// We use expressions with a trailing block to solve this, and steal the block from there.
+TryStatement: TryStatement<'arena> = {
+    <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
+        new_try_statement(arena, _try_keyword, _expression, Some(_returns), _body, _catch_clauses)
+    },
+    <_try_keyword: TryKeyword>  <_expression: ExpressionTrailingBlock>   <_catch_clauses: CatchClauses>  => {
+        let (expr, body) = _expression;
+        new_try_statement(arena, _try_keyword, expr, None, body, _catch_clauses)
+    },
+};
+
+// An expression followed by a block
+ExpressionTrailingBlock: (Expression<'arena>, Block<'arena>) = {
+        
+        <Expression: Expression19<Block>>  => <>,
+    
+};
+"#)
                         ),
                         Repeated(
                             name = CatchClauses,
@@ -3175,10 +3518,13 @@ language_v2_macros::compile!(Language(
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 revert_keyword = Required(RevertKeyword),
-                                error = Optional(reference = IdentifierPath),
+                                // TODO(v2): check this
+                                // a `revert(...)` should be parsed as a function call
+                                error = Required(IdentifierPath),
                                 arguments = Required(ArgumentsDeclaration),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Struct(
                             name = ThrowStatement,
@@ -3499,7 +3845,7 @@ language_v2_macros::compile!(Language(
                                         model = Postfix,
                                         fields = (
                                             period = Required(Period),
-                                            member = Required(Identifier)
+                                            member = Required(MemberAccessIdentifier)
                                         )
                                     )]
                                 ),
@@ -3543,7 +3889,323 @@ language_v2_macros::compile!(Language(
                                 PrimaryExpression(reference = TrueKeyword),
                                 PrimaryExpression(reference = FalseKeyword),
                                 PrimaryExpression(reference = Identifier)
-                            ]
+                            ],
+                            parser_options = ParserOptions(
+                                inline = false,
+                                pubb = true,
+                                verbatim = r#"
+                                
+// Expression has a lot of tricky cases:
+// 1. For primary expressions, we track whether they have a triling IAP and, if so, whether that IAP ends in an identifier path
+//    This is needed to delay reduction of type names and member accesses as long as possible
+// 2. For other expressions, we parametrize over a trailing element, to allow using expressions followed by something
+//    (a block or a contract members construct) that may conflict with other trailing expressions constructs (like
+//    option calls)
+//
+// Note: To simplify my life right now, this is a bit different from what's generated, but we'll get there
+Expression0<IdentRule, TrailingIAP>: Expression<'arena> = {
+        <_IndexAccessPath: IndexAccessPath<IdentRule>> if TrailingIAP == "True" => new_expression_index_access_path(arena, <>),
+        
+        <_NewExpression: NewExpression>  => new_expression_new_expression(arena, <>),
+        
+        <_TupleExpression: ProtoTuple<"True">>  => new_expression_tuple_expression(arena, new_tuple_expression_from_proto_tuple(arena, <>)),
+        
+        <_TypeExpression: TypeExpression>  => new_expression_type_expression(arena, <>),
+        
+        <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(arena, <>),
+        
+        <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(arena, <>),
+        
+        <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(arena, <>),
+        
+        <_StringExpression: StringExpression>  => new_expression_string_expression(arena, <>),
+        
+        <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(arena, <>),
+        
+        <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(arena, <>),
+        
+        <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(arena, <>),
+        
+        <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(arena, <>),
+        
+        <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(arena, <>),
+        
+};
+// We simplifiy all these levels of expressions into a single one, there's no need
+// for precedence here
+Expression1<IdentRule, TrailingIAP>: Expression<'arena> = {
+        
+        <_Expression: Expression1<NoIdentPath, "False">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(arena, new_index_access_expression(arena, <>)),
+        
+        <_Expression: Expression1<NoIdentPath, "True">>  <_period: Period>  <_member: MemberAccessIdentifier>  => new_expression_member_access_expression(arena, new_member_access_expression(arena, <>)),
+        
+        <_Expression: Expression1<IdentifierPath, "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(arena, new_call_options_expression(arena, <>)),
+        
+        <_Expression: Expression1<IdentifierPath, "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(arena, new_function_call_expression(arena, <>)),
+        
+        <Expression: Expression0<IdentRule, TrailingIAP>>  => <>,
+    
+};
+
+// Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
+Expression5<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Tail>>  => {
+            let (expr, tail) = _Expression;
+            (new_expression_prefix_expression(arena, new_prefix_expression(arena, _Expression_PrefixExpression_Operator, expr)), tail)
+        },
+        
+        // A tail can appear just after a postfix or primary expression
+        <Expression: Expression1<IdentifierPath, "True">> <tail: Tail> => {
+            (Expression, tail)
+        },
+    
+};
+Expression6<Tail>: (Expression<'arena>, Tail) = {
+        
+        // This is the only other postfix expression that can overwrite a trailing element
+        <_Expression: Expression6<EmptyTail>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
+            let (expr, _) = _Expression;
+            (new_expression_postfix_expression(arena, new_postfix_expression(arena, expr, _Expression_PostfixExpression_Operator)), tail)
+        },
+        
+        <Expression: Expression5<Tail>>  => <>,
+    
+};
+Expression7<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression6<Tail>>  => <>,
+    
+};
+Expression8<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression8<EmptyTail>>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, e, _Expression_MultiplicativeExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression7<Tail>>  => <>,
+    
+};
+Expression9<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression9<EmptyTail>>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_additive_expression(arena, new_additive_expression(arena, e, _Expression_AdditiveExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression8<Tail>>  => <>,
+    
+};
+Expression10<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression10<EmptyTail>>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_shift_expression(arena, new_shift_expression(arena, e, _Expression_ShiftExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression9<Tail>>  => <>,
+    
+};
+Expression11<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression11<EmptyTail>>  <_operator: Ampersand>  <_Expression_2: Expression10<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_bitwise_and_expression(arena, new_bitwise_and_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression10<Tail>>  => <>,
+    
+};
+Expression12<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression12<EmptyTail>>  <_operator: Caret>  <_Expression_2: Expression11<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_bitwise_xor_expression(arena, new_bitwise_xor_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression11<Tail>>  => <>,
+    
+};
+Expression13<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression13<EmptyTail>>  <_operator: Bar>  <_Expression_2: Expression12<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_bitwise_or_expression(arena, new_bitwise_or_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression12<Tail>>  => <>,
+    
+};
+Expression14<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression14<EmptyTail>>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_inequality_expression(arena, new_inequality_expression(arena, e, _Expression_InequalityExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression13<Tail>>  => <>,
+    
+};
+Expression15<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression15<EmptyTail>>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_equality_expression(arena, new_equality_expression(arena, e, _Expression_EqualityExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression14<Tail>>  => <>,
+    
+};
+Expression16<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression16<EmptyTail>>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_and_expression(arena, new_and_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression15<Tail>>  => <>,
+    
+};
+Expression17<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression17<EmptyTail>>  <_operator: BarBar>  <_Expression_2: Expression16<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_or_expression(arena, new_or_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression16<Tail>>  => <>,
+    
+};
+Expression18<Tail>: (Expression<'arena>, Tail) = {
+    
+    // TODO: Not really sure the associativity is correct, we need to check
+        <_Expression: Expression17<EmptyTail>>  <_question_mark: QuestionMark>  <_true_expression: Expression18<EmptyTail>>  <_colon: Colon>  <_false_expression: Expression18<Tail>>  => {
+            let (cond_expr, _) = _Expression;
+            let (true_expr, _) = _true_expression;
+            let (false_expr, tail) = _false_expression;
+            (new_expression_conditional_expression(arena, new_conditional_expression(arena, cond_expr, _question_mark, true_expr, _colon, false_expr)), tail)
+        },
+        
+        <Expression: Expression17<Tail>>  => <>,
+    
+};
+Expression19<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression19<EmptyTail>>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_assignment_expression(arena, new_assignment_expression(arena, e, _Expression_AssignmentExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression18<Tail>>  => <>,
+    
+};
+
+// TODO(v2): We're making this pub to allow testing Expressions
+pub Expression: Expression<'arena> = {
+        
+        <Expression: Expression19<EmptyTail>>  => Expression.0,
+    
+};
+
+// An empty tail is the default behaviour
+EmptyTail: () = {
+    () => (),
+};
+
+    Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator<'arena> = {
+    <_operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(arena, <>),
+    <_operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(arena, <>),
+    <_operator: Tilde>  => new_expression_prefix_expression_operator_tilde(arena, <>),
+    <_operator: Bang>  => new_expression_prefix_expression_operator_bang(arena, <>),
+    <_operator: Minus>  => new_expression_prefix_expression_operator_minus(arena, <>),
+    <_operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(arena, <>),
+    
+};
+Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator<'arena> = {
+    <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(arena, <>),
+    <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(arena, <>),
+    
+};
+Expression_ExponentiationExpression_Operator: Expression_ExponentiationExpression_Operator<'arena> = {
+    <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(arena, <>),
+    
+};
+Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator<'arena> = {
+    <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(arena, <>),
+    <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(arena, <>),
+    <_operator: Percent>  => new_expression_multiplicative_expression_operator_percent(arena, <>),
+    
+};
+Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator<'arena> = {
+    <_operator: Plus>  => new_expression_additive_expression_operator_plus(arena, <>),
+    <_operator: Minus>  => new_expression_additive_expression_operator_minus(arena, <>),
+    
+};
+Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator<'arena> = {
+    <_operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(arena, <>),
+    <_operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(arena, <>),
+    <_operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(arena, <>),
+    
+};
+Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator<'arena> = {
+    <_operator: LessThan>  => new_expression_inequality_expression_operator_less_than(arena, <>),
+    <_operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(arena, <>),
+    <_operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(arena, <>),
+    <_operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(arena, <>),
+    
+};
+Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator<'arena> = {
+    <_operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(arena, <>),
+    <_operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(arena, <>),
+    
+};
+Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator<'arena> = {
+    <_operator: Equal>  => new_expression_assignment_expression_operator_equal(arena, <>),
+    <_operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(arena, <>),
+    <_operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(arena, <>),
+    <_operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(arena, <>),
+    <_operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(arena, <>),
+    <_operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(arena, <>),
+    <_operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(arena, <>),
+    <_operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(arena, <>),
+    <_operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(arena, <>),
+    <_operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(arena, <>),
+    <_operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(arena, <>),
+    <_operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(arena, <>),
+    
+};
+
+NoIdentPath: IdentifierPath<'arena> = {};
+
+// An IAP that tracks whether it has a trailing identifier path
+IndexAccessPath<IdentPathRule>: IndexAccessPath<'arena> = {
+    <iap: IndexAccessPath<IdentifierPath>> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(arena, <>),
+    <IndexAccessPath1<IdentPathRule>>  => <>,
+};
+IndexAccessPath1<IdentPathRule>: IndexAccessPath<'arena> = {
+    <_Identifier: IdentPathRule> => new_index_access_path_from_identifier_path(arena, <>),
+    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(arena, <>),
+};
+"#
+                            )
                         ),
                         Struct(
                             name = IndexAccessEnd,
@@ -3551,6 +4213,13 @@ language_v2_macros::compile!(Language(
                                 colon = Required(Colon),
                                 end = Optional(reference = Expression)
                             )
+                        ),
+                        Enum(
+                            name = MemberAccessIdentifier,
+                            variants = [
+                                EnumVariant(reference = Identifier),
+                                EnumVariant(reference = AddressKeyword, enabled = From("0.6.0"))
+                            ]
                         )
                     ]
                 ),
@@ -3589,9 +4258,11 @@ language_v2_macros::compile!(Language(
                                 delimiters =
                                     FieldDelimiters(open = open_paren, close = close_paren)
                             ),
+                            // We need this to be required, otherwise it's just an unnamed argument group
+                            // TODO(v2): double check
                             fields = (
                                 open_paren = Required(OpenParen),
-                                arguments = Optional(reference = NamedArgumentGroup),
+                                arguments = Required(NamedArgumentGroup),
                                 close_paren = Required(CloseParen)
                             )
                         ),
@@ -3653,7 +4324,20 @@ language_v2_macros::compile!(Language(
                             name = NewExpression,
                             fields = (
                                 new_keyword = Required(NewKeyword),
-                                type_name = Required(TypeName)
+                                type_name = Required(TypeName),
+                                // TODO(v2): This disallows some grammar ambiguities, we should double check it's ok
+                                options =
+                                    Optional(reference = CallOptionsNew, enabled = From("0.6.2")),
+                                arguments = Required(ArgumentsDeclaration)
+                            )
+                        ),
+                        Struct(
+                            name = CallOptionsNew,
+                            enabled = From("0.6.2"),
+                            fields = (
+                                open_brace = Required(OpenBrace),
+                                options = Required(CallOptions),
+                                close_brace = Required(CloseBrace)
                             )
                         ),
                         Struct(
@@ -3705,6 +4389,17 @@ language_v2_macros::compile!(Language(
                             fields = (
                                 literal = Required(HexLiteral),
                                 unit = Optional(reference = NumberUnit, enabled = Till("0.5.0"))
+                            ),
+                            parser_options = ParserOptions(
+                                inline = false,
+                                pubb = false,
+                                verbatim = "
+// This rule shouldn't be manual, but the node constructor takes an optional argument that is not
+// enabled in 0.8.30, therefore we don't have it automatically generated
+HexNumberExpression: HexNumberExpression<'arena> = {
+        <_literal: HexLiteral>  => new_hex_number_expression(arena, <>, None),
+    
+};"
                             )
                         ),
                         Struct(
@@ -3986,9 +4681,23 @@ language_v2_macros::compile!(Language(
                     title = "Identifiers",
                     lexical_context = Solidity,
                     items = [
-                        Separated(
+                        Struct(
                             name = IdentifierPath,
-                            reference = Identifier,
+                            fields = (
+                                head = Required(Identifier),
+                                tail = Optional(reference = IdentifierPathTail)
+                            )
+                        ),
+                        Struct(
+                            name = IdentifierPathTail,
+                            fields = (
+                                sep = Required(Period),
+                                elements = Required(IdentifierPathTailElements)
+                            )
+                        ),
+                        Separated(
+                            name = IdentifierPathTailElements,
+                            reference = MemberAccessIdentifier,
                             separator = Period
                         ),
                         Token(
@@ -4035,7 +4744,15 @@ language_v2_macros::compile!(Language(
                                 open_brace = Required(OpenBrace),
                                 statements = Required(YulStatements),
                                 close_brace = Required(CloseBrace)
-                            )
+                            ),
+                            // TODO(v2): Until the lexer can perform context switching, we ignore YulBlocks
+parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+YulBlock: YulBlock<'arena> = {
+    <_open_brace: OpenBrace>  !  <_close_brace: CloseBrace>  => {
+        new_yul_block(arena, _open_brace, new_yul_statements(arena, Vec::new_in(arena)), _close_brace)
+    }
+};
+"#)
                         ),
                         Repeated(
                             name = YulStatements,

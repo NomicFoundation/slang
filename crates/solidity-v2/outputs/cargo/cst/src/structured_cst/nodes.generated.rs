@@ -396,6 +396,31 @@ pub fn new_call_options_expression<'arena>(
     )
 }
 
+pub type CallOptionsNew<'arena> = Box<'arena, CallOptionsNewStruct<'arena>>;
+
+#[derive(Debug)]
+pub struct CallOptionsNewStruct<'arena> {
+    pub open_brace: OpenBrace<'arena>,
+    pub options: CallOptions<'arena>,
+    pub close_brace: CloseBrace<'arena>,
+}
+
+pub fn new_call_options_new<'arena>(
+    arena: &'arena Bump,
+    open_brace: OpenBrace<'arena>,
+    options: CallOptions<'arena>,
+    close_brace: CloseBrace<'arena>,
+) -> CallOptionsNew<'arena> {
+    Box::new_in(
+        CallOptionsNewStruct {
+            open_brace,
+            options,
+            close_brace,
+        },
+        arena,
+    )
+}
+
 pub type CatchClause<'arena> = Box<'arena, CatchClauseStruct<'arena>>;
 
 #[derive(Debug)]
@@ -1126,6 +1151,38 @@ pub fn new_hex_number_expression<'arena>(
     Box::new_in(HexNumberExpressionStruct { literal, unit }, arena)
 }
 
+pub type IdentifierPath<'arena> = Box<'arena, IdentifierPathStruct<'arena>>;
+
+#[derive(Debug)]
+pub struct IdentifierPathStruct<'arena> {
+    pub head: Identifier<'arena>,
+    pub tail: Option<IdentifierPathTail<'arena>>,
+}
+
+pub fn new_identifier_path<'arena>(
+    arena: &'arena Bump,
+    head: Identifier<'arena>,
+    tail: Option<IdentifierPathTail<'arena>>,
+) -> IdentifierPath<'arena> {
+    Box::new_in(IdentifierPathStruct { head, tail }, arena)
+}
+
+pub type IdentifierPathTail<'arena> = Box<'arena, IdentifierPathTailStruct<'arena>>;
+
+#[derive(Debug)]
+pub struct IdentifierPathTailStruct<'arena> {
+    pub sep: Period<'arena>,
+    pub elements: IdentifierPathTailElements<'arena>,
+}
+
+pub fn new_identifier_path_tail<'arena>(
+    arena: &'arena Bump,
+    sep: Period<'arena>,
+    elements: IdentifierPathTailElements<'arena>,
+) -> IdentifierPathTail<'arena> {
+    Box::new_in(IdentifierPathTailStruct { sep, elements }, arena)
+}
+
 pub type IfStatement<'arena> = Box<'arena, IfStatementStruct<'arena>>;
 
 #[derive(Debug)]
@@ -1501,14 +1558,14 @@ pub type MemberAccessExpression<'arena> = Box<'arena, MemberAccessExpressionStru
 pub struct MemberAccessExpressionStruct<'arena> {
     pub operand: Expression<'arena>,
     pub period: Period<'arena>,
-    pub member: Identifier<'arena>,
+    pub member: MemberAccessIdentifier<'arena>,
 }
 
 pub fn new_member_access_expression<'arena>(
     arena: &'arena Bump,
     operand: Expression<'arena>,
     period: Period<'arena>,
-    member: Identifier<'arena>,
+    member: MemberAccessIdentifier<'arena>,
 ) -> MemberAccessExpression<'arena> {
     Box::new_in(
         MemberAccessExpressionStruct {
@@ -1643,14 +1700,14 @@ pub type NamedArgumentsDeclaration<'arena> = Box<'arena, NamedArgumentsDeclarati
 #[derive(Debug)]
 pub struct NamedArgumentsDeclarationStruct<'arena> {
     pub open_paren: OpenParen<'arena>,
-    pub arguments: Option<NamedArgumentGroup<'arena>>,
+    pub arguments: NamedArgumentGroup<'arena>,
     pub close_paren: CloseParen<'arena>,
 }
 
 pub fn new_named_arguments_declaration<'arena>(
     arena: &'arena Bump,
     open_paren: OpenParen<'arena>,
-    arguments: Option<NamedArgumentGroup<'arena>>,
+    arguments: NamedArgumentGroup<'arena>,
     close_paren: CloseParen<'arena>,
 ) -> NamedArgumentsDeclaration<'arena> {
     Box::new_in(
@@ -1697,17 +1754,23 @@ pub type NewExpression<'arena> = Box<'arena, NewExpressionStruct<'arena>>;
 pub struct NewExpressionStruct<'arena> {
     pub new_keyword: NewKeyword<'arena>,
     pub type_name: TypeName<'arena>,
+    pub options: Option<CallOptionsNew<'arena>>,
+    pub arguments: ArgumentsDeclaration<'arena>,
 }
 
 pub fn new_new_expression<'arena>(
     arena: &'arena Bump,
     new_keyword: NewKeyword<'arena>,
     type_name: TypeName<'arena>,
+    options: Option<CallOptionsNew<'arena>>,
+    arguments: ArgumentsDeclaration<'arena>,
 ) -> NewExpression<'arena> {
     Box::new_in(
         NewExpressionStruct {
             new_keyword,
             type_name,
+            options,
+            arguments,
         },
         arena,
     )
@@ -2026,7 +2089,7 @@ pub type RevertStatement<'arena> = Box<'arena, RevertStatementStruct<'arena>>;
 #[derive(Debug)]
 pub struct RevertStatementStruct<'arena> {
     pub revert_keyword: RevertKeyword<'arena>,
-    pub error: Option<IdentifierPath<'arena>>,
+    pub error: IdentifierPath<'arena>,
     pub arguments: ArgumentsDeclaration<'arena>,
     pub semicolon: Semicolon<'arena>,
 }
@@ -2034,7 +2097,7 @@ pub struct RevertStatementStruct<'arena> {
 pub fn new_revert_statement<'arena>(
     arena: &'arena Bump,
     revert_keyword: RevertKeyword<'arena>,
-    error: Option<IdentifierPath<'arena>>,
+    error: IdentifierPath<'arena>,
     arguments: ArgumentsDeclaration<'arena>,
     semicolon: Semicolon<'arena>,
 ) -> RevertStatement<'arena> {
@@ -2615,31 +2678,50 @@ pub fn new_using_directive<'arena>(
     )
 }
 
+pub type VariableDeclaration<'arena> = Box<'arena, VariableDeclarationStruct<'arena>>;
+
+#[derive(Debug)]
+pub struct VariableDeclarationStruct<'arena> {
+    pub variable_type: VariableDeclarationType<'arena>,
+    pub storage_location: Option<StorageLocation<'arena>>,
+    pub name: Identifier<'arena>,
+}
+
+pub fn new_variable_declaration<'arena>(
+    arena: &'arena Bump,
+    variable_type: VariableDeclarationType<'arena>,
+    storage_location: Option<StorageLocation<'arena>>,
+    name: Identifier<'arena>,
+) -> VariableDeclaration<'arena> {
+    Box::new_in(
+        VariableDeclarationStruct {
+            variable_type,
+            storage_location,
+            name,
+        },
+        arena,
+    )
+}
+
 pub type VariableDeclarationStatement<'arena> =
     Box<'arena, VariableDeclarationStatementStruct<'arena>>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationStatementStruct<'arena> {
-    pub variable_type: VariableDeclarationType<'arena>,
-    pub storage_location: Option<StorageLocation<'arena>>,
-    pub name: Identifier<'arena>,
+    pub variable_declaration: VariableDeclaration<'arena>,
     pub value: Option<VariableDeclarationValue<'arena>>,
     pub semicolon: Semicolon<'arena>,
 }
 
 pub fn new_variable_declaration_statement<'arena>(
     arena: &'arena Bump,
-    variable_type: VariableDeclarationType<'arena>,
-    storage_location: Option<StorageLocation<'arena>>,
-    name: Identifier<'arena>,
+    variable_declaration: VariableDeclaration<'arena>,
     value: Option<VariableDeclarationValue<'arena>>,
     semicolon: Semicolon<'arena>,
 ) -> VariableDeclarationStatement<'arena> {
     Box::new_in(
         VariableDeclarationStatementStruct {
-            variable_type,
-            storage_location,
-            name,
+            variable_declaration,
             value,
             semicolon,
         },
@@ -4513,6 +4595,26 @@ pub fn new_mapping_key_type_identifier_path<'arena>(
 }
 
 #[derive(Debug)]
+pub enum MemberAccessIdentifier<'arena> {
+    Identifier(Identifier<'arena>),
+    AddressKeyword(AddressKeyword<'arena>),
+}
+
+pub fn new_member_access_identifier_identifier<'arena>(
+    arena: &'arena Bump,
+    element: Identifier<'arena>,
+) -> MemberAccessIdentifier<'arena> {
+    MemberAccessIdentifier::Identifier(element)
+}
+
+pub fn new_member_access_identifier_address_keyword<'arena>(
+    arena: &'arena Bump,
+    element: AddressKeyword<'arena>,
+) -> MemberAccessIdentifier<'arena> {
+    MemberAccessIdentifier::AddressKeyword(element)
+}
+
+#[derive(Debug)]
 pub enum ModifierAttribute<'arena> {
     OverrideSpecifier(OverrideSpecifier<'arena>),
     VirtualKeyword(VirtualKeyword<'arena>),
@@ -5970,15 +6072,15 @@ pub fn new_hex_string_literals<'arena>(
 }
 
 #[derive(Debug)]
-pub struct IdentifierPath<'arena> {
-    pub elements: Vec<'arena, Identifier<'arena>>,
+pub struct IdentifierPathTailElements<'arena> {
+    pub elements: Vec<'arena, MemberAccessIdentifier<'arena>>,
 }
 
-pub fn new_identifier_path<'arena>(
+pub fn new_identifier_path_tail_elements<'arena>(
     arena: &'arena Bump,
-    elements: Vec<'arena, Identifier<'arena>>,
-) -> IdentifierPath<'arena> {
-    IdentifierPath { elements }
+    elements: Vec<'arena, MemberAccessIdentifier<'arena>>,
+) -> IdentifierPathTailElements<'arena> {
+    IdentifierPathTailElements { elements }
 }
 
 #[derive(Debug)]

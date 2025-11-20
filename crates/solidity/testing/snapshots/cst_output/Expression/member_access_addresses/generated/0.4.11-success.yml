@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ [                                                                                │ 0..1
+  2  │     x[1].address,                                                                │ 2..19
+  3  │     x().address                                                                  │ 20..35
+  4  │ ]                                                                                │ 36..37
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ ArrayExpression): # "[\n    x[1].address,\n    x().address\n]\n" (0..38)
+      - (open_bracket꞉ OpenBracket): "[" # (0..1)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
+      - (items꞉ ArrayValues): # "    x[1].address,\n    x().address\n" (2..36)
+          - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "    x[1].address" (2..18)
+              - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # "    x[1]" (2..10)
+                  - (operand꞉ Expression): # "    x" (2..7)
+                      - (leading_trivia꞉ Whitespace): "    " # (2..6)
+                      - (variant꞉ Identifier): "x" # (6..7)
+                  - (open_bracket꞉ OpenBracket): "[" # (7..8)
+                  - (start꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1" # (8..9)
+                  - (close_bracket꞉ CloseBracket): "]" # (9..10)
+              - (period꞉ Period): "." # (10..11)
+              - (member꞉ Identifier): "address" # (11..18)
+          - (separator꞉ Comma): "," # (18..19)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
+          - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "    x().address\n" (20..36)
+              - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # "    x()" (20..27)
+                  - (operand꞉ Expression): # "    x" (20..25)
+                      - (leading_trivia꞉ Whitespace): "    " # (20..24)
+                      - (variant꞉ Identifier): "x" # (24..25)
+                  - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (25..27)
+                      - (open_paren꞉ OpenParen): "(" # (25..26)
+                      - (arguments꞉ PositionalArguments): [] # (26..26)
+                      - (close_paren꞉ CloseParen): ")" # (26..27)
+              - (period꞉ Period): "." # (27..28)
+              - (member꞉ Identifier): "address" # (28..35)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (35..36)
+      - (close_bracket꞉ CloseBracket): "]" # (36..37)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (37..38)

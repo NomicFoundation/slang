@@ -10,7 +10,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use codegen_v2_cst::ir::model::IrModel as IrModelV2;
-use codegen_v2_parser::ParserModel as ParserModelV2;
+use codegen_v2_parser::parser::ParserModel as ParserModelV2;
 use indexmap::IndexSet;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};

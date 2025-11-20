@@ -1,0 +1,4160 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+use crate::lexer::lexemes;
+use slang_solidity_v2_cst::structured_cst::nodes::*;
+use crate::parser::nodes::*;
+use bumpalo::Bump;
+use bumpalo::collections::Vec;
+
+grammar<'arena, 'source>(arena: &'arena Bump, source: &'source str);
+
+Sep<S, T>: Vec<'arena, T> = {
+    => Vec::new_in(arena),
+    SepOne<S, T> => <>,
+};
+
+SepOne<S, T>: Vec<'arena, T> = {
+    <e:T> => {
+        bumpalo::vec![in arena; e]
+    },
+    <mut v: SepOne<S, T>> S <e: T> => {
+        v.push(e);
+        v
+    },
+};
+
+#[inline]
+Rep<T>: Vec<'arena, T> = {
+    => Vec::new_in(arena),
+    RepOne<T> => <>,
+};
+
+RepOne<T>: Vec<'arena, T> = {
+    <T> => {
+        bumpalo::vec![in arena; <>]
+    },
+    <mut v: RepOne<T>> <e: T> => {
+        v.push(e);
+        v
+    },
+};
+
+// Rules for section File Structure
+
+// Rules for topic Source Unit
+    pub SourceUnit: SourceUnit<'arena> = {
+        <_members: SourceUnitMembers>  => new_source_unit(arena, <>),
+        
+    };
+    SourceUnitMembers: SourceUnitMembers<'arena> = {
+        <_SourceUnitMember: Rep<<SourceUnitMember>>>  => new_source_unit_members(arena, <>),
+        
+    };
+    SourceUnitMember: SourceUnitMember<'arena> = {
+        <_PragmaDirective: PragmaDirective>  => new_source_unit_member_pragma_directive(arena, <>),
+        <_ImportDirective: ImportDirective>  => new_source_unit_member_import_directive(arena, <>),
+        <_ContractDefinition: ContractDefinition>  => new_source_unit_member_contract_definition(arena, <>),
+        <_InterfaceDefinition: InterfaceDefinition>  => new_source_unit_member_interface_definition(arena, <>),
+        <_LibraryDefinition: LibraryDefinition>  => new_source_unit_member_library_definition(arena, <>),
+        <_StructDefinition: StructDefinition>  => new_source_unit_member_struct_definition(arena, <>),
+        <_EnumDefinition: EnumDefinition>  => new_source_unit_member_enum_definition(arena, <>),
+        <_FunctionDefinition: FunctionDefinition>  => new_source_unit_member_function_definition(arena, <>),
+        <_ErrorDefinition: ErrorDefinition>  => new_source_unit_member_error_definition(arena, <>),
+        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_source_unit_member_user_defined_value_type_definition(arena, <>),
+        <_UsingDirective: UsingDirective>  => new_source_unit_member_using_directive(arena, <>),
+        <_EventDefinition: EventDefinition>  => new_source_unit_member_event_definition(arena, <>),
+        <_ConstantDefinition: ConstantDefinition>  => new_source_unit_member_constant_definition(arena, <>),
+        
+    };
+    
+
+// Rules for topic Pragma Directives
+    
+    
+PragmaDirective: PragmaDirective<'arena> = {
+    <_pragma_keyword: PragmaKeyword>  ! <_semicolon: Semicolon>  => {
+    let abicoder = new_pragma_abicoder_pragma(arena, new_abicoder_pragma(arena, new_abicoder_keyword(arena, 0, 0, source), new_abicoder_version_abicoder_v1_keyword(arena, new_abicoder_v1_keyword(arena, 0, 0, source))));
+    new_pragma_directive(arena, _pragma_keyword, abicoder , _semicolon)
+    }
+};
+
+    Pragma: Pragma<'arena> = {
+        <_VersionPragma: VersionPragma>  => new_pragma_version_pragma(arena, <>),
+        <_AbicoderPragma: AbicoderPragma>  => new_pragma_abicoder_pragma(arena, <>),
+        <_ExperimentalPragma: ExperimentalPragma>  => new_pragma_experimental_pragma(arena, <>),
+        
+    };
+    AbicoderPragma: AbicoderPragma<'arena> = {
+        <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => new_abicoder_pragma(arena, <>),
+        
+    };
+    ExperimentalPragma: ExperimentalPragma<'arena> = {
+        <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => new_experimental_pragma(arena, <>),
+        
+    };
+    AbicoderVersion: AbicoderVersion<'arena> = {
+        <_AbicoderV1Keyword: AbicoderV1Keyword>  => new_abicoder_version_abicoder_v1_keyword(arena, <>),
+        <_AbicoderV2Keyword: AbicoderV2Keyword>  => new_abicoder_version_abicoder_v2_keyword(arena, <>),
+        
+    };
+    ExperimentalFeature: ExperimentalFeature<'arena> = {
+        <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => new_experimental_feature_abi_encoder_v2_keyword(arena, <>),
+        <_SMTCheckerKeyword: SMTCheckerKeyword>  => new_experimental_feature_smt_checker_keyword(arena, <>),
+        <_StringLiteral: StringLiteral>  => new_experimental_feature_string_literal(arena, <>),
+        
+    };
+    VersionPragma: VersionPragma<'arena> = {
+        <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => new_version_pragma(arena, <>),
+        
+    };
+    VersionExpressionSets: VersionExpressionSets<'arena> = {
+        <_VersionExpressionSet: SepOne<BarBar, <VersionExpressionSet>>>  => new_version_expression_sets(arena, <>),
+        
+    };
+    VersionExpressionSet: VersionExpressionSet<'arena> = {
+        <_VersionExpression: RepOne<<VersionExpression>>>  => new_version_expression_set(arena, <>),
+        
+    };
+    VersionExpression: VersionExpression<'arena> = {
+        <_VersionRange: VersionRange>  => new_version_expression_version_range(arena, <>),
+        <_VersionTerm: VersionTerm>  => new_version_expression_version_term(arena, <>),
+        
+    };
+    VersionRange: VersionRange<'arena> = {
+        <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => new_version_range(arena, <>),
+        
+    };
+    VersionTerm: VersionTerm<'arena> = {
+        <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => new_version_term(arena, <>),
+        
+    };
+    VersionOperator: VersionOperator<'arena> = {
+        <_Caret: Caret>  => new_version_operator_caret(arena, <>),
+        <_Tilde: Tilde>  => new_version_operator_tilde(arena, <>),
+        <_Equal: Equal>  => new_version_operator_equal(arena, <>),
+        <_LessThan: LessThan>  => new_version_operator_less_than(arena, <>),
+        <_GreaterThan: GreaterThan>  => new_version_operator_greater_than(arena, <>),
+        <_LessThanEqual: LessThanEqual>  => new_version_operator_less_than_equal(arena, <>),
+        <_GreaterThanEqual: GreaterThanEqual>  => new_version_operator_greater_than_equal(arena, <>),
+        
+    };
+    VersionLiteral: VersionLiteral<'arena> = {
+        <_SimpleVersionLiteral: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(arena, <>),
+        <_SingleQuotedVersionLiteral: SingleQuotedVersionLiteral>  => new_version_literal_single_quoted_version_literal(arena, <>),
+        <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => new_version_literal_double_quoted_version_literal(arena, <>),
+        
+    };
+    SimpleVersionLiteral: SimpleVersionLiteral<'arena> = {
+        <_VersionSpecifier: SepOne<Period, <VersionSpecifier>>>  => new_simple_version_literal(arena, <>),
+        
+    };
+    
+
+// Rules for topic Import Directives
+    ImportDirective: ImportDirective<'arena> = {
+        <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => new_import_directive(arena, <>),
+        
+    };
+    ImportClause: ImportClause<'arena> = {
+        <_PathImport: PathImport>  => new_import_clause_path_import(arena, <>),
+        <_NamedImport: NamedImport>  => new_import_clause_named_import(arena, <>),
+        <_ImportDeconstruction: ImportDeconstruction>  => new_import_clause_import_deconstruction(arena, <>),
+        
+    };
+    PathImport: PathImport<'arena> = {
+        <_path: StringLiteral>  <_alias: (ImportAlias)?>  => new_path_import(arena, <>),
+        
+    };
+    NamedImport: NamedImport<'arena> = {
+        <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_named_import(arena, <>),
+        
+    };
+    ImportDeconstruction: ImportDeconstruction<'arena> = {
+        <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_import_deconstruction(arena, <>),
+        
+    };
+    ImportDeconstructionSymbols: ImportDeconstructionSymbols<'arena> = {
+        <_ImportDeconstructionSymbol: SepOne<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(arena, <>),
+        
+    };
+    ImportDeconstructionSymbol: ImportDeconstructionSymbol<'arena> = {
+        <_name: Identifier>  <_alias: (ImportAlias)?>  => new_import_deconstruction_symbol(arena, <>),
+        
+    };
+    ImportAlias: ImportAlias<'arena> = {
+        <_as_keyword: AsKeyword>  <_identifier: Identifier>  => new_import_alias(arena, <>),
+        
+    };
+    
+
+// Rules for topic Using Directives
+    UsingDirective: UsingDirective<'arena> = {
+        <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => new_using_directive(arena, <>),
+        
+    };
+    UsingClause: UsingClause<'arena> = {
+        <_IdentifierPath: IdentifierPath>  => new_using_clause_identifier_path(arena, <>),
+        <_UsingDeconstruction: UsingDeconstruction>  => new_using_clause_using_deconstruction(arena, <>),
+        
+    };
+    UsingDeconstruction: UsingDeconstruction<'arena> = {
+        <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => new_using_deconstruction(arena, <>),
+        
+    };
+    UsingDeconstructionSymbols: UsingDeconstructionSymbols<'arena> = {
+        <_UsingDeconstructionSymbol: SepOne<Comma, <UsingDeconstructionSymbol>>>  => new_using_deconstruction_symbols(arena, <>),
+        
+    };
+    UsingDeconstructionSymbol: UsingDeconstructionSymbol<'arena> = {
+        <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => new_using_deconstruction_symbol(arena, <>),
+        
+    };
+    UsingAlias: UsingAlias<'arena> = {
+        <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => new_using_alias(arena, <>),
+        
+    };
+    UsingOperator: UsingOperator<'arena> = {
+        <_Ampersand: Ampersand>  => new_using_operator_ampersand(arena, <>),
+        <_Asterisk: Asterisk>  => new_using_operator_asterisk(arena, <>),
+        <_BangEqual: BangEqual>  => new_using_operator_bang_equal(arena, <>),
+        <_Bar: Bar>  => new_using_operator_bar(arena, <>),
+        <_Caret: Caret>  => new_using_operator_caret(arena, <>),
+        <_EqualEqual: EqualEqual>  => new_using_operator_equal_equal(arena, <>),
+        <_GreaterThan: GreaterThan>  => new_using_operator_greater_than(arena, <>),
+        <_GreaterThanEqual: GreaterThanEqual>  => new_using_operator_greater_than_equal(arena, <>),
+        <_LessThan: LessThan>  => new_using_operator_less_than(arena, <>),
+        <_LessThanEqual: LessThanEqual>  => new_using_operator_less_than_equal(arena, <>),
+        <_Minus: Minus>  => new_using_operator_minus(arena, <>),
+        <_Percent: Percent>  => new_using_operator_percent(arena, <>),
+        <_Plus: Plus>  => new_using_operator_plus(arena, <>),
+        <_Slash: Slash>  => new_using_operator_slash(arena, <>),
+        <_Tilde: Tilde>  => new_using_operator_tilde(arena, <>),
+        
+    };
+    UsingTarget: UsingTarget<'arena> = {
+        <_TypeName: TypeName>  => new_using_target_type_name(arena, <>),
+        <_Asterisk: Asterisk>  => new_using_target_asterisk(arena, <>),
+        
+    };
+    
+
+// Rules for topic Trivia
+    
+
+// Rules for topic Keywords
+    
+
+// Rules for topic Punctuation
+    
+
+
+
+
+// Rules for section Definitions
+
+// Rules for topic Contracts
+    
+    
+// A ContractDefinition's specifiers can conflict with the trailing block, since a block and an option calls
+// have the same prefix (an open brace).
+//
+// For the case with specifiers, we parse the specifiers first, and steal the members from the last specifier.
+pub ContractDefinition: ContractDefinition<'arena> = {
+    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  => {
+        let (specifiers, (_open_brace, _members, _close_brace)) = _specifiers;
+        new_contract_definition(arena, _abstract_keyword, _contract_keyword, _name, specifiers, _open_brace, _members, _close_brace)
+    },
+    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        new_contract_definition(arena, _abstract_keyword, _contract_keyword, _name, new_contract_specifiers(arena, Vec::new_in(arena)), _open_brace, _members, _close_brace)
+    },
+
+};
+
+    
+    
+// The specifiers need to be at least one, and the last one must capture the members
+ContractSpecifiers: (ContractSpecifiers<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+    <mut _ContractSpecifier: Rep<<ContractSpecifier>>> <_tail: ContractSpecifierDM>  => {
+        let (specifier, tail) = _tail;
+        _ContractSpecifier.push(specifier);
+        (new_contract_specifiers(arena, _ContractSpecifier), tail)
+    },
+};
+ContractSpecifierDM: (ContractSpecifier<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+    <_InheritanceSpecifier: InheritanceSpecifier> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (new_contract_specifier_inheritance_specifier(arena, _InheritanceSpecifier), (_open_brace, _members, _close_brace))
+    },
+    <_StorageLayoutSpecifier: StorageLayoutSpecifierDM>  => {
+        let (storage_layout_specifier, tail) = _StorageLayoutSpecifier;
+        (new_contract_specifier_storage_layout_specifier(arena, storage_layout_specifier), tail)
+    },
+};
+
+StorageLayoutSpecifierDM: (StorageLayoutSpecifier<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+    <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: ExpressionTrailingMembers>  => {
+        let (expr, tail) = _expression;
+        (new_storage_layout_specifier(arena, _layout_keyword, _at_keyword, expr), tail)
+    },
+};
+
+// An expression followed by contract members
+ExpressionTrailingMembers: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+        <Expression: Expression19<BracedContractMembers>>  => <>,
+};
+BracedContractMembers: (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>) = {
+    <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (_open_brace, _members, _close_brace)
+    },
+};
+
+
+    ContractSpecifier: ContractSpecifier<'arena> = {
+        <_InheritanceSpecifier: InheritanceSpecifier>  => new_contract_specifier_inheritance_specifier(arena, <>),
+        <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => new_contract_specifier_storage_layout_specifier(arena, <>),
+        
+    };
+    InheritanceSpecifier: InheritanceSpecifier<'arena> = {
+        <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => new_inheritance_specifier(arena, <>),
+        
+    };
+    InheritanceTypes: InheritanceTypes<'arena> = {
+        <_InheritanceType: SepOne<Comma, <InheritanceType>>>  => new_inheritance_types(arena, <>),
+        
+    };
+    InheritanceType: InheritanceType<'arena> = {
+        <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_inheritance_type(arena, <>),
+        
+    };
+    StorageLayoutSpecifier: StorageLayoutSpecifier<'arena> = {
+        <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => new_storage_layout_specifier(arena, <>),
+        
+    };
+    ContractMembers: ContractMembers<'arena> = {
+        <_ContractMember: Rep<<ContractMember>>>  => new_contract_members(arena, <>),
+        
+    };
+    ContractMember: ContractMember<'arena> = {
+        <_UsingDirective: UsingDirective>  => new_contract_member_using_directive(arena, <>),
+        <_FunctionDefinition: FunctionDefinition>  => new_contract_member_function_definition(arena, <>),
+        <_ConstructorDefinition: ConstructorDefinition>  => new_contract_member_constructor_definition(arena, <>),
+        <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => new_contract_member_receive_function_definition(arena, <>),
+        <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => new_contract_member_fallback_function_definition(arena, <>),
+        <_ModifierDefinition: ModifierDefinition>  => new_contract_member_modifier_definition(arena, <>),
+        <_StructDefinition: StructDefinition>  => new_contract_member_struct_definition(arena, <>),
+        <_EnumDefinition: EnumDefinition>  => new_contract_member_enum_definition(arena, <>),
+        <_EventDefinition: EventDefinition>  => new_contract_member_event_definition(arena, <>),
+        <_ErrorDefinition: ErrorDefinition>  => new_contract_member_error_definition(arena, <>),
+        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_contract_member_user_defined_value_type_definition(arena, <>),
+        <_StateVariableDefinition: StateVariableDefinition>  => new_contract_member_state_variable_definition(arena, <>),
+        
+    };
+    
+
+// Rules for topic Interfaces
+    InterfaceDefinition: InterfaceDefinition<'arena> = {
+        <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => new_interface_definition(arena, <>),
+        
+    };
+    InterfaceMembers: InterfaceMembers<'arena> = {
+        <_ContractMember: Rep<<ContractMember>>>  => new_interface_members(arena, <>),
+        
+    };
+    
+
+// Rules for topic Libraries
+    LibraryDefinition: LibraryDefinition<'arena> = {
+        <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => new_library_definition(arena, <>),
+        
+    };
+    LibraryMembers: LibraryMembers<'arena> = {
+        <_ContractMember: Rep<<ContractMember>>>  => new_library_members(arena, <>),
+        
+    };
+    
+
+// Rules for topic Structs
+    StructDefinition: StructDefinition<'arena> = {
+        <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => new_struct_definition(arena, <>),
+        
+    };
+    StructMembers: StructMembers<'arena> = {
+        <_StructMember: Rep<<StructMember>>>  => new_struct_members(arena, <>),
+        
+    };
+    StructMember: StructMember<'arena> = {
+        <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => new_struct_member(arena, <>),
+        
+    };
+    
+
+// Rules for topic Enums
+    EnumDefinition: EnumDefinition<'arena> = {
+        <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => new_enum_definition(arena, <>),
+        
+    };
+    EnumMembers: EnumMembers<'arena> = {
+        <_Identifier: Sep<Comma, <Identifier>>>  => new_enum_members(arena, <>),
+        
+    };
+    
+
+// Rules for topic Constants
+    ConstantDefinition: ConstantDefinition<'arena> = {
+        <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => new_constant_definition(arena, <>),
+        
+    };
+    
+
+// Rules for topic State Variables
+    
+    
+// State variable definitions have a conflict when used with function types, since some attributes
+// can be both function type attributes and state variable attributes.
+// For example in `function (uint a) internal internal foo;`, the first `internal` is a function type attribute,
+// while the second `internal` is a state variable attribute.
+//
+// To disambiguate in these cases we need to count, everything from the second attribute onwards
+// belongs to the state variable. This is very hard to do in LR(1) grammars, so we resort to letting
+// the function type capture all attributes, and then extract the trailing ones to use them in the state variable.
+// 
+// This is done by splitting the state variable rules into two cases, one where any type is allowed, except function types
+// that do not specify a return; and one where only function types without return are allowed.
+StateVariableDefinition: StateVariableDefinition<'arena> = {
+    // If we're not using functions without return, then we can have all attributes
+        <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
+        <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon> => {
+            let identifier = new_identifier(arena, l, r, source);
+            let iap = new_index_access_path_from_identifier_path(arena, new_identifier_path(arena, identifier, None));
+            let type_name = new_type_name_index_access_path(arena, iap);
+
+            new_state_variable_definition(arena, type_name, _attributes, _name, _value, _semicolon)
+        },
+
+
+        // If there is no return, then we need a single special attribute to disambiguate and to post process the attributes
+        <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
+            let (function_type, mut extra_attributes) = extract_extra_attributes(arena, _type_name);
+            if let Some(special_attributes) = special_attributes {
+                extra_attributes.push(special_attributes.0);
+                extra_attributes.extend(special_attributes.1.elements);
+            }
+            new_state_variable_definition(arena, new_type_name_function_type(arena, function_type), new_state_variable_attributes(arena, extra_attributes), _name, _value, _semicolon)
+        },
+};
+
+IdentifierPathNoError: IdentifierPath<'arena> = {
+    // We either have any identifier with a tail (ie a period)
+    <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
+    // or a single identifier that is not `revert`
+    <_head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
+};
+
+// These are the attributes that can appear in a state variable but not a function,
+// they can work as a limit between these definitions.
+#[inline]
+SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
+        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
+        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(arena, <>),
+        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(arena, <>),
+};
+
+    StateVariableDefinitionValue: StateVariableDefinitionValue<'arena> = {
+        <_equal: Equal>  <_value: Expression>  => new_state_variable_definition_value(arena, <>),
+        
+    };
+    #[inline]
+    StateVariableAttributes: StateVariableAttributes<'arena> = {
+        <_StateVariableAttribute: Rep<<StateVariableAttribute>>>  => new_state_variable_attributes(arena, <>),
+        
+    };
+    #[inline]
+    StateVariableAttribute: StateVariableAttribute<'arena> = {
+        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
+        <_ConstantKeyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(arena, <>),
+        <_InternalKeyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(arena, <>),
+        <_PrivateKeyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(arena, <>),
+        <_PublicKeyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(arena, <>),
+        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(arena, <>),
+        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(arena, <>),
+        
+    };
+    
+
+// Rules for topic Functions
+    FunctionDefinition: FunctionDefinition<'arena> = {
+        <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_function_definition(arena, <>),
+        
+    };
+    FunctionName: FunctionName<'arena> = {
+        <_Identifier: Identifier>  => new_function_name_identifier(arena, <>),
+        <_FallbackKeyword: FallbackKeyword>  => new_function_name_fallback_keyword(arena, <>),
+        <_ReceiveKeyword: ReceiveKeyword>  => new_function_name_receive_keyword(arena, <>),
+        
+    };
+    ParametersDeclaration: ParametersDeclaration<'arena> = {
+        <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => new_parameters_declaration(arena, <>),
+        
+    };
+    Parameters: Parameters<'arena> = {
+        <_Parameter: Sep<Comma, <Parameter>>>  => new_parameters(arena, <>),
+        
+    };
+    Parameter: Parameter<'arena> = {
+        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => new_parameter(arena, <>),
+        
+    };
+    FunctionAttributes: FunctionAttributes<'arena> = {
+        <_FunctionAttribute: Rep<<FunctionAttribute>>>  => new_function_attributes(arena, <>),
+        
+    };
+    FunctionAttribute: FunctionAttribute<'arena> = {
+        <_ModifierInvocation: ModifierInvocation>  => new_function_attribute_modifier_invocation(arena, <>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_function_attribute_override_specifier(arena, <>),
+        <_ExternalKeyword: ExternalKeyword>  => new_function_attribute_external_keyword(arena, <>),
+        <_InternalKeyword: InternalKeyword>  => new_function_attribute_internal_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_function_attribute_payable_keyword(arena, <>),
+        <_PrivateKeyword: PrivateKeyword>  => new_function_attribute_private_keyword(arena, <>),
+        <_PublicKeyword: PublicKeyword>  => new_function_attribute_public_keyword(arena, <>),
+        <_PureKeyword: PureKeyword>  => new_function_attribute_pure_keyword(arena, <>),
+        <_ViewKeyword: ViewKeyword>  => new_function_attribute_view_keyword(arena, <>),
+        <_VirtualKeyword: VirtualKeyword>  => new_function_attribute_virtual_keyword(arena, <>),
+        
+    };
+    OverrideSpecifier: OverrideSpecifier<'arena> = {
+        <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => new_override_specifier(arena, <>),
+        
+    };
+    OverridePathsDeclaration: OverridePathsDeclaration<'arena> = {
+        <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => new_override_paths_declaration(arena, <>),
+        
+    };
+    OverridePaths: OverridePaths<'arena> = {
+        <_IdentifierPath: SepOne<Comma, <IdentifierPath>>>  => new_override_paths(arena, <>),
+        
+    };
+    ReturnsDeclaration: ReturnsDeclaration<'arena> = {
+        <_returns_keyword: ReturnsKeyword>  <_variables: ParametersDeclaration>  => new_returns_declaration(arena, <>),
+        
+    };
+    FunctionBody: FunctionBody<'arena> = {
+        <_Block: Block>  => new_function_body_block(arena, <>),
+        <_Semicolon: Semicolon>  => new_function_body_semicolon(arena, <>),
+        
+    };
+    ConstructorDefinition: ConstructorDefinition<'arena> = {
+        <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => new_constructor_definition(arena, <>),
+        
+    };
+    ConstructorAttributes: ConstructorAttributes<'arena> = {
+        <_ConstructorAttribute: Rep<<ConstructorAttribute>>>  => new_constructor_attributes(arena, <>),
+        
+    };
+    ConstructorAttribute: ConstructorAttribute<'arena> = {
+        <_ModifierInvocation: ModifierInvocation>  => new_constructor_attribute_modifier_invocation(arena, <>),
+        <_InternalKeyword: InternalKeyword>  => new_constructor_attribute_internal_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_constructor_attribute_payable_keyword(arena, <>),
+        <_PublicKeyword: PublicKeyword>  => new_constructor_attribute_public_keyword(arena, <>),
+        
+    };
+    FallbackFunctionDefinition: FallbackFunctionDefinition<'arena> = {
+        <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_fallback_function_definition(arena, <>),
+        
+    };
+    FallbackFunctionAttributes: FallbackFunctionAttributes<'arena> = {
+        <_FallbackFunctionAttribute: Rep<<FallbackFunctionAttribute>>>  => new_fallback_function_attributes(arena, <>),
+        
+    };
+    FallbackFunctionAttribute: FallbackFunctionAttribute<'arena> = {
+        <_ModifierInvocation: ModifierInvocation>  => new_fallback_function_attribute_modifier_invocation(arena, <>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_fallback_function_attribute_override_specifier(arena, <>),
+        <_ExternalKeyword: ExternalKeyword>  => new_fallback_function_attribute_external_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_fallback_function_attribute_payable_keyword(arena, <>),
+        <_PureKeyword: PureKeyword>  => new_fallback_function_attribute_pure_keyword(arena, <>),
+        <_ViewKeyword: ViewKeyword>  => new_fallback_function_attribute_view_keyword(arena, <>),
+        <_VirtualKeyword: VirtualKeyword>  => new_fallback_function_attribute_virtual_keyword(arena, <>),
+        
+    };
+    ReceiveFunctionDefinition: ReceiveFunctionDefinition<'arena> = {
+        <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => new_receive_function_definition(arena, <>),
+        
+    };
+    ReceiveFunctionAttributes: ReceiveFunctionAttributes<'arena> = {
+        <_ReceiveFunctionAttribute: Rep<<ReceiveFunctionAttribute>>>  => new_receive_function_attributes(arena, <>),
+        
+    };
+    ReceiveFunctionAttribute: ReceiveFunctionAttribute<'arena> = {
+        <_ModifierInvocation: ModifierInvocation>  => new_receive_function_attribute_modifier_invocation(arena, <>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_receive_function_attribute_override_specifier(arena, <>),
+        <_ExternalKeyword: ExternalKeyword>  => new_receive_function_attribute_external_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_receive_function_attribute_payable_keyword(arena, <>),
+        <_VirtualKeyword: VirtualKeyword>  => new_receive_function_attribute_virtual_keyword(arena, <>),
+        
+    };
+    
+
+// Rules for topic Modifiers
+    ModifierDefinition: ModifierDefinition<'arena> = {
+        <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => new_modifier_definition(arena, <>),
+        
+    };
+    ModifierAttributes: ModifierAttributes<'arena> = {
+        <_ModifierAttribute: Rep<<ModifierAttribute>>>  => new_modifier_attributes(arena, <>),
+        
+    };
+    ModifierAttribute: ModifierAttribute<'arena> = {
+        <_OverrideSpecifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(arena, <>),
+        <_VirtualKeyword: VirtualKeyword>  => new_modifier_attribute_virtual_keyword(arena, <>),
+        
+    };
+    ModifierInvocation: ModifierInvocation<'arena> = {
+        <_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_modifier_invocation(arena, <>),
+        
+    };
+    
+
+// Rules for topic Events
+    EventDefinition: EventDefinition<'arena> = {
+        <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => new_event_definition(arena, <>),
+        
+    };
+    EventParametersDeclaration: EventParametersDeclaration<'arena> = {
+        <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => new_event_parameters_declaration(arena, <>),
+        
+    };
+    EventParameters: EventParameters<'arena> = {
+        <_EventParameter: Sep<Comma, <EventParameter>>>  => new_event_parameters(arena, <>),
+        
+    };
+    EventParameter: EventParameter<'arena> = {
+        <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => new_event_parameter(arena, <>),
+        
+    };
+    
+
+// Rules for topic User Defined Value Types
+    UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition<'arena> = {
+        <_type_keyword: TypeKeyword>  <_name: Identifier>  <_is_keyword: IsKeyword>  <_value_type: ElementaryType>  <_semicolon: Semicolon>  => new_user_defined_value_type_definition(arena, <>),
+        
+    };
+    
+
+// Rules for topic Errors
+    #[inline]
+    ErrorDefinition: ErrorDefinition<'arena> = {
+        <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => new_error_definition(arena, <>),
+        
+    };
+    ErrorParametersDeclaration: ErrorParametersDeclaration<'arena> = {
+        <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => new_error_parameters_declaration(arena, <>),
+        
+    };
+    ErrorParameters: ErrorParameters<'arena> = {
+        <_ErrorParameter: Sep<Comma, <ErrorParameter>>>  => new_error_parameters(arena, <>),
+        
+    };
+    ErrorParameter: ErrorParameter<'arena> = {
+        <_type_name: TypeName>  <_name: (Identifier)?>  => new_error_parameter(arena, <>),
+        
+    };
+    
+
+
+
+
+// Rules for section Types
+
+// Rules for topic Advanced Types
+    
+    
+                            
+// TypeName has two peculiarities:
+// 1. We need to parametrize the FunctionRule to allow StateVariableDefinition to disable FunctionTypes without returns
+// 2. A TypeName that can be represented as an `IndexAccessPath` can conflict with a `MemberAccess`, for example
+//    `a.b[c]` can be either a member access over an identifier path, or array type, depending on what comes next.
+//    This means we need to treat these constructs as IAPs for as long as possible, and only convert them to TypeNames
+//    when it's certainly a type. `new_type_name_index_access_path` transforms an IAP into a TypeName.
+//    However, since a IAP and an array type conflict, we need to make sure that array types are only matched against
+//    base types that are not IAPs, hence the parametric IAPRule.
+    TypeName0<FunctionRule, IAPRule>: TypeName<'arena> = {
+            <_FunctionType: FunctionRule> => new_type_name_function_type(arena, <>),
+            <_MappingType: MappingType>  => new_type_name_mapping_type(arena, <>),
+            <_IndexAccessPath: IAPRule> => new_type_name_index_access_path(arena, <>),
+    };
+    TypeName1<FunctionRule, IAPRule>: TypeName<'arena> = {
+            <_TypeName: ArrayTypeName>  => new_type_name_array_type_name(arena, <>),
+            <TypeName: TypeName0<FunctionRule, IAPRule>>  => <>,
+    };
+    TypeName: TypeName<'arena> = {
+            // A regular type can have any function type and an IAP
+            <TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
+    };
+    
+        #[inline]
+    ArrayTypeName: ArrayTypeName<'arena> = {
+            // The base expression shouldn't end in a trailing IAP
+            <_TypeName: TypeName1<FunctionType, NoIndexAccessPath>>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
+    };
+
+    // An empty rule to disable IAPs
+    NoIndexAccessPath: IndexAccessPath<'arena> = {};
+
+    
+    
+
+// The only reason to split FunctionType into two rules is to allow StateVariableDefinition
+// to choose whether to allow FunctionTypes without returns or not.
+// Note: This could be solved with macros, but is short enough to be explicit
+    FunctionType: FunctionType<'arena> = {
+        FunctionTypeInternalNoReturn => <>,
+        FunctionTypeInternalReturn => <>,
+    };
+
+    FunctionTypeInternalNoReturn: FunctionType<'arena> = {
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(arena, _function_keyword, _parameters, _attributes, None),
+    };
+    FunctionTypeInternalReturn: FunctionType<'arena> = {
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(arena, _function_keyword, _parameters, _attributes, Some(_returns)),
+        
+    };
+
+    FunctionTypeAttributes: FunctionTypeAttributes<'arena> = {
+        <_FunctionTypeAttribute: Rep<<FunctionTypeAttribute>>>  => new_function_type_attributes(arena, <>),
+        
+    };
+    FunctionTypeAttribute: FunctionTypeAttribute<'arena> = {
+        <_InternalKeyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(arena, <>),
+        <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(arena, <>),
+        <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(arena, <>),
+        <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(arena, <>),
+        <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(arena, <>),
+        <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(arena, <>),
+        
+    };
+    MappingType: MappingType<'arena> = {
+        <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => new_mapping_type(arena, <>),
+        
+    };
+    MappingKey: MappingKey<'arena> = {
+        <_key_type: MappingKeyType>  <_name: (Identifier)?>  => new_mapping_key(arena, <>),
+        
+    };
+    MappingKeyType: MappingKeyType<'arena> = {
+        <_ElementaryType: ElementaryType>  => new_mapping_key_type_elementary_type(arena, <>),
+        <_IdentifierPath: IdentifierPath>  => new_mapping_key_type_identifier_path(arena, <>),
+        
+    };
+    MappingValue: MappingValue<'arena> = {
+        <_type_name: TypeName>  <_name: (Identifier)?>  => new_mapping_value(arena, <>),
+        
+    };
+    
+
+// Rules for topic Elementary Types
+    ElementaryType: ElementaryType<'arena> = {
+        <_BoolKeyword: BoolKeyword>  => new_elementary_type_bool_keyword(arena, <>),
+        <_StringKeyword: StringKeyword>  => new_elementary_type_string_keyword(arena, <>),
+        <_AddressType: AddressType>  => new_elementary_type_address_type(arena, <>),
+        <_BytesKeyword: BytesKeyword>  => new_elementary_type_bytes_keyword(arena, <>),
+        <_IntKeyword: IntKeyword>  => new_elementary_type_int_keyword(arena, <>),
+        <_UintKeyword: UintKeyword>  => new_elementary_type_uint_keyword(arena, <>),
+        <_FixedKeyword: FixedKeyword>  => new_elementary_type_fixed_keyword(arena, <>),
+        <_UfixedKeyword: UfixedKeyword>  => new_elementary_type_ufixed_keyword(arena, <>),
+        
+    };
+    AddressType: AddressType<'arena> = {
+        <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => new_address_type(arena, <>),
+        
+    };
+    
+
+
+
+
+// Rules for section Statements
+
+// Rules for topic Blocks
+    Block: Block<'arena> = {
+        <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => new_block(arena, <>),
+        
+    };
+    Statements: Statements<'arena> = {
+        <_Statement: Rep<<Statement>>>  => new_statements(arena, <>),
+        
+    };
+    
+    
+// This is a common problem in grammars[1]. To not reinvent the wheel we follow advice from
+// LALRPOP community[2].
+// Briefly, we parametrize statements on whether they allow a trailing else or not, forcing `else`s to attach to
+// the innermost `if`` possible.
+//
+// [1]: https://en.wikipedia.org/wiki/Dangling_else
+// [2]: https://github.com/lalrpop/lalrpop/issues/67#issuecomment-188951041
+_Statement<TrailingElse>: Statement<'arena> = {
+    <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(arena, <>),
+    <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(arena, <>),
+    <_WhileStatement: WhileStatement<TrailingElse>>  => new_statement_while_statement(arena, <>),
+    <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(arena, <>),
+    <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(arena, <>),
+    <_BreakStatement: BreakStatement>  => new_statement_break_statement(arena, <>),
+    <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(arena, <>),
+    <_EmitStatement: EmitStatement>  => new_statement_emit_statement(arena, <>),
+    <_TryStatement: TryStatement>  => new_statement_try_statement(arena, <>),
+    <_RevertStatement: RevertStatement>  => new_statement_revert_statement(arena, <>),
+    <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(arena, <>),
+    <_Block: Block>  => new_statement_block(arena, <>),
+    <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(arena, <>),
+    <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(arena, <>),
+    <_VariableDeclarationStatement: VariableDeclarationStatementNoRevert>  => new_statement_variable_declaration_statement(arena, <>),
+    <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(arena, <>),
+};
+
+// By default statements allos dangling `else`s
+Statement = _Statement<"True">;
+
+
+// A VariableDeclarationStatement that has a `revert` type as a special case, this allows
+// to disambiguate between a revert statement and a variable declaration with type `revert`
+//
+// Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
+#[inline]
+VariableDeclarationStatementNoRevert: VariableDeclarationStatement<'arena> = {
+    <_variable_declaration: VariableDeclarationNoRevert>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(arena, <>),
+};
+#[inline]
+VariableDeclarationNoRevert: VariableDeclaration<'arena> = {
+    <_variable_type: VariableDeclarationTypeNoRevert>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(arena, <>),
+};
+#[inline]
+VariableDeclarationTypeNoRevert: VariableDeclarationType<'arena> = {
+    <_TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  => new_variable_declaration_type_type_name(arena, <>),
+    <l:@L> L_RevertKeyword_Unreserved <r:@R> => {
+        let identifier = new_identifier(arena, l, r, source);
+        let iap = new_index_access_path_from_identifier_path(arena, new_identifier_path(arena, identifier, None));
+        let type_name = new_type_name_index_access_path(arena, iap);
+        new_variable_declaration_type_type_name(arena, type_name)
+    }
+};
+IdentifierPathNoRevert: IdentifierPath<'arena> = {
+    // We either have any identifier with a tail (ie a period)
+    <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
+    // or a single identifier that is not `revert`
+    <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
+};
+
+    UncheckedBlock: UncheckedBlock<'arena> = {
+        <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => new_unchecked_block(arena, <>),
+        
+    };
+    ExpressionStatement: ExpressionStatement<'arena> = {
+        <_expression: Expression>  <_semicolon: Semicolon>  => new_expression_statement(arena, <>),
+        
+    };
+    AssemblyStatement: AssemblyStatement<'arena> = {
+        <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => new_assembly_statement(arena, <>),
+        
+    };
+    AssemblyFlagsDeclaration: AssemblyFlagsDeclaration<'arena> = {
+        <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => new_assembly_flags_declaration(arena, <>),
+        
+    };
+    AssemblyFlags: AssemblyFlags<'arena> = {
+        <_StringLiteral: SepOne<Comma, <StringLiteral>>>  => new_assembly_flags(arena, <>),
+        
+    };
+    
+
+// Rules for topic Declaration Statements
+    
+    
+// Tuple expressions and tuple declarations can conflict in some situations, for example if the parser sees `(a, b` 
+// it doesn't know whether it's parsing a tuple expression with two identifiers inside, or a tuple pattern/declaration.
+// We solve this by delaying the decision, and parsing common prefixes as ProtoTuples.
+// ProtoTuples are marked with a boolean generic on whether they are tuples (ie, expressions) or patterns (ie, declarations).
+//
+// Note: One caveat of this is that an assignemnt over a tuple (ie, `(a, b) = foo();`) is parsed as an expression.
+// 
+// Note: the solidity grammar chooses to allow tuple expressions to not have any expressions (ie `(,,)` is valid),
+// and then the difference between an assignemtn with a lhs being a tuple expression and a tuple deconstruction statement
+// is whether it has any declaration within itself.
+// We follow a different path, the reason may make a difference in the future when `var` declarations are allowed
+// (`var (a, b) = foo();`), but for now it's mostly a design choice.
+//
+// TODO: Empty tuples are considered patterns, I'm not sure if that's actually allowed
+// TODO: maybe we could get rid of this if we use a right-recursive rules for tuples, but I'm not 100% sure
+ProtoTuple<Tuple>: ProtoTuple<'arena> = {
+    <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(arena, _open_paren, _elements, _close_paren),
+}
+
+ProtoTupleElements<Tuple>: Vec<'arena, ProtoTupleElement<'arena>> = {
+    // A single element can be a tuple or a pattern
+    <_elem: TupleElementExpression> if Tuple == "True" => bumpalo::vec![in arena; <>],
+    <_elem: TupleElementPattern> if Tuple == "False" => bumpalo::vec![in arena; <>],
+    
+    // A ProtoTuple only ProtoTupleElements<True> is a Tuple expression
+    <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementExpression> if Tuple == "True" => {
+        _elems.push(_elem);
+        _elems
+    },
+    
+    // But we can mix and match with patterns
+    <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
+        _elems.push(_elem);
+        _elems
+    },
+    
+    <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
+        _elems.push(_elem);
+        _elems
+    },
+    
+    <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementExpression> if Tuple == "False" => {
+        _elems.push(_elem);
+        _elems
+    },
+};
+
+TupleElementExpression: ProtoTupleElement<'arena> = {
+    // A Tuple expression must be present and only be an identifier
+    <_name: Expression> => new_proto_tuple_element_expression(arena, _name),
+};
+
+TupleElementPattern: ProtoTupleElement<'arena> = {
+    <_decl: VariableDeclaration>  => new_proto_tuple_element_declaration(arena, _decl),
+    <_storage_location: StorageLocation> <_name: Identifier>  => new_proto_tuple_element_storage_location(arena, _storage_location, _name),
+    () => new_proto_tuple_element_empty(arena),
+};
+
+// TupleDeconstructionStatement uses a ProtoTuple with patterns only
+TupleDeconstructionStatement: TupleDeconstructionStatement<'arena> = {
+        // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
+        <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => new_tuple_deconstruction_statement_from_proto_tuple(arena, <>),
+};
+    TupleDeconstructionElements: TupleDeconstructionElements<'arena> = {
+        <_TupleDeconstructionElement: SepOne<Comma, <TupleDeconstructionElement>>>  => new_tuple_deconstruction_elements(arena, <>),
+        
+    };
+    TupleDeconstructionElement: TupleDeconstructionElement<'arena> = {
+        <_member: (TupleMember)?>  => new_tuple_deconstruction_element(arena, <>),
+        
+    };
+    TupleMember: TupleMember<'arena> = {
+        <_TypedTupleMember: TypedTupleMember>  => new_tuple_member_typed_tuple_member(arena, <>),
+        <_UntypedTupleMember: UntypedTupleMember>  => new_tuple_member_untyped_tuple_member(arena, <>),
+        
+    };
+    TypedTupleMember: TypedTupleMember<'arena> = {
+        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_typed_tuple_member(arena, <>),
+        
+    };
+    UntypedTupleMember: UntypedTupleMember<'arena> = {
+        <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_untyped_tuple_member(arena, <>),
+        
+    };
+    VariableDeclarationStatement: VariableDeclarationStatement<'arena> = {
+        <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(arena, <>),
+        
+    };
+    VariableDeclaration: VariableDeclaration<'arena> = {
+        <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(arena, <>),
+        
+    };
+    VariableDeclarationType: VariableDeclarationType<'arena> = {
+        <_TypeName: TypeName>  => new_variable_declaration_type_type_name(arena, <>),
+        
+    };
+    VariableDeclarationValue: VariableDeclarationValue<'arena> = {
+        <_equal: Equal>  <_expression: Expression>  => new_variable_declaration_value(arena, <>),
+        
+    };
+    StorageLocation: StorageLocation<'arena> = {
+        <_MemoryKeyword: MemoryKeyword>  => new_storage_location_memory_keyword(arena, <>),
+        <_StorageKeyword: StorageKeyword>  => new_storage_location_storage_keyword(arena, <>),
+        <_CallDataKeyword: CallDataKeyword>  => new_storage_location_call_data_keyword(arena, <>),
+        
+    };
+    
+
+// Rules for topic Control Statements
+    
+    
+IfStatement<TrailingElse>: IfStatement<'arena> = {
+    // IfStatement only allows dangling `if`s (ie without an else) if TrailingElse == "True"
+    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(arena, <>, None),
+    // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
+    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<TrailingElse>>  => new_if_statement(arena, _if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(arena, _else_keyword, _else_branch))),
+};
+
+    ElseBranch: ElseBranch<'arena> = {
+        <_else_keyword: ElseKeyword>  <_body: Statement>  => new_else_branch(arena, <>),
+        
+    };
+    
+    
+ForStatement<TrailingElse>: ForStatement<'arena> = {
+        <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_for_statement(arena, <>),
+};
+    ForStatementInitialization: ForStatementInitialization<'arena> = {
+        <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_for_statement_initialization_tuple_deconstruction_statement(arena, <>),
+        <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_for_statement_initialization_variable_declaration_statement(arena, <>),
+        <_ExpressionStatement: ExpressionStatement>  => new_for_statement_initialization_expression_statement(arena, <>),
+        <_Semicolon: Semicolon>  => new_for_statement_initialization_semicolon(arena, <>),
+        
+    };
+    ForStatementCondition: ForStatementCondition<'arena> = {
+        <_ExpressionStatement: ExpressionStatement>  => new_for_statement_condition_expression_statement(arena, <>),
+        <_Semicolon: Semicolon>  => new_for_statement_condition_semicolon(arena, <>),
+        
+    };
+    
+    
+WhileStatement<TrailingElse>: WhileStatement<'arena> = {
+        <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_while_statement(arena, <>),
+};
+    DoWhileStatement: DoWhileStatement<'arena> = {
+        <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => new_do_while_statement(arena, <>),
+        
+    };
+    ContinueStatement: ContinueStatement<'arena> = {
+        <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => new_continue_statement(arena, <>),
+        
+    };
+    BreakStatement: BreakStatement<'arena> = {
+        <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => new_break_statement(arena, <>),
+        
+    };
+    ReturnStatement: ReturnStatement<'arena> = {
+        <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => new_return_statement(arena, <>),
+        
+    };
+    EmitStatement: EmitStatement<'arena> = {
+        <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_emit_statement(arena, <>),
+        
+    };
+    
+
+// Rules for topic Error Handling
+    
+    
+// A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
+// at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
+// start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
+//
+// We use expressions with a trailing block to solve this, and steal the block from there.
+TryStatement: TryStatement<'arena> = {
+    <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
+        new_try_statement(arena, _try_keyword, _expression, Some(_returns), _body, _catch_clauses)
+    },
+    <_try_keyword: TryKeyword>  <_expression: ExpressionTrailingBlock>   <_catch_clauses: CatchClauses>  => {
+        let (expr, body) = _expression;
+        new_try_statement(arena, _try_keyword, expr, None, body, _catch_clauses)
+    },
+};
+
+// An expression followed by a block
+ExpressionTrailingBlock: (Expression<'arena>, Block<'arena>) = {
+        
+        <Expression: Expression19<Block>>  => <>,
+    
+};
+
+    CatchClauses: CatchClauses<'arena> = {
+        <_CatchClause: RepOne<<CatchClause>>>  => new_catch_clauses(arena, <>),
+        
+    };
+    CatchClause: CatchClause<'arena> = {
+        <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => new_catch_clause(arena, <>),
+        
+    };
+    CatchClauseError: CatchClauseError<'arena> = {
+        <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => new_catch_clause_error(arena, <>),
+        
+    };
+    #[inline]
+    RevertStatement: RevertStatement<'arena> = {
+        <_revert_keyword: RevertKeyword>  <_error: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_revert_statement(arena, <>),
+        
+    };
+    
+
+
+
+
+// Rules for section Expressions
+
+// Rules for topic Base Expressions
+    
+    
+                                
+// Expression has a lot of tricky cases:
+// 1. For primary expressions, we track whether they have a triling IAP and, if so, whether that IAP ends in an identifier path
+//    This is needed to delay reduction of type names and member accesses as long as possible
+// 2. For other expressions, we parametrize over a trailing element, to allow using expressions followed by something
+//    (a block or a contract members construct) that may conflict with other trailing expressions constructs (like
+//    option calls)
+//
+// Note: To simplify my life right now, this is a bit different from what's generated, but we'll get there
+Expression0<IdentRule, TrailingIAP>: Expression<'arena> = {
+        <_IndexAccessPath: IndexAccessPath<IdentRule>> if TrailingIAP == "True" => new_expression_index_access_path(arena, <>),
+        
+        <_NewExpression: NewExpression>  => new_expression_new_expression(arena, <>),
+        
+        <_TupleExpression: ProtoTuple<"True">>  => new_expression_tuple_expression(arena, new_tuple_expression_from_proto_tuple(arena, <>)),
+        
+        <_TypeExpression: TypeExpression>  => new_expression_type_expression(arena, <>),
+        
+        <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(arena, <>),
+        
+        <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(arena, <>),
+        
+        <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(arena, <>),
+        
+        <_StringExpression: StringExpression>  => new_expression_string_expression(arena, <>),
+        
+        <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(arena, <>),
+        
+        <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(arena, <>),
+        
+        <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(arena, <>),
+        
+        <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(arena, <>),
+        
+        <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(arena, <>),
+        
+};
+// We simplifiy all these levels of expressions into a single one, there's no need
+// for precedence here
+Expression1<IdentRule, TrailingIAP>: Expression<'arena> = {
+        
+        <_Expression: Expression1<NoIdentPath, "False">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(arena, new_index_access_expression(arena, <>)),
+        
+        <_Expression: Expression1<NoIdentPath, "True">>  <_period: Period>  <_member: MemberAccessIdentifier>  => new_expression_member_access_expression(arena, new_member_access_expression(arena, <>)),
+        
+        <_Expression: Expression1<IdentifierPath, "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(arena, new_call_options_expression(arena, <>)),
+        
+        <_Expression: Expression1<IdentifierPath, "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(arena, new_function_call_expression(arena, <>)),
+        
+        <Expression: Expression0<IdentRule, TrailingIAP>>  => <>,
+    
+};
+
+// Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
+Expression5<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Tail>>  => {
+            let (expr, tail) = _Expression;
+            (new_expression_prefix_expression(arena, new_prefix_expression(arena, _Expression_PrefixExpression_Operator, expr)), tail)
+        },
+        
+        // A tail can appear just after a postfix or primary expression
+        <Expression: Expression1<IdentifierPath, "True">> <tail: Tail> => {
+            (Expression, tail)
+        },
+    
+};
+Expression6<Tail>: (Expression<'arena>, Tail) = {
+        
+        // This is the only other postfix expression that can overwrite a trailing element
+        <_Expression: Expression6<EmptyTail>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
+            let (expr, _) = _Expression;
+            (new_expression_postfix_expression(arena, new_postfix_expression(arena, expr, _Expression_PostfixExpression_Operator)), tail)
+        },
+        
+        <Expression: Expression5<Tail>>  => <>,
+    
+};
+Expression7<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression6<Tail>>  => <>,
+    
+};
+Expression8<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression8<EmptyTail>>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, e, _Expression_MultiplicativeExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression7<Tail>>  => <>,
+    
+};
+Expression9<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression9<EmptyTail>>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_additive_expression(arena, new_additive_expression(arena, e, _Expression_AdditiveExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression8<Tail>>  => <>,
+    
+};
+Expression10<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression10<EmptyTail>>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_shift_expression(arena, new_shift_expression(arena, e, _Expression_ShiftExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression9<Tail>>  => <>,
+    
+};
+Expression11<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression11<EmptyTail>>  <_operator: Ampersand>  <_Expression_2: Expression10<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_bitwise_and_expression(arena, new_bitwise_and_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression10<Tail>>  => <>,
+    
+};
+Expression12<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression12<EmptyTail>>  <_operator: Caret>  <_Expression_2: Expression11<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_bitwise_xor_expression(arena, new_bitwise_xor_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression11<Tail>>  => <>,
+    
+};
+Expression13<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression13<EmptyTail>>  <_operator: Bar>  <_Expression_2: Expression12<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_bitwise_or_expression(arena, new_bitwise_or_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression12<Tail>>  => <>,
+    
+};
+Expression14<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression14<EmptyTail>>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_inequality_expression(arena, new_inequality_expression(arena, e, _Expression_InequalityExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression13<Tail>>  => <>,
+    
+};
+Expression15<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression15<EmptyTail>>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_equality_expression(arena, new_equality_expression(arena, e, _Expression_EqualityExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression14<Tail>>  => <>,
+    
+};
+Expression16<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression16<EmptyTail>>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_and_expression(arena, new_and_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression15<Tail>>  => <>,
+    
+};
+Expression17<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression17<EmptyTail>>  <_operator: BarBar>  <_Expression_2: Expression16<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_or_expression(arena, new_or_expression(arena, e, _operator, e2)), tail)
+        },
+        
+        <Expression: Expression16<Tail>>  => <>,
+    
+};
+Expression18<Tail>: (Expression<'arena>, Tail) = {
+    
+    // TODO: Not really sure the associativity is correct, we need to check
+        <_Expression: Expression17<EmptyTail>>  <_question_mark: QuestionMark>  <_true_expression: Expression18<EmptyTail>>  <_colon: Colon>  <_false_expression: Expression18<Tail>>  => {
+            let (cond_expr, _) = _Expression;
+            let (true_expr, _) = _true_expression;
+            let (false_expr, tail) = _false_expression;
+            (new_expression_conditional_expression(arena, new_conditional_expression(arena, cond_expr, _question_mark, true_expr, _colon, false_expr)), tail)
+        },
+        
+        <Expression: Expression17<Tail>>  => <>,
+    
+};
+Expression19<Tail>: (Expression<'arena>, Tail) = {
+        
+        <_Expression: Expression19<EmptyTail>>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Tail>>  => {
+            let (e, _) = _Expression;
+            let (e2, tail) = _Expression_2;
+            (new_expression_assignment_expression(arena, new_assignment_expression(arena, e, _Expression_AssignmentExpression_Operator, e2)), tail)
+        },
+        
+        <Expression: Expression18<Tail>>  => <>,
+    
+};
+
+// TODO(v2): We're making this pub to allow testing Expressions
+pub Expression: Expression<'arena> = {
+        
+        <Expression: Expression19<EmptyTail>>  => Expression.0,
+    
+};
+
+// An empty tail is the default behaviour
+EmptyTail: () = {
+    () => (),
+};
+
+    Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator<'arena> = {
+    <_operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(arena, <>),
+    <_operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(arena, <>),
+    <_operator: Tilde>  => new_expression_prefix_expression_operator_tilde(arena, <>),
+    <_operator: Bang>  => new_expression_prefix_expression_operator_bang(arena, <>),
+    <_operator: Minus>  => new_expression_prefix_expression_operator_minus(arena, <>),
+    <_operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(arena, <>),
+    
+};
+Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator<'arena> = {
+    <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(arena, <>),
+    <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(arena, <>),
+    
+};
+Expression_ExponentiationExpression_Operator: Expression_ExponentiationExpression_Operator<'arena> = {
+    <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(arena, <>),
+    
+};
+Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator<'arena> = {
+    <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(arena, <>),
+    <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(arena, <>),
+    <_operator: Percent>  => new_expression_multiplicative_expression_operator_percent(arena, <>),
+    
+};
+Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator<'arena> = {
+    <_operator: Plus>  => new_expression_additive_expression_operator_plus(arena, <>),
+    <_operator: Minus>  => new_expression_additive_expression_operator_minus(arena, <>),
+    
+};
+Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator<'arena> = {
+    <_operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(arena, <>),
+    <_operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(arena, <>),
+    <_operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(arena, <>),
+    
+};
+Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator<'arena> = {
+    <_operator: LessThan>  => new_expression_inequality_expression_operator_less_than(arena, <>),
+    <_operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(arena, <>),
+    <_operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(arena, <>),
+    <_operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(arena, <>),
+    
+};
+Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator<'arena> = {
+    <_operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(arena, <>),
+    <_operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(arena, <>),
+    
+};
+Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator<'arena> = {
+    <_operator: Equal>  => new_expression_assignment_expression_operator_equal(arena, <>),
+    <_operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(arena, <>),
+    <_operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(arena, <>),
+    <_operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(arena, <>),
+    <_operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(arena, <>),
+    <_operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(arena, <>),
+    <_operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(arena, <>),
+    <_operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(arena, <>),
+    <_operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(arena, <>),
+    <_operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(arena, <>),
+    <_operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(arena, <>),
+    <_operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(arena, <>),
+    
+};
+
+NoIdentPath: IdentifierPath<'arena> = {};
+
+// An IAP that tracks whether it has a trailing identifier path
+IndexAccessPath<IdentPathRule>: IndexAccessPath<'arena> = {
+    <iap: IndexAccessPath<IdentifierPath>> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(arena, <>),
+    <IndexAccessPath1<IdentPathRule>>  => <>,
+};
+IndexAccessPath1<IdentPathRule>: IndexAccessPath<'arena> = {
+    <_Identifier: IdentPathRule> => new_index_access_path_from_identifier_path(arena, <>),
+    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(arena, <>),
+};
+
+    IndexAccessEnd: IndexAccessEnd<'arena> = {
+        <_colon: Colon>  <_end: (Expression)?>  => new_index_access_end(arena, <>),
+        
+    };
+    MemberAccessIdentifier: MemberAccessIdentifier<'arena> = {
+        <_Identifier: Identifier>  => new_member_access_identifier_identifier(arena, <>),
+        <_AddressKeyword: AddressKeyword>  => new_member_access_identifier_address_keyword(arena, <>),
+        
+    };
+    
+
+// Rules for topic Function Calls
+    ArgumentsDeclaration: ArgumentsDeclaration<'arena> = {
+        <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(arena, <>),
+        <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(arena, <>),
+        
+    };
+    PositionalArgumentsDeclaration: PositionalArgumentsDeclaration<'arena> = {
+        <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => new_positional_arguments_declaration(arena, <>),
+        
+    };
+    PositionalArguments: PositionalArguments<'arena> = {
+        <_Expression: Sep<Comma, <Expression>>>  => new_positional_arguments(arena, <>),
+        
+    };
+    NamedArgumentsDeclaration: NamedArgumentsDeclaration<'arena> = {
+        <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(arena, <>),
+        
+    };
+    NamedArgumentGroup: NamedArgumentGroup<'arena> = {
+        <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => new_named_argument_group(arena, <>),
+        
+    };
+    NamedArguments: NamedArguments<'arena> = {
+        <_NamedArgument: Sep<Comma, <NamedArgument>>>  => new_named_arguments(arena, <>),
+        
+    };
+    CallOptions: CallOptions<'arena> = {
+        <_NamedArgument: SepOne<Comma, <NamedArgument>>>  => new_call_options(arena, <>),
+        
+    };
+    NamedArgument: NamedArgument<'arena> = {
+        <_name: Identifier>  <_colon: Colon>  <_value: Expression>  => new_named_argument(arena, <>),
+        
+    };
+    
+
+// Rules for topic Primary Expressions
+    TypeExpression: TypeExpression<'arena> = {
+        <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => new_type_expression(arena, <>),
+        
+    };
+    NewExpression: NewExpression<'arena> = {
+        <_new_keyword: NewKeyword>  <_type_name: TypeName>  <_options: (CallOptionsNew)?>  <_arguments: ArgumentsDeclaration>  => new_new_expression(arena, <>),
+        
+    };
+    CallOptionsNew: CallOptionsNew<'arena> = {
+        <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_call_options_new(arena, <>),
+        
+    };
+    TupleExpression: TupleExpression<'arena> = {
+        <_open_paren: OpenParen>  <_items: TupleValues>  <_close_paren: CloseParen>  => new_tuple_expression(arena, <>),
+        
+    };
+    TupleValues: TupleValues<'arena> = {
+        <_TupleValue: SepOne<Comma, <TupleValue>>>  => new_tuple_values(arena, <>),
+        
+    };
+    TupleValue: TupleValue<'arena> = {
+        <_expression: (Expression)?>  => new_tuple_value(arena, <>),
+        
+    };
+    ArrayExpression: ArrayExpression<'arena> = {
+        <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => new_array_expression(arena, <>),
+        
+    };
+    ArrayValues: ArrayValues<'arena> = {
+        <_Expression: SepOne<Comma, <Expression>>>  => new_array_values(arena, <>),
+        
+    };
+    
+
+// Rules for topic Numbers
+    
+    
+// This rule shouldn't be manual, but the node constructor takes an optional argument that is not
+// enabled in 0.8.30, therefore we don't have it automatically generated
+HexNumberExpression: HexNumberExpression<'arena> = {
+        <_literal: HexLiteral>  => new_hex_number_expression(arena, <>, None),
+    
+};
+    DecimalNumberExpression: DecimalNumberExpression<'arena> = {
+        <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => new_decimal_number_expression(arena, <>),
+        
+    };
+    NumberUnit: NumberUnit<'arena> = {
+        <_WeiKeyword: WeiKeyword>  => new_number_unit_wei_keyword(arena, <>),
+        <_GweiKeyword: GweiKeyword>  => new_number_unit_gwei_keyword(arena, <>),
+        <_EtherKeyword: EtherKeyword>  => new_number_unit_ether_keyword(arena, <>),
+        <_SecondsKeyword: SecondsKeyword>  => new_number_unit_seconds_keyword(arena, <>),
+        <_MinutesKeyword: MinutesKeyword>  => new_number_unit_minutes_keyword(arena, <>),
+        <_HoursKeyword: HoursKeyword>  => new_number_unit_hours_keyword(arena, <>),
+        <_DaysKeyword: DaysKeyword>  => new_number_unit_days_keyword(arena, <>),
+        <_WeeksKeyword: WeeksKeyword>  => new_number_unit_weeks_keyword(arena, <>),
+        
+    };
+    
+
+// Rules for topic Strings
+    StringExpression: StringExpression<'arena> = {
+        <_StringLiterals: StringLiterals>  => new_string_expression_string_literals(arena, <>),
+        <_HexStringLiterals: HexStringLiterals>  => new_string_expression_hex_string_literals(arena, <>),
+        <_UnicodeStringLiterals: UnicodeStringLiterals>  => new_string_expression_unicode_string_literals(arena, <>),
+        
+    };
+    StringLiterals: StringLiterals<'arena> = {
+        <_StringLiteral: RepOne<<StringLiteral>>>  => new_string_literals(arena, <>),
+        
+    };
+    StringLiteral: StringLiteral<'arena> = {
+        <_SingleQuotedStringLiteral: SingleQuotedStringLiteral>  => new_string_literal_single_quoted_string_literal(arena, <>),
+        <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => new_string_literal_double_quoted_string_literal(arena, <>),
+        
+    };
+    HexStringLiterals: HexStringLiterals<'arena> = {
+        <_HexStringLiteral: RepOne<<HexStringLiteral>>>  => new_hex_string_literals(arena, <>),
+        
+    };
+    HexStringLiteral: HexStringLiteral<'arena> = {
+        <_SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral>  => new_hex_string_literal_single_quoted_hex_string_literal(arena, <>),
+        <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => new_hex_string_literal_double_quoted_hex_string_literal(arena, <>),
+        
+    };
+    UnicodeStringLiterals: UnicodeStringLiterals<'arena> = {
+        <_UnicodeStringLiteral: RepOne<<UnicodeStringLiteral>>>  => new_unicode_string_literals(arena, <>),
+        
+    };
+    UnicodeStringLiteral: UnicodeStringLiteral<'arena> = {
+        <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_single_quoted_unicode_string_literal(arena, <>),
+        <_DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_double_quoted_unicode_string_literal(arena, <>),
+        
+    };
+    
+
+// Rules for topic Identifiers
+    IdentifierPath: IdentifierPath<'arena> = {
+        <_head: Identifier>  <_tail: (IdentifierPathTail)?>  => new_identifier_path(arena, <>),
+        
+    };
+    IdentifierPathTail: IdentifierPathTail<'arena> = {
+        <_sep: Period>  <_elements: IdentifierPathTailElements>  => new_identifier_path_tail(arena, <>),
+        
+    };
+    IdentifierPathTailElements: IdentifierPathTailElements<'arena> = {
+        <_MemberAccessIdentifier: SepOne<Period, <MemberAccessIdentifier>>>  => new_identifier_path_tail_elements(arena, <>),
+        
+    };
+    
+
+
+
+
+// Rules for section Yul
+
+// Rules for topic Yul Statements
+    
+    
+YulBlock: YulBlock<'arena> = {
+    <_open_brace: OpenBrace>  !  <_close_brace: CloseBrace>  => {
+        new_yul_block(arena, _open_brace, new_yul_statements(arena, Vec::new_in(arena)), _close_brace)
+    }
+};
+
+    YulStatements: YulStatements<'arena> = {
+        <_YulStatement: Rep<<YulStatement>>>  => new_yul_statements(arena, <>),
+        
+    };
+    YulStatement: YulStatement<'arena> = {
+        <_YulBlock: YulBlock>  => new_yul_statement_yul_block(arena, <>),
+        <_YulFunctionDefinition: YulFunctionDefinition>  => new_yul_statement_yul_function_definition(arena, <>),
+        <_YulIfStatement: YulIfStatement>  => new_yul_statement_yul_if_statement(arena, <>),
+        <_YulForStatement: YulForStatement>  => new_yul_statement_yul_for_statement(arena, <>),
+        <_YulSwitchStatement: YulSwitchStatement>  => new_yul_statement_yul_switch_statement(arena, <>),
+        <_YulLeaveStatement: YulLeaveStatement>  => new_yul_statement_yul_leave_statement(arena, <>),
+        <_YulBreakStatement: YulBreakStatement>  => new_yul_statement_yul_break_statement(arena, <>),
+        <_YulContinueStatement: YulContinueStatement>  => new_yul_statement_yul_continue_statement(arena, <>),
+        <_YulVariableAssignmentStatement: YulVariableAssignmentStatement>  => new_yul_statement_yul_variable_assignment_statement(arena, <>),
+        <_YulVariableDeclarationStatement: YulVariableDeclarationStatement>  => new_yul_statement_yul_variable_declaration_statement(arena, <>),
+        <_YulExpression: YulExpression>  => new_yul_statement_yul_expression(arena, <>),
+        
+    };
+    YulFunctionDefinition: YulFunctionDefinition<'arena> = {
+        <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => new_yul_function_definition(arena, <>),
+        
+    };
+    YulParametersDeclaration: YulParametersDeclaration<'arena> = {
+        <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => new_yul_parameters_declaration(arena, <>),
+        
+    };
+    YulParameters: YulParameters<'arena> = {
+        <_YulIdentifier: Sep<Comma, <YulIdentifier>>>  => new_yul_parameters(arena, <>),
+        
+    };
+    YulReturnsDeclaration: YulReturnsDeclaration<'arena> = {
+        <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => new_yul_returns_declaration(arena, <>),
+        
+    };
+    YulVariableNames: YulVariableNames<'arena> = {
+        <_YulIdentifier: SepOne<Comma, <YulIdentifier>>>  => new_yul_variable_names(arena, <>),
+        
+    };
+    YulVariableDeclarationStatement: YulVariableDeclarationStatement<'arena> = {
+        <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => new_yul_variable_declaration_statement(arena, <>),
+        
+    };
+    YulVariableDeclarationValue: YulVariableDeclarationValue<'arena> = {
+        <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_declaration_value(arena, <>),
+        
+    };
+    YulVariableAssignmentStatement: YulVariableAssignmentStatement<'arena> = {
+        <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_assignment_statement(arena, <>),
+        
+    };
+    YulAssignmentOperator: YulAssignmentOperator<'arena> = {
+        <_ColonEqual: ColonEqual>  => new_yul_assignment_operator_colon_equal(arena, <>),
+        
+    };
+    YulIfStatement: YulIfStatement<'arena> = {
+        <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => new_yul_if_statement(arena, <>),
+        
+    };
+    YulForStatement: YulForStatement<'arena> = {
+        <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => new_yul_for_statement(arena, <>),
+        
+    };
+    YulSwitchStatement: YulSwitchStatement<'arena> = {
+        <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => new_yul_switch_statement(arena, <>),
+        
+    };
+    YulSwitchCases: YulSwitchCases<'arena> = {
+        <_YulSwitchCase: RepOne<<YulSwitchCase>>>  => new_yul_switch_cases(arena, <>),
+        
+    };
+    YulSwitchCase: YulSwitchCase<'arena> = {
+        <_YulDefaultCase: YulDefaultCase>  => new_yul_switch_case_yul_default_case(arena, <>),
+        <_YulValueCase: YulValueCase>  => new_yul_switch_case_yul_value_case(arena, <>),
+        
+    };
+    YulDefaultCase: YulDefaultCase<'arena> = {
+        <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => new_yul_default_case(arena, <>),
+        
+    };
+    YulValueCase: YulValueCase<'arena> = {
+        <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => new_yul_value_case(arena, <>),
+        
+    };
+    YulLeaveStatement: YulLeaveStatement<'arena> = {
+        <_leave_keyword: YulLeaveKeyword>  => new_yul_leave_statement(arena, <>),
+        
+    };
+    YulBreakStatement: YulBreakStatement<'arena> = {
+        <_break_keyword: YulBreakKeyword>  => new_yul_break_statement(arena, <>),
+        
+    };
+    YulContinueStatement: YulContinueStatement<'arena> = {
+        <_continue_keyword: YulContinueKeyword>  => new_yul_continue_statement(arena, <>),
+        
+    };
+    
+
+// Rules for topic Yul Expressions
+    YulExpression0: YulExpression<'arena> = {
+        <_YulLiteral: YulLiteral>  => new_yul_expression_yul_literal(arena, <>),
+        <_YulPath: YulPath>  => new_yul_expression_yul_path(arena, <>),
+        
+    };
+    #[inline]
+    YulFunctionCallExpression: YulFunctionCallExpression<'arena> = {
+        <_YulExpression: YulExpression1>  <_open_paren: OpenParen>  <_arguments: YulArguments>  <_close_paren: CloseParen>  => new_yul_function_call_expression(arena, <>),
+        
+    };
+    YulExpression1: YulExpression<'arena> = {
+        <_YulExpression: YulFunctionCallExpression>  => new_yul_expression_yul_function_call_expression(arena, <>),
+        <YulExpression: YulExpression0>  => <>,
+        
+    };
+    YulExpression: YulExpression<'arena> = {
+        <YulExpression: YulExpression1>  => <>,
+        
+    };
+    YulArguments: YulArguments<'arena> = {
+        <_YulExpression: Sep<Comma, <YulExpression>>>  => new_yul_arguments(arena, <>),
+        
+    };
+    YulPaths: YulPaths<'arena> = {
+        <_YulPath: SepOne<Comma, <YulPath>>>  => new_yul_paths(arena, <>),
+        
+    };
+    YulPath: YulPath<'arena> = {
+        <_YulIdentifier: SepOne<Period, <YulIdentifier>>>  => new_yul_path(arena, <>),
+        
+    };
+    YulLiteral: YulLiteral<'arena> = {
+        <_YulTrueKeyword: YulTrueKeyword>  => new_yul_literal_yul_true_keyword(arena, <>),
+        <_YulFalseKeyword: YulFalseKeyword>  => new_yul_literal_yul_false_keyword(arena, <>),
+        <_YulDecimalLiteral: YulDecimalLiteral>  => new_yul_literal_yul_decimal_literal(arena, <>),
+        <_YulHexLiteral: YulHexLiteral>  => new_yul_literal_yul_hex_literal(arena, <>),
+        <_HexStringLiteral: HexStringLiteral>  => new_yul_literal_hex_string_literal(arena, <>),
+        <_StringLiteral: StringLiteral>  => new_yul_literal_string_literal(arena, <>),
+        
+    };
+    
+
+// Rules for topic Yul Keywords
+    
+
+
+
+
+
+
+// Lexemes formatting
+#[inline]
+ABIEncoderV2Keyword: ABIEncoderV2Keyword<'arena> = {
+
+        <l:@L> L_ABIEncoderV2Keyword_Unreserved <r:@L> => new_abi_encoder_v2_keyword(arena, <>, source),
+
+};
+#[inline]
+AbicoderKeyword: AbicoderKeyword<'arena> = {
+
+        <l:@L> L_AbicoderKeyword_Unreserved <r:@L> => new_abicoder_keyword(arena, <>, source),
+
+};
+#[inline]
+AbicoderV1Keyword: AbicoderV1Keyword<'arena> = {
+
+        <l:@L> L_AbicoderV1Keyword_Unreserved <r:@L> => new_abicoder_v1_keyword(arena, <>, source),
+
+};
+#[inline]
+AbicoderV2Keyword: AbicoderV2Keyword<'arena> = {
+
+        <l:@L> L_AbicoderV2Keyword_Unreserved <r:@L> => new_abicoder_v2_keyword(arena, <>, source),
+
+};
+#[inline]
+AbstractKeyword: AbstractKeyword<'arena> = {
+
+        <l:@L> L_AbstractKeyword_Reserved <r:@L> => new_abstract_keyword(arena, <>, source),
+
+};
+#[inline]
+AddressKeyword: AddressKeyword<'arena> = {
+
+        <l:@L> L_AddressKeyword_Reserved <r:@L> => new_address_keyword(arena, <>, source),
+
+};
+#[inline]
+AfterKeyword: AfterKeyword<'arena> = {
+
+        <l:@L> L_AfterKeyword_Reserved <r:@L> => new_after_keyword(arena, <>, source),
+
+};
+#[inline]
+AliasKeyword: AliasKeyword<'arena> = {
+
+        <l:@L> L_AliasKeyword_Reserved <r:@L> => new_alias_keyword(arena, <>, source),
+
+};
+#[inline]
+Ampersand: Ampersand<'arena> = {
+
+        <l:@L> L_Ampersand <r:@L> => new_ampersand(arena, <>, source),
+
+};
+#[inline]
+AmpersandAmpersand: AmpersandAmpersand<'arena> = {
+
+        <l:@L> L_AmpersandAmpersand <r:@L> => new_ampersand_ampersand(arena, <>, source),
+
+};
+#[inline]
+AmpersandEqual: AmpersandEqual<'arena> = {
+
+        <l:@L> L_AmpersandEqual <r:@L> => new_ampersand_equal(arena, <>, source),
+
+};
+#[inline]
+AnonymousKeyword: AnonymousKeyword<'arena> = {
+
+        <l:@L> L_AnonymousKeyword_Reserved <r:@L> => new_anonymous_keyword(arena, <>, source),
+
+};
+#[inline]
+ApplyKeyword: ApplyKeyword<'arena> = {
+
+        <l:@L> L_ApplyKeyword_Reserved <r:@L> => new_apply_keyword(arena, <>, source),
+
+};
+#[inline]
+AsKeyword: AsKeyword<'arena> = {
+
+        <l:@L> L_AsKeyword_Reserved <r:@L> => new_as_keyword(arena, <>, source),
+
+};
+#[inline]
+AssemblyKeyword: AssemblyKeyword<'arena> = {
+
+        <l:@L> L_AssemblyKeyword_Reserved <r:@L> => new_assembly_keyword(arena, <>, source),
+
+};
+#[inline]
+Asterisk: Asterisk<'arena> = {
+
+        <l:@L> L_Asterisk <r:@L> => new_asterisk(arena, <>, source),
+
+};
+#[inline]
+AsteriskAsterisk: AsteriskAsterisk<'arena> = {
+
+        <l:@L> L_AsteriskAsterisk <r:@L> => new_asterisk_asterisk(arena, <>, source),
+
+};
+#[inline]
+AsteriskEqual: AsteriskEqual<'arena> = {
+
+        <l:@L> L_AsteriskEqual <r:@L> => new_asterisk_equal(arena, <>, source),
+
+};
+#[inline]
+AtKeyword: AtKeyword<'arena> = {
+
+        <l:@L> L_AtKeyword_Unreserved <r:@L> => new_at_keyword(arena, <>, source),
+
+};
+#[inline]
+AutoKeyword: AutoKeyword<'arena> = {
+
+        <l:@L> L_AutoKeyword_Reserved <r:@L> => new_auto_keyword(arena, <>, source),
+
+};
+#[inline]
+Bang: Bang<'arena> = {
+
+        <l:@L> L_Bang <r:@L> => new_bang(arena, <>, source),
+
+};
+#[inline]
+BangEqual: BangEqual<'arena> = {
+
+        <l:@L> L_BangEqual <r:@L> => new_bang_equal(arena, <>, source),
+
+};
+#[inline]
+Bar: Bar<'arena> = {
+
+        <l:@L> L_Bar <r:@L> => new_bar(arena, <>, source),
+
+};
+#[inline]
+BarBar: BarBar<'arena> = {
+
+        <l:@L> L_BarBar <r:@L> => new_bar_bar(arena, <>, source),
+
+};
+#[inline]
+BarEqual: BarEqual<'arena> = {
+
+        <l:@L> L_BarEqual <r:@L> => new_bar_equal(arena, <>, source),
+
+};
+#[inline]
+BoolKeyword: BoolKeyword<'arena> = {
+
+        <l:@L> L_BoolKeyword_Reserved <r:@L> => new_bool_keyword(arena, <>, source),
+
+};
+#[inline]
+BreakKeyword: BreakKeyword<'arena> = {
+
+        <l:@L> L_BreakKeyword_Reserved <r:@L> => new_break_keyword(arena, <>, source),
+
+};
+#[inline]
+ByteKeyword: ByteKeyword<'arena> = {
+
+        <l:@L> L_ByteKeyword_Reserved <r:@L> => new_byte_keyword(arena, <>, source),
+
+};
+#[inline]
+BytesKeyword: BytesKeyword<'arena> = {
+
+        <l:@L> L_BytesKeyword_Reserved <r:@L> => new_bytes_keyword(arena, <>, source),
+
+};
+#[inline]
+CallDataKeyword: CallDataKeyword<'arena> = {
+
+        <l:@L> L_CallDataKeyword_Reserved <r:@L> => new_call_data_keyword(arena, <>, source),
+
+};
+#[inline]
+Caret: Caret<'arena> = {
+
+        <l:@L> L_Caret <r:@L> => new_caret(arena, <>, source),
+
+};
+#[inline]
+CaretEqual: CaretEqual<'arena> = {
+
+        <l:@L> L_CaretEqual <r:@L> => new_caret_equal(arena, <>, source),
+
+};
+#[inline]
+CaseKeyword: CaseKeyword<'arena> = {
+
+        <l:@L> L_CaseKeyword_Reserved <r:@L> => new_case_keyword(arena, <>, source),
+
+};
+#[inline]
+CatchKeyword: CatchKeyword<'arena> = {
+
+        <l:@L> L_CatchKeyword_Reserved <r:@L> => new_catch_keyword(arena, <>, source),
+
+};
+#[inline]
+CloseBrace: CloseBrace<'arena> = {
+
+        <l:@L> L_CloseBrace <r:@L> => new_close_brace(arena, <>, source),
+
+};
+#[inline]
+CloseBracket: CloseBracket<'arena> = {
+
+        <l:@L> L_CloseBracket <r:@L> => new_close_bracket(arena, <>, source),
+
+};
+#[inline]
+CloseParen: CloseParen<'arena> = {
+
+        <l:@L> L_CloseParen <r:@L> => new_close_paren(arena, <>, source),
+
+};
+#[inline]
+Colon: Colon<'arena> = {
+
+        <l:@L> L_Colon <r:@L> => new_colon(arena, <>, source),
+
+};
+#[inline]
+ColonEqual: ColonEqual<'arena> = {
+
+        <l:@L> L_ColonEqual <r:@L> => new_colon_equal(arena, <>, source),
+
+};
+#[inline]
+Comma: Comma<'arena> = {
+
+        <l:@L> L_Comma <r:@L> => new_comma(arena, <>, source),
+
+};
+#[inline]
+ConstantKeyword: ConstantKeyword<'arena> = {
+
+        <l:@L> L_ConstantKeyword_Reserved <r:@L> => new_constant_keyword(arena, <>, source),
+
+};
+#[inline]
+ConstructorKeyword: ConstructorKeyword<'arena> = {
+
+        <l:@L> L_ConstructorKeyword_Reserved <r:@L> => new_constructor_keyword(arena, <>, source),
+
+};
+#[inline]
+ContinueKeyword: ContinueKeyword<'arena> = {
+
+        <l:@L> L_ContinueKeyword_Reserved <r:@L> => new_continue_keyword(arena, <>, source),
+
+};
+#[inline]
+ContractKeyword: ContractKeyword<'arena> = {
+
+        <l:@L> L_ContractKeyword_Reserved <r:@L> => new_contract_keyword(arena, <>, source),
+
+};
+#[inline]
+CopyOfKeyword: CopyOfKeyword<'arena> = {
+
+        <l:@L> L_CopyOfKeyword_Reserved <r:@L> => new_copy_of_keyword(arena, <>, source),
+
+};
+#[inline]
+DaysKeyword: DaysKeyword<'arena> = {
+
+        <l:@L> L_DaysKeyword_Reserved <r:@L> => new_days_keyword(arena, <>, source),
+
+};
+#[inline]
+DecimalLiteral: DecimalLiteral<'arena> = {
+
+        <l:@L> L_DecimalLiteral <r:@L> => new_decimal_literal(arena, <>, source),
+
+};
+#[inline]
+DefaultKeyword: DefaultKeyword<'arena> = {
+
+        <l:@L> L_DefaultKeyword_Reserved <r:@L> => new_default_keyword(arena, <>, source),
+
+};
+#[inline]
+DefineKeyword: DefineKeyword<'arena> = {
+
+        <l:@L> L_DefineKeyword_Reserved <r:@L> => new_define_keyword(arena, <>, source),
+
+};
+#[inline]
+DeleteKeyword: DeleteKeyword<'arena> = {
+
+        <l:@L> L_DeleteKeyword_Reserved <r:@L> => new_delete_keyword(arena, <>, source),
+
+};
+#[inline]
+DoKeyword: DoKeyword<'arena> = {
+
+        <l:@L> L_DoKeyword_Reserved <r:@L> => new_do_keyword(arena, <>, source),
+
+};
+#[inline]
+DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral<'arena> = {
+
+        <l:@L> L_DoubleQuotedHexStringLiteral <r:@L> => new_double_quoted_hex_string_literal(arena, <>, source),
+
+};
+#[inline]
+DoubleQuotedStringLiteral: DoubleQuotedStringLiteral<'arena> = {
+
+        <l:@L> L_DoubleQuotedStringLiteral <r:@L> => new_double_quoted_string_literal(arena, <>, source),
+
+};
+#[inline]
+DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral<'arena> = {
+
+        <l:@L> L_DoubleQuotedUnicodeStringLiteral <r:@L> => new_double_quoted_unicode_string_literal(arena, <>, source),
+
+};
+#[inline]
+DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral<'arena> = {
+
+        <l:@L> L_DoubleQuotedVersionLiteral <r:@L> => new_double_quoted_version_literal(arena, <>, source),
+
+};
+#[inline]
+ElseKeyword: ElseKeyword<'arena> = {
+
+        <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword(arena, <>, source),
+
+};
+#[inline]
+EmitKeyword: EmitKeyword<'arena> = {
+
+        <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword(arena, <>, source),
+
+};
+#[inline]
+EndOfLine: EndOfLine<'arena> = {
+
+        <l:@L> L_EndOfLine <r:@L> => new_end_of_line(arena, <>, source),
+
+};
+#[inline]
+EnumKeyword: EnumKeyword<'arena> = {
+
+        <l:@L> L_EnumKeyword_Reserved <r:@L> => new_enum_keyword(arena, <>, source),
+
+};
+#[inline]
+Equal: Equal<'arena> = {
+
+        <l:@L> L_Equal <r:@L> => new_equal(arena, <>, source),
+
+};
+#[inline]
+EqualColon: EqualColon<'arena> = {
+
+        <l:@L> L_EqualColon <r:@L> => new_equal_colon(arena, <>, source),
+
+};
+#[inline]
+EqualEqual: EqualEqual<'arena> = {
+
+        <l:@L> L_EqualEqual <r:@L> => new_equal_equal(arena, <>, source),
+
+};
+#[inline]
+EqualGreaterThan: EqualGreaterThan<'arena> = {
+
+        <l:@L> L_EqualGreaterThan <r:@L> => new_equal_greater_than(arena, <>, source),
+
+};
+#[inline]
+ErrorKeyword: ErrorKeyword<'arena> = {
+
+        <l:@L> L_ErrorKeyword_Unreserved <r:@L> => new_error_keyword(arena, <>, source),
+
+};
+#[inline]
+EtherKeyword: EtherKeyword<'arena> = {
+
+        <l:@L> L_EtherKeyword_Reserved <r:@L> => new_ether_keyword(arena, <>, source),
+
+};
+#[inline]
+EventKeyword: EventKeyword<'arena> = {
+
+        <l:@L> L_EventKeyword_Reserved <r:@L> => new_event_keyword(arena, <>, source),
+
+};
+#[inline]
+ExperimentalKeyword: ExperimentalKeyword<'arena> = {
+
+        <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> => new_experimental_keyword(arena, <>, source),
+
+};
+#[inline]
+ExternalKeyword: ExternalKeyword<'arena> = {
+
+        <l:@L> L_ExternalKeyword_Reserved <r:@L> => new_external_keyword(arena, <>, source),
+
+};
+#[inline]
+FallbackKeyword: FallbackKeyword<'arena> = {
+
+        <l:@L> L_FallbackKeyword_Reserved <r:@L> => new_fallback_keyword(arena, <>, source),
+
+};
+#[inline]
+FalseKeyword: FalseKeyword<'arena> = {
+
+        <l:@L> L_FalseKeyword_Reserved <r:@L> => new_false_keyword(arena, <>, source),
+
+};
+#[inline]
+FinalKeyword: FinalKeyword<'arena> = {
+
+        <l:@L> L_FinalKeyword_Reserved <r:@L> => new_final_keyword(arena, <>, source),
+
+};
+#[inline]
+FinneyKeyword: FinneyKeyword<'arena> = {
+
+        <l:@L> L_FinneyKeyword_Unreserved <r:@L> => new_finney_keyword(arena, <>, source),
+
+};
+#[inline]
+FixedKeyword: FixedKeyword<'arena> = {
+
+        <l:@L> L_FixedKeyword_Reserved <r:@L> => new_fixed_keyword(arena, <>, source),
+
+};
+#[inline]
+ForKeyword: ForKeyword<'arena> = {
+
+        <l:@L> L_ForKeyword_Reserved <r:@L> => new_for_keyword(arena, <>, source),
+
+};
+#[inline]
+FromKeyword: FromKeyword<'arena> = {
+
+        <l:@L> L_FromKeyword_Unreserved <r:@L> => new_from_keyword(arena, <>, source),
+
+};
+#[inline]
+FunctionKeyword: FunctionKeyword<'arena> = {
+
+        <l:@L> L_FunctionKeyword_Reserved <r:@L> => new_function_keyword(arena, <>, source),
+
+};
+#[inline]
+GlobalKeyword: GlobalKeyword<'arena> = {
+
+        <l:@L> L_GlobalKeyword_Unreserved <r:@L> => new_global_keyword(arena, <>, source),
+
+};
+#[inline]
+GreaterThan: GreaterThan<'arena> = {
+
+        <l:@L> L_GreaterThan <r:@L> => new_greater_than(arena, <>, source),
+
+};
+#[inline]
+GreaterThanEqual: GreaterThanEqual<'arena> = {
+
+        <l:@L> L_GreaterThanEqual <r:@L> => new_greater_than_equal(arena, <>, source),
+
+};
+#[inline]
+GreaterThanGreaterThan: GreaterThanGreaterThan<'arena> = {
+
+        <l:@L> L_GreaterThanGreaterThan <r:@L> => new_greater_than_greater_than(arena, <>, source),
+
+};
+#[inline]
+GreaterThanGreaterThanEqual: GreaterThanGreaterThanEqual<'arena> = {
+
+        <l:@L> L_GreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_equal(arena, <>, source),
+
+};
+#[inline]
+GreaterThanGreaterThanGreaterThan: GreaterThanGreaterThanGreaterThan<'arena> = {
+
+        <l:@L> L_GreaterThanGreaterThanGreaterThan <r:@L> => new_greater_than_greater_than_greater_than(arena, <>, source),
+
+};
+#[inline]
+GreaterThanGreaterThanGreaterThanEqual: GreaterThanGreaterThanGreaterThanEqual<'arena> = {
+
+        <l:@L> L_GreaterThanGreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_greater_than_equal(arena, <>, source),
+
+};
+#[inline]
+GweiKeyword: GweiKeyword<'arena> = {
+
+        <l:@L> L_GweiKeyword_Reserved <r:@L> => new_gwei_keyword(arena, <>, source),
+
+};
+#[inline]
+HexKeyword: HexKeyword<'arena> = {
+
+        <l:@L> L_HexKeyword_Reserved <r:@L> => new_hex_keyword(arena, <>, source),
+
+};
+#[inline]
+HexLiteral: HexLiteral<'arena> = {
+
+        <l:@L> L_HexLiteral <r:@L> => new_hex_literal(arena, <>, source),
+
+};
+#[inline]
+HoursKeyword: HoursKeyword<'arena> = {
+
+        <l:@L> L_HoursKeyword_Reserved <r:@L> => new_hours_keyword(arena, <>, source),
+
+};
+#[inline]
+Identifier: Identifier<'arena> = {
+    SomeIdentifier<""> => <>,
+};
+
+// Making an Identifier inline generates an explosion of states, so DON't
+SomeIdentifier<Except>: Identifier<'arena> = {
+
+        <l:@L> L_ABIEncoderV2Keyword_Unreserved <r:@L> if Except !~ "ABIEncoderV2Keyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_AbicoderKeyword_Unreserved <r:@L> if Except !~ "AbicoderKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_AbicoderV1Keyword_Unreserved <r:@L> if Except !~ "AbicoderV1Keyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_AbicoderV2Keyword_Unreserved <r:@L> if Except !~ "AbicoderV2Keyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_AtKeyword_Unreserved <r:@L> if Except !~ "AtKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_ErrorKeyword_Unreserved <r:@L> if Except !~ "ErrorKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> if Except !~ "ExperimentalKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_FinneyKeyword_Unreserved <r:@L> if Except !~ "FinneyKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_FromKeyword_Unreserved <r:@L> if Except !~ "FromKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_GlobalKeyword_Unreserved <r:@L> if Except !~ "GlobalKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_Identifier <r:@L> if Except !~ "Identifier" => new_identifier(arena, <>, source),
+
+        <l:@L> L_LayoutKeyword_Unreserved <r:@L> if Except !~ "LayoutKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_RevertKeyword_Unreserved <r:@L> if Except !~ "RevertKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_SMTCheckerKeyword_Unreserved <r:@L> if Except !~ "SMTCheckerKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_SolidityKeyword_Unreserved <r:@L> if Except !~ "SolidityKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_SzaboKeyword_Unreserved <r:@L> if Except !~ "SzaboKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_TransientKeyword_Unreserved <r:@L> if Except !~ "TransientKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+};
+#[inline]
+IfKeyword: IfKeyword<'arena> = {
+
+        <l:@L> L_IfKeyword_Reserved <r:@L> => new_if_keyword(arena, <>, source),
+
+};
+#[inline]
+ImmutableKeyword: ImmutableKeyword<'arena> = {
+
+        <l:@L> L_ImmutableKeyword_Reserved <r:@L> => new_immutable_keyword(arena, <>, source),
+
+};
+#[inline]
+ImplementsKeyword: ImplementsKeyword<'arena> = {
+
+        <l:@L> L_ImplementsKeyword_Reserved <r:@L> => new_implements_keyword(arena, <>, source),
+
+};
+#[inline]
+ImportKeyword: ImportKeyword<'arena> = {
+
+        <l:@L> L_ImportKeyword_Reserved <r:@L> => new_import_keyword(arena, <>, source),
+
+};
+#[inline]
+InKeyword: InKeyword<'arena> = {
+
+        <l:@L> L_InKeyword_Reserved <r:@L> => new_in_keyword(arena, <>, source),
+
+};
+#[inline]
+IndexedKeyword: IndexedKeyword<'arena> = {
+
+        <l:@L> L_IndexedKeyword_Reserved <r:@L> => new_indexed_keyword(arena, <>, source),
+
+};
+#[inline]
+InlineKeyword: InlineKeyword<'arena> = {
+
+        <l:@L> L_InlineKeyword_Reserved <r:@L> => new_inline_keyword(arena, <>, source),
+
+};
+#[inline]
+IntKeyword: IntKeyword<'arena> = {
+
+        <l:@L> L_IntKeyword_Reserved <r:@L> => new_int_keyword(arena, <>, source),
+
+};
+#[inline]
+InterfaceKeyword: InterfaceKeyword<'arena> = {
+
+        <l:@L> L_InterfaceKeyword_Reserved <r:@L> => new_interface_keyword(arena, <>, source),
+
+};
+#[inline]
+InternalKeyword: InternalKeyword<'arena> = {
+
+        <l:@L> L_InternalKeyword_Reserved <r:@L> => new_internal_keyword(arena, <>, source),
+
+};
+#[inline]
+IsKeyword: IsKeyword<'arena> = {
+
+        <l:@L> L_IsKeyword_Reserved <r:@L> => new_is_keyword(arena, <>, source),
+
+};
+#[inline]
+LayoutKeyword: LayoutKeyword<'arena> = {
+
+        <l:@L> L_LayoutKeyword_Unreserved <r:@L> => new_layout_keyword(arena, <>, source),
+
+};
+#[inline]
+LessThan: LessThan<'arena> = {
+
+        <l:@L> L_LessThan <r:@L> => new_less_than(arena, <>, source),
+
+};
+#[inline]
+LessThanEqual: LessThanEqual<'arena> = {
+
+        <l:@L> L_LessThanEqual <r:@L> => new_less_than_equal(arena, <>, source),
+
+};
+#[inline]
+LessThanLessThan: LessThanLessThan<'arena> = {
+
+        <l:@L> L_LessThanLessThan <r:@L> => new_less_than_less_than(arena, <>, source),
+
+};
+#[inline]
+LessThanLessThanEqual: LessThanLessThanEqual<'arena> = {
+
+        <l:@L> L_LessThanLessThanEqual <r:@L> => new_less_than_less_than_equal(arena, <>, source),
+
+};
+#[inline]
+LetKeyword: LetKeyword<'arena> = {
+
+        <l:@L> L_LetKeyword_Reserved <r:@L> => new_let_keyword(arena, <>, source),
+
+};
+#[inline]
+LibraryKeyword: LibraryKeyword<'arena> = {
+
+        <l:@L> L_LibraryKeyword_Reserved <r:@L> => new_library_keyword(arena, <>, source),
+
+};
+#[inline]
+MacroKeyword: MacroKeyword<'arena> = {
+
+        <l:@L> L_MacroKeyword_Reserved <r:@L> => new_macro_keyword(arena, <>, source),
+
+};
+#[inline]
+MappingKeyword: MappingKeyword<'arena> = {
+
+        <l:@L> L_MappingKeyword_Reserved <r:@L> => new_mapping_keyword(arena, <>, source),
+
+};
+#[inline]
+MatchKeyword: MatchKeyword<'arena> = {
+
+        <l:@L> L_MatchKeyword_Reserved <r:@L> => new_match_keyword(arena, <>, source),
+
+};
+#[inline]
+MemoryKeyword: MemoryKeyword<'arena> = {
+
+        <l:@L> L_MemoryKeyword_Reserved <r:@L> => new_memory_keyword(arena, <>, source),
+
+};
+#[inline]
+Minus: Minus<'arena> = {
+
+        <l:@L> L_Minus <r:@L> => new_minus(arena, <>, source),
+
+};
+#[inline]
+MinusEqual: MinusEqual<'arena> = {
+
+        <l:@L> L_MinusEqual <r:@L> => new_minus_equal(arena, <>, source),
+
+};
+#[inline]
+MinusGreaterThan: MinusGreaterThan<'arena> = {
+
+        <l:@L> L_MinusGreaterThan <r:@L> => new_minus_greater_than(arena, <>, source),
+
+};
+#[inline]
+MinusMinus: MinusMinus<'arena> = {
+
+        <l:@L> L_MinusMinus <r:@L> => new_minus_minus(arena, <>, source),
+
+};
+#[inline]
+MinutesKeyword: MinutesKeyword<'arena> = {
+
+        <l:@L> L_MinutesKeyword_Reserved <r:@L> => new_minutes_keyword(arena, <>, source),
+
+};
+#[inline]
+ModifierKeyword: ModifierKeyword<'arena> = {
+
+        <l:@L> L_ModifierKeyword_Reserved <r:@L> => new_modifier_keyword(arena, <>, source),
+
+};
+#[inline]
+MultiLineComment: MultiLineComment<'arena> = {
+
+        <l:@L> L_MultiLineComment <r:@L> => new_multi_line_comment(arena, <>, source),
+
+};
+#[inline]
+MultiLineNatSpecComment: MultiLineNatSpecComment<'arena> = {
+
+        <l:@L> L_MultiLineNatSpecComment <r:@L> => new_multi_line_nat_spec_comment(arena, <>, source),
+
+};
+#[inline]
+MutableKeyword: MutableKeyword<'arena> = {
+
+        <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword(arena, <>, source),
+
+};
+#[inline]
+NewKeyword: NewKeyword<'arena> = {
+
+        <l:@L> L_NewKeyword_Reserved <r:@L> => new_new_keyword(arena, <>, source),
+
+};
+#[inline]
+NullKeyword: NullKeyword<'arena> = {
+
+        <l:@L> L_NullKeyword_Reserved <r:@L> => new_null_keyword(arena, <>, source),
+
+};
+#[inline]
+OfKeyword: OfKeyword<'arena> = {
+
+        <l:@L> L_OfKeyword_Reserved <r:@L> => new_of_keyword(arena, <>, source),
+
+};
+#[inline]
+OpenBrace: OpenBrace<'arena> = {
+
+        <l:@L> L_OpenBrace <r:@L> => new_open_brace(arena, <>, source),
+
+};
+#[inline]
+OpenBracket: OpenBracket<'arena> = {
+
+        <l:@L> L_OpenBracket <r:@L> => new_open_bracket(arena, <>, source),
+
+};
+#[inline]
+OpenParen: OpenParen<'arena> = {
+
+        <l:@L> L_OpenParen <r:@L> => new_open_paren(arena, <>, source),
+
+};
+#[inline]
+OverrideKeyword: OverrideKeyword<'arena> = {
+
+        <l:@L> L_OverrideKeyword_Reserved <r:@L> => new_override_keyword(arena, <>, source),
+
+};
+#[inline]
+PartialKeyword: PartialKeyword<'arena> = {
+
+        <l:@L> L_PartialKeyword_Reserved <r:@L> => new_partial_keyword(arena, <>, source),
+
+};
+#[inline]
+PayableKeyword: PayableKeyword<'arena> = {
+
+        <l:@L> L_PayableKeyword_Reserved <r:@L> => new_payable_keyword(arena, <>, source),
+
+};
+#[inline]
+Percent: Percent<'arena> = {
+
+        <l:@L> L_Percent <r:@L> => new_percent(arena, <>, source),
+
+};
+#[inline]
+PercentEqual: PercentEqual<'arena> = {
+
+        <l:@L> L_PercentEqual <r:@L> => new_percent_equal(arena, <>, source),
+
+};
+#[inline]
+Period: Period<'arena> = {
+
+        <l:@L> L_Period <r:@L> => new_period(arena, <>, source),
+
+};
+#[inline]
+Plus: Plus<'arena> = {
+
+        <l:@L> L_Plus <r:@L> => new_plus(arena, <>, source),
+
+};
+#[inline]
+PlusEqual: PlusEqual<'arena> = {
+
+        <l:@L> L_PlusEqual <r:@L> => new_plus_equal(arena, <>, source),
+
+};
+#[inline]
+PlusPlus: PlusPlus<'arena> = {
+
+        <l:@L> L_PlusPlus <r:@L> => new_plus_plus(arena, <>, source),
+
+};
+#[inline]
+PragmaKeyword: PragmaKeyword<'arena> = {
+
+        <l:@L> L_PragmaKeyword_Reserved <r:@L> => new_pragma_keyword(arena, <>, source),
+
+};
+#[inline]
+PrivateKeyword: PrivateKeyword<'arena> = {
+
+        <l:@L> L_PrivateKeyword_Reserved <r:@L> => new_private_keyword(arena, <>, source),
+
+};
+#[inline]
+PromiseKeyword: PromiseKeyword<'arena> = {
+
+        <l:@L> L_PromiseKeyword_Reserved <r:@L> => new_promise_keyword(arena, <>, source),
+
+};
+#[inline]
+PublicKeyword: PublicKeyword<'arena> = {
+
+        <l:@L> L_PublicKeyword_Reserved <r:@L> => new_public_keyword(arena, <>, source),
+
+};
+#[inline]
+PureKeyword: PureKeyword<'arena> = {
+
+        <l:@L> L_PureKeyword_Reserved <r:@L> => new_pure_keyword(arena, <>, source),
+
+};
+#[inline]
+QuestionMark: QuestionMark<'arena> = {
+
+        <l:@L> L_QuestionMark <r:@L> => new_question_mark(arena, <>, source),
+
+};
+#[inline]
+ReceiveKeyword: ReceiveKeyword<'arena> = {
+
+        <l:@L> L_ReceiveKeyword_Reserved <r:@L> => new_receive_keyword(arena, <>, source),
+
+};
+#[inline]
+ReferenceKeyword: ReferenceKeyword<'arena> = {
+
+        <l:@L> L_ReferenceKeyword_Reserved <r:@L> => new_reference_keyword(arena, <>, source),
+
+};
+#[inline]
+RelocatableKeyword: RelocatableKeyword<'arena> = {
+
+        <l:@L> L_RelocatableKeyword_Reserved <r:@L> => new_relocatable_keyword(arena, <>, source),
+
+};
+#[inline]
+ReturnKeyword: ReturnKeyword<'arena> = {
+
+        <l:@L> L_ReturnKeyword_Reserved <r:@L> => new_return_keyword(arena, <>, source),
+
+};
+#[inline]
+ReturnsKeyword: ReturnsKeyword<'arena> = {
+
+        <l:@L> L_ReturnsKeyword_Reserved <r:@L> => new_returns_keyword(arena, <>, source),
+
+};
+#[inline]
+RevertKeyword: RevertKeyword<'arena> = {
+
+        <l:@L> L_RevertKeyword_Unreserved <r:@L> => new_revert_keyword(arena, <>, source),
+
+};
+#[inline]
+SMTCheckerKeyword: SMTCheckerKeyword<'arena> = {
+
+        <l:@L> L_SMTCheckerKeyword_Unreserved <r:@L> => new_smt_checker_keyword(arena, <>, source),
+
+};
+#[inline]
+SealedKeyword: SealedKeyword<'arena> = {
+
+        <l:@L> L_SealedKeyword_Reserved <r:@L> => new_sealed_keyword(arena, <>, source),
+
+};
+#[inline]
+SecondsKeyword: SecondsKeyword<'arena> = {
+
+        <l:@L> L_SecondsKeyword_Reserved <r:@L> => new_seconds_keyword(arena, <>, source),
+
+};
+#[inline]
+Semicolon: Semicolon<'arena> = {
+
+        <l:@L> L_Semicolon <r:@L> => new_semicolon(arena, <>, source),
+
+};
+#[inline]
+SingleLineComment: SingleLineComment<'arena> = {
+
+        <l:@L> L_SingleLineComment <r:@L> => new_single_line_comment(arena, <>, source),
+
+};
+#[inline]
+SingleLineNatSpecComment: SingleLineNatSpecComment<'arena> = {
+
+        <l:@L> L_SingleLineNatSpecComment <r:@L> => new_single_line_nat_spec_comment(arena, <>, source),
+
+};
+#[inline]
+SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral<'arena> = {
+
+        <l:@L> L_SingleQuotedHexStringLiteral <r:@L> => new_single_quoted_hex_string_literal(arena, <>, source),
+
+};
+#[inline]
+SingleQuotedStringLiteral: SingleQuotedStringLiteral<'arena> = {
+
+        <l:@L> L_SingleQuotedStringLiteral <r:@L> => new_single_quoted_string_literal(arena, <>, source),
+
+};
+#[inline]
+SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral<'arena> = {
+
+        <l:@L> L_SingleQuotedUnicodeStringLiteral <r:@L> => new_single_quoted_unicode_string_literal(arena, <>, source),
+
+};
+#[inline]
+SingleQuotedVersionLiteral: SingleQuotedVersionLiteral<'arena> = {
+
+        <l:@L> L_SingleQuotedVersionLiteral <r:@L> => new_single_quoted_version_literal(arena, <>, source),
+
+};
+#[inline]
+SizeOfKeyword: SizeOfKeyword<'arena> = {
+
+        <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(arena, <>, source),
+
+};
+#[inline]
+Slash: Slash<'arena> = {
+
+        <l:@L> L_Slash <r:@L> => new_slash(arena, <>, source),
+
+};
+#[inline]
+SlashEqual: SlashEqual<'arena> = {
+
+        <l:@L> L_SlashEqual <r:@L> => new_slash_equal(arena, <>, source),
+
+};
+#[inline]
+SolidityKeyword: SolidityKeyword<'arena> = {
+
+        <l:@L> L_SolidityKeyword_Unreserved <r:@L> => new_solidity_keyword(arena, <>, source),
+
+};
+#[inline]
+StaticKeyword: StaticKeyword<'arena> = {
+
+        <l:@L> L_StaticKeyword_Reserved <r:@L> => new_static_keyword(arena, <>, source),
+
+};
+#[inline]
+StorageKeyword: StorageKeyword<'arena> = {
+
+        <l:@L> L_StorageKeyword_Reserved <r:@L> => new_storage_keyword(arena, <>, source),
+
+};
+#[inline]
+StringKeyword: StringKeyword<'arena> = {
+
+        <l:@L> L_StringKeyword_Reserved <r:@L> => new_string_keyword(arena, <>, source),
+
+};
+#[inline]
+StructKeyword: StructKeyword<'arena> = {
+
+        <l:@L> L_StructKeyword_Reserved <r:@L> => new_struct_keyword(arena, <>, source),
+
+};
+#[inline]
+SuperKeyword: SuperKeyword<'arena> = {
+
+        <l:@L> L_SuperKeyword_Reserved <r:@L> => new_super_keyword(arena, <>, source),
+
+};
+#[inline]
+SupportsKeyword: SupportsKeyword<'arena> = {
+
+        <l:@L> L_SupportsKeyword_Reserved <r:@L> => new_supports_keyword(arena, <>, source),
+
+};
+#[inline]
+SwitchKeyword: SwitchKeyword<'arena> = {
+
+        <l:@L> L_SwitchKeyword_Reserved <r:@L> => new_switch_keyword(arena, <>, source),
+
+};
+#[inline]
+SzaboKeyword: SzaboKeyword<'arena> = {
+
+        <l:@L> L_SzaboKeyword_Unreserved <r:@L> => new_szabo_keyword(arena, <>, source),
+
+};
+#[inline]
+ThisKeyword: ThisKeyword<'arena> = {
+
+        <l:@L> L_ThisKeyword_Reserved <r:@L> => new_this_keyword(arena, <>, source),
+
+};
+#[inline]
+ThrowKeyword: ThrowKeyword<'arena> = {
+
+        <l:@L> L_ThrowKeyword_Reserved <r:@L> => new_throw_keyword(arena, <>, source),
+
+};
+#[inline]
+Tilde: Tilde<'arena> = {
+
+        <l:@L> L_Tilde <r:@L> => new_tilde(arena, <>, source),
+
+};
+#[inline]
+TransientKeyword: TransientKeyword<'arena> = {
+
+        <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_transient_keyword(arena, <>, source),
+
+};
+#[inline]
+TrueKeyword: TrueKeyword<'arena> = {
+
+        <l:@L> L_TrueKeyword_Reserved <r:@L> => new_true_keyword(arena, <>, source),
+
+};
+#[inline]
+TryKeyword: TryKeyword<'arena> = {
+
+        <l:@L> L_TryKeyword_Reserved <r:@L> => new_try_keyword(arena, <>, source),
+
+};
+#[inline]
+TypeDefKeyword: TypeDefKeyword<'arena> = {
+
+        <l:@L> L_TypeDefKeyword_Reserved <r:@L> => new_type_def_keyword(arena, <>, source),
+
+};
+#[inline]
+TypeKeyword: TypeKeyword<'arena> = {
+
+        <l:@L> L_TypeKeyword_Reserved <r:@L> => new_type_keyword(arena, <>, source),
+
+};
+#[inline]
+TypeOfKeyword: TypeOfKeyword<'arena> = {
+
+        <l:@L> L_TypeOfKeyword_Reserved <r:@L> => new_type_of_keyword(arena, <>, source),
+
+};
+#[inline]
+UfixedKeyword: UfixedKeyword<'arena> = {
+
+        <l:@L> L_UfixedKeyword_Reserved <r:@L> => new_ufixed_keyword(arena, <>, source),
+
+};
+#[inline]
+UintKeyword: UintKeyword<'arena> = {
+
+        <l:@L> L_UintKeyword_Reserved <r:@L> => new_uint_keyword(arena, <>, source),
+
+};
+#[inline]
+UncheckedKeyword: UncheckedKeyword<'arena> = {
+
+        <l:@L> L_UncheckedKeyword_Reserved <r:@L> => new_unchecked_keyword(arena, <>, source),
+
+};
+#[inline]
+UsingKeyword: UsingKeyword<'arena> = {
+
+        <l:@L> L_UsingKeyword_Reserved <r:@L> => new_using_keyword(arena, <>, source),
+
+};
+#[inline]
+VarKeyword: VarKeyword<'arena> = {
+
+        <l:@L> L_VarKeyword_Reserved <r:@L> => new_var_keyword(arena, <>, source),
+
+};
+#[inline]
+VersionSpecifier: VersionSpecifier<'arena> = {
+
+        <l:@L> L_VersionSpecifier <r:@L> => new_version_specifier(arena, <>, source),
+
+};
+#[inline]
+ViewKeyword: ViewKeyword<'arena> = {
+
+        <l:@L> L_ViewKeyword_Reserved <r:@L> => new_view_keyword(arena, <>, source),
+
+};
+#[inline]
+VirtualKeyword: VirtualKeyword<'arena> = {
+
+        <l:@L> L_VirtualKeyword_Reserved <r:@L> => new_virtual_keyword(arena, <>, source),
+
+};
+#[inline]
+WeeksKeyword: WeeksKeyword<'arena> = {
+
+        <l:@L> L_WeeksKeyword_Reserved <r:@L> => new_weeks_keyword(arena, <>, source),
+
+};
+#[inline]
+WeiKeyword: WeiKeyword<'arena> = {
+
+        <l:@L> L_WeiKeyword_Reserved <r:@L> => new_wei_keyword(arena, <>, source),
+
+};
+#[inline]
+WhileKeyword: WhileKeyword<'arena> = {
+
+        <l:@L> L_WhileKeyword_Reserved <r:@L> => new_while_keyword(arena, <>, source),
+
+};
+#[inline]
+Whitespace: Whitespace<'arena> = {
+
+        <l:@L> L_Whitespace <r:@L> => new_whitespace(arena, <>, source),
+
+};
+#[inline]
+YearsKeyword: YearsKeyword<'arena> = {
+
+        <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword(arena, <>, source),
+
+};
+#[inline]
+YulAbstractKeyword: YulAbstractKeyword<'arena> = {
+
+        <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_abstract_keyword(arena, <>, source),
+
+};
+#[inline]
+YulAfterKeyword: YulAfterKeyword<'arena> = {
+
+        <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_yul_after_keyword(arena, <>, source),
+
+};
+#[inline]
+YulAliasKeyword: YulAliasKeyword<'arena> = {
+
+        <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_yul_alias_keyword(arena, <>, source),
+
+};
+#[inline]
+YulAnonymousKeyword: YulAnonymousKeyword<'arena> = {
+
+        <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_yul_anonymous_keyword(arena, <>, source),
+
+};
+#[inline]
+YulApplyKeyword: YulApplyKeyword<'arena> = {
+
+        <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_yul_apply_keyword(arena, <>, source),
+
+};
+#[inline]
+YulAsKeyword: YulAsKeyword<'arena> = {
+
+        <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_yul_as_keyword(arena, <>, source),
+
+};
+#[inline]
+YulAssemblyKeyword: YulAssemblyKeyword<'arena> = {
+
+        <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_yul_assembly_keyword(arena, <>, source),
+
+};
+#[inline]
+YulAutoKeyword: YulAutoKeyword<'arena> = {
+
+        <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_yul_auto_keyword(arena, <>, source),
+
+};
+#[inline]
+YulBoolKeyword: YulBoolKeyword<'arena> = {
+
+        <l:@L> L_YulBoolKeyword_Unreserved <r:@L> => new_yul_bool_keyword(arena, <>, source),
+
+};
+#[inline]
+YulBreakKeyword: YulBreakKeyword<'arena> = {
+
+        <l:@L> L_YulBreakKeyword_Reserved <r:@L> => new_yul_break_keyword(arena, <>, source),
+
+};
+#[inline]
+YulBytesKeyword: YulBytesKeyword<'arena> = {
+
+        <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_yul_bytes_keyword(arena, <>, source),
+
+};
+#[inline]
+YulCallDataKeyword: YulCallDataKeyword<'arena> = {
+
+        <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_yul_call_data_keyword(arena, <>, source),
+
+};
+#[inline]
+YulCaseKeyword: YulCaseKeyword<'arena> = {
+
+        <l:@L> L_YulCaseKeyword_Reserved <r:@L> => new_yul_case_keyword(arena, <>, source),
+
+};
+#[inline]
+YulCatchKeyword: YulCatchKeyword<'arena> = {
+
+        <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_yul_catch_keyword(arena, <>, source),
+
+};
+#[inline]
+YulConstantKeyword: YulConstantKeyword<'arena> = {
+
+        <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_yul_constant_keyword(arena, <>, source),
+
+};
+#[inline]
+YulConstructorKeyword: YulConstructorKeyword<'arena> = {
+
+        <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_yul_constructor_keyword(arena, <>, source),
+
+};
+#[inline]
+YulContinueKeyword: YulContinueKeyword<'arena> = {
+
+        <l:@L> L_YulContinueKeyword_Reserved <r:@L> => new_yul_continue_keyword(arena, <>, source),
+
+};
+#[inline]
+YulContractKeyword: YulContractKeyword<'arena> = {
+
+        <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_yul_contract_keyword(arena, <>, source),
+
+};
+#[inline]
+YulCopyOfKeyword: YulCopyOfKeyword<'arena> = {
+
+        <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_yul_copy_of_keyword(arena, <>, source),
+
+};
+#[inline]
+YulDaysKeyword: YulDaysKeyword<'arena> = {
+
+        <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_yul_days_keyword(arena, <>, source),
+
+};
+#[inline]
+YulDecimalLiteral: YulDecimalLiteral<'arena> = {
+
+        <l:@L> L_YulDecimalLiteral <r:@L> => new_yul_decimal_literal(arena, <>, source),
+
+};
+#[inline]
+YulDefaultKeyword: YulDefaultKeyword<'arena> = {
+
+        <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword(arena, <>, source),
+
+};
+#[inline]
+YulDefineKeyword: YulDefineKeyword<'arena> = {
+
+        <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_yul_define_keyword(arena, <>, source),
+
+};
+#[inline]
+YulDeleteKeyword: YulDeleteKeyword<'arena> = {
+
+        <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_yul_delete_keyword(arena, <>, source),
+
+};
+#[inline]
+YulDoKeyword: YulDoKeyword<'arena> = {
+
+        <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_yul_do_keyword(arena, <>, source),
+
+};
+#[inline]
+YulElseKeyword: YulElseKeyword<'arena> = {
+
+        <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_yul_else_keyword(arena, <>, source),
+
+};
+#[inline]
+YulEmitKeyword: YulEmitKeyword<'arena> = {
+
+        <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_yul_emit_keyword(arena, <>, source),
+
+};
+#[inline]
+YulEnumKeyword: YulEnumKeyword<'arena> = {
+
+        <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_yul_enum_keyword(arena, <>, source),
+
+};
+#[inline]
+YulEtherKeyword: YulEtherKeyword<'arena> = {
+
+        <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_yul_ether_keyword(arena, <>, source),
+
+};
+#[inline]
+YulEventKeyword: YulEventKeyword<'arena> = {
+
+        <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_yul_event_keyword(arena, <>, source),
+
+};
+#[inline]
+YulExternalKeyword: YulExternalKeyword<'arena> = {
+
+        <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_yul_external_keyword(arena, <>, source),
+
+};
+#[inline]
+YulFallbackKeyword: YulFallbackKeyword<'arena> = {
+
+        <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_yul_fallback_keyword(arena, <>, source),
+
+};
+#[inline]
+YulFalseKeyword: YulFalseKeyword<'arena> = {
+
+        <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(arena, <>, source),
+
+};
+#[inline]
+YulFinalKeyword: YulFinalKeyword<'arena> = {
+
+        <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_yul_final_keyword(arena, <>, source),
+
+};
+#[inline]
+YulFinneyKeyword: YulFinneyKeyword<'arena> = {
+
+        <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_yul_finney_keyword(arena, <>, source),
+
+};
+#[inline]
+YulFixedKeyword: YulFixedKeyword<'arena> = {
+
+        <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_yul_fixed_keyword(arena, <>, source),
+
+};
+#[inline]
+YulForKeyword: YulForKeyword<'arena> = {
+
+        <l:@L> L_YulForKeyword_Reserved <r:@L> => new_yul_for_keyword(arena, <>, source),
+
+};
+#[inline]
+YulFunctionKeyword: YulFunctionKeyword<'arena> = {
+
+        <l:@L> L_YulFunctionKeyword_Reserved <r:@L> => new_yul_function_keyword(arena, <>, source),
+
+};
+#[inline]
+YulGweiKeyword: YulGweiKeyword<'arena> = {
+
+        <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_yul_gwei_keyword(arena, <>, source),
+
+};
+#[inline]
+YulHexKeyword: YulHexKeyword<'arena> = {
+
+        <l:@L> L_YulHexKeyword_Reserved <r:@L> => new_yul_hex_keyword(arena, <>, source),
+
+};
+#[inline]
+YulHexLiteral: YulHexLiteral<'arena> = {
+
+        <l:@L> L_YulHexLiteral <r:@L> => new_yul_hex_literal(arena, <>, source),
+
+};
+#[inline]
+YulHoursKeyword: YulHoursKeyword<'arena> = {
+
+        <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_hours_keyword(arena, <>, source),
+
+};
+#[inline]
+YulIdentifier: YulIdentifier<'arena> = {
+
+        <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulBoolKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulIdentifier <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+};
+#[inline]
+YulIfKeyword: YulIfKeyword<'arena> = {
+
+        <l:@L> L_YulIfKeyword_Reserved <r:@L> => new_yul_if_keyword(arena, <>, source),
+
+};
+#[inline]
+YulImmutableKeyword: YulImmutableKeyword<'arena> = {
+
+        <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_yul_immutable_keyword(arena, <>, source),
+
+};
+#[inline]
+YulImplementsKeyword: YulImplementsKeyword<'arena> = {
+
+        <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_yul_implements_keyword(arena, <>, source),
+
+};
+#[inline]
+YulImportKeyword: YulImportKeyword<'arena> = {
+
+        <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_yul_import_keyword(arena, <>, source),
+
+};
+#[inline]
+YulInKeyword: YulInKeyword<'arena> = {
+
+        <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_yul_in_keyword(arena, <>, source),
+
+};
+#[inline]
+YulIndexedKeyword: YulIndexedKeyword<'arena> = {
+
+        <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_yul_indexed_keyword(arena, <>, source),
+
+};
+#[inline]
+YulInlineKeyword: YulInlineKeyword<'arena> = {
+
+        <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_yul_inline_keyword(arena, <>, source),
+
+};
+#[inline]
+YulIntKeyword: YulIntKeyword<'arena> = {
+
+        <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_yul_int_keyword(arena, <>, source),
+
+};
+#[inline]
+YulInterfaceKeyword: YulInterfaceKeyword<'arena> = {
+
+        <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_yul_interface_keyword(arena, <>, source),
+
+};
+#[inline]
+YulInternalKeyword: YulInternalKeyword<'arena> = {
+
+        <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_yul_internal_keyword(arena, <>, source),
+
+};
+#[inline]
+YulIsKeyword: YulIsKeyword<'arena> = {
+
+        <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_is_keyword(arena, <>, source),
+
+};
+#[inline]
+YulLeaveKeyword: YulLeaveKeyword<'arena> = {
+
+        <l:@L> L_YulLeaveKeyword_Reserved <r:@L> => new_yul_leave_keyword(arena, <>, source),
+
+};
+#[inline]
+YulLetKeyword: YulLetKeyword<'arena> = {
+
+        <l:@L> L_YulLetKeyword_Reserved <r:@L> => new_yul_let_keyword(arena, <>, source),
+
+};
+#[inline]
+YulLibraryKeyword: YulLibraryKeyword<'arena> = {
+
+        <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_library_keyword(arena, <>, source),
+
+};
+#[inline]
+YulMacroKeyword: YulMacroKeyword<'arena> = {
+
+        <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_macro_keyword(arena, <>, source),
+
+};
+#[inline]
+YulMappingKeyword: YulMappingKeyword<'arena> = {
+
+        <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_yul_mapping_keyword(arena, <>, source),
+
+};
+#[inline]
+YulMatchKeyword: YulMatchKeyword<'arena> = {
+
+        <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_yul_match_keyword(arena, <>, source),
+
+};
+#[inline]
+YulMemoryKeyword: YulMemoryKeyword<'arena> = {
+
+        <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_yul_memory_keyword(arena, <>, source),
+
+};
+#[inline]
+YulMinutesKeyword: YulMinutesKeyword<'arena> = {
+
+        <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_yul_minutes_keyword(arena, <>, source),
+
+};
+#[inline]
+YulModifierKeyword: YulModifierKeyword<'arena> = {
+
+        <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_yul_modifier_keyword(arena, <>, source),
+
+};
+#[inline]
+YulMutableKeyword: YulMutableKeyword<'arena> = {
+
+        <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_yul_mutable_keyword(arena, <>, source),
+
+};
+#[inline]
+YulNewKeyword: YulNewKeyword<'arena> = {
+
+        <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_yul_new_keyword(arena, <>, source),
+
+};
+#[inline]
+YulNullKeyword: YulNullKeyword<'arena> = {
+
+        <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_yul_null_keyword(arena, <>, source),
+
+};
+#[inline]
+YulOfKeyword: YulOfKeyword<'arena> = {
+
+        <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_yul_of_keyword(arena, <>, source),
+
+};
+#[inline]
+YulOverrideKeyword: YulOverrideKeyword<'arena> = {
+
+        <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_yul_override_keyword(arena, <>, source),
+
+};
+#[inline]
+YulPartialKeyword: YulPartialKeyword<'arena> = {
+
+        <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_yul_partial_keyword(arena, <>, source),
+
+};
+#[inline]
+YulPayableKeyword: YulPayableKeyword<'arena> = {
+
+        <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_yul_payable_keyword(arena, <>, source),
+
+};
+#[inline]
+YulPragmaKeyword: YulPragmaKeyword<'arena> = {
+
+        <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_yul_pragma_keyword(arena, <>, source),
+
+};
+#[inline]
+YulPrivateKeyword: YulPrivateKeyword<'arena> = {
+
+        <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_yul_private_keyword(arena, <>, source),
+
+};
+#[inline]
+YulPromiseKeyword: YulPromiseKeyword<'arena> = {
+
+        <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_yul_promise_keyword(arena, <>, source),
+
+};
+#[inline]
+YulPublicKeyword: YulPublicKeyword<'arena> = {
+
+        <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_yul_public_keyword(arena, <>, source),
+
+};
+#[inline]
+YulPureKeyword: YulPureKeyword<'arena> = {
+
+        <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_yul_pure_keyword(arena, <>, source),
+
+};
+#[inline]
+YulReceiveKeyword: YulReceiveKeyword<'arena> = {
+
+        <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_yul_receive_keyword(arena, <>, source),
+
+};
+#[inline]
+YulReferenceKeyword: YulReferenceKeyword<'arena> = {
+
+        <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_yul_reference_keyword(arena, <>, source),
+
+};
+#[inline]
+YulRelocatableKeyword: YulRelocatableKeyword<'arena> = {
+
+        <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_yul_relocatable_keyword(arena, <>, source),
+
+};
+#[inline]
+YulReturnsKeyword: YulReturnsKeyword<'arena> = {
+
+        <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_yul_returns_keyword(arena, <>, source),
+
+};
+#[inline]
+YulSealedKeyword: YulSealedKeyword<'arena> = {
+
+        <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_yul_sealed_keyword(arena, <>, source),
+
+};
+#[inline]
+YulSecondsKeyword: YulSecondsKeyword<'arena> = {
+
+        <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_yul_seconds_keyword(arena, <>, source),
+
+};
+#[inline]
+YulSizeOfKeyword: YulSizeOfKeyword<'arena> = {
+
+        <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_yul_size_of_keyword(arena, <>, source),
+
+};
+#[inline]
+YulStaticKeyword: YulStaticKeyword<'arena> = {
+
+        <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_yul_static_keyword(arena, <>, source),
+
+};
+#[inline]
+YulStorageKeyword: YulStorageKeyword<'arena> = {
+
+        <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_yul_storage_keyword(arena, <>, source),
+
+};
+#[inline]
+YulStringKeyword: YulStringKeyword<'arena> = {
+
+        <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_yul_string_keyword(arena, <>, source),
+
+};
+#[inline]
+YulStructKeyword: YulStructKeyword<'arena> = {
+
+        <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_struct_keyword(arena, <>, source),
+
+};
+#[inline]
+YulSuperKeyword: YulSuperKeyword<'arena> = {
+
+        <l:@L> L_YulSuperKeyword_Reserved <r:@L> => new_yul_super_keyword(arena, <>, source),
+
+};
+#[inline]
+YulSupportsKeyword: YulSupportsKeyword<'arena> = {
+
+        <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_supports_keyword(arena, <>, source),
+
+};
+#[inline]
+YulSwitchKeyword: YulSwitchKeyword<'arena> = {
+
+        <l:@L> L_YulSwitchKeyword_Reserved <r:@L> => new_yul_switch_keyword(arena, <>, source),
+
+};
+#[inline]
+YulSzaboKeyword: YulSzaboKeyword<'arena> = {
+
+        <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_szabo_keyword(arena, <>, source),
+
+};
+#[inline]
+YulThisKeyword: YulThisKeyword<'arena> = {
+
+        <l:@L> L_YulThisKeyword_Reserved <r:@L> => new_yul_this_keyword(arena, <>, source),
+
+};
+#[inline]
+YulThrowKeyword: YulThrowKeyword<'arena> = {
+
+        <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_throw_keyword(arena, <>, source),
+
+};
+#[inline]
+YulTrueKeyword: YulTrueKeyword<'arena> = {
+
+        <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(arena, <>, source),
+
+};
+#[inline]
+YulTryKeyword: YulTryKeyword<'arena> = {
+
+        <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_yul_try_keyword(arena, <>, source),
+
+};
+#[inline]
+YulTypeDefKeyword: YulTypeDefKeyword<'arena> = {
+
+        <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_yul_type_def_keyword(arena, <>, source),
+
+};
+#[inline]
+YulTypeKeyword: YulTypeKeyword<'arena> = {
+
+        <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_yul_type_keyword(arena, <>, source),
+
+};
+#[inline]
+YulTypeOfKeyword: YulTypeOfKeyword<'arena> = {
+
+        <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_yul_type_of_keyword(arena, <>, source),
+
+};
+#[inline]
+YulUfixedKeyword: YulUfixedKeyword<'arena> = {
+
+        <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_yul_ufixed_keyword(arena, <>, source),
+
+};
+#[inline]
+YulUintKeyword: YulUintKeyword<'arena> = {
+
+        <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_yul_uint_keyword(arena, <>, source),
+
+};
+#[inline]
+YulUncheckedKeyword: YulUncheckedKeyword<'arena> = {
+
+        <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_yul_unchecked_keyword(arena, <>, source),
+
+};
+#[inline]
+YulUsingKeyword: YulUsingKeyword<'arena> = {
+
+        <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_yul_using_keyword(arena, <>, source),
+
+};
+#[inline]
+YulVarKeyword: YulVarKeyword<'arena> = {
+
+        <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_yul_var_keyword(arena, <>, source),
+
+};
+#[inline]
+YulViewKeyword: YulViewKeyword<'arena> = {
+
+        <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_yul_view_keyword(arena, <>, source),
+
+};
+#[inline]
+YulVirtualKeyword: YulVirtualKeyword<'arena> = {
+
+        <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_yul_virtual_keyword(arena, <>, source),
+
+};
+#[inline]
+YulWeeksKeyword: YulWeeksKeyword<'arena> = {
+
+        <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_yul_weeks_keyword(arena, <>, source),
+
+};
+#[inline]
+YulWeiKeyword: YulWeiKeyword<'arena> = {
+
+        <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_yul_wei_keyword(arena, <>, source),
+
+};
+#[inline]
+YulWhileKeyword: YulWhileKeyword<'arena> = {
+
+        <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_yul_while_keyword(arena, <>, source),
+
+};
+#[inline]
+YulYearsKeyword: YulYearsKeyword<'arena> = {
+
+        <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_yul_years_keyword(arena, <>, source),
+
+};
+
+
+
+extern {
+    type Location = usize;
+    // TODO(v2): error recovery
+    type Error = ();
+
+    enum lexemes::LexemeKind {
+        L_ABIEncoderV2Keyword_Unreserved => lexemes::LexemeKind::ABIEncoderV2Keyword_Unreserved,
+        L_AbicoderKeyword_Unreserved => lexemes::LexemeKind::AbicoderKeyword_Unreserved,
+        L_AbicoderV1Keyword_Unreserved => lexemes::LexemeKind::AbicoderV1Keyword_Unreserved,
+        L_AbicoderV2Keyword_Unreserved => lexemes::LexemeKind::AbicoderV2Keyword_Unreserved,
+        L_AbstractKeyword_Reserved => lexemes::LexemeKind::AbstractKeyword_Reserved,
+        L_AddressKeyword_Reserved => lexemes::LexemeKind::AddressKeyword_Reserved,
+        L_AfterKeyword_Reserved => lexemes::LexemeKind::AfterKeyword_Reserved,
+        L_AliasKeyword_Reserved => lexemes::LexemeKind::AliasKeyword_Reserved,
+        L_AliasKeyword_Unreserved => lexemes::LexemeKind::AliasKeyword_Unreserved,
+        L_Ampersand => lexemes::LexemeKind::Ampersand,
+        L_AmpersandAmpersand => lexemes::LexemeKind::AmpersandAmpersand,
+        L_AmpersandEqual => lexemes::LexemeKind::AmpersandEqual,
+        L_AnonymousKeyword_Reserved => lexemes::LexemeKind::AnonymousKeyword_Reserved,
+        L_ApplyKeyword_Reserved => lexemes::LexemeKind::ApplyKeyword_Reserved,
+        L_ApplyKeyword_Unreserved => lexemes::LexemeKind::ApplyKeyword_Unreserved,
+        L_AsKeyword_Reserved => lexemes::LexemeKind::AsKeyword_Reserved,
+        L_AssemblyKeyword_Reserved => lexemes::LexemeKind::AssemblyKeyword_Reserved,
+        L_Asterisk => lexemes::LexemeKind::Asterisk,
+        L_AsteriskAsterisk => lexemes::LexemeKind::AsteriskAsterisk,
+        L_AsteriskEqual => lexemes::LexemeKind::AsteriskEqual,
+        L_AtKeyword_Unreserved => lexemes::LexemeKind::AtKeyword_Unreserved,
+        L_AutoKeyword_Reserved => lexemes::LexemeKind::AutoKeyword_Reserved,
+        L_AutoKeyword_Unreserved => lexemes::LexemeKind::AutoKeyword_Unreserved,
+        L_Bang => lexemes::LexemeKind::Bang,
+        L_BangEqual => lexemes::LexemeKind::BangEqual,
+        L_Bar => lexemes::LexemeKind::Bar,
+        L_BarBar => lexemes::LexemeKind::BarBar,
+        L_BarEqual => lexemes::LexemeKind::BarEqual,
+        L_BoolKeyword_Reserved => lexemes::LexemeKind::BoolKeyword_Reserved,
+        L_BreakKeyword_Reserved => lexemes::LexemeKind::BreakKeyword_Reserved,
+        L_ByteKeyword_Reserved => lexemes::LexemeKind::ByteKeyword_Reserved,
+        L_BytesKeyword_Reserved => lexemes::LexemeKind::BytesKeyword_Reserved,
+        L_CallDataKeyword_Reserved => lexemes::LexemeKind::CallDataKeyword_Reserved,
+        L_CallDataKeyword_Unreserved => lexemes::LexemeKind::CallDataKeyword_Unreserved,
+        L_Caret => lexemes::LexemeKind::Caret,
+        L_CaretEqual => lexemes::LexemeKind::CaretEqual,
+        L_CaseKeyword_Reserved => lexemes::LexemeKind::CaseKeyword_Reserved,
+        L_CatchKeyword_Reserved => lexemes::LexemeKind::CatchKeyword_Reserved,
+        L_CloseBrace => lexemes::LexemeKind::CloseBrace,
+        L_CloseBracket => lexemes::LexemeKind::CloseBracket,
+        L_CloseParen => lexemes::LexemeKind::CloseParen,
+        L_Colon => lexemes::LexemeKind::Colon,
+        L_ColonEqual => lexemes::LexemeKind::ColonEqual,
+        L_Comma => lexemes::LexemeKind::Comma,
+        L_ConstantKeyword_Reserved => lexemes::LexemeKind::ConstantKeyword_Reserved,
+        L_ConstructorKeyword_Reserved => lexemes::LexemeKind::ConstructorKeyword_Reserved,
+        L_ConstructorKeyword_Unreserved => lexemes::LexemeKind::ConstructorKeyword_Unreserved,
+        L_ContinueKeyword_Reserved => lexemes::LexemeKind::ContinueKeyword_Reserved,
+        L_ContractKeyword_Reserved => lexemes::LexemeKind::ContractKeyword_Reserved,
+        L_CopyOfKeyword_Reserved => lexemes::LexemeKind::CopyOfKeyword_Reserved,
+        L_CopyOfKeyword_Unreserved => lexemes::LexemeKind::CopyOfKeyword_Unreserved,
+        L_DaysKeyword_Reserved => lexemes::LexemeKind::DaysKeyword_Reserved,
+        L_DecimalLiteral => lexemes::LexemeKind::DecimalLiteral,
+        L_DefaultKeyword_Reserved => lexemes::LexemeKind::DefaultKeyword_Reserved,
+        L_DefineKeyword_Reserved => lexemes::LexemeKind::DefineKeyword_Reserved,
+        L_DefineKeyword_Unreserved => lexemes::LexemeKind::DefineKeyword_Unreserved,
+        L_DeleteKeyword_Reserved => lexemes::LexemeKind::DeleteKeyword_Reserved,
+        L_DoKeyword_Reserved => lexemes::LexemeKind::DoKeyword_Reserved,
+        L_DoubleQuotedHexStringLiteral => lexemes::LexemeKind::DoubleQuotedHexStringLiteral,
+        L_DoubleQuotedStringLiteral => lexemes::LexemeKind::DoubleQuotedStringLiteral,
+        L_DoubleQuotedUnicodeStringLiteral => lexemes::LexemeKind::DoubleQuotedUnicodeStringLiteral,
+        L_DoubleQuotedVersionLiteral => lexemes::LexemeKind::DoubleQuotedVersionLiteral,
+        L_ElseKeyword_Reserved => lexemes::LexemeKind::ElseKeyword_Reserved,
+        L_EmitKeyword_Reserved => lexemes::LexemeKind::EmitKeyword_Reserved,
+        L_EmitKeyword_Unreserved => lexemes::LexemeKind::EmitKeyword_Unreserved,
+        L_EndOfLine => lexemes::LexemeKind::EndOfLine,
+        L_EnumKeyword_Reserved => lexemes::LexemeKind::EnumKeyword_Reserved,
+        L_Equal => lexemes::LexemeKind::Equal,
+        L_EqualColon => lexemes::LexemeKind::EqualColon,
+        L_EqualEqual => lexemes::LexemeKind::EqualEqual,
+        L_EqualGreaterThan => lexemes::LexemeKind::EqualGreaterThan,
+        L_ErrorKeyword_Unreserved => lexemes::LexemeKind::ErrorKeyword_Unreserved,
+        L_EtherKeyword_Reserved => lexemes::LexemeKind::EtherKeyword_Reserved,
+        L_EventKeyword_Reserved => lexemes::LexemeKind::EventKeyword_Reserved,
+        L_ExperimentalKeyword_Unreserved => lexemes::LexemeKind::ExperimentalKeyword_Unreserved,
+        L_ExternalKeyword_Reserved => lexemes::LexemeKind::ExternalKeyword_Reserved,
+        L_FallbackKeyword_Reserved => lexemes::LexemeKind::FallbackKeyword_Reserved,
+        L_FallbackKeyword_Unreserved => lexemes::LexemeKind::FallbackKeyword_Unreserved,
+        L_FalseKeyword_Reserved => lexemes::LexemeKind::FalseKeyword_Reserved,
+        L_FinalKeyword_Reserved => lexemes::LexemeKind::FinalKeyword_Reserved,
+        L_FinneyKeyword_Reserved => lexemes::LexemeKind::FinneyKeyword_Reserved,
+        L_FinneyKeyword_Unreserved => lexemes::LexemeKind::FinneyKeyword_Unreserved,
+        L_FixedKeyword_Reserved => lexemes::LexemeKind::FixedKeyword_Reserved,
+        L_FixedKeyword_Unreserved => lexemes::LexemeKind::FixedKeyword_Unreserved,
+        L_ForKeyword_Reserved => lexemes::LexemeKind::ForKeyword_Reserved,
+        L_FromKeyword_Unreserved => lexemes::LexemeKind::FromKeyword_Unreserved,
+        L_FunctionKeyword_Reserved => lexemes::LexemeKind::FunctionKeyword_Reserved,
+        L_GlobalKeyword_Unreserved => lexemes::LexemeKind::GlobalKeyword_Unreserved,
+        L_GreaterThan => lexemes::LexemeKind::GreaterThan,
+        L_GreaterThanEqual => lexemes::LexemeKind::GreaterThanEqual,
+        L_GreaterThanGreaterThan => lexemes::LexemeKind::GreaterThanGreaterThan,
+        L_GreaterThanGreaterThanEqual => lexemes::LexemeKind::GreaterThanGreaterThanEqual,
+        L_GreaterThanGreaterThanGreaterThan => lexemes::LexemeKind::GreaterThanGreaterThanGreaterThan,
+        L_GreaterThanGreaterThanGreaterThanEqual => lexemes::LexemeKind::GreaterThanGreaterThanGreaterThanEqual,
+        L_GweiKeyword_Reserved => lexemes::LexemeKind::GweiKeyword_Reserved,
+        L_GweiKeyword_Unreserved => lexemes::LexemeKind::GweiKeyword_Unreserved,
+        L_HexKeyword_Reserved => lexemes::LexemeKind::HexKeyword_Reserved,
+        L_HexLiteral => lexemes::LexemeKind::HexLiteral,
+        L_HoursKeyword_Reserved => lexemes::LexemeKind::HoursKeyword_Reserved,
+        L_Identifier => lexemes::LexemeKind::Identifier,
+        L_IfKeyword_Reserved => lexemes::LexemeKind::IfKeyword_Reserved,
+        L_ImmutableKeyword_Reserved => lexemes::LexemeKind::ImmutableKeyword_Reserved,
+        L_ImmutableKeyword_Unreserved => lexemes::LexemeKind::ImmutableKeyword_Unreserved,
+        L_ImplementsKeyword_Reserved => lexemes::LexemeKind::ImplementsKeyword_Reserved,
+        L_ImplementsKeyword_Unreserved => lexemes::LexemeKind::ImplementsKeyword_Unreserved,
+        L_ImportKeyword_Reserved => lexemes::LexemeKind::ImportKeyword_Reserved,
+        L_InKeyword_Reserved => lexemes::LexemeKind::InKeyword_Reserved,
+        L_IndexedKeyword_Reserved => lexemes::LexemeKind::IndexedKeyword_Reserved,
+        L_InlineKeyword_Reserved => lexemes::LexemeKind::InlineKeyword_Reserved,
+        L_IntKeyword_Reserved => lexemes::LexemeKind::IntKeyword_Reserved,
+        L_InterfaceKeyword_Reserved => lexemes::LexemeKind::InterfaceKeyword_Reserved,
+        L_InternalKeyword_Reserved => lexemes::LexemeKind::InternalKeyword_Reserved,
+        L_IsKeyword_Reserved => lexemes::LexemeKind::IsKeyword_Reserved,
+        L_LayoutKeyword_Unreserved => lexemes::LexemeKind::LayoutKeyword_Unreserved,
+        L_LessThan => lexemes::LexemeKind::LessThan,
+        L_LessThanEqual => lexemes::LexemeKind::LessThanEqual,
+        L_LessThanLessThan => lexemes::LexemeKind::LessThanLessThan,
+        L_LessThanLessThanEqual => lexemes::LexemeKind::LessThanLessThanEqual,
+        L_LetKeyword_Reserved => lexemes::LexemeKind::LetKeyword_Reserved,
+        L_LibraryKeyword_Reserved => lexemes::LexemeKind::LibraryKeyword_Reserved,
+        L_MacroKeyword_Reserved => lexemes::LexemeKind::MacroKeyword_Reserved,
+        L_MacroKeyword_Unreserved => lexemes::LexemeKind::MacroKeyword_Unreserved,
+        L_MappingKeyword_Reserved => lexemes::LexemeKind::MappingKeyword_Reserved,
+        L_MatchKeyword_Reserved => lexemes::LexemeKind::MatchKeyword_Reserved,
+        L_MemoryKeyword_Reserved => lexemes::LexemeKind::MemoryKeyword_Reserved,
+        L_Minus => lexemes::LexemeKind::Minus,
+        L_MinusEqual => lexemes::LexemeKind::MinusEqual,
+        L_MinusGreaterThan => lexemes::LexemeKind::MinusGreaterThan,
+        L_MinusMinus => lexemes::LexemeKind::MinusMinus,
+        L_MinutesKeyword_Reserved => lexemes::LexemeKind::MinutesKeyword_Reserved,
+        L_ModifierKeyword_Reserved => lexemes::LexemeKind::ModifierKeyword_Reserved,
+        L_MultiLineComment => lexemes::LexemeKind::MultiLineComment,
+        L_MultiLineNatSpecComment => lexemes::LexemeKind::MultiLineNatSpecComment,
+        L_MutableKeyword_Reserved => lexemes::LexemeKind::MutableKeyword_Reserved,
+        L_MutableKeyword_Unreserved => lexemes::LexemeKind::MutableKeyword_Unreserved,
+        L_NewKeyword_Reserved => lexemes::LexemeKind::NewKeyword_Reserved,
+        L_NullKeyword_Reserved => lexemes::LexemeKind::NullKeyword_Reserved,
+        L_OfKeyword_Reserved => lexemes::LexemeKind::OfKeyword_Reserved,
+        L_OpenBrace => lexemes::LexemeKind::OpenBrace,
+        L_OpenBracket => lexemes::LexemeKind::OpenBracket,
+        L_OpenParen => lexemes::LexemeKind::OpenParen,
+        L_OverrideKeyword_Reserved => lexemes::LexemeKind::OverrideKeyword_Reserved,
+        L_OverrideKeyword_Unreserved => lexemes::LexemeKind::OverrideKeyword_Unreserved,
+        L_PartialKeyword_Reserved => lexemes::LexemeKind::PartialKeyword_Reserved,
+        L_PartialKeyword_Unreserved => lexemes::LexemeKind::PartialKeyword_Unreserved,
+        L_PayableKeyword_Reserved => lexemes::LexemeKind::PayableKeyword_Reserved,
+        L_Percent => lexemes::LexemeKind::Percent,
+        L_PercentEqual => lexemes::LexemeKind::PercentEqual,
+        L_Period => lexemes::LexemeKind::Period,
+        L_Plus => lexemes::LexemeKind::Plus,
+        L_PlusEqual => lexemes::LexemeKind::PlusEqual,
+        L_PlusPlus => lexemes::LexemeKind::PlusPlus,
+        L_PragmaKeyword_Reserved => lexemes::LexemeKind::PragmaKeyword_Reserved,
+        L_PrivateKeyword_Reserved => lexemes::LexemeKind::PrivateKeyword_Reserved,
+        L_PromiseKeyword_Reserved => lexemes::LexemeKind::PromiseKeyword_Reserved,
+        L_PromiseKeyword_Unreserved => lexemes::LexemeKind::PromiseKeyword_Unreserved,
+        L_PublicKeyword_Reserved => lexemes::LexemeKind::PublicKeyword_Reserved,
+        L_PureKeyword_Reserved => lexemes::LexemeKind::PureKeyword_Reserved,
+        L_QuestionMark => lexemes::LexemeKind::QuestionMark,
+        L_ReceiveKeyword_Reserved => lexemes::LexemeKind::ReceiveKeyword_Reserved,
+        L_ReceiveKeyword_Unreserved => lexemes::LexemeKind::ReceiveKeyword_Unreserved,
+        L_ReferenceKeyword_Reserved => lexemes::LexemeKind::ReferenceKeyword_Reserved,
+        L_ReferenceKeyword_Unreserved => lexemes::LexemeKind::ReferenceKeyword_Unreserved,
+        L_RelocatableKeyword_Reserved => lexemes::LexemeKind::RelocatableKeyword_Reserved,
+        L_ReturnKeyword_Reserved => lexemes::LexemeKind::ReturnKeyword_Reserved,
+        L_ReturnsKeyword_Reserved => lexemes::LexemeKind::ReturnsKeyword_Reserved,
+        L_RevertKeyword_Unreserved => lexemes::LexemeKind::RevertKeyword_Unreserved,
+        L_SMTCheckerKeyword_Unreserved => lexemes::LexemeKind::SMTCheckerKeyword_Unreserved,
+        L_SealedKeyword_Reserved => lexemes::LexemeKind::SealedKeyword_Reserved,
+        L_SealedKeyword_Unreserved => lexemes::LexemeKind::SealedKeyword_Unreserved,
+        L_SecondsKeyword_Reserved => lexemes::LexemeKind::SecondsKeyword_Reserved,
+        L_Semicolon => lexemes::LexemeKind::Semicolon,
+        L_SingleLineComment => lexemes::LexemeKind::SingleLineComment,
+        L_SingleLineNatSpecComment => lexemes::LexemeKind::SingleLineNatSpecComment,
+        L_SingleQuotedHexStringLiteral => lexemes::LexemeKind::SingleQuotedHexStringLiteral,
+        L_SingleQuotedStringLiteral => lexemes::LexemeKind::SingleQuotedStringLiteral,
+        L_SingleQuotedUnicodeStringLiteral => lexemes::LexemeKind::SingleQuotedUnicodeStringLiteral,
+        L_SingleQuotedVersionLiteral => lexemes::LexemeKind::SingleQuotedVersionLiteral,
+        L_SizeOfKeyword_Reserved => lexemes::LexemeKind::SizeOfKeyword_Reserved,
+        L_SizeOfKeyword_Unreserved => lexemes::LexemeKind::SizeOfKeyword_Unreserved,
+        L_Slash => lexemes::LexemeKind::Slash,
+        L_SlashEqual => lexemes::LexemeKind::SlashEqual,
+        L_SolidityKeyword_Unreserved => lexemes::LexemeKind::SolidityKeyword_Unreserved,
+        L_StaticKeyword_Reserved => lexemes::LexemeKind::StaticKeyword_Reserved,
+        L_StorageKeyword_Reserved => lexemes::LexemeKind::StorageKeyword_Reserved,
+        L_StringKeyword_Reserved => lexemes::LexemeKind::StringKeyword_Reserved,
+        L_StructKeyword_Reserved => lexemes::LexemeKind::StructKeyword_Reserved,
+        L_SuperKeyword_Reserved => lexemes::LexemeKind::SuperKeyword_Reserved,
+        L_SuperKeyword_Unreserved => lexemes::LexemeKind::SuperKeyword_Unreserved,
+        L_SupportsKeyword_Reserved => lexemes::LexemeKind::SupportsKeyword_Reserved,
+        L_SupportsKeyword_Unreserved => lexemes::LexemeKind::SupportsKeyword_Unreserved,
+        L_SwitchKeyword_Reserved => lexemes::LexemeKind::SwitchKeyword_Reserved,
+        L_SzaboKeyword_Reserved => lexemes::LexemeKind::SzaboKeyword_Reserved,
+        L_SzaboKeyword_Unreserved => lexemes::LexemeKind::SzaboKeyword_Unreserved,
+        L_ThisKeyword_Reserved => lexemes::LexemeKind::ThisKeyword_Reserved,
+        L_ThisKeyword_Unreserved => lexemes::LexemeKind::ThisKeyword_Unreserved,
+        L_ThrowKeyword_Reserved => lexemes::LexemeKind::ThrowKeyword_Reserved,
+        L_Tilde => lexemes::LexemeKind::Tilde,
+        L_TransientKeyword_Unreserved => lexemes::LexemeKind::TransientKeyword_Unreserved,
+        L_TrueKeyword_Reserved => lexemes::LexemeKind::TrueKeyword_Reserved,
+        L_TryKeyword_Reserved => lexemes::LexemeKind::TryKeyword_Reserved,
+        L_TypeDefKeyword_Reserved => lexemes::LexemeKind::TypeDefKeyword_Reserved,
+        L_TypeDefKeyword_Unreserved => lexemes::LexemeKind::TypeDefKeyword_Unreserved,
+        L_TypeKeyword_Reserved => lexemes::LexemeKind::TypeKeyword_Reserved,
+        L_TypeOfKeyword_Reserved => lexemes::LexemeKind::TypeOfKeyword_Reserved,
+        L_UfixedKeyword_Reserved => lexemes::LexemeKind::UfixedKeyword_Reserved,
+        L_UfixedKeyword_Unreserved => lexemes::LexemeKind::UfixedKeyword_Unreserved,
+        L_UintKeyword_Reserved => lexemes::LexemeKind::UintKeyword_Reserved,
+        L_UncheckedKeyword_Reserved => lexemes::LexemeKind::UncheckedKeyword_Reserved,
+        L_UncheckedKeyword_Unreserved => lexemes::LexemeKind::UncheckedKeyword_Unreserved,
+        L_UsingKeyword_Reserved => lexemes::LexemeKind::UsingKeyword_Reserved,
+        L_VarKeyword_Reserved => lexemes::LexemeKind::VarKeyword_Reserved,
+        L_VersionSpecifier => lexemes::LexemeKind::VersionSpecifier,
+        L_ViewKeyword_Reserved => lexemes::LexemeKind::ViewKeyword_Reserved,
+        L_VirtualKeyword_Reserved => lexemes::LexemeKind::VirtualKeyword_Reserved,
+        L_VirtualKeyword_Unreserved => lexemes::LexemeKind::VirtualKeyword_Unreserved,
+        L_WeeksKeyword_Reserved => lexemes::LexemeKind::WeeksKeyword_Reserved,
+        L_WeiKeyword_Reserved => lexemes::LexemeKind::WeiKeyword_Reserved,
+        L_WhileKeyword_Reserved => lexemes::LexemeKind::WhileKeyword_Reserved,
+        L_Whitespace => lexemes::LexemeKind::Whitespace,
+        L_YearsKeyword_Reserved => lexemes::LexemeKind::YearsKeyword_Reserved,
+        L_YulAbstractKeyword_Reserved => lexemes::LexemeKind::YulAbstractKeyword_Reserved,
+        L_YulAbstractKeyword_Unreserved => lexemes::LexemeKind::YulAbstractKeyword_Unreserved,
+        L_YulAfterKeyword_Reserved => lexemes::LexemeKind::YulAfterKeyword_Reserved,
+        L_YulAfterKeyword_Unreserved => lexemes::LexemeKind::YulAfterKeyword_Unreserved,
+        L_YulAliasKeyword_Reserved => lexemes::LexemeKind::YulAliasKeyword_Reserved,
+        L_YulAliasKeyword_Unreserved => lexemes::LexemeKind::YulAliasKeyword_Unreserved,
+        L_YulAnonymousKeyword_Reserved => lexemes::LexemeKind::YulAnonymousKeyword_Reserved,
+        L_YulAnonymousKeyword_Unreserved => lexemes::LexemeKind::YulAnonymousKeyword_Unreserved,
+        L_YulApplyKeyword_Reserved => lexemes::LexemeKind::YulApplyKeyword_Reserved,
+        L_YulApplyKeyword_Unreserved => lexemes::LexemeKind::YulApplyKeyword_Unreserved,
+        L_YulAsKeyword_Reserved => lexemes::LexemeKind::YulAsKeyword_Reserved,
+        L_YulAsKeyword_Unreserved => lexemes::LexemeKind::YulAsKeyword_Unreserved,
+        L_YulAssemblyKeyword_Reserved => lexemes::LexemeKind::YulAssemblyKeyword_Reserved,
+        L_YulAssemblyKeyword_Unreserved => lexemes::LexemeKind::YulAssemblyKeyword_Unreserved,
+        L_YulAutoKeyword_Reserved => lexemes::LexemeKind::YulAutoKeyword_Reserved,
+        L_YulAutoKeyword_Unreserved => lexemes::LexemeKind::YulAutoKeyword_Unreserved,
+        L_YulBoolKeyword_Reserved => lexemes::LexemeKind::YulBoolKeyword_Reserved,
+        L_YulBoolKeyword_Unreserved => lexemes::LexemeKind::YulBoolKeyword_Unreserved,
+        L_YulBreakKeyword_Reserved => lexemes::LexemeKind::YulBreakKeyword_Reserved,
+        L_YulBytesKeyword_Reserved => lexemes::LexemeKind::YulBytesKeyword_Reserved,
+        L_YulBytesKeyword_Unreserved => lexemes::LexemeKind::YulBytesKeyword_Unreserved,
+        L_YulCallDataKeyword_Reserved => lexemes::LexemeKind::YulCallDataKeyword_Reserved,
+        L_YulCallDataKeyword_Unreserved => lexemes::LexemeKind::YulCallDataKeyword_Unreserved,
+        L_YulCaseKeyword_Reserved => lexemes::LexemeKind::YulCaseKeyword_Reserved,
+        L_YulCatchKeyword_Reserved => lexemes::LexemeKind::YulCatchKeyword_Reserved,
+        L_YulCatchKeyword_Unreserved => lexemes::LexemeKind::YulCatchKeyword_Unreserved,
+        L_YulConstantKeyword_Reserved => lexemes::LexemeKind::YulConstantKeyword_Reserved,
+        L_YulConstantKeyword_Unreserved => lexemes::LexemeKind::YulConstantKeyword_Unreserved,
+        L_YulConstructorKeyword_Reserved => lexemes::LexemeKind::YulConstructorKeyword_Reserved,
+        L_YulConstructorKeyword_Unreserved => lexemes::LexemeKind::YulConstructorKeyword_Unreserved,
+        L_YulContinueKeyword_Reserved => lexemes::LexemeKind::YulContinueKeyword_Reserved,
+        L_YulContractKeyword_Reserved => lexemes::LexemeKind::YulContractKeyword_Reserved,
+        L_YulContractKeyword_Unreserved => lexemes::LexemeKind::YulContractKeyword_Unreserved,
+        L_YulCopyOfKeyword_Reserved => lexemes::LexemeKind::YulCopyOfKeyword_Reserved,
+        L_YulCopyOfKeyword_Unreserved => lexemes::LexemeKind::YulCopyOfKeyword_Unreserved,
+        L_YulDaysKeyword_Reserved => lexemes::LexemeKind::YulDaysKeyword_Reserved,
+        L_YulDaysKeyword_Unreserved => lexemes::LexemeKind::YulDaysKeyword_Unreserved,
+        L_YulDecimalLiteral => lexemes::LexemeKind::YulDecimalLiteral,
+        L_YulDefaultKeyword_Reserved => lexemes::LexemeKind::YulDefaultKeyword_Reserved,
+        L_YulDefineKeyword_Reserved => lexemes::LexemeKind::YulDefineKeyword_Reserved,
+        L_YulDefineKeyword_Unreserved => lexemes::LexemeKind::YulDefineKeyword_Unreserved,
+        L_YulDeleteKeyword_Reserved => lexemes::LexemeKind::YulDeleteKeyword_Reserved,
+        L_YulDeleteKeyword_Unreserved => lexemes::LexemeKind::YulDeleteKeyword_Unreserved,
+        L_YulDoKeyword_Reserved => lexemes::LexemeKind::YulDoKeyword_Reserved,
+        L_YulDoKeyword_Unreserved => lexemes::LexemeKind::YulDoKeyword_Unreserved,
+        L_YulElseKeyword_Reserved => lexemes::LexemeKind::YulElseKeyword_Reserved,
+        L_YulElseKeyword_Unreserved => lexemes::LexemeKind::YulElseKeyword_Unreserved,
+        L_YulEmitKeyword_Reserved => lexemes::LexemeKind::YulEmitKeyword_Reserved,
+        L_YulEmitKeyword_Unreserved => lexemes::LexemeKind::YulEmitKeyword_Unreserved,
+        L_YulEnumKeyword_Reserved => lexemes::LexemeKind::YulEnumKeyword_Reserved,
+        L_YulEnumKeyword_Unreserved => lexemes::LexemeKind::YulEnumKeyword_Unreserved,
+        L_YulEtherKeyword_Reserved => lexemes::LexemeKind::YulEtherKeyword_Reserved,
+        L_YulEtherKeyword_Unreserved => lexemes::LexemeKind::YulEtherKeyword_Unreserved,
+        L_YulEventKeyword_Reserved => lexemes::LexemeKind::YulEventKeyword_Reserved,
+        L_YulEventKeyword_Unreserved => lexemes::LexemeKind::YulEventKeyword_Unreserved,
+        L_YulExternalKeyword_Reserved => lexemes::LexemeKind::YulExternalKeyword_Reserved,
+        L_YulExternalKeyword_Unreserved => lexemes::LexemeKind::YulExternalKeyword_Unreserved,
+        L_YulFallbackKeyword_Reserved => lexemes::LexemeKind::YulFallbackKeyword_Reserved,
+        L_YulFallbackKeyword_Unreserved => lexemes::LexemeKind::YulFallbackKeyword_Unreserved,
+        L_YulFalseKeyword_Reserved => lexemes::LexemeKind::YulFalseKeyword_Reserved,
+        L_YulFinalKeyword_Reserved => lexemes::LexemeKind::YulFinalKeyword_Reserved,
+        L_YulFinalKeyword_Unreserved => lexemes::LexemeKind::YulFinalKeyword_Unreserved,
+        L_YulFinneyKeyword_Reserved => lexemes::LexemeKind::YulFinneyKeyword_Reserved,
+        L_YulFinneyKeyword_Unreserved => lexemes::LexemeKind::YulFinneyKeyword_Unreserved,
+        L_YulFixedKeyword_Reserved => lexemes::LexemeKind::YulFixedKeyword_Reserved,
+        L_YulFixedKeyword_Unreserved => lexemes::LexemeKind::YulFixedKeyword_Unreserved,
+        L_YulForKeyword_Reserved => lexemes::LexemeKind::YulForKeyword_Reserved,
+        L_YulFunctionKeyword_Reserved => lexemes::LexemeKind::YulFunctionKeyword_Reserved,
+        L_YulGweiKeyword_Reserved => lexemes::LexemeKind::YulGweiKeyword_Reserved,
+        L_YulGweiKeyword_Unreserved => lexemes::LexemeKind::YulGweiKeyword_Unreserved,
+        L_YulHexKeyword_Reserved => lexemes::LexemeKind::YulHexKeyword_Reserved,
+        L_YulHexLiteral => lexemes::LexemeKind::YulHexLiteral,
+        L_YulHoursKeyword_Reserved => lexemes::LexemeKind::YulHoursKeyword_Reserved,
+        L_YulHoursKeyword_Unreserved => lexemes::LexemeKind::YulHoursKeyword_Unreserved,
+        L_YulIdentifier => lexemes::LexemeKind::YulIdentifier,
+        L_YulIfKeyword_Reserved => lexemes::LexemeKind::YulIfKeyword_Reserved,
+        L_YulImmutableKeyword_Reserved => lexemes::LexemeKind::YulImmutableKeyword_Reserved,
+        L_YulImmutableKeyword_Unreserved => lexemes::LexemeKind::YulImmutableKeyword_Unreserved,
+        L_YulImplementsKeyword_Reserved => lexemes::LexemeKind::YulImplementsKeyword_Reserved,
+        L_YulImplementsKeyword_Unreserved => lexemes::LexemeKind::YulImplementsKeyword_Unreserved,
+        L_YulImportKeyword_Reserved => lexemes::LexemeKind::YulImportKeyword_Reserved,
+        L_YulImportKeyword_Unreserved => lexemes::LexemeKind::YulImportKeyword_Unreserved,
+        L_YulInKeyword_Reserved => lexemes::LexemeKind::YulInKeyword_Reserved,
+        L_YulInKeyword_Unreserved => lexemes::LexemeKind::YulInKeyword_Unreserved,
+        L_YulIndexedKeyword_Reserved => lexemes::LexemeKind::YulIndexedKeyword_Reserved,
+        L_YulIndexedKeyword_Unreserved => lexemes::LexemeKind::YulIndexedKeyword_Unreserved,
+        L_YulInlineKeyword_Reserved => lexemes::LexemeKind::YulInlineKeyword_Reserved,
+        L_YulInlineKeyword_Unreserved => lexemes::LexemeKind::YulInlineKeyword_Unreserved,
+        L_YulIntKeyword_Reserved => lexemes::LexemeKind::YulIntKeyword_Reserved,
+        L_YulIntKeyword_Unreserved => lexemes::LexemeKind::YulIntKeyword_Unreserved,
+        L_YulInterfaceKeyword_Reserved => lexemes::LexemeKind::YulInterfaceKeyword_Reserved,
+        L_YulInterfaceKeyword_Unreserved => lexemes::LexemeKind::YulInterfaceKeyword_Unreserved,
+        L_YulInternalKeyword_Reserved => lexemes::LexemeKind::YulInternalKeyword_Reserved,
+        L_YulInternalKeyword_Unreserved => lexemes::LexemeKind::YulInternalKeyword_Unreserved,
+        L_YulIsKeyword_Reserved => lexemes::LexemeKind::YulIsKeyword_Reserved,
+        L_YulIsKeyword_Unreserved => lexemes::LexemeKind::YulIsKeyword_Unreserved,
+        L_YulLeaveKeyword_Reserved => lexemes::LexemeKind::YulLeaveKeyword_Reserved,
+        L_YulLeaveKeyword_Unreserved => lexemes::LexemeKind::YulLeaveKeyword_Unreserved,
+        L_YulLetKeyword_Reserved => lexemes::LexemeKind::YulLetKeyword_Reserved,
+        L_YulLibraryKeyword_Reserved => lexemes::LexemeKind::YulLibraryKeyword_Reserved,
+        L_YulLibraryKeyword_Unreserved => lexemes::LexemeKind::YulLibraryKeyword_Unreserved,
+        L_YulMacroKeyword_Reserved => lexemes::LexemeKind::YulMacroKeyword_Reserved,
+        L_YulMacroKeyword_Unreserved => lexemes::LexemeKind::YulMacroKeyword_Unreserved,
+        L_YulMappingKeyword_Reserved => lexemes::LexemeKind::YulMappingKeyword_Reserved,
+        L_YulMappingKeyword_Unreserved => lexemes::LexemeKind::YulMappingKeyword_Unreserved,
+        L_YulMatchKeyword_Reserved => lexemes::LexemeKind::YulMatchKeyword_Reserved,
+        L_YulMatchKeyword_Unreserved => lexemes::LexemeKind::YulMatchKeyword_Unreserved,
+        L_YulMemoryKeyword_Reserved => lexemes::LexemeKind::YulMemoryKeyword_Reserved,
+        L_YulMemoryKeyword_Unreserved => lexemes::LexemeKind::YulMemoryKeyword_Unreserved,
+        L_YulMinutesKeyword_Reserved => lexemes::LexemeKind::YulMinutesKeyword_Reserved,
+        L_YulMinutesKeyword_Unreserved => lexemes::LexemeKind::YulMinutesKeyword_Unreserved,
+        L_YulModifierKeyword_Reserved => lexemes::LexemeKind::YulModifierKeyword_Reserved,
+        L_YulModifierKeyword_Unreserved => lexemes::LexemeKind::YulModifierKeyword_Unreserved,
+        L_YulMutableKeyword_Reserved => lexemes::LexemeKind::YulMutableKeyword_Reserved,
+        L_YulMutableKeyword_Unreserved => lexemes::LexemeKind::YulMutableKeyword_Unreserved,
+        L_YulNewKeyword_Reserved => lexemes::LexemeKind::YulNewKeyword_Reserved,
+        L_YulNewKeyword_Unreserved => lexemes::LexemeKind::YulNewKeyword_Unreserved,
+        L_YulNullKeyword_Reserved => lexemes::LexemeKind::YulNullKeyword_Reserved,
+        L_YulNullKeyword_Unreserved => lexemes::LexemeKind::YulNullKeyword_Unreserved,
+        L_YulOfKeyword_Reserved => lexemes::LexemeKind::YulOfKeyword_Reserved,
+        L_YulOfKeyword_Unreserved => lexemes::LexemeKind::YulOfKeyword_Unreserved,
+        L_YulOverrideKeyword_Reserved => lexemes::LexemeKind::YulOverrideKeyword_Reserved,
+        L_YulOverrideKeyword_Unreserved => lexemes::LexemeKind::YulOverrideKeyword_Unreserved,
+        L_YulPartialKeyword_Reserved => lexemes::LexemeKind::YulPartialKeyword_Reserved,
+        L_YulPartialKeyword_Unreserved => lexemes::LexemeKind::YulPartialKeyword_Unreserved,
+        L_YulPayableKeyword_Reserved => lexemes::LexemeKind::YulPayableKeyword_Reserved,
+        L_YulPayableKeyword_Unreserved => lexemes::LexemeKind::YulPayableKeyword_Unreserved,
+        L_YulPragmaKeyword_Reserved => lexemes::LexemeKind::YulPragmaKeyword_Reserved,
+        L_YulPragmaKeyword_Unreserved => lexemes::LexemeKind::YulPragmaKeyword_Unreserved,
+        L_YulPrivateKeyword_Reserved => lexemes::LexemeKind::YulPrivateKeyword_Reserved,
+        L_YulPrivateKeyword_Unreserved => lexemes::LexemeKind::YulPrivateKeyword_Unreserved,
+        L_YulPromiseKeyword_Reserved => lexemes::LexemeKind::YulPromiseKeyword_Reserved,
+        L_YulPromiseKeyword_Unreserved => lexemes::LexemeKind::YulPromiseKeyword_Unreserved,
+        L_YulPublicKeyword_Reserved => lexemes::LexemeKind::YulPublicKeyword_Reserved,
+        L_YulPublicKeyword_Unreserved => lexemes::LexemeKind::YulPublicKeyword_Unreserved,
+        L_YulPureKeyword_Reserved => lexemes::LexemeKind::YulPureKeyword_Reserved,
+        L_YulPureKeyword_Unreserved => lexemes::LexemeKind::YulPureKeyword_Unreserved,
+        L_YulReceiveKeyword_Reserved => lexemes::LexemeKind::YulReceiveKeyword_Reserved,
+        L_YulReceiveKeyword_Unreserved => lexemes::LexemeKind::YulReceiveKeyword_Unreserved,
+        L_YulReferenceKeyword_Reserved => lexemes::LexemeKind::YulReferenceKeyword_Reserved,
+        L_YulReferenceKeyword_Unreserved => lexemes::LexemeKind::YulReferenceKeyword_Unreserved,
+        L_YulRelocatableKeyword_Reserved => lexemes::LexemeKind::YulRelocatableKeyword_Reserved,
+        L_YulRelocatableKeyword_Unreserved => lexemes::LexemeKind::YulRelocatableKeyword_Unreserved,
+        L_YulReturnsKeyword_Reserved => lexemes::LexemeKind::YulReturnsKeyword_Reserved,
+        L_YulReturnsKeyword_Unreserved => lexemes::LexemeKind::YulReturnsKeyword_Unreserved,
+        L_YulSealedKeyword_Reserved => lexemes::LexemeKind::YulSealedKeyword_Reserved,
+        L_YulSealedKeyword_Unreserved => lexemes::LexemeKind::YulSealedKeyword_Unreserved,
+        L_YulSecondsKeyword_Reserved => lexemes::LexemeKind::YulSecondsKeyword_Reserved,
+        L_YulSecondsKeyword_Unreserved => lexemes::LexemeKind::YulSecondsKeyword_Unreserved,
+        L_YulSizeOfKeyword_Reserved => lexemes::LexemeKind::YulSizeOfKeyword_Reserved,
+        L_YulSizeOfKeyword_Unreserved => lexemes::LexemeKind::YulSizeOfKeyword_Unreserved,
+        L_YulStaticKeyword_Reserved => lexemes::LexemeKind::YulStaticKeyword_Reserved,
+        L_YulStaticKeyword_Unreserved => lexemes::LexemeKind::YulStaticKeyword_Unreserved,
+        L_YulStorageKeyword_Reserved => lexemes::LexemeKind::YulStorageKeyword_Reserved,
+        L_YulStorageKeyword_Unreserved => lexemes::LexemeKind::YulStorageKeyword_Unreserved,
+        L_YulStringKeyword_Reserved => lexemes::LexemeKind::YulStringKeyword_Reserved,
+        L_YulStringKeyword_Unreserved => lexemes::LexemeKind::YulStringKeyword_Unreserved,
+        L_YulStructKeyword_Reserved => lexemes::LexemeKind::YulStructKeyword_Reserved,
+        L_YulStructKeyword_Unreserved => lexemes::LexemeKind::YulStructKeyword_Unreserved,
+        L_YulSuperKeyword_Reserved => lexemes::LexemeKind::YulSuperKeyword_Reserved,
+        L_YulSuperKeyword_Unreserved => lexemes::LexemeKind::YulSuperKeyword_Unreserved,
+        L_YulSupportsKeyword_Reserved => lexemes::LexemeKind::YulSupportsKeyword_Reserved,
+        L_YulSupportsKeyword_Unreserved => lexemes::LexemeKind::YulSupportsKeyword_Unreserved,
+        L_YulSwitchKeyword_Reserved => lexemes::LexemeKind::YulSwitchKeyword_Reserved,
+        L_YulSzaboKeyword_Reserved => lexemes::LexemeKind::YulSzaboKeyword_Reserved,
+        L_YulSzaboKeyword_Unreserved => lexemes::LexemeKind::YulSzaboKeyword_Unreserved,
+        L_YulThisKeyword_Reserved => lexemes::LexemeKind::YulThisKeyword_Reserved,
+        L_YulThisKeyword_Unreserved => lexemes::LexemeKind::YulThisKeyword_Unreserved,
+        L_YulThrowKeyword_Reserved => lexemes::LexemeKind::YulThrowKeyword_Reserved,
+        L_YulThrowKeyword_Unreserved => lexemes::LexemeKind::YulThrowKeyword_Unreserved,
+        L_YulTrueKeyword_Reserved => lexemes::LexemeKind::YulTrueKeyword_Reserved,
+        L_YulTryKeyword_Reserved => lexemes::LexemeKind::YulTryKeyword_Reserved,
+        L_YulTryKeyword_Unreserved => lexemes::LexemeKind::YulTryKeyword_Unreserved,
+        L_YulTypeDefKeyword_Reserved => lexemes::LexemeKind::YulTypeDefKeyword_Reserved,
+        L_YulTypeDefKeyword_Unreserved => lexemes::LexemeKind::YulTypeDefKeyword_Unreserved,
+        L_YulTypeKeyword_Reserved => lexemes::LexemeKind::YulTypeKeyword_Reserved,
+        L_YulTypeKeyword_Unreserved => lexemes::LexemeKind::YulTypeKeyword_Unreserved,
+        L_YulTypeOfKeyword_Reserved => lexemes::LexemeKind::YulTypeOfKeyword_Reserved,
+        L_YulTypeOfKeyword_Unreserved => lexemes::LexemeKind::YulTypeOfKeyword_Unreserved,
+        L_YulUfixedKeyword_Reserved => lexemes::LexemeKind::YulUfixedKeyword_Reserved,
+        L_YulUfixedKeyword_Unreserved => lexemes::LexemeKind::YulUfixedKeyword_Unreserved,
+        L_YulUintKeyword_Reserved => lexemes::LexemeKind::YulUintKeyword_Reserved,
+        L_YulUintKeyword_Unreserved => lexemes::LexemeKind::YulUintKeyword_Unreserved,
+        L_YulUncheckedKeyword_Reserved => lexemes::LexemeKind::YulUncheckedKeyword_Reserved,
+        L_YulUncheckedKeyword_Unreserved => lexemes::LexemeKind::YulUncheckedKeyword_Unreserved,
+        L_YulUsingKeyword_Reserved => lexemes::LexemeKind::YulUsingKeyword_Reserved,
+        L_YulUsingKeyword_Unreserved => lexemes::LexemeKind::YulUsingKeyword_Unreserved,
+        L_YulVarKeyword_Reserved => lexemes::LexemeKind::YulVarKeyword_Reserved,
+        L_YulVarKeyword_Unreserved => lexemes::LexemeKind::YulVarKeyword_Unreserved,
+        L_YulViewKeyword_Reserved => lexemes::LexemeKind::YulViewKeyword_Reserved,
+        L_YulViewKeyword_Unreserved => lexemes::LexemeKind::YulViewKeyword_Unreserved,
+        L_YulVirtualKeyword_Reserved => lexemes::LexemeKind::YulVirtualKeyword_Reserved,
+        L_YulVirtualKeyword_Unreserved => lexemes::LexemeKind::YulVirtualKeyword_Unreserved,
+        L_YulWeeksKeyword_Reserved => lexemes::LexemeKind::YulWeeksKeyword_Reserved,
+        L_YulWeeksKeyword_Unreserved => lexemes::LexemeKind::YulWeeksKeyword_Unreserved,
+        L_YulWeiKeyword_Reserved => lexemes::LexemeKind::YulWeiKeyword_Reserved,
+        L_YulWeiKeyword_Unreserved => lexemes::LexemeKind::YulWeiKeyword_Unreserved,
+        L_YulWhileKeyword_Reserved => lexemes::LexemeKind::YulWhileKeyword_Reserved,
+        L_YulWhileKeyword_Unreserved => lexemes::LexemeKind::YulWhileKeyword_Unreserved,
+        L_YulYearsKeyword_Reserved => lexemes::LexemeKind::YulYearsKeyword_Reserved,
+        L_YulYearsKeyword_Unreserved => lexemes::LexemeKind::YulYearsKeyword_Unreserved,
+        
+    }
+}

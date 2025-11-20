@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ error MyError(uint256 a, uint256 b);                                             │ 0..36
+  2  │                                                                                  │ 37..37
+  3  │ contract A {                                                                     │ 38..50
+  4  │   error MyOtherError(address addr);                                              │ 51..86
+  5  │   error foo;                                                                     │ 87..99
+  6  │ }                                                                                │ 100..101
+
+Errors: # 2 total
+  - >
+    Error: Expected ConstantKeyword or OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:1:7]
+       │
+     1 │ error MyError(uint256 a, uint256 b);
+       │       ──────────────┬──────────────  
+       │                     ╰──────────────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected Equal or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:4:21]
+       │
+     4 │   error MyOtherError(address addr);
+       │                     ───────┬──────  
+       │                            ╰──────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "error MyError(uint256 a, uint256 b);\n\ncontract A {..." (0..102)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ConstantDefinition): # "error MyError(uint256 a, uint256 b);\n" (0..37)
+          - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "error" (0..5)
+              - (item꞉ Identifier): "error" # (0..5)
+          - (leading_trivia꞉ Whitespace): " " # (5..6)
+          - (unrecognized꞉ UNRECOGNIZED): "MyError(uint256 a, uint256 b)" # (6..35)
+          - (semicolon꞉ Semicolon): ";" # (35..36)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (36..37)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "\ncontract A {\n  error MyOtherError(address addr);\n..." (37..102)
+          - (leading_trivia꞉ EndOfLine): "\n" # (37..38)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (38..46)
+          - (leading_trivia꞉ Whitespace): " " # (46..47)
+          - (name꞉ Identifier): "A" # (47..48)
+          - (specifiers꞉ ContractSpecifiers): [] # (48..48)
+          - (leading_trivia꞉ Whitespace): " " # (48..49)
+          - (open_brace꞉ OpenBrace): "{" # (49..50)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (50..51)
+          - (members꞉ ContractMembers): # "  error MyOtherError(address addr);\n  error foo;\n" (51..100)
+              - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "  error MyOtherError(address addr);\n" (51..87)
+                  - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "  error" (51..58)
+                      - (leading_trivia꞉ Whitespace): "  " # (51..53)
+                      - (item꞉ Identifier): "error" # (53..58)
+                  - (attributes꞉ StateVariableAttributes): [] # (58..58)
+                  - (leading_trivia꞉ Whitespace): " " # (58..59)
+                  - (name꞉ Identifier): "MyOtherError" # (59..71)
+                  - (unrecognized꞉ UNRECOGNIZED): "(address addr)" # (71..85)
+                  - (semicolon꞉ Semicolon): ";" # (85..86)
+                  - (trailing_trivia꞉ EndOfLine): "\n" # (86..87)
+              - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "  error foo;\n" (87..100)
+                  - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "  error" (87..94)
+                      - (leading_trivia꞉ Whitespace): "  " # (87..89)
+                      - (item꞉ Identifier): "error" # (89..94)
+                  - (attributes꞉ StateVariableAttributes): [] # (94..94)
+                  - (leading_trivia꞉ Whitespace): " " # (94..95)
+                  - (name꞉ Identifier): "foo" # (95..98)
+                  - (semicolon꞉ Semicolon): ";" # (98..99)
+                  - (trailing_trivia꞉ EndOfLine): "\n" # (99..100)
+          - (close_brace꞉ CloseBrace): "}" # (100..101)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (101..102)

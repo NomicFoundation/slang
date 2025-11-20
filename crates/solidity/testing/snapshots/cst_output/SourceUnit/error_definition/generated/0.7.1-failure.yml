@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ error MyError(uint256 a, uint256 b);                                             │ 0..36
+  2  │                                                                                  │ 37..37
+  3  │ contract A {                                                                     │ 38..50
+  4  │   error MyOtherError(address addr);                                              │ 51..86
+  5  │   error foo;                                                                     │ 87..99
+  6  │ }                                                                                │ 100..101
+
+Errors: # 1 total
+  - >
+    Error: Expected ContractKeyword or EnumKeyword or FunctionKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:1:1]
+       │
+     1 │ ╭─▶ error MyError(uint256 a, uint256 b);
+       ┆ ┆   
+     6 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ SourceUnit): # "error MyError(uint256 a, uint256 b);\n\ncontract A {..." (0..102)
+      - (members꞉ SourceUnitMembers): [] # (0..0)
+      - (unrecognized꞉ UNRECOGNIZED): "error MyError(uint256 a, uint256 b);\n\ncontract A {..." # (0..102)
