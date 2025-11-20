@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract A {                                                                     │ 0..12
+  2  │ 	uint transient foo;                                                             │ 13..33
+  3  │ 	uint transient;                                                                 │ 34..50
+  4  │ }                                                                                │ 51..52
+
+Errors: # 1 total
+  - >
+    Error: Expected Equal or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol:2:17]
+       │
+     2 │     uint transient foo;
+       │                    ─┬─  
+       │                     ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (0..53)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (0..53)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+          - (leading_trivia꞉ Whitespace): " " # (8..9)
+          - (name꞉ Identifier): "A" # (9..10)
+          - (specifiers꞉ ContractSpecifiers): [] # (10..10)
+          - (leading_trivia꞉ Whitespace): " " # (10..11)
+          - (open_brace꞉ OpenBrace): "{" # (11..12)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (12..13)
+          - (members꞉ ContractMembers): # "\tuint transient foo;\n\tuint transient;\n" (13..51)
+              - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "\tuint transient foo;\n" (13..34)
+                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # "\tuint" (13..18)
+                      - (leading_trivia꞉ Whitespace): "\t" # (13..14)
+                      - (variant꞉ UintKeyword): "uint" # (14..18)
+                  - (attributes꞉ StateVariableAttributes): [] # (18..18)
+                  - (leading_trivia꞉ Whitespace): " " # (18..19)
+                  - (name꞉ Identifier): "transient" # (19..28)
+                  - (leading_trivia꞉ Whitespace): " " # (28..29)
+                  - (unrecognized꞉ UNRECOGNIZED): "foo" # (29..32)
+                  - (semicolon꞉ Semicolon): ";" # (32..33)
+                  - (trailing_trivia꞉ EndOfLine): "\n" # (33..34)
+              - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "\tuint transient;\n" (34..51)
+                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # "\tuint" (34..39)
+                      - (leading_trivia꞉ Whitespace): "\t" # (34..35)
+                      - (variant꞉ UintKeyword): "uint" # (35..39)
+                  - (attributes꞉ StateVariableAttributes): [] # (39..39)
+                  - (leading_trivia꞉ Whitespace): " " # (39..40)
+                  - (name꞉ Identifier): "transient" # (40..49)
+                  - (semicolon꞉ Semicolon): ";" # (49..50)
+                  - (trailing_trivia꞉ EndOfLine): "\n" # (50..51)
+          - (close_brace꞉ CloseBrace): "}" # (51..52)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (52..53)

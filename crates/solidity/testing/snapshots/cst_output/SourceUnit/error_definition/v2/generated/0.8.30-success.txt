@@ -1,0 +1,152 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ErrorDefinition(
+                ErrorDefinitionStruct {
+                    error_keyword: ErrorKeyword {
+                        range: 0..5,
+                    },
+                    name: Identifier {
+                        range: 6..13,
+                    },
+                    members: ErrorParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 13..14,
+                        },
+                        parameters: ErrorParameters {
+                            elements: [
+                                ErrorParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 14..21,
+                                            },
+                                        ),
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 22..23,
+                                        },
+                                    ),
+                                },
+                                ErrorParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 25..32,
+                                            },
+                                        ),
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 33..34,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 34..35,
+                        },
+                    },
+                    semicolon: Semicolon {
+                        range: 35..36,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 38..46,
+                    },
+                    name: Identifier {
+                        range: 47..48,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 49..50,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            ErrorDefinition(
+                                ErrorDefinitionStruct {
+                                    error_keyword: ErrorKeyword {
+                                        range: 53..58,
+                                    },
+                                    name: Identifier {
+                                        range: 59..71,
+                                    },
+                                    members: ErrorParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 71..72,
+                                        },
+                                        parameters: ErrorParameters {
+                                            elements: [
+                                                ErrorParameterStruct {
+                                                    type_name: ElementaryType(
+                                                        AddressType(
+                                                            AddressTypeStruct {
+                                                                address_keyword: AddressKeyword {
+                                                                    range: 72..79,
+                                                                },
+                                                                payable_keyword: None,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    name: Some(
+                                                        Identifier {
+                                                            range: 80..84,
+                                                        },
+                                                    ),
+                                                },
+                                            ],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 84..85,
+                                        },
+                                    },
+                                    semicolon: Semicolon {
+                                        range: 85..86,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: IdentifierPath(
+                                        IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 89..94,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        range: 95..98,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 98..99,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 100..101,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,85 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: CallOptionsExpression(
+            CallOptionsExpressionStruct {
+                operand: TupleExpression(
+                    TupleExpressionStruct {
+                        open_paren: OpenParen {
+                            range: 1..2,
+                        },
+                        items: TupleValues {
+                            elements: [
+                                TupleValueStruct {
+                                    expression: Some(
+                                        NewExpression(
+                                            NewExpressionStruct {
+                                                new_keyword: NewKeyword {
+                                                    range: 2..5,
+                                                },
+                                                type_name: IdentifierPath(
+                                                    IdentifierPath {
+                                                        elements: [
+                                                            Identifier(
+                                                                Identifier {
+                                                                    range: 6..12,
+                                                                },
+                                                            ),
+                                                        ],
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 12..13,
+                        },
+                    },
+                ),
+                open_brace: OpenBrace {
+                    range: 13..14,
+                },
+                options: CallOptions {
+                    elements: [
+                        NamedArgumentStruct {
+                            name: Identifier {
+                                range: 14..19,
+                            },
+                            colon: Colon {
+                                range: 19..20,
+                            },
+                            value: DecimalNumberExpression(
+                                DecimalNumberExpressionStruct {
+                                    literal: DecimalLiteral {
+                                        range: 21..22,
+                                    },
+                                    unit: None,
+                                },
+                            ),
+                        },
+                    ],
+                },
+                close_brace: CloseBrace {
+                    range: 22..23,
+                },
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    range: 23..24,
+                },
+                arguments: PositionalArguments {
+                    elements: [],
+                },
+                close_paren: CloseParen {
+                    range: 24..25,
+                },
+            },
+        ),
+    },
+)

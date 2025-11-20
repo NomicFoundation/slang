@@ -131,6 +131,7 @@ impl LexerModelBuilder {
     fn convert_keyword<'a>(&'a self, item: &'a KeywordItem) -> impl Iterator<Item = Lexeme> + 'a {
         item.definitions.iter().map(|def| Lexeme::Keyword {
             kind: item.name.to_string(),
+            identifier: item.identifier.to_string(),
             regex: self.convert_keyword_value(&def.value),
             reserved: def.reserved.clone().unwrap_or_default(),
         })
