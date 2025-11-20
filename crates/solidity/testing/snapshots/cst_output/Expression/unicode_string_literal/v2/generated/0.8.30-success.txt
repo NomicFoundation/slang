@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+StringExpression(
+    UnicodeStringLiterals(
+        UnicodeStringLiterals {
+            elements: [
+                DoubleQuotedUnicodeStringLiteral(
+                    DoubleQuotedUnicodeStringLiteral {
+                        range: 0..25,
+                    },
+                ),
+            ],
+        },
+    ),
+)

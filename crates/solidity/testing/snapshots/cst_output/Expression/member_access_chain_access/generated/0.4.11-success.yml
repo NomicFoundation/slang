@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ x.y.z[1].w                                                                       │ 0..10
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ MemberAccessExpression): # "x.y.z[1].w\n" (0..11)
+      - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # "x.y.z[1]" (0..8)
+          - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "x.y.z" (0..5)
+              - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "x.y" (0..3)
+                  - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
+                  - (period꞉ Period): "." # (1..2)
+                  - (member꞉ Identifier): "y" # (2..3)
+              - (period꞉ Period): "." # (3..4)
+              - (member꞉ Identifier): "z" # (4..5)
+          - (open_bracket꞉ OpenBracket): "[" # (5..6)
+          - (start꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1" # (6..7)
+          - (close_bracket꞉ CloseBracket): "]" # (7..8)
+      - (period꞉ Period): "." # (8..9)
+      - (member꞉ Identifier): "w" # (9..10)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (10..11)

@@ -150,7 +150,7 @@ fn get_spanned_type(input: Type) -> Type {
 
         // These are model Types that have a derived 'SpannedXXX' type.
         // Let's use that instead, but also wrap it in 'Spanned<T>' because we want to capture its complete span for validation:
-        "OperatorModel" | "VersionSpecifier" => {
+        "OperatorModel" | "VersionSpecifier" | "ParserOptions" => {
             let spanned_type = format_ident!("{}", add_spanned_prefix(type_name));
             parse_quote! {
                 crate::internals::Spanned<crate::model::#spanned_type>

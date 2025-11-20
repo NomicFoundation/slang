@@ -24,7 +24,9 @@ pub fn generate_header(file_path: &Path) -> Option<String> {
     Some(match (file_path.unwrap_name(), file_path.unwrap_ext()) {
         (_, "ebnf") => format!("(* {warning_line} *)"),
         (_, "html" | "md") => format!("<!-- {warning_line} -->"),
-        (_, "dot" | "js" | "mts" | "rs" | "sol" | "ts" | "wit") => format!("// {warning_line}"),
+        (_, "dot" | "js" | "mts" | "rs" | "sol" | "ts" | "wit" | "lalrpop") => {
+            format!("// {warning_line}")
+        }
         (_, "yml" | "txt") => format!("# {warning_line}"),
         (_, "mmd") => format!("%% {warning_line}"),
 
@@ -42,7 +44,7 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
         (_, "rs") => run_rustfmt(contents),
 
         // No formatters available for these yet:
-        (_, "wit") => Ok(contents.to_owned()),
+        (_, "wit" | "lalrpop") => Ok(contents.to_owned()),
 
         _ => panic!("Unsupported path to format: {file_path:?}"),
     }

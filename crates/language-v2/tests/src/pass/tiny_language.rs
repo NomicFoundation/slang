@@ -82,7 +82,8 @@ fn definition() {
                                             }
                                         )
                                     ]
-                                    .into()
+                                    .into(),
+                                    parser_options: None
                                 }
                                 .into()
                             },
