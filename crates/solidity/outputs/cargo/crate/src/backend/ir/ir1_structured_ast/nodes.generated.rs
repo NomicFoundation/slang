@@ -1173,7 +1173,7 @@ pub struct YulFunctionCallExpressionStruct {
 // Choices:
 //
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ImportDirective(ImportDirective),
@@ -1190,33 +1190,33 @@ pub enum SourceUnitMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionOperator {
     Caret,
     Tilde,
@@ -1227,27 +1227,27 @@ pub enum VersionOperator {
     GreaterThanEqual,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     SingleQuotedVersionLiteral(Rc<TerminalNode>),
     DoubleQuotedVersionLiteral(Rc<TerminalNode>),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ImportClause {
     PathImport(PathImport),
     NamedImport(NamedImport),
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -1266,19 +1266,19 @@ pub enum UsingOperator {
     Tilde,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ContractSpecifier {
     InheritanceSpecifier(InheritanceSpecifier),
     StorageLayoutSpecifier(StorageLayoutSpecifier),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -1295,7 +1295,7 @@ pub enum ContractMember {
     StateVariableDefinition(StateVariableDefinition),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StateVariableAttribute {
     OverrideSpecifier(OverrideSpecifier),
     ConstantKeyword,
@@ -1306,14 +1306,14 @@ pub enum StateVariableAttribute {
     TransientKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionName {
     Identifier(Rc<TerminalNode>),
     FallbackKeyword,
     ReceiveKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -1328,13 +1328,13 @@ pub enum FunctionAttribute {
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionBody {
     Block(Block),
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ConstructorAttribute {
     ModifierInvocation(ModifierInvocation),
     InternalKeyword,
@@ -1344,7 +1344,7 @@ pub enum ConstructorAttribute {
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UnnamedFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     ConstantKeyword,
@@ -1357,7 +1357,7 @@ pub enum UnnamedFunctionAttribute {
     ViewKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FallbackFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -1368,7 +1368,7 @@ pub enum FallbackFunctionAttribute {
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ReceiveFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -1377,13 +1377,13 @@ pub enum ReceiveFunctionAttribute {
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ModifierAttribute {
     OverrideSpecifier(OverrideSpecifier),
     VirtualKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -1392,7 +1392,7 @@ pub enum TypeName {
     IdentifierPath(IdentifierPath),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionTypeAttribute {
     InternalKeyword,
     ExternalKeyword,
@@ -1404,13 +1404,13 @@ pub enum FunctionTypeAttribute {
     PayableKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum MappingKeyType {
     ElementaryType(ElementaryType),
     IdentifierPath(IdentifierPath),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ElementaryType {
     AddressType(AddressType),
     BytesKeyword(Rc<TerminalNode>),
@@ -1423,7 +1423,7 @@ pub enum ElementaryType {
     StringKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -1444,26 +1444,26 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum TupleMember {
     TypedTupleMember(TypedTupleMember),
     UntypedTupleMember(UntypedTupleMember),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VariableDeclarationType {
     TypeName(TypeName),
     VarKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
     CallDataKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ForStatementInitialization {
     TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
@@ -1471,13 +1471,13 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -1514,13 +1514,13 @@ pub enum Expression {
     FalseKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ArgumentsDeclaration {
     PositionalArgumentsDeclaration(PositionalArgumentsDeclaration),
     NamedArgumentsDeclaration(NamedArgumentsDeclaration),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -1535,7 +1535,7 @@ pub enum NumberUnit {
     YearsKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StringExpression {
     StringLiteral(StringLiteral),
     StringLiterals(StringLiterals),
@@ -1544,25 +1544,25 @@ pub enum StringExpression {
     UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StringLiteral {
     SingleQuotedStringLiteral(Rc<TerminalNode>),
     DoubleQuotedStringLiteral(Rc<TerminalNode>),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum HexStringLiteral {
     SingleQuotedHexStringLiteral(Rc<TerminalNode>),
     DoubleQuotedHexStringLiteral(Rc<TerminalNode>),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UnicodeStringLiteral {
     SingleQuotedUnicodeStringLiteral(Rc<TerminalNode>),
     DoubleQuotedUnicodeStringLiteral(Rc<TerminalNode>),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -1579,32 +1579,32 @@ pub enum YulStatement {
     YulExpression(YulExpression),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulAssignmentOperator {
     YulColonAndEqual(YulColonAndEqual),
     ColonEqual,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulStackAssignmentOperator {
     YulEqualAndColon(YulEqualAndColon),
     EqualColon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
     YulPath(YulPath),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulLiteral {
     HexStringLiteral(HexStringLiteral),
     StringLiteral(StringLiteral),
