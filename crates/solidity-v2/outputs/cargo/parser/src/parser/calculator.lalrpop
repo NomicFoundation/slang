@@ -1,20 +1,45 @@
 use std::str::FromStr;
 use crate::lexer::lexemes;
+use crate::lexer::definition::Lexer;
+use crate::lexer::contexts::ContextKind;
 
-grammar<'source>(source: &'source str);
+grammar<'source>(source: &'source str, lexer: &'source Lexer<'source>);
 
 // pub Term: i32 = {
 //     <n:Num> => n,
 //     "(" <t:Term> ")" => t,
 // };
 
-pub Num: i32 = {
-    <l:@L> <s:DecimalLiteral> <r:@R> => i32::from_str(source[dbg!(l)..dbg!(r)].trim()).unwrap(),
-}
+//pub Num: i32 = {
+//    <l:@L> <s:DecimalLiteral> <r:@R> => i32::from_str(source[dbg!(l)..dbg!(r)].trim()).unwrap(),
+//}
+
+// pub PragmaDirective: String = {
+//     PragmaKeyword_Reserved => {
+//         let new_parser = Pragma::new();
+//     }
 
 pub PragmaDirective: String = {
-    PragmaKeyword_Reserved <p:Pragma> Semicolon => p,
+    PragmaKeyword_Reserved_Switcher Slash <p: Pragma> Semicolon_Switcher => {
+        p
+    }
 }
+
+PragmaKeyword_Reserved_Switcher: () = { 
+    PragmaKeyword_Reserved => {
+        println!("Pragma keyword reducing");
+        lexer.switch_context(ContextKind::Pragma);
+        ()
+    }
+}
+
+Semicolon_Switcher: () = {
+    Semicolon => {
+        lexer.switch_context(ContextKind::Solidity);
+        ()
+    }
+}
+
 
 Pragma: String = {
     <v:VersionPragma> => v,
@@ -23,7 +48,7 @@ Pragma: String = {
 }
 
 VersionPragma: String = {
-    SolidityKeyword_Unreserved <v:VersionExpressionSets> => v,
+    <v:VersionExpressionSets> => v,
 }
 
 VersionExpressionSets: String = {
@@ -83,6 +108,7 @@ extern {
         Tilde => lexemes::LexemeKind::Tilde,
         Period => lexemes::LexemeKind::Period,
         VersionSpecifierLex => lexemes::LexemeKind::VersionSpecifier,
+        Slash => lexemes::LexemeKind::Slash,
 
     }
 }

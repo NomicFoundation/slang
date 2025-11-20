@@ -2,7 +2,7 @@ use std::ops::Range;
 
 use strum_macros::IntoStaticStr;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Lexeme {
     pub kind: LexemeKind,
     pub range: Range<usize>,

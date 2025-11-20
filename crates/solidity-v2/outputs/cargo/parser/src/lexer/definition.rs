@@ -1,4 +1,6 @@
+use std::cell::RefCell;
 use std::collections::VecDeque;
+use std::rc::Rc;
 
 use logos::Logos;
 use semver::Version;
@@ -6,9 +8,10 @@ use semver::Version;
 use crate::lexer::contexts::{ContextExtras, ContextKind, ContextWrapper};
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
+#[derive(Clone, Debug)]
 pub struct Lexer<'source> {
     language_version: Version,
-    context: ContextWrapper<'source>,
+    context: Rc<RefCell<ContextWrapper<'source>>>,
     queue: VecDeque<Lexeme>,
 }
 
@@ -22,17 +25,26 @@ impl<'source> Lexer<'source> {
 
         Self {
             language_version,
-            context,
+            context: Rc::new(RefCell::new(context)),
             queue: VecDeque::new(),
         }
     }
 
-    pub fn switch_context(&mut self, kind: ContextKind) {
-        self.context = self.context.clone().morph(kind);
+    pub fn switch_context(&self, kind: ContextKind) {
+        // I'm not 100% convinced this would be wrong, but it's a good sanity check for now
+        assert!(self.queue.is_empty());
+
+        println!(
+            "Switching from {:?} to {:?}",
+            self.context.borrow().as_ref(),
+            kind
+        );
+
+        self.context.replace_with(|cell| cell.clone().morph(kind));
     }
 
     pub fn bump(&mut self, n: usize) {
-        self.context.bump(n);
+        self.context.borrow_mut().bump(n);
     }
 
     pub fn next_lexeme(&mut self) -> Option<Lexeme> {
@@ -40,7 +52,30 @@ impl<'source> Lexer<'source> {
             return Some(lexeme);
         }
 
-        let lexeme = self.context.next_lexeme()?;
+        let lexeme = self.context.borrow_mut().next_lexeme()?;
+        match lexeme.kind {
+            LexemeKind::PragmaKeyword_Reserved => {
+                // Swithc
+            },
+            LexemeKind::PragmaSemicolon => {
+                // switch
+                // return LexemeKind::Semicolon;
+            }
+            LexemeKind::UNRECOGNIZED => {
+        }
+
+        if lexeme.kind == LexemeKind::PragmaKeyword_Reserved {
+            self.queue.push_back(Lexeme {
+                kind: LexemeKind::Slash,
+                range: 0..0,
+            });
+        }
+
+        println!(
+            "Next lexeme {:?} from context {:?}",
+            lexeme,
+            self.context.borrow().as_ref()
+        );
 
         // TODO(v2):
         // Some lexemes are split/post-processed after lexing to handle historical bugs in older Solidity versions.
@@ -74,7 +109,7 @@ impl Lexer<'_> {
         }
 
         let original_start = original.range.start;
-        let original_source = self.context.source()[original.range].as_ref();
+        let original_source = self.context.borrow().source()[original.range].as_ref();
 
         let mut parts = Splitter::lexer(original_source)
             .spanned()
@@ -112,7 +147,7 @@ impl Lexer<'_> {
         }
 
         let original_start = original.range.start;
-        let original_source = self.context.source()[original.range].as_ref();
+        let original_source = self.context.borrow().source()[original.range].as_ref();
 
         let mut parts = Splitter::lexer(original_source)
             .spanned()

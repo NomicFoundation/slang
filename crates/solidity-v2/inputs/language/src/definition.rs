@@ -453,6 +453,18 @@ language_v2_macros::compile!(Language(
                     ]
                 ),
                 Topic(
+                    title = "Pragma Keywords",
+                    lexical_context = Pragma,
+                    items = [Keyword(
+                        name = SolidityKeyword,
+                        identifier = Identifier,
+                        definitions = [KeywordDefinition(
+                            reserved = Never,
+                            value = Atom("solidity")
+                        )]
+                    )]
+                ),
+                Topic(
                     title = "Keywords",
                     lexical_context = Solidity,
                     items = [
@@ -1399,14 +1411,6 @@ language_v2_macros::compile!(Language(
                             definitions = [KeywordDefinition(
                                 reserved = Never,
                                 value = Atom("SMTChecker")
-                            )]
-                        ),
-                        Keyword(
-                            name = SolidityKeyword,
-                            identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                reserved = Never,
-                                value = Atom("solidity")
                             )]
                         ),
                         Keyword(
