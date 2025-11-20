@@ -1,0 +1,83 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..12,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [
+            StorageLayoutSpecifier(
+                StorageLayoutSpecifierStruct {
+                    layout_keyword: LayoutKeyword {
+                        range: 13..19,
+                    },
+                    at_keyword: AtKeyword {
+                        range: 20..22,
+                    },
+                    expression: DecimalNumberExpression(
+                        DecimalNumberExpressionStruct {
+                            literal: DecimalLiteral {
+                                range: 23..24,
+                            },
+                            unit: None,
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    open_brace: OpenBrace {
+        range: 25..26,
+    },
+    members: ContractMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        range: 31..39,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            range: 40..43,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 43..44,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 44..45,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 45..46,
+                            },
+                            statements: Statements {
+                                elements: [],
+                            },
+                            close_brace: CloseBrace {
+                                range: 46..47,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 48..49,
+    },
+}

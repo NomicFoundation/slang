@@ -52,6 +52,11 @@ fn delete_conditional() -> Result<()> {
 }
 
 #[test]
+fn elementary_type_under_call() -> Result<()> {
+    run(T, "elementary_type_under_call")
+}
+
+#[test]
 fn function_call() -> Result<()> {
     run(T, "function_call")
 }
@@ -267,8 +272,18 @@ fn member_access_address() -> Result<()> {
 }
 
 #[test]
+fn member_access_addresses() -> Result<()> {
+    run(T, "member_access_addresses")
+}
+
+#[test]
 fn member_access_chain() -> Result<()> {
     run(T, "member_access_chain")
+}
+
+#[test]
+fn member_access_chain_access() -> Result<()> {
+    run(T, "member_access_chain_access")
 }
 
 #[test]
@@ -319,6 +334,11 @@ fn mixed_compound_assignment() -> Result<()> {
 #[test]
 fn new_expression() -> Result<()> {
     run(T, "new_expression")
+}
+
+#[test]
+fn new_expression_chain() -> Result<()> {
+    run(T, "new_expression_chain")
 }
 
 #[test]
