@@ -126,7 +126,7 @@ test("throws an exception on using an incorrect/incomplete CST node", () => {
   assertTerminalNode(contractKeyword!.node, TerminalKind.ContractKeyword, "contract");
   assertTerminalNode(skippedTerminal!.node, TerminalKind.Missing, "");
 
-  // Creating the tree should succeed, as the fields are lazily intialized.
+  // Creating the tree should succeed, as the fields are lazily initialized.
   const tree = new ContractDefinition(cst);
   assertNonterminalNode(tree.cst, NonterminalKind.ContractDefinition);
 
