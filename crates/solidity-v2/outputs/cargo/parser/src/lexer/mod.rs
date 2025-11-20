@@ -2,7 +2,7 @@
 mod contexts;
 mod definition;
 #[path = "lexemes.generated.rs"]
-mod lexemes;
+pub(crate) mod lexemes;
 
 #[cfg(test)]
 mod tests;
