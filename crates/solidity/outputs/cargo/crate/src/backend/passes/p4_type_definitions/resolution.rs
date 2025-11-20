@@ -1,10 +1,7 @@
 use std::rc::Rc;
 
 use super::Pass;
-use crate::backend::binder::{
-    ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, LibraryDefinition,
-    Reference, Resolution, ScopeId,
-};
+use crate::backend::binder::{Definition, ImportDefinition, Reference, Resolution, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, Type, TypeId};
 
@@ -50,11 +47,9 @@ impl Pass<'_> {
                     }) => resolved_file_id.as_ref().and_then(|resolved_file_id| {
                         self.binder.scope_id_for_file_id(resolved_file_id)
                     }),
-                    Definition::Contract(ContractDefinition { node_id, .. })
-                    | Definition::Interface(InterfaceDefinition { node_id, .. })
-                    | Definition::Library(LibraryDefinition { node_id, .. }) => {
+                    Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
                         use_lexical_resolution = false;
-                        self.binder.scope_id_for_node_id(*node_id)
+                        self.binder.scope_id_for_node_id(definition.node_id())
                     }
                     _ => None,
                 });
