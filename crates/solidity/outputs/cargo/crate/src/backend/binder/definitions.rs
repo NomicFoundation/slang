@@ -43,35 +43,36 @@ pub struct ConstantDefinition {
 
 #[derive(Debug)]
 pub struct ContractDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::ContractDefinition,
     pub bases: Option<Vec<NodeId>>,
     pub constructor_parameters_scope_id: Option<ScopeId>,
 }
 
+impl ContractDefinition {
+    pub(crate) fn name(&self) -> String {
+        self.ir_node.name.unparse()
+    }
+}
+
 #[derive(Debug)]
 pub struct EnumDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::EnumDefinition,
 }
 
 #[derive(Debug)]
 pub struct EnumMemberDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: Rc<TerminalNode>,
 }
 
 #[derive(Debug)]
 pub struct ErrorDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::ErrorDefinition,
     pub parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct EventDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::EventDefinition,
     pub parameters_scope_id: ScopeId,
 }
 
@@ -85,8 +86,7 @@ pub enum FunctionVisibility {
 
 #[derive(Debug)]
 pub struct FunctionDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::FunctionDefinition,
     pub parameters_scope_id: ScopeId,
     pub visibility: FunctionVisibility,
 }
@@ -108,21 +108,18 @@ pub struct ImportedSymbolDefinition {
 
 #[derive(Debug)]
 pub struct InterfaceDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::InterfaceDefinition,
     pub bases: Option<Vec<NodeId>>,
 }
 
 #[derive(Debug)]
 pub struct LibraryDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::LibraryDefinition,
 }
 
 #[derive(Debug)]
 pub struct ModifierDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::FunctionDefinition,
 }
 
 #[derive(Debug)]
@@ -140,8 +137,7 @@ pub enum StateVariableVisibility {
 
 #[derive(Debug)]
 pub struct StateVariableDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::StateVariableDefinition,
     pub getter_type_id: Option<TypeId>,
     pub visibility: StateVariableVisibility,
 }
@@ -153,8 +149,7 @@ pub struct StructDefinition {
 
 #[derive(Debug)]
 pub struct StructMemberDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::StructMember,
 }
 
 #[derive(Debug)]
@@ -165,8 +160,7 @@ pub struct TypeParameterDefinition {
 
 #[derive(Debug)]
 pub struct UserDefinedValueTypeDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::UserDefinedValueTypeDefinition,
     pub target_type_id: Option<TypeId>,
 }
 
@@ -178,82 +172,91 @@ pub struct VariableDefinition {
 
 #[derive(Debug)]
 pub struct YulLabelDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::YulLabel,
 }
 
 #[derive(Debug)]
 pub struct YulFunctionDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::YulFunctionDefinition,
 }
 
 #[derive(Debug)]
 pub struct YulParameterDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: Rc<TerminalNode>,
 }
 
 #[derive(Debug)]
 pub struct YulVariableDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: Rc<TerminalNode>,
 }
 
 impl Definition {
     pub fn node_id(&self) -> NodeId {
         match self {
             Self::Constant(constant_definition) => constant_definition.node_id,
-            Self::Contract(contract_definition) => contract_definition.node_id,
-            Self::Enum(enum_definition) => enum_definition.node_id,
-            Self::EnumMember(enum_member_definition) => enum_member_definition.node_id,
-            Self::Error(error_definition) => error_definition.node_id,
-            Self::Event(event_definition) => event_definition.node_id,
-            Self::Function(function_definition) => function_definition.node_id,
+            Self::Contract(contract_definition) => contract_definition.ir_node.node_id,
+            Self::Enum(enum_definition) => enum_definition.ir_node.node_id,
+            Self::EnumMember(enum_member_definition) => enum_member_definition.ir_node.id(),
+            Self::Error(error_definition) => error_definition.ir_node.node_id,
+            Self::Event(event_definition) => event_definition.ir_node.node_id,
+            Self::Function(function_definition) => function_definition.ir_node.node_id,
             Self::Import(import_definition) => import_definition.node_id,
             Self::ImportedSymbol(imported_symbol_definition) => imported_symbol_definition.node_id,
-            Self::Interface(interface_definition) => interface_definition.node_id,
-            Self::Library(library_definition) => library_definition.node_id,
-            Self::Modifier(modifier_definition) => modifier_definition.node_id,
+            Self::Interface(interface_definition) => interface_definition.ir_node.node_id,
+            Self::Library(library_definition) => library_definition.ir_node.node_id,
+            Self::Modifier(modifier_definition) => modifier_definition.ir_node.node_id,
             Self::Parameter(parameter_definition) => parameter_definition.node_id,
-            Self::StateVariable(state_variable_definition) => state_variable_definition.node_id,
+            Self::StateVariable(state_variable_definition) => {
+                state_variable_definition.ir_node.node_id
+            }
             Self::Struct(struct_definition) => struct_definition.ir_node.node_id,
-            Self::StructMember(struct_member_definition) => struct_member_definition.node_id,
+            Self::StructMember(struct_member_definition) => {
+                struct_member_definition.ir_node.node_id
+            }
             Self::TypeParameter(parameter_definition) => parameter_definition.node_id,
-            Self::UserDefinedValueType(udvt_definition) => udvt_definition.node_id,
+            Self::UserDefinedValueType(udvt_definition) => udvt_definition.ir_node.node_id,
             Self::Variable(variable_definition) => variable_definition.node_id,
-            Self::YulFunction(function_definition) => function_definition.node_id,
-            Self::YulLabel(label_definition) => label_definition.node_id,
-            Self::YulParameter(parameter_definition) => parameter_definition.node_id,
-            Self::YulVariable(variable_definition) => variable_definition.node_id,
+            Self::YulFunction(function_definition) => function_definition.ir_node.node_id,
+            Self::YulLabel(label_definition) => label_definition.ir_node.node_id,
+            Self::YulParameter(parameter_definition) => parameter_definition.ir_node.id(),
+            Self::YulVariable(variable_definition) => variable_definition.ir_node.id(),
         }
     }
 
     pub fn identifier(&self) -> &Rc<TerminalNode> {
         match self {
             Self::Constant(constant_definition) => &constant_definition.identifier,
-            Self::Contract(contract_definition) => &contract_definition.identifier,
-            Self::Enum(enum_definition) => &enum_definition.identifier,
-            Self::EnumMember(enum_member_definition) => &enum_member_definition.identifier,
-            Self::Error(error_definition) => &error_definition.identifier,
-            Self::Event(event_definition) => &event_definition.identifier,
-            Self::Function(function_definition) => &function_definition.identifier,
+            Self::Contract(contract_definition) => &contract_definition.ir_node.name,
+            Self::Enum(enum_definition) => &enum_definition.ir_node.name,
+            Self::EnumMember(enum_member_definition) => &enum_member_definition.ir_node,
+            Self::Error(error_definition) => &error_definition.ir_node.name,
+            Self::Event(event_definition) => &event_definition.ir_node.name,
+            Self::Function(function_definition) => {
+                // Function definitions are only created for *named* functions
+                function_definition.ir_node.name.as_ref().unwrap()
+            }
             Self::Import(import_definition) => &import_definition.identifier,
             Self::ImportedSymbol(symbol_definition) => &symbol_definition.identifier,
-            Self::Interface(interface_definition) => &interface_definition.identifier,
-            Self::Library(library_definition) => &library_definition.identifier,
-            Self::Modifier(modifier_definition) => &modifier_definition.identifier,
+            Self::Interface(interface_definition) => &interface_definition.ir_node.name,
+            Self::Library(library_definition) => &library_definition.ir_node.name,
+            Self::Modifier(modifier_definition) => {
+                // Modifier definitions are only created for modifiers, which
+                // always have a name
+                modifier_definition.ir_node.name.as_ref().unwrap()
+            }
             Self::Parameter(parameter_definition) => &parameter_definition.identifier,
-            Self::StateVariable(state_variable_definition) => &state_variable_definition.identifier,
+            Self::StateVariable(state_variable_definition) => {
+                &state_variable_definition.ir_node.name
+            }
             Self::Struct(struct_definition) => &struct_definition.ir_node.name,
-            Self::StructMember(struct_member_definition) => &struct_member_definition.identifier,
+            Self::StructMember(struct_member_definition) => &struct_member_definition.ir_node.name,
             Self::TypeParameter(parameter_definition) => &parameter_definition.identifier,
-            Self::UserDefinedValueType(udvt_definition) => &udvt_definition.identifier,
+            Self::UserDefinedValueType(udvt_definition) => &udvt_definition.ir_node.name,
             Self::Variable(variable_definition) => &variable_definition.identifier,
-            Self::YulFunction(function_definition) => &function_definition.identifier,
-            Self::YulLabel(label_definition) => &label_definition.identifier,
-            Self::YulParameter(parameter_definition) => &parameter_definition.identifier,
-            Self::YulVariable(variable_definition) => &variable_definition.identifier,
+            Self::YulFunction(function_definition) => &function_definition.ir_node.name,
+            Self::YulLabel(label_definition) => &label_definition.ir_node.label,
+            Self::YulParameter(parameter_definition) => &parameter_definition.ir_node,
+            Self::YulVariable(variable_definition) => &variable_definition.ir_node,
         }
     }
 
@@ -298,62 +301,61 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_contract(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_contract(ir_node: &output_ir::ContractDefinition) -> Self {
         Self::Contract(ContractDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             bases: None,
             constructor_parameters_scope_id: None,
         })
     }
 
-    pub(crate) fn new_enum(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_enum(ir_node: &output_ir::EnumDefinition) -> Self {
         Self::Enum(EnumDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
-    pub(crate) fn new_enum_member(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_enum_member(ir_node: &Rc<TerminalNode>) -> Self {
         Self::EnumMember(EnumMemberDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
     pub(crate) fn new_error(
-        node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        ir_node: &output_ir::ErrorDefinition,
         parameters_scope_id: ScopeId,
     ) -> Self {
         Self::Error(ErrorDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             parameters_scope_id,
         })
     }
 
     pub(crate) fn new_event(
-        node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        ir_node: &output_ir::EventDefinition,
         parameters_scope_id: ScopeId,
     ) -> Self {
         Self::Event(EventDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             parameters_scope_id,
         })
     }
 
     pub(crate) fn new_function(
-        node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        ir_node: &output_ir::FunctionDefinition,
         parameters_scope_id: ScopeId,
         visibility: FunctionVisibility,
     ) -> Self {
+        assert!(
+            ir_node.name.is_some(),
+            "Cannot create a definition for an unnamed function"
+        );
+        assert!(
+            matches!(ir_node.kind, output_ir::FunctionKind::Regular),
+            "Cannot create definition for special function or modifier"
+        );
         Self::Function(FunctionDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             parameters_scope_id,
             visibility,
         })
@@ -385,25 +387,30 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_interface(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_interface(ir_node: &output_ir::InterfaceDefinition) -> Self {
         Self::Interface(InterfaceDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             bases: None,
         })
     }
 
-    pub(crate) fn new_library(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_library(ir_node: &output_ir::LibraryDefinition) -> Self {
         Self::Library(LibraryDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
-    pub(crate) fn new_modifier(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_modifier(ir_node: &output_ir::FunctionDefinition) -> Self {
+        assert!(
+            ir_node.name.is_some(),
+            "Modifier definition must have a name"
+        );
+        assert!(
+            matches!(ir_node.kind, output_ir::FunctionKind::Modifier),
+            "Cannot create definition from a non-modifier function definition"
+        );
         Self::Modifier(ModifierDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
@@ -415,28 +422,25 @@ impl Definition {
     }
 
     pub(crate) fn new_state_variable(
-        node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        ir_node: &output_ir::StateVariableDefinition,
         visibility: StateVariableVisibility,
     ) -> Self {
         Self::StateVariable(StateVariableDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             getter_type_id: None,
             visibility,
         })
     }
 
-    pub(crate) fn new_struct(node: &output_ir::StructDefinition) -> Self {
+    pub(crate) fn new_struct(ir_node: &output_ir::StructDefinition) -> Self {
         Self::Struct(StructDefinition {
-            ir_node: Rc::clone(node),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
-    pub(crate) fn new_struct_member(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_struct_member(ir_node: &output_ir::StructMember) -> Self {
         Self::StructMember(StructMemberDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
@@ -448,12 +452,10 @@ impl Definition {
     }
 
     pub(crate) fn new_user_defined_value_type(
-        node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        ir_node: &output_ir::UserDefinedValueTypeDefinition,
     ) -> Self {
         Self::UserDefinedValueType(UserDefinedValueTypeDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             target_type_id: None,
         })
     }
@@ -465,31 +467,27 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_yul_function(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_yul_function(ir_node: &output_ir::YulFunctionDefinition) -> Self {
         Self::YulFunction(YulFunctionDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
-    pub(crate) fn new_yul_label(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_yul_label(ir_node: &output_ir::YulLabel) -> Self {
         Self::YulLabel(YulLabelDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
-    pub(crate) fn new_yul_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_yul_parameter(ir_node: &Rc<TerminalNode>) -> Self {
         Self::YulParameter(YulParameterDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
-    pub(crate) fn new_yul_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_yul_variable(ir_node: &Rc<TerminalNode>) -> Self {
         Self::YulVariable(YulVariableDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 }
