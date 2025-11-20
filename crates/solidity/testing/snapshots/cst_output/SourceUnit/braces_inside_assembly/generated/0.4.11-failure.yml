@@ -1,0 +1,123 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // File: @openzeppelin/contracts/token/ERC20/IERC20.sol                                 │ 0..55
+  2  │                                                                                         │ 56..56
+  3  │                                                                                         │ 57..57
+  4  │ // OpenZeppelin Contracts (last updated v5.1.0) (token/ERC20/IERC20.sol)                │ 58..130
+  5  │                                                                                         │ 131..131
+  6  │ pragma solidity ^0.8.20;                                                                │ 132..156
+  7  │                                                                                         │ 157..157
+  8  │ library SafeERC20 {                                                                     │ 158..177
+  9  │     function _callOptionalReturn(IERC20 token, bytes memory data) private {             │ 178..253
+  10 │         assembly ("memory-safe") {                                                      │ 254..288
+  11 │             let success := call(gas(), token, 0, add(data, 0x20), mload(data), 0, 0x20) │ 289..376
+  12 │             // bubble errors                                                            │ 377..405
+  13 │             if iszero(success) {                                                        │ 406..438
+  14 │                 let ptr := mload(0x40)                                                  │ 439..477
+  15 │                 returndatacopy(ptr, 0, returndatasize())                                │ 478..534
+  16 │                 revert(ptr, returndatasize())                                           │ 535..580
+  17 │             }                                                                           │ 581..594
+  18 │             returnSize := returndatasize()                                              │ 595..637
+  19 │             returnValue := mload(0)                                                     │ 638..673
+  20 │         }                                                                               │ 674..683
+  21 │     }                                                                                   │ 684..689
+  22 │                                                                                         │ 690..690
+  23 │                                                                                         │ 691..695
+  24 │ }                                                                                       │ 696..697
+
+Errors: # 1 total
+  - >
+    Error: Expected DoubleQuotedStringLiteral or OpenBrace or SingleQuotedStringLiteral.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/braces_inside_assembly/input.sol:10:18]
+        │
+     10 │ ╭─▶         assembly ("memory-safe") {
+        ┆ ┆   
+     21 │ ├─▶     }
+        │ │           
+        │ ╰─────────── Error occurred here.
+    ────╯
+
+Tree:
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "// File: @openzeppelin/contracts/token/ERC20/IERC2..." (0..698)
+      - (item꞉ SourceUnitMember) ► (variant꞉ PragmaDirective): # "// File: @openzeppelin/contracts/token/ERC20/IERC2..." (0..157)
+          - (leading_trivia꞉ SingleLineComment): "// File: @openzeppelin/contracts/token/ERC20/IERC2..." # (0..55)
+          - (leading_trivia꞉ EndOfLine): "\n" # (55..56)
+          - (leading_trivia꞉ EndOfLine): "\n" # (56..57)
+          - (leading_trivia꞉ EndOfLine): "\n" # (57..58)
+          - (leading_trivia꞉ SingleLineComment): "// OpenZeppelin Contracts (last updated v5.1.0) (t..." # (58..130)
+          - (leading_trivia꞉ EndOfLine): "\n" # (130..131)
+          - (leading_trivia꞉ EndOfLine): "\n" # (131..132)
+          - (pragma_keyword꞉ PragmaKeyword): "pragma" # (132..138)
+          - (pragma꞉ Pragma) ► (variant꞉ VersionPragma): # " solidity ^0.8.20" (138..155)
+              - (leading_trivia꞉ Whitespace): " " # (138..139)
+              - (solidity_keyword꞉ SolidityKeyword): "solidity" # (139..147)
+              - (sets꞉ VersionExpressionSets): # " ^0.8.20" (147..155)
+                  - (item꞉ VersionExpressionSet): # " ^0.8.20" (147..155)
+                      - (item꞉ VersionExpression) ► (variant꞉ VersionTerm): # " ^0.8.20" (147..155)
+                          - (operator꞉ VersionOperator): # " ^" (147..149)
+                              - (leading_trivia꞉ Whitespace): " " # (147..148)
+                              - (variant꞉ Caret): "^" # (148..149)
+                          - (literal꞉ VersionLiteral) ► (variant꞉ SimpleVersionLiteral): # "0.8.20" (149..155)
+                              - (item꞉ VersionSpecifier): "0" # (149..150)
+                              - (separator꞉ Period): "." # (150..151)
+                              - (item꞉ VersionSpecifier): "8" # (151..152)
+                              - (separator꞉ Period): "." # (152..153)
+                              - (item꞉ VersionSpecifier): "20" # (153..155)
+          - (semicolon꞉ Semicolon): ";" # (155..156)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (156..157)
+      - (item꞉ SourceUnitMember) ► (variant꞉ LibraryDefinition): # "\nlibrary SafeERC20 {\n    function _callOptionalRet..." (157..698)
+          - (leading_trivia꞉ EndOfLine): "\n" # (157..158)
+          - (library_keyword꞉ LibraryKeyword): "library" # (158..165)
+          - (leading_trivia꞉ Whitespace): " " # (165..166)
+          - (name꞉ Identifier): "SafeERC20" # (166..175)
+          - (leading_trivia꞉ Whitespace): " " # (175..176)
+          - (open_brace꞉ OpenBrace): "{" # (176..177)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (177..178)
+          - (members꞉ LibraryMembers): # "    function _callOptionalReturn(IERC20 token, byt..." (178..690)
+              - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "    function _callOptionalReturn(IERC20 token, byt..." (178..690)
+                  - (leading_trivia꞉ Whitespace): "    " # (178..182)
+                  - (function_keyword꞉ FunctionKeyword): "function" # (182..190)
+                  - (name꞉ FunctionName): # " _callOptionalReturn" (190..210)
+                      - (leading_trivia꞉ Whitespace): " " # (190..191)
+                      - (variant꞉ Identifier): "_callOptionalReturn" # (191..210)
+                  - (parameters꞉ ParametersDeclaration): # "(IERC20 token, bytes memory data)" (210..243)
+                      - (open_paren꞉ OpenParen): "(" # (210..211)
+                      - (parameters꞉ Parameters): # "IERC20 token, bytes memory data" (211..242)
+                          - (item꞉ Parameter): # "IERC20 token" (211..223)
+                              - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "IERC20" (211..217)
+                                  - (item꞉ Identifier): "IERC20" # (211..217)
+                              - (leading_trivia꞉ Whitespace): " " # (217..218)
+                              - (name꞉ Identifier): "token" # (218..223)
+                          - (separator꞉ Comma): "," # (223..224)
+                          - (item꞉ Parameter): # " bytes memory data" (224..242)
+                              - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # " bytes" (224..230)
+                                  - (leading_trivia꞉ Whitespace): " " # (224..225)
+                                  - (variant꞉ BytesKeyword): "bytes" # (225..230)
+                              - (storage_location꞉ StorageLocation): # " memory" (230..237)
+                                  - (leading_trivia꞉ Whitespace): " " # (230..231)
+                                  - (variant꞉ MemoryKeyword): "memory" # (231..237)
+                              - (leading_trivia꞉ Whitespace): " " # (237..238)
+                              - (name꞉ Identifier): "data" # (238..242)
+                      - (close_paren꞉ CloseParen): ")" # (242..243)
+                  - (attributes꞉ FunctionAttributes): # " private" (243..251)
+                      - (item꞉ FunctionAttribute): # " private" (243..251)
+                          - (leading_trivia꞉ Whitespace): " " # (243..244)
+                          - (variant꞉ PrivateKeyword): "private" # (244..251)
+                  - (body꞉ FunctionBody) ► (variant꞉ Block): # ' {\n        assembly ("memory-safe") {\n            ...' (251..690)
+                      - (leading_trivia꞉ Whitespace): " " # (251..252)
+                      - (open_brace꞉ OpenBrace): "{" # (252..253)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (253..254)
+                      - (statements꞉ Statements): # "        assembly" (254..270)
+                          - (item꞉ Statement) ► (variant꞉ AssemblyStatement): # "        assembly" (254..270)
+                              - (leading_trivia꞉ Whitespace): "        " # (254..262)
+                              - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (262..270)
+                      - (leading_trivia꞉ Whitespace): " " # (270..271)
+                      - (unrecognized꞉ UNRECOGNIZED): '("memory-safe") {\n            let success := call(...' # (271..688)
+                      - (close_brace꞉ CloseBrace): "}" # (688..689)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (689..690)
+          - (leading_trivia꞉ EndOfLine): "\n" # (690..691)
+          - (leading_trivia꞉ Whitespace): "    " # (691..695)
+          - (leading_trivia꞉ EndOfLine): "\n" # (695..696)
+          - (close_brace꞉ CloseBrace): "}" # (696..697)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (697..698)

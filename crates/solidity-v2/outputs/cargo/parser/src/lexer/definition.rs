@@ -130,3 +130,28 @@ impl Lexer<'_> {
         first_part
     }
 }
+
+pub type Spanned<Tok, Loc, Error> = Result<(Loc, Tok, Loc), Error>;
+
+/// Iterate over the lexemes and their offsets
+///
+/// This iterator skips all trivia, we'll want to include it in
+/// future versions
+impl Iterator for Lexer<'_> {
+    type Item = Spanned<LexemeKind, usize, ()>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(lexeme) = self.next_lexeme() {
+            match lexeme.kind {
+                LexemeKind::Whitespace
+                | LexemeKind::EndOfLine
+                | LexemeKind::SingleLineComment
+                | LexemeKind::MultiLineComment
+                | LexemeKind::SingleLineNatSpecComment
+                | LexemeKind::MultiLineNatSpecComment => {}
+                _ => return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end))),
+            }
+        }
+        None
+    }
+}

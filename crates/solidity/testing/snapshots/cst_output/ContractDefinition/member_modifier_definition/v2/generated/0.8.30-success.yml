@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            ModifierDefinition(
+                ModifierDefinitionStruct {
+                    modifier_keyword: ModifierKeyword {
+                        range: 20..28,
+                    },
+                    name: Identifier {
+                        range: 29..32,
+                    },
+                    parameters: Some(
+                        ParametersDeclarationStruct {
+                            open_paren: OpenParen {
+                                range: 32..33,
+                            },
+                            parameters: Parameters {
+                                elements: [],
+                            },
+                            close_paren: CloseParen {
+                                range: 33..34,
+                            },
+                        },
+                    ),
+                    attributes: ModifierAttributes {
+                        elements: [],
+                    },
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 35..36,
+                            },
+                            statements: Statements {
+                                elements: [
+                                    ExpressionStatement(
+                                        ExpressionStatementStruct {
+                                            expression: Identifier(
+                                                Identifier {
+                                                    range: 41..42,
+                                                },
+                                            ),
+                                            semicolon: Semicolon {
+                                                range: 42..43,
+                                            },
+                                        },
+                                    ),
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 46..47,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 48..49,
+    },
+}

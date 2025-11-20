@@ -48,7 +48,6 @@ pub trait NodeChecker {
     /// Check whether self matches the given CST node.
     ///
     /// Returns a vector of errors found, empty if no errors.
-    #[allow(dead_code)]
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         self.check_node_with_offset(node, TextIndex::ZERO)
     }
@@ -7809,7 +7808,8 @@ impl NodeChecker for PostfixExpression {
     }
 }
 
-/// Generic `NodeChecker` for sequences
+// TODO(v2): PragmaDirective ignores the pragma value for now until the Lexer can
+// perform a context switch, therefore the checker ignores that edge
 impl NodeChecker for PragmaDirective {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -7844,7 +7844,7 @@ impl NodeChecker for PragmaDirective {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected pragma_keyword to be present in the CST, but it was not".to_string(),
+                    format!("Expected pragma_keyword to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -7853,18 +7853,13 @@ impl NodeChecker for PragmaDirective {
         // pragma
 
         {
-            let pragma = &self.pragma;
-
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Pragma)
-            {
-                let child_errors = pragma.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Pragma) {
+                // We don't check, since V2 can't parse these yet
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected pragma to be present in the CST, but it was not".to_string(),
+                    format!("Expected pragma to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -7884,7 +7879,7 @@ impl NodeChecker for PragmaDirective {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected semicolon to be present in the CST, but it was not".to_string(),
+                    format!("Expected semicolon to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -7892,7 +7887,10 @@ impl NodeChecker for PragmaDirective {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!("Expected 0 children left, but there's some left {children:#?}"),
+                format!(
+                    "Expected 0 children left, but there's some left {:#?}",
+                    children
+                ),
                 node_range,
             ));
         }
@@ -11242,7 +11240,8 @@ impl NodeChecker for WhileStatement {
     }
 }
 
-/// Generic `NodeChecker` for sequences
+// TODO(v2): YulBlock ignores the statements for now until the Lexer can
+// perform a context switch, therefore the checker ignores that edge
 impl NodeChecker for YulBlock {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -11277,7 +11276,7 @@ impl NodeChecker for YulBlock {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected open_brace to be present in the CST, but it was not".to_string(),
+                    format!("Expected open_brace to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -11286,18 +11285,13 @@ impl NodeChecker for YulBlock {
         // statements
 
         {
-            let statements = &self.statements;
-
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Statements)
-            {
-                let child_errors = statements.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Statements) {
+                // We don't check statements, since V2 can't parse them yet
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected statements to be present in the CST, but it was not".to_string(),
+                    format!("Expected statements to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -11317,7 +11311,7 @@ impl NodeChecker for YulBlock {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected close_brace to be present in the CST, but it was not".to_string(),
+                    format!("Expected close_brace to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -11325,7 +11319,10 @@ impl NodeChecker for YulBlock {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!("Expected 0 children left, but there's some left {children:#?}"),
+                format!(
+                    "Expected 0 children left, but there's some left {:#?}",
+                    children
+                ),
                 node_range,
             ));
         }

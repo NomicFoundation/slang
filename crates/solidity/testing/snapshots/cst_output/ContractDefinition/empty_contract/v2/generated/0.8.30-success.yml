@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [],
+    },
+    close_brace: CloseBrace {
+        range: 17..18,
+    },
+}

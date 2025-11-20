@@ -9,6 +9,7 @@ publish = false
 [dependencies]
 language_v2_definition = { workspace = true }
 serde = { workspace = true }
+semver = { workspace = true }
 
 [lints]
 workspace = true

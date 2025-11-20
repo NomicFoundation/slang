@@ -1,0 +1,356 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            PragmaDirective(
+                PragmaDirectiveStruct {
+                    pragma_keyword: PragmaKeyword {
+                        range: 0..6,
+                    },
+                    pragma: AbicoderPragma(
+                        AbicoderPragmaStruct {
+                            abicoder_keyword: AbicoderKeyword {
+                                range: 0..0,
+                            },
+                            version: AbicoderV1Keyword(
+                                AbicoderV1Keyword {
+                                    range: 0..0,
+                                },
+                            ),
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 21..22,
+                    },
+                },
+            ),
+            ImportDirective(
+                ImportDirectiveStruct {
+                    import_keyword: ImportKeyword {
+                        range: 24..30,
+                    },
+                    clause: PathImport(
+                        PathImportStruct {
+                            path: DoubleQuotedStringLiteral(
+                                DoubleQuotedStringLiteral {
+                                    range: 31..40,
+                                },
+                            ),
+                            alias: None,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 40..41,
+                    },
+                },
+            ),
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 43..48,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPathStruct {
+                            head: Identifier {
+                                range: 49..50,
+                            },
+                            tail: None,
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 51..54,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPathStruct {
+                                head: Identifier {
+                                    range: 55..56,
+                                },
+                                tail: None,
+                            },
+                        ),
+                    ),
+                    global_keyword: None,
+                    semicolon: Semicolon {
+                        range: 56..57,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 59..67,
+                    },
+                    name: Identifier {
+                        range: 68..69,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 70..71,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 72..73,
+                    },
+                },
+            ),
+            InterfaceDefinition(
+                InterfaceDefinitionStruct {
+                    interface_keyword: InterfaceKeyword {
+                        range: 75..84,
+                    },
+                    name: Identifier {
+                        range: 85..86,
+                    },
+                    inheritance: None,
+                    open_brace: OpenBrace {
+                        range: 87..88,
+                    },
+                    members: InterfaceMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 89..90,
+                    },
+                },
+            ),
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        range: 92..99,
+                    },
+                    name: Identifier {
+                        range: 100..101,
+                    },
+                    open_brace: OpenBrace {
+                        range: 102..103,
+                    },
+                    members: LibraryMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 104..105,
+                    },
+                },
+            ),
+            StructDefinition(
+                StructDefinitionStruct {
+                    struct_keyword: StructKeyword {
+                        range: 107..113,
+                    },
+                    name: Identifier {
+                        range: 114..115,
+                    },
+                    open_brace: OpenBrace {
+                        range: 116..117,
+                    },
+                    members: StructMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 118..119,
+                    },
+                },
+            ),
+            EnumDefinition(
+                EnumDefinitionStruct {
+                    enum_keyword: EnumKeyword {
+                        range: 121..125,
+                    },
+                    name: Identifier {
+                        range: 126..127,
+                    },
+                    open_brace: OpenBrace {
+                        range: 128..129,
+                    },
+                    members: EnumMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 130..131,
+                    },
+                },
+            ),
+            ConstantDefinition(
+                ConstantDefinitionStruct {
+                    type_name: ElementaryType(
+                        UintKeyword(
+                            UintKeyword {
+                                range: 133..139,
+                            },
+                        ),
+                    ),
+                    constant_keyword: ConstantKeyword {
+                        range: 140..148,
+                    },
+                    name: Identifier {
+                        range: 149..150,
+                    },
+                    equal: Equal {
+                        range: 151..152,
+                    },
+                    value: DecimalNumberExpression(
+                        DecimalNumberExpressionStruct {
+                            literal: DecimalLiteral {
+                                range: 153..154,
+                            },
+                            unit: None,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 154..155,
+                    },
+                },
+            ),
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        range: 157..165,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            range: 166..167,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 167..168,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 168..169,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [
+                            PublicKeyword(
+                                PublicKeyword {
+                                    range: 170..176,
+                                },
+                            ),
+                        ],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 177..178,
+                            },
+                            statements: Statements {
+                                elements: [],
+                            },
+                            close_brace: CloseBrace {
+                                range: 179..180,
+                            },
+                        },
+                    ),
+                },
+            ),
+            ErrorDefinition(
+                ErrorDefinitionStruct {
+                    error_keyword: ErrorKeyword {
+                        range: 182..187,
+                    },
+                    name: Identifier {
+                        range: 188..190,
+                    },
+                    members: ErrorParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 190..191,
+                        },
+                        parameters: ErrorParameters {
+                            elements: [
+                                ErrorParameterStruct {
+                                    type_name: ElementaryType(
+                                        StringKeyword(
+                                            StringKeyword {
+                                                range: 191..197,
+                                            },
+                                        ),
+                                    ),
+                                    name: None,
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 197..198,
+                        },
+                    },
+                    semicolon: Semicolon {
+                        range: 198..199,
+                    },
+                },
+            ),
+            UserDefinedValueTypeDefinition(
+                UserDefinedValueTypeDefinitionStruct {
+                    type_keyword: TypeKeyword {
+                        range: 201..205,
+                    },
+                    name: Identifier {
+                        range: 206..207,
+                    },
+                    is_keyword: IsKeyword {
+                        range: 208..210,
+                    },
+                    value_type: BoolKeyword(
+                        BoolKeyword {
+                            range: 211..215,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 215..216,
+                    },
+                },
+            ),
+            EventDefinition(
+                EventDefinitionStruct {
+                    event_keyword: EventKeyword {
+                        range: 218..223,
+                    },
+                    name: Identifier {
+                        range: 224..226,
+                    },
+                    parameters: EventParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 226..227,
+                        },
+                        parameters: EventParameters {
+                            elements: [
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 227..234,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: None,
+                                    name: Some(
+                                        Identifier {
+                                            range: 235..240,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 240..241,
+                        },
+                    },
+                    anonymous_keyword: None,
+                    semicolon: Semicolon {
+                        range: 241..242,
+                    },
+                },
+            ),
+        ],
+    },
+}

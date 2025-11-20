@@ -1,0 +1,114 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        range: 20..28,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            range: 29..32,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 32..33,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 33..34,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [],
+                    },
+                    returns: Some(
+                        ReturnsDeclarationStruct {
+                            returns_keyword: ReturnsKeyword {
+                                range: 35..42,
+                            },
+                            variables: ParametersDeclarationStruct {
+                                open_paren: OpenParen {
+                                    range: 43..44,
+                                },
+                                parameters: Parameters {
+                                    elements: [
+                                        ParameterStruct {
+                                            type_name: ElementaryType(
+                                                UintKeyword(
+                                                    UintKeyword {
+                                                        range: 44..48,
+                                                    },
+                                                ),
+                                            ),
+                                            storage_location: None,
+                                            name: None,
+                                        },
+                                    ],
+                                },
+                                close_paren: CloseParen {
+                                    range: 48..49,
+                                },
+                            },
+                        },
+                    ),
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 50..51,
+                            },
+                            statements: Statements {
+                                elements: [
+                                    ReturnStatement(
+                                        ReturnStatementStruct {
+                                            return_keyword: ReturnKeyword {
+                                                range: 56..62,
+                                            },
+                                            expression: Some(
+                                                DecimalNumberExpression(
+                                                    DecimalNumberExpressionStruct {
+                                                        literal: DecimalLiteral {
+                                                            range: 63..64,
+                                                        },
+                                                        unit: None,
+                                                    },
+                                                ),
+                                            ),
+                                            semicolon: Semicolon {
+                                                range: 64..65,
+                                            },
+                                        },
+                                    ),
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 68..69,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 70..71,
+    },
+}

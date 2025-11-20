@@ -1,0 +1,319 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        range: 0..7,
+                    },
+                    name: Identifier {
+                        range: 8..16,
+                    },
+                    open_brace: OpenBrace {
+                        range: 17..18,
+                    },
+                    members: LibraryMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 21..29,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 30..36,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 36..37,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 37..38,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 39..47,
+                                                },
+                                            ),
+                                            PureKeyword(
+                                                PureKeyword {
+                                                    range: 48..52,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 54..55,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    TupleDeconstructionStatement(
+                                                        TupleDeconstructionStatementStruct {
+                                                            target: TypedTupleDeconstructionTarget(
+                                                                TypedTupleDeconstructionTargetStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 60..61,
+                                                                    },
+                                                                    elements: TypedTupleDeconstructionElements {
+                                                                        elements: [
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: Some(
+                                                                                    TypedTupleDeconstructionMemberStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            BoolKeyword(
+                                                                                                BoolKeyword {
+                                                                                                    range: 63..67,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 68..69,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 71..72,
+                                                                    },
+                                                                },
+                                                            ),
+                                                            equal: Equal {
+                                                                range: 73..74,
+                                                            },
+                                                            expression: Identifier(
+                                                                Identifier {
+                                                                    range: 75..78,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 78..79,
+                                                            },
+                                                        },
+                                                    ),
+                                                    TupleDeconstructionStatement(
+                                                        TupleDeconstructionStatementStruct {
+                                                            target: TypedTupleDeconstructionTarget(
+                                                                TypedTupleDeconstructionTargetStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 84..85,
+                                                                    },
+                                                                    elements: TypedTupleDeconstructionElements {
+                                                                        elements: [
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: Some(
+                                                                                    TypedTupleDeconstructionMemberStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            BoolKeyword(
+                                                                                                BoolKeyword {
+                                                                                                    range: 85..89,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 90..91,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: Some(
+                                                                                    TypedTupleDeconstructionMemberStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            UintKeyword(
+                                                                                                UintKeyword {
+                                                                                                    range: 93..97,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 98..99,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 99..100,
+                                                                    },
+                                                                },
+                                                            ),
+                                                            equal: Equal {
+                                                                range: 101..102,
+                                                            },
+                                                            expression: Identifier(
+                                                                Identifier {
+                                                                    range: 103..106,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 106..107,
+                                                            },
+                                                        },
+                                                    ),
+                                                    TupleDeconstructionStatement(
+                                                        TupleDeconstructionStatementStruct {
+                                                            target: TypedTupleDeconstructionTarget(
+                                                                TypedTupleDeconstructionTargetStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 112..113,
+                                                                    },
+                                                                    elements: TypedTupleDeconstructionElements {
+                                                                        elements: [
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: Some(
+                                                                                    TypedTupleDeconstructionMemberStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            UintKeyword(
+                                                                                                UintKeyword {
+                                                                                                    range: 113..117,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 118..119,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: Some(
+                                                                                    TypedTupleDeconstructionMemberStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            UintKeyword(
+                                                                                                UintKeyword {
+                                                                                                    range: 123..127,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 128..129,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 129..130,
+                                                                    },
+                                                                },
+                                                            ),
+                                                            equal: Equal {
+                                                                range: 131..132,
+                                                            },
+                                                            expression: Identifier(
+                                                                Identifier {
+                                                                    range: 133..136,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 136..137,
+                                                            },
+                                                        },
+                                                    ),
+                                                    TupleDeconstructionStatement(
+                                                        TupleDeconstructionStatementStruct {
+                                                            target: TypedTupleDeconstructionTarget(
+                                                                TypedTupleDeconstructionTargetStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 142..143,
+                                                                    },
+                                                                    elements: TypedTupleDeconstructionElements {
+                                                                        elements: [
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            TypedTupleDeconstructionElementStruct {
+                                                                                member: Some(
+                                                                                    TypedTupleDeconstructionMemberStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            BoolKeyword(
+                                                                                                BoolKeyword {
+                                                                                                    range: 147..151,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 152..153,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 153..154,
+                                                                    },
+                                                                },
+                                                            ),
+                                                            equal: Equal {
+                                                                range: 155..156,
+                                                            },
+                                                            expression: Identifier(
+                                                                Identifier {
+                                                                    range: 157..160,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 160..161,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 164..165,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 166..167,
+                    },
+                },
+            ),
+        ],
+    },
+}

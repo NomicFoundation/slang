@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            ErrorDefinition(
+                ErrorDefinitionStruct {
+                    error_keyword: ErrorKeyword {
+                        range: 20..25,
+                    },
+                    name: Identifier {
+                        range: 26..32,
+                    },
+                    members: ErrorParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 32..33,
+                        },
+                        parameters: ErrorParameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 33..34,
+                        },
+                    },
+                    semicolon: Semicolon {
+                        range: 34..35,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 36..37,
+    },
+}

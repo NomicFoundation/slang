@@ -67,6 +67,7 @@ fn check_struct(analysis: &mut Analysis, item: &SpannedStructItem) {
         enabled,
         error_recovery: _,
         fields,
+        parser_options: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());
@@ -78,6 +79,7 @@ fn check_enum(analysis: &mut Analysis, item: &SpannedEnumItem) {
         name: _,
         enabled,
         variants,
+        parser_options: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());
@@ -98,6 +100,7 @@ fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem) {
         reference: _,
         allow_empty: _,
         enabled,
+        parser_options: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());
@@ -110,6 +113,7 @@ fn check_separated(analysis: &mut Analysis, item: &SpannedSeparatedItem) {
         separator: _,
         allow_empty: _,
         enabled,
+        parser_options: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());
@@ -121,6 +125,7 @@ fn check_precedence(analysis: &mut Analysis, item: &SpannedPrecedenceItem) {
         enabled,
         precedence_expressions,
         primary_expressions,
+        parser_options: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());

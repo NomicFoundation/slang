@@ -1,0 +1,93 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [
+            InheritanceSpecifier(
+                InheritanceSpecifierStruct {
+                    is_keyword: IsKeyword {
+                        range: 16..18,
+                    },
+                    types: InheritanceTypes {
+                        elements: [
+                            InheritanceTypeStruct {
+                                type_name: IdentifierPathStruct {
+                                    head: Identifier {
+                                        range: 19..22,
+                                    },
+                                    tail: None,
+                                },
+                                arguments: None,
+                            },
+                            InheritanceTypeStruct {
+                                type_name: IdentifierPathStruct {
+                                    head: Identifier {
+                                        range: 24..27,
+                                    },
+                                    tail: None,
+                                },
+                                arguments: Some(
+                                    PositionalArgumentsDeclaration(
+                                        PositionalArgumentsDeclarationStruct {
+                                            open_paren: OpenParen {
+                                                range: 27..28,
+                                            },
+                                            arguments: PositionalArguments {
+                                                elements: [
+                                                    DecimalNumberExpression(
+                                                        DecimalNumberExpressionStruct {
+                                                            literal: DecimalLiteral {
+                                                                range: 28..29,
+                                                            },
+                                                            unit: None,
+                                                        },
+                                                    ),
+                                                    DecimalNumberExpression(
+                                                        DecimalNumberExpressionStruct {
+                                                            literal: DecimalLiteral {
+                                                                range: 31..32,
+                                                            },
+                                                            unit: None,
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_paren: CloseParen {
+                                                range: 32..33,
+                                            },
+                                        },
+                                    ),
+                                ),
+                            },
+                            InheritanceTypeStruct {
+                                type_name: IdentifierPathStruct {
+                                    head: Identifier {
+                                        range: 35..38,
+                                    },
+                                    tail: None,
+                                },
+                                arguments: None,
+                            },
+                        ],
+                    },
+                },
+            ),
+        ],
+    },
+    open_brace: OpenBrace {
+        range: 39..40,
+    },
+    members: ContractMembers {
+        elements: [],
+    },
+    close_brace: CloseBrace {
+        range: 40..41,
+    },
+}
