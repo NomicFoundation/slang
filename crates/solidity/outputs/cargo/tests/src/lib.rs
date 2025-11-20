@@ -2,6 +2,7 @@
 
 use metaslang_bindings as _;
 
+mod ast_api;
 mod backend;
 mod binder;
 mod bindings;

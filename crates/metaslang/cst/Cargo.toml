@@ -18,6 +18,9 @@ license = "MIT"
 keywords = ["parser"]
 categories = ["compilers", "parsing", "parser-implementations"]
 
+[features]
+syntax = []
+
 [dependencies]
 nom = { workspace = true }
 serde = { workspace = true }
