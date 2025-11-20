@@ -7,6 +7,11 @@ use crate::cst::cst_output::runner::run;
 const T: &str = "SourceUnit";
 
 #[test]
+fn braces_inside_assembly() -> Result<()> {
+    run(T, "braces_inside_assembly")
+}
+
+#[test]
 fn empty_file() -> Result<()> {
     run(T, "empty_file")
 }
@@ -52,8 +57,18 @@ fn end_of_file_trivia_unexpected_after() -> Result<()> {
 }
 
 #[test]
+fn error_definition() -> Result<()> {
+    run(T, "error_definition")
+}
+
+#[test]
 fn everything() -> Result<()> {
     run(T, "everything")
+}
+
+#[test]
+fn layout_at() -> Result<()> {
+    run(T, "layout_at")
 }
 
 #[test]
@@ -102,8 +117,18 @@ fn pratt_precedence_recovery() -> Result<()> {
 }
 
 #[test]
+fn revert_statement() -> Result<()> {
+    run(T, "revert_statement")
+}
+
+#[test]
 fn safe_math() -> Result<()> {
     run(T, "safe_math")
+}
+
+#[test]
+fn state_variable_function() -> Result<()> {
+    run(T, "state_variable_function")
 }
 
 #[test]
@@ -134,6 +159,36 @@ fn trailing_trivia_multi_line_without_newline() -> Result<()> {
 #[test]
 fn trailing_trivia_only_until_newline() -> Result<()> {
     run(T, "trailing_trivia_only_until_newline")
+}
+
+#[test]
+fn try_expression() -> Result<()> {
+    run(T, "try_expression")
+}
+
+#[test]
+fn try_options() -> Result<()> {
+    run(T, "try_options")
+}
+
+#[test]
+fn tuple_assignment() -> Result<()> {
+    run(T, "tuple_assignment")
+}
+
+#[test]
+fn tuple_assignment_empty() -> Result<()> {
+    run(T, "tuple_assignment_empty")
+}
+
+#[test]
+fn tuple_deconstruction_statement() -> Result<()> {
+    run(T, "tuple_deconstruction_statement")
+}
+
+#[test]
+fn unreserved_keywords() -> Result<()> {
+    run(T, "unreserved_keywords")
 }
 
 #[test]

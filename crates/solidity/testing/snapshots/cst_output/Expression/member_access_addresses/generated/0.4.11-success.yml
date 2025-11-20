@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ [                                                                                │ 0..1
+  2  │     // This is parsed as an IAP and later resolved to a member access            │ 2..71
+  3  │     x[1].address,                                                                │ 72..89
+  4  │     x().address                                                                  │ 90..105
+  5  │ ]                                                                                │ 106..107
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ ArrayExpression): # "[\n    // This is parsed as an IAP and later resolv..." (0..108)
+      - (open_bracket꞉ OpenBracket): "[" # (0..1)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
+      - (items꞉ ArrayValues): # "    // This is parsed as an IAP and later resolved..." (2..106)
+          - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "    // This is parsed as an IAP and later resolved..." (2..88)
+              - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # "    // This is parsed as an IAP and later resolved..." (2..80)
+                  - (operand꞉ Expression): # "    // This is parsed as an IAP and later resolved..." (2..77)
+                      - (leading_trivia꞉ Whitespace): "    " # (2..6)
+                      - (leading_trivia꞉ SingleLineComment): "// This is parsed as an IAP and later resolved to ..." # (6..71)
+                      - (leading_trivia꞉ EndOfLine): "\n" # (71..72)
+                      - (leading_trivia꞉ Whitespace): "    " # (72..76)
+                      - (variant꞉ Identifier): "x" # (76..77)
+                  - (open_bracket꞉ OpenBracket): "[" # (77..78)
+                  - (start꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1" # (78..79)
+                  - (close_bracket꞉ CloseBracket): "]" # (79..80)
+              - (period꞉ Period): "." # (80..81)
+              - (member꞉ Identifier): "address" # (81..88)
+          - (separator꞉ Comma): "," # (88..89)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (89..90)
+          - (item꞉ Expression) ► (variant꞉ MemberAccessExpression): # "    x().address\n" (90..106)
+              - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # "    x()" (90..97)
+                  - (operand꞉ Expression): # "    x" (90..95)
+                      - (leading_trivia꞉ Whitespace): "    " # (90..94)
+                      - (variant꞉ Identifier): "x" # (94..95)
+                  - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (95..97)
+                      - (open_paren꞉ OpenParen): "(" # (95..96)
+                      - (arguments꞉ PositionalArguments): [] # (96..96)
+                      - (close_paren꞉ CloseParen): ")" # (96..97)
+              - (period꞉ Period): "." # (97..98)
+              - (member꞉ Identifier): "address" # (98..105)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (105..106)
+      - (close_bracket꞉ CloseBracket): "]" # (106..107)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (107..108)

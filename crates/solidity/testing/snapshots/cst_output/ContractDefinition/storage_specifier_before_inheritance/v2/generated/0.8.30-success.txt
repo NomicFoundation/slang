@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..12,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [
+            StorageLayoutSpecifier(
+                StorageLayoutSpecifierStruct {
+                    layout_keyword: LayoutKeyword {
+                        range: 13..19,
+                    },
+                    at_keyword: AtKeyword {
+                        range: 20..22,
+                    },
+                    expression: DecimalNumberExpression(
+                        DecimalNumberExpressionStruct {
+                            literal: DecimalLiteral {
+                                range: 23..24,
+                            },
+                            unit: None,
+                        },
+                    ),
+                },
+            ),
+            InheritanceSpecifier(
+                InheritanceSpecifierStruct {
+                    is_keyword: IsKeyword {
+                        range: 25..27,
+                    },
+                    types: InheritanceTypes {
+                        elements: [
+                            InheritanceTypeStruct {
+                                type_name: IdentifierPath {
+                                    elements: [
+                                        Identifier(
+                                            Identifier {
+                                                range: 28..31,
+                                            },
+                                        ),
+                                    ],
+                                },
+                                arguments: None,
+                            },
+                        ],
+                    },
+                },
+            ),
+        ],
+    },
+    open_brace: OpenBrace {
+        range: 32..33,
+    },
+    members: ContractMembers {
+        elements: [],
+    },
+    close_brace: CloseBrace {
+        range: 34..35,
+    },
+}

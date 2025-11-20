@@ -1,0 +1,3 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+"UnrecognizedEof { location: 7, expected: [\"L_AddressKeyword_Reserved\", \"L_AtKeyword_Unreserved\", \"L_BoolKeyword_Reserved\", \"L_BytesKeyword_Reserved\", \"L_ErrorKeyword_Unreserved\", \"L_FinneyKeyword_Unreserved\", \"L_FixedKeyword_Reserved\", \"L_FromKeyword_Unreserved\", \"L_FunctionKeyword_Reserved\", \"L_GlobalKeyword_Unreserved\", \"L_Identifier\", \"L_IntKeyword_Reserved\", \"L_LayoutKeyword_Unreserved\", \"L_MappingKeyword_Reserved\", \"L_RevertKeyword_Unreserved\", \"L_StringKeyword_Reserved\", \"L_SzaboKeyword_Unreserved\", \"L_TransientKeyword_Unreserved\", \"L_UfixedKeyword_Reserved\", \"L_UintKeyword_Reserved\"] }"
