@@ -69,14 +69,6 @@ pub struct VersionTermStruct {
     pub literal: VersionLiteral,
 }
 
-pub type ImportDirective = Rc<ImportDirectiveStruct>;
-
-#[derive(Debug)]
-pub struct ImportDirectiveStruct {
-    pub node_id: NodeId,
-    pub clause: ImportClause,
-}
-
 pub type PathImport = Rc<PathImportStruct>;
 
 #[derive(Debug)]
@@ -981,7 +973,6 @@ pub struct YulFunctionCallExpressionStruct {
 #[derive(Debug)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
-    ImportDirective(ImportDirective),
     ContractDefinition(ContractDefinition),
     InterfaceDefinition(InterfaceDefinition),
     LibraryDefinition(LibraryDefinition),
@@ -993,6 +984,7 @@ pub enum SourceUnitMember {
     UsingDirective(UsingDirective),
     EventDefinition(EventDefinition),
     ConstantDefinition(ConstantDefinition),
+    ImportClause(ImportClause),
 }
 
 #[derive(Debug)]

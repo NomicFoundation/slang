@@ -40,6 +40,20 @@ struct Pass {
 }
 
 impl Transformer for Pass {
+    fn transform_source_unit_member(
+        &mut self,
+        source: &input::SourceUnitMember,
+    ) -> output::SourceUnitMember {
+        match source {
+            input::SourceUnitMember::ImportDirective(import_directive) => {
+                output::SourceUnitMember::ImportClause(
+                    self.transform_import_clause(&import_directive.clause),
+                )
+            }
+            _ => self.default_transform_source_unit_member(source),
+        }
+    }
+
     fn transform_contract_definition(
         &mut self,
         source: &input::ContractDefinition,

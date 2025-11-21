@@ -93,18 +93,6 @@ pub trait Transformer {
         })
     }
 
-    fn transform_import_directive(
-        &mut self,
-        source: &input::ImportDirective,
-    ) -> output::ImportDirective {
-        let clause = self.transform_import_clause(&source.clause);
-
-        Rc::new(output::ImportDirectiveStruct {
-            node_id: source.node_id,
-            clause,
-        })
-    }
-
     fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport;
 
     fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport;
@@ -1483,6 +1471,13 @@ pub trait Transformer {
         self.transform_named_arguments(&source.arguments)
     }
 
+    fn transform_import_directive(
+        &mut self,
+        source: &input::ImportDirective,
+    ) -> output::ImportClause {
+        self.transform_import_clause(&source.clause)
+    }
+
     //
     // Choices:
     //
@@ -1497,11 +1492,6 @@ pub trait Transformer {
             input::SourceUnitMember::PragmaDirective(ref pragma_directive) => {
                 output::SourceUnitMember::PragmaDirective(
                     self.transform_pragma_directive(pragma_directive),
-                )
-            }
-            input::SourceUnitMember::ImportDirective(ref import_directive) => {
-                output::SourceUnitMember::ImportDirective(
-                    self.transform_import_directive(import_directive),
                 )
             }
             input::SourceUnitMember::ContractDefinition(ref contract_definition) => {
@@ -1561,6 +1551,7 @@ pub trait Transformer {
                     self.transform_constant_definition(constant_definition),
                 )
             }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_source_unit_member(

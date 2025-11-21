@@ -9,6 +9,7 @@ pub(super) fn build_from(structured_ast_model: &IrModel) -> ModelWithTransformer
     flatten_state_variable_attributes(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
     simplify_string_literals(&mut mutator);
+    simplify_imports(&mut mutator);
 
     mutator.into()
 }
@@ -243,4 +244,8 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.add_collection_type("AssemblyFlags", "StringLiteral");
     mutator.add_sequence_field("AssemblyStatement", "flags", "AssemblyFlags", false);
     mutator.add_sequence_field("AssemblyStatement", "label", "StringLiteral", true);
+}
+
+fn simplify_imports(mutator: &mut IrModelMutator) {
+    mutator.collapse_sequence("ImportDirective");
 }

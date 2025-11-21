@@ -42,11 +42,6 @@ pub trait Visitor {
     }
     fn leave_version_term(&mut self, _node: &VersionTerm) {}
 
-    fn enter_import_directive(&mut self, _node: &ImportDirective) -> bool {
-        true
-    }
-    fn leave_import_directive(&mut self, _node: &ImportDirective) {}
-
     fn enter_path_import(&mut self, _node: &PathImport) -> bool {
         true
     }
@@ -997,14 +992,6 @@ pub fn accept_version_term(node: &VersionTerm, visitor: &mut impl Visitor) {
     }
     accept_version_literal(&node.literal, visitor);
     visitor.leave_version_term(node);
-}
-
-pub fn accept_import_directive(node: &ImportDirective, visitor: &mut impl Visitor) {
-    if !visitor.enter_import_directive(node) {
-        return;
-    }
-    accept_import_clause(&node.clause, visitor);
-    visitor.leave_import_directive(node);
 }
 
 pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
@@ -1973,9 +1960,6 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         SourceUnitMember::PragmaDirective(ref pragma_directive) => {
             accept_pragma_directive(pragma_directive, visitor);
         }
-        SourceUnitMember::ImportDirective(ref import_directive) => {
-            accept_import_directive(import_directive, visitor);
-        }
         SourceUnitMember::ContractDefinition(ref contract_definition) => {
             accept_contract_definition(contract_definition, visitor);
         }
@@ -2010,6 +1994,9 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         }
         SourceUnitMember::ConstantDefinition(ref constant_definition) => {
             accept_constant_definition(constant_definition, visitor);
+        }
+        SourceUnitMember::ImportClause(ref import_clause) => {
+            accept_import_clause(import_clause, visitor);
         }
     }
     visitor.leave_source_unit_member(node);
