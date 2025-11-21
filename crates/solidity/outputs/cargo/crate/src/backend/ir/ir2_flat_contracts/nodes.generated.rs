@@ -78,15 +78,6 @@ pub struct PathImportStruct {
     pub path: Rc<TerminalNode>,
 }
 
-pub type NamedImport = Rc<NamedImportStruct>;
-
-#[derive(Debug)]
-pub struct NamedImportStruct {
-    pub node_id: NodeId,
-    pub alias: Rc<TerminalNode>,
-    pub path: Rc<TerminalNode>,
-}
-
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
 #[derive(Debug)]
@@ -1034,7 +1025,6 @@ pub enum VersionLiteral {
 #[derive(Debug)]
 pub enum ImportClause {
     PathImport(PathImport),
-    NamedImport(NamedImport),
     ImportDeconstruction(ImportDeconstruction),
 }
 

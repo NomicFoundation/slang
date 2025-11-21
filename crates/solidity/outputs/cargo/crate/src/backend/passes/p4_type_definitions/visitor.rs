@@ -85,10 +85,6 @@ impl Visitor for Pass {
         }
     }
 
-    fn leave_named_import(&mut self, node: &input_ir::NamedImport) {
-        self.binder.mark_user_meta_type_node(node.node_id);
-    }
-
     fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
         for symbol in &node.symbols {
             let target_symbol = if let Some(alias) = &symbol.alias {

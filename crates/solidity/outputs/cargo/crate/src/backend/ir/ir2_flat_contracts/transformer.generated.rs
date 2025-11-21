@@ -95,8 +95,6 @@ pub trait Transformer {
 
     fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport;
 
-    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport;
-
     fn transform_import_deconstruction(
         &mut self,
         source: &input::ImportDeconstruction,
@@ -1705,14 +1703,12 @@ pub trait Transformer {
             input::ImportClause::PathImport(ref path_import) => {
                 output::ImportClause::PathImport(self.transform_path_import(path_import))
             }
-            input::ImportClause::NamedImport(ref named_import) => {
-                output::ImportClause::NamedImport(self.transform_named_import(named_import))
-            }
             input::ImportClause::ImportDeconstruction(ref import_deconstruction) => {
                 output::ImportClause::ImportDeconstruction(
                     self.transform_import_deconstruction(import_deconstruction),
                 )
             }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_import_clause(&mut self, source: &input::ImportClause) -> output::ImportClause {

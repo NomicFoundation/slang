@@ -304,15 +304,6 @@ impl Visitor for Pass {
         false
     }
 
-    fn enter_named_import(&mut self, node: &input_ir::NamedImport) -> bool {
-        let imported_file_id = self.resolve_import_path(&node.path);
-
-        let definition = Definition::new_import(node.node_id, &node.alias, imported_file_id);
-        self.insert_definition_in_current_scope(definition);
-
-        false
-    }
-
     fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
         let imported_file_id = self.resolve_import_path(&node.path);
 

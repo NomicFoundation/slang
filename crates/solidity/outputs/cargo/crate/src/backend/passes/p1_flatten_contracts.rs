@@ -54,6 +54,15 @@ impl Transformer for Pass {
         }
     }
 
+    fn transform_import_clause(&mut self, source: &input::ImportClause) -> output::ImportClause {
+        match source {
+            input::ImportClause::NamedImport(named_import) => {
+                output::ImportClause::PathImport(self.transform_named_import(named_import))
+            }
+            _ => self.default_transform_import_clause(source)
+        }
+    }
+
     fn transform_contract_definition(
         &mut self,
         source: &input::ContractDefinition,
@@ -316,18 +325,6 @@ impl Transformer for Pass {
         })
     }
 
-    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport {
-        let node_id = source.node_id;
-        let alias = self.transform_import_alias(&source.alias);
-        let path = Self::string_literal_terminal_node(&source.path);
-
-        Rc::new(output::NamedImportStruct {
-            node_id,
-            alias,
-            path,
-        })
-    }
-
     fn transform_import_deconstruction(
         &mut self,
         source: &input::ImportDeconstruction,
@@ -399,6 +396,18 @@ impl Transformer for Pass {
 }
 
 impl Pass {
+    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::PathImport {
+        let node_id = source.node_id;
+        let alias = Some(self.transform_import_alias(&source.alias));
+        let path = Self::string_literal_terminal_node(&source.path);
+
+        Rc::new(output::PathImportStruct {
+            node_id,
+            alias,
+            path,
+        })
+    }
+
     fn function_visibility(
         &self,
         attributes: &input::FunctionAttributes,

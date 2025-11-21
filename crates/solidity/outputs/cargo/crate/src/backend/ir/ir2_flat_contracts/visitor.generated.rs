@@ -47,11 +47,6 @@ pub trait Visitor {
     }
     fn leave_path_import(&mut self, _node: &PathImport) {}
 
-    fn enter_named_import(&mut self, _node: &NamedImport) -> bool {
-        true
-    }
-    fn leave_named_import(&mut self, _node: &NamedImport) {}
-
     fn enter_import_deconstruction(&mut self, _node: &ImportDeconstruction) -> bool {
         true
     }
@@ -999,13 +994,6 @@ pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
         return;
     }
     visitor.leave_path_import(node);
-}
-
-pub fn accept_named_import(node: &NamedImport, visitor: &mut impl Visitor) {
-    if !visitor.enter_named_import(node) {
-        return;
-    }
-    visitor.leave_named_import(node);
 }
 
 pub fn accept_import_deconstruction(node: &ImportDeconstruction, visitor: &mut impl Visitor) {
@@ -2062,9 +2050,6 @@ pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     match node {
         ImportClause::PathImport(ref path_import) => {
             accept_path_import(path_import, visitor);
-        }
-        ImportClause::NamedImport(ref named_import) => {
-            accept_named_import(named_import, visitor);
         }
         ImportClause::ImportDeconstruction(ref import_deconstruction) => {
             accept_import_deconstruction(import_deconstruction, visitor);

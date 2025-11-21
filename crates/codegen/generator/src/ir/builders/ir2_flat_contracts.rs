@@ -247,5 +247,8 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
 }
 
 fn simplify_imports(mutator: &mut IrModelMutator) {
+    // Collapse `ImportDirective` which is only a container for the `ImportClause`
     mutator.collapse_sequence("ImportDirective");
+    // Remove `NamedImport`, since it can be converted to the equivalent `PathImport`
+    mutator.remove_type("NamedImport");
 }
