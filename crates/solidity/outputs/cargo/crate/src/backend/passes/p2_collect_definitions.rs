@@ -253,8 +253,8 @@ impl Visitor for Pass<'_> {
     fn enter_path_import(&mut self, node: &input_ir::PathImport) -> bool {
         let imported_file_id = self.resolve_import_path(&node.path);
 
-        if let Some(alias) = &node.alias {
-            let definition = Definition::new_import(node.node_id, alias, imported_file_id);
+        if node.alias.is_some() {
+            let definition = Definition::new_import(node, imported_file_id);
             self.insert_definition_in_current_scope(definition);
         } else if let Some(imported_file_id) = imported_file_id {
             self.current_file_scope()

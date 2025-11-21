@@ -93,8 +93,7 @@ pub struct FunctionDefinition {
 
 #[derive(Debug)]
 pub struct ImportDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::PathImport,
     pub resolved_file_id: Option<String>,
 }
 
@@ -200,7 +199,7 @@ impl Definition {
             Self::Error(error_definition) => error_definition.ir_node.node_id,
             Self::Event(event_definition) => event_definition.ir_node.node_id,
             Self::Function(function_definition) => function_definition.ir_node.node_id,
-            Self::Import(import_definition) => import_definition.node_id,
+            Self::Import(import_definition) => import_definition.ir_node.node_id,
             Self::ImportedSymbol(imported_symbol_definition) => imported_symbol_definition.node_id,
             Self::Interface(interface_definition) => interface_definition.ir_node.node_id,
             Self::Library(library_definition) => library_definition.ir_node.node_id,
@@ -235,7 +234,10 @@ impl Definition {
                 // Function definitions are only created for *named* functions
                 function_definition.ir_node.name.as_ref().unwrap()
             }
-            Self::Import(import_definition) => &import_definition.identifier,
+            Self::Import(import_definition) => {
+                // Definitions are created only for aliased imports
+                import_definition.ir_node.alias.as_ref().unwrap()
+            }
             Self::ImportedSymbol(symbol_definition) => &symbol_definition.identifier,
             Self::Interface(interface_definition) => &interface_definition.ir_node.name,
             Self::Library(library_definition) => &library_definition.ir_node.name,
@@ -362,13 +364,16 @@ impl Definition {
     }
 
     pub(crate) fn new_import(
-        node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        ir_node: &output_ir::PathImport,
         resolved_file_id: Option<String>,
     ) -> Self {
+        assert!(
+            ir_node.alias.is_some(),
+            "Definition can only be created for aliased imports"
+        );
+
         Self::Import(ImportDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             resolved_file_id,
         })
     }
