@@ -7,6 +7,7 @@ pub(super) fn build_from(structured_ast_model: &IrModel) -> ModelWithTransformer
     unify_function_types(&mut mutator);
     flatten_function_attributes(&mut mutator);
     flatten_state_variable_attributes(&mut mutator);
+    transmute_constant_state_variables(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
     simplify_string_literals(&mut mutator);
     simplify_imports(&mut mutator);
@@ -139,13 +140,14 @@ fn flatten_function_attributes(mutator: &mut IrModelMutator) {
 }
 
 fn flatten_state_variable_attributes(mutator: &mut IrModelMutator) {
-    // Function visibility, computed from a subset of the attributes
+    // State variable visibility, computed from a subset of the attributes
     mutator.add_enum_type(
         "StateVariableVisibility",
         &["Public", "Private", "Internal"],
     );
 
-    // Function mutability, computed from a subset of the attributes
+    // State variable mutability, computed from a subset of the attributes
+    // We remove `Constant` because those are transmuted to `ConstantDefinition`
     mutator.add_enum_type(
         "StateVariableMutability",
         &["Mutable", "Constant", "Immutable", "Transient"],
@@ -173,6 +175,29 @@ fn flatten_state_variable_attributes(mutator: &mut IrModelMutator) {
     // And remove the list of attributes
     mutator.remove_type("StateVariableAttributes");
     mutator.remove_type("StateVariableAttribute");
+}
+
+fn transmute_constant_state_variables(mutator: &mut IrModelMutator) {
+    // State variables that are marked constant and are not public will be
+    // transformed into `ConstantDefinition` (ie. the type used for top-level
+    // constant definitions). Public constant state variables *cannot* be
+    // transformed because they generate a getter, so it makes more sense to
+    // keep them as `StateVariableDefinition`
+    mutator.add_choice_variant("ContractMember", "ConstantDefinition");
+
+    // Modify `ConstantDefinition` to accomodate for constant state variables
+    mutator.add_sequence_field(
+        "ConstantDefinition",
+        "visibility",
+        "StateVariableVisibility",
+        true,
+    );
+
+    // ...and make the value optional because state variables may not define it
+    // NOTE: this is not valid Solidity, but we still want to support the
+    // representation until we have robust validation
+    mutator.remove_sequence_field("ConstantDefinition", "value");
+    mutator.add_sequence_field("ConstantDefinition", "value", "Expression", true);
 }
 
 fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {

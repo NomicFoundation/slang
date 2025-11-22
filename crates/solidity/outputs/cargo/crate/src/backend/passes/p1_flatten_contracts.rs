@@ -59,7 +59,7 @@ impl Transformer for Pass {
             input::ImportClause::NamedImport(named_import) => {
                 output::ImportClause::PathImport(self.transform_named_import(named_import))
             }
-            _ => self.default_transform_import_clause(source)
+            _ => self.default_transform_import_clause(source),
         }
     }
 
@@ -173,6 +173,21 @@ impl Transformer for Pass {
                     self.transform_modifier_definition(modifier_definition),
                 )
             }
+            input::ContractMember::StateVariableDefinition(state_variable_definition) => {
+                let output = self.transform_state_variable_definition(state_variable_definition);
+                if matches!(output.mutability, output::StateVariableMutability::Constant)
+                    && !matches!(output.visibility, output::StateVariableVisibility::Public)
+                {
+                    // Transmute the `StateVariableDefinition` into a `ConstantDefinition`
+                    output::ContractMember::ConstantDefinition(
+                        Self::state_variable_definition_as_constant_definition(
+                            Rc::into_inner(output).expect("Created node is not yet shared"),
+                        ),
+                    )
+                } else {
+                    output::ContractMember::StateVariableDefinition(output)
+                }
+            }
             _ => self.default_transform_contract_member(source),
         }
     }
@@ -240,6 +255,25 @@ impl Transformer for Pass {
                 )
             }
         }
+    }
+
+    fn transform_constant_definition(
+        &mut self,
+        source: &input::ConstantDefinition,
+    ) -> output::ConstantDefinition {
+        let node_id = source.node_id;
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = Rc::clone(&source.name);
+        let visibility = None;
+        let value = Some(self.transform_expression(&source.value));
+
+        Rc::new(output::ConstantDefinitionStruct {
+            node_id,
+            type_name,
+            name,
+            visibility,
+            value,
+        })
     }
 
     fn transform_state_variable_definition(
@@ -952,6 +986,24 @@ impl Pass {
             } else {
                 None
             }
+        })
+    }
+
+    fn state_variable_definition_as_constant_definition(
+        state_variable_definition: output::StateVariableDefinitionStruct,
+    ) -> output::ConstantDefinition {
+        let node_id = state_variable_definition.node_id;
+        let type_name = state_variable_definition.type_name;
+        let name = Rc::clone(&state_variable_definition.name);
+        let value = state_variable_definition.value;
+        let visibility = Some(state_variable_definition.visibility);
+
+        Rc::new(output::ConstantDefinitionStruct {
+            node_id,
+            type_name,
+            name,
+            visibility,
+            value,
         })
     }
 

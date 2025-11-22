@@ -197,7 +197,8 @@ pub struct ConstantDefinitionStruct {
     pub node_id: NodeId,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
-    pub value: Expression,
+    pub visibility: Option<StateVariableVisibility>,
+    pub value: Option<Expression>,
 }
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
@@ -1069,6 +1070,7 @@ pub enum ContractMember {
     ErrorDefinition(ErrorDefinition),
     UserDefinedValueTypeDefinition(UserDefinedValueTypeDefinition),
     StateVariableDefinition(StateVariableDefinition),
+    ConstantDefinition(ConstantDefinition),
 }
 
 #[derive(Debug)]

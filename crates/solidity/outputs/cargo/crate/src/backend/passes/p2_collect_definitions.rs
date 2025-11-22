@@ -458,16 +458,8 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::StateVariableDefinition,
     ) -> bool {
-        let is_constant = matches!(node.mutability, input_ir::StateVariableMutability::Constant);
-        let is_public = matches!(node.visibility, input_ir::StateVariableVisibility::Public);
-        // Public state variables define a getter, so we don't register them as
-        // constants here
-        let definition = if is_constant && !is_public {
-            Definition::new_constant(node.node_id, &node.name)
-        } else {
-            let visibility = (&node.visibility).into();
-            Definition::new_state_variable(node.node_id, &node.name, visibility)
-        };
+        let visibility = (&node.visibility).into();
+        let definition = Definition::new_state_variable(node.node_id, &node.name, visibility);
         self.insert_definition_in_current_scope(definition);
 
         // there may be more definitions in the type of the state variable (eg.

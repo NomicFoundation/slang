@@ -259,18 +259,7 @@ pub trait Transformer {
     fn transform_constant_definition(
         &mut self,
         source: &input::ConstantDefinition,
-    ) -> output::ConstantDefinition {
-        let type_name = self.transform_type_name(&source.type_name);
-        let name = Rc::clone(&source.name);
-        let value = self.transform_expression(&source.value);
-
-        Rc::new(output::ConstantDefinitionStruct {
-            node_id: source.node_id,
-            type_name,
-            name,
-            value,
-        })
-    }
+    ) -> output::ConstantDefinition;
 
     fn transform_state_variable_definition(
         &mut self,

@@ -1116,7 +1116,12 @@ pub fn accept_constant_definition(node: &ConstantDefinition, visitor: &mut impl 
         return;
     }
     accept_type_name(&node.type_name, visitor);
-    accept_expression(&node.value, visitor);
+    if let Some(ref visibility) = node.visibility {
+        accept_state_variable_visibility(visibility, visitor);
+    }
+    if let Some(ref value) = node.value {
+        accept_expression(value, visitor);
+    }
     visitor.leave_constant_definition(node);
 }
 
@@ -2116,6 +2121,9 @@ pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor)
         }
         ContractMember::StateVariableDefinition(ref state_variable_definition) => {
             accept_state_variable_definition(state_variable_definition, visitor);
+        }
+        ContractMember::ConstantDefinition(ref constant_definition) => {
+            accept_constant_definition(constant_definition, visitor);
         }
     }
     visitor.leave_contract_member(node);
