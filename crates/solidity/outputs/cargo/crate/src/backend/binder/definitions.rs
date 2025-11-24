@@ -98,8 +98,7 @@ pub struct ImportDefinition {
 
 #[derive(Debug)]
 pub struct ImportedSymbolDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::ImportDeconstructionSymbol,
     pub symbol: String,
     pub resolved_file_id: Option<String>,
 }
@@ -199,7 +198,9 @@ impl Definition {
             Self::Event(event_definition) => event_definition.ir_node.node_id,
             Self::Function(function_definition) => function_definition.ir_node.node_id,
             Self::Import(import_definition) => import_definition.ir_node.node_id,
-            Self::ImportedSymbol(imported_symbol_definition) => imported_symbol_definition.node_id,
+            Self::ImportedSymbol(imported_symbol_definition) => {
+                imported_symbol_definition.ir_node.node_id
+            }
             Self::Interface(interface_definition) => interface_definition.ir_node.node_id,
             Self::Library(library_definition) => library_definition.ir_node.node_id,
             Self::Modifier(modifier_definition) => modifier_definition.ir_node.node_id,
@@ -237,7 +238,14 @@ impl Definition {
                 // Definitions are created only for aliased imports
                 import_definition.ir_node.alias.as_ref().unwrap()
             }
-            Self::ImportedSymbol(symbol_definition) => &symbol_definition.identifier,
+            Self::ImportedSymbol(symbol_definition) => {
+                // This is the "local" identifier for the imported symbol, ie. the alias
+                if let Some(alias) = &symbol_definition.ir_node.alias {
+                    alias
+                } else {
+                    &symbol_definition.ir_node.name
+                }
+            }
             Self::Interface(interface_definition) => &interface_definition.ir_node.name,
             Self::Library(library_definition) => &library_definition.ir_node.name,
             Self::Modifier(modifier_definition) => {
@@ -377,14 +385,12 @@ impl Definition {
     }
 
     pub(crate) fn new_imported_symbol(
-        node_id: NodeId,
-        identifier: &Rc<TerminalNode>,
+        ir_node: &output_ir::ImportDeconstructionSymbol,
         symbol: String,
         resolved_file_id: Option<String>,
     ) -> Self {
         Self::ImportedSymbol(ImportedSymbolDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
             symbol,
             resolved_file_id,
         })
