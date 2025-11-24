@@ -268,14 +268,8 @@ impl Visitor for Pass<'_> {
         let imported_file_id = self.resolve_import_path(&node.path);
 
         for symbol in &node.symbols {
-            let identifier = if let Some(alias) = &symbol.alias {
-                alias
-            } else {
-                &symbol.name
-            };
             let definition = Definition::new_imported_symbol(
-                symbol.node_id,
-                identifier,
+                symbol,
                 symbol.name.unparse(),
                 imported_file_id.clone(),
             );
