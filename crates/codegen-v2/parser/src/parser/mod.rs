@@ -1,12 +1,10 @@
 mod item;
 
-use std::collections::HashMap;
-
 use language_v2_definition::model::{Identifier, Language, Section, Topic};
 use serde::Serialize;
 
 use crate::lexer::LexerModel;
-use crate::parser::item::Item;
+use crate::parser::item::LALRPOPItem;
 
 /// A parser model used while generating the parser (and the lexer).
 #[derive(Clone, Debug, Serialize)]
@@ -33,7 +31,7 @@ struct ParserSection {
 struct ParserTopic {
     pub title: String,
     // Still missing producing type, and so on
-    pub items: HashMap<Identifier, Item>,
+    pub items: Vec<LALRPOPItem>,
 }
 
 impl ParserModel {
@@ -69,7 +67,7 @@ impl ParserModel {
                 .iter()
                 .filter_map(|item| {
                     let name = item.name().clone();
-                    item.try_into().ok().map(|item| (name, item))
+                    item.try_into().ok()
                 })
                 .collect(),
         }
