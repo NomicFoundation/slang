@@ -456,7 +456,7 @@ impl Visitor for Pass {
             self.replace_scope(scope);
         }
 
-        let definition = Definition::new_variable(node.node_id, &node.name);
+        let definition = Definition::new_variable(node);
         self.insert_definition_in_current_scope(definition);
     }
 

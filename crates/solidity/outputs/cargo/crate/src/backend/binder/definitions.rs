@@ -163,8 +163,7 @@ pub struct UserDefinedValueTypeDefinition {
 
 #[derive(Debug)]
 pub struct VariableDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::VariableDeclarationStatement,
 }
 
 #[derive(Debug)]
@@ -214,7 +213,7 @@ impl Definition {
             }
             Self::TypeParameter(parameter_definition) => parameter_definition.node_id,
             Self::UserDefinedValueType(udvt_definition) => udvt_definition.ir_node.node_id,
-            Self::Variable(variable_definition) => variable_definition.node_id,
+            Self::Variable(variable_definition) => variable_definition.ir_node.node_id,
             Self::YulFunction(function_definition) => function_definition.ir_node.node_id,
             Self::YulLabel(label_definition) => label_definition.ir_node.node_id,
             Self::YulParameter(parameter_definition) => parameter_definition.ir_node.id(),
@@ -261,7 +260,7 @@ impl Definition {
             Self::StructMember(struct_member_definition) => &struct_member_definition.ir_node.name,
             Self::TypeParameter(parameter_definition) => &parameter_definition.identifier,
             Self::UserDefinedValueType(udvt_definition) => &udvt_definition.ir_node.name,
-            Self::Variable(variable_definition) => &variable_definition.identifier,
+            Self::Variable(variable_definition) => &variable_definition.ir_node.name,
             Self::YulFunction(function_definition) => &function_definition.ir_node.name,
             Self::YulLabel(label_definition) => &label_definition.ir_node.label,
             Self::YulParameter(parameter_definition) => &parameter_definition.ir_node,
@@ -469,10 +468,9 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_variable(ir_node: &output_ir::VariableDeclarationStatement) -> Self {
         Self::Variable(VariableDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
