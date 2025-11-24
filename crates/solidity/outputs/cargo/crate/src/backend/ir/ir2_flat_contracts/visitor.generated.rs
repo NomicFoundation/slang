@@ -224,21 +224,6 @@ pub trait Visitor {
     }
     fn leave_tuple_deconstruction_statement(&mut self, _node: &TupleDeconstructionStatement) {}
 
-    fn enter_tuple_deconstruction_element(&mut self, _node: &TupleDeconstructionElement) -> bool {
-        true
-    }
-    fn leave_tuple_deconstruction_element(&mut self, _node: &TupleDeconstructionElement) {}
-
-    fn enter_typed_tuple_member(&mut self, _node: &TypedTupleMember) -> bool {
-        true
-    }
-    fn leave_typed_tuple_member(&mut self, _node: &TypedTupleMember) {}
-
-    fn enter_untyped_tuple_member(&mut self, _node: &UntypedTupleMember) -> bool {
-        true
-    }
-    fn leave_untyped_tuple_member(&mut self, _node: &UntypedTupleMember) {}
-
     fn enter_variable_declaration_statement(
         &mut self,
         _node: &VariableDeclarationStatement,
@@ -633,11 +618,6 @@ pub trait Visitor {
     }
     fn leave_statement(&mut self, _node: &Statement) {}
 
-    fn enter_tuple_member(&mut self, _node: &TupleMember) -> bool {
-        true
-    }
-    fn leave_tuple_member(&mut self, _node: &TupleMember) {}
-
     fn enter_storage_location(&mut self, _node: &StorageLocation) -> bool {
         true
     }
@@ -728,6 +708,11 @@ pub trait Visitor {
     }
     fn leave_state_variable_mutability(&mut self, _node: &StateVariableMutability) {}
 
+    fn enter_tuple_deconstruction_member(&mut self, _node: &TupleDeconstructionMember) -> bool {
+        true
+    }
+    fn leave_tuple_deconstruction_member(&mut self, _node: &TupleDeconstructionMember) {}
+
     fn enter_source_unit_members(&mut self, _items: &SourceUnitMembers) -> bool {
         true
     }
@@ -815,14 +800,6 @@ pub trait Visitor {
         true
     }
     fn leave_statements(&mut self, _items: &Statements) {}
-
-    fn enter_tuple_deconstruction_elements(
-        &mut self,
-        _items: &TupleDeconstructionElements,
-    ) -> bool {
-        true
-    }
-    fn leave_tuple_deconstruction_elements(&mut self, _items: &TupleDeconstructionElements) {}
 
     fn enter_catch_clauses(&mut self, _items: &CatchClauses) -> bool {
         true
@@ -918,6 +895,11 @@ pub trait Visitor {
         true
     }
     fn leave_assembly_flags(&mut self, _items: &AssemblyFlags) {}
+
+    fn enter_tuple_deconstruction_members(&mut self, _items: &TupleDeconstructionMembers) -> bool {
+        true
+    }
+    fn leave_tuple_deconstruction_members(&mut self, _items: &TupleDeconstructionMembers) {}
 }
 
 //
@@ -1331,43 +1313,9 @@ pub fn accept_tuple_deconstruction_statement(
     if !visitor.enter_tuple_deconstruction_statement(node) {
         return;
     }
-    accept_tuple_deconstruction_elements(&node.elements, visitor);
     accept_expression(&node.expression, visitor);
+    accept_tuple_deconstruction_members(&node.members, visitor);
     visitor.leave_tuple_deconstruction_statement(node);
-}
-
-pub fn accept_tuple_deconstruction_element(
-    node: &TupleDeconstructionElement,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_tuple_deconstruction_element(node) {
-        return;
-    }
-    if let Some(ref member) = node.member {
-        accept_tuple_member(member, visitor);
-    }
-    visitor.leave_tuple_deconstruction_element(node);
-}
-
-pub fn accept_typed_tuple_member(node: &TypedTupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_typed_tuple_member(node) {
-        return;
-    }
-    accept_type_name(&node.type_name, visitor);
-    if let Some(ref storage_location) = node.storage_location {
-        accept_storage_location(storage_location, visitor);
-    }
-    visitor.leave_typed_tuple_member(node);
-}
-
-pub fn accept_untyped_tuple_member(node: &UntypedTupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_untyped_tuple_member(node) {
-        return;
-    }
-    if let Some(ref storage_location) = node.storage_location {
-        accept_storage_location(storage_location, visitor);
-    }
-    visitor.leave_untyped_tuple_member(node);
 }
 
 pub fn accept_variable_declaration_statement(
@@ -2245,21 +2193,6 @@ pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
     visitor.leave_statement(node);
 }
 
-pub fn accept_tuple_member(node: &TupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_tuple_member(node) {
-        return;
-    }
-    match node {
-        TupleMember::TypedTupleMember(ref typed_tuple_member) => {
-            accept_typed_tuple_member(typed_tuple_member, visitor);
-        }
-        TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
-            accept_untyped_tuple_member(untyped_tuple_member, visitor);
-        }
-    }
-    visitor.leave_tuple_member(node);
-}
-
 pub fn accept_storage_location(_node: &StorageLocation, _visitor: &mut impl Visitor) {}
 
 pub fn accept_for_statement_initialization(
@@ -2562,6 +2495,25 @@ pub fn accept_state_variable_mutability(
 ) {
 }
 
+pub fn accept_tuple_deconstruction_member(
+    node: &TupleDeconstructionMember,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_tuple_deconstruction_member(node) {
+        return;
+    }
+    match node {
+        TupleDeconstructionMember::VariableDeclarationStatement(
+            ref variable_declaration_statement,
+        ) => {
+            accept_variable_declaration_statement(variable_declaration_statement, visitor);
+        }
+        TupleDeconstructionMember::Identifier(_) => {}
+        TupleDeconstructionMember::None => {}
+    }
+    visitor.leave_tuple_deconstruction_member(node);
+}
+
 //
 // Repeated & Separated
 //
@@ -2752,20 +2704,6 @@ fn accept_statements(items: &Vec<Statement>, visitor: &mut impl Visitor) {
 }
 
 #[inline]
-fn accept_tuple_deconstruction_elements(
-    items: &Vec<TupleDeconstructionElement>,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_tuple_deconstruction_elements(items) {
-        return;
-    }
-    for item in items {
-        accept_tuple_deconstruction_element(item, visitor);
-    }
-    visitor.leave_tuple_deconstruction_elements(items);
-}
-
-#[inline]
 fn accept_catch_clauses(items: &Vec<CatchClause>, visitor: &mut impl Visitor) {
     if !visitor.enter_catch_clauses(items) {
         return;
@@ -2940,4 +2878,18 @@ fn accept_assembly_flags(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visit
     if visitor.enter_assembly_flags(items) {
         visitor.leave_assembly_flags(items);
     }
+}
+
+#[inline]
+fn accept_tuple_deconstruction_members(
+    items: &Vec<TupleDeconstructionMember>,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_tuple_deconstruction_members(items) {
+        return;
+    }
+    for item in items {
+        accept_tuple_deconstruction_member(item, visitor);
+    }
+    visitor.leave_tuple_deconstruction_members(items);
 }

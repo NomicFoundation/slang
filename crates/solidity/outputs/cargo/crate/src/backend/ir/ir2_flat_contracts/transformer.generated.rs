@@ -495,69 +495,7 @@ pub trait Transformer {
     fn transform_tuple_deconstruction_statement(
         &mut self,
         source: &input::TupleDeconstructionStatement,
-    ) -> output::TupleDeconstructionStatement {
-        let var_keyword = source.var_keyword;
-        let elements = self.transform_tuple_deconstruction_elements(&source.elements);
-        let expression = self.transform_expression(&source.expression);
-
-        Rc::new(output::TupleDeconstructionStatementStruct {
-            node_id: source.node_id,
-            var_keyword,
-            elements,
-            expression,
-        })
-    }
-
-    fn transform_tuple_deconstruction_element(
-        &mut self,
-        source: &input::TupleDeconstructionElement,
-    ) -> output::TupleDeconstructionElement {
-        let member = source
-            .member
-            .as_ref()
-            .map(|value| self.transform_tuple_member(value));
-
-        Rc::new(output::TupleDeconstructionElementStruct {
-            node_id: source.node_id,
-            member,
-        })
-    }
-
-    fn transform_typed_tuple_member(
-        &mut self,
-        source: &input::TypedTupleMember,
-    ) -> output::TypedTupleMember {
-        let type_name = self.transform_type_name(&source.type_name);
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.transform_storage_location(value));
-        let name = Rc::clone(&source.name);
-
-        Rc::new(output::TypedTupleMemberStruct {
-            node_id: source.node_id,
-            type_name,
-            storage_location,
-            name,
-        })
-    }
-
-    fn transform_untyped_tuple_member(
-        &mut self,
-        source: &input::UntypedTupleMember,
-    ) -> output::UntypedTupleMember {
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.transform_storage_location(value));
-        let name = Rc::clone(&source.name);
-
-        Rc::new(output::UntypedTupleMemberStruct {
-            node_id: source.node_id,
-            storage_location,
-            name,
-        })
-    }
+    ) -> output::TupleDeconstructionStatement;
 
     fn transform_variable_declaration_statement(
         &mut self,
@@ -1975,29 +1913,6 @@ pub trait Transformer {
         self.default_transform_statement(source)
     }
 
-    fn default_transform_tuple_member(
-        &mut self,
-        source: &input::TupleMember,
-    ) -> output::TupleMember {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::TupleMember::TypedTupleMember(ref typed_tuple_member) => {
-                output::TupleMember::TypedTupleMember(
-                    self.transform_typed_tuple_member(typed_tuple_member),
-                )
-            }
-            input::TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
-                output::TupleMember::UntypedTupleMember(
-                    self.transform_untyped_tuple_member(untyped_tuple_member),
-                )
-            }
-        }
-    }
-    fn transform_tuple_member(&mut self, source: &input::TupleMember) -> output::TupleMember {
-        self.default_transform_tuple_member(source)
-    }
-
     fn default_transform_storage_location(
         &mut self,
         source: &input::StorageLocation,
@@ -2606,16 +2521,6 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_statement(item))
-            .collect()
-    }
-
-    fn transform_tuple_deconstruction_elements(
-        &mut self,
-        source: &input::TupleDeconstructionElements,
-    ) -> output::TupleDeconstructionElements {
-        source
-            .iter()
-            .map(|item| self.transform_tuple_deconstruction_element(item))
             .collect()
     }
 

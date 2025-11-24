@@ -399,36 +399,8 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
     pub node_id: NodeId,
-    pub var_keyword: bool,
-    pub elements: TupleDeconstructionElements,
     pub expression: Expression,
-}
-
-pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
-
-#[derive(Debug)]
-pub struct TupleDeconstructionElementStruct {
-    pub node_id: NodeId,
-    pub member: Option<TupleMember>,
-}
-
-pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
-
-#[derive(Debug)]
-pub struct TypedTupleMemberStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Rc<TerminalNode>,
-}
-
-pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
-
-#[derive(Debug)]
-pub struct UntypedTupleMemberStruct {
-    pub node_id: NodeId,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Rc<TerminalNode>,
+    pub members: TupleDeconstructionMembers,
 }
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
@@ -1123,12 +1095,6 @@ pub enum Statement {
 }
 
 #[derive(Debug)]
-pub enum TupleMember {
-    TypedTupleMember(TypedTupleMember),
-    UntypedTupleMember(UntypedTupleMember),
-}
-
-#[derive(Debug)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
@@ -1307,6 +1273,13 @@ pub enum StateVariableMutability {
     Transient,
 }
 
+#[derive(Debug)]
+pub enum TupleDeconstructionMember {
+    VariableDeclarationStatement(VariableDeclarationStatement),
+    Identifier(Rc<TerminalNode>),
+    None,
+}
+
 //
 // Repeated & Separated
 //
@@ -1345,8 +1318,6 @@ pub type ErrorParameters = Vec<ErrorParameter>;
 
 pub type Statements = Vec<Statement>;
 
-pub type TupleDeconstructionElements = Vec<TupleDeconstructionElement>;
-
 pub type CatchClauses = Vec<CatchClause>;
 
 pub type PositionalArguments = Vec<Expression>;
@@ -1384,3 +1355,5 @@ pub type HexStrings = Vec<Rc<TerminalNode>>;
 pub type UnicodeStrings = Vec<Rc<TerminalNode>>;
 
 pub type AssemblyFlags = Vec<Rc<TerminalNode>>;
+
+pub type TupleDeconstructionMembers = Vec<TupleDeconstructionMember>;

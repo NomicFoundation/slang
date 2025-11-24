@@ -288,4 +288,28 @@ fn simplify_variable_declarations(mutator: &mut IrModelMutator) {
         "TypeName",
         true,
     );
+
+    // Re-use `VariableDeclarationStatement` for variable declarations in tuple
+    // deconstruction expressions. Remove `TupleMember` first.
+    mutator.remove_type("UntypedTupleMember");
+    mutator.remove_type("TypedTupleMember");
+    mutator.remove_type("TupleMember");
+    mutator.remove_type("TupleDeconstructionElements");
+    mutator.remove_type("TupleDeconstructionElement");
+
+    // Create a `TupleDeconstructionMember` initially as an enum so that the
+    // `None` variant has no child
+    mutator.add_enum_type("TupleDeconstructionMember", &["None"]);
+    mutator.add_choice_variant("TupleDeconstructionMember", "Identifier");
+    mutator.add_choice_variant("TupleDeconstructionMember", "VariableDeclarationStatement");
+    mutator.add_collection_type("TupleDeconstructionMembers", "TupleDeconstructionMember");
+    mutator.add_sequence_field(
+        "TupleDeconstructionStatement",
+        "members",
+        "TupleDeconstructionMembers",
+        false,
+    );
+    // This refactor also means we don't need the `var_keyword` field in the
+    // `TupleDeconstructionStatement` anymore
+    mutator.remove_sequence_field("TupleDeconstructionStatement", "var_keyword");
 }

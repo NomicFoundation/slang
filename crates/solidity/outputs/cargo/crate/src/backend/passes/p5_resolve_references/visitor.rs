@@ -564,29 +564,16 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
     ) -> bool {
-        if node.var_keyword {
-            // this is a (deprecated) variable declaration, not assignment
-            return true;
-        }
-
-        for element in &node.elements {
-            let Some(member) = &element.member else {
+        for member in &node.members {
+            let input_ir::TupleDeconstructionMember::Identifier(identifier) = &member else {
                 continue;
             };
-            match member {
-                input_ir::TupleMember::TypedTupleMember(_) => {
-                    // this is a declaration, not a reference, so nothing left to do in this pass
-                }
-                input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
-                    let identifier = &untyped_tuple_member.name;
-                    let scope_id = self.current_scope_id();
-                    let resolution = self.filter_overriden_definitions(
-                        self.resolve_symbol_in_scope(scope_id, &identifier.unparse()),
-                    );
-                    let reference = Reference::new(Rc::clone(identifier), resolution);
-                    self.binder.insert_reference(reference);
-                }
-            }
+            let scope_id = self.current_scope_id();
+            let resolution = self.filter_overriden_definitions(
+                self.resolve_symbol_in_scope(scope_id, &identifier.unparse()),
+            );
+            let reference = Reference::new(Rc::clone(identifier), resolution);
+            self.binder.insert_reference(reference);
         }
 
         true
@@ -684,17 +671,6 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
     ) {
-        if self.language_version >= VERSION_0_5_0 {
-            // in Solidity >= 0.5.0 we need to update the scope so further
-            // resolutions can access these variable definitions
-            self.replace_scope_for_node_id(node.node_id);
-            // NOTE: ensure following code does not need to perform resolution
-        }
-
-        if !node.var_keyword {
-            return;
-        }
-
         let typing = self.typing_of_expression(&node.expression);
         let Typing::Resolved(tuple_type_id) = typing else {
             // we can't fixup typing if the expression failed to type
@@ -708,15 +684,19 @@ impl Visitor for Pass {
         };
 
         // fixup typing of `var` declarations
-        for (element, element_type_id) in node.elements.iter().zip(types) {
-            let Some(member) = &element.member else {
+        for (member, element_type_id) in node.members.iter().zip(types) {
+            let input_ir::TupleDeconstructionMember::VariableDeclarationStatement(
+                variable_declaration,
+            ) = member
+            else {
                 continue;
             };
-            if let input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) = member {
-                let typing = Typing::Resolved(self.types.reified_type(element_type_id));
-                self.binder
-                    .fixup_node_typing(untyped_tuple_member.node_id, typing);
+            if variable_declaration.type_name.is_some() {
+                continue;
             }
+            let typing = Typing::Resolved(self.types.reified_type(element_type_id));
+            self.binder
+                .fixup_node_typing(variable_declaration.node_id, typing);
         }
     }
 }

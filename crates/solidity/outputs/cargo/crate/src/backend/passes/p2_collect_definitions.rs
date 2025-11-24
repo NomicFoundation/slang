@@ -500,41 +500,6 @@ impl Visitor for Pass {
         self.insert_definition_in_current_scope(definition);
     }
 
-    fn leave_tuple_deconstruction_statement(
-        &mut self,
-        node: &input_ir::TupleDeconstructionStatement,
-    ) {
-        if self.language_version >= VERSION_0_5_0 {
-            // In Solidity >= 0.5.0 the definitions should only be available for
-            // statements after this one. So we open a new scope that replaces
-            // but is linked to the current one
-            let scope = Scope::new_block(node.node_id, self.current_scope_id());
-            self.replace_scope(scope);
-        }
-
-        let is_untyped_declaration = node.var_keyword;
-        for element in &node.elements {
-            let Some(tuple_member) = &element.member else {
-                continue;
-            };
-            let definition = match tuple_member {
-                input_ir::TupleMember::TypedTupleMember(typed_tuple_member) => {
-                    Definition::new_variable(typed_tuple_member.node_id, &typed_tuple_member.name)
-                }
-                input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
-                    if !is_untyped_declaration {
-                        continue;
-                    }
-                    Definition::new_variable(
-                        untyped_tuple_member.node_id,
-                        &untyped_tuple_member.name,
-                    )
-                }
-            };
-            self.insert_definition_in_current_scope(definition);
-        }
-    }
-
     fn enter_block(&mut self, node: &input_ir::Block) -> bool {
         if self.language_version >= VERSION_0_5_0 {
             let scope = Scope::new_block(node.node_id, self.current_scope_id());
