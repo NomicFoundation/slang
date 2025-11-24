@@ -37,8 +37,7 @@ pub enum Definition {
 
 #[derive(Debug)]
 pub struct ConstantDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::ConstantDefinition,
 }
 
 #[derive(Debug)]
@@ -192,7 +191,7 @@ pub struct YulVariableDefinition {
 impl Definition {
     pub fn node_id(&self) -> NodeId {
         match self {
-            Self::Constant(constant_definition) => constant_definition.node_id,
+            Self::Constant(constant_definition) => constant_definition.ir_node.node_id,
             Self::Contract(contract_definition) => contract_definition.ir_node.node_id,
             Self::Enum(enum_definition) => enum_definition.ir_node.node_id,
             Self::EnumMember(enum_member_definition) => enum_member_definition.ir_node.id(),
@@ -224,7 +223,7 @@ impl Definition {
 
     pub fn identifier(&self) -> &Rc<TerminalNode> {
         match self {
-            Self::Constant(constant_definition) => &constant_definition.identifier,
+            Self::Constant(constant_definition) => &constant_definition.ir_node.name,
             Self::Contract(contract_definition) => &contract_definition.ir_node.name,
             Self::Enum(enum_definition) => &enum_definition.ir_node.name,
             Self::EnumMember(enum_member_definition) => &enum_member_definition.ir_node,
@@ -296,10 +295,9 @@ impl Definition {
         }
     }
 
-    pub(crate) fn new_constant(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_constant(ir_node: &output_ir::ConstantDefinition) -> Self {
         Self::Constant(ConstantDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 

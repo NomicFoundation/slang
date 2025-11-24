@@ -420,7 +420,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_constant_definition(&mut self, node: &input_ir::ConstantDefinition) -> bool {
-        let definition = Definition::new_constant(node.node_id, &node.name);
+        let definition = Definition::new_constant(node);
         self.insert_definition_in_current_scope(definition);
 
         false
