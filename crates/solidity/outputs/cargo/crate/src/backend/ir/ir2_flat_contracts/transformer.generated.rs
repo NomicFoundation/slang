@@ -562,26 +562,7 @@ pub trait Transformer {
     fn transform_variable_declaration_statement(
         &mut self,
         source: &input::VariableDeclarationStatement,
-    ) -> output::VariableDeclarationStatement {
-        let variable_type = self.transform_variable_declaration_type(&source.variable_type);
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.transform_storage_location(value));
-        let name = Rc::clone(&source.name);
-        let value = source
-            .value
-            .as_ref()
-            .map(|value| self.transform_variable_declaration_value(value));
-
-        Rc::new(output::VariableDeclarationStatementStruct {
-            node_id: source.node_id,
-            variable_type,
-            storage_location,
-            name,
-            value,
-        })
-    }
+    ) -> output::VariableDeclarationStatement;
 
     fn transform_if_statement(&mut self, source: &input::IfStatement) -> output::IfStatement {
         let condition = self.transform_expression(&source.condition);
@@ -2015,28 +1996,6 @@ pub trait Transformer {
     }
     fn transform_tuple_member(&mut self, source: &input::TupleMember) -> output::TupleMember {
         self.default_transform_tuple_member(source)
-    }
-
-    fn default_transform_variable_declaration_type(
-        &mut self,
-        source: &input::VariableDeclarationType,
-    ) -> output::VariableDeclarationType {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::VariableDeclarationType::TypeName(ref type_name) => {
-                output::VariableDeclarationType::TypeName(self.transform_type_name(type_name))
-            }
-            input::VariableDeclarationType::VarKeyword => {
-                output::VariableDeclarationType::VarKeyword
-            }
-        }
-    }
-    fn transform_variable_declaration_type(
-        &mut self,
-        source: &input::VariableDeclarationType,
-    ) -> output::VariableDeclarationType {
-        self.default_transform_variable_declaration_type(source)
     }
 
     fn default_transform_storage_location(

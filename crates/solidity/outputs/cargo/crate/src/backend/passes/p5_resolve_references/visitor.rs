@@ -666,10 +666,7 @@ impl Visitor for Pass {
             // NOTE: ensure following code does not need to perform resolution
         }
 
-        if matches!(
-            node.variable_type,
-            input_ir::VariableDeclarationType::VarKeyword
-        ) {
+        if node.type_name.is_none() {
             // update the type of the variable with the type of the expression (if available)
             if let Some(value) = &node.value {
                 let typing = self

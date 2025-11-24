@@ -252,24 +252,23 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::VariableDeclarationStatement,
     ) {
-        let type_id =
-            if let input_ir::VariableDeclarationType::TypeName(type_name) = &node.variable_type {
-                self.resolve_type_name(
-                    type_name,
-                    node.storage_location.as_ref().map(Into::into).or_else(|| {
-                        if self.language_version < VERSION_0_5_0 {
-                            // default data location is storage for variables
-                            Some(DataLocation::Storage)
-                        } else {
-                            None
-                        }
-                    }),
-                )
-            } else {
-                // this is for `var` variables (in Solidity < 0.5.0) we cannot
-                // resolve the type at this point (will fixup in p5)
-                None
-            };
+        let type_id = if let Some(type_name) = &node.type_name {
+            self.resolve_type_name(
+                type_name,
+                node.storage_location.as_ref().map(Into::into).or_else(|| {
+                    if self.language_version < VERSION_0_5_0 {
+                        // default data location is storage for variables
+                        Some(DataLocation::Storage)
+                    } else {
+                        None
+                    }
+                }),
+            )
+        } else {
+            // this is for `var` variables (in Solidity < 0.5.0) we cannot
+            // resolve the type at this point (will fixup in p5)
+            None
+        };
         self.binder.set_node_type(node.node_id, type_id);
     }
 

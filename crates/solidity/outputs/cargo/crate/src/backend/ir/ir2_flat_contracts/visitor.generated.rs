@@ -638,11 +638,6 @@ pub trait Visitor {
     }
     fn leave_tuple_member(&mut self, _node: &TupleMember) {}
 
-    fn enter_variable_declaration_type(&mut self, _node: &VariableDeclarationType) -> bool {
-        true
-    }
-    fn leave_variable_declaration_type(&mut self, _node: &VariableDeclarationType) {}
-
     fn enter_storage_location(&mut self, _node: &StorageLocation) -> bool {
         true
     }
@@ -1382,12 +1377,14 @@ pub fn accept_variable_declaration_statement(
     if !visitor.enter_variable_declaration_statement(node) {
         return;
     }
-    accept_variable_declaration_type(&node.variable_type, visitor);
     if let Some(ref storage_location) = node.storage_location {
         accept_storage_location(storage_location, visitor);
     }
     if let Some(ref value) = node.value {
         accept_expression(value, visitor);
+    }
+    if let Some(ref type_name) = node.type_name {
+        accept_type_name(type_name, visitor);
     }
     visitor.leave_variable_declaration_statement(node);
 }
@@ -2261,22 +2258,6 @@ pub fn accept_tuple_member(node: &TupleMember, visitor: &mut impl Visitor) {
         }
     }
     visitor.leave_tuple_member(node);
-}
-
-pub fn accept_variable_declaration_type(
-    node: &VariableDeclarationType,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_variable_declaration_type(node) {
-        return;
-    }
-    match node {
-        VariableDeclarationType::TypeName(ref type_name) => {
-            accept_type_name(type_name, visitor);
-        }
-        VariableDeclarationType::VarKeyword => {}
-    }
-    visitor.leave_variable_declaration_type(node);
 }
 
 pub fn accept_storage_location(_node: &StorageLocation, _visitor: &mut impl Visitor) {}

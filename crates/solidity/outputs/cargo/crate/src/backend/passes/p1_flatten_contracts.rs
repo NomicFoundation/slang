@@ -427,6 +427,35 @@ impl Transformer for Pass {
             _ => self.default_transform_yul_literal(source),
         }
     }
+
+    fn transform_variable_declaration_statement(
+        &mut self,
+        source: &input::VariableDeclarationStatement,
+    ) -> output::VariableDeclarationStatement {
+        let type_name = match &source.variable_type {
+            input::VariableDeclarationType::TypeName(type_name) => {
+                Some(self.transform_type_name(type_name))
+            }
+            input::VariableDeclarationType::VarKeyword => None,
+        };
+        let storage_location = source
+            .storage_location
+            .as_ref()
+            .map(|value| self.transform_storage_location(value));
+        let name = Rc::clone(&source.name);
+        let value = source
+            .value
+            .as_ref()
+            .map(|value| self.transform_variable_declaration_value(value));
+
+        Rc::new(output::VariableDeclarationStatementStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location,
+            name,
+            value,
+        })
+    }
 }
 
 impl Pass {

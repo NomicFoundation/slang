@@ -436,10 +436,10 @@ pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 #[derive(Debug)]
 pub struct VariableDeclarationStatementStruct {
     pub node_id: NodeId,
-    pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
     pub value: Option<Expression>,
+    pub type_name: Option<TypeName>,
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -1126,12 +1126,6 @@ pub enum Statement {
 pub enum TupleMember {
     TypedTupleMember(TypedTupleMember),
     UntypedTupleMember(UntypedTupleMember),
-}
-
-#[derive(Debug)]
-pub enum VariableDeclarationType {
-    TypeName(TypeName),
-    VarKeyword,
 }
 
 #[derive(Debug)]

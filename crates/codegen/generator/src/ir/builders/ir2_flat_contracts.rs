@@ -11,6 +11,7 @@ pub(super) fn build_from(structured_ast_model: &IrModel) -> ModelWithTransformer
     collapse_redundant_node_types(&mut mutator);
     simplify_string_literals(&mut mutator);
     simplify_imports(&mut mutator);
+    simplify_variable_declarations(&mut mutator);
 
     mutator.into()
 }
@@ -276,4 +277,15 @@ fn simplify_imports(mutator: &mut IrModelMutator) {
     mutator.collapse_sequence("ImportDirective");
     // Remove `NamedImport`, since it can be converted to the equivalent `PathImport`
     mutator.remove_type("NamedImport");
+}
+
+fn simplify_variable_declarations(mutator: &mut IrModelMutator) {
+    // Collapse the `VariableDeclarationType` into the parent `VariableDeclarationStatement`
+    mutator.remove_type("VariableDeclarationType");
+    mutator.add_sequence_field(
+        "VariableDeclarationStatement",
+        "type_name",
+        "TypeName",
+        true,
+    );
 }
