@@ -156,8 +156,8 @@ impl<'a> Pass<'a> {
         let mut scope = ParametersScope::new();
         for parameter in parameters {
             scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
+            if parameter.name.is_some() {
+                let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
             }
         }
@@ -173,8 +173,8 @@ impl<'a> Pass<'a> {
         scope_id: ScopeId,
     ) {
         for parameter in parameters {
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
+            if parameter.name.is_some() {
+                let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }

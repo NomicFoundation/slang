@@ -121,8 +121,7 @@ pub struct ModifierDefinition {
 
 #[derive(Debug)]
 pub struct ParameterDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::Parameter,
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -203,7 +202,7 @@ impl Definition {
             Self::Interface(interface_definition) => interface_definition.ir_node.node_id,
             Self::Library(library_definition) => library_definition.ir_node.node_id,
             Self::Modifier(modifier_definition) => modifier_definition.ir_node.node_id,
-            Self::Parameter(parameter_definition) => parameter_definition.node_id,
+            Self::Parameter(parameter_definition) => parameter_definition.ir_node.node_id,
             Self::StateVariable(state_variable_definition) => {
                 state_variable_definition.ir_node.node_id
             }
@@ -252,7 +251,10 @@ impl Definition {
                 // always have a name
                 modifier_definition.ir_node.name.as_ref().unwrap()
             }
-            Self::Parameter(parameter_definition) => &parameter_definition.identifier,
+            Self::Parameter(parameter_definition) => {
+                // Definitions are created only for named parameters
+                parameter_definition.ir_node.name.as_ref().unwrap()
+            }
             Self::StateVariable(state_variable_definition) => {
                 &state_variable_definition.ir_node.name
             }
@@ -422,10 +424,13 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_parameter(ir_node: &output_ir::Parameter) -> Self {
+        assert!(
+            ir_node.name.is_some(),
+            "Parameter definition must have a name"
+        );
         Self::Parameter(ParameterDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
