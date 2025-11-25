@@ -3,10 +3,6 @@ use crate::lexer::lexemes;
 
 grammar<'source>(source: &'source str);
 
-pub Num: i32 = {
-   <l:@L> <s:DecimalLiteral> <r:@R> => i32::from_str(source[dbg!(l)..dbg!(r)].trim()).unwrap(),
-}
-
 {% for section in model.parser.sections -%}
 
 // Rules for section {{ section.title }}
@@ -15,9 +11,10 @@ pub Num: i32 = {
     // Rules for topic {{ topic.title }}
     {% for item in topic.items -%}
 
-    {{ item.name }}: {{ item.producing_type }} = {
+    {% if item.name == model.parser.root_item -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
         {% for option in item.options -%}
-            {% for field in option.fields -%}    
+            {{ option.attributes }} 
+            {% for field in option.fields -%}   
                 <{{ field.capturing_name }}: {{ field.rule }}> {{ " " }}
             {%- endfor %}=> {{ option.action }},
         {% endfor %}

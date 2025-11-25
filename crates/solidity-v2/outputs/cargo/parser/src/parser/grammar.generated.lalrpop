@@ -5,200 +5,274 @@ use crate::lexer::lexemes;
 
 grammar<'source>(source: &'source str);
 
-pub Num: i32 = {
-   <l:@L> <s:DecimalLiteral> <r:@R> => i32::from_str(source[dbg!(l)..dbg!(r)].trim()).unwrap(),
-}
-
 // Rules for section File Structure
 
 // Rules for topic Source Unit
-    SourceUnit: String = {
-        <_members: SourceUnitMembers>  => format!("Struct(SourceUnit)[{:?}]", _members),
+    pub SourceUnit: String = {
+         
+            <_members: SourceUnitMembers>  => format!("Struct(SourceUnit)[{:?}]", _members),
         
     };
     SourceUnitMembers: String = {
-        <_SourceUnitMember: (SourceUnitMember)*>  => "Repeated[_SourceUnitMember]".to_string(),
+         
+            <_SourceUnitMember: (SourceUnitMember)*>  => "Repeated(SourceUnitMembers)[_SourceUnitMember]".to_string(),
         
     };
     SourceUnitMember: String = {
-        <_PragmaDirective: PragmaDirective>  => format!("Variant[{:?}]", _PragmaDirective),
-        <_ImportDirective: ImportDirective>  => format!("Variant[{:?}]", _ImportDirective),
-        <_ContractDefinition: ContractDefinition>  => format!("Variant[{:?}]", _ContractDefinition),
-        <_InterfaceDefinition: InterfaceDefinition>  => format!("Variant[{:?}]", _InterfaceDefinition),
-        <_LibraryDefinition: LibraryDefinition>  => format!("Variant[{:?}]", _LibraryDefinition),
-        <_StructDefinition: StructDefinition>  => format!("Variant[{:?}]", _StructDefinition),
-        <_EnumDefinition: EnumDefinition>  => format!("Variant[{:?}]", _EnumDefinition),
-        <_FunctionDefinition: FunctionDefinition>  => format!("Variant[{:?}]", _FunctionDefinition),
-        <_ErrorDefinition: ErrorDefinition>  => format!("Variant[{:?}]", _ErrorDefinition),
-        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant[{:?}]", _UserDefinedValueTypeDefinition),
-        <_UsingDirective: UsingDirective>  => format!("Variant[{:?}]", _UsingDirective),
-        <_EventDefinition: EventDefinition>  => format!("Variant[{:?}]", _EventDefinition),
-        <_ConstantDefinition: ConstantDefinition>  => format!("Variant[{:?}]", _ConstantDefinition),
+         
+            <_PragmaDirective: PragmaDirective>  => format!("Variant(SourceUnitMember)[{:?}]", _PragmaDirective),
+         
+            <_ImportDirective: ImportDirective>  => format!("Variant(SourceUnitMember)[{:?}]", _ImportDirective),
+         
+            <_ContractDefinition: ContractDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _ContractDefinition),
+         
+            <_InterfaceDefinition: InterfaceDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _InterfaceDefinition),
+         
+            <_LibraryDefinition: LibraryDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _LibraryDefinition),
+         
+            <_StructDefinition: StructDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _StructDefinition),
+         
+            <_EnumDefinition: EnumDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _EnumDefinition),
+         
+            <_FunctionDefinition: FunctionDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _FunctionDefinition),
+         
+            <_ErrorDefinition: ErrorDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _ErrorDefinition),
+         
+            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _UserDefinedValueTypeDefinition),
+         
+            <_UsingDirective: UsingDirective>  => format!("Variant(SourceUnitMember)[{:?}]", _UsingDirective),
+         
+            <_EventDefinition: EventDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _EventDefinition),
+         
+            <_ConstantDefinition: ConstantDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _ConstantDefinition),
         
     };
     
 
 // Rules for topic Pragma Directives
     PragmaDirective: String = {
-        <_pragma_keyword: PragmaKeyword>  <_pragma: Pragma>  <_semicolon: Semicolon>  => format!("Struct(PragmaDirective)[{:?}, {:?}, {:?}]", _pragma_keyword, _pragma, _semicolon),
+         
+            <_pragma_keyword: PragmaKeyword>  <_pragma: Pragma>  <_semicolon: Semicolon>  => format!("Struct(PragmaDirective)[{:?}, {:?}, {:?}]", _pragma_keyword, _pragma, _semicolon),
         
     };
     Pragma: String = {
-        <_VersionPragma: VersionPragma>  => format!("Variant[{:?}]", _VersionPragma),
-        <_AbicoderPragma: AbicoderPragma>  => format!("Variant[{:?}]", _AbicoderPragma),
-        <_ExperimentalPragma: ExperimentalPragma>  => format!("Variant[{:?}]", _ExperimentalPragma),
+         
+            <_VersionPragma: VersionPragma>  => format!("Variant(Pragma)[{:?}]", _VersionPragma),
+         
+            <_AbicoderPragma: AbicoderPragma>  => format!("Variant(Pragma)[{:?}]", _AbicoderPragma),
+         
+            <_ExperimentalPragma: ExperimentalPragma>  => format!("Variant(Pragma)[{:?}]", _ExperimentalPragma),
         
     };
     AbicoderPragma: String = {
-        <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => format!("Struct(AbicoderPragma)[{:?}, {:?}]", _abicoder_keyword, _version),
+         
+            <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => format!("Struct(AbicoderPragma)[{:?}, {:?}]", _abicoder_keyword, _version),
         
     };
     ExperimentalPragma: String = {
-        <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => format!("Struct(ExperimentalPragma)[{:?}, {:?}]", _experimental_keyword, _feature),
+         
+            <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => format!("Struct(ExperimentalPragma)[{:?}, {:?}]", _experimental_keyword, _feature),
         
     };
     AbicoderVersion: String = {
-        <_AbicoderV1Keyword: AbicoderV1Keyword>  => format!("Variant[{:?}]", _AbicoderV1Keyword),
-        <_AbicoderV2Keyword: AbicoderV2Keyword>  => format!("Variant[{:?}]", _AbicoderV2Keyword),
+         
+            <_AbicoderV1Keyword: AbicoderV1Keyword>  => format!("Variant(AbicoderVersion)[{:?}]", _AbicoderV1Keyword),
+         
+            <_AbicoderV2Keyword: AbicoderV2Keyword>  => format!("Variant(AbicoderVersion)[{:?}]", _AbicoderV2Keyword),
         
     };
     ExperimentalFeature: String = {
-        <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => format!("Variant[{:?}]", _ABIEncoderV2Keyword),
-        <_SMTCheckerKeyword: SMTCheckerKeyword>  => format!("Variant[{:?}]", _SMTCheckerKeyword),
-        <_StringLiteral: StringLiteral>  => format!("Variant[{:?}]", _StringLiteral),
+         
+            <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => format!("Variant(ExperimentalFeature)[{:?}]", _ABIEncoderV2Keyword),
+         
+            <_SMTCheckerKeyword: SMTCheckerKeyword>  => format!("Variant(ExperimentalFeature)[{:?}]", _SMTCheckerKeyword),
+         
+            <_StringLiteral: StringLiteral>  => format!("Variant(ExperimentalFeature)[{:?}]", _StringLiteral),
         
     };
     VersionPragma: String = {
-        <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => format!("Struct(VersionPragma)[{:?}, {:?}]", _solidity_keyword, _sets),
+         
+            <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => format!("Struct(VersionPragma)[{:?}, {:?}]", _solidity_keyword, _sets),
         
     };
     VersionExpressionSets: String = {
-        <_VersionExpressionSet: ((VersionExpressionSet (BarBar VersionExpressionSet)*))?>  => "Separated[_VersionExpressionSet]".to_string(),
+         
+            <_VersionExpressionSet: (VersionExpressionSet (BarBar VersionExpressionSet)*)>  => "Separated(VersionExpressionSets)[_VersionExpressionSet]".to_string(),
         
     };
     VersionExpressionSet: String = {
-        <_VersionExpression: (VersionExpression)+>  => "Repeated[_VersionExpression]".to_string(),
+         
+            <_VersionExpression: (VersionExpression)+>  => "Repeated(VersionExpressionSet)[_VersionExpression]".to_string(),
         
     };
     VersionExpression: String = {
-        <_VersionRange: VersionRange>  => format!("Variant[{:?}]", _VersionRange),
-        <_VersionTerm: VersionTerm>  => format!("Variant[{:?}]", _VersionTerm),
+         
+            <_VersionRange: VersionRange>  => format!("Variant(VersionExpression)[{:?}]", _VersionRange),
+         
+            <_VersionTerm: VersionTerm>  => format!("Variant(VersionExpression)[{:?}]", _VersionTerm),
         
     };
     VersionRange: String = {
-        <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => format!("Struct(VersionRange)[{:?}, {:?}, {:?}]", _start, _minus, _end),
+         
+            <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => format!("Struct(VersionRange)[{:?}, {:?}, {:?}]", _start, _minus, _end),
         
     };
     VersionTerm: String = {
-        <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => format!("Struct(VersionTerm)[{:?}, {:?}]", _operator, _literal),
+         
+            <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => format!("Struct(VersionTerm)[{:?}, {:?}]", _operator, _literal),
         
     };
     VersionOperator: String = {
-        <_Caret: Caret>  => format!("Variant[{:?}]", _Caret),
-        <_Tilde: Tilde>  => format!("Variant[{:?}]", _Tilde),
-        <_Equal: Equal>  => format!("Variant[{:?}]", _Equal),
-        <_LessThan: LessThan>  => format!("Variant[{:?}]", _LessThan),
-        <_GreaterThan: GreaterThan>  => format!("Variant[{:?}]", _GreaterThan),
-        <_LessThanEqual: LessThanEqual>  => format!("Variant[{:?}]", _LessThanEqual),
-        <_GreaterThanEqual: GreaterThanEqual>  => format!("Variant[{:?}]", _GreaterThanEqual),
+         
+            <_Caret: Caret>  => format!("Variant(VersionOperator)[{:?}]", _Caret),
+         
+            <_Tilde: Tilde>  => format!("Variant(VersionOperator)[{:?}]", _Tilde),
+         
+            <_Equal: Equal>  => format!("Variant(VersionOperator)[{:?}]", _Equal),
+         
+            <_LessThan: LessThan>  => format!("Variant(VersionOperator)[{:?}]", _LessThan),
+         
+            <_GreaterThan: GreaterThan>  => format!("Variant(VersionOperator)[{:?}]", _GreaterThan),
+         
+            <_LessThanEqual: LessThanEqual>  => format!("Variant(VersionOperator)[{:?}]", _LessThanEqual),
+         
+            <_GreaterThanEqual: GreaterThanEqual>  => format!("Variant(VersionOperator)[{:?}]", _GreaterThanEqual),
         
     };
     VersionLiteral: String = {
-        <_SimpleVersionLiteral: SimpleVersionLiteral>  => format!("Variant[{:?}]", _SimpleVersionLiteral),
-        <_SingleQuotedVersionLiteral: SingleQuotedVersionLiteral>  => format!("Variant[{:?}]", _SingleQuotedVersionLiteral),
-        <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => format!("Variant[{:?}]", _DoubleQuotedVersionLiteral),
+         
+            <_SimpleVersionLiteral: SimpleVersionLiteral>  => format!("Variant(VersionLiteral)[{:?}]", _SimpleVersionLiteral),
+         
+            <_SingleQuotedVersionLiteral: SingleQuotedVersionLiteral>  => format!("Variant(VersionLiteral)[{:?}]", _SingleQuotedVersionLiteral),
+         
+            <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => format!("Variant(VersionLiteral)[{:?}]", _DoubleQuotedVersionLiteral),
         
     };
     SimpleVersionLiteral: String = {
-        <_VersionSpecifier: ((VersionSpecifier (Period VersionSpecifier)*))?>  => "Separated[_VersionSpecifier]".to_string(),
+         
+            <_VersionSpecifier: (VersionSpecifier (Period VersionSpecifier)*)>  => "Separated(SimpleVersionLiteral)[_VersionSpecifier]".to_string(),
         
     };
     
 
 // Rules for topic Import Directives
     ImportDirective: String = {
-        <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => format!("Struct(ImportDirective)[{:?}, {:?}, {:?}]", _import_keyword, _clause, _semicolon),
+         
+            <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => format!("Struct(ImportDirective)[{:?}, {:?}, {:?}]", _import_keyword, _clause, _semicolon),
         
     };
     ImportClause: String = {
-        <_PathImport: PathImport>  => format!("Variant[{:?}]", _PathImport),
-        <_NamedImport: NamedImport>  => format!("Variant[{:?}]", _NamedImport),
-        <_ImportDeconstruction: ImportDeconstruction>  => format!("Variant[{:?}]", _ImportDeconstruction),
+         
+            <_PathImport: PathImport>  => format!("Variant(ImportClause)[{:?}]", _PathImport),
+         
+            <_NamedImport: NamedImport>  => format!("Variant(ImportClause)[{:?}]", _NamedImport),
+         
+            <_ImportDeconstruction: ImportDeconstruction>  => format!("Variant(ImportClause)[{:?}]", _ImportDeconstruction),
         
     };
     PathImport: String = {
-        <_path: StringLiteral>  <_alias: (ImportAlias)?>  => format!("Struct(PathImport)[{:?}, {:?}]", _path, _alias),
+         
+            <_path: StringLiteral>  <_alias: (ImportAlias)?>  => format!("Struct(PathImport)[{:?}, {:?}]", _path, _alias),
         
     };
     NamedImport: String = {
-        <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => format!("Struct(NamedImport)[{:?}, {:?}, {:?}, {:?}]", _asterisk, _alias, _from_keyword, _path),
+         
+            <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => format!("Struct(NamedImport)[{:?}, {:?}, {:?}, {:?}]", _asterisk, _alias, _from_keyword, _path),
         
     };
     ImportDeconstruction: String = {
-        <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => format!("Struct(ImportDeconstruction)[{:?}, {:?}, {:?}, {:?}, {:?}]", _open_brace, _symbols, _close_brace, _from_keyword, _path),
+         
+            <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => format!("Struct(ImportDeconstruction)[{:?}, {:?}, {:?}, {:?}, {:?}]", _open_brace, _symbols, _close_brace, _from_keyword, _path),
         
     };
     ImportDeconstructionSymbols: String = {
-        <_ImportDeconstructionSymbol: ((ImportDeconstructionSymbol (Comma ImportDeconstructionSymbol)*))?>  => "Separated[_ImportDeconstructionSymbol]".to_string(),
+         
+            <_ImportDeconstructionSymbol: (ImportDeconstructionSymbol (Comma ImportDeconstructionSymbol)*)>  => "Separated(ImportDeconstructionSymbols)[_ImportDeconstructionSymbol]".to_string(),
         
     };
     ImportDeconstructionSymbol: String = {
-        <_name: Identifier>  <_alias: (ImportAlias)?>  => format!("Struct(ImportDeconstructionSymbol)[{:?}, {:?}]", _name, _alias),
+         
+            <_name: Identifier>  <_alias: (ImportAlias)?>  => format!("Struct(ImportDeconstructionSymbol)[{:?}, {:?}]", _name, _alias),
         
     };
     ImportAlias: String = {
-        <_as_keyword: AsKeyword>  <_identifier: Identifier>  => format!("Struct(ImportAlias)[{:?}, {:?}]", _as_keyword, _identifier),
+         
+            <_as_keyword: AsKeyword>  <_identifier: Identifier>  => format!("Struct(ImportAlias)[{:?}, {:?}]", _as_keyword, _identifier),
         
     };
     
 
 // Rules for topic Using Directives
     UsingDirective: String = {
-        <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => format!("Struct(UsingDirective)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _using_keyword, _clause, _for_keyword, _target, _global_keyword, _semicolon),
+         
+            <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => format!("Struct(UsingDirective)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _using_keyword, _clause, _for_keyword, _target, _global_keyword, _semicolon),
         
     };
     UsingClause: String = {
-        <_IdentifierPath: IdentifierPath>  => format!("Variant[{:?}]", _IdentifierPath),
-        <_UsingDeconstruction: UsingDeconstruction>  => format!("Variant[{:?}]", _UsingDeconstruction),
+         
+            <_IdentifierPath: IdentifierPath>  => format!("Variant(UsingClause)[{:?}]", _IdentifierPath),
+         
+            <_UsingDeconstruction: UsingDeconstruction>  => format!("Variant(UsingClause)[{:?}]", _UsingDeconstruction),
         
     };
     UsingDeconstruction: String = {
-        <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => format!("Struct(UsingDeconstruction)[{:?}, {:?}, {:?}]", _open_brace, _symbols, _close_brace),
+         
+            <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => format!("Struct(UsingDeconstruction)[{:?}, {:?}, {:?}]", _open_brace, _symbols, _close_brace),
         
     };
     UsingDeconstructionSymbols: String = {
-        <_UsingDeconstructionSymbol: ((UsingDeconstructionSymbol (Comma UsingDeconstructionSymbol)*))?>  => "Separated[_UsingDeconstructionSymbol]".to_string(),
+         
+            <_UsingDeconstructionSymbol: (UsingDeconstructionSymbol (Comma UsingDeconstructionSymbol)*)>  => "Separated(UsingDeconstructionSymbols)[_UsingDeconstructionSymbol]".to_string(),
         
     };
     UsingDeconstructionSymbol: String = {
-        <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => format!("Struct(UsingDeconstructionSymbol)[{:?}, {:?}]", _name, _alias),
+         
+            <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => format!("Struct(UsingDeconstructionSymbol)[{:?}, {:?}]", _name, _alias),
         
     };
     UsingAlias: String = {
-        <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => format!("Struct(UsingAlias)[{:?}, {:?}]", _as_keyword, _operator),
+         
+            <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => format!("Struct(UsingAlias)[{:?}, {:?}]", _as_keyword, _operator),
         
     };
     UsingOperator: String = {
-        <_Ampersand: Ampersand>  => format!("Variant[{:?}]", _Ampersand),
-        <_Asterisk: Asterisk>  => format!("Variant[{:?}]", _Asterisk),
-        <_BangEqual: BangEqual>  => format!("Variant[{:?}]", _BangEqual),
-        <_Bar: Bar>  => format!("Variant[{:?}]", _Bar),
-        <_Caret: Caret>  => format!("Variant[{:?}]", _Caret),
-        <_EqualEqual: EqualEqual>  => format!("Variant[{:?}]", _EqualEqual),
-        <_GreaterThan: GreaterThan>  => format!("Variant[{:?}]", _GreaterThan),
-        <_GreaterThanEqual: GreaterThanEqual>  => format!("Variant[{:?}]", _GreaterThanEqual),
-        <_LessThan: LessThan>  => format!("Variant[{:?}]", _LessThan),
-        <_LessThanEqual: LessThanEqual>  => format!("Variant[{:?}]", _LessThanEqual),
-        <_Minus: Minus>  => format!("Variant[{:?}]", _Minus),
-        <_Percent: Percent>  => format!("Variant[{:?}]", _Percent),
-        <_Plus: Plus>  => format!("Variant[{:?}]", _Plus),
-        <_Slash: Slash>  => format!("Variant[{:?}]", _Slash),
-        <_Tilde: Tilde>  => format!("Variant[{:?}]", _Tilde),
+         
+            <_Ampersand: Ampersand>  => format!("Variant(UsingOperator)[{:?}]", _Ampersand),
+         
+            <_Asterisk: Asterisk>  => format!("Variant(UsingOperator)[{:?}]", _Asterisk),
+         
+            <_BangEqual: BangEqual>  => format!("Variant(UsingOperator)[{:?}]", _BangEqual),
+         
+            <_Bar: Bar>  => format!("Variant(UsingOperator)[{:?}]", _Bar),
+         
+            <_Caret: Caret>  => format!("Variant(UsingOperator)[{:?}]", _Caret),
+         
+            <_EqualEqual: EqualEqual>  => format!("Variant(UsingOperator)[{:?}]", _EqualEqual),
+         
+            <_GreaterThan: GreaterThan>  => format!("Variant(UsingOperator)[{:?}]", _GreaterThan),
+         
+            <_GreaterThanEqual: GreaterThanEqual>  => format!("Variant(UsingOperator)[{:?}]", _GreaterThanEqual),
+         
+            <_LessThan: LessThan>  => format!("Variant(UsingOperator)[{:?}]", _LessThan),
+         
+            <_LessThanEqual: LessThanEqual>  => format!("Variant(UsingOperator)[{:?}]", _LessThanEqual),
+         
+            <_Minus: Minus>  => format!("Variant(UsingOperator)[{:?}]", _Minus),
+         
+            <_Percent: Percent>  => format!("Variant(UsingOperator)[{:?}]", _Percent),
+         
+            <_Plus: Plus>  => format!("Variant(UsingOperator)[{:?}]", _Plus),
+         
+            <_Slash: Slash>  => format!("Variant(UsingOperator)[{:?}]", _Slash),
+         
+            <_Tilde: Tilde>  => format!("Variant(UsingOperator)[{:?}]", _Tilde),
         
     };
     UsingTarget: String = {
-        <_TypeName: TypeName>  => format!("Variant[{:?}]", _TypeName),
-        <_Asterisk: Asterisk>  => format!("Variant[{:?}]", _Asterisk),
+         
+            <_TypeName: TypeName>  => format!("Variant(UsingTarget)[{:?}]", _TypeName),
+         
+            <_Asterisk: Asterisk>  => format!("Variant(UsingTarget)[{:?}]", _Asterisk),
         
     };
     
@@ -208,487 +282,608 @@ pub Num: i32 = {
 
 // Rules for topic Keywords
     AbicoderKeyword: String = {
-        <_AbicoderKeyword: AbicoderKeyword_Unreserved>  => "Keyword[_AbicoderKeyword]".to_string(),
+         
+            <_AbicoderKeyword: AbicoderKeyword_Unreserved>  => "Keyword[_AbicoderKeyword]".to_string(),
         
     };
     AbicoderV1Keyword: String = {
-        <_AbicoderV1Keyword: AbicoderV1Keyword_Unreserved>  => "Keyword[_AbicoderV1Keyword]".to_string(),
+         
+            <_AbicoderV1Keyword: AbicoderV1Keyword_Unreserved>  => "Keyword[_AbicoderV1Keyword]".to_string(),
         
     };
     AbicoderV2Keyword: String = {
-        <_AbicoderV2Keyword: AbicoderV2Keyword_Unreserved>  => "Keyword[_AbicoderV2Keyword]".to_string(),
+         
+            <_AbicoderV2Keyword: AbicoderV2Keyword_Unreserved>  => "Keyword[_AbicoderV2Keyword]".to_string(),
         
     };
     ABIEncoderV2Keyword: String = {
-        <_ABIEncoderV2Keyword: ABIEncoderV2Keyword_Unreserved>  => "Keyword[_ABIEncoderV2Keyword]".to_string(),
+         
+            <_ABIEncoderV2Keyword: ABIEncoderV2Keyword_Unreserved>  => "Keyword[_ABIEncoderV2Keyword]".to_string(),
         
     };
     AbstractKeyword: String = {
-        <_AbstractKeyword: AbstractKeyword_Reserved>  => "Keyword[_AbstractKeyword]".to_string(),
+         
+            <_AbstractKeyword: AbstractKeyword_Reserved>  => "Keyword[_AbstractKeyword]".to_string(),
         
     };
     AddressKeyword: String = {
-        <_AddressKeyword: AddressKeyword_Unreserved>  => "Keyword[_AddressKeyword]".to_string(),
+         
+            <_AddressKeyword: AddressKeyword_Unreserved>  => "Keyword[_AddressKeyword]".to_string(),
         
     };
     AfterKeyword: String = {
-        <_AfterKeyword: AfterKeyword_Reserved>  => "Keyword[_AfterKeyword]".to_string(),
+         
+            <_AfterKeyword: AfterKeyword_Reserved>  => "Keyword[_AfterKeyword]".to_string(),
         
     };
     AliasKeyword: String = {
-        <_AliasKeyword: AliasKeyword_Reserved>  => "Keyword[_AliasKeyword]".to_string(),
+         
+            <_AliasKeyword: AliasKeyword_Reserved>  => "Keyword[_AliasKeyword]".to_string(),
         
     };
     AnonymousKeyword: String = {
-        <_AnonymousKeyword: AnonymousKeyword_Reserved>  => "Keyword[_AnonymousKeyword]".to_string(),
+         
+            <_AnonymousKeyword: AnonymousKeyword_Reserved>  => "Keyword[_AnonymousKeyword]".to_string(),
         
     };
     ApplyKeyword: String = {
-        <_ApplyKeyword: ApplyKeyword_Reserved>  => "Keyword[_ApplyKeyword]".to_string(),
+         
+            <_ApplyKeyword: ApplyKeyword_Reserved>  => "Keyword[_ApplyKeyword]".to_string(),
         
     };
     AsKeyword: String = {
-        <_AsKeyword: AsKeyword_Reserved>  => "Keyword[_AsKeyword]".to_string(),
+         
+            <_AsKeyword: AsKeyword_Reserved>  => "Keyword[_AsKeyword]".to_string(),
         
     };
     AssemblyKeyword: String = {
-        <_AssemblyKeyword: AssemblyKeyword_Reserved>  => "Keyword[_AssemblyKeyword]".to_string(),
+         
+            <_AssemblyKeyword: AssemblyKeyword_Reserved>  => "Keyword[_AssemblyKeyword]".to_string(),
         
     };
     AtKeyword: String = {
-        <_AtKeyword: AtKeyword_Unreserved>  => "Keyword[_AtKeyword]".to_string(),
+         
+            <_AtKeyword: AtKeyword_Unreserved>  => "Keyword[_AtKeyword]".to_string(),
         
     };
     AutoKeyword: String = {
-        <_AutoKeyword: AutoKeyword_Reserved>  => "Keyword[_AutoKeyword]".to_string(),
+         
+            <_AutoKeyword: AutoKeyword_Reserved>  => "Keyword[_AutoKeyword]".to_string(),
         
     };
     BoolKeyword: String = {
-        <_BoolKeyword: BoolKeyword_Reserved>  => "Keyword[_BoolKeyword]".to_string(),
+         
+            <_BoolKeyword: BoolKeyword_Reserved>  => "Keyword[_BoolKeyword]".to_string(),
         
     };
     BreakKeyword: String = {
-        <_BreakKeyword: BreakKeyword_Reserved>  => "Keyword[_BreakKeyword]".to_string(),
+         
+            <_BreakKeyword: BreakKeyword_Reserved>  => "Keyword[_BreakKeyword]".to_string(),
         
     };
     ByteKeyword: String = {
-        <_ByteKeyword: ByteKeyword_Reserved>  => "Keyword[_ByteKeyword]".to_string(),
+         
+            <_ByteKeyword: ByteKeyword_Reserved>  => "Keyword[_ByteKeyword]".to_string(),
         
     };
     BytesKeyword: String = {
-        <_BytesKeyword: BytesKeyword_Reserved>  => "Keyword[_BytesKeyword]".to_string(),
+         
+            <_BytesKeyword: BytesKeyword_Reserved>  => "Keyword[_BytesKeyword]".to_string(),
         
     };
     CallDataKeyword: String = {
-        <_CallDataKeyword: CallDataKeyword_Reserved>  => "Keyword[_CallDataKeyword]".to_string(),
+         
+            <_CallDataKeyword: CallDataKeyword_Reserved>  => "Keyword[_CallDataKeyword]".to_string(),
         
     };
     CaseKeyword: String = {
-        <_CaseKeyword: CaseKeyword_Reserved>  => "Keyword[_CaseKeyword]".to_string(),
+         
+            <_CaseKeyword: CaseKeyword_Reserved>  => "Keyword[_CaseKeyword]".to_string(),
         
     };
     CatchKeyword: String = {
-        <_CatchKeyword: CatchKeyword_Reserved>  => "Keyword[_CatchKeyword]".to_string(),
+         
+            <_CatchKeyword: CatchKeyword_Reserved>  => "Keyword[_CatchKeyword]".to_string(),
         
     };
     ConstantKeyword: String = {
-        <_ConstantKeyword: ConstantKeyword_Reserved>  => "Keyword[_ConstantKeyword]".to_string(),
+         
+            <_ConstantKeyword: ConstantKeyword_Reserved>  => "Keyword[_ConstantKeyword]".to_string(),
         
     };
     ConstructorKeyword: String = {
-        <_ConstructorKeyword: ConstructorKeyword_Reserved>  => "Keyword[_ConstructorKeyword]".to_string(),
+         
+            <_ConstructorKeyword: ConstructorKeyword_Reserved>  => "Keyword[_ConstructorKeyword]".to_string(),
         
     };
     ContinueKeyword: String = {
-        <_ContinueKeyword: ContinueKeyword_Reserved>  => "Keyword[_ContinueKeyword]".to_string(),
+         
+            <_ContinueKeyword: ContinueKeyword_Reserved>  => "Keyword[_ContinueKeyword]".to_string(),
         
     };
     ContractKeyword: String = {
-        <_ContractKeyword: ContractKeyword_Reserved>  => "Keyword[_ContractKeyword]".to_string(),
+         
+            <_ContractKeyword: ContractKeyword_Reserved>  => "Keyword[_ContractKeyword]".to_string(),
         
     };
     CopyOfKeyword: String = {
-        <_CopyOfKeyword: CopyOfKeyword_Reserved>  => "Keyword[_CopyOfKeyword]".to_string(),
+         
+            <_CopyOfKeyword: CopyOfKeyword_Reserved>  => "Keyword[_CopyOfKeyword]".to_string(),
         
     };
     DaysKeyword: String = {
-        <_DaysKeyword: DaysKeyword_Reserved>  => "Keyword[_DaysKeyword]".to_string(),
+         
+            <_DaysKeyword: DaysKeyword_Reserved>  => "Keyword[_DaysKeyword]".to_string(),
         
     };
     DefaultKeyword: String = {
-        <_DefaultKeyword: DefaultKeyword_Reserved>  => "Keyword[_DefaultKeyword]".to_string(),
+         
+            <_DefaultKeyword: DefaultKeyword_Reserved>  => "Keyword[_DefaultKeyword]".to_string(),
         
     };
     DefineKeyword: String = {
-        <_DefineKeyword: DefineKeyword_Reserved>  => "Keyword[_DefineKeyword]".to_string(),
+         
+            <_DefineKeyword: DefineKeyword_Reserved>  => "Keyword[_DefineKeyword]".to_string(),
         
     };
     DeleteKeyword: String = {
-        <_DeleteKeyword: DeleteKeyword_Reserved>  => "Keyword[_DeleteKeyword]".to_string(),
+         
+            <_DeleteKeyword: DeleteKeyword_Reserved>  => "Keyword[_DeleteKeyword]".to_string(),
         
     };
     DoKeyword: String = {
-        <_DoKeyword: DoKeyword_Reserved>  => "Keyword[_DoKeyword]".to_string(),
+         
+            <_DoKeyword: DoKeyword_Reserved>  => "Keyword[_DoKeyword]".to_string(),
         
     };
     ElseKeyword: String = {
-        <_ElseKeyword: ElseKeyword_Reserved>  => "Keyword[_ElseKeyword]".to_string(),
+         
+            <_ElseKeyword: ElseKeyword_Reserved>  => "Keyword[_ElseKeyword]".to_string(),
         
     };
     EmitKeyword: String = {
-        <_EmitKeyword: EmitKeyword_Reserved>  => "Keyword[_EmitKeyword]".to_string(),
+         
+            <_EmitKeyword: EmitKeyword_Reserved>  => "Keyword[_EmitKeyword]".to_string(),
         
     };
     EnumKeyword: String = {
-        <_EnumKeyword: EnumKeyword_Reserved>  => "Keyword[_EnumKeyword]".to_string(),
+         
+            <_EnumKeyword: EnumKeyword_Reserved>  => "Keyword[_EnumKeyword]".to_string(),
         
     };
     ErrorKeyword: String = {
-        <_ErrorKeyword: ErrorKeyword_Unreserved>  => "Keyword[_ErrorKeyword]".to_string(),
+         
+            <_ErrorKeyword: ErrorKeyword_Unreserved>  => "Keyword[_ErrorKeyword]".to_string(),
         
     };
     EtherKeyword: String = {
-        <_EtherKeyword: EtherKeyword_Reserved>  => "Keyword[_EtherKeyword]".to_string(),
+         
+            <_EtherKeyword: EtherKeyword_Reserved>  => "Keyword[_EtherKeyword]".to_string(),
         
     };
     EventKeyword: String = {
-        <_EventKeyword: EventKeyword_Reserved>  => "Keyword[_EventKeyword]".to_string(),
+         
+            <_EventKeyword: EventKeyword_Reserved>  => "Keyword[_EventKeyword]".to_string(),
         
     };
     ExperimentalKeyword: String = {
-        <_ExperimentalKeyword: ExperimentalKeyword_Unreserved>  => "Keyword[_ExperimentalKeyword]".to_string(),
+         
+            <_ExperimentalKeyword: ExperimentalKeyword_Unreserved>  => "Keyword[_ExperimentalKeyword]".to_string(),
         
     };
     ExternalKeyword: String = {
-        <_ExternalKeyword: ExternalKeyword_Reserved>  => "Keyword[_ExternalKeyword]".to_string(),
+         
+            <_ExternalKeyword: ExternalKeyword_Reserved>  => "Keyword[_ExternalKeyword]".to_string(),
         
     };
     FallbackKeyword: String = {
-        <_FallbackKeyword: FallbackKeyword_Reserved>  => "Keyword[_FallbackKeyword]".to_string(),
+         
+            <_FallbackKeyword: FallbackKeyword_Reserved>  => "Keyword[_FallbackKeyword]".to_string(),
         
     };
     FalseKeyword: String = {
-        <_FalseKeyword: FalseKeyword_Reserved>  => "Keyword[_FalseKeyword]".to_string(),
+         
+            <_FalseKeyword: FalseKeyword_Reserved>  => "Keyword[_FalseKeyword]".to_string(),
         
     };
     FinalKeyword: String = {
-        <_FinalKeyword: FinalKeyword_Reserved>  => "Keyword[_FinalKeyword]".to_string(),
+         
+            <_FinalKeyword: FinalKeyword_Reserved>  => "Keyword[_FinalKeyword]".to_string(),
         
     };
     FinneyKeyword: String = {
-        <_FinneyKeyword: FinneyKeyword_Unreserved>  => "Keyword[_FinneyKeyword]".to_string(),
+         
+            <_FinneyKeyword: FinneyKeyword_Unreserved>  => "Keyword[_FinneyKeyword]".to_string(),
         
     };
     FixedKeyword: String = {
-        <_FixedKeyword: FixedKeyword_Reserved>  => "Keyword[_FixedKeyword]".to_string(),
+         
+            <_FixedKeyword: FixedKeyword_Reserved>  => "Keyword[_FixedKeyword]".to_string(),
         
     };
     ForKeyword: String = {
-        <_ForKeyword: ForKeyword_Reserved>  => "Keyword[_ForKeyword]".to_string(),
+         
+            <_ForKeyword: ForKeyword_Reserved>  => "Keyword[_ForKeyword]".to_string(),
         
     };
     FromKeyword: String = {
-        <_FromKeyword: FromKeyword_Unreserved>  => "Keyword[_FromKeyword]".to_string(),
+         
+            <_FromKeyword: FromKeyword_Unreserved>  => "Keyword[_FromKeyword]".to_string(),
         
     };
     FunctionKeyword: String = {
-        <_FunctionKeyword: FunctionKeyword_Reserved>  => "Keyword[_FunctionKeyword]".to_string(),
+         
+            <_FunctionKeyword: FunctionKeyword_Reserved>  => "Keyword[_FunctionKeyword]".to_string(),
         
     };
     GlobalKeyword: String = {
-        <_GlobalKeyword: GlobalKeyword_Unreserved>  => "Keyword[_GlobalKeyword]".to_string(),
+         
+            <_GlobalKeyword: GlobalKeyword_Unreserved>  => "Keyword[_GlobalKeyword]".to_string(),
         
     };
     GweiKeyword: String = {
-        <_GweiKeyword: GweiKeyword_Reserved>  => "Keyword[_GweiKeyword]".to_string(),
+         
+            <_GweiKeyword: GweiKeyword_Reserved>  => "Keyword[_GweiKeyword]".to_string(),
         
     };
     HexKeyword: String = {
-        <_HexKeyword: HexKeyword_Reserved>  => "Keyword[_HexKeyword]".to_string(),
+         
+            <_HexKeyword: HexKeyword_Reserved>  => "Keyword[_HexKeyword]".to_string(),
         
     };
     HoursKeyword: String = {
-        <_HoursKeyword: HoursKeyword_Reserved>  => "Keyword[_HoursKeyword]".to_string(),
+         
+            <_HoursKeyword: HoursKeyword_Reserved>  => "Keyword[_HoursKeyword]".to_string(),
         
     };
     IfKeyword: String = {
-        <_IfKeyword: IfKeyword_Reserved>  => "Keyword[_IfKeyword]".to_string(),
+         
+            <_IfKeyword: IfKeyword_Reserved>  => "Keyword[_IfKeyword]".to_string(),
         
     };
     ImmutableKeyword: String = {
-        <_ImmutableKeyword: ImmutableKeyword_Reserved>  => "Keyword[_ImmutableKeyword]".to_string(),
+         
+            <_ImmutableKeyword: ImmutableKeyword_Reserved>  => "Keyword[_ImmutableKeyword]".to_string(),
         
     };
     ImplementsKeyword: String = {
-        <_ImplementsKeyword: ImplementsKeyword_Reserved>  => "Keyword[_ImplementsKeyword]".to_string(),
+         
+            <_ImplementsKeyword: ImplementsKeyword_Reserved>  => "Keyword[_ImplementsKeyword]".to_string(),
         
     };
     ImportKeyword: String = {
-        <_ImportKeyword: ImportKeyword_Reserved>  => "Keyword[_ImportKeyword]".to_string(),
+         
+            <_ImportKeyword: ImportKeyword_Reserved>  => "Keyword[_ImportKeyword]".to_string(),
         
     };
     IndexedKeyword: String = {
-        <_IndexedKeyword: IndexedKeyword_Reserved>  => "Keyword[_IndexedKeyword]".to_string(),
+         
+            <_IndexedKeyword: IndexedKeyword_Reserved>  => "Keyword[_IndexedKeyword]".to_string(),
         
     };
     InKeyword: String = {
-        <_InKeyword: InKeyword_Reserved>  => "Keyword[_InKeyword]".to_string(),
+         
+            <_InKeyword: InKeyword_Reserved>  => "Keyword[_InKeyword]".to_string(),
         
     };
     InlineKeyword: String = {
-        <_InlineKeyword: InlineKeyword_Reserved>  => "Keyword[_InlineKeyword]".to_string(),
+         
+            <_InlineKeyword: InlineKeyword_Reserved>  => "Keyword[_InlineKeyword]".to_string(),
         
     };
     InterfaceKeyword: String = {
-        <_InterfaceKeyword: InterfaceKeyword_Reserved>  => "Keyword[_InterfaceKeyword]".to_string(),
+         
+            <_InterfaceKeyword: InterfaceKeyword_Reserved>  => "Keyword[_InterfaceKeyword]".to_string(),
         
     };
     InternalKeyword: String = {
-        <_InternalKeyword: InternalKeyword_Reserved>  => "Keyword[_InternalKeyword]".to_string(),
+         
+            <_InternalKeyword: InternalKeyword_Reserved>  => "Keyword[_InternalKeyword]".to_string(),
         
     };
     IntKeyword: String = {
-        <_IntKeyword: IntKeyword_Reserved>  => "Keyword[_IntKeyword]".to_string(),
+         
+            <_IntKeyword: IntKeyword_Reserved>  => "Keyword[_IntKeyword]".to_string(),
         
     };
     IsKeyword: String = {
-        <_IsKeyword: IsKeyword_Reserved>  => "Keyword[_IsKeyword]".to_string(),
+         
+            <_IsKeyword: IsKeyword_Reserved>  => "Keyword[_IsKeyword]".to_string(),
         
     };
     LayoutKeyword: String = {
-        <_LayoutKeyword: LayoutKeyword_Unreserved>  => "Keyword[_LayoutKeyword]".to_string(),
+         
+            <_LayoutKeyword: LayoutKeyword_Unreserved>  => "Keyword[_LayoutKeyword]".to_string(),
         
     };
     LetKeyword: String = {
-        <_LetKeyword: LetKeyword_Reserved>  => "Keyword[_LetKeyword]".to_string(),
+         
+            <_LetKeyword: LetKeyword_Reserved>  => "Keyword[_LetKeyword]".to_string(),
         
     };
     LibraryKeyword: String = {
-        <_LibraryKeyword: LibraryKeyword_Reserved>  => "Keyword[_LibraryKeyword]".to_string(),
+         
+            <_LibraryKeyword: LibraryKeyword_Reserved>  => "Keyword[_LibraryKeyword]".to_string(),
         
     };
     MacroKeyword: String = {
-        <_MacroKeyword: MacroKeyword_Reserved>  => "Keyword[_MacroKeyword]".to_string(),
+         
+            <_MacroKeyword: MacroKeyword_Reserved>  => "Keyword[_MacroKeyword]".to_string(),
         
     };
     MappingKeyword: String = {
-        <_MappingKeyword: MappingKeyword_Reserved>  => "Keyword[_MappingKeyword]".to_string(),
+         
+            <_MappingKeyword: MappingKeyword_Reserved>  => "Keyword[_MappingKeyword]".to_string(),
         
     };
     MatchKeyword: String = {
-        <_MatchKeyword: MatchKeyword_Reserved>  => "Keyword[_MatchKeyword]".to_string(),
+         
+            <_MatchKeyword: MatchKeyword_Reserved>  => "Keyword[_MatchKeyword]".to_string(),
         
     };
     MemoryKeyword: String = {
-        <_MemoryKeyword: MemoryKeyword_Reserved>  => "Keyword[_MemoryKeyword]".to_string(),
+         
+            <_MemoryKeyword: MemoryKeyword_Reserved>  => "Keyword[_MemoryKeyword]".to_string(),
         
     };
     MinutesKeyword: String = {
-        <_MinutesKeyword: MinutesKeyword_Reserved>  => "Keyword[_MinutesKeyword]".to_string(),
+         
+            <_MinutesKeyword: MinutesKeyword_Reserved>  => "Keyword[_MinutesKeyword]".to_string(),
         
     };
     ModifierKeyword: String = {
-        <_ModifierKeyword: ModifierKeyword_Reserved>  => "Keyword[_ModifierKeyword]".to_string(),
+         
+            <_ModifierKeyword: ModifierKeyword_Reserved>  => "Keyword[_ModifierKeyword]".to_string(),
         
     };
     MutableKeyword: String = {
-        <_MutableKeyword: MutableKeyword_Reserved>  => "Keyword[_MutableKeyword]".to_string(),
+         
+            <_MutableKeyword: MutableKeyword_Reserved>  => "Keyword[_MutableKeyword]".to_string(),
         
     };
     NewKeyword: String = {
-        <_NewKeyword: NewKeyword_Reserved>  => "Keyword[_NewKeyword]".to_string(),
+         
+            <_NewKeyword: NewKeyword_Reserved>  => "Keyword[_NewKeyword]".to_string(),
         
     };
     NullKeyword: String = {
-        <_NullKeyword: NullKeyword_Reserved>  => "Keyword[_NullKeyword]".to_string(),
+         
+            <_NullKeyword: NullKeyword_Reserved>  => "Keyword[_NullKeyword]".to_string(),
         
     };
     OfKeyword: String = {
-        <_OfKeyword: OfKeyword_Reserved>  => "Keyword[_OfKeyword]".to_string(),
+         
+            <_OfKeyword: OfKeyword_Reserved>  => "Keyword[_OfKeyword]".to_string(),
         
     };
     OverrideKeyword: String = {
-        <_OverrideKeyword: OverrideKeyword_Reserved>  => "Keyword[_OverrideKeyword]".to_string(),
+         
+            <_OverrideKeyword: OverrideKeyword_Reserved>  => "Keyword[_OverrideKeyword]".to_string(),
         
     };
     PartialKeyword: String = {
-        <_PartialKeyword: PartialKeyword_Reserved>  => "Keyword[_PartialKeyword]".to_string(),
+         
+            <_PartialKeyword: PartialKeyword_Reserved>  => "Keyword[_PartialKeyword]".to_string(),
         
     };
     PayableKeyword: String = {
-        <_PayableKeyword: PayableKeyword_Reserved>  => "Keyword[_PayableKeyword]".to_string(),
+         
+            <_PayableKeyword: PayableKeyword_Reserved>  => "Keyword[_PayableKeyword]".to_string(),
         
     };
     PragmaKeyword: String = {
-        <_PragmaKeyword: PragmaKeyword_Reserved>  => "Keyword[_PragmaKeyword]".to_string(),
+         
+            <_PragmaKeyword: PragmaKeyword_Reserved>  => "Keyword[_PragmaKeyword]".to_string(),
         
     };
     PrivateKeyword: String = {
-        <_PrivateKeyword: PrivateKeyword_Reserved>  => "Keyword[_PrivateKeyword]".to_string(),
+         
+            <_PrivateKeyword: PrivateKeyword_Reserved>  => "Keyword[_PrivateKeyword]".to_string(),
         
     };
     PromiseKeyword: String = {
-        <_PromiseKeyword: PromiseKeyword_Reserved>  => "Keyword[_PromiseKeyword]".to_string(),
+         
+            <_PromiseKeyword: PromiseKeyword_Reserved>  => "Keyword[_PromiseKeyword]".to_string(),
         
     };
     PublicKeyword: String = {
-        <_PublicKeyword: PublicKeyword_Reserved>  => "Keyword[_PublicKeyword]".to_string(),
+         
+            <_PublicKeyword: PublicKeyword_Reserved>  => "Keyword[_PublicKeyword]".to_string(),
         
     };
     PureKeyword: String = {
-        <_PureKeyword: PureKeyword_Reserved>  => "Keyword[_PureKeyword]".to_string(),
+         
+            <_PureKeyword: PureKeyword_Reserved>  => "Keyword[_PureKeyword]".to_string(),
         
     };
     ReceiveKeyword: String = {
-        <_ReceiveKeyword: ReceiveKeyword_Reserved>  => "Keyword[_ReceiveKeyword]".to_string(),
+         
+            <_ReceiveKeyword: ReceiveKeyword_Reserved>  => "Keyword[_ReceiveKeyword]".to_string(),
         
     };
     ReferenceKeyword: String = {
-        <_ReferenceKeyword: ReferenceKeyword_Reserved>  => "Keyword[_ReferenceKeyword]".to_string(),
+         
+            <_ReferenceKeyword: ReferenceKeyword_Reserved>  => "Keyword[_ReferenceKeyword]".to_string(),
         
     };
     RelocatableKeyword: String = {
-        <_RelocatableKeyword: RelocatableKeyword_Reserved>  => "Keyword[_RelocatableKeyword]".to_string(),
+         
+            <_RelocatableKeyword: RelocatableKeyword_Reserved>  => "Keyword[_RelocatableKeyword]".to_string(),
         
     };
     ReturnKeyword: String = {
-        <_ReturnKeyword: ReturnKeyword_Reserved>  => "Keyword[_ReturnKeyword]".to_string(),
+         
+            <_ReturnKeyword: ReturnKeyword_Reserved>  => "Keyword[_ReturnKeyword]".to_string(),
         
     };
     ReturnsKeyword: String = {
-        <_ReturnsKeyword: ReturnsKeyword_Reserved>  => "Keyword[_ReturnsKeyword]".to_string(),
+         
+            <_ReturnsKeyword: ReturnsKeyword_Reserved>  => "Keyword[_ReturnsKeyword]".to_string(),
         
     };
     RevertKeyword: String = {
-        <_RevertKeyword: RevertKeyword_Unreserved>  => "Keyword[_RevertKeyword]".to_string(),
+         
+            <_RevertKeyword: RevertKeyword_Unreserved>  => "Keyword[_RevertKeyword]".to_string(),
         
     };
     SealedKeyword: String = {
-        <_SealedKeyword: SealedKeyword_Reserved>  => "Keyword[_SealedKeyword]".to_string(),
+         
+            <_SealedKeyword: SealedKeyword_Reserved>  => "Keyword[_SealedKeyword]".to_string(),
         
     };
     SecondsKeyword: String = {
-        <_SecondsKeyword: SecondsKeyword_Reserved>  => "Keyword[_SecondsKeyword]".to_string(),
+         
+            <_SecondsKeyword: SecondsKeyword_Reserved>  => "Keyword[_SecondsKeyword]".to_string(),
         
     };
     SizeOfKeyword: String = {
-        <_SizeOfKeyword: SizeOfKeyword_Reserved>  => "Keyword[_SizeOfKeyword]".to_string(),
+         
+            <_SizeOfKeyword: SizeOfKeyword_Reserved>  => "Keyword[_SizeOfKeyword]".to_string(),
         
     };
     SMTCheckerKeyword: String = {
-        <_SMTCheckerKeyword: SMTCheckerKeyword_Unreserved>  => "Keyword[_SMTCheckerKeyword]".to_string(),
+         
+            <_SMTCheckerKeyword: SMTCheckerKeyword_Unreserved>  => "Keyword[_SMTCheckerKeyword]".to_string(),
         
     };
     SolidityKeyword: String = {
-        <_SolidityKeyword: SolidityKeyword_Unreserved>  => "Keyword[_SolidityKeyword]".to_string(),
+         
+            <_SolidityKeyword: SolidityKeyword_Unreserved>  => "Keyword[_SolidityKeyword]".to_string(),
         
     };
     StaticKeyword: String = {
-        <_StaticKeyword: StaticKeyword_Reserved>  => "Keyword[_StaticKeyword]".to_string(),
+         
+            <_StaticKeyword: StaticKeyword_Reserved>  => "Keyword[_StaticKeyword]".to_string(),
         
     };
     StorageKeyword: String = {
-        <_StorageKeyword: StorageKeyword_Reserved>  => "Keyword[_StorageKeyword]".to_string(),
+         
+            <_StorageKeyword: StorageKeyword_Reserved>  => "Keyword[_StorageKeyword]".to_string(),
         
     };
     StringKeyword: String = {
-        <_StringKeyword: StringKeyword_Reserved>  => "Keyword[_StringKeyword]".to_string(),
+         
+            <_StringKeyword: StringKeyword_Reserved>  => "Keyword[_StringKeyword]".to_string(),
         
     };
     StructKeyword: String = {
-        <_StructKeyword: StructKeyword_Reserved>  => "Keyword[_StructKeyword]".to_string(),
+         
+            <_StructKeyword: StructKeyword_Reserved>  => "Keyword[_StructKeyword]".to_string(),
         
     };
     SuperKeyword: String = {
-        <_SuperKeyword: SuperKeyword_Reserved>  => "Keyword[_SuperKeyword]".to_string(),
+         
+            <_SuperKeyword: SuperKeyword_Reserved>  => "Keyword[_SuperKeyword]".to_string(),
         
     };
     SupportsKeyword: String = {
-        <_SupportsKeyword: SupportsKeyword_Reserved>  => "Keyword[_SupportsKeyword]".to_string(),
+         
+            <_SupportsKeyword: SupportsKeyword_Reserved>  => "Keyword[_SupportsKeyword]".to_string(),
         
     };
     SwitchKeyword: String = {
-        <_SwitchKeyword: SwitchKeyword_Reserved>  => "Keyword[_SwitchKeyword]".to_string(),
+         
+            <_SwitchKeyword: SwitchKeyword_Reserved>  => "Keyword[_SwitchKeyword]".to_string(),
         
     };
     SzaboKeyword: String = {
-        <_SzaboKeyword: SzaboKeyword_Unreserved>  => "Keyword[_SzaboKeyword]".to_string(),
+         
+            <_SzaboKeyword: SzaboKeyword_Unreserved>  => "Keyword[_SzaboKeyword]".to_string(),
         
     };
     ThisKeyword: String = {
-        <_ThisKeyword: ThisKeyword_Reserved>  => "Keyword[_ThisKeyword]".to_string(),
+         
+            <_ThisKeyword: ThisKeyword_Reserved>  => "Keyword[_ThisKeyword]".to_string(),
         
     };
     ThrowKeyword: String = {
-        <_ThrowKeyword: ThrowKeyword_Reserved>  => "Keyword[_ThrowKeyword]".to_string(),
+         
+            <_ThrowKeyword: ThrowKeyword_Reserved>  => "Keyword[_ThrowKeyword]".to_string(),
         
     };
     TransientKeyword: String = {
-        <_TransientKeyword: TransientKeyword_Unreserved>  => "Keyword[_TransientKeyword]".to_string(),
+         
+            <_TransientKeyword: TransientKeyword_Unreserved>  => "Keyword[_TransientKeyword]".to_string(),
         
     };
     TrueKeyword: String = {
-        <_TrueKeyword: TrueKeyword_Reserved>  => "Keyword[_TrueKeyword]".to_string(),
+         
+            <_TrueKeyword: TrueKeyword_Reserved>  => "Keyword[_TrueKeyword]".to_string(),
         
     };
     TryKeyword: String = {
-        <_TryKeyword: TryKeyword_Reserved>  => "Keyword[_TryKeyword]".to_string(),
+         
+            <_TryKeyword: TryKeyword_Reserved>  => "Keyword[_TryKeyword]".to_string(),
         
     };
     TypeDefKeyword: String = {
-        <_TypeDefKeyword: TypeDefKeyword_Reserved>  => "Keyword[_TypeDefKeyword]".to_string(),
+         
+            <_TypeDefKeyword: TypeDefKeyword_Reserved>  => "Keyword[_TypeDefKeyword]".to_string(),
         
     };
     TypeKeyword: String = {
-        <_TypeKeyword: TypeKeyword_Reserved>  => "Keyword[_TypeKeyword]".to_string(),
+         
+            <_TypeKeyword: TypeKeyword_Reserved>  => "Keyword[_TypeKeyword]".to_string(),
         
     };
     TypeOfKeyword: String = {
-        <_TypeOfKeyword: TypeOfKeyword_Reserved>  => "Keyword[_TypeOfKeyword]".to_string(),
+         
+            <_TypeOfKeyword: TypeOfKeyword_Reserved>  => "Keyword[_TypeOfKeyword]".to_string(),
         
     };
     UfixedKeyword: String = {
-        <_UfixedKeyword: UfixedKeyword_Reserved>  => "Keyword[_UfixedKeyword]".to_string(),
+         
+            <_UfixedKeyword: UfixedKeyword_Reserved>  => "Keyword[_UfixedKeyword]".to_string(),
         
     };
     UintKeyword: String = {
-        <_UintKeyword: UintKeyword_Reserved>  => "Keyword[_UintKeyword]".to_string(),
+         
+            <_UintKeyword: UintKeyword_Reserved>  => "Keyword[_UintKeyword]".to_string(),
         
     };
     UncheckedKeyword: String = {
-        <_UncheckedKeyword: UncheckedKeyword_Reserved>  => "Keyword[_UncheckedKeyword]".to_string(),
+         
+            <_UncheckedKeyword: UncheckedKeyword_Reserved>  => "Keyword[_UncheckedKeyword]".to_string(),
         
     };
     UsingKeyword: String = {
-        <_UsingKeyword: UsingKeyword_Reserved>  => "Keyword[_UsingKeyword]".to_string(),
+         
+            <_UsingKeyword: UsingKeyword_Reserved>  => "Keyword[_UsingKeyword]".to_string(),
         
     };
     VarKeyword: String = {
-        <_VarKeyword: VarKeyword_Reserved>  => "Keyword[_VarKeyword]".to_string(),
+         
+            <_VarKeyword: VarKeyword_Reserved>  => "Keyword[_VarKeyword]".to_string(),
         
     };
     ViewKeyword: String = {
-        <_ViewKeyword: ViewKeyword_Reserved>  => "Keyword[_ViewKeyword]".to_string(),
+         
+            <_ViewKeyword: ViewKeyword_Reserved>  => "Keyword[_ViewKeyword]".to_string(),
         
     };
     VirtualKeyword: String = {
-        <_VirtualKeyword: VirtualKeyword_Reserved>  => "Keyword[_VirtualKeyword]".to_string(),
+         
+            <_VirtualKeyword: VirtualKeyword_Reserved>  => "Keyword[_VirtualKeyword]".to_string(),
         
     };
     WeeksKeyword: String = {
-        <_WeeksKeyword: WeeksKeyword_Reserved>  => "Keyword[_WeeksKeyword]".to_string(),
+         
+            <_WeeksKeyword: WeeksKeyword_Reserved>  => "Keyword[_WeeksKeyword]".to_string(),
         
     };
     WeiKeyword: String = {
-        <_WeiKeyword: WeiKeyword_Reserved>  => "Keyword[_WeiKeyword]".to_string(),
+         
+            <_WeiKeyword: WeiKeyword_Reserved>  => "Keyword[_WeiKeyword]".to_string(),
         
     };
     WhileKeyword: String = {
-        <_WhileKeyword: WhileKeyword_Reserved>  => "Keyword[_WhileKeyword]".to_string(),
+         
+            <_WhileKeyword: WhileKeyword_Reserved>  => "Keyword[_WhileKeyword]".to_string(),
         
     };
     YearsKeyword: String = {
-        <_YearsKeyword: YearsKeyword_Reserved>  => "Keyword[_YearsKeyword]".to_string(),
+         
+            <_YearsKeyword: YearsKeyword_Reserved>  => "Keyword[_YearsKeyword]".to_string(),
         
     };
     
@@ -703,332 +898,409 @@ pub Num: i32 = {
 
 // Rules for topic Contracts
     ContractDefinition: String = {
-        <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => format!("Struct(ContractDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _abstract_keyword, _contract_keyword, _name, _specifiers, _open_brace, _members, _close_brace),
+         
+            <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => format!("Struct(ContractDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _abstract_keyword, _contract_keyword, _name, _specifiers, _open_brace, _members, _close_brace),
         
     };
     ContractSpecifiers: String = {
-        <_ContractSpecifier: (ContractSpecifier)*>  => "Repeated[_ContractSpecifier]".to_string(),
+         
+            <_ContractSpecifier: (ContractSpecifier)*>  => "Repeated(ContractSpecifiers)[_ContractSpecifier]".to_string(),
         
     };
     ContractSpecifier: String = {
-        <_InheritanceSpecifier: InheritanceSpecifier>  => format!("Variant[{:?}]", _InheritanceSpecifier),
-        <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => format!("Variant[{:?}]", _StorageLayoutSpecifier),
+         
+            <_InheritanceSpecifier: InheritanceSpecifier>  => format!("Variant(ContractSpecifier)[{:?}]", _InheritanceSpecifier),
+         
+            <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => format!("Variant(ContractSpecifier)[{:?}]", _StorageLayoutSpecifier),
         
     };
     InheritanceSpecifier: String = {
-        <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => format!("Struct(InheritanceSpecifier)[{:?}, {:?}]", _is_keyword, _types),
+         
+            <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => format!("Struct(InheritanceSpecifier)[{:?}, {:?}]", _is_keyword, _types),
         
     };
     InheritanceTypes: String = {
-        <_InheritanceType: ((InheritanceType (Comma InheritanceType)*))?>  => "Separated[_InheritanceType]".to_string(),
+         
+            <_InheritanceType: (InheritanceType (Comma InheritanceType)*)>  => "Separated(InheritanceTypes)[_InheritanceType]".to_string(),
         
     };
     InheritanceType: String = {
-        <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => format!("Struct(InheritanceType)[{:?}, {:?}]", _type_name, _arguments),
+         
+            <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => format!("Struct(InheritanceType)[{:?}, {:?}]", _type_name, _arguments),
         
     };
     StorageLayoutSpecifier: String = {
-        <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => format!("Struct(StorageLayoutSpecifier)[{:?}, {:?}, {:?}]", _layout_keyword, _at_keyword, _expression),
+         
+            <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => format!("Struct(StorageLayoutSpecifier)[{:?}, {:?}, {:?}]", _layout_keyword, _at_keyword, _expression),
         
     };
     ContractMembers: String = {
-        <_ContractMember: (ContractMember)*>  => "Repeated[_ContractMember]".to_string(),
+         
+            <_ContractMember: (ContractMember)*>  => "Repeated(ContractMembers)[_ContractMember]".to_string(),
         
     };
     ContractMember: String = {
-        <_UsingDirective: UsingDirective>  => format!("Variant[{:?}]", _UsingDirective),
-        <_FunctionDefinition: FunctionDefinition>  => format!("Variant[{:?}]", _FunctionDefinition),
-        <_ConstructorDefinition: ConstructorDefinition>  => format!("Variant[{:?}]", _ConstructorDefinition),
-        <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => format!("Variant[{:?}]", _ReceiveFunctionDefinition),
-        <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => format!("Variant[{:?}]", _FallbackFunctionDefinition),
-        <_UnnamedFunctionDefinition: UnnamedFunctionDefinition>  => format!("Variant[{:?}]", _UnnamedFunctionDefinition),
-        <_ModifierDefinition: ModifierDefinition>  => format!("Variant[{:?}]", _ModifierDefinition),
-        <_StructDefinition: StructDefinition>  => format!("Variant[{:?}]", _StructDefinition),
-        <_EnumDefinition: EnumDefinition>  => format!("Variant[{:?}]", _EnumDefinition),
-        <_EventDefinition: EventDefinition>  => format!("Variant[{:?}]", _EventDefinition),
-        <_ErrorDefinition: ErrorDefinition>  => format!("Variant[{:?}]", _ErrorDefinition),
-        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant[{:?}]", _UserDefinedValueTypeDefinition),
-        <_StateVariableDefinition: StateVariableDefinition>  => format!("Variant[{:?}]", _StateVariableDefinition),
+         
+            <_UsingDirective: UsingDirective>  => format!("Variant(ContractMember)[{:?}]", _UsingDirective),
+         
+            <_FunctionDefinition: FunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _FunctionDefinition),
+         
+            <_ConstructorDefinition: ConstructorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ConstructorDefinition),
+         
+            <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _ReceiveFunctionDefinition),
+         
+            <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _FallbackFunctionDefinition),
+         
+            <_ModifierDefinition: ModifierDefinition>  => format!("Variant(ContractMember)[{:?}]", _ModifierDefinition),
+         
+            <_StructDefinition: StructDefinition>  => format!("Variant(ContractMember)[{:?}]", _StructDefinition),
+         
+            <_EnumDefinition: EnumDefinition>  => format!("Variant(ContractMember)[{:?}]", _EnumDefinition),
+         
+            <_EventDefinition: EventDefinition>  => format!("Variant(ContractMember)[{:?}]", _EventDefinition),
+         
+            <_ErrorDefinition: ErrorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ErrorDefinition),
+         
+            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant(ContractMember)[{:?}]", _UserDefinedValueTypeDefinition),
+         
+            <_StateVariableDefinition: StateVariableDefinition>  => format!("Variant(ContractMember)[{:?}]", _StateVariableDefinition),
         
     };
     
 
 // Rules for topic Interfaces
     InterfaceDefinition: String = {
-        <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => format!("Struct(InterfaceDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _interface_keyword, _name, _inheritance, _open_brace, _members, _close_brace),
+         
+            <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => format!("Struct(InterfaceDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _interface_keyword, _name, _inheritance, _open_brace, _members, _close_brace),
         
     };
     InterfaceMembers: String = {
-        <_ContractMember: (ContractMember)*>  => "Repeated[_ContractMember]".to_string(),
+         
+            <_ContractMember: (ContractMember)*>  => "Repeated(InterfaceMembers)[_ContractMember]".to_string(),
         
     };
     
 
 // Rules for topic Libraries
     LibraryDefinition: String = {
-        <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => format!("Struct(LibraryDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _library_keyword, _name, _open_brace, _members, _close_brace),
+         
+            <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => format!("Struct(LibraryDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _library_keyword, _name, _open_brace, _members, _close_brace),
         
     };
     LibraryMembers: String = {
-        <_ContractMember: (ContractMember)*>  => "Repeated[_ContractMember]".to_string(),
+         
+            <_ContractMember: (ContractMember)*>  => "Repeated(LibraryMembers)[_ContractMember]".to_string(),
         
     };
     
 
 // Rules for topic Structs
     StructDefinition: String = {
-        <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => format!("Struct(StructDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _struct_keyword, _name, _open_brace, _members, _close_brace),
+         
+            <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => format!("Struct(StructDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _struct_keyword, _name, _open_brace, _members, _close_brace),
         
     };
     StructMembers: String = {
-        <_StructMember: (StructMember)*>  => "Repeated[_StructMember]".to_string(),
+         
+            <_StructMember: (StructMember)*>  => "Repeated(StructMembers)[_StructMember]".to_string(),
         
     };
     StructMember: String = {
-        <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => format!("Struct(StructMember)[{:?}, {:?}, {:?}]", _type_name, _name, _semicolon),
+         
+            <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => format!("Struct(StructMember)[{:?}, {:?}, {:?}]", _type_name, _name, _semicolon),
         
     };
     
 
 // Rules for topic Enums
     EnumDefinition: String = {
-        <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => format!("Struct(EnumDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _enum_keyword, _name, _open_brace, _members, _close_brace),
+         
+            <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => format!("Struct(EnumDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _enum_keyword, _name, _open_brace, _members, _close_brace),
         
     };
     EnumMembers: String = {
-        <_Identifier: (Identifier (Comma Identifier)*)>  => "Separated[_Identifier]".to_string(),
+         
+            <_Identifier: (Identifier (Comma Identifier)*)>  => "Separated(EnumMembers)[_Identifier]".to_string(),
         
     };
     
 
 // Rules for topic Constants
     ConstantDefinition: String = {
-        <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => format!("Struct(ConstantDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _constant_keyword, _name, _equal, _value, _semicolon),
+         
+            <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => format!("Struct(ConstantDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _constant_keyword, _name, _equal, _value, _semicolon),
         
     };
     
 
 // Rules for topic State Variables
     StateVariableDefinition: String = {
-        <_type_name: TypeName>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _attributes, _name, _value, _semicolon),
+         
+            <_type_name: TypeName>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _attributes, _name, _value, _semicolon),
         
     };
     StateVariableDefinitionValue: String = {
-        <_equal: Equal>  <_value: Expression>  => format!("Struct(StateVariableDefinitionValue)[{:?}, {:?}]", _equal, _value),
+         
+            <_equal: Equal>  <_value: Expression>  => format!("Struct(StateVariableDefinitionValue)[{:?}, {:?}]", _equal, _value),
         
     };
     StateVariableAttributes: String = {
-        <_StateVariableAttribute: (StateVariableAttribute)*>  => "Repeated[_StateVariableAttribute]".to_string(),
+         
+            <_StateVariableAttribute: (StateVariableAttribute)*>  => "Repeated(StateVariableAttributes)[_StateVariableAttribute]".to_string(),
         
     };
     StateVariableAttribute: String = {
-        <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant[{:?}]", _OverrideSpecifier),
-        <_ConstantKeyword: ConstantKeyword>  => format!("Variant[{:?}]", _ConstantKeyword),
-        <_InternalKeyword: InternalKeyword>  => format!("Variant[{:?}]", _InternalKeyword),
-        <_PrivateKeyword: PrivateKeyword>  => format!("Variant[{:?}]", _PrivateKeyword),
-        <_PublicKeyword: PublicKeyword>  => format!("Variant[{:?}]", _PublicKeyword),
-        <_ImmutableKeyword: ImmutableKeyword>  => format!("Variant[{:?}]", _ImmutableKeyword),
-        <_TransientKeyword: TransientKeyword>  => format!("Variant[{:?}]", _TransientKeyword),
+         
+            <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant(StateVariableAttribute)[{:?}]", _OverrideSpecifier),
+         
+            <_ConstantKeyword: ConstantKeyword>  => format!("Variant(StateVariableAttribute)[{:?}]", _ConstantKeyword),
+         
+            <_InternalKeyword: InternalKeyword>  => format!("Variant(StateVariableAttribute)[{:?}]", _InternalKeyword),
+         
+            <_PrivateKeyword: PrivateKeyword>  => format!("Variant(StateVariableAttribute)[{:?}]", _PrivateKeyword),
+         
+            <_PublicKeyword: PublicKeyword>  => format!("Variant(StateVariableAttribute)[{:?}]", _PublicKeyword),
+         
+            <_ImmutableKeyword: ImmutableKeyword>  => format!("Variant(StateVariableAttribute)[{:?}]", _ImmutableKeyword),
+         
+            <_TransientKeyword: TransientKeyword>  => format!("Variant(StateVariableAttribute)[{:?}]", _TransientKeyword),
         
     };
     
 
 // Rules for topic Functions
     FunctionDefinition: String = {
-        <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => format!("Struct(FunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _function_keyword, _name, _parameters, _attributes, _returns, _body),
+         
+            <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => format!("Struct(FunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _function_keyword, _name, _parameters, _attributes, _returns, _body),
         
     };
     FunctionName: String = {
-        <_Identifier: Identifier>  => format!("Variant[{:?}]", _Identifier),
-        <_FallbackKeyword: FallbackKeyword>  => format!("Variant[{:?}]", _FallbackKeyword),
-        <_ReceiveKeyword: ReceiveKeyword>  => format!("Variant[{:?}]", _ReceiveKeyword),
+         
+            <_Identifier: Identifier>  => format!("Variant(FunctionName)[{:?}]", _Identifier),
+         
+            <_FallbackKeyword: FallbackKeyword>  => format!("Variant(FunctionName)[{:?}]", _FallbackKeyword),
+         
+            <_ReceiveKeyword: ReceiveKeyword>  => format!("Variant(FunctionName)[{:?}]", _ReceiveKeyword),
         
     };
     ParametersDeclaration: String = {
-        <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => format!("Struct(ParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
+         
+            <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => format!("Struct(ParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
         
     };
     Parameters: String = {
-        <_Parameter: (Parameter (Comma Parameter)*)>  => "Separated[_Parameter]".to_string(),
+         
+            <_Parameter: (Parameter (Comma Parameter)*)>  => "Separated(Parameters)[_Parameter]".to_string(),
         
     };
     Parameter: String = {
-        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => format!("Struct(Parameter)[{:?}, {:?}, {:?}]", _type_name, _storage_location, _name),
+         
+            <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => format!("Struct(Parameter)[{:?}, {:?}, {:?}]", _type_name, _storage_location, _name),
         
     };
     FunctionAttributes: String = {
-        <_FunctionAttribute: (FunctionAttribute)*>  => "Repeated[_FunctionAttribute]".to_string(),
+         
+            <_FunctionAttribute: (FunctionAttribute)*>  => "Repeated(FunctionAttributes)[_FunctionAttribute]".to_string(),
         
     };
     FunctionAttribute: String = {
-        <_ModifierInvocation: ModifierInvocation>  => format!("Variant[{:?}]", _ModifierInvocation),
-        <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant[{:?}]", _OverrideSpecifier),
-        <_ConstantKeyword: ConstantKeyword>  => format!("Variant[{:?}]", _ConstantKeyword),
-        <_ExternalKeyword: ExternalKeyword>  => format!("Variant[{:?}]", _ExternalKeyword),
-        <_InternalKeyword: InternalKeyword>  => format!("Variant[{:?}]", _InternalKeyword),
-        <_PayableKeyword: PayableKeyword>  => format!("Variant[{:?}]", _PayableKeyword),
-        <_PrivateKeyword: PrivateKeyword>  => format!("Variant[{:?}]", _PrivateKeyword),
-        <_PublicKeyword: PublicKeyword>  => format!("Variant[{:?}]", _PublicKeyword),
-        <_PureKeyword: PureKeyword>  => format!("Variant[{:?}]", _PureKeyword),
-        <_ViewKeyword: ViewKeyword>  => format!("Variant[{:?}]", _ViewKeyword),
-        <_VirtualKeyword: VirtualKeyword>  => format!("Variant[{:?}]", _VirtualKeyword),
+         
+            <_ModifierInvocation: ModifierInvocation>  => format!("Variant(FunctionAttribute)[{:?}]", _ModifierInvocation),
+         
+            <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant(FunctionAttribute)[{:?}]", _OverrideSpecifier),
+         
+            <_ExternalKeyword: ExternalKeyword>  => format!("Variant(FunctionAttribute)[{:?}]", _ExternalKeyword),
+         
+            <_InternalKeyword: InternalKeyword>  => format!("Variant(FunctionAttribute)[{:?}]", _InternalKeyword),
+         
+            <_PayableKeyword: PayableKeyword>  => format!("Variant(FunctionAttribute)[{:?}]", _PayableKeyword),
+         
+            <_PrivateKeyword: PrivateKeyword>  => format!("Variant(FunctionAttribute)[{:?}]", _PrivateKeyword),
+         
+            <_PublicKeyword: PublicKeyword>  => format!("Variant(FunctionAttribute)[{:?}]", _PublicKeyword),
+         
+            <_PureKeyword: PureKeyword>  => format!("Variant(FunctionAttribute)[{:?}]", _PureKeyword),
+         
+            <_ViewKeyword: ViewKeyword>  => format!("Variant(FunctionAttribute)[{:?}]", _ViewKeyword),
+         
+            <_VirtualKeyword: VirtualKeyword>  => format!("Variant(FunctionAttribute)[{:?}]", _VirtualKeyword),
         
     };
     OverrideSpecifier: String = {
-        <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => format!("Struct(OverrideSpecifier)[{:?}, {:?}]", _override_keyword, _overridden),
+         
+            <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => format!("Struct(OverrideSpecifier)[{:?}, {:?}]", _override_keyword, _overridden),
         
     };
     OverridePathsDeclaration: String = {
-        <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => format!("Struct(OverridePathsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _paths, _close_paren),
+         
+            <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => format!("Struct(OverridePathsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _paths, _close_paren),
         
     };
     OverridePaths: String = {
-        <_IdentifierPath: ((IdentifierPath (Comma IdentifierPath)*))?>  => "Separated[_IdentifierPath]".to_string(),
+         
+            <_IdentifierPath: (IdentifierPath (Comma IdentifierPath)*)>  => "Separated(OverridePaths)[_IdentifierPath]".to_string(),
         
     };
     ReturnsDeclaration: String = {
-        <_returns_keyword: ReturnsKeyword>  <_variables: ParametersDeclaration>  => format!("Struct(ReturnsDeclaration)[{:?}, {:?}]", _returns_keyword, _variables),
+         
+            <_returns_keyword: ReturnsKeyword>  <_variables: ParametersDeclaration>  => format!("Struct(ReturnsDeclaration)[{:?}, {:?}]", _returns_keyword, _variables),
         
     };
     FunctionBody: String = {
-        <_Block: Block>  => format!("Variant[{:?}]", _Block),
-        <_Semicolon: Semicolon>  => format!("Variant[{:?}]", _Semicolon),
+         
+            <_Block: Block>  => format!("Variant(FunctionBody)[{:?}]", _Block),
+         
+            <_Semicolon: Semicolon>  => format!("Variant(FunctionBody)[{:?}]", _Semicolon),
         
     };
     ConstructorDefinition: String = {
-        <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => format!("Struct(ConstructorDefinition)[{:?}, {:?}, {:?}, {:?}]", _constructor_keyword, _parameters, _attributes, _body),
+         
+            <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => format!("Struct(ConstructorDefinition)[{:?}, {:?}, {:?}, {:?}]", _constructor_keyword, _parameters, _attributes, _body),
         
     };
     ConstructorAttributes: String = {
-        <_ConstructorAttribute: (ConstructorAttribute)*>  => "Repeated[_ConstructorAttribute]".to_string(),
+         
+            <_ConstructorAttribute: (ConstructorAttribute)*>  => "Repeated(ConstructorAttributes)[_ConstructorAttribute]".to_string(),
         
     };
     ConstructorAttribute: String = {
-        <_ModifierInvocation: ModifierInvocation>  => format!("Variant[{:?}]", _ModifierInvocation),
-        <_InternalKeyword: InternalKeyword>  => format!("Variant[{:?}]", _InternalKeyword),
-        <_OverrideKeyword: OverrideKeyword>  => format!("Variant[{:?}]", _OverrideKeyword),
-        <_PayableKeyword: PayableKeyword>  => format!("Variant[{:?}]", _PayableKeyword),
-        <_PublicKeyword: PublicKeyword>  => format!("Variant[{:?}]", _PublicKeyword),
-        <_VirtualKeyword: VirtualKeyword>  => format!("Variant[{:?}]", _VirtualKeyword),
-        
-    };
-    UnnamedFunctionDefinition: String = {
-        <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: UnnamedFunctionAttributes>  <_body: FunctionBody>  => format!("Struct(UnnamedFunctionDefinition)[{:?}, {:?}, {:?}, {:?}]", _function_keyword, _parameters, _attributes, _body),
-        
-    };
-    UnnamedFunctionAttributes: String = {
-        <_UnnamedFunctionAttribute: (UnnamedFunctionAttribute)*>  => "Repeated[_UnnamedFunctionAttribute]".to_string(),
-        
-    };
-    UnnamedFunctionAttribute: String = {
-        <_ModifierInvocation: ModifierInvocation>  => format!("Variant[{:?}]", _ModifierInvocation),
-        <_ConstantKeyword: ConstantKeyword>  => format!("Variant[{:?}]", _ConstantKeyword),
-        <_ExternalKeyword: ExternalKeyword>  => format!("Variant[{:?}]", _ExternalKeyword),
-        <_InternalKeyword: InternalKeyword>  => format!("Variant[{:?}]", _InternalKeyword),
-        <_PayableKeyword: PayableKeyword>  => format!("Variant[{:?}]", _PayableKeyword),
-        <_PrivateKeyword: PrivateKeyword>  => format!("Variant[{:?}]", _PrivateKeyword),
-        <_PublicKeyword: PublicKeyword>  => format!("Variant[{:?}]", _PublicKeyword),
-        <_PureKeyword: PureKeyword>  => format!("Variant[{:?}]", _PureKeyword),
-        <_ViewKeyword: ViewKeyword>  => format!("Variant[{:?}]", _ViewKeyword),
+         
+            <_ModifierInvocation: ModifierInvocation>  => format!("Variant(ConstructorAttribute)[{:?}]", _ModifierInvocation),
+         
+            <_InternalKeyword: InternalKeyword>  => format!("Variant(ConstructorAttribute)[{:?}]", _InternalKeyword),
+         
+            <_PayableKeyword: PayableKeyword>  => format!("Variant(ConstructorAttribute)[{:?}]", _PayableKeyword),
+         
+            <_PublicKeyword: PublicKeyword>  => format!("Variant(ConstructorAttribute)[{:?}]", _PublicKeyword),
         
     };
     FallbackFunctionDefinition: String = {
-        <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => format!("Struct(FallbackFunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _fallback_keyword, _parameters, _attributes, _returns, _body),
+         
+            <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => format!("Struct(FallbackFunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _fallback_keyword, _parameters, _attributes, _returns, _body),
         
     };
     FallbackFunctionAttributes: String = {
-        <_FallbackFunctionAttribute: (FallbackFunctionAttribute)*>  => "Repeated[_FallbackFunctionAttribute]".to_string(),
+         
+            <_FallbackFunctionAttribute: (FallbackFunctionAttribute)*>  => "Repeated(FallbackFunctionAttributes)[_FallbackFunctionAttribute]".to_string(),
         
     };
     FallbackFunctionAttribute: String = {
-        <_ModifierInvocation: ModifierInvocation>  => format!("Variant[{:?}]", _ModifierInvocation),
-        <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant[{:?}]", _OverrideSpecifier),
-        <_ExternalKeyword: ExternalKeyword>  => format!("Variant[{:?}]", _ExternalKeyword),
-        <_PayableKeyword: PayableKeyword>  => format!("Variant[{:?}]", _PayableKeyword),
-        <_PureKeyword: PureKeyword>  => format!("Variant[{:?}]", _PureKeyword),
-        <_ViewKeyword: ViewKeyword>  => format!("Variant[{:?}]", _ViewKeyword),
-        <_VirtualKeyword: VirtualKeyword>  => format!("Variant[{:?}]", _VirtualKeyword),
+         
+            <_ModifierInvocation: ModifierInvocation>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _ModifierInvocation),
+         
+            <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _OverrideSpecifier),
+         
+            <_ExternalKeyword: ExternalKeyword>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _ExternalKeyword),
+         
+            <_PayableKeyword: PayableKeyword>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _PayableKeyword),
+         
+            <_PureKeyword: PureKeyword>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _PureKeyword),
+         
+            <_ViewKeyword: ViewKeyword>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _ViewKeyword),
+         
+            <_VirtualKeyword: VirtualKeyword>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _VirtualKeyword),
         
     };
     ReceiveFunctionDefinition: String = {
-        <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => format!("Struct(ReceiveFunctionDefinition)[{:?}, {:?}, {:?}, {:?}]", _receive_keyword, _parameters, _attributes, _body),
+         
+            <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => format!("Struct(ReceiveFunctionDefinition)[{:?}, {:?}, {:?}, {:?}]", _receive_keyword, _parameters, _attributes, _body),
         
     };
     ReceiveFunctionAttributes: String = {
-        <_ReceiveFunctionAttribute: (ReceiveFunctionAttribute)*>  => "Repeated[_ReceiveFunctionAttribute]".to_string(),
+         
+            <_ReceiveFunctionAttribute: (ReceiveFunctionAttribute)*>  => "Repeated(ReceiveFunctionAttributes)[_ReceiveFunctionAttribute]".to_string(),
         
     };
     ReceiveFunctionAttribute: String = {
-        <_ModifierInvocation: ModifierInvocation>  => format!("Variant[{:?}]", _ModifierInvocation),
-        <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant[{:?}]", _OverrideSpecifier),
-        <_ExternalKeyword: ExternalKeyword>  => format!("Variant[{:?}]", _ExternalKeyword),
-        <_PayableKeyword: PayableKeyword>  => format!("Variant[{:?}]", _PayableKeyword),
-        <_VirtualKeyword: VirtualKeyword>  => format!("Variant[{:?}]", _VirtualKeyword),
+         
+            <_ModifierInvocation: ModifierInvocation>  => format!("Variant(ReceiveFunctionAttribute)[{:?}]", _ModifierInvocation),
+         
+            <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant(ReceiveFunctionAttribute)[{:?}]", _OverrideSpecifier),
+         
+            <_ExternalKeyword: ExternalKeyword>  => format!("Variant(ReceiveFunctionAttribute)[{:?}]", _ExternalKeyword),
+         
+            <_PayableKeyword: PayableKeyword>  => format!("Variant(ReceiveFunctionAttribute)[{:?}]", _PayableKeyword),
+         
+            <_VirtualKeyword: VirtualKeyword>  => format!("Variant(ReceiveFunctionAttribute)[{:?}]", _VirtualKeyword),
         
     };
     
 
 // Rules for topic Modifiers
     ModifierDefinition: String = {
-        <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => format!("Struct(ModifierDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _modifier_keyword, _name, _parameters, _attributes, _body),
+         
+            <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => format!("Struct(ModifierDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _modifier_keyword, _name, _parameters, _attributes, _body),
         
     };
     ModifierAttributes: String = {
-        <_ModifierAttribute: (ModifierAttribute)*>  => "Repeated[_ModifierAttribute]".to_string(),
+         
+            <_ModifierAttribute: (ModifierAttribute)*>  => "Repeated(ModifierAttributes)[_ModifierAttribute]".to_string(),
         
     };
     ModifierAttribute: String = {
-        <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant[{:?}]", _OverrideSpecifier),
-        <_VirtualKeyword: VirtualKeyword>  => format!("Variant[{:?}]", _VirtualKeyword),
+         
+            <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant(ModifierAttribute)[{:?}]", _OverrideSpecifier),
+         
+            <_VirtualKeyword: VirtualKeyword>  => format!("Variant(ModifierAttribute)[{:?}]", _VirtualKeyword),
         
     };
     ModifierInvocation: String = {
-        <_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => format!("Struct(ModifierInvocation)[{:?}, {:?}]", _name, _arguments),
+         
+            <_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => format!("Struct(ModifierInvocation)[{:?}, {:?}]", _name, _arguments),
         
     };
     
 
 // Rules for topic Events
     EventDefinition: String = {
-        <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => format!("Struct(EventDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _event_keyword, _name, _parameters, _anonymous_keyword, _semicolon),
+         
+            <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => format!("Struct(EventDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _event_keyword, _name, _parameters, _anonymous_keyword, _semicolon),
         
     };
     EventParametersDeclaration: String = {
-        <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => format!("Struct(EventParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
+         
+            <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => format!("Struct(EventParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
         
     };
     EventParameters: String = {
-        <_EventParameter: (EventParameter (Comma EventParameter)*)>  => "Separated[_EventParameter]".to_string(),
+         
+            <_EventParameter: (EventParameter (Comma EventParameter)*)>  => "Separated(EventParameters)[_EventParameter]".to_string(),
         
     };
     EventParameter: String = {
-        <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => format!("Struct(EventParameter)[{:?}, {:?}, {:?}]", _type_name, _indexed_keyword, _name),
+         
+            <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => format!("Struct(EventParameter)[{:?}, {:?}, {:?}]", _type_name, _indexed_keyword, _name),
         
     };
     
 
 // Rules for topic User Defined Value Types
     UserDefinedValueTypeDefinition: String = {
-        <_type_keyword: TypeKeyword>  <_name: Identifier>  <_is_keyword: IsKeyword>  <_value_type: ElementaryType>  <_semicolon: Semicolon>  => format!("Struct(UserDefinedValueTypeDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_keyword, _name, _is_keyword, _value_type, _semicolon),
+         
+            <_type_keyword: TypeKeyword>  <_name: Identifier>  <_is_keyword: IsKeyword>  <_value_type: ElementaryType>  <_semicolon: Semicolon>  => format!("Struct(UserDefinedValueTypeDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_keyword, _name, _is_keyword, _value_type, _semicolon),
         
     };
     
 
 // Rules for topic Errors
     ErrorDefinition: String = {
-        <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => format!("Struct(ErrorDefinition)[{:?}, {:?}, {:?}, {:?}]", _error_keyword, _name, _members, _semicolon),
+         
+            <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => format!("Struct(ErrorDefinition)[{:?}, {:?}, {:?}, {:?}]", _error_keyword, _name, _members, _semicolon),
         
     };
     ErrorParametersDeclaration: String = {
-        <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => format!("Struct(ErrorParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
+         
+            <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => format!("Struct(ErrorParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
         
     };
     ErrorParameters: String = {
-        <_ErrorParameter: (ErrorParameter (Comma ErrorParameter)*)>  => "Separated[_ErrorParameter]".to_string(),
+         
+            <_ErrorParameter: (ErrorParameter (Comma ErrorParameter)*)>  => "Separated(ErrorParameters)[_ErrorParameter]".to_string(),
         
     };
     ErrorParameter: String = {
-        <_type_name: TypeName>  <_name: (Identifier)?>  => format!("Struct(ErrorParameter)[{:?}, {:?}]", _type_name, _name),
+         
+            <_type_name: TypeName>  <_name: (Identifier)?>  => format!("Struct(ErrorParameter)[{:?}, {:?}]", _type_name, _name),
         
     };
     
@@ -1040,65 +1312,104 @@ pub Num: i32 = {
 
 // Rules for topic Advanced Types
     TypeName: String = {
-        <_FunctionType: FunctionType>  => format!("Precedence[{:?}]", _FunctionType),
-        <_MappingType: MappingType>  => format!("Precedence[{:?}]", _MappingType),
-        <_ElementaryType: ElementaryType>  => format!("Precedence[{:?}]", _ElementaryType),
-        <_IdentifierPath: IdentifierPath>  => format!("Precedence[{:?}]", _IdentifierPath),
+        #[precedence(level="0")] 
+            <_FunctionType: FunctionType>  => format!("Precedence[{:?}]", _FunctionType),
+        #[precedence(level="0")] 
+            <_MappingType: MappingType>  => format!("Precedence[{:?}]", _MappingType),
+        #[precedence(level="0")] 
+            <_ElementaryType: ElementaryType>  => format!("Precedence[{:?}]", _ElementaryType),
+        #[precedence(level="0")] 
+            <_IdentifierPath: IdentifierPath>  => format!("Precedence[{:?}]", _IdentifierPath),
+        
+    };
+    NewableTypeName: String = {
+         
+            <_NewableArrayType: NewableArrayType>  => format!("Variant(NewableTypeName)[{:?}]", _NewableArrayType),
+         
+            <_ElementaryType: ElementaryType>  => format!("Variant(NewableTypeName)[{:?}]", _ElementaryType),
+         
+            <_IdentifierPath: IdentifierPath>  => format!("Variant(NewableTypeName)[{:?}]", _IdentifierPath),
+        
+    };
+    NewableArrayType: String = {
+         
+            <_type_name: TypeName>  <_open_bracket: OpenBracket>  <_close_bracket: CloseBracket>  => format!("Struct(NewableArrayType)[{:?}, {:?}, {:?}]", _type_name, _open_bracket, _close_bracket),
         
     };
     FunctionType: String = {
-        <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: (ReturnsDeclaration)?>  => format!("Struct(FunctionType)[{:?}, {:?}, {:?}, {:?}]", _function_keyword, _parameters, _attributes, _returns),
+         
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: (ReturnsDeclaration)?>  => format!("Struct(FunctionType)[{:?}, {:?}, {:?}, {:?}]", _function_keyword, _parameters, _attributes, _returns),
         
     };
     FunctionTypeAttributes: String = {
-        <_FunctionTypeAttribute: (FunctionTypeAttribute)*>  => "Repeated[_FunctionTypeAttribute]".to_string(),
+         
+            <_FunctionTypeAttribute: (FunctionTypeAttribute)*>  => "Repeated(FunctionTypeAttributes)[_FunctionTypeAttribute]".to_string(),
         
     };
     FunctionTypeAttribute: String = {
-        <_InternalKeyword: InternalKeyword>  => format!("Variant[{:?}]", _InternalKeyword),
-        <_ExternalKeyword: ExternalKeyword>  => format!("Variant[{:?}]", _ExternalKeyword),
-        <_PrivateKeyword: PrivateKeyword>  => format!("Variant[{:?}]", _PrivateKeyword),
-        <_PublicKeyword: PublicKeyword>  => format!("Variant[{:?}]", _PublicKeyword),
-        <_ConstantKeyword: ConstantKeyword>  => format!("Variant[{:?}]", _ConstantKeyword),
-        <_PureKeyword: PureKeyword>  => format!("Variant[{:?}]", _PureKeyword),
-        <_ViewKeyword: ViewKeyword>  => format!("Variant[{:?}]", _ViewKeyword),
-        <_PayableKeyword: PayableKeyword>  => format!("Variant[{:?}]", _PayableKeyword),
+         
+            <_InternalKeyword: InternalKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _InternalKeyword),
+         
+            <_ExternalKeyword: ExternalKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _ExternalKeyword),
+         
+            <_PrivateKeyword: PrivateKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _PrivateKeyword),
+         
+            <_PublicKeyword: PublicKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _PublicKeyword),
+         
+            <_PureKeyword: PureKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _PureKeyword),
+         
+            <_ViewKeyword: ViewKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _ViewKeyword),
+         
+            <_PayableKeyword: PayableKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _PayableKeyword),
         
     };
     MappingType: String = {
-        <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => format!("Struct(MappingType)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _mapping_keyword, _open_paren, _key_type, _equal_greater_than, _value_type, _close_paren),
+         
+            <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => format!("Struct(MappingType)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _mapping_keyword, _open_paren, _key_type, _equal_greater_than, _value_type, _close_paren),
         
     };
     MappingKey: String = {
-        <_key_type: MappingKeyType>  <_name: (Identifier)?>  => format!("Struct(MappingKey)[{:?}, {:?}]", _key_type, _name),
+         
+            <_key_type: MappingKeyType>  <_name: (Identifier)?>  => format!("Struct(MappingKey)[{:?}, {:?}]", _key_type, _name),
         
     };
     MappingKeyType: String = {
-        <_ElementaryType: ElementaryType>  => format!("Variant[{:?}]", _ElementaryType),
-        <_IdentifierPath: IdentifierPath>  => format!("Variant[{:?}]", _IdentifierPath),
+         
+            <_ElementaryType: ElementaryType>  => format!("Variant(MappingKeyType)[{:?}]", _ElementaryType),
+         
+            <_IdentifierPath: IdentifierPath>  => format!("Variant(MappingKeyType)[{:?}]", _IdentifierPath),
         
     };
     MappingValue: String = {
-        <_type_name: TypeName>  <_name: (Identifier)?>  => format!("Struct(MappingValue)[{:?}, {:?}]", _type_name, _name),
+         
+            <_type_name: TypeName>  <_name: (Identifier)?>  => format!("Struct(MappingValue)[{:?}, {:?}]", _type_name, _name),
         
     };
     
 
 // Rules for topic Elementary Types
     ElementaryType: String = {
-        <_BoolKeyword: BoolKeyword>  => format!("Variant[{:?}]", _BoolKeyword),
-        <_ByteKeyword: ByteKeyword>  => format!("Variant[{:?}]", _ByteKeyword),
-        <_StringKeyword: StringKeyword>  => format!("Variant[{:?}]", _StringKeyword),
-        <_AddressType: AddressType>  => format!("Variant[{:?}]", _AddressType),
-        <_BytesKeyword: BytesKeyword>  => format!("Variant[{:?}]", _BytesKeyword),
-        <_IntKeyword: IntKeyword>  => format!("Variant[{:?}]", _IntKeyword),
-        <_UintKeyword: UintKeyword>  => format!("Variant[{:?}]", _UintKeyword),
-        <_FixedKeyword: FixedKeyword>  => format!("Variant[{:?}]", _FixedKeyword),
-        <_UfixedKeyword: UfixedKeyword>  => format!("Variant[{:?}]", _UfixedKeyword),
+         
+            <_BoolKeyword: BoolKeyword>  => format!("Variant(ElementaryType)[{:?}]", _BoolKeyword),
+         
+            <_StringKeyword: StringKeyword>  => format!("Variant(ElementaryType)[{:?}]", _StringKeyword),
+         
+            <_AddressType: AddressType>  => format!("Variant(ElementaryType)[{:?}]", _AddressType),
+         
+            <_BytesKeyword: BytesKeyword>  => format!("Variant(ElementaryType)[{:?}]", _BytesKeyword),
+         
+            <_IntKeyword: IntKeyword>  => format!("Variant(ElementaryType)[{:?}]", _IntKeyword),
+         
+            <_UintKeyword: UintKeyword>  => format!("Variant(ElementaryType)[{:?}]", _UintKeyword),
+         
+            <_FixedKeyword: FixedKeyword>  => format!("Variant(ElementaryType)[{:?}]", _FixedKeyword),
+         
+            <_UfixedKeyword: UfixedKeyword>  => format!("Variant(ElementaryType)[{:?}]", _UfixedKeyword),
         
     };
     AddressType: String = {
-        <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => format!("Struct(AddressType)[{:?}, {:?}]", _address_keyword, _payable_keyword),
+         
+            <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => format!("Struct(AddressType)[{:?}, {:?}]", _address_keyword, _payable_keyword),
         
     };
     
@@ -1110,176 +1421,226 @@ pub Num: i32 = {
 
 // Rules for topic Blocks
     Block: String = {
-        <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => format!("Struct(Block)[{:?}, {:?}, {:?}]", _open_brace, _statements, _close_brace),
+         
+            <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => format!("Struct(Block)[{:?}, {:?}, {:?}]", _open_brace, _statements, _close_brace),
         
     };
     Statements: String = {
-        <_Statement: (Statement)*>  => "Repeated[_Statement]".to_string(),
+         
+            <_Statement: (Statement)*>  => "Repeated(Statements)[_Statement]".to_string(),
         
     };
     Statement: String = {
-        <_IfStatement: IfStatement>  => format!("Variant[{:?}]", _IfStatement),
-        <_ForStatement: ForStatement>  => format!("Variant[{:?}]", _ForStatement),
-        <_WhileStatement: WhileStatement>  => format!("Variant[{:?}]", _WhileStatement),
-        <_DoWhileStatement: DoWhileStatement>  => format!("Variant[{:?}]", _DoWhileStatement),
-        <_ContinueStatement: ContinueStatement>  => format!("Variant[{:?}]", _ContinueStatement),
-        <_BreakStatement: BreakStatement>  => format!("Variant[{:?}]", _BreakStatement),
-        <_ReturnStatement: ReturnStatement>  => format!("Variant[{:?}]", _ReturnStatement),
-        <_ThrowStatement: ThrowStatement>  => format!("Variant[{:?}]", _ThrowStatement),
-        <_EmitStatement: EmitStatement>  => format!("Variant[{:?}]", _EmitStatement),
-        <_TryStatement: TryStatement>  => format!("Variant[{:?}]", _TryStatement),
-        <_RevertStatement: RevertStatement>  => format!("Variant[{:?}]", _RevertStatement),
-        <_AssemblyStatement: AssemblyStatement>  => format!("Variant[{:?}]", _AssemblyStatement),
-        <_Block: Block>  => format!("Variant[{:?}]", _Block),
-        <_UncheckedBlock: UncheckedBlock>  => format!("Variant[{:?}]", _UncheckedBlock),
-        <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant[{:?}]", _TupleDeconstructionStatement),
-        <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant[{:?}]", _VariableDeclarationStatement),
-        <_ExpressionStatement: ExpressionStatement>  => format!("Variant[{:?}]", _ExpressionStatement),
+         
+            <_IfStatement: IfStatement>  => format!("Variant(Statement)[{:?}]", _IfStatement),
+         
+            <_ForStatement: ForStatement>  => format!("Variant(Statement)[{:?}]", _ForStatement),
+         
+            <_WhileStatement: WhileStatement>  => format!("Variant(Statement)[{:?}]", _WhileStatement),
+         
+            <_DoWhileStatement: DoWhileStatement>  => format!("Variant(Statement)[{:?}]", _DoWhileStatement),
+         
+            <_ContinueStatement: ContinueStatement>  => format!("Variant(Statement)[{:?}]", _ContinueStatement),
+         
+            <_BreakStatement: BreakStatement>  => format!("Variant(Statement)[{:?}]", _BreakStatement),
+         
+            <_ReturnStatement: ReturnStatement>  => format!("Variant(Statement)[{:?}]", _ReturnStatement),
+         
+            <_EmitStatement: EmitStatement>  => format!("Variant(Statement)[{:?}]", _EmitStatement),
+         
+            <_TryStatement: TryStatement>  => format!("Variant(Statement)[{:?}]", _TryStatement),
+         
+            <_RevertStatement: RevertStatement>  => format!("Variant(Statement)[{:?}]", _RevertStatement),
+         
+            <_AssemblyStatement: AssemblyStatement>  => format!("Variant(Statement)[{:?}]", _AssemblyStatement),
+         
+            <_Block: Block>  => format!("Variant(Statement)[{:?}]", _Block),
+         
+            <_UncheckedBlock: UncheckedBlock>  => format!("Variant(Statement)[{:?}]", _UncheckedBlock),
+         
+            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(Statement)[{:?}]", _TupleDeconstructionStatement),
+         
+            <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant(Statement)[{:?}]", _VariableDeclarationStatement),
+         
+            <_ExpressionStatement: ExpressionStatement>  => format!("Variant(Statement)[{:?}]", _ExpressionStatement),
         
     };
     UncheckedBlock: String = {
-        <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => format!("Struct(UncheckedBlock)[{:?}, {:?}]", _unchecked_keyword, _block),
+         
+            <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => format!("Struct(UncheckedBlock)[{:?}, {:?}]", _unchecked_keyword, _block),
         
     };
     ExpressionStatement: String = {
-        <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(ExpressionStatement)[{:?}, {:?}]", _expression, _semicolon),
+         
+            <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(ExpressionStatement)[{:?}, {:?}]", _expression, _semicolon),
         
     };
     AssemblyStatement: String = {
-        <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => format!("Struct(AssemblyStatement)[{:?}, {:?}, {:?}, {:?}]", _assembly_keyword, _label, _flags, _body),
+         
+            <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => format!("Struct(AssemblyStatement)[{:?}, {:?}, {:?}, {:?}]", _assembly_keyword, _label, _flags, _body),
         
     };
     AssemblyFlagsDeclaration: String = {
-        <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => format!("Struct(AssemblyFlagsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _flags, _close_paren),
+         
+            <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => format!("Struct(AssemblyFlagsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _flags, _close_paren),
         
     };
     AssemblyFlags: String = {
-        <_StringLiteral: ((StringLiteral (Comma StringLiteral)*))?>  => "Separated[_StringLiteral]".to_string(),
+         
+            <_StringLiteral: (StringLiteral (Comma StringLiteral)*)>  => "Separated(AssemblyFlags)[_StringLiteral]".to_string(),
         
     };
     
 
 // Rules for topic Declaration Statements
     TupleDeconstructionStatement: String = {
-        <_open_paren: OpenParen>  <_elements: TupleDeconstructionElements>  <_close_paren: CloseParen>  <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(TupleDeconstructionStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _open_paren, _elements, _close_paren, _equal, _expression, _semicolon),
+         
+            <_open_paren: OpenParen>  <_elements: TupleDeconstructionElements>  <_close_paren: CloseParen>  <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(TupleDeconstructionStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _open_paren, _elements, _close_paren, _equal, _expression, _semicolon),
         
     };
     TupleDeconstructionElements: String = {
-        <_TupleDeconstructionElement: ((TupleDeconstructionElement (Comma TupleDeconstructionElement)*))?>  => "Separated[_TupleDeconstructionElement]".to_string(),
+         
+            <_TupleDeconstructionElement: (TupleDeconstructionElement (Comma TupleDeconstructionElement)*)>  => "Separated(TupleDeconstructionElements)[_TupleDeconstructionElement]".to_string(),
         
     };
     TupleDeconstructionElement: String = {
-        <_member: (TupleMember)?>  => format!("Struct(TupleDeconstructionElement)[{:?}]", _member),
+         
+            <_member: (TupleMember)?>  => format!("Struct(TupleDeconstructionElement)[{:?}]", _member),
         
     };
     TupleMember: String = {
-        <_TypedTupleMember: TypedTupleMember>  => format!("Variant[{:?}]", _TypedTupleMember),
-        <_UntypedTupleMember: UntypedTupleMember>  => format!("Variant[{:?}]", _UntypedTupleMember),
+         
+            <_TypedTupleMember: TypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _TypedTupleMember),
+         
+            <_UntypedTupleMember: UntypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _UntypedTupleMember),
         
     };
     TypedTupleMember: String = {
-        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(TypedTupleMember)[{:?}, {:?}, {:?}]", _type_name, _storage_location, _name),
+         
+            <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(TypedTupleMember)[{:?}, {:?}, {:?}]", _type_name, _storage_location, _name),
         
     };
     UntypedTupleMember: String = {
-        <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(UntypedTupleMember)[{:?}, {:?}]", _storage_location, _name),
+         
+            <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(UntypedTupleMember)[{:?}, {:?}]", _storage_location, _name),
         
     };
     VariableDeclarationStatement: String = {
-        <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("Struct(VariableDeclarationStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _variable_type, _storage_location, _name, _value, _semicolon),
+         
+            <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("Struct(VariableDeclarationStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _variable_type, _storage_location, _name, _value, _semicolon),
         
     };
     VariableDeclarationType: String = {
-        <_TypeName: TypeName>  => format!("Variant[{:?}]", _TypeName),
-        <_VarKeyword: VarKeyword>  => format!("Variant[{:?}]", _VarKeyword),
+         
+            <_TypeName: TypeName>  => format!("Variant(VariableDeclarationType)[{:?}]", _TypeName),
         
     };
     VariableDeclarationValue: String = {
-        <_equal: Equal>  <_expression: Expression>  => format!("Struct(VariableDeclarationValue)[{:?}, {:?}]", _equal, _expression),
+         
+            <_equal: Equal>  <_expression: Expression>  => format!("Struct(VariableDeclarationValue)[{:?}, {:?}]", _equal, _expression),
         
     };
     StorageLocation: String = {
-        <_MemoryKeyword: MemoryKeyword>  => format!("Variant[{:?}]", _MemoryKeyword),
-        <_StorageKeyword: StorageKeyword>  => format!("Variant[{:?}]", _StorageKeyword),
-        <_CallDataKeyword: CallDataKeyword>  => format!("Variant[{:?}]", _CallDataKeyword),
+         
+            <_MemoryKeyword: MemoryKeyword>  => format!("Variant(StorageLocation)[{:?}]", _MemoryKeyword),
+         
+            <_StorageKeyword: StorageKeyword>  => format!("Variant(StorageLocation)[{:?}]", _StorageKeyword),
+         
+            <_CallDataKeyword: CallDataKeyword>  => format!("Variant(StorageLocation)[{:?}]", _CallDataKeyword),
         
     };
     
 
 // Rules for topic Control Statements
     IfStatement: String = {
-        <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: Statement>  <_else_branch: (ElseBranch)?>  => format!("Struct(IfStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
+         
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: Statement>  <_else_branch: (ElseBranch)?>  => format!("Struct(IfStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
         
     };
     ElseBranch: String = {
-        <_else_keyword: ElseKeyword>  <_body: Statement>  => format!("Struct(ElseBranch)[{:?}, {:?}]", _else_keyword, _body),
+         
+            <_else_keyword: ElseKeyword>  <_body: Statement>  => format!("Struct(ElseBranch)[{:?}, {:?}]", _else_keyword, _body),
         
     };
     ForStatement: String = {
-        <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: Statement>  => format!("Struct(ForStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _for_keyword, _open_paren, _initialization, _condition, _iterator, _close_paren, _body),
+         
+            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: Statement>  => format!("Struct(ForStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _for_keyword, _open_paren, _initialization, _condition, _iterator, _close_paren, _body),
         
     };
     ForStatementInitialization: String = {
-        <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant[{:?}]", _TupleDeconstructionStatement),
-        <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant[{:?}]", _VariableDeclarationStatement),
-        <_ExpressionStatement: ExpressionStatement>  => format!("Variant[{:?}]", _ExpressionStatement),
-        <_Semicolon: Semicolon>  => format!("Variant[{:?}]", _Semicolon),
+         
+            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _TupleDeconstructionStatement),
+         
+            <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _VariableDeclarationStatement),
+         
+            <_ExpressionStatement: ExpressionStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _ExpressionStatement),
+         
+            <_Semicolon: Semicolon>  => format!("Variant(ForStatementInitialization)[{:?}]", _Semicolon),
         
     };
     ForStatementCondition: String = {
-        <_ExpressionStatement: ExpressionStatement>  => format!("Variant[{:?}]", _ExpressionStatement),
-        <_Semicolon: Semicolon>  => format!("Variant[{:?}]", _Semicolon),
+         
+            <_ExpressionStatement: ExpressionStatement>  => format!("Variant(ForStatementCondition)[{:?}]", _ExpressionStatement),
+         
+            <_Semicolon: Semicolon>  => format!("Variant(ForStatementCondition)[{:?}]", _Semicolon),
         
     };
     WhileStatement: String = {
-        <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: Statement>  => format!("Struct(WhileStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _while_keyword, _open_paren, _condition, _close_paren, _body),
+         
+            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: Statement>  => format!("Struct(WhileStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _while_keyword, _open_paren, _condition, _close_paren, _body),
         
     };
     DoWhileStatement: String = {
-        <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => format!("Struct(DoWhileStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _do_keyword, _body, _while_keyword, _open_paren, _condition, _close_paren, _semicolon),
+         
+            <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => format!("Struct(DoWhileStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _do_keyword, _body, _while_keyword, _open_paren, _condition, _close_paren, _semicolon),
         
     };
     ContinueStatement: String = {
-        <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => format!("Struct(ContinueStatement)[{:?}, {:?}]", _continue_keyword, _semicolon),
+         
+            <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => format!("Struct(ContinueStatement)[{:?}, {:?}]", _continue_keyword, _semicolon),
         
     };
     BreakStatement: String = {
-        <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => format!("Struct(BreakStatement)[{:?}, {:?}]", _break_keyword, _semicolon),
+         
+            <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => format!("Struct(BreakStatement)[{:?}, {:?}]", _break_keyword, _semicolon),
         
     };
     ReturnStatement: String = {
-        <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => format!("Struct(ReturnStatement)[{:?}, {:?}, {:?}]", _return_keyword, _expression, _semicolon),
+         
+            <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => format!("Struct(ReturnStatement)[{:?}, {:?}, {:?}]", _return_keyword, _expression, _semicolon),
         
     };
     EmitStatement: String = {
-        <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => format!("Struct(EmitStatement)[{:?}, {:?}, {:?}, {:?}]", _emit_keyword, _event, _arguments, _semicolon),
+         
+            <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => format!("Struct(EmitStatement)[{:?}, {:?}, {:?}, {:?}]", _emit_keyword, _event, _arguments, _semicolon),
         
     };
     
 
 // Rules for topic Error Handling
     TryStatement: String = {
-        <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)?>  <_body: Block>  <_catch_clauses: CatchClauses>  => format!("Struct(TryStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _try_keyword, _expression, _returns, _body, _catch_clauses),
+         
+            <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)?>  <_body: Block>  <_catch_clauses: CatchClauses>  => format!("Struct(TryStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _try_keyword, _expression, _returns, _body, _catch_clauses),
         
     };
     CatchClauses: String = {
-        <_CatchClause: (CatchClause)+>  => "Repeated[_CatchClause]".to_string(),
+         
+            <_CatchClause: (CatchClause)+>  => "Repeated(CatchClauses)[_CatchClause]".to_string(),
         
     };
     CatchClause: String = {
-        <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => format!("Struct(CatchClause)[{:?}, {:?}, {:?}]", _catch_keyword, _error, _body),
+         
+            <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => format!("Struct(CatchClause)[{:?}, {:?}, {:?}]", _catch_keyword, _error, _body),
         
     };
     CatchClauseError: String = {
-        <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => format!("Struct(CatchClauseError)[{:?}, {:?}]", _name, _parameters),
+         
+            <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => format!("Struct(CatchClauseError)[{:?}, {:?}]", _name, _parameters),
         
     };
     RevertStatement: String = {
-        <_revert_keyword: RevertKeyword>  <_error: (IdentifierPath)?>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => format!("Struct(RevertStatement)[{:?}, {:?}, {:?}, {:?}]", _revert_keyword, _error, _arguments, _semicolon),
-        
-    };
-    ThrowStatement: String = {
-        <_throw_keyword: ThrowKeyword>  <_semicolon: Semicolon>  => format!("Struct(ThrowStatement)[{:?}, {:?}]", _throw_keyword, _semicolon),
+         
+            <_revert_keyword: RevertKeyword>  <_error: (IdentifierPath)?>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => format!("Struct(RevertStatement)[{:?}, {:?}, {:?}, {:?}]", _revert_keyword, _error, _arguments, _semicolon),
         
     };
     
@@ -1291,161 +1652,210 @@ pub Num: i32 = {
 
 // Rules for topic Base Expressions
     Expression: String = {
-        <_NewExpression: NewExpression>  => format!("Precedence[{:?}]", _NewExpression),
-        <_TupleExpression: TupleExpression>  => format!("Precedence[{:?}]", _TupleExpression),
-        <_TypeExpression: TypeExpression>  => format!("Precedence[{:?}]", _TypeExpression),
-        <_ArrayExpression: ArrayExpression>  => format!("Precedence[{:?}]", _ArrayExpression),
-        <_HexNumberExpression: HexNumberExpression>  => format!("Precedence[{:?}]", _HexNumberExpression),
-        <_DecimalNumberExpression: DecimalNumberExpression>  => format!("Precedence[{:?}]", _DecimalNumberExpression),
-        <_StringExpression: StringExpression>  => format!("Precedence[{:?}]", _StringExpression),
-        <_ElementaryType: ElementaryType>  => format!("Precedence[{:?}]", _ElementaryType),
-        <_PayableKeyword: PayableKeyword>  => format!("Precedence[{:?}]", _PayableKeyword),
-        <_ThisKeyword: ThisKeyword>  => format!("Precedence[{:?}]", _ThisKeyword),
-        <_SuperKeyword: SuperKeyword>  => format!("Precedence[{:?}]", _SuperKeyword),
-        <_TrueKeyword: TrueKeyword>  => format!("Precedence[{:?}]", _TrueKeyword),
-        <_FalseKeyword: FalseKeyword>  => format!("Precedence[{:?}]", _FalseKeyword),
-        <_Identifier: Identifier>  => format!("Precedence[{:?}]", _Identifier),
+        #[precedence(level="0")] 
+            <_NewExpression: NewExpression>  => format!("Precedence[{:?}]", _NewExpression),
+        #[precedence(level="0")] 
+            <_TupleExpression: TupleExpression>  => format!("Precedence[{:?}]", _TupleExpression),
+        #[precedence(level="0")] 
+            <_TypeExpression: TypeExpression>  => format!("Precedence[{:?}]", _TypeExpression),
+        #[precedence(level="0")] 
+            <_ArrayExpression: ArrayExpression>  => format!("Precedence[{:?}]", _ArrayExpression),
+        #[precedence(level="0")] 
+            <_HexNumberExpression: HexNumberExpression>  => format!("Precedence[{:?}]", _HexNumberExpression),
+        #[precedence(level="0")] 
+            <_DecimalNumberExpression: DecimalNumberExpression>  => format!("Precedence[{:?}]", _DecimalNumberExpression),
+        #[precedence(level="0")] 
+            <_StringExpression: StringExpression>  => format!("Precedence[{:?}]", _StringExpression),
+        #[precedence(level="0")] 
+            <_ElementaryType: ElementaryType>  => format!("Precedence[{:?}]", _ElementaryType),
+        #[precedence(level="0")] 
+            <_PayableKeyword: PayableKeyword>  => format!("Precedence[{:?}]", _PayableKeyword),
+        #[precedence(level="0")] 
+            <_ThisKeyword: ThisKeyword>  => format!("Precedence[{:?}]", _ThisKeyword),
+        #[precedence(level="0")] 
+            <_SuperKeyword: SuperKeyword>  => format!("Precedence[{:?}]", _SuperKeyword),
+        #[precedence(level="0")] 
+            <_TrueKeyword: TrueKeyword>  => format!("Precedence[{:?}]", _TrueKeyword),
+        #[precedence(level="0")] 
+            <_FalseKeyword: FalseKeyword>  => format!("Precedence[{:?}]", _FalseKeyword),
+        #[precedence(level="0")] 
+            <_Identifier: Identifier>  => format!("Precedence[{:?}]", _Identifier),
         
     };
     IndexAccessEnd: String = {
-        <_colon: Colon>  <_end: (Expression)?>  => format!("Struct(IndexAccessEnd)[{:?}, {:?}]", _colon, _end),
+         
+            <_colon: Colon>  <_end: (Expression)?>  => format!("Struct(IndexAccessEnd)[{:?}, {:?}]", _colon, _end),
         
     };
     
 
 // Rules for topic Function Calls
     ArgumentsDeclaration: String = {
-        <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => format!("Variant[{:?}]", _PositionalArgumentsDeclaration),
-        <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => format!("Variant[{:?}]", _NamedArgumentsDeclaration),
+         
+            <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => format!("Variant(ArgumentsDeclaration)[{:?}]", _PositionalArgumentsDeclaration),
+         
+            <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => format!("Variant(ArgumentsDeclaration)[{:?}]", _NamedArgumentsDeclaration),
         
     };
     PositionalArgumentsDeclaration: String = {
-        <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => format!("Struct(PositionalArgumentsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _arguments, _close_paren),
+         
+            <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => format!("Struct(PositionalArgumentsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _arguments, _close_paren),
         
     };
     PositionalArguments: String = {
-        <_Expression: (Expression (Comma Expression)*)>  => "Separated[_Expression]".to_string(),
+         
+            <_Expression: (Expression (Comma Expression)*)>  => "Separated(PositionalArguments)[_Expression]".to_string(),
         
     };
     NamedArgumentsDeclaration: String = {
-        <_open_paren: OpenParen>  <_arguments: (NamedArgumentGroup)?>  <_close_paren: CloseParen>  => format!("Struct(NamedArgumentsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _arguments, _close_paren),
+         
+            <_open_paren: OpenParen>  <_arguments: (NamedArgumentGroup)?>  <_close_paren: CloseParen>  => format!("Struct(NamedArgumentsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _arguments, _close_paren),
         
     };
     NamedArgumentGroup: String = {
-        <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => format!("Struct(NamedArgumentGroup)[{:?}, {:?}, {:?}]", _open_brace, _arguments, _close_brace),
+         
+            <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => format!("Struct(NamedArgumentGroup)[{:?}, {:?}, {:?}]", _open_brace, _arguments, _close_brace),
         
     };
     NamedArguments: String = {
-        <_NamedArgument: (NamedArgument (Comma NamedArgument)*)>  => "Separated[_NamedArgument]".to_string(),
+         
+            <_NamedArgument: (NamedArgument (Comma NamedArgument)*)>  => "Separated(NamedArguments)[_NamedArgument]".to_string(),
         
     };
     CallOptions: String = {
-        <_NamedArgument: ((NamedArgument (Comma NamedArgument)*))?>  => "Separated[_NamedArgument]".to_string(),
+         
+            <_NamedArgument: ((NamedArgument (Comma NamedArgument)*))?>  => "Separated(CallOptions)[_NamedArgument]".to_string(),
         
     };
     NamedArgument: String = {
-        <_name: Identifier>  <_colon: Colon>  <_value: Expression>  => format!("Struct(NamedArgument)[{:?}, {:?}, {:?}]", _name, _colon, _value),
+         
+            <_name: Identifier>  <_colon: Colon>  <_value: Expression>  => format!("Struct(NamedArgument)[{:?}, {:?}, {:?}]", _name, _colon, _value),
         
     };
     
 
 // Rules for topic Primary Expressions
     TypeExpression: String = {
-        <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => format!("Struct(TypeExpression)[{:?}, {:?}, {:?}, {:?}]", _type_keyword, _open_paren, _type_name, _close_paren),
+         
+            <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => format!("Struct(TypeExpression)[{:?}, {:?}, {:?}, {:?}]", _type_keyword, _open_paren, _type_name, _close_paren),
         
     };
     NewExpression: String = {
-        <_new_keyword: NewKeyword>  <_type_name: TypeName>  => format!("Struct(NewExpression)[{:?}, {:?}]", _new_keyword, _type_name),
+         
+            <_new_keyword: NewKeyword>  <_type_name: NewableTypeName>  => format!("Struct(NewExpression)[{:?}, {:?}]", _new_keyword, _type_name),
         
     };
     TupleExpression: String = {
-        <_open_paren: OpenParen>  <_items: TupleValues>  <_close_paren: CloseParen>  => format!("Struct(TupleExpression)[{:?}, {:?}, {:?}]", _open_paren, _items, _close_paren),
+         
+            <_open_paren: OpenParen>  <_items: TupleValues>  <_close_paren: CloseParen>  => format!("Struct(TupleExpression)[{:?}, {:?}, {:?}]", _open_paren, _items, _close_paren),
         
     };
     TupleValues: String = {
-        <_TupleValue: ((TupleValue (Comma TupleValue)*))?>  => "Separated[_TupleValue]".to_string(),
+         
+            <_TupleValue: (TupleValue (Comma TupleValue)*)>  => "Separated(TupleValues)[_TupleValue]".to_string(),
         
     };
     TupleValue: String = {
-        <_expression: (Expression)?>  => format!("Struct(TupleValue)[{:?}]", _expression),
+         
+            <_expression: (Expression)?>  => format!("Struct(TupleValue)[{:?}]", _expression),
         
     };
     ArrayExpression: String = {
-        <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => format!("Struct(ArrayExpression)[{:?}, {:?}, {:?}]", _open_bracket, _items, _close_bracket),
+         
+            <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => format!("Struct(ArrayExpression)[{:?}, {:?}, {:?}]", _open_bracket, _items, _close_bracket),
         
     };
     ArrayValues: String = {
-        <_Expression: ((Expression (Comma Expression)*))?>  => "Separated[_Expression]".to_string(),
+         
+            <_Expression: (Expression (Comma Expression)*)>  => "Separated(ArrayValues)[_Expression]".to_string(),
         
     };
     
 
 // Rules for topic Numbers
     HexNumberExpression: String = {
-        <_literal: HexLiteral>  => format!("Struct(HexNumberExpression)[{:?}]", _literal),
+         
+            <_literal: HexLiteral>  => format!("Struct(HexNumberExpression)[{:?}]", _literal),
         
     };
     DecimalNumberExpression: String = {
-        <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => format!("Struct(DecimalNumberExpression)[{:?}, {:?}]", _literal, _unit),
+         
+            <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => format!("Struct(DecimalNumberExpression)[{:?}, {:?}]", _literal, _unit),
         
     };
     NumberUnit: String = {
-        <_WeiKeyword: WeiKeyword>  => format!("Variant[{:?}]", _WeiKeyword),
-        <_GweiKeyword: GweiKeyword>  => format!("Variant[{:?}]", _GweiKeyword),
-        <_SzaboKeyword: SzaboKeyword>  => format!("Variant[{:?}]", _SzaboKeyword),
-        <_FinneyKeyword: FinneyKeyword>  => format!("Variant[{:?}]", _FinneyKeyword),
-        <_EtherKeyword: EtherKeyword>  => format!("Variant[{:?}]", _EtherKeyword),
-        <_SecondsKeyword: SecondsKeyword>  => format!("Variant[{:?}]", _SecondsKeyword),
-        <_MinutesKeyword: MinutesKeyword>  => format!("Variant[{:?}]", _MinutesKeyword),
-        <_HoursKeyword: HoursKeyword>  => format!("Variant[{:?}]", _HoursKeyword),
-        <_DaysKeyword: DaysKeyword>  => format!("Variant[{:?}]", _DaysKeyword),
-        <_WeeksKeyword: WeeksKeyword>  => format!("Variant[{:?}]", _WeeksKeyword),
-        <_YearsKeyword: YearsKeyword>  => format!("Variant[{:?}]", _YearsKeyword),
+         
+            <_WeiKeyword: WeiKeyword>  => format!("Variant(NumberUnit)[{:?}]", _WeiKeyword),
+         
+            <_GweiKeyword: GweiKeyword>  => format!("Variant(NumberUnit)[{:?}]", _GweiKeyword),
+         
+            <_EtherKeyword: EtherKeyword>  => format!("Variant(NumberUnit)[{:?}]", _EtherKeyword),
+         
+            <_SecondsKeyword: SecondsKeyword>  => format!("Variant(NumberUnit)[{:?}]", _SecondsKeyword),
+         
+            <_MinutesKeyword: MinutesKeyword>  => format!("Variant(NumberUnit)[{:?}]", _MinutesKeyword),
+         
+            <_HoursKeyword: HoursKeyword>  => format!("Variant(NumberUnit)[{:?}]", _HoursKeyword),
+         
+            <_DaysKeyword: DaysKeyword>  => format!("Variant(NumberUnit)[{:?}]", _DaysKeyword),
+         
+            <_WeeksKeyword: WeeksKeyword>  => format!("Variant(NumberUnit)[{:?}]", _WeeksKeyword),
         
     };
     
 
 // Rules for topic Strings
     StringExpression: String = {
-        <_StringLiteral: StringLiteral>  => format!("Variant[{:?}]", _StringLiteral),
-        <_StringLiterals: StringLiterals>  => format!("Variant[{:?}]", _StringLiterals),
-        <_HexStringLiteral: HexStringLiteral>  => format!("Variant[{:?}]", _HexStringLiteral),
-        <_HexStringLiterals: HexStringLiterals>  => format!("Variant[{:?}]", _HexStringLiterals),
-        <_UnicodeStringLiterals: UnicodeStringLiterals>  => format!("Variant[{:?}]", _UnicodeStringLiterals),
+         
+            <_StringLiterals: StringLiterals>  => format!("Variant(StringExpression)[{:?}]", _StringLiterals),
+         
+            <_HexStringLiterals: HexStringLiterals>  => format!("Variant(StringExpression)[{:?}]", _HexStringLiterals),
+         
+            <_UnicodeStringLiterals: UnicodeStringLiterals>  => format!("Variant(StringExpression)[{:?}]", _UnicodeStringLiterals),
         
     };
     StringLiterals: String = {
-        <_StringLiteral: (StringLiteral)+>  => "Repeated[_StringLiteral]".to_string(),
+         
+            <_StringLiteral: (StringLiteral)+>  => "Repeated(StringLiterals)[_StringLiteral]".to_string(),
         
     };
     StringLiteral: String = {
-        <_SingleQuotedStringLiteral: SingleQuotedStringLiteral>  => format!("Variant[{:?}]", _SingleQuotedStringLiteral),
-        <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => format!("Variant[{:?}]", _DoubleQuotedStringLiteral),
+         
+            <_SingleQuotedStringLiteral: SingleQuotedStringLiteral>  => format!("Variant(StringLiteral)[{:?}]", _SingleQuotedStringLiteral),
+         
+            <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => format!("Variant(StringLiteral)[{:?}]", _DoubleQuotedStringLiteral),
         
     };
     HexStringLiterals: String = {
-        <_HexStringLiteral: (HexStringLiteral)+>  => "Repeated[_HexStringLiteral]".to_string(),
+         
+            <_HexStringLiteral: (HexStringLiteral)+>  => "Repeated(HexStringLiterals)[_HexStringLiteral]".to_string(),
         
     };
     HexStringLiteral: String = {
-        <_SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral>  => format!("Variant[{:?}]", _SingleQuotedHexStringLiteral),
-        <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => format!("Variant[{:?}]", _DoubleQuotedHexStringLiteral),
+         
+            <_SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral>  => format!("Variant(HexStringLiteral)[{:?}]", _SingleQuotedHexStringLiteral),
+         
+            <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => format!("Variant(HexStringLiteral)[{:?}]", _DoubleQuotedHexStringLiteral),
         
     };
     UnicodeStringLiterals: String = {
-        <_UnicodeStringLiteral: (UnicodeStringLiteral)+>  => "Repeated[_UnicodeStringLiteral]".to_string(),
+         
+            <_UnicodeStringLiteral: (UnicodeStringLiteral)+>  => "Repeated(UnicodeStringLiterals)[_UnicodeStringLiteral]".to_string(),
         
     };
     UnicodeStringLiteral: String = {
-        <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => format!("Variant[{:?}]", _SingleQuotedUnicodeStringLiteral),
-        <_DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral>  => format!("Variant[{:?}]", _DoubleQuotedUnicodeStringLiteral),
+         
+            <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => format!("Variant(UnicodeStringLiteral)[{:?}]", _SingleQuotedUnicodeStringLiteral),
+         
+            <_DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral>  => format!("Variant(UnicodeStringLiteral)[{:?}]", _DoubleQuotedUnicodeStringLiteral),
         
     };
     
 
 // Rules for topic Identifiers
     IdentifierPath: String = {
-        <_Identifier: ((Identifier (Period Identifier)*))?>  => "Separated[_Identifier]".to_string(),
+         
+            <_Identifier: (Identifier (Period Identifier)*)>  => "Separated(IdentifierPath)[_Identifier]".to_string(),
         
     };
     
@@ -1457,578 +1867,703 @@ pub Num: i32 = {
 
 // Rules for topic Yul Statements
     YulBlock: String = {
-        <_open_brace: OpenBrace>  <_statements: YulStatements>  <_close_brace: CloseBrace>  => format!("Struct(YulBlock)[{:?}, {:?}, {:?}]", _open_brace, _statements, _close_brace),
+         
+            <_open_brace: OpenBrace>  <_statements: YulStatements>  <_close_brace: CloseBrace>  => format!("Struct(YulBlock)[{:?}, {:?}, {:?}]", _open_brace, _statements, _close_brace),
         
     };
     YulStatements: String = {
-        <_YulStatement: (YulStatement)*>  => "Repeated[_YulStatement]".to_string(),
+         
+            <_YulStatement: (YulStatement)*>  => "Repeated(YulStatements)[_YulStatement]".to_string(),
         
     };
     YulStatement: String = {
-        <_YulBlock: YulBlock>  => format!("Variant[{:?}]", _YulBlock),
-        <_YulFunctionDefinition: YulFunctionDefinition>  => format!("Variant[{:?}]", _YulFunctionDefinition),
-        <_YulStackAssignmentStatement: YulStackAssignmentStatement>  => format!("Variant[{:?}]", _YulStackAssignmentStatement),
-        <_YulIfStatement: YulIfStatement>  => format!("Variant[{:?}]", _YulIfStatement),
-        <_YulForStatement: YulForStatement>  => format!("Variant[{:?}]", _YulForStatement),
-        <_YulSwitchStatement: YulSwitchStatement>  => format!("Variant[{:?}]", _YulSwitchStatement),
-        <_YulLeaveStatement: YulLeaveStatement>  => format!("Variant[{:?}]", _YulLeaveStatement),
-        <_YulBreakStatement: YulBreakStatement>  => format!("Variant[{:?}]", _YulBreakStatement),
-        <_YulContinueStatement: YulContinueStatement>  => format!("Variant[{:?}]", _YulContinueStatement),
-        <_YulVariableAssignmentStatement: YulVariableAssignmentStatement>  => format!("Variant[{:?}]", _YulVariableAssignmentStatement),
-        <_YulLabel: YulLabel>  => format!("Variant[{:?}]", _YulLabel),
-        <_YulVariableDeclarationStatement: YulVariableDeclarationStatement>  => format!("Variant[{:?}]", _YulVariableDeclarationStatement),
-        <_YulExpression: YulExpression>  => format!("Variant[{:?}]", _YulExpression),
+         
+            <_YulBlock: YulBlock>  => format!("Variant(YulStatement)[{:?}]", _YulBlock),
+         
+            <_YulFunctionDefinition: YulFunctionDefinition>  => format!("Variant(YulStatement)[{:?}]", _YulFunctionDefinition),
+         
+            <_YulIfStatement: YulIfStatement>  => format!("Variant(YulStatement)[{:?}]", _YulIfStatement),
+         
+            <_YulForStatement: YulForStatement>  => format!("Variant(YulStatement)[{:?}]", _YulForStatement),
+         
+            <_YulSwitchStatement: YulSwitchStatement>  => format!("Variant(YulStatement)[{:?}]", _YulSwitchStatement),
+         
+            <_YulLeaveStatement: YulLeaveStatement>  => format!("Variant(YulStatement)[{:?}]", _YulLeaveStatement),
+         
+            <_YulBreakStatement: YulBreakStatement>  => format!("Variant(YulStatement)[{:?}]", _YulBreakStatement),
+         
+            <_YulContinueStatement: YulContinueStatement>  => format!("Variant(YulStatement)[{:?}]", _YulContinueStatement),
+         
+            <_YulVariableAssignmentStatement: YulVariableAssignmentStatement>  => format!("Variant(YulStatement)[{:?}]", _YulVariableAssignmentStatement),
+         
+            <_YulVariableDeclarationStatement: YulVariableDeclarationStatement>  => format!("Variant(YulStatement)[{:?}]", _YulVariableDeclarationStatement),
+         
+            <_YulExpression: YulExpression>  => format!("Variant(YulStatement)[{:?}]", _YulExpression),
         
     };
     YulFunctionDefinition: String = {
-        <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => format!("Struct(YulFunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _function_keyword, _name, _parameters, _returns, _body),
+         
+            <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => format!("Struct(YulFunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _function_keyword, _name, _parameters, _returns, _body),
         
     };
     YulParametersDeclaration: String = {
-        <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => format!("Struct(YulParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
+         
+            <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => format!("Struct(YulParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
         
     };
     YulParameters: String = {
-        <_YulIdentifier: (YulIdentifier (Comma YulIdentifier)*)>  => "Separated[_YulIdentifier]".to_string(),
+         
+            <_YulIdentifier: (YulIdentifier (Comma YulIdentifier)*)>  => "Separated(YulParameters)[_YulIdentifier]".to_string(),
         
     };
     YulReturnsDeclaration: String = {
-        <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => format!("Struct(YulReturnsDeclaration)[{:?}, {:?}]", _minus_greater_than, _variables),
+         
+            <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => format!("Struct(YulReturnsDeclaration)[{:?}, {:?}]", _minus_greater_than, _variables),
         
     };
     YulVariableNames: String = {
-        <_YulIdentifier: ((YulIdentifier (Comma YulIdentifier)*))?>  => "Separated[_YulIdentifier]".to_string(),
+         
+            <_YulIdentifier: (YulIdentifier (Comma YulIdentifier)*)>  => "Separated(YulVariableNames)[_YulIdentifier]".to_string(),
         
     };
     YulVariableDeclarationStatement: String = {
-        <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => format!("Struct(YulVariableDeclarationStatement)[{:?}, {:?}, {:?}]", _let_keyword, _variables, _value),
+         
+            <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => format!("Struct(YulVariableDeclarationStatement)[{:?}, {:?}, {:?}]", _let_keyword, _variables, _value),
         
     };
     YulVariableDeclarationValue: String = {
-        <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => format!("Struct(YulVariableDeclarationValue)[{:?}, {:?}]", _assignment, _expression),
+         
+            <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => format!("Struct(YulVariableDeclarationValue)[{:?}, {:?}]", _assignment, _expression),
         
     };
     YulVariableAssignmentStatement: String = {
-        <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => format!("Struct(YulVariableAssignmentStatement)[{:?}, {:?}, {:?}]", _variables, _assignment, _expression),
+         
+            <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => format!("Struct(YulVariableAssignmentStatement)[{:?}, {:?}, {:?}]", _variables, _assignment, _expression),
         
     };
     YulAssignmentOperator: String = {
-        <_ColonEqual: ColonEqual>  => format!("Variant[{:?}]", _ColonEqual),
-        <_YulColonAndEqual: YulColonAndEqual>  => format!("Variant[{:?}]", _YulColonAndEqual),
-        
-    };
-    YulColonAndEqual: String = {
-        <_colon: Colon>  <_equal: Equal>  => format!("Struct(YulColonAndEqual)[{:?}, {:?}]", _colon, _equal),
-        
-    };
-    YulStackAssignmentStatement: String = {
-        <_assignment: YulStackAssignmentOperator>  <_variable: YulIdentifier>  => format!("Struct(YulStackAssignmentStatement)[{:?}, {:?}]", _assignment, _variable),
-        
-    };
-    YulStackAssignmentOperator: String = {
-        <_EqualColon: EqualColon>  => format!("Variant[{:?}]", _EqualColon),
-        <_YulEqualAndColon: YulEqualAndColon>  => format!("Variant[{:?}]", _YulEqualAndColon),
-        
-    };
-    YulEqualAndColon: String = {
-        <_equal: Equal>  <_colon: Colon>  => format!("Struct(YulEqualAndColon)[{:?}, {:?}]", _equal, _colon),
+         
+            <_ColonEqual: ColonEqual>  => format!("Variant(YulAssignmentOperator)[{:?}]", _ColonEqual),
         
     };
     YulIfStatement: String = {
-        <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => format!("Struct(YulIfStatement)[{:?}, {:?}, {:?}]", _if_keyword, _condition, _body),
+         
+            <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => format!("Struct(YulIfStatement)[{:?}, {:?}, {:?}]", _if_keyword, _condition, _body),
         
     };
     YulForStatement: String = {
-        <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => format!("Struct(YulForStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _for_keyword, _initialization, _condition, _iterator, _body),
+         
+            <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => format!("Struct(YulForStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _for_keyword, _initialization, _condition, _iterator, _body),
         
     };
     YulSwitchStatement: String = {
-        <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => format!("Struct(YulSwitchStatement)[{:?}, {:?}, {:?}]", _switch_keyword, _expression, _cases),
+         
+            <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => format!("Struct(YulSwitchStatement)[{:?}, {:?}, {:?}]", _switch_keyword, _expression, _cases),
         
     };
     YulSwitchCases: String = {
-        <_YulSwitchCase: (YulSwitchCase)+>  => "Repeated[_YulSwitchCase]".to_string(),
+         
+            <_YulSwitchCase: (YulSwitchCase)+>  => "Repeated(YulSwitchCases)[_YulSwitchCase]".to_string(),
         
     };
     YulSwitchCase: String = {
-        <_YulDefaultCase: YulDefaultCase>  => format!("Variant[{:?}]", _YulDefaultCase),
-        <_YulValueCase: YulValueCase>  => format!("Variant[{:?}]", _YulValueCase),
+         
+            <_YulDefaultCase: YulDefaultCase>  => format!("Variant(YulSwitchCase)[{:?}]", _YulDefaultCase),
+         
+            <_YulValueCase: YulValueCase>  => format!("Variant(YulSwitchCase)[{:?}]", _YulValueCase),
         
     };
     YulDefaultCase: String = {
-        <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => format!("Struct(YulDefaultCase)[{:?}, {:?}]", _default_keyword, _body),
+         
+            <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => format!("Struct(YulDefaultCase)[{:?}, {:?}]", _default_keyword, _body),
         
     };
     YulValueCase: String = {
-        <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => format!("Struct(YulValueCase)[{:?}, {:?}, {:?}]", _case_keyword, _value, _body),
+         
+            <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => format!("Struct(YulValueCase)[{:?}, {:?}, {:?}]", _case_keyword, _value, _body),
         
     };
     YulLeaveStatement: String = {
-        <_leave_keyword: YulLeaveKeyword>  => format!("Struct(YulLeaveStatement)[{:?}]", _leave_keyword),
+         
+            <_leave_keyword: YulLeaveKeyword>  => format!("Struct(YulLeaveStatement)[{:?}]", _leave_keyword),
         
     };
     YulBreakStatement: String = {
-        <_break_keyword: YulBreakKeyword>  => format!("Struct(YulBreakStatement)[{:?}]", _break_keyword),
+         
+            <_break_keyword: YulBreakKeyword>  => format!("Struct(YulBreakStatement)[{:?}]", _break_keyword),
         
     };
     YulContinueStatement: String = {
-        <_continue_keyword: YulContinueKeyword>  => format!("Struct(YulContinueStatement)[{:?}]", _continue_keyword),
-        
-    };
-    YulLabel: String = {
-        <_label: YulIdentifier>  <_colon: Colon>  => format!("Struct(YulLabel)[{:?}, {:?}]", _label, _colon),
+         
+            <_continue_keyword: YulContinueKeyword>  => format!("Struct(YulContinueStatement)[{:?}]", _continue_keyword),
         
     };
     
 
 // Rules for topic Yul Expressions
     YulExpression: String = {
-        <_YulLiteral: YulLiteral>  => format!("Precedence[{:?}]", _YulLiteral),
-        <_YulPath: YulPath>  => format!("Precedence[{:?}]", _YulPath),
+        #[precedence(level="0")] 
+            <_YulLiteral: YulLiteral>  => format!("Precedence[{:?}]", _YulLiteral),
+        #[precedence(level="0")] 
+            <_YulPath: YulPath>  => format!("Precedence[{:?}]", _YulPath),
         
     };
     YulArguments: String = {
-        <_YulExpression: (YulExpression (Comma YulExpression)*)>  => "Separated[_YulExpression]".to_string(),
+         
+            <_YulExpression: (YulExpression (Comma YulExpression)*)>  => "Separated(YulArguments)[_YulExpression]".to_string(),
         
     };
     YulPaths: String = {
-        <_YulPath: ((YulPath (Comma YulPath)*))?>  => "Separated[_YulPath]".to_string(),
+         
+            <_YulPath: (YulPath (Comma YulPath)*)>  => "Separated(YulPaths)[_YulPath]".to_string(),
         
     };
     YulPath: String = {
-        <_YulIdentifier: ((YulIdentifier (Period YulIdentifier)*))?>  => "Separated[_YulIdentifier]".to_string(),
+         
+            <_YulIdentifier: (YulIdentifier (Period YulIdentifier)*)>  => "Separated(YulPath)[_YulIdentifier]".to_string(),
         
     };
     YulLiteral: String = {
-        <_YulTrueKeyword: YulTrueKeyword>  => format!("Variant[{:?}]", _YulTrueKeyword),
-        <_YulFalseKeyword: YulFalseKeyword>  => format!("Variant[{:?}]", _YulFalseKeyword),
-        <_YulDecimalLiteral: YulDecimalLiteral>  => format!("Variant[{:?}]", _YulDecimalLiteral),
-        <_YulHexLiteral: YulHexLiteral>  => format!("Variant[{:?}]", _YulHexLiteral),
-        <_HexStringLiteral: HexStringLiteral>  => format!("Variant[{:?}]", _HexStringLiteral),
-        <_StringLiteral: StringLiteral>  => format!("Variant[{:?}]", _StringLiteral),
+         
+            <_YulTrueKeyword: YulTrueKeyword>  => format!("Variant(YulLiteral)[{:?}]", _YulTrueKeyword),
+         
+            <_YulFalseKeyword: YulFalseKeyword>  => format!("Variant(YulLiteral)[{:?}]", _YulFalseKeyword),
+         
+            <_YulDecimalLiteral: YulDecimalLiteral>  => format!("Variant(YulLiteral)[{:?}]", _YulDecimalLiteral),
+         
+            <_YulHexLiteral: YulHexLiteral>  => format!("Variant(YulLiteral)[{:?}]", _YulHexLiteral),
+         
+            <_HexStringLiteral: HexStringLiteral>  => format!("Variant(YulLiteral)[{:?}]", _HexStringLiteral),
+         
+            <_StringLiteral: StringLiteral>  => format!("Variant(YulLiteral)[{:?}]", _StringLiteral),
         
     };
     
 
 // Rules for topic Yul Keywords
     YulAbstractKeyword: String = {
-        <_YulAbstractKeyword: YulAbstractKeyword_Unreserved>  => "Keyword[_YulAbstractKeyword]".to_string(),
+         
+            <_YulAbstractKeyword: YulAbstractKeyword_Unreserved>  => "Keyword[_YulAbstractKeyword]".to_string(),
         
     };
     YulAfterKeyword: String = {
-        <_YulAfterKeyword: YulAfterKeyword_Unreserved>  => "Keyword[_YulAfterKeyword]".to_string(),
+         
+            <_YulAfterKeyword: YulAfterKeyword_Unreserved>  => "Keyword[_YulAfterKeyword]".to_string(),
         
     };
     YulAliasKeyword: String = {
-        <_YulAliasKeyword: YulAliasKeyword_Unreserved>  => "Keyword[_YulAliasKeyword]".to_string(),
+         
+            <_YulAliasKeyword: YulAliasKeyword_Unreserved>  => "Keyword[_YulAliasKeyword]".to_string(),
         
     };
     YulAnonymousKeyword: String = {
-        <_YulAnonymousKeyword: YulAnonymousKeyword_Unreserved>  => "Keyword[_YulAnonymousKeyword]".to_string(),
+         
+            <_YulAnonymousKeyword: YulAnonymousKeyword_Unreserved>  => "Keyword[_YulAnonymousKeyword]".to_string(),
         
     };
     YulApplyKeyword: String = {
-        <_YulApplyKeyword: YulApplyKeyword_Unreserved>  => "Keyword[_YulApplyKeyword]".to_string(),
+         
+            <_YulApplyKeyword: YulApplyKeyword_Unreserved>  => "Keyword[_YulApplyKeyword]".to_string(),
         
     };
     YulAsKeyword: String = {
-        <_YulAsKeyword: YulAsKeyword_Unreserved>  => "Keyword[_YulAsKeyword]".to_string(),
+         
+            <_YulAsKeyword: YulAsKeyword_Unreserved>  => "Keyword[_YulAsKeyword]".to_string(),
         
     };
     YulAssemblyKeyword: String = {
-        <_YulAssemblyKeyword: YulAssemblyKeyword_Unreserved>  => "Keyword[_YulAssemblyKeyword]".to_string(),
+         
+            <_YulAssemblyKeyword: YulAssemblyKeyword_Unreserved>  => "Keyword[_YulAssemblyKeyword]".to_string(),
         
     };
     YulAutoKeyword: String = {
-        <_YulAutoKeyword: YulAutoKeyword_Unreserved>  => "Keyword[_YulAutoKeyword]".to_string(),
+         
+            <_YulAutoKeyword: YulAutoKeyword_Unreserved>  => "Keyword[_YulAutoKeyword]".to_string(),
         
     };
     YulBoolKeyword: String = {
-        <_YulBoolKeyword: YulBoolKeyword_Unreserved>  => "Keyword[_YulBoolKeyword]".to_string(),
+         
+            <_YulBoolKeyword: YulBoolKeyword_Unreserved>  => "Keyword[_YulBoolKeyword]".to_string(),
         
     };
     YulBreakKeyword: String = {
-        <_YulBreakKeyword: YulBreakKeyword_Reserved>  => "Keyword[_YulBreakKeyword]".to_string(),
+         
+            <_YulBreakKeyword: YulBreakKeyword_Reserved>  => "Keyword[_YulBreakKeyword]".to_string(),
         
     };
     YulBytesKeyword: String = {
-        <_YulBytesKeyword: YulBytesKeyword_Unreserved>  => "Keyword[_YulBytesKeyword]".to_string(),
+         
+            <_YulBytesKeyword: YulBytesKeyword_Unreserved>  => "Keyword[_YulBytesKeyword]".to_string(),
         
     };
     YulCallDataKeyword: String = {
-        <_YulCallDataKeyword: YulCallDataKeyword_Unreserved>  => "Keyword[_YulCallDataKeyword]".to_string(),
+         
+            <_YulCallDataKeyword: YulCallDataKeyword_Unreserved>  => "Keyword[_YulCallDataKeyword]".to_string(),
         
     };
     YulCaseKeyword: String = {
-        <_YulCaseKeyword: YulCaseKeyword_Reserved>  => "Keyword[_YulCaseKeyword]".to_string(),
+         
+            <_YulCaseKeyword: YulCaseKeyword_Reserved>  => "Keyword[_YulCaseKeyword]".to_string(),
         
     };
     YulCatchKeyword: String = {
-        <_YulCatchKeyword: YulCatchKeyword_Unreserved>  => "Keyword[_YulCatchKeyword]".to_string(),
+         
+            <_YulCatchKeyword: YulCatchKeyword_Unreserved>  => "Keyword[_YulCatchKeyword]".to_string(),
         
     };
     YulConstantKeyword: String = {
-        <_YulConstantKeyword: YulConstantKeyword_Unreserved>  => "Keyword[_YulConstantKeyword]".to_string(),
+         
+            <_YulConstantKeyword: YulConstantKeyword_Unreserved>  => "Keyword[_YulConstantKeyword]".to_string(),
         
     };
     YulConstructorKeyword: String = {
-        <_YulConstructorKeyword: YulConstructorKeyword_Unreserved>  => "Keyword[_YulConstructorKeyword]".to_string(),
+         
+            <_YulConstructorKeyword: YulConstructorKeyword_Unreserved>  => "Keyword[_YulConstructorKeyword]".to_string(),
         
     };
     YulContinueKeyword: String = {
-        <_YulContinueKeyword: YulContinueKeyword_Reserved>  => "Keyword[_YulContinueKeyword]".to_string(),
+         
+            <_YulContinueKeyword: YulContinueKeyword_Reserved>  => "Keyword[_YulContinueKeyword]".to_string(),
         
     };
     YulContractKeyword: String = {
-        <_YulContractKeyword: YulContractKeyword_Unreserved>  => "Keyword[_YulContractKeyword]".to_string(),
+         
+            <_YulContractKeyword: YulContractKeyword_Unreserved>  => "Keyword[_YulContractKeyword]".to_string(),
         
     };
     YulCopyOfKeyword: String = {
-        <_YulCopyOfKeyword: YulCopyOfKeyword_Unreserved>  => "Keyword[_YulCopyOfKeyword]".to_string(),
+         
+            <_YulCopyOfKeyword: YulCopyOfKeyword_Unreserved>  => "Keyword[_YulCopyOfKeyword]".to_string(),
         
     };
     YulDaysKeyword: String = {
-        <_YulDaysKeyword: YulDaysKeyword_Unreserved>  => "Keyword[_YulDaysKeyword]".to_string(),
+         
+            <_YulDaysKeyword: YulDaysKeyword_Unreserved>  => "Keyword[_YulDaysKeyword]".to_string(),
         
     };
     YulDefaultKeyword: String = {
-        <_YulDefaultKeyword: YulDefaultKeyword_Reserved>  => "Keyword[_YulDefaultKeyword]".to_string(),
+         
+            <_YulDefaultKeyword: YulDefaultKeyword_Reserved>  => "Keyword[_YulDefaultKeyword]".to_string(),
         
     };
     YulDefineKeyword: String = {
-        <_YulDefineKeyword: YulDefineKeyword_Unreserved>  => "Keyword[_YulDefineKeyword]".to_string(),
+         
+            <_YulDefineKeyword: YulDefineKeyword_Unreserved>  => "Keyword[_YulDefineKeyword]".to_string(),
         
     };
     YulDeleteKeyword: String = {
-        <_YulDeleteKeyword: YulDeleteKeyword_Unreserved>  => "Keyword[_YulDeleteKeyword]".to_string(),
+         
+            <_YulDeleteKeyword: YulDeleteKeyword_Unreserved>  => "Keyword[_YulDeleteKeyword]".to_string(),
         
     };
     YulDoKeyword: String = {
-        <_YulDoKeyword: YulDoKeyword_Unreserved>  => "Keyword[_YulDoKeyword]".to_string(),
+         
+            <_YulDoKeyword: YulDoKeyword_Unreserved>  => "Keyword[_YulDoKeyword]".to_string(),
         
     };
     YulElseKeyword: String = {
-        <_YulElseKeyword: YulElseKeyword_Unreserved>  => "Keyword[_YulElseKeyword]".to_string(),
+         
+            <_YulElseKeyword: YulElseKeyword_Unreserved>  => "Keyword[_YulElseKeyword]".to_string(),
         
     };
     YulEmitKeyword: String = {
-        <_YulEmitKeyword: YulEmitKeyword_Unreserved>  => "Keyword[_YulEmitKeyword]".to_string(),
+         
+            <_YulEmitKeyword: YulEmitKeyword_Unreserved>  => "Keyword[_YulEmitKeyword]".to_string(),
         
     };
     YulEnumKeyword: String = {
-        <_YulEnumKeyword: YulEnumKeyword_Unreserved>  => "Keyword[_YulEnumKeyword]".to_string(),
+         
+            <_YulEnumKeyword: YulEnumKeyword_Unreserved>  => "Keyword[_YulEnumKeyword]".to_string(),
         
     };
     YulEtherKeyword: String = {
-        <_YulEtherKeyword: YulEtherKeyword_Unreserved>  => "Keyword[_YulEtherKeyword]".to_string(),
+         
+            <_YulEtherKeyword: YulEtherKeyword_Unreserved>  => "Keyword[_YulEtherKeyword]".to_string(),
         
     };
     YulEventKeyword: String = {
-        <_YulEventKeyword: YulEventKeyword_Unreserved>  => "Keyword[_YulEventKeyword]".to_string(),
+         
+            <_YulEventKeyword: YulEventKeyword_Unreserved>  => "Keyword[_YulEventKeyword]".to_string(),
         
     };
     YulExternalKeyword: String = {
-        <_YulExternalKeyword: YulExternalKeyword_Unreserved>  => "Keyword[_YulExternalKeyword]".to_string(),
+         
+            <_YulExternalKeyword: YulExternalKeyword_Unreserved>  => "Keyword[_YulExternalKeyword]".to_string(),
         
     };
     YulFallbackKeyword: String = {
-        <_YulFallbackKeyword: YulFallbackKeyword_Unreserved>  => "Keyword[_YulFallbackKeyword]".to_string(),
+         
+            <_YulFallbackKeyword: YulFallbackKeyword_Unreserved>  => "Keyword[_YulFallbackKeyword]".to_string(),
         
     };
     YulFalseKeyword: String = {
-        <_YulFalseKeyword: YulFalseKeyword_Reserved>  => "Keyword[_YulFalseKeyword]".to_string(),
+         
+            <_YulFalseKeyword: YulFalseKeyword_Reserved>  => "Keyword[_YulFalseKeyword]".to_string(),
         
     };
     YulFinalKeyword: String = {
-        <_YulFinalKeyword: YulFinalKeyword_Unreserved>  => "Keyword[_YulFinalKeyword]".to_string(),
+         
+            <_YulFinalKeyword: YulFinalKeyword_Unreserved>  => "Keyword[_YulFinalKeyword]".to_string(),
         
     };
     YulFinneyKeyword: String = {
-        <_YulFinneyKeyword: YulFinneyKeyword_Unreserved>  => "Keyword[_YulFinneyKeyword]".to_string(),
+         
+            <_YulFinneyKeyword: YulFinneyKeyword_Unreserved>  => "Keyword[_YulFinneyKeyword]".to_string(),
         
     };
     YulFixedKeyword: String = {
-        <_YulFixedKeyword: YulFixedKeyword_Unreserved>  => "Keyword[_YulFixedKeyword]".to_string(),
+         
+            <_YulFixedKeyword: YulFixedKeyword_Unreserved>  => "Keyword[_YulFixedKeyword]".to_string(),
         
     };
     YulForKeyword: String = {
-        <_YulForKeyword: YulForKeyword_Reserved>  => "Keyword[_YulForKeyword]".to_string(),
+         
+            <_YulForKeyword: YulForKeyword_Reserved>  => "Keyword[_YulForKeyword]".to_string(),
         
     };
     YulFunctionKeyword: String = {
-        <_YulFunctionKeyword: YulFunctionKeyword_Reserved>  => "Keyword[_YulFunctionKeyword]".to_string(),
+         
+            <_YulFunctionKeyword: YulFunctionKeyword_Reserved>  => "Keyword[_YulFunctionKeyword]".to_string(),
         
     };
     YulGweiKeyword: String = {
-        <_YulGweiKeyword: YulGweiKeyword_Unreserved>  => "Keyword[_YulGweiKeyword]".to_string(),
+         
+            <_YulGweiKeyword: YulGweiKeyword_Unreserved>  => "Keyword[_YulGweiKeyword]".to_string(),
         
     };
     YulHexKeyword: String = {
-        <_YulHexKeyword: YulHexKeyword_Reserved>  => "Keyword[_YulHexKeyword]".to_string(),
+         
+            <_YulHexKeyword: YulHexKeyword_Reserved>  => "Keyword[_YulHexKeyword]".to_string(),
         
     };
     YulHoursKeyword: String = {
-        <_YulHoursKeyword: YulHoursKeyword_Unreserved>  => "Keyword[_YulHoursKeyword]".to_string(),
+         
+            <_YulHoursKeyword: YulHoursKeyword_Unreserved>  => "Keyword[_YulHoursKeyword]".to_string(),
         
     };
     YulIfKeyword: String = {
-        <_YulIfKeyword: YulIfKeyword_Reserved>  => "Keyword[_YulIfKeyword]".to_string(),
+         
+            <_YulIfKeyword: YulIfKeyword_Reserved>  => "Keyword[_YulIfKeyword]".to_string(),
         
     };
     YulImmutableKeyword: String = {
-        <_YulImmutableKeyword: YulImmutableKeyword_Unreserved>  => "Keyword[_YulImmutableKeyword]".to_string(),
+         
+            <_YulImmutableKeyword: YulImmutableKeyword_Unreserved>  => "Keyword[_YulImmutableKeyword]".to_string(),
         
     };
     YulImplementsKeyword: String = {
-        <_YulImplementsKeyword: YulImplementsKeyword_Unreserved>  => "Keyword[_YulImplementsKeyword]".to_string(),
+         
+            <_YulImplementsKeyword: YulImplementsKeyword_Unreserved>  => "Keyword[_YulImplementsKeyword]".to_string(),
         
     };
     YulImportKeyword: String = {
-        <_YulImportKeyword: YulImportKeyword_Unreserved>  => "Keyword[_YulImportKeyword]".to_string(),
+         
+            <_YulImportKeyword: YulImportKeyword_Unreserved>  => "Keyword[_YulImportKeyword]".to_string(),
         
     };
     YulIndexedKeyword: String = {
-        <_YulIndexedKeyword: YulIndexedKeyword_Unreserved>  => "Keyword[_YulIndexedKeyword]".to_string(),
+         
+            <_YulIndexedKeyword: YulIndexedKeyword_Unreserved>  => "Keyword[_YulIndexedKeyword]".to_string(),
         
     };
     YulInKeyword: String = {
-        <_YulInKeyword: YulInKeyword_Unreserved>  => "Keyword[_YulInKeyword]".to_string(),
+         
+            <_YulInKeyword: YulInKeyword_Unreserved>  => "Keyword[_YulInKeyword]".to_string(),
         
     };
     YulInlineKeyword: String = {
-        <_YulInlineKeyword: YulInlineKeyword_Unreserved>  => "Keyword[_YulInlineKeyword]".to_string(),
+         
+            <_YulInlineKeyword: YulInlineKeyword_Unreserved>  => "Keyword[_YulInlineKeyword]".to_string(),
         
     };
     YulInterfaceKeyword: String = {
-        <_YulInterfaceKeyword: YulInterfaceKeyword_Unreserved>  => "Keyword[_YulInterfaceKeyword]".to_string(),
+         
+            <_YulInterfaceKeyword: YulInterfaceKeyword_Unreserved>  => "Keyword[_YulInterfaceKeyword]".to_string(),
         
     };
     YulInternalKeyword: String = {
-        <_YulInternalKeyword: YulInternalKeyword_Unreserved>  => "Keyword[_YulInternalKeyword]".to_string(),
+         
+            <_YulInternalKeyword: YulInternalKeyword_Unreserved>  => "Keyword[_YulInternalKeyword]".to_string(),
         
     };
     YulIntKeyword: String = {
-        <_YulIntKeyword: YulIntKeyword_Unreserved>  => "Keyword[_YulIntKeyword]".to_string(),
+         
+            <_YulIntKeyword: YulIntKeyword_Unreserved>  => "Keyword[_YulIntKeyword]".to_string(),
         
     };
     YulIsKeyword: String = {
-        <_YulIsKeyword: YulIsKeyword_Unreserved>  => "Keyword[_YulIsKeyword]".to_string(),
+         
+            <_YulIsKeyword: YulIsKeyword_Unreserved>  => "Keyword[_YulIsKeyword]".to_string(),
         
     };
     YulLeaveKeyword: String = {
-        <_YulLeaveKeyword: YulLeaveKeyword_Reserved>  => "Keyword[_YulLeaveKeyword]".to_string(),
+         
+            <_YulLeaveKeyword: YulLeaveKeyword_Reserved>  => "Keyword[_YulLeaveKeyword]".to_string(),
         
     };
     YulLetKeyword: String = {
-        <_YulLetKeyword: YulLetKeyword_Reserved>  => "Keyword[_YulLetKeyword]".to_string(),
+         
+            <_YulLetKeyword: YulLetKeyword_Reserved>  => "Keyword[_YulLetKeyword]".to_string(),
         
     };
     YulLibraryKeyword: String = {
-        <_YulLibraryKeyword: YulLibraryKeyword_Unreserved>  => "Keyword[_YulLibraryKeyword]".to_string(),
+         
+            <_YulLibraryKeyword: YulLibraryKeyword_Unreserved>  => "Keyword[_YulLibraryKeyword]".to_string(),
         
     };
     YulMacroKeyword: String = {
-        <_YulMacroKeyword: YulMacroKeyword_Unreserved>  => "Keyword[_YulMacroKeyword]".to_string(),
+         
+            <_YulMacroKeyword: YulMacroKeyword_Unreserved>  => "Keyword[_YulMacroKeyword]".to_string(),
         
     };
     YulMappingKeyword: String = {
-        <_YulMappingKeyword: YulMappingKeyword_Unreserved>  => "Keyword[_YulMappingKeyword]".to_string(),
+         
+            <_YulMappingKeyword: YulMappingKeyword_Unreserved>  => "Keyword[_YulMappingKeyword]".to_string(),
         
     };
     YulMatchKeyword: String = {
-        <_YulMatchKeyword: YulMatchKeyword_Unreserved>  => "Keyword[_YulMatchKeyword]".to_string(),
+         
+            <_YulMatchKeyword: YulMatchKeyword_Unreserved>  => "Keyword[_YulMatchKeyword]".to_string(),
         
     };
     YulMemoryKeyword: String = {
-        <_YulMemoryKeyword: YulMemoryKeyword_Unreserved>  => "Keyword[_YulMemoryKeyword]".to_string(),
+         
+            <_YulMemoryKeyword: YulMemoryKeyword_Unreserved>  => "Keyword[_YulMemoryKeyword]".to_string(),
         
     };
     YulMinutesKeyword: String = {
-        <_YulMinutesKeyword: YulMinutesKeyword_Unreserved>  => "Keyword[_YulMinutesKeyword]".to_string(),
+         
+            <_YulMinutesKeyword: YulMinutesKeyword_Unreserved>  => "Keyword[_YulMinutesKeyword]".to_string(),
         
     };
     YulModifierKeyword: String = {
-        <_YulModifierKeyword: YulModifierKeyword_Unreserved>  => "Keyword[_YulModifierKeyword]".to_string(),
+         
+            <_YulModifierKeyword: YulModifierKeyword_Unreserved>  => "Keyword[_YulModifierKeyword]".to_string(),
         
     };
     YulMutableKeyword: String = {
-        <_YulMutableKeyword: YulMutableKeyword_Unreserved>  => "Keyword[_YulMutableKeyword]".to_string(),
+         
+            <_YulMutableKeyword: YulMutableKeyword_Unreserved>  => "Keyword[_YulMutableKeyword]".to_string(),
         
     };
     YulNewKeyword: String = {
-        <_YulNewKeyword: YulNewKeyword_Unreserved>  => "Keyword[_YulNewKeyword]".to_string(),
+         
+            <_YulNewKeyword: YulNewKeyword_Unreserved>  => "Keyword[_YulNewKeyword]".to_string(),
         
     };
     YulNullKeyword: String = {
-        <_YulNullKeyword: YulNullKeyword_Unreserved>  => "Keyword[_YulNullKeyword]".to_string(),
+         
+            <_YulNullKeyword: YulNullKeyword_Unreserved>  => "Keyword[_YulNullKeyword]".to_string(),
         
     };
     YulOfKeyword: String = {
-        <_YulOfKeyword: YulOfKeyword_Unreserved>  => "Keyword[_YulOfKeyword]".to_string(),
+         
+            <_YulOfKeyword: YulOfKeyword_Unreserved>  => "Keyword[_YulOfKeyword]".to_string(),
         
     };
     YulOverrideKeyword: String = {
-        <_YulOverrideKeyword: YulOverrideKeyword_Unreserved>  => "Keyword[_YulOverrideKeyword]".to_string(),
+         
+            <_YulOverrideKeyword: YulOverrideKeyword_Unreserved>  => "Keyword[_YulOverrideKeyword]".to_string(),
         
     };
     YulPartialKeyword: String = {
-        <_YulPartialKeyword: YulPartialKeyword_Unreserved>  => "Keyword[_YulPartialKeyword]".to_string(),
+         
+            <_YulPartialKeyword: YulPartialKeyword_Unreserved>  => "Keyword[_YulPartialKeyword]".to_string(),
         
     };
     YulPayableKeyword: String = {
-        <_YulPayableKeyword: YulPayableKeyword_Unreserved>  => "Keyword[_YulPayableKeyword]".to_string(),
+         
+            <_YulPayableKeyword: YulPayableKeyword_Unreserved>  => "Keyword[_YulPayableKeyword]".to_string(),
         
     };
     YulPragmaKeyword: String = {
-        <_YulPragmaKeyword: YulPragmaKeyword_Unreserved>  => "Keyword[_YulPragmaKeyword]".to_string(),
+         
+            <_YulPragmaKeyword: YulPragmaKeyword_Unreserved>  => "Keyword[_YulPragmaKeyword]".to_string(),
         
     };
     YulPrivateKeyword: String = {
-        <_YulPrivateKeyword: YulPrivateKeyword_Unreserved>  => "Keyword[_YulPrivateKeyword]".to_string(),
+         
+            <_YulPrivateKeyword: YulPrivateKeyword_Unreserved>  => "Keyword[_YulPrivateKeyword]".to_string(),
         
     };
     YulPromiseKeyword: String = {
-        <_YulPromiseKeyword: YulPromiseKeyword_Unreserved>  => "Keyword[_YulPromiseKeyword]".to_string(),
+         
+            <_YulPromiseKeyword: YulPromiseKeyword_Unreserved>  => "Keyword[_YulPromiseKeyword]".to_string(),
         
     };
     YulPublicKeyword: String = {
-        <_YulPublicKeyword: YulPublicKeyword_Unreserved>  => "Keyword[_YulPublicKeyword]".to_string(),
+         
+            <_YulPublicKeyword: YulPublicKeyword_Unreserved>  => "Keyword[_YulPublicKeyword]".to_string(),
         
     };
     YulPureKeyword: String = {
-        <_YulPureKeyword: YulPureKeyword_Unreserved>  => "Keyword[_YulPureKeyword]".to_string(),
+         
+            <_YulPureKeyword: YulPureKeyword_Unreserved>  => "Keyword[_YulPureKeyword]".to_string(),
         
     };
     YulReceiveKeyword: String = {
-        <_YulReceiveKeyword: YulReceiveKeyword_Unreserved>  => "Keyword[_YulReceiveKeyword]".to_string(),
+         
+            <_YulReceiveKeyword: YulReceiveKeyword_Unreserved>  => "Keyword[_YulReceiveKeyword]".to_string(),
         
     };
     YulReferenceKeyword: String = {
-        <_YulReferenceKeyword: YulReferenceKeyword_Unreserved>  => "Keyword[_YulReferenceKeyword]".to_string(),
+         
+            <_YulReferenceKeyword: YulReferenceKeyword_Unreserved>  => "Keyword[_YulReferenceKeyword]".to_string(),
         
     };
     YulRelocatableKeyword: String = {
-        <_YulRelocatableKeyword: YulRelocatableKeyword_Unreserved>  => "Keyword[_YulRelocatableKeyword]".to_string(),
+         
+            <_YulRelocatableKeyword: YulRelocatableKeyword_Unreserved>  => "Keyword[_YulRelocatableKeyword]".to_string(),
         
     };
     YulReturnsKeyword: String = {
-        <_YulReturnsKeyword: YulReturnsKeyword_Unreserved>  => "Keyword[_YulReturnsKeyword]".to_string(),
+         
+            <_YulReturnsKeyword: YulReturnsKeyword_Unreserved>  => "Keyword[_YulReturnsKeyword]".to_string(),
         
     };
     YulSealedKeyword: String = {
-        <_YulSealedKeyword: YulSealedKeyword_Unreserved>  => "Keyword[_YulSealedKeyword]".to_string(),
+         
+            <_YulSealedKeyword: YulSealedKeyword_Unreserved>  => "Keyword[_YulSealedKeyword]".to_string(),
         
     };
     YulSecondsKeyword: String = {
-        <_YulSecondsKeyword: YulSecondsKeyword_Unreserved>  => "Keyword[_YulSecondsKeyword]".to_string(),
+         
+            <_YulSecondsKeyword: YulSecondsKeyword_Unreserved>  => "Keyword[_YulSecondsKeyword]".to_string(),
         
     };
     YulSizeOfKeyword: String = {
-        <_YulSizeOfKeyword: YulSizeOfKeyword_Unreserved>  => "Keyword[_YulSizeOfKeyword]".to_string(),
+         
+            <_YulSizeOfKeyword: YulSizeOfKeyword_Unreserved>  => "Keyword[_YulSizeOfKeyword]".to_string(),
         
     };
     YulStaticKeyword: String = {
-        <_YulStaticKeyword: YulStaticKeyword_Unreserved>  => "Keyword[_YulStaticKeyword]".to_string(),
+         
+            <_YulStaticKeyword: YulStaticKeyword_Unreserved>  => "Keyword[_YulStaticKeyword]".to_string(),
         
     };
     YulStorageKeyword: String = {
-        <_YulStorageKeyword: YulStorageKeyword_Unreserved>  => "Keyword[_YulStorageKeyword]".to_string(),
+         
+            <_YulStorageKeyword: YulStorageKeyword_Unreserved>  => "Keyword[_YulStorageKeyword]".to_string(),
         
     };
     YulStringKeyword: String = {
-        <_YulStringKeyword: YulStringKeyword_Unreserved>  => "Keyword[_YulStringKeyword]".to_string(),
+         
+            <_YulStringKeyword: YulStringKeyword_Unreserved>  => "Keyword[_YulStringKeyword]".to_string(),
         
     };
     YulStructKeyword: String = {
-        <_YulStructKeyword: YulStructKeyword_Unreserved>  => "Keyword[_YulStructKeyword]".to_string(),
+         
+            <_YulStructKeyword: YulStructKeyword_Unreserved>  => "Keyword[_YulStructKeyword]".to_string(),
         
     };
     YulSuperKeyword: String = {
-        <_YulSuperKeyword: YulSuperKeyword_Reserved>  => "Keyword[_YulSuperKeyword]".to_string(),
+         
+            <_YulSuperKeyword: YulSuperKeyword_Reserved>  => "Keyword[_YulSuperKeyword]".to_string(),
         
     };
     YulSupportsKeyword: String = {
-        <_YulSupportsKeyword: YulSupportsKeyword_Unreserved>  => "Keyword[_YulSupportsKeyword]".to_string(),
+         
+            <_YulSupportsKeyword: YulSupportsKeyword_Unreserved>  => "Keyword[_YulSupportsKeyword]".to_string(),
         
     };
     YulSwitchKeyword: String = {
-        <_YulSwitchKeyword: YulSwitchKeyword_Reserved>  => "Keyword[_YulSwitchKeyword]".to_string(),
+         
+            <_YulSwitchKeyword: YulSwitchKeyword_Reserved>  => "Keyword[_YulSwitchKeyword]".to_string(),
         
     };
     YulSzaboKeyword: String = {
-        <_YulSzaboKeyword: YulSzaboKeyword_Unreserved>  => "Keyword[_YulSzaboKeyword]".to_string(),
+         
+            <_YulSzaboKeyword: YulSzaboKeyword_Unreserved>  => "Keyword[_YulSzaboKeyword]".to_string(),
         
     };
     YulThisKeyword: String = {
-        <_YulThisKeyword: YulThisKeyword_Reserved>  => "Keyword[_YulThisKeyword]".to_string(),
+         
+            <_YulThisKeyword: YulThisKeyword_Reserved>  => "Keyword[_YulThisKeyword]".to_string(),
         
     };
     YulThrowKeyword: String = {
-        <_YulThrowKeyword: YulThrowKeyword_Unreserved>  => "Keyword[_YulThrowKeyword]".to_string(),
+         
+            <_YulThrowKeyword: YulThrowKeyword_Unreserved>  => "Keyword[_YulThrowKeyword]".to_string(),
         
     };
     YulTrueKeyword: String = {
-        <_YulTrueKeyword: YulTrueKeyword_Reserved>  => "Keyword[_YulTrueKeyword]".to_string(),
+         
+            <_YulTrueKeyword: YulTrueKeyword_Reserved>  => "Keyword[_YulTrueKeyword]".to_string(),
         
     };
     YulTryKeyword: String = {
-        <_YulTryKeyword: YulTryKeyword_Unreserved>  => "Keyword[_YulTryKeyword]".to_string(),
+         
+            <_YulTryKeyword: YulTryKeyword_Unreserved>  => "Keyword[_YulTryKeyword]".to_string(),
         
     };
     YulTypeDefKeyword: String = {
-        <_YulTypeDefKeyword: YulTypeDefKeyword_Unreserved>  => "Keyword[_YulTypeDefKeyword]".to_string(),
+         
+            <_YulTypeDefKeyword: YulTypeDefKeyword_Unreserved>  => "Keyword[_YulTypeDefKeyword]".to_string(),
         
     };
     YulTypeKeyword: String = {
-        <_YulTypeKeyword: YulTypeKeyword_Unreserved>  => "Keyword[_YulTypeKeyword]".to_string(),
+         
+            <_YulTypeKeyword: YulTypeKeyword_Unreserved>  => "Keyword[_YulTypeKeyword]".to_string(),
         
     };
     YulTypeOfKeyword: String = {
-        <_YulTypeOfKeyword: YulTypeOfKeyword_Unreserved>  => "Keyword[_YulTypeOfKeyword]".to_string(),
+         
+            <_YulTypeOfKeyword: YulTypeOfKeyword_Unreserved>  => "Keyword[_YulTypeOfKeyword]".to_string(),
         
     };
     YulUfixedKeyword: String = {
-        <_YulUfixedKeyword: YulUfixedKeyword_Unreserved>  => "Keyword[_YulUfixedKeyword]".to_string(),
+         
+            <_YulUfixedKeyword: YulUfixedKeyword_Unreserved>  => "Keyword[_YulUfixedKeyword]".to_string(),
         
     };
     YulUintKeyword: String = {
-        <_YulUintKeyword: YulUintKeyword_Unreserved>  => "Keyword[_YulUintKeyword]".to_string(),
+         
+            <_YulUintKeyword: YulUintKeyword_Unreserved>  => "Keyword[_YulUintKeyword]".to_string(),
         
     };
     YulUncheckedKeyword: String = {
-        <_YulUncheckedKeyword: YulUncheckedKeyword_Unreserved>  => "Keyword[_YulUncheckedKeyword]".to_string(),
+         
+            <_YulUncheckedKeyword: YulUncheckedKeyword_Unreserved>  => "Keyword[_YulUncheckedKeyword]".to_string(),
         
     };
     YulUsingKeyword: String = {
-        <_YulUsingKeyword: YulUsingKeyword_Unreserved>  => "Keyword[_YulUsingKeyword]".to_string(),
+         
+            <_YulUsingKeyword: YulUsingKeyword_Unreserved>  => "Keyword[_YulUsingKeyword]".to_string(),
         
     };
     YulVarKeyword: String = {
-        <_YulVarKeyword: YulVarKeyword_Unreserved>  => "Keyword[_YulVarKeyword]".to_string(),
+         
+            <_YulVarKeyword: YulVarKeyword_Unreserved>  => "Keyword[_YulVarKeyword]".to_string(),
         
     };
     YulViewKeyword: String = {
-        <_YulViewKeyword: YulViewKeyword_Unreserved>  => "Keyword[_YulViewKeyword]".to_string(),
+         
+            <_YulViewKeyword: YulViewKeyword_Unreserved>  => "Keyword[_YulViewKeyword]".to_string(),
         
     };
     YulVirtualKeyword: String = {
-        <_YulVirtualKeyword: YulVirtualKeyword_Unreserved>  => "Keyword[_YulVirtualKeyword]".to_string(),
+         
+            <_YulVirtualKeyword: YulVirtualKeyword_Unreserved>  => "Keyword[_YulVirtualKeyword]".to_string(),
         
     };
     YulWeeksKeyword: String = {
-        <_YulWeeksKeyword: YulWeeksKeyword_Unreserved>  => "Keyword[_YulWeeksKeyword]".to_string(),
+         
+            <_YulWeeksKeyword: YulWeeksKeyword_Unreserved>  => "Keyword[_YulWeeksKeyword]".to_string(),
         
     };
     YulWeiKeyword: String = {
-        <_YulWeiKeyword: YulWeiKeyword_Unreserved>  => "Keyword[_YulWeiKeyword]".to_string(),
+         
+            <_YulWeiKeyword: YulWeiKeyword_Unreserved>  => "Keyword[_YulWeiKeyword]".to_string(),
         
     };
     YulWhileKeyword: String = {
-        <_YulWhileKeyword: YulWhileKeyword_Unreserved>  => "Keyword[_YulWhileKeyword]".to_string(),
+         
+            <_YulWhileKeyword: YulWhileKeyword_Unreserved>  => "Keyword[_YulWhileKeyword]".to_string(),
         
     };
     YulYearsKeyword: String = {
-        <_YulYearsKeyword: YulYearsKeyword_Unreserved>  => "Keyword[_YulYearsKeyword]".to_string(),
+         
+            <_YulYearsKeyword: YulYearsKeyword_Unreserved>  => "Keyword[_YulYearsKeyword]".to_string(),
         
     };
     
