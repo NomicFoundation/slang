@@ -285,7 +285,7 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
 
         let mut prec_counter = 0;
 
-        let precedence_expressions: Vec<LALRPOPOption> = item
+        let mut precedence_expressions: Vec<LALRPOPOption> = item
             .precedence_expressions
             .iter()
             .flat_map(|prec| {
@@ -295,7 +295,7 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
                     if op.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
                         return None;
                     }
-                    let capturing_name = format!("_{}", prec.name);
+                    let capturing_name = format!("_{}", item.name);
                     let fields = match op.model {
                         OperatorModel::Prefix => {
                             let mut fields = op
@@ -306,14 +306,14 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
 
                             fields.push(LALRPOPField {
                                 capturing_name: Some(capturing_name.clone().into()),
-                                rule: RustCode(prec.name.clone().to_string()),
+                                rule: RustCode(item.name.clone().to_string()),
                             });
                             Some(fields)
                         }
                         OperatorModel::Postfix => {
                             let mut fields = vec![LALRPOPField {
                                 capturing_name: Some(capturing_name.clone().into()),
-                                rule: RustCode(prec.name.clone().to_string()),
+                                rule: RustCode(item.name.clone().to_string()),
                             }];
 
                             let mut extra_fields = op
@@ -340,13 +340,13 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
                             operator.map(|op| {
                                 vec![
                                     LALRPOPField {
-                                        capturing_name: Some(capturing_name.clone().into()),
-                                        rule: RustCode(prec.name.clone().to_string()),
+                                        capturing_name: Some(format!("{capturing_name}_1").into()),
+                                        rule: RustCode(item.name.clone().to_string()),
                                     },
                                     op,
                                     LALRPOPField {
-                                        capturing_name: Some(capturing_name.clone().into()),
-                                        rule: RustCode(prec.name.clone().to_string()),
+                                        capturing_name: Some(format!("{capturing_name}_2").into()),
+                                        rule: RustCode(item.name.clone().to_string()),
                                     },
                                 ]
                             })
@@ -358,12 +358,10 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
                             RustCode(format!("#[precedence(level=\"{}\")]", prec_counter))
                         }
                         OperatorModel::BinaryLeftAssociative => RustCode(format!(
-                            "#[precedence(level=\"{}\")] #[assoc(side=\"left\")]",
-                            prec_counter
+                            "#[precedence(level=\"{prec_counter}\")] #[assoc(side=\"left\")]"
                         )),
                         OperatorModel::BinaryRightAssociative => RustCode(format!(
-                            "#[precedence(level=\"{}\")] #[assoc(side=\"right\")]",
-                            prec_counter
+                            "#[precedence(level=\"{prec_counter}\")] #[assoc(side=\"right\")]"
                         )),
                     };
 
@@ -379,11 +377,13 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
             })
             .collect();
 
+        precedence_expressions.extend(primaries);
+
         // TODO add operators
         Ok(LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
-            options: primaries.collect(),
+            options: precedence_expressions,
         })
     }
 
