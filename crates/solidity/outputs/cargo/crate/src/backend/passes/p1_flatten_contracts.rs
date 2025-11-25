@@ -518,6 +518,17 @@ impl Transformer for Pass {
             parameters,
         })
     }
+
+    fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
+        let key_type = self.transform_mapping_key(&source.key_type);
+        let value_type = self.transform_mapping_value(&source.value_type);
+
+        Rc::new(output::MappingTypeStruct {
+            node_id: source.node_id,
+            key_type,
+            value_type,
+        })
+    }
 }
 
 impl Pass {
@@ -1239,6 +1250,43 @@ impl Pass {
     }
 
     fn transform_error_parameter(&mut self, source: &input::ErrorParameter) -> output::Parameter {
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location: None,
+            name,
+            indexed: false,
+        })
+    }
+
+    fn transform_mapping_key(&mut self, source: &input::MappingKey) -> output::Parameter {
+        let type_name = self.transform_mapping_key_type(&source.key_type);
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location: None,
+            name,
+            indexed: false,
+        })
+    }
+
+    fn transform_mapping_key_type(&mut self, source: &input::MappingKeyType) -> output::TypeName {
+        match source {
+            input::MappingKeyType::ElementaryType(elementary_type) => {
+                output::TypeName::ElementaryType(self.transform_elementary_type(elementary_type))
+            }
+            input::MappingKeyType::IdentifierPath(terminal_nodes) => {
+                output::TypeName::IdentifierPath(self.transform_identifier_path(terminal_nodes))
+            }
+        }
+    }
+
+    fn transform_mapping_value(&mut self, source: &input::MappingValue) -> output::Parameter {
         let type_name = self.transform_type_name(&source.type_name);
         let name = source.name.as_ref().map(Rc::clone);
 

@@ -348,38 +348,7 @@ pub trait Transformer {
 
     fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType;
 
-    fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
-        let key_type = self.transform_mapping_key(&source.key_type);
-        let value_type = self.transform_mapping_value(&source.value_type);
-
-        Rc::new(output::MappingTypeStruct {
-            node_id: source.node_id,
-            key_type,
-            value_type,
-        })
-    }
-
-    fn transform_mapping_key(&mut self, source: &input::MappingKey) -> output::MappingKey {
-        let key_type = self.transform_mapping_key_type(&source.key_type);
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::MappingKeyStruct {
-            node_id: source.node_id,
-            key_type,
-            name,
-        })
-    }
-
-    fn transform_mapping_value(&mut self, source: &input::MappingValue) -> output::MappingValue {
-        let type_name = self.transform_type_name(&source.type_name);
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::MappingValueStruct {
-            node_id: source.node_id,
-            type_name,
-            name,
-        })
-    }
+    fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType;
 
     fn transform_address_type(&mut self, source: &input::AddressType) -> output::AddressType {
         let payable_keyword = source.payable_keyword;
@@ -1693,32 +1662,6 @@ pub trait Transformer {
     }
     fn transform_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
         self.default_transform_type_name(source)
-    }
-
-    fn default_transform_mapping_key_type(
-        &mut self,
-        source: &input::MappingKeyType,
-    ) -> output::MappingKeyType {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::MappingKeyType::ElementaryType(ref elementary_type) => {
-                output::MappingKeyType::ElementaryType(
-                    self.transform_elementary_type(elementary_type),
-                )
-            }
-            input::MappingKeyType::IdentifierPath(ref identifier_path) => {
-                output::MappingKeyType::IdentifierPath(
-                    self.transform_identifier_path(identifier_path),
-                )
-            }
-        }
-    }
-    fn transform_mapping_key_type(
-        &mut self,
-        source: &input::MappingKeyType,
-    ) -> output::MappingKeyType {
-        self.default_transform_mapping_key_type(source)
     }
 
     fn default_transform_elementary_type(

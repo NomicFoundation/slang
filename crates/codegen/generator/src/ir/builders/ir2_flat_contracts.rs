@@ -13,6 +13,7 @@ pub(super) fn build_from(structured_ast_model: &IrModel) -> ModelWithTransformer
     simplify_imports(&mut mutator);
     simplify_variable_declarations(&mut mutator);
     simplify_parameters(&mut mutator);
+    simplify_mapping_type_parameters(&mut mutator);
 
     mutator.into()
 }
@@ -327,4 +328,15 @@ fn simplify_parameters(mutator: &mut IrModelMutator) {
     mutator.remove_type("ErrorParameters");
     mutator.remove_type("ErrorParameter");
     mutator.add_sequence_field("ErrorDefinition", "parameters", "Parameters", false);
+}
+
+fn simplify_mapping_type_parameters(mutator: &mut IrModelMutator) {
+    // Replace `MappingKey` and `MappingValue` with regular `Parameter` types.
+    // `MappingKeyType` is a subset of `TypeName` and can be removed as well.
+    mutator.remove_type("MappingKeyType");
+    mutator.remove_type("MappingKey");
+    mutator.remove_type("MappingValue");
+
+    mutator.add_sequence_field("MappingType", "key_type", "Parameter", false);
+    mutator.add_sequence_field("MappingType", "value_type", "Parameter", false);
 }

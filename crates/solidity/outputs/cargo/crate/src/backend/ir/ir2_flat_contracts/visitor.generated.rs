@@ -171,16 +171,6 @@ pub trait Visitor {
     }
     fn leave_mapping_type(&mut self, _node: &MappingType) {}
 
-    fn enter_mapping_key(&mut self, _node: &MappingKey) -> bool {
-        true
-    }
-    fn leave_mapping_key(&mut self, _node: &MappingKey) {}
-
-    fn enter_mapping_value(&mut self, _node: &MappingValue) -> bool {
-        true
-    }
-    fn leave_mapping_value(&mut self, _node: &MappingValue) {}
-
     fn enter_address_type(&mut self, _node: &AddressType) -> bool {
         true
     }
@@ -592,11 +582,6 @@ pub trait Visitor {
         true
     }
     fn leave_type_name(&mut self, _node: &TypeName) {}
-
-    fn enter_mapping_key_type(&mut self, _node: &MappingKeyType) -> bool {
-        true
-    }
-    fn leave_mapping_key_type(&mut self, _node: &MappingKeyType) {}
 
     fn enter_elementary_type(&mut self, _node: &ElementaryType) -> bool {
         true
@@ -1209,25 +1194,9 @@ pub fn accept_mapping_type(node: &MappingType, visitor: &mut impl Visitor) {
     if !visitor.enter_mapping_type(node) {
         return;
     }
-    accept_mapping_key(&node.key_type, visitor);
-    accept_mapping_value(&node.value_type, visitor);
+    accept_parameter(&node.key_type, visitor);
+    accept_parameter(&node.value_type, visitor);
     visitor.leave_mapping_type(node);
-}
-
-pub fn accept_mapping_key(node: &MappingKey, visitor: &mut impl Visitor) {
-    if !visitor.enter_mapping_key(node) {
-        return;
-    }
-    accept_mapping_key_type(&node.key_type, visitor);
-    visitor.leave_mapping_key(node);
-}
-
-pub fn accept_mapping_value(node: &MappingValue, visitor: &mut impl Visitor) {
-    if !visitor.enter_mapping_value(node) {
-        return;
-    }
-    accept_type_name(&node.type_name, visitor);
-    visitor.leave_mapping_value(node);
 }
 
 pub fn accept_address_type(node: &AddressType, visitor: &mut impl Visitor) {
@@ -2060,21 +2029,6 @@ pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
         }
     }
     visitor.leave_type_name(node);
-}
-
-pub fn accept_mapping_key_type(node: &MappingKeyType, visitor: &mut impl Visitor) {
-    if !visitor.enter_mapping_key_type(node) {
-        return;
-    }
-    match node {
-        MappingKeyType::ElementaryType(ref elementary_type) => {
-            accept_elementary_type(elementary_type, visitor);
-        }
-        MappingKeyType::IdentifierPath(ref identifier_path) => {
-            accept_identifier_path(identifier_path, visitor);
-        }
-    }
-    visitor.leave_mapping_key_type(node);
 }
 
 pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor) {

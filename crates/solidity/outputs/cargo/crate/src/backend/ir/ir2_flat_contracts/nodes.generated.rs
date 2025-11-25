@@ -312,26 +312,8 @@ pub type MappingType = Rc<MappingTypeStruct>;
 #[derive(Debug)]
 pub struct MappingTypeStruct {
     pub node_id: NodeId,
-    pub key_type: MappingKey,
-    pub value_type: MappingValue,
-}
-
-pub type MappingKey = Rc<MappingKeyStruct>;
-
-#[derive(Debug)]
-pub struct MappingKeyStruct {
-    pub node_id: NodeId,
-    pub key_type: MappingKeyType,
-    pub name: Option<Rc<TerminalNode>>,
-}
-
-pub type MappingValue = Rc<MappingValueStruct>;
-
-#[derive(Debug)]
-pub struct MappingValueStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub name: Option<Rc<TerminalNode>>,
+    pub key_type: Parameter,
+    pub value_type: Parameter,
 }
 
 pub type AddressType = Rc<AddressTypeStruct>;
@@ -1032,12 +1014,6 @@ pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
     MappingType(MappingType),
-    ElementaryType(ElementaryType),
-    IdentifierPath(IdentifierPath),
-}
-
-#[derive(Debug)]
-pub enum MappingKeyType {
     ElementaryType(ElementaryType),
     IdentifierPath(IdentifierPath),
 }

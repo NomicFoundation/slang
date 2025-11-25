@@ -177,15 +177,6 @@ impl Visitor for Pass {
         }
     }
 
-    fn enter_mapping_key_type(&mut self, node: &input_ir::MappingKeyType) -> bool {
-        if let input_ir::MappingKeyType::IdentifierPath(identifier_path) = node {
-            self.resolve_identifier_path(identifier_path);
-            false
-        } else {
-            true
-        }
-    }
-
     fn enter_override_paths(&mut self, items: &input_ir::OverridePaths) -> bool {
         for identifier_path in items {
             self.resolve_identifier_path(identifier_path);
