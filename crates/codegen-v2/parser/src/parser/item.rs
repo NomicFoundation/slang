@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use language_v2_definition::model::{
-    EnumItem, Field, Identifier, Item as LanguageItem, KeywordItem, PrecedenceItem, RepeatedItem,
-    SeparatedItem, StructItem,
+    EnumItem, Field, Identifier, Item as LanguageItem, KeywordItem, OperatorModel, PrecedenceItem,
+    RepeatedItem, SeparatedItem, StructItem,
 };
 use semver::Version;
 use serde::Serialize;
@@ -19,7 +19,7 @@ pub(crate) struct LALRPOPItem {
 
 #[derive(Clone, Debug, Serialize)]
 struct LALRPOPOption {
-    // attributes?
+    attributes: RustCode,
     fields: Vec<LALRPOPField>,
     action: RustCode,
 }
@@ -31,36 +31,6 @@ struct LALRPOPField {
     // TODO: we may need some mutable captures, maybe not
     // mutable: bool,
 }
-
-// /// An LALRPOP rule represents a single capturing rule in the grammar.
-// ///
-// /// For example `(<T> ",")*` would be represented by
-// /// `ZeroOrMore(Sequence(vec![CapturingReference("T", true), Reference(",", false)]))`.
-// #[derive(Clone, Debug, Serialize)]
-// enum LALRPOPRule {
-//     Reference(Identifier),
-//     CapturingReference(Identifier),
-//     Optional(Box<LALRPOPRule>),
-//     OneOrMore(Box<LALRPOPRule>),
-//     ZeroOrMore(Box<LALRPOPRule>),
-//     Sequence(Vec<LALRPOPRule>),
-// }
-
-// impl From<&LALRPOPRule> for RustCode {
-//     fn from(rule: &LALRPOPRule) -> Self {
-//         match rule {
-//             LALRPOPRule::Reference(identifier) => RustCode(identifier.to_string()),
-//             LALRPOPRule::CapturingReference(identifier) => todo!(),
-//             LALRPOPRule::Optional(lalrpoprule) => RustCode(format!(
-//                 "({})?",
-//                 Into::<RustCode>::into(lalrpoprule.as_ref()).0
-//             )),
-//             LALRPOPRule::OneOrMore(lalrpoprule) => todo!(),
-//             LALRPOPRule::ZeroOrMore(lalrpoprule) => todo!(),
-//             LALRPOPRule::Sequence(lalrpoprules) => todo!(),
-//         }
-//     }
-// }
 
 const PRODUCING_TYPE: &str = "String";
 
@@ -81,34 +51,22 @@ fn repeated(rule: RustCode, allow_empty: bool) -> RustCode {
 fn separated(rule: RustCode, separator: RustCode, allow_empty: bool) -> RustCode {
     // TODO is there a perf difference between this and `({} {})* {}`?
     let at_least_one = RustCode(format!("({} ({} {})*)", rule.0, separator.0, rule.0));
-    if !allow_empty {
-        optional(at_least_one)
-    } else {
+    if allow_empty {
         at_least_one
+    } else {
+        optional(at_least_one)
     }
 }
 
-impl From<&StructItem> for LALRPOPItem {
-    fn from(item: &StructItem) -> Self {
-        let fields = item.fields.iter().filter_map(|(name, field)| {
-            let capturing_name = format!("_{}", name);
-
-            match field {
-                Field::Required { reference } => Some(LALRPOPField {
-                    capturing_name: Some(capturing_name.clone().into()),
-                    rule: RustCode(reference.clone().to_string()),
-                }),
-                Field::Optional { reference, enabled }
-                    if enabled.as_ref().is_none_or(|x| x.contains(&VERSION)) =>
-                {
-                    Some(LALRPOPField {
-                        capturing_name: Some(capturing_name.clone().into()),
-                        rule: optional(RustCode(reference.clone().to_string())),
-                    })
-                }
-                _ => None,
-            }
-        });
+impl TryFrom<&StructItem> for LALRPOPItem {
+    fn try_from(item: &StructItem) -> Result<Self, Self::Error> {
+        if item.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+            return Err(());
+        }
+        let fields = item
+            .fields
+            .iter()
+            .filter_map(|(name, field)| field_to_lalrpop_field(&name, &field));
 
         let option = LALRPOPOption {
             fields: fields.clone().collect(),
@@ -124,43 +82,64 @@ impl From<&StructItem> for LALRPOPItem {
                     .filter_map(|field| { field.capturing_name.map(|name| name.to_string()) })
                     .join(", ")
             )),
+            attributes: RustCode("".to_owned()),
         };
 
-        LALRPOPItem {
+        Ok(LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options: vec![option],
-        }
+        })
     }
+
+    type Error = ();
 }
 
-impl From<&EnumItem> for LALRPOPItem {
-    fn from(item: &EnumItem) -> Self {
+impl TryFrom<&EnumItem> for LALRPOPItem {
+    fn try_from(item: &EnumItem) -> Result<Self, Self::Error> {
+        if item.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+            return Err(());
+        }
         let options = item
             .variants
             .iter()
-            .map(|variant| {
+            .filter_map(|variant| {
+                if variant
+                    .enabled
+                    .clone()
+                    .is_some_and(|v| !v.contains(&VERSION))
+                {
+                    return None;
+                }
                 let capturing_name = format!("_{}", variant.reference);
-                LALRPOPOption {
+                Some(LALRPOPOption {
                     fields: vec![LALRPOPField {
                         capturing_name: Some(capturing_name.clone().into()),
                         rule: RustCode(variant.reference.clone().to_string()),
                     }],
-                    action: RustCode(format!("format!(\"Variant[{{:?}}]\", {capturing_name})")),
-                }
+                    action: RustCode(format!(
+                        "format!(\"Variant({})[{{:?}}]\", {capturing_name})",
+                        item.name
+                    )),
+                    attributes: RustCode("".to_owned()),
+                })
             })
             .collect();
 
-        LALRPOPItem {
+        Ok(LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options,
-        }
+        })
     }
+    type Error = ();
 }
 
-impl From<&RepeatedItem> for LALRPOPItem {
-    fn from(item: &RepeatedItem) -> Self {
+impl TryFrom<&RepeatedItem> for LALRPOPItem {
+    fn try_from(item: &RepeatedItem) -> Result<Self, Self::Error> {
+        if item.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+            return Err(());
+        }
         let capturing_name = format!("_{}", item.reference);
 
         let option = LALRPOPOption {
@@ -171,19 +150,28 @@ impl From<&RepeatedItem> for LALRPOPItem {
                     item.allow_empty.unwrap_or(false),
                 ),
             }],
-            action: RustCode(format!("\"Repeated[{capturing_name}]\".to_string()")),
+            action: RustCode(format!(
+                "\"Repeated({})[{capturing_name}]\".to_string()",
+                item.name
+            )),
+            attributes: RustCode("".to_owned()),
         };
 
-        LALRPOPItem {
+        Ok(LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options: vec![option],
-        }
+        })
     }
+
+    type Error = ();
 }
 
-impl From<&SeparatedItem> for LALRPOPItem {
-    fn from(item: &SeparatedItem) -> Self {
+impl TryFrom<&SeparatedItem> for LALRPOPItem {
+    fn try_from(item: &SeparatedItem) -> Result<Self, Self::Error> {
+        if item.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+            return Err(());
+        }
         let capturing_name = format!("_{}", item.reference);
         let option = LALRPOPOption {
             fields: vec![LALRPOPField {
@@ -193,18 +181,23 @@ impl From<&SeparatedItem> for LALRPOPItem {
                     // TODO: Capture internally
                     RustCode(item.reference.clone().to_string()),
                     RustCode(item.separator.clone().to_string()),
-                    item.allow_empty.unwrap_or(false),
+                    item.allow_empty.unwrap_or(true),
                 ),
             }],
-            action: RustCode(format!("\"Separated[{capturing_name}]\".to_string()")),
+            action: RustCode(format!(
+                "\"Separated({})[{capturing_name}]\".to_string()",
+                item.name
+            )),
+            attributes: RustCode("".to_owned()),
         };
 
-        LALRPOPItem {
+        Ok(LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options: vec![option],
-        }
+        })
     }
+    type Error = ();
 }
 
 impl From<&KeywordItem> for LALRPOPItem {
@@ -222,6 +215,7 @@ impl From<&KeywordItem> for LALRPOPItem {
                     )),
                 }],
                 action: RustCode(format!("\"Keyword[{capturing_name}]\".to_string()")),
+                attributes: RustCode("".to_owned()),
             }
         };
         let mut options = vec![];
@@ -248,24 +242,152 @@ impl From<&KeywordItem> for LALRPOPItem {
     }
 }
 
-impl From<&PrecedenceItem> for LALRPOPItem {
-    fn from(item: &PrecedenceItem) -> Self {
-        let primaries = item.primary_expressions.iter().map(|exp| {
+fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> Option<LALRPOPField> {
+    let capturing_name = format!("_{}", name);
+    match field {
+        Field::Required { reference } => Some(LALRPOPField {
+            capturing_name: Some(capturing_name.clone().into()),
+            rule: RustCode(reference.clone().to_string()),
+        }),
+        Field::Optional { reference, enabled }
+            if enabled.as_ref().is_none_or(|x| x.contains(&VERSION)) =>
+        {
+            Some(LALRPOPField {
+                capturing_name: Some(capturing_name.clone().into()),
+                rule: optional(RustCode(reference.clone().to_string())),
+            })
+        }
+        _ => None,
+    }
+}
+
+// TODO: Improve this function
+#[allow(clippy::too_many_lines)]
+impl TryFrom<&PrecedenceItem> for LALRPOPItem {
+    fn try_from(item: &PrecedenceItem) -> Result<Self, Self::Error> {
+        if item.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+            return Err(());
+        }
+        let primaries = item.primary_expressions.iter().filter_map(|exp| {
+            if exp.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+                return None;
+            }
             let capturing_name = format!("_{}", exp.reference);
-            LALRPOPOption {
+            Some(LALRPOPOption {
                 fields: vec![LALRPOPField {
                     capturing_name: Some(capturing_name.clone().into()),
                     rule: RustCode(exp.reference.clone().to_string()),
                 }],
                 action: RustCode(format!("format!(\"Precedence[{{:?}}]\", {capturing_name})")),
-            }
+                attributes: RustCode("#[precedence(level=\"0\")]".to_owned()),
+            })
         });
-        LALRPOPItem {
+
+        let mut prec_counter = 0;
+
+        let precedence_expressions: Vec<LALRPOPOption> = item
+            .precedence_expressions
+            .iter()
+            .flat_map(|prec| {
+                prec_counter += 1;
+
+                prec.operators.iter().filter_map(move |op| {
+                    if op.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+                        return None;
+                    }
+                    let capturing_name = format!("_{}", prec.name);
+                    let fields = match op.model {
+                        OperatorModel::Prefix => {
+                            let mut fields = op
+                                .fields
+                                .iter()
+                                .filter_map(|(name, field)| field_to_lalrpop_field(&name, &field))
+                                .collect::<Vec<_>>();
+
+                            fields.push(LALRPOPField {
+                                capturing_name: Some(capturing_name.clone().into()),
+                                rule: RustCode(prec.name.clone().to_string()),
+                            });
+                            Some(fields)
+                        }
+                        OperatorModel::Postfix => {
+                            let mut fields = vec![LALRPOPField {
+                                capturing_name: Some(capturing_name.clone().into()),
+                                rule: RustCode(prec.name.clone().to_string()),
+                            }];
+
+                            let mut extra_fields = op
+                                .fields
+                                .iter()
+                                .filter_map(|(name, field)| field_to_lalrpop_field(&name, &field));
+
+                            fields.extend(extra_fields);
+
+                            Some(fields)
+                        }
+                        OperatorModel::BinaryLeftAssociative
+                        | OperatorModel::BinaryRightAssociative => {
+                            let op_ident: Identifier = "operator".into();
+
+                            debug_assert!(op.fields.len() == 1);
+                            debug_assert!(op.fields.contains_key(&op_ident));
+
+                            let operator = field_to_lalrpop_field(
+                                &op_ident,
+                                op.fields.get(&op_ident).unwrap(),
+                            );
+
+                            operator.map(|op| {
+                                vec![
+                                    LALRPOPField {
+                                        capturing_name: Some(capturing_name.clone().into()),
+                                        rule: RustCode(prec.name.clone().to_string()),
+                                    },
+                                    op,
+                                    LALRPOPField {
+                                        capturing_name: Some(capturing_name.clone().into()),
+                                        rule: RustCode(prec.name.clone().to_string()),
+                                    },
+                                ]
+                            })
+                        }
+                    };
+
+                    let attributes = match op.model {
+                        OperatorModel::Prefix | OperatorModel::Postfix => {
+                            RustCode(format!("#[precedence(level=\"{}\")]", prec_counter))
+                        }
+                        OperatorModel::BinaryLeftAssociative => RustCode(format!(
+                            "#[precedence(level=\"{}\")] #[assoc(side=\"left\")]",
+                            prec_counter
+                        )),
+                        OperatorModel::BinaryRightAssociative => RustCode(format!(
+                            "#[precedence(level=\"{}\")] #[assoc(side=\"right\")]",
+                            prec_counter
+                        )),
+                    };
+
+                    fields.map(|fields| LALRPOPOption {
+                        fields,
+                        action: RustCode(format!(
+                            "format!(\"Precedence({})[{{:?}}]\", {capturing_name})",
+                            prec.name
+                        )),
+                        attributes,
+                    })
+                })
+            })
+            .collect();
+
+        // TODO add operators
+        Ok(LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options: primaries.collect(),
-        }
+        })
     }
+
+    type Error = ();
 }
 
 impl TryFrom<&LanguageItem> for LALRPOPItem {
@@ -278,12 +400,12 @@ impl TryFrom<&LanguageItem> for LALRPOPItem {
         // TODO: use an actual type rather than string
 
         match item {
-            LanguageItem::Struct { item } => Ok(item.as_ref().into()),
-            LanguageItem::Enum { item } => Ok(item.as_ref().into()),
-            LanguageItem::Repeated { item } => Ok(item.as_ref().into()),
-            LanguageItem::Separated { item } => Ok(item.as_ref().into()),
+            LanguageItem::Struct { item } => item.as_ref().try_into(),
+            LanguageItem::Enum { item } => item.as_ref().try_into(),
+            LanguageItem::Repeated { item } => item.as_ref().try_into(),
+            LanguageItem::Separated { item } => item.as_ref().try_into(),
             // TODO: No idea how to do this yet
-            LanguageItem::Precedence { item } => Ok(item.as_ref().into()),
+            LanguageItem::Precedence { item } => item.as_ref().try_into(),
             // I don't think we care about fragments at all
             // ... but we'll see once versioning comes in place
 

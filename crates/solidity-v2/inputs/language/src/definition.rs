@@ -2734,6 +2734,27 @@ language_v2_macros::compile!(Language(
                                 PrimaryExpression(reference = IdentifierPath)
                             ]
                         ),
+                        Enum(
+                            // This should be some kind of slice of TypeName, using a different derivation
+                            // in the grammar but resulting in the same AST node
+                            name = NewableTypeName,
+                            variants = [
+                                EnumVariant(reference = NewableArrayType),
+                                // Maybe not even Elementary?
+                                EnumVariant(reference = ElementaryType),
+                                EnumVariant(reference = IdentifierPath)
+                            ]
+                        ),
+                        Struct(
+                            name = NewableArrayType,
+                            fields = (
+                                // Can any type be in an array?
+                                type_name = Required(TypeName),
+                                open_bracket = Required(OpenBracket),
+                                // I think there's never an expression here, but we'll see
+                                close_bracket = Required(CloseBracket)
+                            )
+                        ),
                         Struct(
                             name = FunctionType,
                             fields = (
@@ -3653,7 +3674,7 @@ language_v2_macros::compile!(Language(
                             name = NewExpression,
                             fields = (
                                 new_keyword = Required(NewKeyword),
-                                type_name = Required(TypeName)
+                                type_name = Required(NewableTypeName)
                             )
                         ),
                         Struct(
