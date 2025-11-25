@@ -196,11 +196,18 @@ impl Visitor for Pass {
     fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
         self.binder.mark_user_meta_type_node(node.node_id);
 
-        let parameter_types: Vec<_> = node
-            .parameters
-            .iter()
-            .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
-            .collect();
+        // Resolve and collect the types of the parameters, saving them in the
+        // scope to use in overload disambiguation when invoking an event as a
+        // function
+        let mut parameter_types = Vec::new();
+        for parameter in &node.parameters {
+            // TODO: the data location is not strictly correct, but strings, bytes
+            // and structs are allowed as event parameters and they won't type if we
+            // pass None here
+            let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
+            self.binder.set_node_type(parameter.node_id, type_id);
+            parameter_types.push(type_id);
+        }
 
         let Some(parameters_scope_id) = self
             .binder
@@ -216,24 +223,17 @@ impl Visitor for Pass {
         parameters_scope.set_parameter_types(&parameter_types);
     }
 
-    fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {
-        // TODO: the data location is not strictly correct, but strings, bytes
-        // and structs are allowed as event parameters and they won't type if we
-        // pass None here
-        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        self.binder.set_node_type(node.node_id, type_id);
-    }
-
     fn leave_error_definition(&mut self, node: &input_ir::ErrorDefinition) {
         self.binder.mark_user_meta_type_node(node.node_id);
-    }
 
-    fn leave_error_parameter(&mut self, node: &input_ir::ErrorParameter) {
-        // TODO: the data location is not strictly correct, but strings, bytes
-        // and structs are allowed as error parameters and they won't type if we
-        // pass None here
-        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        self.binder.set_node_type(node.node_id, type_id);
+        // Resolve the types of the parameters
+        for parameter in &node.parameters {
+            // TODO: the data location is not strictly correct, but strings, bytes
+            // and structs are allowed as error parameters and they won't type if we
+            // pass None here
+            let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
+            self.binder.set_node_type(parameter.node_id, type_id);
+        }
     }
 
     fn leave_state_variable_definition(&mut self, node: &input_ir::StateVariableDefinition) {

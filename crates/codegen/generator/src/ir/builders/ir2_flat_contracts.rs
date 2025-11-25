@@ -12,6 +12,7 @@ pub(super) fn build_from(structured_ast_model: &IrModel) -> ModelWithTransformer
     simplify_string_literals(&mut mutator);
     simplify_imports(&mut mutator);
     simplify_variable_declarations(&mut mutator);
+    simplify_parameters(&mut mutator);
 
     mutator.into()
 }
@@ -207,8 +208,6 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
     mutator.collapse_sequence("ReturnsDeclaration");
     mutator.collapse_sequence("YulParametersDeclaration");
     mutator.collapse_sequence("YulReturnsDeclaration");
-    mutator.collapse_sequence("EventParametersDeclaration");
-    mutator.collapse_sequence("ErrorParametersDeclaration");
     mutator.collapse_sequence("ImportAlias");
     mutator.collapse_sequence("ElseBranch");
     mutator.collapse_sequence("UsingAlias");
@@ -312,4 +311,20 @@ fn simplify_variable_declarations(mutator: &mut IrModelMutator) {
     // This refactor also means we don't need the `var_keyword` field in the
     // `TupleDeconstructionStatement` anymore
     mutator.remove_sequence_field("TupleDeconstructionStatement", "var_keyword");
+}
+
+fn simplify_parameters(mutator: &mut IrModelMutator) {
+    // Replace `EventParameter` and `ErrorParameter` with `Parameter`. This
+    // requires adding an `indexed` attribute (required for event parameters).
+    mutator.add_sequence_field("Parameter", "indexed", "IndexedKeyword", true);
+
+    mutator.remove_type("EventParametersDeclaration");
+    mutator.remove_type("EventParameters");
+    mutator.remove_type("EventParameter");
+    mutator.add_sequence_field("EventDefinition", "parameters", "Parameters", false);
+
+    mutator.remove_type("ErrorParametersDeclaration");
+    mutator.remove_type("ErrorParameters");
+    mutator.remove_type("ErrorParameter");
+    mutator.add_sequence_field("ErrorDefinition", "parameters", "Parameters", false);
 }

@@ -142,11 +142,6 @@ pub trait Visitor {
     }
     fn leave_event_definition(&mut self, _node: &EventDefinition) {}
 
-    fn enter_event_parameter(&mut self, _node: &EventParameter) -> bool {
-        true
-    }
-    fn leave_event_parameter(&mut self, _node: &EventParameter) {}
-
     fn enter_user_defined_value_type_definition(
         &mut self,
         _node: &UserDefinedValueTypeDefinition,
@@ -160,11 +155,6 @@ pub trait Visitor {
         true
     }
     fn leave_error_definition(&mut self, _node: &ErrorDefinition) {}
-
-    fn enter_error_parameter(&mut self, _node: &ErrorParameter) -> bool {
-        true
-    }
-    fn leave_error_parameter(&mut self, _node: &ErrorParameter) {}
 
     fn enter_array_type_name(&mut self, _node: &ArrayTypeName) -> bool {
         true
@@ -786,16 +776,6 @@ pub trait Visitor {
     }
     fn leave_override_paths(&mut self, _items: &OverridePaths) {}
 
-    fn enter_event_parameters(&mut self, _items: &EventParameters) -> bool {
-        true
-    }
-    fn leave_event_parameters(&mut self, _items: &EventParameters) {}
-
-    fn enter_error_parameters(&mut self, _items: &ErrorParameters) -> bool {
-        true
-    }
-    fn leave_error_parameters(&mut self, _items: &ErrorParameters) {}
-
     fn enter_statements(&mut self, _items: &Statements) -> bool {
         true
     }
@@ -1178,16 +1158,8 @@ pub fn accept_event_definition(node: &EventDefinition, visitor: &mut impl Visito
     if !visitor.enter_event_definition(node) {
         return;
     }
-    accept_event_parameters(&node.parameters, visitor);
+    accept_parameters(&node.parameters, visitor);
     visitor.leave_event_definition(node);
-}
-
-pub fn accept_event_parameter(node: &EventParameter, visitor: &mut impl Visitor) {
-    if !visitor.enter_event_parameter(node) {
-        return;
-    }
-    accept_type_name(&node.type_name, visitor);
-    visitor.leave_event_parameter(node);
 }
 
 pub fn accept_user_defined_value_type_definition(
@@ -1205,16 +1177,8 @@ pub fn accept_error_definition(node: &ErrorDefinition, visitor: &mut impl Visito
     if !visitor.enter_error_definition(node) {
         return;
     }
-    accept_error_parameters(&node.members, visitor);
+    accept_parameters(&node.parameters, visitor);
     visitor.leave_error_definition(node);
-}
-
-pub fn accept_error_parameter(node: &ErrorParameter, visitor: &mut impl Visitor) {
-    if !visitor.enter_error_parameter(node) {
-        return;
-    }
-    accept_type_name(&node.type_name, visitor);
-    visitor.leave_error_parameter(node);
 }
 
 pub fn accept_array_type_name(node: &ArrayTypeName, visitor: &mut impl Visitor) {
@@ -2668,28 +2632,6 @@ fn accept_override_paths(items: &Vec<IdentifierPath>, visitor: &mut impl Visitor
         accept_identifier_path(item, visitor);
     }
     visitor.leave_override_paths(items);
-}
-
-#[inline]
-fn accept_event_parameters(items: &Vec<EventParameter>, visitor: &mut impl Visitor) {
-    if !visitor.enter_event_parameters(items) {
-        return;
-    }
-    for item in items {
-        accept_event_parameter(item, visitor);
-    }
-    visitor.leave_event_parameters(items);
-}
-
-#[inline]
-fn accept_error_parameters(items: &Vec<ErrorParameter>, visitor: &mut impl Visitor) {
-    if !visitor.enter_error_parameters(items) {
-        return;
-    }
-    for item in items {
-        accept_error_parameter(item, visitor);
-    }
-    visitor.leave_error_parameters(items);
 }
 
 #[inline]

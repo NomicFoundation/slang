@@ -239,6 +239,7 @@ pub struct ParameterStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Option<Rc<TerminalNode>>,
+    pub indexed: bool,
 }
 
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
@@ -264,18 +265,8 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 pub struct EventDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: EventParameters,
     pub anonymous_keyword: bool,
-}
-
-pub type EventParameter = Rc<EventParameterStruct>;
-
-#[derive(Debug)]
-pub struct EventParameterStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub indexed_keyword: bool,
-    pub name: Option<Rc<TerminalNode>>,
+    pub parameters: Parameters,
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
@@ -293,16 +284,7 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 pub struct ErrorDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub members: ErrorParameters,
-}
-
-pub type ErrorParameter = Rc<ErrorParameterStruct>;
-
-#[derive(Debug)]
-pub struct ErrorParameterStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub name: Option<Rc<TerminalNode>>,
+    pub parameters: Parameters,
 }
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
@@ -1311,10 +1293,6 @@ pub type EnumMembers = Vec<Rc<TerminalNode>>;
 pub type Parameters = Vec<Parameter>;
 
 pub type OverridePaths = Vec<IdentifierPath>;
-
-pub type EventParameters = Vec<EventParameter>;
-
-pub type ErrorParameters = Vec<ErrorParameter>;
 
 pub type Statements = Vec<Statement>;
 

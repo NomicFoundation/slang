@@ -271,21 +271,7 @@ pub trait Transformer {
         source: &input::FunctionDefinition,
     ) -> output::FunctionDefinition;
 
-    fn transform_parameter(&mut self, source: &input::Parameter) -> output::Parameter {
-        let type_name = self.transform_type_name(&source.type_name);
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.transform_storage_location(value));
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::ParameterStruct {
-            node_id: source.node_id,
-            type_name,
-            storage_location,
-            name,
-        })
-    }
+    fn transform_parameter(&mut self, source: &input::Parameter) -> output::Parameter;
 
     fn transform_override_specifier(
         &mut self,
@@ -322,34 +308,7 @@ pub trait Transformer {
     fn transform_event_definition(
         &mut self,
         source: &input::EventDefinition,
-    ) -> output::EventDefinition {
-        let name = Rc::clone(&source.name);
-        let parameters = self.transform_event_parameters_declaration(&source.parameters);
-        let anonymous_keyword = source.anonymous_keyword;
-
-        Rc::new(output::EventDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            anonymous_keyword,
-        })
-    }
-
-    fn transform_event_parameter(
-        &mut self,
-        source: &input::EventParameter,
-    ) -> output::EventParameter {
-        let type_name = self.transform_type_name(&source.type_name);
-        let indexed_keyword = source.indexed_keyword;
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::EventParameterStruct {
-            node_id: source.node_id,
-            type_name,
-            indexed_keyword,
-            name,
-        })
-    }
+    ) -> output::EventDefinition;
 
     fn transform_user_defined_value_type_definition(
         &mut self,
@@ -368,30 +327,7 @@ pub trait Transformer {
     fn transform_error_definition(
         &mut self,
         source: &input::ErrorDefinition,
-    ) -> output::ErrorDefinition {
-        let name = Rc::clone(&source.name);
-        let members = self.transform_error_parameters_declaration(&source.members);
-
-        Rc::new(output::ErrorDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            members,
-        })
-    }
-
-    fn transform_error_parameter(
-        &mut self,
-        source: &input::ErrorParameter,
-    ) -> output::ErrorParameter {
-        let type_name = self.transform_type_name(&source.type_name);
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::ErrorParameterStruct {
-            node_id: source.node_id,
-            type_name,
-            name,
-        })
-    }
+    ) -> output::ErrorDefinition;
 
     fn transform_array_type_name(
         &mut self,
@@ -1321,20 +1257,6 @@ pub trait Transformer {
         source: &input::YulReturnsDeclaration,
     ) -> output::YulVariableNames {
         self.transform_yul_variable_names(&source.variables)
-    }
-
-    fn transform_event_parameters_declaration(
-        &mut self,
-        source: &input::EventParametersDeclaration,
-    ) -> output::EventParameters {
-        self.transform_event_parameters(&source.parameters)
-    }
-
-    fn transform_error_parameters_declaration(
-        &mut self,
-        source: &input::ErrorParametersDeclaration,
-    ) -> output::ErrorParameters {
-        self.transform_error_parameters(&source.parameters)
     }
 
     fn transform_import_alias(&mut self, source: &input::ImportAlias) -> Rc<TerminalNode> {
@@ -2494,26 +2416,6 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_identifier_path(item))
-            .collect()
-    }
-
-    fn transform_event_parameters(
-        &mut self,
-        source: &input::EventParameters,
-    ) -> output::EventParameters {
-        source
-            .iter()
-            .map(|item| self.transform_event_parameter(item))
-            .collect()
-    }
-
-    fn transform_error_parameters(
-        &mut self,
-        source: &input::ErrorParameters,
-    ) -> output::ErrorParameters {
-        source
-            .iter()
-            .map(|item| self.transform_error_parameter(item))
             .collect()
     }
 

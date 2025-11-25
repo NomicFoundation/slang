@@ -178,32 +178,6 @@ impl Pass {
         self.binder.insert_scope(Scope::Parameters(scope))
     }
 
-    // Collect parameters in error definition
-    fn collect_error_parameters(&mut self, parameters: &input_ir::ErrorParameters) -> ScopeId {
-        let mut scope = ParametersScope::new();
-        for parameter in parameters {
-            scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
-                self.binder.insert_definition_no_scope(definition);
-            }
-        }
-        self.binder.insert_scope(Scope::Parameters(scope))
-    }
-
-    // Collect parameters in event definition
-    fn collect_event_parameters(&mut self, parameters: &input_ir::EventParameters) -> ScopeId {
-        let mut scope = ParametersScope::new();
-        for parameter in parameters {
-            scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
-                self.binder.insert_definition_no_scope(definition);
-            }
-        }
-        self.binder.insert_scope(Scope::Parameters(scope))
-    }
-
     // This is used to collect only named parameters and insert their
     // definitions into an existing scope. Used mostly for return parameters,
     // where position and types are not used for binding.
@@ -439,7 +413,7 @@ impl Visitor for Pass {
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
-        let parameters_scope_id = self.collect_error_parameters(&node.members);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_error(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
@@ -447,7 +421,7 @@ impl Visitor for Pass {
     }
 
     fn enter_event_definition(&mut self, node: &input_ir::EventDefinition) -> bool {
-        let parameters_scope_id = self.collect_event_parameters(&node.parameters);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_event(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 

@@ -471,6 +471,53 @@ impl Transformer for Pass {
             members,
         })
     }
+
+    fn transform_parameter(&mut self, source: &input::Parameter) -> output::Parameter {
+        let type_name = self.transform_type_name(&source.type_name);
+        let storage_location = source
+            .storage_location
+            .as_ref()
+            .map(|location| self.transform_storage_location(location));
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location,
+            name,
+            indexed: false,
+        })
+    }
+
+    fn transform_event_definition(
+        &mut self,
+        source: &input::EventDefinition,
+    ) -> output::EventDefinition {
+        let name = Rc::clone(&source.name);
+        let anonymous_keyword = source.anonymous_keyword;
+        let parameters = self.transform_event_parameters(&source.parameters.parameters);
+
+        Rc::new(output::EventDefinitionStruct {
+            node_id: source.node_id,
+            name,
+            anonymous_keyword,
+            parameters,
+        })
+    }
+
+    fn transform_error_definition(
+        &mut self,
+        source: &input::ErrorDefinition,
+    ) -> output::ErrorDefinition {
+        let name = Rc::clone(&source.name);
+        let parameters = self.transform_error_parameters(&source.members.parameters);
+
+        Rc::new(output::ErrorDefinitionStruct {
+            node_id: source.node_id,
+            name,
+            parameters,
+        })
+    }
 }
 
 impl Pass {
@@ -1154,6 +1201,53 @@ impl Pass {
             name,
             value: None,
             type_name: None,
+        })
+    }
+
+    fn transform_event_parameters(
+        &mut self,
+        source: &input::EventParameters,
+    ) -> output::Parameters {
+        source
+            .iter()
+            .map(|parameter| self.transform_event_parameter(parameter))
+            .collect()
+    }
+
+    fn transform_event_parameter(&mut self, source: &input::EventParameter) -> output::Parameter {
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = source.name.as_ref().map(Rc::clone);
+        let indexed = source.indexed_keyword;
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location: None,
+            name,
+            indexed,
+        })
+    }
+
+    fn transform_error_parameters(
+        &mut self,
+        source: &input::ErrorParameters,
+    ) -> output::Parameters {
+        source
+            .iter()
+            .map(|parameter| self.transform_error_parameter(parameter))
+            .collect()
+    }
+
+    fn transform_error_parameter(&mut self, source: &input::ErrorParameter) -> output::Parameter {
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location: None,
+            name,
+            indexed: false,
         })
     }
 }
