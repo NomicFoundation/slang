@@ -150,8 +150,7 @@ pub struct StructMemberDefinition {
 
 #[derive(Debug)]
 pub struct TypeParameterDefinition {
-    pub node_id: NodeId,
-    pub identifier: Rc<TerminalNode>,
+    pub(crate) ir_node: output_ir::Parameter,
 }
 
 #[derive(Debug)]
@@ -210,7 +209,7 @@ impl Definition {
             Self::StructMember(struct_member_definition) => {
                 struct_member_definition.ir_node.node_id
             }
-            Self::TypeParameter(parameter_definition) => parameter_definition.node_id,
+            Self::TypeParameter(parameter_definition) => parameter_definition.ir_node.node_id,
             Self::UserDefinedValueType(udvt_definition) => udvt_definition.ir_node.node_id,
             Self::Variable(variable_definition) => variable_definition.ir_node.node_id,
             Self::YulFunction(function_definition) => function_definition.ir_node.node_id,
@@ -260,7 +259,10 @@ impl Definition {
             }
             Self::Struct(struct_definition) => &struct_definition.ir_node.name,
             Self::StructMember(struct_member_definition) => &struct_member_definition.ir_node.name,
-            Self::TypeParameter(parameter_definition) => &parameter_definition.identifier,
+            Self::TypeParameter(parameter_definition) => {
+                // Definitions are created only for named type parameters
+                parameter_definition.ir_node.name.as_ref().unwrap()
+            }
             Self::UserDefinedValueType(udvt_definition) => &udvt_definition.ir_node.name,
             Self::Variable(variable_definition) => &variable_definition.ir_node.name,
             Self::YulFunction(function_definition) => &function_definition.ir_node.name,
@@ -457,10 +459,13 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_type_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_type_parameter(ir_node: &output_ir::Parameter) -> Self {
+        assert!(
+            ir_node.name.is_some(),
+            "Cannot create definition for nameless parameter"
+        );
         Self::TypeParameter(TypeParameterDefinition {
-            node_id,
-            identifier: Rc::clone(identifier),
+            ir_node: Rc::clone(ir_node),
         })
     }
 
