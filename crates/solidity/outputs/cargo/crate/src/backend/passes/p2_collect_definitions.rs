@@ -499,12 +499,12 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_mapping_type(&mut self, node: &input_ir::MappingType) -> bool {
-        if let Some(name) = &node.key_type.name {
-            let definition = Definition::new_type_parameter(node.key_type.node_id, name);
+        if node.key_type.name.is_some() {
+            let definition = Definition::new_type_parameter(&node.key_type);
             self.binder.insert_definition_no_scope(definition);
         }
-        if let Some(name) = &node.value_type.name {
-            let definition = Definition::new_type_parameter(node.value_type.node_id, name);
+        if node.value_type.name.is_some() {
+            let definition = Definition::new_type_parameter(&node.value_type);
             self.binder.insert_definition_no_scope(definition);
         }
 
@@ -513,15 +513,15 @@ impl Visitor for Pass<'_> {
 
     fn enter_function_type(&mut self, node: &input_ir::FunctionType) -> bool {
         for parameter in &node.parameters {
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_type_parameter(parameter.node_id, name);
+            if parameter.name.is_some() {
+                let definition = Definition::new_type_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
             }
         }
         if let Some(returns) = &node.returns {
             for parameter in returns {
-                if let Some(name) = &parameter.name {
-                    let definition = Definition::new_type_parameter(parameter.node_id, name);
+                if parameter.name.is_some() {
+                    let definition = Definition::new_type_parameter(parameter);
                     self.binder.insert_definition_no_scope(definition);
                 }
             }
