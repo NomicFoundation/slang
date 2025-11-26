@@ -15,7 +15,7 @@ pub(crate) struct LALRPOPItem {
     name: Identifier,
     producing_type: Identifier,
     options: Vec<LALRPOPOption>,
-    attributes: RustCode,
+    inline: bool,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -90,7 +90,7 @@ impl TryFrom<&StructItem> for LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options: vec![option],
-            attributes: RustCode("".to_owned()),
+            inline: false,
         })
     }
 
@@ -132,7 +132,7 @@ impl TryFrom<&EnumItem> for LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options,
-            attributes: RustCode("".to_owned()),
+            inline: false,
         })
     }
     type Error = ();
@@ -164,7 +164,7 @@ impl TryFrom<&RepeatedItem> for LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options: vec![option],
-            attributes: RustCode("".to_owned()),
+            inline: false,
         })
     }
 
@@ -199,7 +199,7 @@ impl TryFrom<&SeparatedItem> for LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options: vec![option],
-            attributes: RustCode("".to_owned()),
+            inline: false,
         })
     }
     type Error = ();
@@ -243,7 +243,7 @@ impl From<&KeywordItem> for LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options,
-            attributes: RustCode("#[inline]".to_owned()),
+            inline: true,
         }
     }
 }
@@ -390,7 +390,7 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
             name: item.name.clone(),
             producing_type: PRODUCING_TYPE.into(),
             options: precedence_expressions,
-            attributes: RustCode("".to_owned()),
+            inline: false,
         })
     }
 
