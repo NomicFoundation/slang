@@ -12,11 +12,13 @@ grammar<'source>(source: &'source str);
             <_members: SourceUnitMembers>  => format!("Struct(SourceUnit)[{:?}]", _members),
         
     };
+    #[inline]
     SourceUnitMembers: String = {
          
             <_SourceUnitMember: (SourceUnitMember)*>  => "Repeated(SourceUnitMembers)[_SourceUnitMember]".to_string(),
         
     };
+    #[inline]
     SourceUnitMember: String = {
          
             <_PragmaDirective: PragmaDirective>  => format!("Variant(SourceUnitMember)[{:?}]", _PragmaDirective),
@@ -50,11 +52,13 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Pragma Directives
+    #[inline]
     PragmaDirective: String = {
          
             <_pragma_keyword: PragmaKeyword>  <_pragma: Pragma>  <_semicolon: Semicolon>  => format!("Struct(PragmaDirective)[{:?}, {:?}, {:?}]", _pragma_keyword, _pragma, _semicolon),
         
     };
+    #[inline]
     Pragma: String = {
          
             <_VersionPragma: VersionPragma>  => format!("Variant(Pragma)[{:?}]", _VersionPragma),
@@ -64,16 +68,19 @@ grammar<'source>(source: &'source str);
             <_ExperimentalPragma: ExperimentalPragma>  => format!("Variant(Pragma)[{:?}]", _ExperimentalPragma),
         
     };
+    #[inline]
     AbicoderPragma: String = {
          
             <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => format!("Struct(AbicoderPragma)[{:?}, {:?}]", _abicoder_keyword, _version),
         
     };
+    #[inline]
     ExperimentalPragma: String = {
          
             <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => format!("Struct(ExperimentalPragma)[{:?}, {:?}]", _experimental_keyword, _feature),
         
     };
+    #[inline]
     AbicoderVersion: String = {
          
             <_AbicoderV1Keyword: AbicoderV1Keyword>  => format!("Variant(AbicoderVersion)[{:?}]", _AbicoderV1Keyword),
@@ -81,6 +88,7 @@ grammar<'source>(source: &'source str);
             <_AbicoderV2Keyword: AbicoderV2Keyword>  => format!("Variant(AbicoderVersion)[{:?}]", _AbicoderV2Keyword),
         
     };
+    #[inline]
     ExperimentalFeature: String = {
          
             <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => format!("Variant(ExperimentalFeature)[{:?}]", _ABIEncoderV2Keyword),
@@ -90,21 +98,25 @@ grammar<'source>(source: &'source str);
             <_StringLiteral: StringLiteral>  => format!("Variant(ExperimentalFeature)[{:?}]", _StringLiteral),
         
     };
+    #[inline]
     VersionPragma: String = {
          
             <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => format!("Struct(VersionPragma)[{:?}, {:?}]", _solidity_keyword, _sets),
         
     };
+    #[inline]
     VersionExpressionSets: String = {
          
             <_VersionExpressionSet: (VersionExpressionSet (BarBar VersionExpressionSet)*)>  => "Separated(VersionExpressionSets)[_VersionExpressionSet]".to_string(),
         
     };
+    #[inline]
     VersionExpressionSet: String = {
          
             <_VersionExpression: (VersionExpression)+>  => "Repeated(VersionExpressionSet)[_VersionExpression]".to_string(),
         
     };
+    #[inline]
     VersionExpression: String = {
          
             <_VersionRange: VersionRange>  => format!("Variant(VersionExpression)[{:?}]", _VersionRange),
@@ -112,16 +124,19 @@ grammar<'source>(source: &'source str);
             <_VersionTerm: VersionTerm>  => format!("Variant(VersionExpression)[{:?}]", _VersionTerm),
         
     };
+    #[inline]
     VersionRange: String = {
          
             <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => format!("Struct(VersionRange)[{:?}, {:?}, {:?}]", _start, _minus, _end),
         
     };
+    #[inline]
     VersionTerm: String = {
          
             <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => format!("Struct(VersionTerm)[{:?}, {:?}]", _operator, _literal),
         
     };
+    #[inline]
     VersionOperator: String = {
          
             <_Caret: Caret>  => format!("Variant(VersionOperator)[{:?}]", _Caret),
@@ -148,6 +163,7 @@ grammar<'source>(source: &'source str);
             <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => format!("Variant(VersionLiteral)[{:?}]", _DoubleQuotedVersionLiteral),
         
     };
+    #[inline]
     SimpleVersionLiteral: String = {
          
             <_VersionSpecifier: (VersionSpecifier (Period VersionSpecifier)*)>  => "Separated(SimpleVersionLiteral)[_VersionSpecifier]".to_string(),
@@ -156,11 +172,13 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Import Directives
+    #[inline]
     ImportDirective: String = {
          
             <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => format!("Struct(ImportDirective)[{:?}, {:?}, {:?}]", _import_keyword, _clause, _semicolon),
         
     };
+    #[inline]
     ImportClause: String = {
          
             <_PathImport: PathImport>  => format!("Variant(ImportClause)[{:?}]", _PathImport),
@@ -170,26 +188,31 @@ grammar<'source>(source: &'source str);
             <_ImportDeconstruction: ImportDeconstruction>  => format!("Variant(ImportClause)[{:?}]", _ImportDeconstruction),
         
     };
+    #[inline]
     PathImport: String = {
          
             <_path: StringLiteral>  <_alias: (ImportAlias)?>  => format!("Struct(PathImport)[{:?}, {:?}]", _path, _alias),
         
     };
+    #[inline]
     NamedImport: String = {
          
             <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => format!("Struct(NamedImport)[{:?}, {:?}, {:?}, {:?}]", _asterisk, _alias, _from_keyword, _path),
         
     };
+    #[inline]
     ImportDeconstruction: String = {
          
             <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => format!("Struct(ImportDeconstruction)[{:?}, {:?}, {:?}, {:?}, {:?}]", _open_brace, _symbols, _close_brace, _from_keyword, _path),
         
     };
+    #[inline]
     ImportDeconstructionSymbols: String = {
          
             <_ImportDeconstructionSymbol: (ImportDeconstructionSymbol (Comma ImportDeconstructionSymbol)*)>  => "Separated(ImportDeconstructionSymbols)[_ImportDeconstructionSymbol]".to_string(),
         
     };
+    #[inline]
     ImportDeconstructionSymbol: String = {
          
             <_name: Identifier>  <_alias: (ImportAlias)?>  => format!("Struct(ImportDeconstructionSymbol)[{:?}, {:?}]", _name, _alias),
@@ -208,6 +231,7 @@ grammar<'source>(source: &'source str);
             <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => format!("Struct(UsingDirective)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _using_keyword, _clause, _for_keyword, _target, _global_keyword, _semicolon),
         
     };
+    #[inline]
     UsingClause: String = {
          
             <_IdentifierPath: IdentifierPath>  => format!("Variant(UsingClause)[{:?}]", _IdentifierPath),
@@ -215,26 +239,31 @@ grammar<'source>(source: &'source str);
             <_UsingDeconstruction: UsingDeconstruction>  => format!("Variant(UsingClause)[{:?}]", _UsingDeconstruction),
         
     };
+    #[inline]
     UsingDeconstruction: String = {
          
             <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => format!("Struct(UsingDeconstruction)[{:?}, {:?}, {:?}]", _open_brace, _symbols, _close_brace),
         
     };
+    #[inline]
     UsingDeconstructionSymbols: String = {
          
             <_UsingDeconstructionSymbol: (UsingDeconstructionSymbol (Comma UsingDeconstructionSymbol)*)>  => "Separated(UsingDeconstructionSymbols)[_UsingDeconstructionSymbol]".to_string(),
         
     };
+    #[inline]
     UsingDeconstructionSymbol: String = {
          
             <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => format!("Struct(UsingDeconstructionSymbol)[{:?}, {:?}]", _name, _alias),
         
     };
+    #[inline]
     UsingAlias: String = {
          
             <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => format!("Struct(UsingAlias)[{:?}, {:?}]", _as_keyword, _operator),
         
     };
+    #[inline]
     UsingOperator: String = {
          
             <_Ampersand: Ampersand>  => format!("Variant(UsingOperator)[{:?}]", _Ampersand),
@@ -268,6 +297,7 @@ grammar<'source>(source: &'source str);
             <_Tilde: Tilde>  => format!("Variant(UsingOperator)[{:?}]", _Tilde),
         
     };
+    #[inline]
     UsingTarget: String = {
          
             <_TypeName: TypeName>  => format!("Variant(UsingTarget)[{:?}]", _TypeName),
@@ -1018,19 +1048,19 @@ grammar<'source>(source: &'source str);
 // Rules for section Definitions
 
 // Rules for topic Contracts
-#[inline]
+    #[inline]
     ContractDefinition: String = {
          
             <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => format!("Struct(ContractDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _abstract_keyword, _contract_keyword, _name, _specifiers, _open_brace, _members, _close_brace),
         
     };
-#[inline]
+    #[inline]
     ContractSpecifiers: String = {
          
             <_ContractSpecifier: (ContractSpecifier)*>  => "Repeated(ContractSpecifiers)[_ContractSpecifier]".to_string(),
         
     };
-#[inline]
+    #[inline]
     ContractSpecifier: String = {
          
             <_InheritanceSpecifier: InheritanceSpecifier>  => format!("Variant(ContractSpecifier)[{:?}]", _InheritanceSpecifier),
@@ -1038,37 +1068,37 @@ grammar<'source>(source: &'source str);
             <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => format!("Variant(ContractSpecifier)[{:?}]", _StorageLayoutSpecifier),
         
     };
-#[inline]
+        // Maybe this needs to be inlined
     InheritanceSpecifier: String = {
          
             <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => format!("Struct(InheritanceSpecifier)[{:?}, {:?}]", _is_keyword, _types),
         
     };
-#[inline]
+    #[inline]
     InheritanceTypes: String = {
          
             <_InheritanceType: (InheritanceType (Comma InheritanceType)*)>  => "Separated(InheritanceTypes)[_InheritanceType]".to_string(),
         
     };
-#[inline]
+    #[inline]
     InheritanceType: String = {
          
             <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => format!("Struct(InheritanceType)[{:?}, {:?}]", _type_name, _arguments),
         
     };
-#[inline]
+    #[inline]
     StorageLayoutSpecifier: String = {
          
             <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => format!("Struct(StorageLayoutSpecifier)[{:?}, {:?}, {:?}]", _layout_keyword, _at_keyword, _expression),
         
     };
-#[inline]
+    #[inline]
     ContractMembers: String = {
          
             <_ContractMember: (ContractMember)*>  => "Repeated(ContractMembers)[_ContractMember]".to_string(),
         
     };
-#[inline]
+        // Maybe this needs to be inlined
     ContractMember: String = {
          
             <_UsingDirective: UsingDirective>  => format!("Variant(ContractMember)[{:?}]", _UsingDirective),
@@ -1099,11 +1129,13 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Interfaces
+    #[inline]
     InterfaceDefinition: String = {
          
             <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => format!("Struct(InterfaceDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _interface_keyword, _name, _inheritance, _open_brace, _members, _close_brace),
         
     };
+    #[inline]
     InterfaceMembers: String = {
          
             <_ContractMember: (ContractMember)*>  => "Repeated(InterfaceMembers)[_ContractMember]".to_string(),
@@ -1112,11 +1144,13 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Libraries
+    #[inline]
     LibraryDefinition: String = {
          
             <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => format!("Struct(LibraryDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _library_keyword, _name, _open_brace, _members, _close_brace),
         
     };
+    #[inline]
     LibraryMembers: String = {
          
             <_ContractMember: (ContractMember)*>  => "Repeated(LibraryMembers)[_ContractMember]".to_string(),
@@ -1130,11 +1164,13 @@ grammar<'source>(source: &'source str);
             <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => format!("Struct(StructDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _struct_keyword, _name, _open_brace, _members, _close_brace),
         
     };
+    #[inline]
     StructMembers: String = {
          
             <_StructMember: (StructMember)*>  => "Repeated(StructMembers)[_StructMember]".to_string(),
         
     };
+    #[inline]
     StructMember: String = {
          
             <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => format!("Struct(StructMember)[{:?}, {:?}, {:?}]", _type_name, _name, _semicolon),
@@ -1148,6 +1184,7 @@ grammar<'source>(source: &'source str);
             <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => format!("Struct(EnumDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _enum_keyword, _name, _open_brace, _members, _close_brace),
         
     };
+    #[inline]
     EnumMembers: String = {
          
             <_Identifier: (Identifier (Comma Identifier)*)>  => "Separated(EnumMembers)[_Identifier]".to_string(),
@@ -1156,6 +1193,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Constants
+    #[inline]
     ConstantDefinition: String = {
          
             <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => format!("Struct(ConstantDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _constant_keyword, _name, _equal, _value, _semicolon),
@@ -1164,21 +1202,26 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic State Variables
+    #[inline]
     StateVariableDefinition: String = {
          
+         // TODO: enable
             <_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _name, _name, _value, _semicolon),
         
     };
+    #[inline]
     StateVariableDefinitionValue: String = {
          
             <_equal: Equal>  <_value: Expression>  => format!("Struct(StateVariableDefinitionValue)[{:?}, {:?}]", _equal, _value),
         
     };
+    #[inline]
     StateVariableAttributes: String = {
          
             <_StateVariableAttribute: (StateVariableAttribute)*>  => "Repeated(StateVariableAttributes)[_StateVariableAttribute]".to_string(),
         
     };
+    #[inline]
     StateVariableAttribute: String = {
          
             <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant(StateVariableAttribute)[{:?}]", _OverrideSpecifier),
@@ -1204,6 +1247,7 @@ grammar<'source>(source: &'source str);
             <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => format!("Struct(FunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _function_keyword, _name, _parameters, _attributes, _returns, _body),
         
     };
+    #[inline]
     FunctionName: String = {
          
             <_Identifier: Identifier>  => format!("Variant(FunctionName)[{:?}]", _Identifier),
@@ -1218,21 +1262,25 @@ grammar<'source>(source: &'source str);
             <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => format!("Struct(ParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
         
     };
+    #[inline]
     Parameters: String = {
          
             <_Parameter: (Parameter (Comma Parameter)*)>  => "Separated(Parameters)[_Parameter]".to_string(),
         
     };
+    #[inline]
     Parameter: String = {
          
             <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => format!("Struct(Parameter)[{:?}, {:?}, {:?}]", _type_name, _storage_location, _name),
         
     };
+    #[inline]
     FunctionAttributes: String = {
          
             <_FunctionAttribute: (FunctionAttribute)*>  => "Repeated(FunctionAttributes)[_FunctionAttribute]".to_string(),
         
     };
+    #[inline]
     FunctionAttribute: String = {
          
             <_ModifierInvocation: ModifierInvocation>  => format!("Variant(FunctionAttribute)[{:?}]", _ModifierInvocation),
@@ -1261,11 +1309,13 @@ grammar<'source>(source: &'source str);
             <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => format!("Struct(OverrideSpecifier)[{:?}, {:?}]", _override_keyword, _overridden),
         
     };
+    #[inline]
     OverridePathsDeclaration: String = {
          
             <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => format!("Struct(OverridePathsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _paths, _close_paren),
         
     };
+    #[inline]
     OverridePaths: String = {
          
             <_IdentifierPath: (IdentifierPath (Comma IdentifierPath)*)>  => "Separated(OverridePaths)[_IdentifierPath]".to_string(),
@@ -1283,16 +1333,19 @@ grammar<'source>(source: &'source str);
             <_Semicolon: Semicolon>  => format!("Variant(FunctionBody)[{:?}]", _Semicolon),
         
     };
+    #[inline]
     ConstructorDefinition: String = {
          
             <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => format!("Struct(ConstructorDefinition)[{:?}, {:?}, {:?}, {:?}]", _constructor_keyword, _parameters, _attributes, _body),
         
     };
+    #[inline]
     ConstructorAttributes: String = {
          
             <_ConstructorAttribute: (ConstructorAttribute)*>  => "Repeated(ConstructorAttributes)[_ConstructorAttribute]".to_string(),
         
     };
+    #[inline]
     ConstructorAttribute: String = {
          
             <_ModifierInvocation: ModifierInvocation>  => format!("Variant(ConstructorAttribute)[{:?}]", _ModifierInvocation),
@@ -1304,16 +1357,19 @@ grammar<'source>(source: &'source str);
             <_PublicKeyword: PublicKeyword>  => format!("Variant(ConstructorAttribute)[{:?}]", _PublicKeyword),
         
     };
+    #[inline]
     FallbackFunctionDefinition: String = {
          
             <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => format!("Struct(FallbackFunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _fallback_keyword, _parameters, _attributes, _returns, _body),
         
     };
+    #[inline]
     FallbackFunctionAttributes: String = {
          
             <_FallbackFunctionAttribute: (FallbackFunctionAttribute)*>  => "Repeated(FallbackFunctionAttributes)[_FallbackFunctionAttribute]".to_string(),
         
     };
+    #[inline]
     FallbackFunctionAttribute: String = {
          
             <_ModifierInvocation: ModifierInvocation>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _ModifierInvocation),
@@ -1331,16 +1387,19 @@ grammar<'source>(source: &'source str);
             <_VirtualKeyword: VirtualKeyword>  => format!("Variant(FallbackFunctionAttribute)[{:?}]", _VirtualKeyword),
         
     };
+    #[inline]
     ReceiveFunctionDefinition: String = {
          
             <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => format!("Struct(ReceiveFunctionDefinition)[{:?}, {:?}, {:?}, {:?}]", _receive_keyword, _parameters, _attributes, _body),
         
     };
+    #[inline]
     ReceiveFunctionAttributes: String = {
          
             <_ReceiveFunctionAttribute: (ReceiveFunctionAttribute)*>  => "Repeated(ReceiveFunctionAttributes)[_ReceiveFunctionAttribute]".to_string(),
         
     };
+    #[inline]
     ReceiveFunctionAttribute: String = {
          
             <_ModifierInvocation: ModifierInvocation>  => format!("Variant(ReceiveFunctionAttribute)[{:?}]", _ModifierInvocation),
@@ -1357,16 +1416,19 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Modifiers
+    #[inline]
     ModifierDefinition: String = {
          
             <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => format!("Struct(ModifierDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _modifier_keyword, _name, _parameters, _attributes, _body),
         
     };
+    #[inline]
     ModifierAttributes: String = {
          
             <_ModifierAttribute: (ModifierAttribute)*>  => "Repeated(ModifierAttributes)[_ModifierAttribute]".to_string(),
         
     };
+    #[inline]
     ModifierAttribute: String = {
          
             <_OverrideSpecifier: OverrideSpecifier>  => format!("Variant(ModifierAttribute)[{:?}]", _OverrideSpecifier),
@@ -1387,16 +1449,19 @@ grammar<'source>(source: &'source str);
             <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => format!("Struct(EventDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _event_keyword, _name, _parameters, _anonymous_keyword, _semicolon),
         
     };
+    #[inline]
     EventParametersDeclaration: String = {
          
             <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => format!("Struct(EventParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
         
     };
+    #[inline]
     EventParameters: String = {
          
             <_EventParameter: (EventParameter (Comma EventParameter)*)>  => "Separated(EventParameters)[_EventParameter]".to_string(),
         
     };
+    #[inline]
     EventParameter: String = {
          
             <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => format!("Struct(EventParameter)[{:?}, {:?}, {:?}]", _type_name, _indexed_keyword, _name),
@@ -1418,16 +1483,19 @@ grammar<'source>(source: &'source str);
             <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => format!("Struct(ErrorDefinition)[{:?}, {:?}, {:?}, {:?}]", _error_keyword, _name, _members, _semicolon),
         
     };
+    #[inline]
     ErrorParametersDeclaration: String = {
          
             <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => format!("Struct(ErrorParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
         
     };
+    #[inline]
     ErrorParameters: String = {
          
             <_ErrorParameter: (ErrorParameter (Comma ErrorParameter)*)>  => "Separated(ErrorParameters)[_ErrorParameter]".to_string(),
         
     };
+    #[inline]
     ErrorParameter: String = {
          
             <_type_name: TypeName>  <_name: (Identifier)?>  => format!("Struct(ErrorParameter)[{:?}, {:?}]", _type_name, _name),
@@ -1456,6 +1524,7 @@ grammar<'source>(source: &'source str);
             <_IdentifierPath: IdentifierPath>  => format!("Precedence[{:?}]", _IdentifierPath),
         
     };
+    #[inline]
     NewableTypeName: String = {
          
             <_NewableArrayType: NewableArrayType>  => format!("Variant(NewableTypeName)[{:?}]", _NewableArrayType),
@@ -1465,21 +1534,25 @@ grammar<'source>(source: &'source str);
             <_IdentifierPath: IdentifierPath>  => format!("Variant(NewableTypeName)[{:?}]", _IdentifierPath),
         
     };
+    #[inline]
     NewableArrayType: String = {
          
             <_type_name: TypeName>  <_open_bracket: OpenBracket>  <_close_bracket: CloseBracket>  => format!("Struct(NewableArrayType)[{:?}, {:?}, {:?}]", _type_name, _open_bracket, _close_bracket),
         
     };
+    #[inline]
     FunctionType: String = {
          
             <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: (ReturnsDeclaration)?>  => format!("Struct(FunctionType)[{:?}, {:?}, {:?}, {:?}]", _function_keyword, _parameters, _attributes, _returns),
         
     };
+    #[inline]
     FunctionTypeAttributes: String = {
          
             <_FunctionTypeAttribute: (FunctionTypeAttribute)*>  => "Repeated(FunctionTypeAttributes)[_FunctionTypeAttribute]".to_string(),
         
     };
+    #[inline]
     FunctionTypeAttribute: String = {
          
             <_InternalKeyword: InternalKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _InternalKeyword),
@@ -1497,16 +1570,19 @@ grammar<'source>(source: &'source str);
             <_PayableKeyword: PayableKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _PayableKeyword),
         
     };
+    #[inline]
     MappingType: String = {
          
             <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => format!("Struct(MappingType)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _mapping_keyword, _open_paren, _key_type, _equal_greater_than, _value_type, _close_paren),
         
     };
+    #[inline]
     MappingKey: String = {
          
             <_key_type: MappingKeyType>  <_name: (Identifier)?>  => format!("Struct(MappingKey)[{:?}, {:?}]", _key_type, _name),
         
     };
+    #[inline]
     MappingKeyType: String = {
          
             <_ElementaryType: ElementaryType>  => format!("Variant(MappingKeyType)[{:?}]", _ElementaryType),
@@ -1514,6 +1590,7 @@ grammar<'source>(source: &'source str);
             <_IdentifierPath: IdentifierPath>  => format!("Variant(MappingKeyType)[{:?}]", _IdentifierPath),
         
     };
+    #[inline]
     MappingValue: String = {
          
             <_type_name: TypeName>  <_name: (Identifier)?>  => format!("Struct(MappingValue)[{:?}, {:?}]", _type_name, _name),
@@ -1541,6 +1618,7 @@ grammar<'source>(source: &'source str);
             <_UfixedKeyword: UfixedKeyword>  => format!("Variant(ElementaryType)[{:?}]", _UfixedKeyword),
         
     };
+    #[inline]
     AddressType: String = {
          
             <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => format!("Struct(AddressType)[{:?}, {:?}]", _address_keyword, _payable_keyword),
@@ -1559,6 +1637,7 @@ grammar<'source>(source: &'source str);
             <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => format!("Struct(Block)[{:?}, {:?}, {:?}]", _open_brace, _statements, _close_brace),
         
     };
+    #[inline]
     Statements: String = {
          
             <_Statement: (Statement)*>  => "Repeated(Statements)[_Statement]".to_string(),
@@ -1566,7 +1645,7 @@ grammar<'source>(source: &'source str);
     };
     // By default statements allos dangling `if`s
     Statement = _Statement<"True">;
-
+         
         // A Statement that either allows (DI == "True") or disallows (DI == "False")
         // dangling `if`s
     _Statement<DI>: String = {
@@ -1582,7 +1661,7 @@ grammar<'source>(source: &'source str);
             <_ContinueStatement: ContinueStatement>  => format!("Variant(Statement)[{:?}]", _ContinueStatement),
          
             <_BreakStatement: BreakStatement>  => format!("Variant(Statement)[{:?}]", _BreakStatement),
-            
+         
             <_ReturnStatement: ReturnStatement>  => format!("Variant(Statement)[{:?}]", _ReturnStatement),
          
             <_EmitStatement: EmitStatement>  => format!("Variant(Statement)[{:?}]", _EmitStatement),
@@ -1604,6 +1683,7 @@ grammar<'source>(source: &'source str);
             <_ExpressionStatement: ExpressionStatement>  => format!("Variant(Statement)[{:?}]", _ExpressionStatement),
         
     };
+    #[inline]
     UncheckedBlock: String = {
          
             <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => format!("Struct(UncheckedBlock)[{:?}, {:?}]", _unchecked_keyword, _block),
@@ -1614,16 +1694,19 @@ grammar<'source>(source: &'source str);
             <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(ExpressionStatement)[{:?}, {:?}]", _expression, _semicolon),
         
     };
+    #[inline]
     AssemblyStatement: String = {
          
             <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => format!("Struct(AssemblyStatement)[{:?}, {:?}, {:?}, {:?}]", _assembly_keyword, _label, _flags, _body),
         
     };
+    #[inline]
     AssemblyFlagsDeclaration: String = {
          
             <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => format!("Struct(AssemblyFlagsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _flags, _close_paren),
         
     };
+    #[inline]
     AssemblyFlags: String = {
          
             <_StringLiteral: (StringLiteral (Comma StringLiteral)*)>  => "Separated(AssemblyFlags)[_StringLiteral]".to_string(),
@@ -1641,16 +1724,19 @@ grammar<'source>(source: &'source str);
     };
 
     // TODO: delete (unless we find a better way to remove the conflict between TupleDeconstructionStatement and TupleValue)
+    #[inline]
     TupleDeconstructionElements: String = {
          // A Tuple deconstruction element must have at least one member
             Comma* <_TupleDeconstructionElement: (TupleMember (Comma TupleMember?)*)>  => "Separated(TupleDeconstructionElements)[_TupleDeconstructionElement]".to_string(),
         
     };
+    //#[inline]
     //TupleDeconstructionElement: String = {
     //     
     //        <_member: (TupleMember)?>  => format!("Struct(TupleDeconstructionElement)[{:?}]", _member),
     //    
     //};
+    #[inline]
     TupleMember: String = {
          
             <_TypedTupleMember: TypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _TypedTupleMember),
@@ -1666,11 +1752,13 @@ grammar<'source>(source: &'source str);
             //<_UntypedTupleMember: UntypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _UntypedTupleMember),
         
     };
+    #[inline]
     TypedTupleMember: String = {
          
             <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(TypedTupleMember)[{:?}, {:?}, {:?}]", _type_name, _storage_location, _name),
         
     };
+    #[inline]
     UntypedTupleMember: String = {
          
             <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(UntypedTupleMember)[{:?}, {:?}]", _storage_location, _name),
@@ -1681,11 +1769,13 @@ grammar<'source>(source: &'source str);
             <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("Struct(VariableDeclarationStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _variable_type, _storage_location, _name, _value, _semicolon),
         
     };
+    #[inline]
     VariableDeclarationType: String = {
          
             <_TypeName: TypeName>  => format!("Variant(VariableDeclarationType)[{:?}]", _TypeName),
         
     };
+    #[inline]
     VariableDeclarationValue: String = {
          
             <_equal: Equal>  <_expression: Expression>  => format!("Struct(VariableDeclarationValue)[{:?}, {:?}]", _equal, _expression),
@@ -1703,6 +1793,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Control Statements
+// Maybe inline, check
     IfStatement<DI>: String = {
          
          // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
@@ -1712,16 +1803,20 @@ grammar<'source>(source: &'source str);
         
     };
     // TODO: delete once we're sure this works
+    // #[inline]
     //ElseBranch<DI>: String = {
     //     
     //        <_else_keyword: ElseKeyword>  <_body: Statement<DI>>  => format!("Struct(ElseBranch)[{:?}, {:?}]", _else_keyword, _body),
     //    
     //};
+
+    // TODO Maybe inline
     ForStatement<DI>: String = {
          
             <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("Struct(ForStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _for_keyword, _open_paren, _initialization, _condition, _iterator, _close_paren, _body),
         
     };
+    #[inline]
     ForStatementInitialization: String = {
          
             <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _TupleDeconstructionStatement),
@@ -1733,6 +1828,7 @@ grammar<'source>(source: &'source str);
             <_Semicolon: Semicolon>  => format!("Variant(ForStatementInitialization)[{:?}]", _Semicolon),
         
     };
+    #[inline]
     ForStatementCondition: String = {
          
             <_ExpressionStatement: ExpressionStatement>  => format!("Variant(ForStatementCondition)[{:?}]", _ExpressionStatement),
@@ -1740,31 +1836,37 @@ grammar<'source>(source: &'source str);
             <_Semicolon: Semicolon>  => format!("Variant(ForStatementCondition)[{:?}]", _Semicolon),
         
     };
+    // TODO maybe inline
     WhileStatement<DI>: String = {
          
             <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("Struct(WhileStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _while_keyword, _open_paren, _condition, _close_paren, _body),
         
     };
+    #[inline]
     DoWhileStatement: String = {
          
             <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => format!("Struct(DoWhileStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _do_keyword, _body, _while_keyword, _open_paren, _condition, _close_paren, _semicolon),
         
     };
+    #[inline]
     ContinueStatement: String = {
          
             <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => format!("Struct(ContinueStatement)[{:?}, {:?}]", _continue_keyword, _semicolon),
         
     };
+    #[inline]
     BreakStatement: String = {
          
             <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => format!("Struct(BreakStatement)[{:?}, {:?}]", _break_keyword, _semicolon),
         
     };
+    #[inline]
     ReturnStatement: String = {
          
             <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => format!("Struct(ReturnStatement)[{:?}, {:?}, {:?}]", _return_keyword, _expression, _semicolon),
         
     };
+    #[inline]
     EmitStatement: String = {
          
             <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => format!("Struct(EmitStatement)[{:?}, {:?}, {:?}, {:?}]", _emit_keyword, _event, _arguments, _semicolon),
@@ -1773,26 +1875,31 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Error Handling
+    #[inline]
     TryStatement: String = {
          
             <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)?>  <_body: Block>  <_catch_clauses: CatchClauses>  => format!("Struct(TryStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _try_keyword, _expression, _returns, _body, _catch_clauses),
         
     };
+    #[inline]
     CatchClauses: String = {
          
             <_CatchClause: (CatchClause)+>  => "Repeated(CatchClauses)[_CatchClause]".to_string(),
         
     };
+    #[inline]
     CatchClause: String = {
          
             <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => format!("Struct(CatchClause)[{:?}, {:?}, {:?}]", _catch_keyword, _error, _body),
         
     };
+    #[inline]
     CatchClauseError: String = {
          
             <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => format!("Struct(CatchClauseError)[{:?}, {:?}]", _name, _parameters),
         
     };
+    #[inline]
     RevertStatement: String = {
          
             <_revert_keyword: RevertKeyword>  <_error: (IdentifierPath)?>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => format!("Struct(RevertStatement)[{:?}, {:?}, {:?}, {:?}]", _revert_keyword, _error, _arguments, _semicolon),
@@ -1933,6 +2040,7 @@ grammar<'source>(source: &'source str);
         //    <_Identifier: Identifier>  => format!("Precedence[{:?}]", _Identifier),
         
     };
+    #[inline]
     IndexAccessEnd: String = {
          
             <_colon: Colon>  <_end: (Expression)?>  => format!("Struct(IndexAccessEnd)[{:?}, {:?}]", _colon, _end),
@@ -1948,31 +2056,37 @@ grammar<'source>(source: &'source str);
             <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => format!("Variant(ArgumentsDeclaration)[{:?}]", _NamedArgumentsDeclaration),
         
     };
+    #[inline]
     PositionalArgumentsDeclaration: String = {
          
             <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => format!("Struct(PositionalArgumentsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _arguments, _close_paren),
         
     };
+    #[inline]
     PositionalArguments: String = {
          
             <_Expression: (Expression (Comma Expression)*)>  => "Separated(PositionalArguments)[_Expression]".to_string(),
         
     };
+    #[inline]
     NamedArgumentsDeclaration: String = {
          
             <_open_paren: OpenParen>  <_arguments: (NamedArgumentGroup)?>  <_close_paren: CloseParen>  => format!("Struct(NamedArgumentsDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _arguments, _close_paren),
         
     };
+    #[inline]
     NamedArgumentGroup: String = {
          
             <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => format!("Struct(NamedArgumentGroup)[{:?}, {:?}, {:?}]", _open_brace, _arguments, _close_brace),
         
     };
+    #[inline]
     NamedArguments: String = {
          
             <_NamedArgument: (NamedArgument (Comma NamedArgument)*)>  => "Separated(NamedArguments)[_NamedArgument]".to_string(),
         
     };
+    #[inline]
     CallOptions: String = {
          
             <_NamedArgument: ((NamedArgument (Comma NamedArgument)*))?>  => "Separated(CallOptions)[_NamedArgument]".to_string(),
@@ -1986,38 +2100,45 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Primary Expressions
+    #[inline]
     TypeExpression: String = {
          
             <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => format!("Struct(TypeExpression)[{:?}, {:?}, {:?}, {:?}]", _type_keyword, _open_paren, _type_name, _close_paren),
         
     };
+    #[inline]
     NewExpression: String = {
          
          // I think this is correct, it helps disambiguate between a new expression and a index access
             <_new_keyword: NewKeyword>  <_type_name: NewableTypeName> <pos: PositionalArgumentsDeclaration> => format!("Struct(NewExpression)[{:?}, {:?}, {:?}]", _new_keyword, _type_name, pos),
         
     };
+    #[inline]
     TupleExpression: String = {
          
             <_open_paren: OpenParen>  <_items: TupleValues?>  <_close_paren: CloseParen>  => format!("Struct(TupleExpression)[{:?}, {:?}, {:?}]", _open_paren, _items, _close_paren),
         
     };
+    #[inline]
     TupleValues: String = {
          
             <_TupleValue: (TupleValue (Comma TupleValue)*)>  => "Separated(TupleValues)[_TupleValue]".to_string(),
         
     };
+    #[inline]
     TupleValue: String = {
          
          // A tuple value is an actual value, not a deconstruction
             <_expression: (Expression)>  => format!("Struct(TupleValue)[{:?}]", _expression),
         
     };
+    #[inline]
     ArrayExpression: String = {
          
             <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => format!("Struct(ArrayExpression)[{:?}, {:?}, {:?}]", _open_bracket, _items, _close_bracket),
         
     };
+    #[inline]
     ArrayValues: String = {
          
             <_Expression: (Expression (Comma Expression)*)>  => "Separated(ArrayValues)[_Expression]".to_string(),
@@ -2026,11 +2147,13 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Numbers
+    #[inline]
     HexNumberExpression: String = {
          
             <_literal: HexLiteral>  => format!("Struct(HexNumberExpression)[{:?}]", _literal),
         
     };
+    #[inline]
     DecimalNumberExpression: String = {
          
             <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => format!("Struct(DecimalNumberExpression)[{:?}, {:?}]", _literal, _unit),
@@ -2058,6 +2181,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Strings
+    #[inline]
     StringExpression: String = {
          
             <_StringLiterals: StringLiterals>  => format!("Variant(StringExpression)[{:?}]", _StringLiterals),
@@ -2067,6 +2191,7 @@ grammar<'source>(source: &'source str);
             <_UnicodeStringLiterals: UnicodeStringLiterals>  => format!("Variant(StringExpression)[{:?}]", _UnicodeStringLiterals),
         
     };
+    #[inline]
     StringLiterals: String = {
          
             <_StringLiteral: (StringLiteral)+>  => "Repeated(StringLiterals)[_StringLiteral]".to_string(),
@@ -2079,6 +2204,7 @@ grammar<'source>(source: &'source str);
             <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => format!("Variant(StringLiteral)[{:?}]", _DoubleQuotedStringLiteral),
         
     };
+    #[inline]
     HexStringLiterals: String = {
          
             <_HexStringLiteral: (HexStringLiteral)+>  => "Repeated(HexStringLiterals)[_HexStringLiteral]".to_string(),
@@ -2091,11 +2217,13 @@ grammar<'source>(source: &'source str);
             <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => format!("Variant(HexStringLiteral)[{:?}]", _DoubleQuotedHexStringLiteral),
         
     };
+    #[inline]
     UnicodeStringLiterals: String = {
          
             <_UnicodeStringLiteral: (UnicodeStringLiteral)+>  => "Repeated(UnicodeStringLiterals)[_UnicodeStringLiteral]".to_string(),
         
     };
+    #[inline]
     UnicodeStringLiteral: String = {
          
             <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => format!("Variant(UnicodeStringLiteral)[{:?}]", _SingleQuotedUnicodeStringLiteral),
@@ -2124,11 +2252,13 @@ grammar<'source>(source: &'source str);
             <_open_brace: OpenBrace>  <_statements: YulStatements>  <_close_brace: CloseBrace>  => format!("Struct(YulBlock)[{:?}, {:?}, {:?}]", _open_brace, _statements, _close_brace),
         
     };
+    #[inline]
     YulStatements: String = {
          
             <_YulStatement: (YulStatement)*>  => "Repeated(YulStatements)[_YulStatement]".to_string(),
         
     };
+    #[inline]
     YulStatement: String = {
          
             <_YulBlock: YulBlock>  => format!("Variant(YulStatement)[{:?}]", _YulBlock),
@@ -2154,21 +2284,25 @@ grammar<'source>(source: &'source str);
             <_YulExpression: YulExpression>  => format!("Variant(YulStatement)[{:?}]", _YulExpression),
         
     };
+    #[inline]
     YulFunctionDefinition: String = {
          
             <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => format!("Struct(YulFunctionDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _function_keyword, _name, _parameters, _returns, _body),
         
     };
+    #[inline]
     YulParametersDeclaration: String = {
          
             <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => format!("Struct(YulParametersDeclaration)[{:?}, {:?}, {:?}]", _open_paren, _parameters, _close_paren),
         
     };
+    #[inline]
     YulParameters: String = {
          
             <_YulIdentifier: (YulIdentifier (Comma YulIdentifier)*)>  => "Separated(YulParameters)[_YulIdentifier]".to_string(),
         
     };
+    #[inline]
     YulReturnsDeclaration: String = {
          
             <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => format!("Struct(YulReturnsDeclaration)[{:?}, {:?}]", _minus_greater_than, _variables),
@@ -2179,16 +2313,19 @@ grammar<'source>(source: &'source str);
             <_YulIdentifier: (YulIdentifier (Comma YulIdentifier)*)>  => "Separated(YulVariableNames)[_YulIdentifier]".to_string(),
         
     };
+    #[inline]
     YulVariableDeclarationStatement: String = {
          
             <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => format!("Struct(YulVariableDeclarationStatement)[{:?}, {:?}, {:?}]", _let_keyword, _variables, _value),
         
     };
+    #[inline]
     YulVariableDeclarationValue: String = {
          
             <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => format!("Struct(YulVariableDeclarationValue)[{:?}, {:?}]", _assignment, _expression),
         
     };
+    #[inline]
     YulVariableAssignmentStatement: String = {
          
             <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => format!("Struct(YulVariableAssignmentStatement)[{:?}, {:?}, {:?}]", _variables, _assignment, _expression),
@@ -2199,26 +2336,31 @@ grammar<'source>(source: &'source str);
             <_ColonEqual: ColonEqual>  => format!("Variant(YulAssignmentOperator)[{:?}]", _ColonEqual),
         
     };
+    #[inline]
     YulIfStatement: String = {
          
             <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => format!("Struct(YulIfStatement)[{:?}, {:?}, {:?}]", _if_keyword, _condition, _body),
         
     };
+    #[inline]
     YulForStatement: String = {
          
             <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => format!("Struct(YulForStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _for_keyword, _initialization, _condition, _iterator, _body),
         
     };
+    #[inline]
     YulSwitchStatement: String = {
          
             <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => format!("Struct(YulSwitchStatement)[{:?}, {:?}, {:?}]", _switch_keyword, _expression, _cases),
         
     };
+    #[inline]
     YulSwitchCases: String = {
          
             <_YulSwitchCase: (YulSwitchCase)+>  => "Repeated(YulSwitchCases)[_YulSwitchCase]".to_string(),
         
     };
+    #[inline]
     YulSwitchCase: String = {
          
             <_YulDefaultCase: YulDefaultCase>  => format!("Variant(YulSwitchCase)[{:?}]", _YulDefaultCase),
@@ -2226,26 +2368,31 @@ grammar<'source>(source: &'source str);
             <_YulValueCase: YulValueCase>  => format!("Variant(YulSwitchCase)[{:?}]", _YulValueCase),
         
     };
+    #[inline]
     YulDefaultCase: String = {
          
             <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => format!("Struct(YulDefaultCase)[{:?}, {:?}]", _default_keyword, _body),
         
     };
+    #[inline]
     YulValueCase: String = {
          
             <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => format!("Struct(YulValueCase)[{:?}, {:?}, {:?}]", _case_keyword, _value, _body),
         
     };
+    #[inline]
     YulLeaveStatement: String = {
          
             <_leave_keyword: YulLeaveKeyword>  => format!("Struct(YulLeaveStatement)[{:?}]", _leave_keyword),
         
     };
+    #[inline]
     YulBreakStatement: String = {
          
             <_break_keyword: YulBreakKeyword>  => format!("Struct(YulBreakStatement)[{:?}]", _break_keyword),
         
     };
+    #[inline]
     YulContinueStatement: String = {
          
             <_continue_keyword: YulContinueKeyword>  => format!("Struct(YulContinueStatement)[{:?}]", _continue_keyword),
@@ -2263,11 +2410,13 @@ grammar<'source>(source: &'source str);
             <_YulPath: YulPath>  => format!("Precedence[{:?}]", _YulPath),
         
     };
+    #[inline]
     YulArguments: String = {
          
             <_YulExpression: (YulExpression (Comma YulExpression)*)>  => "Separated(YulArguments)[_YulExpression]".to_string(),
         
     };
+    #[inline]
     YulPaths: String = {
          
             <_YulPath: (YulPath (Comma YulPath)*)>  => "Separated(YulPaths)[_YulPath]".to_string(),
