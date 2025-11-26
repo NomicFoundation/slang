@@ -11,7 +11,8 @@ grammar<'source>(source: &'source str);
     // Rules for topic {{ topic.title }}
     {% for item in topic.items -%}
 
-    {% if item.name == model.parser.root_item -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
+    {% if item.attributes %}{{ item.attributes }}
+    {% endif %}{% if item.name == model.parser.root_item -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
         {% for option in item.options -%}
             {{ option.attributes }} 
             {% for field in option.fields -%}   
