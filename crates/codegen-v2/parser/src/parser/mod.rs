@@ -1,10 +1,12 @@
 mod item;
+mod parser_builder;
 
 use language_v2_definition::model::{Identifier, Language, Section, Topic};
 use serde::Serialize;
 
 use crate::lexer::LexerModel;
 use crate::parser::item::LALRPOPItem;
+use crate::parser::parser_builder::ParserBuilder;
 
 /// A parser model used while generating the parser (and the lexer).
 #[derive(Clone, Debug, Serialize)]
@@ -40,36 +42,7 @@ impl ParserModel {
         Self {
             lexer: LexerModel::from_language(language),
             root_item: language.root_item.clone(),
-            sections: Self::collect_sections(language),
-        }
-    }
-
-    fn collect_sections(language: &Language) -> Vec<ParserSection> {
-        language
-            .sections
-            .iter()
-            .map(Self::collect_section)
-            .collect()
-    }
-
-    fn collect_section(section: &Section) -> ParserSection {
-        ParserSection {
-            title: section.title.clone(),
-            topics: section.topics.iter().map(Self::collect_topic).collect(),
-        }
-    }
-
-    fn collect_topic(topic: &Topic) -> ParserTopic {
-        ParserTopic {
-            title: topic.title.clone(),
-            items: topic
-                .items
-                .iter()
-                .filter_map(|item| {
-                    let name = item.name().clone();
-                    item.try_into().ok()
-                })
-                .collect(),
+            sections: ParserBuilder::new(language).build(),
         }
     }
 }
