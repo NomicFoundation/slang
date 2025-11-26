@@ -1,6 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use std::str::FromStr;
 use crate::lexer::lexemes;
 
 grammar<'source>(source: &'source str);
@@ -1576,35 +1575,34 @@ grammar<'source>(source: &'source str);
             <_IfStatement: IfStatement<DI>>  => format!("Variant(Statement)[{:?}]", _IfStatement),
          
             <_ForStatement: ForStatement<DI>>  => format!("Variant(Statement)[{:?}]", _ForStatement),
-            // TODO: enable
-//         
-//            <_WhileStatement: WhileStatement>  => format!("Variant(Statement)[{:?}]", _WhileStatement),
-//         
-//            <_DoWhileStatement: DoWhileStatement>  => format!("Variant(Statement)[{:?}]", _DoWhileStatement),
-//         
-//            <_ContinueStatement: ContinueStatement>  => format!("Variant(Statement)[{:?}]", _ContinueStatement),
-//         
-//            <_BreakStatement: BreakStatement>  => format!("Variant(Statement)[{:?}]", _BreakStatement),
-//         
-//            <_ReturnStatement: ReturnStatement>  => format!("Variant(Statement)[{:?}]", _ReturnStatement),
-//         
-//            <_EmitStatement: EmitStatement>  => format!("Variant(Statement)[{:?}]", _EmitStatement),
-//         
-//            <_TryStatement: TryStatement>  => format!("Variant(Statement)[{:?}]", _TryStatement),
-//         
-//            <_RevertStatement: RevertStatement>  => format!("Variant(Statement)[{:?}]", _RevertStatement),
-//         
-//            <_AssemblyStatement: AssemblyStatement>  => format!("Variant(Statement)[{:?}]", _AssemblyStatement),
-//         
-//            <_Block: Block>  => format!("Variant(Statement)[{:?}]", _Block),
-//         
-//            <_UncheckedBlock: UncheckedBlock>  => format!("Variant(Statement)[{:?}]", _UncheckedBlock),
-//         
-//            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(Statement)[{:?}]", _TupleDeconstructionStatement),
-//         
-//            <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant(Statement)[{:?}]", _VariableDeclarationStatement),
-//         
-//            <_ExpressionStatement: ExpressionStatement>  => format!("Variant(Statement)[{:?}]", _ExpressionStatement),
+         
+            <_WhileStatement: WhileStatement<DI>>  => format!("Variant(Statement)[{:?}]", _WhileStatement),
+         
+            <_DoWhileStatement: DoWhileStatement>  => format!("Variant(Statement)[{:?}]", _DoWhileStatement),
+         
+            <_ContinueStatement: ContinueStatement>  => format!("Variant(Statement)[{:?}]", _ContinueStatement),
+         
+            <_BreakStatement: BreakStatement>  => format!("Variant(Statement)[{:?}]", _BreakStatement),
+            
+            <_ReturnStatement: ReturnStatement>  => format!("Variant(Statement)[{:?}]", _ReturnStatement),
+         
+            <_EmitStatement: EmitStatement>  => format!("Variant(Statement)[{:?}]", _EmitStatement),
+         
+            <_TryStatement: TryStatement>  => format!("Variant(Statement)[{:?}]", _TryStatement),
+         
+            <_RevertStatement: RevertStatement>  => format!("Variant(Statement)[{:?}]", _RevertStatement),
+         
+            <_AssemblyStatement: AssemblyStatement>  => format!("Variant(Statement)[{:?}]", _AssemblyStatement),
+         
+            <_Block: Block>  => format!("Variant(Statement)[{:?}]", _Block),
+         
+            <_UncheckedBlock: UncheckedBlock>  => format!("Variant(Statement)[{:?}]", _UncheckedBlock),
+         
+            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(Statement)[{:?}]", _TupleDeconstructionStatement),
+         
+            <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant(Statement)[{:?}]", _VariableDeclarationStatement),
+         
+            <_ExpressionStatement: ExpressionStatement>  => format!("Variant(Statement)[{:?}]", _ExpressionStatement),
         
     };
     UncheckedBlock: String = {
@@ -1743,9 +1741,9 @@ grammar<'source>(source: &'source str);
             <_Semicolon: Semicolon>  => format!("Variant(ForStatementCondition)[{:?}]", _Semicolon),
         
     };
-    WhileStatement: String = {
+    WhileStatement<DI>: String = {
          
-            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: Statement>  => format!("Struct(WhileStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _while_keyword, _open_paren, _condition, _close_paren, _body),
+            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("Struct(WhileStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _while_keyword, _open_paren, _condition, _close_paren, _body),
         
     };
     DoWhileStatement: String = {
