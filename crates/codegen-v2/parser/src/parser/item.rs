@@ -12,10 +12,10 @@ struct RustCode(String);
 
 #[derive(Clone, Debug, Serialize)]
 pub(crate) struct LALRPOPItem {
-    name: Identifier,
+    pub name: Identifier,
     producing_type: Identifier,
     options: Vec<LALRPOPOption>,
-    inline: bool,
+    pub inline: bool,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -322,7 +322,7 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
                                 rule: RustCode(item.name.clone().to_string()),
                             }];
 
-                            let mut extra_fields = op
+                            let extra_fields = op
                                 .fields
                                 .iter()
                                 .filter_map(|(name, field)| field_to_lalrpop_field(&name, &field));
