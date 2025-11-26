@@ -1639,28 +1639,36 @@ grammar<'source>(source: &'source str);
          
          // We may face other issues here, but for now we need to handle Tuple deconstructions over general
          // tuples, otherwise we have some conflicts
-             <_elements: TupleExpression>  <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(TupleDeconstructionStatement)[{:?}, {:?}, {:?}, {:?}]", _elements, _equal, _expression, _semicolon),
+             OpenParen <_elements: TupleDeconstructionElements> CloseParen <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(TupleDeconstructionStatement)[{:?}, {:?}, {:?}, {:?}]", _elements, _equal, _expression, _semicolon),
         
     };
 
     // TODO: delete (unless we find a better way to remove the conflict between TupleDeconstructionStatement and TupleValue)
-    //TupleDeconstructionElements: String = {
-    //     
-    //        <_TupleDeconstructionElement: (TupleDeconstructionElement (Comma TupleDeconstructionElement)*)>  => "Separated(TupleDeconstructionElements)[_TupleDeconstructionElement]".to_string(),
-    //    
-    //};
+    TupleDeconstructionElements: String = {
+         // A Tuple deconstruction element must have at least one member
+            Comma* <_TupleDeconstructionElement: (TupleMember (Comma TupleMember?)*)>  => "Separated(TupleDeconstructionElements)[_TupleDeconstructionElement]".to_string(),
+        
+    };
     //TupleDeconstructionElement: String = {
     //     
     //        <_member: (TupleMember)?>  => format!("Struct(TupleDeconstructionElement)[{:?}]", _member),
     //    
     //};
-    //TupleMember: String = {
-    //     
-    //        <_TypedTupleMember: TypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _TypedTupleMember),
-    //     
-    //        <_UntypedTupleMember: UntypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _UntypedTupleMember),
-    //    
-    //};
+    TupleMember: String = {
+         
+            <_TypedTupleMember: TypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _TypedTupleMember),
+         
+         // TODO: research if this is allowed, if so, enable
+         // This is a tuple value assigned to an expression rather than a declaration
+         // However, I'm not sure what's going on with the sotrage location bit, is this allowed?
+         // I think at this moment we're missing a case like:
+         // ```solidity
+         // uint b;
+         // (b, ) = (1, 2);
+         // ```
+            //<_UntypedTupleMember: UntypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _UntypedTupleMember),
+        
+    };
     TypedTupleMember: String = {
          
             <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(TypedTupleMember)[{:?}, {:?}, {:?}]", _type_name, _storage_location, _name),
@@ -1668,8 +1676,7 @@ grammar<'source>(source: &'source str);
     };
     UntypedTupleMember: String = {
          
-         // Otherwise is an expression, this is needed since we're sharing tuple values and tuple deconstruction
-            <_storage_location: (StorageLocation)>  <_name: Identifier>  => format!("Struct(UntypedTupleMember)[{:?}, {:?}]", _storage_location, _name),
+            <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(UntypedTupleMember)[{:?}, {:?}]", _storage_location, _name),
         
     };
     VariableDeclarationStatement: String = {
@@ -1707,7 +1714,7 @@ grammar<'source>(source: &'source str);
             <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<DI>>  => format!("Struct(IfStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
         
     };
-    TODO: delete once we're sure this works
+    // TODO: delete once we're sure this works
     //ElseBranch<DI>: String = {
     //     
     //        <_else_keyword: ElseKeyword>  <_body: Statement<DI>>  => format!("Struct(ElseBranch)[{:?}, {:?}]", _else_keyword, _body),
@@ -1720,8 +1727,7 @@ grammar<'source>(source: &'source str);
     };
     ForStatementInitialization: String = {
          
-         // TODO: enable
-            // <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _TupleDeconstructionStatement),
+            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _TupleDeconstructionStatement),
          
             <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _VariableDeclarationStatement),
          
@@ -1828,7 +1834,7 @@ grammar<'source>(source: &'source str);
             <_Expression: Expression>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
             <_Expression: Expression>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-        // TODO: Not really sure this is correct, we need to check
+        // TODO: Not really sure the associativity is correct, we need to check
         #[precedence(level="2")] #[assoc(side="right")] 
             <_Expression: Expression>  <_question_mark: QuestionMark>  <_true_expression: Expression>  <_colon: Colon>  <_false_expression: Expression>  => format!("Precedence(ConditionalExpression)[{:?}]", _Expression),
         #[precedence(level="3")] #[assoc(side="left")] 
@@ -1996,7 +2002,7 @@ grammar<'source>(source: &'source str);
     };
     TupleExpression: String = {
          
-            <_open_paren: OpenParen>  <_items: TupleValues>  <_close_paren: CloseParen>  => format!("Struct(TupleExpression)[{:?}, {:?}, {:?}]", _open_paren, _items, _close_paren),
+            <_open_paren: OpenParen>  <_items: TupleValues?>  <_close_paren: CloseParen>  => format!("Struct(TupleExpression)[{:?}, {:?}, {:?}]", _open_paren, _items, _close_paren),
         
     };
     TupleValues: String = {
@@ -2006,13 +2012,8 @@ grammar<'source>(source: &'source str);
     };
     TupleValue: String = {
          
-            <_expression: (Expression)?>  => format!("Struct(TupleValue)[{:?}]", _expression),
-            // TupleValues also works for TupleDeconstructionElement now, we should check at a later
-            // stage if the use is correct or not
-                <_TypedTupleMember: TypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _TypedTupleMember),
-         
-            <_UntypedTupleMember: UntypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _UntypedTupleMember),
-
+         // A tuple value is an actual value, not a deconstruction
+            <_expression: (Expression)>  => format!("Struct(TupleValue)[{:?}]", _expression),
         
     };
     ArrayExpression: String = {
