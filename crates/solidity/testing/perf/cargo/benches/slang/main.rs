@@ -70,10 +70,10 @@ macro_rules! slang_define_full_tests {
                 black_box(unit);
             }
 
-            #[library_benchmark(setup = tests::binder::setup)]
+            #[library_benchmark(setup = tests::binder_run::setup)]
             #[bench::test(stringify!($prj))]
             fn [< $prj _binder >](unit: CompilationUnit) -> BinderOutput {
-                black_box(tests::binder::run(unit))
+                black_box(tests::binder_run::run(unit))
             }
 
             #[library_benchmark(setup = tests::binder_cleanup::setup)]
