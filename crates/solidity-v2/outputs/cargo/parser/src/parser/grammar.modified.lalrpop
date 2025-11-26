@@ -1509,21 +1509,24 @@ grammar<'source>(source: &'source str);
 // Rules for section Types
 
 // Rules for topic Advanced Types
+
+#[inline]
     TypeName: String = {
         // TODO: enable
         // It has problems with Access expression
-        //#[precedence(level="1")] 
-        //    <_TypeName: TypeName>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => format!("Precedence(ArrayTypeName)[{:?}]", _TypeName),
-        #[precedence(level="0")] 
+            //<_TypeName: TypeName0>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => format!("Precedence(ArrayTypeName)[{:?}]", _TypeName),
+            <_TypeName: TypeName0>  => _TypeName,
+    }
+
+#[inline]
+    TypeName0: String = {
             <_FunctionType: FunctionType>  => format!("Precedence[{:?}]", _FunctionType),
-        #[precedence(level="0")] 
             <_MappingType: MappingType>  => format!("Precedence[{:?}]", _MappingType),
-        #[precedence(level="0")] 
             <_ElementaryType: ElementaryType>  => format!("Precedence[{:?}]", _ElementaryType),
-        #[precedence(level="0")] 
             <_IdentifierPath: IdentifierPath>  => format!("Precedence[{:?}]", _IdentifierPath),
         
     };
+
     #[inline]
     NewableTypeName: String = {
          
@@ -1540,7 +1543,7 @@ grammar<'source>(source: &'source str);
             <_type_name: TypeName>  <_open_bracket: OpenBracket>  <_close_bracket: CloseBracket>  => format!("Struct(NewableArrayType)[{:?}, {:?}, {:?}]", _type_name, _open_bracket, _close_bracket),
         
     };
-    #[inline]
+    // We dont inline this to break a cycle between type names
     FunctionType: String = {
          
             <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: (ReturnsDeclaration)?>  => format!("Struct(FunctionType)[{:?}, {:?}, {:?}, {:?}]", _function_keyword, _parameters, _attributes, _returns),
@@ -1570,7 +1573,7 @@ grammar<'source>(source: &'source str);
             <_PayableKeyword: PayableKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _PayableKeyword),
         
     };
-    #[inline]
+    // We dont inline this to break a cycle between type names
     MappingType: String = {
          
             <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => format!("Struct(MappingType)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _mapping_keyword, _open_paren, _key_type, _equal_greater_than, _value_type, _close_paren),
@@ -1914,8 +1917,11 @@ grammar<'source>(source: &'source str);
 
 // Rules for topic Base Expressions
 
-Expression0: String = {
-            <_NewExpression: IdentifierPath>  => format!("Precedence(IdentifierPath)[{:?}]", _NewExpression),
+// Ident is a variable to check whether this expression allows identifier paths or not
+// The problem comes from a.b.c, this can be either an identifier path or a member access, we should
+// always prefer identifier paths
+Expression0<Ident>: String = {
+            <_NewExpression: IdentifierPath> if Ident == "True" => format!("Precedence(IdentifierPath)[{:?}]", _NewExpression),
             <_NewExpression: NewExpression>  => format!("Precedence[{:?}]", _NewExpression),
             <_TupleExpression: TupleExpression>  => format!("Precedence[{:?}]", _TupleExpression),
             <_TypeExpression: TypeExpression>  => format!("Precedence[{:?}]", _TypeExpression),
@@ -1932,112 +1938,119 @@ Expression0: String = {
             // TODO: delete
             // it's taken care by the IdentifierPath
         //#[precedence(level="0")] 
-        //    <_Identifier: Identifier>  => format!("Precedence[{:?}]", _Identifier),
+            //<_Identifier: Identifier>  => format!("Precedence[{:?}]", _Identifier),
         
 
-}
-    Expression1: String = {
-            <_Expression: Expression1>  <_operator: Equal>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: BarEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: PlusEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: MinusEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: CaretEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: SlashEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: PercentEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: AsteriskEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: AmpersandEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            <_Expression: Expression1>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression0>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-            Expression0 => <>,
-    }
+};
+    Expression1<Ident>: String = {
+            <_Expression: Expression1<"True">>  <_operator: Equal>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: BarEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression1<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression0<Ident>>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            Expression0<Ident> => <>,
+    };
 
         
-    Expression2: String = {
+
+    Expression2<Ident>: String = {
         // TODO: Not really sure the associativity is correct, we need to check
-            <_Expression: Expression1>  <_question_mark: QuestionMark>  <_true_expression: Expression2>  <_colon: Colon>  <_false_expression: Expression2>  => format!("Precedence(ConditionalExpression)[{:?}]", _Expression),
-            Expression1 => <>,
+            <_Expression: Expression1<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression2<"True">>  <_colon: Colon>  <_false_expression: Expression2<Ident>>  => format!("Precedence(ConditionalExpression)[{:?}]", _Expression),
+            Expression1<Ident> => <>,
     };
-    Expression3: String = {
-            <_Expression: Expression3>  <_operator: BarBar>  <_Expression_2: Expression2>  => format!("Precedence(OrExpression)[{:?}]", _Expression),
-            Expression2 => <>,
+    Expression3<Ident>: String = {
+            <_Expression: Expression3<"True">>  <_operator: BarBar>  <_Expression_2: Expression2<Ident>>  => format!("Precedence(OrExpression)[{:?}]", _Expression),
+            Expression2<Ident> => <>,
     };
-    Expression4: String = {
-            <_Expression: Expression4>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression3>  => format!("Precedence(AndExpression)[{:?}]", _Expression),
-            Expression3 => <>,
+    Expression4<Ident>: String = {
+            <_Expression: Expression4<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression3<Ident>>  => format!("Precedence(AndExpression)[{:?}]", _Expression),
+            Expression3<Ident> => <>,
     };
-    Expression5: String = {
-            <_Expression: Expression5>  <_operator: EqualEqual>  <_Expression_2: Expression4>  => format!("Precedence(EqualityExpression)[{:?}]", _Expression),
-            <_Expression: Expression5>  <_operator: BangEqual>  <_Expression_2: Expression4>  => format!("Precedence(EqualityExpression)[{:?}]", _Expression),
-            Expression4 => <>,
+    Expression5<Ident>: String = {
+            <_Expression: Expression5<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression4<Ident>>  => format!("Precedence(EqualityExpression)[{:?}]", _Expression),
+            <_Expression: Expression5<"True">>  <_operator: BangEqual>  <_Expression_2: Expression4<Ident>>  => format!("Precedence(EqualityExpression)[{:?}]", _Expression),
+            Expression4<Ident> => <>,
     };
-    Expression6: String = {
-            <_Expression: Expression6>  <_operator: LessThan>  <_Expression_2: Expression5>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
-            <_Expression: Expression6>  <_operator: GreaterThan>  <_Expression_2: Expression5>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
-            <_Expression: Expression6>  <_operator: LessThanEqual>  <_Expression_2: Expression5>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
-            <_Expression: Expression6>  <_operator: GreaterThanEqual>  <_Expression_2: Expression5>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
-            Expression5 => <>,
+    Expression6<Ident>: String = {
+            <_Expression: Expression6<"True">>  <_operator: LessThan>  <_Expression_2: Expression5<Ident>>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
+            <_Expression: Expression6<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression5<Ident>>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
+            <_Expression: Expression6<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression5<Ident>>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
+            <_Expression: Expression6<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression5<Ident>>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
+            Expression5<Ident> => <>,
     };
-    Expression7: String = {
-            <_Expression: Expression7>  <_operator: Bar>  <_Expression_2: Expression6>  => format!("Precedence(BitwiseOrExpression)[{:?}]", _Expression),
-            Expression6 => <>,
+    Expression7<Ident>: String = {
+            <_Expression: Expression7<"True">>  <_operator: Bar>  <_Expression_2: Expression6<Ident>>  => format!("Precedence(BitwiseOrExpression)[{:?}]", _Expression),
+            Expression6<Ident> => <>,
     };
-    Expression8: String = {
-            <_Expression: Expression8>  <_operator: Caret>  <_Expression_2: Expression7>  => format!("Precedence(BitwiseXorExpression)[{:?}]", _Expression),
-            Expression7 => <>,
+    Expression8<Ident>: String = {
+            <_Expression: Expression8<"True">>  <_operator: Caret>  <_Expression_2: Expression7<Ident>>  => format!("Precedence(BitwiseXorExpression)[{:?}]", _Expression),
+            Expression7<Ident> => <>,
     };
-    Expression9: String = {
-            <_Expression: Expression9>  <_operator: Ampersand>  <_Expression_2: Expression8>  => format!("Precedence(BitwiseAndExpression)[{:?}]", _Expression),
-            Expression8 => <>,
+    Expression9<Ident>: String = {
+            <_Expression: Expression9<"True">>  <_operator: Ampersand>  <_Expression_2: Expression8<Ident>>  => format!("Precedence(BitwiseAndExpression)[{:?}]", _Expression),
+            Expression8<Ident> => <>,
     };
-    Expression10: String = {
-            <_Expression: Expression10>  <_operator: LessThanLessThan>  <_Expression_2: Expression9>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
-            <_Expression: Expression10>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
-            <_Expression: Expression10>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
-            Expression9 => <>,
+    Expression10<Ident>: String = {
+            <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
+            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
+            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
+            Expression9<Ident> => <>,
     };
-    Expression11: String = {
-            <_Expression: Expression11>  <_operator: Plus>  <_Expression_2: Expression10>  => format!("Precedence(AdditiveExpression)[{:?}]", _Expression),
-            <_Expression: Expression11>  <_operator: Minus>  <_Expression_2: Expression10>  => format!("Precedence(AdditiveExpression)[{:?}]", _Expression),
-            Expression10 => <>,
+    Expression11<Ident>: String = {
+            <_Expression: Expression11<"True">>  <_operator: Plus>  <_Expression_2: Expression10<Ident>>  => format!("Precedence(AdditiveExpression)[{:?}]", _Expression),
+            <_Expression: Expression11<"True">>  <_operator: Minus>  <_Expression_2: Expression10<Ident>>  => format!("Precedence(AdditiveExpression)[{:?}]", _Expression),
+            Expression10<Ident> => <>,
     };
-    Expression12: String = {
-            <_Expression: Expression12>  <_operator: Asterisk>  <_Expression_2: Expression11>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
-            <_Expression: Expression12>  <_operator: Slash>  <_Expression_2: Expression11>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
-            <_Expression: Expression12>  <_operator: Percent>  <_Expression_2: Expression11>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
-            Expression11 => <>,
+    Expression12<Ident>: String = {
+            <_Expression: Expression12<"True">>  <_operator: Asterisk>  <_Expression_2: Expression11<Ident>>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
+            <_Expression: Expression12<"True">>  <_operator: Slash>  <_Expression_2: Expression11<Ident>>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
+            <_Expression: Expression12<"True">>  <_operator: Percent>  <_Expression_2: Expression11<Ident>>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
+            Expression11<Ident> => <>,
     };
-    Expression13: String = {
-            <_Expression: Expression12>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression13>  => format!("Precedence(ExponentiationExpression)[{:?}]", _Expression),
-            Expression12 => <>,
+    Expression13<Ident>: String = {
+            <_Expression: Expression12<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression13<Ident>>  => format!("Precedence(ExponentiationExpression)[{:?}]", _Expression),
+            Expression12<Ident> => <>,
     };
-    Expression14: String = {
-            <_Expression: Expression14>  <_operator: PlusPlus>  => format!("Precedence(PostfixExpression)[{:?}]", _Expression),
-            <_Expression: Expression14>  <_operator: MinusMinus>  => format!("Precedence(PostfixExpression)[{:?}]", _Expression),
-            Expression13 => <>,
+    Expression14<Ident>: String = {
+            <_Expression: Expression14<"True">>  <_operator: PlusPlus>  => format!("Precedence(PostfixExpression)[{:?}]", _Expression),
+            <_Expression: Expression14<"True">>  <_operator: MinusMinus>  => format!("Precedence(PostfixExpression)[{:?}]", _Expression),
+            Expression13<Ident> => <>,
     };
-    Expression15: String = {
-            <_operator: PlusPlus>  <_Expression: Expression15>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
-            <_operator: MinusMinus>  <_Expression: Expression15>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
-            <_operator: Tilde>  <_Expression: Expression15>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
-            <_operator: Bang>  <_Expression: Expression15>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
-            <_operator: Minus>  <_Expression: Expression15>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
-            <_operator: DeleteKeyword>  <_Expression: Expression15>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
-            Expression14 => <>,
+    Expression15<Ident>: String = {
+            <_operator: PlusPlus>  <_Expression: Expression15<Ident>>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
+            <_operator: MinusMinus>  <_Expression: Expression15<Ident>>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
+            <_operator: Tilde>  <_Expression: Expression15<Ident>>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
+            <_operator: Bang>  <_Expression: Expression15<Ident>>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
+            <_operator: Minus>  <_Expression: Expression15<Ident>>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
+            <_operator: DeleteKeyword>  <_Expression: Expression15<Ident>>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
+            Expression14<Ident> => <>,
     };
-    Expression16: String = {
-            <_Expression: Expression16>  <_arguments: ArgumentsDeclaration>  => format!("Precedence(FunctionCallExpression)[{:?}]", _Expression),
-            Expression15 => <>,
+    Expression16<Ident>: String = {
+            // This sets it back to "True" since there's a separator now, is this reasonable?
+            <_Expression: Expression16<"True">>  <_arguments: ArgumentsDeclaration>  => format!("Precedence(FunctionCallExpression)[{:?}]", _Expression),
+            Expression15<Ident> => <>,
     };
-    Expression17: String = {
+    Expression17<Ident>: String = {
         // TODO: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()
             //<_Expresxsion: Expression16>  <_open_brace: OpenBrace>  <_options: CallOptions> <_close_brace: CloseBrace>  => format!("Precedence(CallOptionsExpression)[{:?}]", _Expression),
-            Expression16 => <>,
+            Expression16<Ident> => <>,
     };
+    Expression18<Ident>: String = {
+            <_Expression: Expression18<"False">>  <_period: Period>  <_member: Identifier>  => format!("Precedence(MemberAccessExpression)[{:?}]", _Expression),
+            Expression17<Ident> => <>,
+    };
+
     Expression19: String = {
-            <_Expression: Expression19>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => format!("Precedence(IndexAccessExpression)[{:?}]", _Expression),
-            Expression17 => <>,
+            <_Expression: Expression19>  <_open_bracket: OpenBracket>  <_start: (Expression19)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => format!("Precedence(IndexAccessExpression)[{:?}]", _Expression),
+            Expression18<"True"> => <>,
     };
 
     #[inline]
@@ -2112,7 +2125,8 @@ Expression0: String = {
     #[inline]
     NewExpression: String = {
          
-         // I think this is correct, it helps disambiguate between a new expression and a index access
+         // I think Adding the arguments here is correct, it helps disambiguate between a new expression and a index access
+         // TODO: Check if the newable type name makes sense
             <_new_keyword: NewKeyword>  <_type_name: NewableTypeName> <pos: PositionalArgumentsDeclaration> => format!("Struct(NewExpression)[{:?}, {:?}, {:?}]", _new_keyword, _type_name, pos),
         
     };
