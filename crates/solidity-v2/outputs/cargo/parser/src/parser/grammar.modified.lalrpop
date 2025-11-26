@@ -1074,27 +1074,26 @@ grammar<'source>(source: &'source str);
             <_UsingDirective: UsingDirective>  => format!("Variant(ContractMember)[{:?}]", _UsingDirective),
          
             <_FunctionDefinition: FunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _FunctionDefinition),
-// TODO: enable
-//         
-//            <_ConstructorDefinition: ConstructorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ConstructorDefinition),
-//         
-//            <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _ReceiveFunctionDefinition),
-//         
-//            <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _FallbackFunctionDefinition),
-//         
-//            <_ModifierDefinition: ModifierDefinition>  => format!("Variant(ContractMember)[{:?}]", _ModifierDefinition),
-//         
-//            <_StructDefinition: StructDefinition>  => format!("Variant(ContractMember)[{:?}]", _StructDefinition),
-//         
-//            <_EnumDefinition: EnumDefinition>  => format!("Variant(ContractMember)[{:?}]", _EnumDefinition),
-//         
-//            <_EventDefinition: EventDefinition>  => format!("Variant(ContractMember)[{:?}]", _EventDefinition),
-//         
-//            <_ErrorDefinition: ErrorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ErrorDefinition),
-//         
-//            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant(ContractMember)[{:?}]", _UserDefinedValueTypeDefinition),
-//         
-//            <_StateVariableDefinition: StateVariableDefinition>  => format!("Variant(ContractMember)[{:?}]", _StateVariableDefinition),
+         
+            <_ConstructorDefinition: ConstructorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ConstructorDefinition),
+         
+            <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _ReceiveFunctionDefinition),
+         
+            <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _FallbackFunctionDefinition),
+         
+            <_ModifierDefinition: ModifierDefinition>  => format!("Variant(ContractMember)[{:?}]", _ModifierDefinition),
+         
+            <_StructDefinition: StructDefinition>  => format!("Variant(ContractMember)[{:?}]", _StructDefinition),
+         
+            <_EnumDefinition: EnumDefinition>  => format!("Variant(ContractMember)[{:?}]", _EnumDefinition),
+         
+            <_EventDefinition: EventDefinition>  => format!("Variant(ContractMember)[{:?}]", _EventDefinition),
+         
+            <_ErrorDefinition: ErrorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ErrorDefinition),
+         
+            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant(ContractMember)[{:?}]", _UserDefinedValueTypeDefinition),
+         
+            <_StateVariableDefinition: StateVariableDefinition>  => format!("Variant(ContractMember)[{:?}]", _StateVariableDefinition),
         
     };
     
