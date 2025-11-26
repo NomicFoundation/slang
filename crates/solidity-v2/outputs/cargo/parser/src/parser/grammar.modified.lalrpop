@@ -26,25 +26,26 @@ grammar<'source>(source: &'source str);
          
             <_ContractDefinition: ContractDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _ContractDefinition),
          
-            <_InterfaceDefinition: InterfaceDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _InterfaceDefinition),
-         
-            <_LibraryDefinition: LibraryDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _LibraryDefinition),
-         
-            <_StructDefinition: StructDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _StructDefinition),
-         
-            <_EnumDefinition: EnumDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _EnumDefinition),
-         
-            <_FunctionDefinition: FunctionDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _FunctionDefinition),
-         
-            <_ErrorDefinition: ErrorDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _ErrorDefinition),
-         
-            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _UserDefinedValueTypeDefinition),
-         
-            <_UsingDirective: UsingDirective>  => format!("Variant(SourceUnitMember)[{:?}]", _UsingDirective),
-         
-            <_EventDefinition: EventDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _EventDefinition),
-         
-            <_ConstantDefinition: ConstantDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _ConstantDefinition),
+// TODO: enable
+//            <_InterfaceDefinition: InterfaceDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _InterfaceDefinition),
+//         
+//            <_LibraryDefinition: LibraryDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _LibraryDefinition),
+//         
+//            <_StructDefinition: StructDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _StructDefinition),
+//         
+//            <_EnumDefinition: EnumDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _EnumDefinition),
+//         
+//            <_FunctionDefinition: FunctionDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _FunctionDefinition),
+//         
+//            <_ErrorDefinition: ErrorDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _ErrorDefinition),
+//         
+//            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _UserDefinedValueTypeDefinition),
+//         
+//            <_UsingDirective: UsingDirective>  => format!("Variant(SourceUnitMember)[{:?}]", _UsingDirective),
+//         
+//            <_EventDefinition: EventDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _EventDefinition),
+//         
+//            <_ConstantDefinition: ConstantDefinition>  => format!("Variant(SourceUnitMember)[{:?}]", _ConstantDefinition),
         
     };
     
@@ -1074,26 +1075,27 @@ grammar<'source>(source: &'source str);
             <_UsingDirective: UsingDirective>  => format!("Variant(ContractMember)[{:?}]", _UsingDirective),
          
             <_FunctionDefinition: FunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _FunctionDefinition),
-         
-            <_ConstructorDefinition: ConstructorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ConstructorDefinition),
-         
-            <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _ReceiveFunctionDefinition),
-         
-            <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _FallbackFunctionDefinition),
-         
-            <_ModifierDefinition: ModifierDefinition>  => format!("Variant(ContractMember)[{:?}]", _ModifierDefinition),
-         
-            <_StructDefinition: StructDefinition>  => format!("Variant(ContractMember)[{:?}]", _StructDefinition),
-         
-            <_EnumDefinition: EnumDefinition>  => format!("Variant(ContractMember)[{:?}]", _EnumDefinition),
-         
-            <_EventDefinition: EventDefinition>  => format!("Variant(ContractMember)[{:?}]", _EventDefinition),
-         
-            <_ErrorDefinition: ErrorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ErrorDefinition),
-         
-            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant(ContractMember)[{:?}]", _UserDefinedValueTypeDefinition),
-         
-            <_StateVariableDefinition: StateVariableDefinition>  => format!("Variant(ContractMember)[{:?}]", _StateVariableDefinition),
+// TODO: enable
+//         
+//            <_ConstructorDefinition: ConstructorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ConstructorDefinition),
+//         
+//            <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _ReceiveFunctionDefinition),
+//         
+//            <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => format!("Variant(ContractMember)[{:?}]", _FallbackFunctionDefinition),
+//         
+//            <_ModifierDefinition: ModifierDefinition>  => format!("Variant(ContractMember)[{:?}]", _ModifierDefinition),
+//         
+//            <_StructDefinition: StructDefinition>  => format!("Variant(ContractMember)[{:?}]", _StructDefinition),
+//         
+//            <_EnumDefinition: EnumDefinition>  => format!("Variant(ContractMember)[{:?}]", _EnumDefinition),
+//         
+//            <_EventDefinition: EventDefinition>  => format!("Variant(ContractMember)[{:?}]", _EventDefinition),
+//         
+//            <_ErrorDefinition: ErrorDefinition>  => format!("Variant(ContractMember)[{:?}]", _ErrorDefinition),
+//         
+//            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("Variant(ContractMember)[{:?}]", _UserDefinedValueTypeDefinition),
+//         
+//            <_StateVariableDefinition: StateVariableDefinition>  => format!("Variant(ContractMember)[{:?}]", _StateVariableDefinition),
         
     };
     
@@ -1442,8 +1444,10 @@ grammar<'source>(source: &'source str);
 
 // Rules for topic Advanced Types
     TypeName: String = {
-        #[precedence(level="1")] 
-            <_TypeName: TypeName>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => format!("Precedence(ArrayTypeName)[{:?}]", _TypeName),
+        // TODO: enable
+        // It has problems with Access expression
+        //#[precedence(level="1")] 
+        //    <_TypeName: TypeName>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => format!("Precedence(ArrayTypeName)[{:?}]", _TypeName),
         #[precedence(level="0")] 
             <_FunctionType: FunctionType>  => format!("Precedence[{:?}]", _FunctionType),
         #[precedence(level="0")] 
@@ -1562,39 +1566,45 @@ grammar<'source>(source: &'source str);
             <_Statement: (Statement)*>  => "Repeated(Statements)[_Statement]".to_string(),
         
     };
-    Statement: String = {
+    // By default statements allos dangling `if`s
+    Statement = _Statement<"True">;
+
+        // A Statement that either allows (DI == "True") or disallows (DI == "False")
+        // dangling `if`s
+    _Statement<DI>: String = {
          
-            <_IfStatement: IfStatement>  => format!("Variant(Statement)[{:?}]", _IfStatement),
+            <_IfStatement: IfStatement<DI>>  => format!("Variant(Statement)[{:?}]", _IfStatement),
          
-            <_ForStatement: ForStatement>  => format!("Variant(Statement)[{:?}]", _ForStatement),
-         
-            <_WhileStatement: WhileStatement>  => format!("Variant(Statement)[{:?}]", _WhileStatement),
-         
-            <_DoWhileStatement: DoWhileStatement>  => format!("Variant(Statement)[{:?}]", _DoWhileStatement),
-         
-            <_ContinueStatement: ContinueStatement>  => format!("Variant(Statement)[{:?}]", _ContinueStatement),
-         
-            <_BreakStatement: BreakStatement>  => format!("Variant(Statement)[{:?}]", _BreakStatement),
-         
-            <_ReturnStatement: ReturnStatement>  => format!("Variant(Statement)[{:?}]", _ReturnStatement),
-         
-            <_EmitStatement: EmitStatement>  => format!("Variant(Statement)[{:?}]", _EmitStatement),
-         
-            <_TryStatement: TryStatement>  => format!("Variant(Statement)[{:?}]", _TryStatement),
-         
-            <_RevertStatement: RevertStatement>  => format!("Variant(Statement)[{:?}]", _RevertStatement),
-         
-            <_AssemblyStatement: AssemblyStatement>  => format!("Variant(Statement)[{:?}]", _AssemblyStatement),
-         
-            <_Block: Block>  => format!("Variant(Statement)[{:?}]", _Block),
-         
-            <_UncheckedBlock: UncheckedBlock>  => format!("Variant(Statement)[{:?}]", _UncheckedBlock),
-         
-            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(Statement)[{:?}]", _TupleDeconstructionStatement),
-         
-            <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant(Statement)[{:?}]", _VariableDeclarationStatement),
-         
-            <_ExpressionStatement: ExpressionStatement>  => format!("Variant(Statement)[{:?}]", _ExpressionStatement),
+            <_ForStatement: ForStatement<DI>>  => format!("Variant(Statement)[{:?}]", _ForStatement),
+            // TODO: enable
+//         
+//            <_WhileStatement: WhileStatement>  => format!("Variant(Statement)[{:?}]", _WhileStatement),
+//         
+//            <_DoWhileStatement: DoWhileStatement>  => format!("Variant(Statement)[{:?}]", _DoWhileStatement),
+//         
+//            <_ContinueStatement: ContinueStatement>  => format!("Variant(Statement)[{:?}]", _ContinueStatement),
+//         
+//            <_BreakStatement: BreakStatement>  => format!("Variant(Statement)[{:?}]", _BreakStatement),
+//         
+//            <_ReturnStatement: ReturnStatement>  => format!("Variant(Statement)[{:?}]", _ReturnStatement),
+//         
+//            <_EmitStatement: EmitStatement>  => format!("Variant(Statement)[{:?}]", _EmitStatement),
+//         
+//            <_TryStatement: TryStatement>  => format!("Variant(Statement)[{:?}]", _TryStatement),
+//         
+//            <_RevertStatement: RevertStatement>  => format!("Variant(Statement)[{:?}]", _RevertStatement),
+//         
+//            <_AssemblyStatement: AssemblyStatement>  => format!("Variant(Statement)[{:?}]", _AssemblyStatement),
+//         
+//            <_Block: Block>  => format!("Variant(Statement)[{:?}]", _Block),
+//         
+//            <_UncheckedBlock: UncheckedBlock>  => format!("Variant(Statement)[{:?}]", _UncheckedBlock),
+//         
+//            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(Statement)[{:?}]", _TupleDeconstructionStatement),
+//         
+//            <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant(Statement)[{:?}]", _VariableDeclarationStatement),
+//         
+//            <_ExpressionStatement: ExpressionStatement>  => format!("Variant(Statement)[{:?}]", _ExpressionStatement),
         
     };
     UncheckedBlock: String = {
@@ -1627,26 +1637,30 @@ grammar<'source>(source: &'source str);
 // Rules for topic Declaration Statements
     TupleDeconstructionStatement: String = {
          
-            <_open_paren: OpenParen>  <_elements: TupleDeconstructionElements>  <_close_paren: CloseParen>  <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(TupleDeconstructionStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _open_paren, _elements, _close_paren, _equal, _expression, _semicolon),
+         // We may face other issues here, but for now we need to handle Tuple deconstructions over general
+         // tuples, otherwise we have some conflicts
+             <_elements: TupleExpression>  <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("Struct(TupleDeconstructionStatement)[{:?}, {:?}, {:?}, {:?}]", _elements, _equal, _expression, _semicolon),
         
     };
-    TupleDeconstructionElements: String = {
-         
-            <_TupleDeconstructionElement: (TupleDeconstructionElement (Comma TupleDeconstructionElement)*)>  => "Separated(TupleDeconstructionElements)[_TupleDeconstructionElement]".to_string(),
-        
-    };
-    TupleDeconstructionElement: String = {
-         
-            <_member: (TupleMember)?>  => format!("Struct(TupleDeconstructionElement)[{:?}]", _member),
-        
-    };
-    TupleMember: String = {
-         
-            <_TypedTupleMember: TypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _TypedTupleMember),
-         
-            <_UntypedTupleMember: UntypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _UntypedTupleMember),
-        
-    };
+
+    // TODO: delete (unless we find a better way to remove the conflict between TupleDeconstructionStatement and TupleValue)
+    //TupleDeconstructionElements: String = {
+    //     
+    //        <_TupleDeconstructionElement: (TupleDeconstructionElement (Comma TupleDeconstructionElement)*)>  => "Separated(TupleDeconstructionElements)[_TupleDeconstructionElement]".to_string(),
+    //    
+    //};
+    //TupleDeconstructionElement: String = {
+    //     
+    //        <_member: (TupleMember)?>  => format!("Struct(TupleDeconstructionElement)[{:?}]", _member),
+    //    
+    //};
+    //TupleMember: String = {
+    //     
+    //        <_TypedTupleMember: TypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _TypedTupleMember),
+    //     
+    //        <_UntypedTupleMember: UntypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _UntypedTupleMember),
+    //    
+    //};
     TypedTupleMember: String = {
          
             <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(TypedTupleMember)[{:?}, {:?}, {:?}]", _type_name, _storage_location, _name),
@@ -1654,7 +1668,8 @@ grammar<'source>(source: &'source str);
     };
     UntypedTupleMember: String = {
          
-            <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("Struct(UntypedTupleMember)[{:?}, {:?}]", _storage_location, _name),
+         // Otherwise is an expression, this is needed since we're sharing tuple values and tuple deconstruction
+            <_storage_location: (StorageLocation)>  <_name: Identifier>  => format!("Struct(UntypedTupleMember)[{:?}, {:?}]", _storage_location, _name),
         
     };
     VariableDeclarationStatement: String = {
@@ -1684,24 +1699,29 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Control Statements
-    IfStatement: String = {
+    IfStatement<DI>: String = {
          
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: Statement>  <_else_branch: (ElseBranch)?>  => format!("Struct(IfStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
+         // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True" => format!("Struct(IfStatement)[{:?}, {:?}, {:?}, {:?}, {:?}]", _if_keyword, _open_paren, _condition, _close_paren, _body),
+            // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<DI>>  => format!("Struct(IfStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
         
     };
-    ElseBranch: String = {
+    TODO: delete once we're sure this works
+    //ElseBranch<DI>: String = {
+    //     
+    //        <_else_keyword: ElseKeyword>  <_body: Statement<DI>>  => format!("Struct(ElseBranch)[{:?}, {:?}]", _else_keyword, _body),
+    //    
+    //};
+    ForStatement<DI>: String = {
          
-            <_else_keyword: ElseKeyword>  <_body: Statement>  => format!("Struct(ElseBranch)[{:?}, {:?}]", _else_keyword, _body),
-        
-    };
-    ForStatement: String = {
-         
-            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: Statement>  => format!("Struct(ForStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _for_keyword, _open_paren, _initialization, _condition, _iterator, _close_paren, _body),
+            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("Struct(ForStatement)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _for_keyword, _open_paren, _initialization, _condition, _iterator, _close_paren, _body),
         
     };
     ForStatementInitialization: String = {
          
-            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _TupleDeconstructionStatement),
+         // TODO: enable
+            // <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _TupleDeconstructionStatement),
          
             <_VariableDeclarationStatement: VariableDeclarationStatement>  => format!("Variant(ForStatementInitialization)[{:?}]", _VariableDeclarationStatement),
          
@@ -1808,7 +1828,8 @@ grammar<'source>(source: &'source str);
             <_Expression: Expression>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
             <_Expression: Expression>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
-        #[precedence(level="2")] 
+        // TODO: Not really sure this is correct, we need to check
+        #[precedence(level="2")] #[assoc(side="right")] 
             <_Expression: Expression>  <_question_mark: QuestionMark>  <_true_expression: Expression>  <_colon: Colon>  <_false_expression: Expression>  => format!("Precedence(ConditionalExpression)[{:?}]", _Expression),
         #[precedence(level="3")] #[assoc(side="left")] 
             <_Expression: Expression>  <_operator: BarBar>  <_Expression_2: Expression>  => format!("Precedence(OrExpression)[{:?}]", _Expression),
@@ -1868,12 +1889,15 @@ grammar<'source>(source: &'source str);
             <_operator: DeleteKeyword>  <_Expression: Expression>  => format!("Precedence(PrefixExpression)[{:?}]", _Expression),
         #[precedence(level="16")] 
             <_Expression: Expression>  <_arguments: ArgumentsDeclaration>  => format!("Precedence(FunctionCallExpression)[{:?}]", _Expression),
-        #[precedence(level="17")] 
-            <_Expression: Expression>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => format!("Precedence(CallOptionsExpression)[{:?}]", _Expression),
-        #[precedence(level="18")] 
-            <_Expression: Expression>  <_period: Period>  <_member: Identifier>  => format!("Precedence(MemberAccessExpression)[{:?}]", _Expression),
+        // TODO: enable, doesn't work nicely with try statements
+        // in particular try foo {...} ()
+        //#[precedence(level="17")] 
+        //    <_Expression: Expression>  <_open_brace: OpenBrace>  <_options: CallOptions> <_close_brace: CloseBrace>  => format!("Precedence(CallOptionsExpression)[{:?}]", _Expression),
         #[precedence(level="19")] 
             <_Expression: Expression>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => format!("Precedence(IndexAccessExpression)[{:?}]", _Expression),
+            // Make sure this works, no longer treating member access as an expression
+        #[precedence(level="0")] 
+            <_NewExpression: IdentifierPath>  => format!("Precedence(IdentifierPath)[{:?}]", _NewExpression),
         #[precedence(level="0")] 
             <_NewExpression: NewExpression>  => format!("Precedence[{:?}]", _NewExpression),
         #[precedence(level="0")] 
@@ -1900,8 +1924,10 @@ grammar<'source>(source: &'source str);
             <_TrueKeyword: TrueKeyword>  => format!("Precedence[{:?}]", _TrueKeyword),
         #[precedence(level="0")] 
             <_FalseKeyword: FalseKeyword>  => format!("Precedence[{:?}]", _FalseKeyword),
-        #[precedence(level="0")] 
-            <_Identifier: Identifier>  => format!("Precedence[{:?}]", _Identifier),
+            // TODO: delete
+            // it's taken care by the IdentifierPath
+        //#[precedence(level="0")] 
+        //    <_Identifier: Identifier>  => format!("Precedence[{:?}]", _Identifier),
         
     };
     IndexAccessEnd: String = {
@@ -1964,7 +1990,8 @@ grammar<'source>(source: &'source str);
     };
     NewExpression: String = {
          
-            <_new_keyword: NewKeyword>  <_type_name: NewableTypeName>  => format!("Struct(NewExpression)[{:?}, {:?}]", _new_keyword, _type_name),
+         // I think this is correct, it helps disambiguate between a new expression and a index access
+            <_new_keyword: NewKeyword>  <_type_name: NewableTypeName> <pos: PositionalArgumentsDeclaration> => format!("Struct(NewExpression)[{:?}, {:?}, {:?}]", _new_keyword, _type_name, pos),
         
     };
     TupleExpression: String = {
@@ -1980,6 +2007,12 @@ grammar<'source>(source: &'source str);
     TupleValue: String = {
          
             <_expression: (Expression)?>  => format!("Struct(TupleValue)[{:?}]", _expression),
+            // TupleValues also works for TupleDeconstructionElement now, we should check at a later
+            // stage if the use is correct or not
+                <_TypedTupleMember: TypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _TypedTupleMember),
+         
+            <_UntypedTupleMember: UntypedTupleMember>  => format!("Variant(TupleMember)[{:?}]", _UntypedTupleMember),
+
         
     };
     ArrayExpression: String = {
