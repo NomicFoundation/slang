@@ -281,606 +281,727 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Keywords
+    #[inline]
     AbicoderKeyword: String = {
          
             <_AbicoderKeyword: AbicoderKeyword_Unreserved>  => "Keyword[_AbicoderKeyword]".to_string(),
         
     };
+    #[inline]
     AbicoderV1Keyword: String = {
          
             <_AbicoderV1Keyword: AbicoderV1Keyword_Unreserved>  => "Keyword[_AbicoderV1Keyword]".to_string(),
         
     };
+    #[inline]
     AbicoderV2Keyword: String = {
          
             <_AbicoderV2Keyword: AbicoderV2Keyword_Unreserved>  => "Keyword[_AbicoderV2Keyword]".to_string(),
         
     };
+    #[inline]
     ABIEncoderV2Keyword: String = {
          
             <_ABIEncoderV2Keyword: ABIEncoderV2Keyword_Unreserved>  => "Keyword[_ABIEncoderV2Keyword]".to_string(),
         
     };
+    #[inline]
     AbstractKeyword: String = {
          
             <_AbstractKeyword: AbstractKeyword_Reserved>  => "Keyword[_AbstractKeyword]".to_string(),
         
     };
+    #[inline]
     AddressKeyword: String = {
          
             <_AddressKeyword: AddressKeyword_Unreserved>  => "Keyword[_AddressKeyword]".to_string(),
         
     };
+    #[inline]
     AfterKeyword: String = {
          
             <_AfterKeyword: AfterKeyword_Reserved>  => "Keyword[_AfterKeyword]".to_string(),
         
     };
+    #[inline]
     AliasKeyword: String = {
          
             <_AliasKeyword: AliasKeyword_Reserved>  => "Keyword[_AliasKeyword]".to_string(),
         
     };
+    #[inline]
     AnonymousKeyword: String = {
          
             <_AnonymousKeyword: AnonymousKeyword_Reserved>  => "Keyword[_AnonymousKeyword]".to_string(),
         
     };
+    #[inline]
     ApplyKeyword: String = {
          
             <_ApplyKeyword: ApplyKeyword_Reserved>  => "Keyword[_ApplyKeyword]".to_string(),
         
     };
+    #[inline]
     AsKeyword: String = {
          
             <_AsKeyword: AsKeyword_Reserved>  => "Keyword[_AsKeyword]".to_string(),
         
     };
+    #[inline]
     AssemblyKeyword: String = {
          
             <_AssemblyKeyword: AssemblyKeyword_Reserved>  => "Keyword[_AssemblyKeyword]".to_string(),
         
     };
+    #[inline]
     AtKeyword: String = {
          
             <_AtKeyword: AtKeyword_Unreserved>  => "Keyword[_AtKeyword]".to_string(),
         
     };
+    #[inline]
     AutoKeyword: String = {
          
             <_AutoKeyword: AutoKeyword_Reserved>  => "Keyword[_AutoKeyword]".to_string(),
         
     };
+    #[inline]
     BoolKeyword: String = {
          
             <_BoolKeyword: BoolKeyword_Reserved>  => "Keyword[_BoolKeyword]".to_string(),
         
     };
+    #[inline]
     BreakKeyword: String = {
          
             <_BreakKeyword: BreakKeyword_Reserved>  => "Keyword[_BreakKeyword]".to_string(),
         
     };
+    #[inline]
     ByteKeyword: String = {
          
             <_ByteKeyword: ByteKeyword_Reserved>  => "Keyword[_ByteKeyword]".to_string(),
         
     };
+    #[inline]
     BytesKeyword: String = {
          
             <_BytesKeyword: BytesKeyword_Reserved>  => "Keyword[_BytesKeyword]".to_string(),
         
     };
+    #[inline]
     CallDataKeyword: String = {
          
             <_CallDataKeyword: CallDataKeyword_Reserved>  => "Keyword[_CallDataKeyword]".to_string(),
         
     };
+    #[inline]
     CaseKeyword: String = {
          
             <_CaseKeyword: CaseKeyword_Reserved>  => "Keyword[_CaseKeyword]".to_string(),
         
     };
+    #[inline]
     CatchKeyword: String = {
          
             <_CatchKeyword: CatchKeyword_Reserved>  => "Keyword[_CatchKeyword]".to_string(),
         
     };
+    #[inline]
     ConstantKeyword: String = {
          
             <_ConstantKeyword: ConstantKeyword_Reserved>  => "Keyword[_ConstantKeyword]".to_string(),
         
     };
+    #[inline]
     ConstructorKeyword: String = {
          
             <_ConstructorKeyword: ConstructorKeyword_Reserved>  => "Keyword[_ConstructorKeyword]".to_string(),
         
     };
+    #[inline]
     ContinueKeyword: String = {
          
             <_ContinueKeyword: ContinueKeyword_Reserved>  => "Keyword[_ContinueKeyword]".to_string(),
         
     };
+    #[inline]
     ContractKeyword: String = {
          
             <_ContractKeyword: ContractKeyword_Reserved>  => "Keyword[_ContractKeyword]".to_string(),
         
     };
+    #[inline]
     CopyOfKeyword: String = {
          
             <_CopyOfKeyword: CopyOfKeyword_Reserved>  => "Keyword[_CopyOfKeyword]".to_string(),
         
     };
+    #[inline]
     DaysKeyword: String = {
          
             <_DaysKeyword: DaysKeyword_Reserved>  => "Keyword[_DaysKeyword]".to_string(),
         
     };
+    #[inline]
     DefaultKeyword: String = {
          
             <_DefaultKeyword: DefaultKeyword_Reserved>  => "Keyword[_DefaultKeyword]".to_string(),
         
     };
+    #[inline]
     DefineKeyword: String = {
          
             <_DefineKeyword: DefineKeyword_Reserved>  => "Keyword[_DefineKeyword]".to_string(),
         
     };
+    #[inline]
     DeleteKeyword: String = {
          
             <_DeleteKeyword: DeleteKeyword_Reserved>  => "Keyword[_DeleteKeyword]".to_string(),
         
     };
+    #[inline]
     DoKeyword: String = {
          
             <_DoKeyword: DoKeyword_Reserved>  => "Keyword[_DoKeyword]".to_string(),
         
     };
+    #[inline]
     ElseKeyword: String = {
          
             <_ElseKeyword: ElseKeyword_Reserved>  => "Keyword[_ElseKeyword]".to_string(),
         
     };
+    #[inline]
     EmitKeyword: String = {
          
             <_EmitKeyword: EmitKeyword_Reserved>  => "Keyword[_EmitKeyword]".to_string(),
         
     };
+    #[inline]
     EnumKeyword: String = {
          
             <_EnumKeyword: EnumKeyword_Reserved>  => "Keyword[_EnumKeyword]".to_string(),
         
     };
+    #[inline]
     ErrorKeyword: String = {
          
             <_ErrorKeyword: ErrorKeyword_Unreserved>  => "Keyword[_ErrorKeyword]".to_string(),
         
     };
+    #[inline]
     EtherKeyword: String = {
          
             <_EtherKeyword: EtherKeyword_Reserved>  => "Keyword[_EtherKeyword]".to_string(),
         
     };
+    #[inline]
     EventKeyword: String = {
          
             <_EventKeyword: EventKeyword_Reserved>  => "Keyword[_EventKeyword]".to_string(),
         
     };
+    #[inline]
     ExperimentalKeyword: String = {
          
             <_ExperimentalKeyword: ExperimentalKeyword_Unreserved>  => "Keyword[_ExperimentalKeyword]".to_string(),
         
     };
+    #[inline]
     ExternalKeyword: String = {
          
             <_ExternalKeyword: ExternalKeyword_Reserved>  => "Keyword[_ExternalKeyword]".to_string(),
         
     };
+    #[inline]
     FallbackKeyword: String = {
          
             <_FallbackKeyword: FallbackKeyword_Reserved>  => "Keyword[_FallbackKeyword]".to_string(),
         
     };
+    #[inline]
     FalseKeyword: String = {
          
             <_FalseKeyword: FalseKeyword_Reserved>  => "Keyword[_FalseKeyword]".to_string(),
         
     };
+    #[inline]
     FinalKeyword: String = {
          
             <_FinalKeyword: FinalKeyword_Reserved>  => "Keyword[_FinalKeyword]".to_string(),
         
     };
+    #[inline]
     FinneyKeyword: String = {
          
             <_FinneyKeyword: FinneyKeyword_Unreserved>  => "Keyword[_FinneyKeyword]".to_string(),
         
     };
+    #[inline]
     FixedKeyword: String = {
          
             <_FixedKeyword: FixedKeyword_Reserved>  => "Keyword[_FixedKeyword]".to_string(),
         
     };
+    #[inline]
     ForKeyword: String = {
          
             <_ForKeyword: ForKeyword_Reserved>  => "Keyword[_ForKeyword]".to_string(),
         
     };
+    #[inline]
     FromKeyword: String = {
          
             <_FromKeyword: FromKeyword_Unreserved>  => "Keyword[_FromKeyword]".to_string(),
         
     };
+    #[inline]
     FunctionKeyword: String = {
          
             <_FunctionKeyword: FunctionKeyword_Reserved>  => "Keyword[_FunctionKeyword]".to_string(),
         
     };
+    #[inline]
     GlobalKeyword: String = {
          
             <_GlobalKeyword: GlobalKeyword_Unreserved>  => "Keyword[_GlobalKeyword]".to_string(),
         
     };
+    #[inline]
     GweiKeyword: String = {
          
             <_GweiKeyword: GweiKeyword_Reserved>  => "Keyword[_GweiKeyword]".to_string(),
         
     };
+    #[inline]
     HexKeyword: String = {
          
             <_HexKeyword: HexKeyword_Reserved>  => "Keyword[_HexKeyword]".to_string(),
         
     };
+    #[inline]
     HoursKeyword: String = {
          
             <_HoursKeyword: HoursKeyword_Reserved>  => "Keyword[_HoursKeyword]".to_string(),
         
     };
+    #[inline]
     IfKeyword: String = {
          
             <_IfKeyword: IfKeyword_Reserved>  => "Keyword[_IfKeyword]".to_string(),
         
     };
+    #[inline]
     ImmutableKeyword: String = {
          
             <_ImmutableKeyword: ImmutableKeyword_Reserved>  => "Keyword[_ImmutableKeyword]".to_string(),
         
     };
+    #[inline]
     ImplementsKeyword: String = {
          
             <_ImplementsKeyword: ImplementsKeyword_Reserved>  => "Keyword[_ImplementsKeyword]".to_string(),
         
     };
+    #[inline]
     ImportKeyword: String = {
          
             <_ImportKeyword: ImportKeyword_Reserved>  => "Keyword[_ImportKeyword]".to_string(),
         
     };
+    #[inline]
     IndexedKeyword: String = {
          
             <_IndexedKeyword: IndexedKeyword_Reserved>  => "Keyword[_IndexedKeyword]".to_string(),
         
     };
+    #[inline]
     InKeyword: String = {
          
             <_InKeyword: InKeyword_Reserved>  => "Keyword[_InKeyword]".to_string(),
         
     };
+    #[inline]
     InlineKeyword: String = {
          
             <_InlineKeyword: InlineKeyword_Reserved>  => "Keyword[_InlineKeyword]".to_string(),
         
     };
+    #[inline]
     InterfaceKeyword: String = {
          
             <_InterfaceKeyword: InterfaceKeyword_Reserved>  => "Keyword[_InterfaceKeyword]".to_string(),
         
     };
+    #[inline]
     InternalKeyword: String = {
          
             <_InternalKeyword: InternalKeyword_Reserved>  => "Keyword[_InternalKeyword]".to_string(),
         
     };
+    #[inline]
     IntKeyword: String = {
          
             <_IntKeyword: IntKeyword_Reserved>  => "Keyword[_IntKeyword]".to_string(),
         
     };
+    #[inline]
     IsKeyword: String = {
          
             <_IsKeyword: IsKeyword_Reserved>  => "Keyword[_IsKeyword]".to_string(),
         
     };
+    #[inline]
     LayoutKeyword: String = {
          
             <_LayoutKeyword: LayoutKeyword_Unreserved>  => "Keyword[_LayoutKeyword]".to_string(),
         
     };
+    #[inline]
     LetKeyword: String = {
          
             <_LetKeyword: LetKeyword_Reserved>  => "Keyword[_LetKeyword]".to_string(),
         
     };
+    #[inline]
     LibraryKeyword: String = {
          
             <_LibraryKeyword: LibraryKeyword_Reserved>  => "Keyword[_LibraryKeyword]".to_string(),
         
     };
+    #[inline]
     MacroKeyword: String = {
          
             <_MacroKeyword: MacroKeyword_Reserved>  => "Keyword[_MacroKeyword]".to_string(),
         
     };
+    #[inline]
     MappingKeyword: String = {
          
             <_MappingKeyword: MappingKeyword_Reserved>  => "Keyword[_MappingKeyword]".to_string(),
         
     };
+    #[inline]
     MatchKeyword: String = {
          
             <_MatchKeyword: MatchKeyword_Reserved>  => "Keyword[_MatchKeyword]".to_string(),
         
     };
+    #[inline]
     MemoryKeyword: String = {
          
             <_MemoryKeyword: MemoryKeyword_Reserved>  => "Keyword[_MemoryKeyword]".to_string(),
         
     };
+    #[inline]
     MinutesKeyword: String = {
          
             <_MinutesKeyword: MinutesKeyword_Reserved>  => "Keyword[_MinutesKeyword]".to_string(),
         
     };
+    #[inline]
     ModifierKeyword: String = {
          
             <_ModifierKeyword: ModifierKeyword_Reserved>  => "Keyword[_ModifierKeyword]".to_string(),
         
     };
+    #[inline]
     MutableKeyword: String = {
          
             <_MutableKeyword: MutableKeyword_Reserved>  => "Keyword[_MutableKeyword]".to_string(),
         
     };
+    #[inline]
     NewKeyword: String = {
          
             <_NewKeyword: NewKeyword_Reserved>  => "Keyword[_NewKeyword]".to_string(),
         
     };
+    #[inline]
     NullKeyword: String = {
          
             <_NullKeyword: NullKeyword_Reserved>  => "Keyword[_NullKeyword]".to_string(),
         
     };
+    #[inline]
     OfKeyword: String = {
          
             <_OfKeyword: OfKeyword_Reserved>  => "Keyword[_OfKeyword]".to_string(),
         
     };
+    #[inline]
     OverrideKeyword: String = {
          
             <_OverrideKeyword: OverrideKeyword_Reserved>  => "Keyword[_OverrideKeyword]".to_string(),
         
     };
+    #[inline]
     PartialKeyword: String = {
          
             <_PartialKeyword: PartialKeyword_Reserved>  => "Keyword[_PartialKeyword]".to_string(),
         
     };
+    #[inline]
     PayableKeyword: String = {
          
             <_PayableKeyword: PayableKeyword_Reserved>  => "Keyword[_PayableKeyword]".to_string(),
         
     };
+    #[inline]
     PragmaKeyword: String = {
          
             <_PragmaKeyword: PragmaKeyword_Reserved>  => "Keyword[_PragmaKeyword]".to_string(),
         
     };
+    #[inline]
     PrivateKeyword: String = {
          
             <_PrivateKeyword: PrivateKeyword_Reserved>  => "Keyword[_PrivateKeyword]".to_string(),
         
     };
+    #[inline]
     PromiseKeyword: String = {
          
             <_PromiseKeyword: PromiseKeyword_Reserved>  => "Keyword[_PromiseKeyword]".to_string(),
         
     };
+    #[inline]
     PublicKeyword: String = {
          
             <_PublicKeyword: PublicKeyword_Reserved>  => "Keyword[_PublicKeyword]".to_string(),
         
     };
+    #[inline]
     PureKeyword: String = {
          
             <_PureKeyword: PureKeyword_Reserved>  => "Keyword[_PureKeyword]".to_string(),
         
     };
+    #[inline]
     ReceiveKeyword: String = {
          
             <_ReceiveKeyword: ReceiveKeyword_Reserved>  => "Keyword[_ReceiveKeyword]".to_string(),
         
     };
+    #[inline]
     ReferenceKeyword: String = {
          
             <_ReferenceKeyword: ReferenceKeyword_Reserved>  => "Keyword[_ReferenceKeyword]".to_string(),
         
     };
+    #[inline]
     RelocatableKeyword: String = {
          
             <_RelocatableKeyword: RelocatableKeyword_Reserved>  => "Keyword[_RelocatableKeyword]".to_string(),
         
     };
+    #[inline]
     ReturnKeyword: String = {
          
             <_ReturnKeyword: ReturnKeyword_Reserved>  => "Keyword[_ReturnKeyword]".to_string(),
         
     };
+    #[inline]
     ReturnsKeyword: String = {
          
             <_ReturnsKeyword: ReturnsKeyword_Reserved>  => "Keyword[_ReturnsKeyword]".to_string(),
         
     };
+    #[inline]
     RevertKeyword: String = {
          
             <_RevertKeyword: RevertKeyword_Unreserved>  => "Keyword[_RevertKeyword]".to_string(),
         
     };
+    #[inline]
     SealedKeyword: String = {
          
             <_SealedKeyword: SealedKeyword_Reserved>  => "Keyword[_SealedKeyword]".to_string(),
         
     };
+    #[inline]
     SecondsKeyword: String = {
          
             <_SecondsKeyword: SecondsKeyword_Reserved>  => "Keyword[_SecondsKeyword]".to_string(),
         
     };
+    #[inline]
     SizeOfKeyword: String = {
          
             <_SizeOfKeyword: SizeOfKeyword_Reserved>  => "Keyword[_SizeOfKeyword]".to_string(),
         
     };
+    #[inline]
     SMTCheckerKeyword: String = {
          
             <_SMTCheckerKeyword: SMTCheckerKeyword_Unreserved>  => "Keyword[_SMTCheckerKeyword]".to_string(),
         
     };
+    #[inline]
     SolidityKeyword: String = {
          
             <_SolidityKeyword: SolidityKeyword_Unreserved>  => "Keyword[_SolidityKeyword]".to_string(),
         
     };
+    #[inline]
     StaticKeyword: String = {
          
             <_StaticKeyword: StaticKeyword_Reserved>  => "Keyword[_StaticKeyword]".to_string(),
         
     };
+    #[inline]
     StorageKeyword: String = {
          
             <_StorageKeyword: StorageKeyword_Reserved>  => "Keyword[_StorageKeyword]".to_string(),
         
     };
+    #[inline]
     StringKeyword: String = {
          
             <_StringKeyword: StringKeyword_Reserved>  => "Keyword[_StringKeyword]".to_string(),
         
     };
+    #[inline]
     StructKeyword: String = {
          
             <_StructKeyword: StructKeyword_Reserved>  => "Keyword[_StructKeyword]".to_string(),
         
     };
+    #[inline]
     SuperKeyword: String = {
          
             <_SuperKeyword: SuperKeyword_Reserved>  => "Keyword[_SuperKeyword]".to_string(),
         
     };
+    #[inline]
     SupportsKeyword: String = {
          
             <_SupportsKeyword: SupportsKeyword_Reserved>  => "Keyword[_SupportsKeyword]".to_string(),
         
     };
+    #[inline]
     SwitchKeyword: String = {
          
             <_SwitchKeyword: SwitchKeyword_Reserved>  => "Keyword[_SwitchKeyword]".to_string(),
         
     };
+    #[inline]
     SzaboKeyword: String = {
          
             <_SzaboKeyword: SzaboKeyword_Unreserved>  => "Keyword[_SzaboKeyword]".to_string(),
         
     };
+    #[inline]
     ThisKeyword: String = {
          
             <_ThisKeyword: ThisKeyword_Reserved>  => "Keyword[_ThisKeyword]".to_string(),
         
     };
+    #[inline]
     ThrowKeyword: String = {
          
             <_ThrowKeyword: ThrowKeyword_Reserved>  => "Keyword[_ThrowKeyword]".to_string(),
         
     };
+    #[inline]
     TransientKeyword: String = {
          
             <_TransientKeyword: TransientKeyword_Unreserved>  => "Keyword[_TransientKeyword]".to_string(),
         
     };
+    #[inline]
     TrueKeyword: String = {
          
             <_TrueKeyword: TrueKeyword_Reserved>  => "Keyword[_TrueKeyword]".to_string(),
         
     };
+    #[inline]
     TryKeyword: String = {
          
             <_TryKeyword: TryKeyword_Reserved>  => "Keyword[_TryKeyword]".to_string(),
         
     };
+    #[inline]
     TypeDefKeyword: String = {
          
             <_TypeDefKeyword: TypeDefKeyword_Reserved>  => "Keyword[_TypeDefKeyword]".to_string(),
         
     };
+    #[inline]
     TypeKeyword: String = {
          
             <_TypeKeyword: TypeKeyword_Reserved>  => "Keyword[_TypeKeyword]".to_string(),
         
     };
+    #[inline]
     TypeOfKeyword: String = {
          
             <_TypeOfKeyword: TypeOfKeyword_Reserved>  => "Keyword[_TypeOfKeyword]".to_string(),
         
     };
+    #[inline]
     UfixedKeyword: String = {
          
             <_UfixedKeyword: UfixedKeyword_Reserved>  => "Keyword[_UfixedKeyword]".to_string(),
         
     };
+    #[inline]
     UintKeyword: String = {
          
             <_UintKeyword: UintKeyword_Reserved>  => "Keyword[_UintKeyword]".to_string(),
         
     };
+    #[inline]
     UncheckedKeyword: String = {
          
             <_UncheckedKeyword: UncheckedKeyword_Reserved>  => "Keyword[_UncheckedKeyword]".to_string(),
         
     };
+    #[inline]
     UsingKeyword: String = {
          
             <_UsingKeyword: UsingKeyword_Reserved>  => "Keyword[_UsingKeyword]".to_string(),
         
     };
+    #[inline]
     VarKeyword: String = {
          
             <_VarKeyword: VarKeyword_Reserved>  => "Keyword[_VarKeyword]".to_string(),
         
     };
+    #[inline]
     ViewKeyword: String = {
          
             <_ViewKeyword: ViewKeyword_Reserved>  => "Keyword[_ViewKeyword]".to_string(),
         
     };
+    #[inline]
     VirtualKeyword: String = {
          
             <_VirtualKeyword: VirtualKeyword_Reserved>  => "Keyword[_VirtualKeyword]".to_string(),
         
     };
+    #[inline]
     WeeksKeyword: String = {
          
             <_WeeksKeyword: WeeksKeyword_Reserved>  => "Keyword[_WeeksKeyword]".to_string(),
         
     };
+    #[inline]
     WeiKeyword: String = {
          
             <_WeiKeyword: WeiKeyword_Reserved>  => "Keyword[_WeiKeyword]".to_string(),
         
     };
+    #[inline]
     WhileKeyword: String = {
          
             <_WhileKeyword: WhileKeyword_Reserved>  => "Keyword[_WhileKeyword]".to_string(),
         
     };
+    #[inline]
     YearsKeyword: String = {
          
             <_YearsKeyword: YearsKeyword_Reserved>  => "Keyword[_YearsKeyword]".to_string(),
@@ -897,16 +1018,19 @@ grammar<'source>(source: &'source str);
 // Rules for section Definitions
 
 // Rules for topic Contracts
+#[inline]
     ContractDefinition: String = {
          
             <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => format!("Struct(ContractDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]", _abstract_keyword, _contract_keyword, _name, _specifiers, _open_brace, _members, _close_brace),
         
     };
+#[inline]
     ContractSpecifiers: String = {
          
             <_ContractSpecifier: (ContractSpecifier)*>  => "Repeated(ContractSpecifiers)[_ContractSpecifier]".to_string(),
         
     };
+#[inline]
     ContractSpecifier: String = {
          
             <_InheritanceSpecifier: InheritanceSpecifier>  => format!("Variant(ContractSpecifier)[{:?}]", _InheritanceSpecifier),
@@ -914,31 +1038,37 @@ grammar<'source>(source: &'source str);
             <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => format!("Variant(ContractSpecifier)[{:?}]", _StorageLayoutSpecifier),
         
     };
+#[inline]
     InheritanceSpecifier: String = {
          
             <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => format!("Struct(InheritanceSpecifier)[{:?}, {:?}]", _is_keyword, _types),
         
     };
+#[inline]
     InheritanceTypes: String = {
          
             <_InheritanceType: (InheritanceType (Comma InheritanceType)*)>  => "Separated(InheritanceTypes)[_InheritanceType]".to_string(),
         
     };
+#[inline]
     InheritanceType: String = {
          
             <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => format!("Struct(InheritanceType)[{:?}, {:?}]", _type_name, _arguments),
         
     };
+#[inline]
     StorageLayoutSpecifier: String = {
          
             <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => format!("Struct(StorageLayoutSpecifier)[{:?}, {:?}, {:?}]", _layout_keyword, _at_keyword, _expression),
         
     };
+#[inline]
     ContractMembers: String = {
          
             <_ContractMember: (ContractMember)*>  => "Repeated(ContractMembers)[_ContractMember]".to_string(),
         
     };
+#[inline]
     ContractMember: String = {
          
             <_UsingDirective: UsingDirective>  => format!("Variant(ContractMember)[{:?}]", _UsingDirective),
@@ -1036,7 +1166,7 @@ grammar<'source>(source: &'source str);
 // Rules for topic State Variables
     StateVariableDefinition: String = {
          
-            <_type_name: TypeName>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _attributes, _name, _value, _semicolon),
+            <_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _name, _name, _value, _semicolon),
         
     };
     StateVariableDefinitionValue: String = {
@@ -1655,71 +1785,71 @@ grammar<'source>(source: &'source str);
 // Rules for topic Base Expressions
     Expression: String = {
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Equal>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Equal>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: BarEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: BarEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: PlusEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: PlusEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: MinusEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: MinusEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: CaretEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: CaretEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: SlashEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: SlashEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: PercentEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: PercentEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: AsteriskEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: AsteriskEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: AmpersandEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: AmpersandEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="1")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(AssignmentExpression)[{:?}]", _Expression),
         #[precedence(level="2")] 
             <_Expression: Expression>  <_question_mark: QuestionMark>  <_true_expression: Expression>  <_colon: Colon>  <_false_expression: Expression>  => format!("Precedence(ConditionalExpression)[{:?}]", _Expression),
         #[precedence(level="3")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: BarBar>  <_Expression_2: Expression>  => format!("Precedence(OrExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: BarBar>  <_Expression_2: Expression>  => format!("Precedence(OrExpression)[{:?}]", _Expression),
         #[precedence(level="4")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression>  => format!("Precedence(AndExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression>  => format!("Precedence(AndExpression)[{:?}]", _Expression),
         #[precedence(level="5")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: EqualEqual>  <_Expression_2: Expression>  => format!("Precedence(EqualityExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: EqualEqual>  <_Expression_2: Expression>  => format!("Precedence(EqualityExpression)[{:?}]", _Expression),
         #[precedence(level="5")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: BangEqual>  <_Expression_2: Expression>  => format!("Precedence(EqualityExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: BangEqual>  <_Expression_2: Expression>  => format!("Precedence(EqualityExpression)[{:?}]", _Expression),
         #[precedence(level="6")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: LessThan>  <_Expression_2: Expression>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: LessThan>  <_Expression_2: Expression>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
         #[precedence(level="6")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: GreaterThan>  <_Expression_2: Expression>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: GreaterThan>  <_Expression_2: Expression>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
         #[precedence(level="6")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: LessThanEqual>  <_Expression_2: Expression>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: LessThanEqual>  <_Expression_2: Expression>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
         #[precedence(level="6")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: GreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: GreaterThanEqual>  <_Expression_2: Expression>  => format!("Precedence(InequalityExpression)[{:?}]", _Expression),
         #[precedence(level="7")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Bar>  <_Expression_2: Expression>  => format!("Precedence(BitwiseOrExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Bar>  <_Expression_2: Expression>  => format!("Precedence(BitwiseOrExpression)[{:?}]", _Expression),
         #[precedence(level="8")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Caret>  <_Expression_2: Expression>  => format!("Precedence(BitwiseXorExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Caret>  <_Expression_2: Expression>  => format!("Precedence(BitwiseXorExpression)[{:?}]", _Expression),
         #[precedence(level="9")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Ampersand>  <_Expression_2: Expression>  => format!("Precedence(BitwiseAndExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Ampersand>  <_Expression_2: Expression>  => format!("Precedence(BitwiseAndExpression)[{:?}]", _Expression),
         #[precedence(level="10")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: LessThanLessThan>  <_Expression_2: Expression>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: LessThanLessThan>  <_Expression_2: Expression>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
         #[precedence(level="10")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
         #[precedence(level="10")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression>  => format!("Precedence(ShiftExpression)[{:?}]", _Expression),
         #[precedence(level="11")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Plus>  <_Expression_2: Expression>  => format!("Precedence(AdditiveExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Plus>  <_Expression_2: Expression>  => format!("Precedence(AdditiveExpression)[{:?}]", _Expression),
         #[precedence(level="11")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Minus>  <_Expression_2: Expression>  => format!("Precedence(AdditiveExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Minus>  <_Expression_2: Expression>  => format!("Precedence(AdditiveExpression)[{:?}]", _Expression),
         #[precedence(level="12")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Asterisk>  <_Expression_2: Expression>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Asterisk>  <_Expression_2: Expression>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
         #[precedence(level="12")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Slash>  <_Expression_2: Expression>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Slash>  <_Expression_2: Expression>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
         #[precedence(level="12")] #[assoc(side="left")] 
-            <_Expression_1: Expression>  <_operator: Percent>  <_Expression_2: Expression>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: Percent>  <_Expression_2: Expression>  => format!("Precedence(MultiplicativeExpression)[{:?}]", _Expression),
         #[precedence(level="13")] #[assoc(side="right")] 
-            <_Expression_1: Expression>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression>  => format!("Precedence(ExponentiationExpression)[{:?}]", _Expression),
+            <_Expression: Expression>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression>  => format!("Precedence(ExponentiationExpression)[{:?}]", _Expression),
         #[precedence(level="14")] 
             <_Expression: Expression>  <_operator: PlusPlus>  => format!("Precedence(PostfixExpression)[{:?}]", _Expression),
         #[precedence(level="14")] 
@@ -2135,526 +2265,631 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Yul Keywords
+    #[inline]
     YulAbstractKeyword: String = {
          
             <_YulAbstractKeyword: YulAbstractKeyword_Unreserved>  => "Keyword[_YulAbstractKeyword]".to_string(),
         
     };
+    #[inline]
     YulAfterKeyword: String = {
          
             <_YulAfterKeyword: YulAfterKeyword_Unreserved>  => "Keyword[_YulAfterKeyword]".to_string(),
         
     };
+    #[inline]
     YulAliasKeyword: String = {
          
             <_YulAliasKeyword: YulAliasKeyword_Unreserved>  => "Keyword[_YulAliasKeyword]".to_string(),
         
     };
+    #[inline]
     YulAnonymousKeyword: String = {
          
             <_YulAnonymousKeyword: YulAnonymousKeyword_Unreserved>  => "Keyword[_YulAnonymousKeyword]".to_string(),
         
     };
+    #[inline]
     YulApplyKeyword: String = {
          
             <_YulApplyKeyword: YulApplyKeyword_Unreserved>  => "Keyword[_YulApplyKeyword]".to_string(),
         
     };
+    #[inline]
     YulAsKeyword: String = {
          
             <_YulAsKeyword: YulAsKeyword_Unreserved>  => "Keyword[_YulAsKeyword]".to_string(),
         
     };
+    #[inline]
     YulAssemblyKeyword: String = {
          
             <_YulAssemblyKeyword: YulAssemblyKeyword_Unreserved>  => "Keyword[_YulAssemblyKeyword]".to_string(),
         
     };
+    #[inline]
     YulAutoKeyword: String = {
          
             <_YulAutoKeyword: YulAutoKeyword_Unreserved>  => "Keyword[_YulAutoKeyword]".to_string(),
         
     };
+    #[inline]
     YulBoolKeyword: String = {
          
             <_YulBoolKeyword: YulBoolKeyword_Unreserved>  => "Keyword[_YulBoolKeyword]".to_string(),
         
     };
+    #[inline]
     YulBreakKeyword: String = {
          
             <_YulBreakKeyword: YulBreakKeyword_Reserved>  => "Keyword[_YulBreakKeyword]".to_string(),
         
     };
+    #[inline]
     YulBytesKeyword: String = {
          
             <_YulBytesKeyword: YulBytesKeyword_Unreserved>  => "Keyword[_YulBytesKeyword]".to_string(),
         
     };
+    #[inline]
     YulCallDataKeyword: String = {
          
             <_YulCallDataKeyword: YulCallDataKeyword_Unreserved>  => "Keyword[_YulCallDataKeyword]".to_string(),
         
     };
+    #[inline]
     YulCaseKeyword: String = {
          
             <_YulCaseKeyword: YulCaseKeyword_Reserved>  => "Keyword[_YulCaseKeyword]".to_string(),
         
     };
+    #[inline]
     YulCatchKeyword: String = {
          
             <_YulCatchKeyword: YulCatchKeyword_Unreserved>  => "Keyword[_YulCatchKeyword]".to_string(),
         
     };
+    #[inline]
     YulConstantKeyword: String = {
          
             <_YulConstantKeyword: YulConstantKeyword_Unreserved>  => "Keyword[_YulConstantKeyword]".to_string(),
         
     };
+    #[inline]
     YulConstructorKeyword: String = {
          
             <_YulConstructorKeyword: YulConstructorKeyword_Unreserved>  => "Keyword[_YulConstructorKeyword]".to_string(),
         
     };
+    #[inline]
     YulContinueKeyword: String = {
          
             <_YulContinueKeyword: YulContinueKeyword_Reserved>  => "Keyword[_YulContinueKeyword]".to_string(),
         
     };
+    #[inline]
     YulContractKeyword: String = {
          
             <_YulContractKeyword: YulContractKeyword_Unreserved>  => "Keyword[_YulContractKeyword]".to_string(),
         
     };
+    #[inline]
     YulCopyOfKeyword: String = {
          
             <_YulCopyOfKeyword: YulCopyOfKeyword_Unreserved>  => "Keyword[_YulCopyOfKeyword]".to_string(),
         
     };
+    #[inline]
     YulDaysKeyword: String = {
          
             <_YulDaysKeyword: YulDaysKeyword_Unreserved>  => "Keyword[_YulDaysKeyword]".to_string(),
         
     };
+    #[inline]
     YulDefaultKeyword: String = {
          
             <_YulDefaultKeyword: YulDefaultKeyword_Reserved>  => "Keyword[_YulDefaultKeyword]".to_string(),
         
     };
+    #[inline]
     YulDefineKeyword: String = {
          
             <_YulDefineKeyword: YulDefineKeyword_Unreserved>  => "Keyword[_YulDefineKeyword]".to_string(),
         
     };
+    #[inline]
     YulDeleteKeyword: String = {
          
             <_YulDeleteKeyword: YulDeleteKeyword_Unreserved>  => "Keyword[_YulDeleteKeyword]".to_string(),
         
     };
+    #[inline]
     YulDoKeyword: String = {
          
             <_YulDoKeyword: YulDoKeyword_Unreserved>  => "Keyword[_YulDoKeyword]".to_string(),
         
     };
+    #[inline]
     YulElseKeyword: String = {
          
             <_YulElseKeyword: YulElseKeyword_Unreserved>  => "Keyword[_YulElseKeyword]".to_string(),
         
     };
+    #[inline]
     YulEmitKeyword: String = {
          
             <_YulEmitKeyword: YulEmitKeyword_Unreserved>  => "Keyword[_YulEmitKeyword]".to_string(),
         
     };
+    #[inline]
     YulEnumKeyword: String = {
          
             <_YulEnumKeyword: YulEnumKeyword_Unreserved>  => "Keyword[_YulEnumKeyword]".to_string(),
         
     };
+    #[inline]
     YulEtherKeyword: String = {
          
             <_YulEtherKeyword: YulEtherKeyword_Unreserved>  => "Keyword[_YulEtherKeyword]".to_string(),
         
     };
+    #[inline]
     YulEventKeyword: String = {
          
             <_YulEventKeyword: YulEventKeyword_Unreserved>  => "Keyword[_YulEventKeyword]".to_string(),
         
     };
+    #[inline]
     YulExternalKeyword: String = {
          
             <_YulExternalKeyword: YulExternalKeyword_Unreserved>  => "Keyword[_YulExternalKeyword]".to_string(),
         
     };
+    #[inline]
     YulFallbackKeyword: String = {
          
             <_YulFallbackKeyword: YulFallbackKeyword_Unreserved>  => "Keyword[_YulFallbackKeyword]".to_string(),
         
     };
+    #[inline]
     YulFalseKeyword: String = {
          
             <_YulFalseKeyword: YulFalseKeyword_Reserved>  => "Keyword[_YulFalseKeyword]".to_string(),
         
     };
+    #[inline]
     YulFinalKeyword: String = {
          
             <_YulFinalKeyword: YulFinalKeyword_Unreserved>  => "Keyword[_YulFinalKeyword]".to_string(),
         
     };
+    #[inline]
     YulFinneyKeyword: String = {
          
             <_YulFinneyKeyword: YulFinneyKeyword_Unreserved>  => "Keyword[_YulFinneyKeyword]".to_string(),
         
     };
+    #[inline]
     YulFixedKeyword: String = {
          
             <_YulFixedKeyword: YulFixedKeyword_Unreserved>  => "Keyword[_YulFixedKeyword]".to_string(),
         
     };
+    #[inline]
     YulForKeyword: String = {
          
             <_YulForKeyword: YulForKeyword_Reserved>  => "Keyword[_YulForKeyword]".to_string(),
         
     };
+    #[inline]
     YulFunctionKeyword: String = {
          
             <_YulFunctionKeyword: YulFunctionKeyword_Reserved>  => "Keyword[_YulFunctionKeyword]".to_string(),
         
     };
+    #[inline]
     YulGweiKeyword: String = {
          
             <_YulGweiKeyword: YulGweiKeyword_Unreserved>  => "Keyword[_YulGweiKeyword]".to_string(),
         
     };
+    #[inline]
     YulHexKeyword: String = {
          
             <_YulHexKeyword: YulHexKeyword_Reserved>  => "Keyword[_YulHexKeyword]".to_string(),
         
     };
+    #[inline]
     YulHoursKeyword: String = {
          
             <_YulHoursKeyword: YulHoursKeyword_Unreserved>  => "Keyword[_YulHoursKeyword]".to_string(),
         
     };
+    #[inline]
     YulIfKeyword: String = {
          
             <_YulIfKeyword: YulIfKeyword_Reserved>  => "Keyword[_YulIfKeyword]".to_string(),
         
     };
+    #[inline]
     YulImmutableKeyword: String = {
          
             <_YulImmutableKeyword: YulImmutableKeyword_Unreserved>  => "Keyword[_YulImmutableKeyword]".to_string(),
         
     };
+    #[inline]
     YulImplementsKeyword: String = {
          
             <_YulImplementsKeyword: YulImplementsKeyword_Unreserved>  => "Keyword[_YulImplementsKeyword]".to_string(),
         
     };
+    #[inline]
     YulImportKeyword: String = {
          
             <_YulImportKeyword: YulImportKeyword_Unreserved>  => "Keyword[_YulImportKeyword]".to_string(),
         
     };
+    #[inline]
     YulIndexedKeyword: String = {
          
             <_YulIndexedKeyword: YulIndexedKeyword_Unreserved>  => "Keyword[_YulIndexedKeyword]".to_string(),
         
     };
+    #[inline]
     YulInKeyword: String = {
          
             <_YulInKeyword: YulInKeyword_Unreserved>  => "Keyword[_YulInKeyword]".to_string(),
         
     };
+    #[inline]
     YulInlineKeyword: String = {
          
             <_YulInlineKeyword: YulInlineKeyword_Unreserved>  => "Keyword[_YulInlineKeyword]".to_string(),
         
     };
+    #[inline]
     YulInterfaceKeyword: String = {
          
             <_YulInterfaceKeyword: YulInterfaceKeyword_Unreserved>  => "Keyword[_YulInterfaceKeyword]".to_string(),
         
     };
+    #[inline]
     YulInternalKeyword: String = {
          
             <_YulInternalKeyword: YulInternalKeyword_Unreserved>  => "Keyword[_YulInternalKeyword]".to_string(),
         
     };
+    #[inline]
     YulIntKeyword: String = {
          
             <_YulIntKeyword: YulIntKeyword_Unreserved>  => "Keyword[_YulIntKeyword]".to_string(),
         
     };
+    #[inline]
     YulIsKeyword: String = {
          
             <_YulIsKeyword: YulIsKeyword_Unreserved>  => "Keyword[_YulIsKeyword]".to_string(),
         
     };
+    #[inline]
     YulLeaveKeyword: String = {
          
             <_YulLeaveKeyword: YulLeaveKeyword_Reserved>  => "Keyword[_YulLeaveKeyword]".to_string(),
         
     };
+    #[inline]
     YulLetKeyword: String = {
          
             <_YulLetKeyword: YulLetKeyword_Reserved>  => "Keyword[_YulLetKeyword]".to_string(),
         
     };
+    #[inline]
     YulLibraryKeyword: String = {
          
             <_YulLibraryKeyword: YulLibraryKeyword_Unreserved>  => "Keyword[_YulLibraryKeyword]".to_string(),
         
     };
+    #[inline]
     YulMacroKeyword: String = {
          
             <_YulMacroKeyword: YulMacroKeyword_Unreserved>  => "Keyword[_YulMacroKeyword]".to_string(),
         
     };
+    #[inline]
     YulMappingKeyword: String = {
          
             <_YulMappingKeyword: YulMappingKeyword_Unreserved>  => "Keyword[_YulMappingKeyword]".to_string(),
         
     };
+    #[inline]
     YulMatchKeyword: String = {
          
             <_YulMatchKeyword: YulMatchKeyword_Unreserved>  => "Keyword[_YulMatchKeyword]".to_string(),
         
     };
+    #[inline]
     YulMemoryKeyword: String = {
          
             <_YulMemoryKeyword: YulMemoryKeyword_Unreserved>  => "Keyword[_YulMemoryKeyword]".to_string(),
         
     };
+    #[inline]
     YulMinutesKeyword: String = {
          
             <_YulMinutesKeyword: YulMinutesKeyword_Unreserved>  => "Keyword[_YulMinutesKeyword]".to_string(),
         
     };
+    #[inline]
     YulModifierKeyword: String = {
          
             <_YulModifierKeyword: YulModifierKeyword_Unreserved>  => "Keyword[_YulModifierKeyword]".to_string(),
         
     };
+    #[inline]
     YulMutableKeyword: String = {
          
             <_YulMutableKeyword: YulMutableKeyword_Unreserved>  => "Keyword[_YulMutableKeyword]".to_string(),
         
     };
+    #[inline]
     YulNewKeyword: String = {
          
             <_YulNewKeyword: YulNewKeyword_Unreserved>  => "Keyword[_YulNewKeyword]".to_string(),
         
     };
+    #[inline]
     YulNullKeyword: String = {
          
             <_YulNullKeyword: YulNullKeyword_Unreserved>  => "Keyword[_YulNullKeyword]".to_string(),
         
     };
+    #[inline]
     YulOfKeyword: String = {
          
             <_YulOfKeyword: YulOfKeyword_Unreserved>  => "Keyword[_YulOfKeyword]".to_string(),
         
     };
+    #[inline]
     YulOverrideKeyword: String = {
          
             <_YulOverrideKeyword: YulOverrideKeyword_Unreserved>  => "Keyword[_YulOverrideKeyword]".to_string(),
         
     };
+    #[inline]
     YulPartialKeyword: String = {
          
             <_YulPartialKeyword: YulPartialKeyword_Unreserved>  => "Keyword[_YulPartialKeyword]".to_string(),
         
     };
+    #[inline]
     YulPayableKeyword: String = {
          
             <_YulPayableKeyword: YulPayableKeyword_Unreserved>  => "Keyword[_YulPayableKeyword]".to_string(),
         
     };
+    #[inline]
     YulPragmaKeyword: String = {
          
             <_YulPragmaKeyword: YulPragmaKeyword_Unreserved>  => "Keyword[_YulPragmaKeyword]".to_string(),
         
     };
+    #[inline]
     YulPrivateKeyword: String = {
          
             <_YulPrivateKeyword: YulPrivateKeyword_Unreserved>  => "Keyword[_YulPrivateKeyword]".to_string(),
         
     };
+    #[inline]
     YulPromiseKeyword: String = {
          
             <_YulPromiseKeyword: YulPromiseKeyword_Unreserved>  => "Keyword[_YulPromiseKeyword]".to_string(),
         
     };
+    #[inline]
     YulPublicKeyword: String = {
          
             <_YulPublicKeyword: YulPublicKeyword_Unreserved>  => "Keyword[_YulPublicKeyword]".to_string(),
         
     };
+    #[inline]
     YulPureKeyword: String = {
          
             <_YulPureKeyword: YulPureKeyword_Unreserved>  => "Keyword[_YulPureKeyword]".to_string(),
         
     };
+    #[inline]
     YulReceiveKeyword: String = {
          
             <_YulReceiveKeyword: YulReceiveKeyword_Unreserved>  => "Keyword[_YulReceiveKeyword]".to_string(),
         
     };
+    #[inline]
     YulReferenceKeyword: String = {
          
             <_YulReferenceKeyword: YulReferenceKeyword_Unreserved>  => "Keyword[_YulReferenceKeyword]".to_string(),
         
     };
+    #[inline]
     YulRelocatableKeyword: String = {
          
             <_YulRelocatableKeyword: YulRelocatableKeyword_Unreserved>  => "Keyword[_YulRelocatableKeyword]".to_string(),
         
     };
+    #[inline]
     YulReturnsKeyword: String = {
          
             <_YulReturnsKeyword: YulReturnsKeyword_Unreserved>  => "Keyword[_YulReturnsKeyword]".to_string(),
         
     };
+    #[inline]
     YulSealedKeyword: String = {
          
             <_YulSealedKeyword: YulSealedKeyword_Unreserved>  => "Keyword[_YulSealedKeyword]".to_string(),
         
     };
+    #[inline]
     YulSecondsKeyword: String = {
          
             <_YulSecondsKeyword: YulSecondsKeyword_Unreserved>  => "Keyword[_YulSecondsKeyword]".to_string(),
         
     };
+    #[inline]
     YulSizeOfKeyword: String = {
          
             <_YulSizeOfKeyword: YulSizeOfKeyword_Unreserved>  => "Keyword[_YulSizeOfKeyword]".to_string(),
         
     };
+    #[inline]
     YulStaticKeyword: String = {
          
             <_YulStaticKeyword: YulStaticKeyword_Unreserved>  => "Keyword[_YulStaticKeyword]".to_string(),
         
     };
+    #[inline]
     YulStorageKeyword: String = {
          
             <_YulStorageKeyword: YulStorageKeyword_Unreserved>  => "Keyword[_YulStorageKeyword]".to_string(),
         
     };
+    #[inline]
     YulStringKeyword: String = {
          
             <_YulStringKeyword: YulStringKeyword_Unreserved>  => "Keyword[_YulStringKeyword]".to_string(),
         
     };
+    #[inline]
     YulStructKeyword: String = {
          
             <_YulStructKeyword: YulStructKeyword_Unreserved>  => "Keyword[_YulStructKeyword]".to_string(),
         
     };
+    #[inline]
     YulSuperKeyword: String = {
          
             <_YulSuperKeyword: YulSuperKeyword_Reserved>  => "Keyword[_YulSuperKeyword]".to_string(),
         
     };
+    #[inline]
     YulSupportsKeyword: String = {
          
             <_YulSupportsKeyword: YulSupportsKeyword_Unreserved>  => "Keyword[_YulSupportsKeyword]".to_string(),
         
     };
+    #[inline]
     YulSwitchKeyword: String = {
          
             <_YulSwitchKeyword: YulSwitchKeyword_Reserved>  => "Keyword[_YulSwitchKeyword]".to_string(),
         
     };
+    #[inline]
     YulSzaboKeyword: String = {
          
             <_YulSzaboKeyword: YulSzaboKeyword_Unreserved>  => "Keyword[_YulSzaboKeyword]".to_string(),
         
     };
+    #[inline]
     YulThisKeyword: String = {
          
             <_YulThisKeyword: YulThisKeyword_Reserved>  => "Keyword[_YulThisKeyword]".to_string(),
         
     };
+    #[inline]
     YulThrowKeyword: String = {
          
             <_YulThrowKeyword: YulThrowKeyword_Unreserved>  => "Keyword[_YulThrowKeyword]".to_string(),
         
     };
+    #[inline]
     YulTrueKeyword: String = {
          
             <_YulTrueKeyword: YulTrueKeyword_Reserved>  => "Keyword[_YulTrueKeyword]".to_string(),
         
     };
+    #[inline]
     YulTryKeyword: String = {
          
             <_YulTryKeyword: YulTryKeyword_Unreserved>  => "Keyword[_YulTryKeyword]".to_string(),
         
     };
+    #[inline]
     YulTypeDefKeyword: String = {
          
             <_YulTypeDefKeyword: YulTypeDefKeyword_Unreserved>  => "Keyword[_YulTypeDefKeyword]".to_string(),
         
     };
+    #[inline]
     YulTypeKeyword: String = {
          
             <_YulTypeKeyword: YulTypeKeyword_Unreserved>  => "Keyword[_YulTypeKeyword]".to_string(),
         
     };
+    #[inline]
     YulTypeOfKeyword: String = {
          
             <_YulTypeOfKeyword: YulTypeOfKeyword_Unreserved>  => "Keyword[_YulTypeOfKeyword]".to_string(),
         
     };
+    #[inline]
     YulUfixedKeyword: String = {
          
             <_YulUfixedKeyword: YulUfixedKeyword_Unreserved>  => "Keyword[_YulUfixedKeyword]".to_string(),
         
     };
+    #[inline]
     YulUintKeyword: String = {
          
             <_YulUintKeyword: YulUintKeyword_Unreserved>  => "Keyword[_YulUintKeyword]".to_string(),
         
     };
+    #[inline]
     YulUncheckedKeyword: String = {
          
             <_YulUncheckedKeyword: YulUncheckedKeyword_Unreserved>  => "Keyword[_YulUncheckedKeyword]".to_string(),
         
     };
+    #[inline]
     YulUsingKeyword: String = {
          
             <_YulUsingKeyword: YulUsingKeyword_Unreserved>  => "Keyword[_YulUsingKeyword]".to_string(),
         
     };
+    #[inline]
     YulVarKeyword: String = {
          
             <_YulVarKeyword: YulVarKeyword_Unreserved>  => "Keyword[_YulVarKeyword]".to_string(),
         
     };
+    #[inline]
     YulViewKeyword: String = {
          
             <_YulViewKeyword: YulViewKeyword_Unreserved>  => "Keyword[_YulViewKeyword]".to_string(),
         
     };
+    #[inline]
     YulVirtualKeyword: String = {
          
             <_YulVirtualKeyword: YulVirtualKeyword_Unreserved>  => "Keyword[_YulVirtualKeyword]".to_string(),
         
     };
+    #[inline]
     YulWeeksKeyword: String = {
          
             <_YulWeeksKeyword: YulWeeksKeyword_Unreserved>  => "Keyword[_YulWeeksKeyword]".to_string(),
         
     };
+    #[inline]
     YulWeiKeyword: String = {
          
             <_YulWeiKeyword: YulWeiKeyword_Unreserved>  => "Keyword[_YulWeiKeyword]".to_string(),
         
     };
+    #[inline]
     YulWhileKeyword: String = {
          
             <_YulWhileKeyword: YulWhileKeyword_Unreserved>  => "Keyword[_YulWhileKeyword]".to_string(),
         
     };
+    #[inline]
     YulYearsKeyword: String = {
          
             <_YulYearsKeyword: YulYearsKeyword_Unreserved>  => "Keyword[_YulYearsKeyword]".to_string(),
