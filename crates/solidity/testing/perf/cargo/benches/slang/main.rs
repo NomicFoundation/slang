@@ -70,15 +70,15 @@ macro_rules! slang_define_full_tests {
                 black_box(unit);
             }
 
-            #[library_benchmark(setup = tests::binder_run::setup)]
+            #[library_benchmark(setup = tests::binder_v2_run::setup)]
             #[bench::test(stringify!($prj))]
-            fn [< $prj _binder >](unit: CompilationUnit) -> BinderOutput {
-                black_box(tests::binder_run::run(unit))
+            fn [< $prj _binder_v2_run >](unit: CompilationUnit) -> BinderOutput {
+                black_box(tests::binder_v2_run::run(unit))
             }
 
-            #[library_benchmark(setup = tests::binder_cleanup::setup)]
+            #[library_benchmark(setup = tests::binder_v2_cleanup::setup)]
             #[bench::test(stringify!($prj))]
-            fn [< $prj _binder_cleanup >](output: BinderOutput) {
+            fn [< $prj _binder_v2_cleanup >](output: BinderOutput) {
                 black_box(output);
             }
 
@@ -93,8 +93,8 @@ macro_rules! slang_define_full_tests {
                     [< $prj _bindings_build >],
                     [< $prj _bindings_resolve >],
                     [< $prj _cleanup >],
-                    [< $prj _binder >],
-                    [< $prj _binder_cleanup >],
+                    [< $prj _binder_v2_run >],
+                    [< $prj _binder_v2_cleanup >],
             );
         }
     };

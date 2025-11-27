@@ -46,7 +46,7 @@ mod unit_tests {
         define_payload_test_and_assert_count_eq!(query, super::CONTRACT_COUNT);
         define_payload_test!(bindings_build);
         define_payload_test_and_assert_count_eq!(bindings_resolve, super::IDENTIFIER_COUNT);
-        define_payload_test_and_assert_count_eq!(binder_run, super::IDENTIFIER_COUNT);
+        define_payload_test_and_assert_count_eq!(binder_v2_run, super::IDENTIFIER_COUNT);
     }
 
     mod solar {
