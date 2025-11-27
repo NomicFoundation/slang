@@ -1,5 +1,4 @@
 use logos::source;
-use semver::Version;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
@@ -22,7 +21,9 @@ fn empty_contract() {
     let mut lexer = Lexer::new(kind, source.clone(), version);
 
     assert_eq!(
-        grammar::SourceUnitParser::new().parse(&source, lexer),
-        Ok("33".into())
+        grammar::SourceUnitParser::new()
+            .parse(&source, lexer)
+            .unwrap(),
+        "33"
     );
 }

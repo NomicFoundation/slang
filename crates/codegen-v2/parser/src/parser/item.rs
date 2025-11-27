@@ -59,7 +59,8 @@ fn capture(rule: RustCode) -> RustCode {
 
 fn separated(rule: RustCode, separator: RustCode, allow_empty: bool) -> RustCode {
     // TODO is there a perf difference between this and `({} {})* {}`?
-    let at_least_one = RustCode(format!("({} ({} {})*)", rule.0, separator.0, rule.0));
+    // Hack, I'm capturing the repeating element
+    let at_least_one = RustCode(format!("({} <({} {})*>)", rule.0, separator.0, rule.0));
     if allow_empty {
         optional(at_least_one)
     } else {
@@ -236,7 +237,7 @@ impl TryFrom<&SeparatedItem> for LALRPOPItem {
                     // If it's allowed to be empty, then we have an Option<(String, Vec<String>)>
                     // TODO: This is not ideal, we should make something smarter later on
                     once(format!(
-                        "{}.map(|x| format!(\"[{{}}, {{}}]\", x.0, x.1.join(\", \"))).unwrap_or(\"[]\".into())",
+                        "{}.map(|x| format!(\"[{{}}, {{}}]\", x.0, x.1.iter().join(\", \"))).unwrap_or(\"[]\".into())",
                         capturing_name
                     ))
                 } else {
