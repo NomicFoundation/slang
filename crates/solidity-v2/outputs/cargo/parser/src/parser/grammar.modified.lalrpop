@@ -2116,7 +2116,9 @@ TypeName = TypeNameInternal<"True">;
          
             <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => format!("{{ \"item\": \"Variant\", \"name\": \"ArgumentsDeclaration\", \"_PositionalArgumentsDeclaration\": {} }}", _PositionalArgumentsDeclaration),
          
-            <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => format!("{{ \"item\": \"Variant\", \"name\": \"ArgumentsDeclaration\", \"_NamedArgumentsDeclaration\": {} }}", _NamedArgumentsDeclaration),
+         // TODO: enable
+                // Some strange conflict
+            //<_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => format!("{{ \"item\": \"Variant\", \"name\": \"ArgumentsDeclaration\", \"_NamedArgumentsDeclaration\": {} }}", _NamedArgumentsDeclaration),
         
     };
     #[inline]
@@ -2134,13 +2136,13 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     NamedArgumentsDeclaration: String = {
          
-            <_open_paren: OpenParen>  <_arguments: (NamedArgumentGroup)?>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgumentsDeclaration\", \"_open_paren\": {}, \"_arguments\": {}, \"_close_paren\": {} }}", _open_paren, _arguments.unwrap_or("\"\"".into()), _close_paren),
+            <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgumentsDeclaration\", \"_open_paren\": {}, \"_arguments\": {}, \"_close_paren\": {} }}", _open_paren, _arguments, _close_paren),
         
     };
     #[inline]
     NamedArgumentGroup: String = {
          
-            <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgumentGroup\", \"_open_brace\": {}, \"_arguments\": {}, \"_close_brace\": {} }}", _open_brace, _arguments, _close_brace),
+            <_open_brace: OpenBrace>  <_arguments: (NamedArguments)?>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgumentGroup\", \"_open_brace\": {}, \"_arguments\": {}, \"_close_brace\": {} }}", _open_brace, _arguments.unwrap_or("\"\"".into()), _close_brace),
         
     };
     #[inline]
