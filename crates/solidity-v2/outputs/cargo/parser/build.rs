@@ -1,6 +1,6 @@
 fn main() {
     lalrpop::Configuration::new()
-        .emit_report(true)
+        .emit_report(false)
         .log_verbose()
         .process_current_dir()
         .unwrap();
