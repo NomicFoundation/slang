@@ -1,7 +1,7 @@
 mod item;
 mod parser_builder;
 
-use language_v2_definition::model::{Identifier, Language, Section, Topic};
+use language_v2_definition::model::{Identifier, Language};
 use serde::Serialize;
 
 use crate::lexer::LexerModel;
