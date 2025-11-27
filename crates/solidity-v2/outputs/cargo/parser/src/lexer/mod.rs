@@ -1,5 +1,5 @@
 #[path = "contexts.generated.rs"]
-mod contexts;
+pub(crate) mod contexts;
 pub(crate) mod definition;
 #[path = "lexemes.generated.rs"]
 pub(crate) mod lexemes;
