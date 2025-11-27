@@ -1206,7 +1206,23 @@ grammar<'source>(source: &'source str);
     StateVariableDefinition: String = {
          
          // TODO: enable
-            <_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _name, _name, _value, _semicolon),
+            //<_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _name, _name, _value, _semicolon),
+
+
+         // If we're not using functions, then we can have all attributes
+            <_type_name: TypeNameInternal<"False">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _name, _name, _value, _semicolon),
+            // Otherwise, the fun begins
+
+            // If the there is a return, the visibility doesnt really matter, it's ignored. 
+            // So we can either have or not have a vis
+            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _name, _name, _value, _semicolon),
+
+            // If there is no return, then we need to check the visibility
+            // If there's a Vis then we can have a Vis
+            <_type_name: FunctionTypeInternalNoReturn<"1">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _name, _name, _value, _semicolon),
+            // If there's no Vis, then we cant have a Vis
+            <_type_name: FunctionTypeInternalNoReturn<"0">>  <_attributes: StateVariableAttributes<"0">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("Struct(StateVariableDefinition)[{:?}, {:?}, {:?}, {:?}, {:?}]", _type_name, _name, _name, _value, _semicolon),
+            
         
     };
     #[inline]
@@ -1216,11 +1232,17 @@ grammar<'source>(source: &'source str);
         
     };
     #[inline]
-    StateVariableAttributes: String = {
-         
-            <_StateVariableAttribute: (StateVariableAttribute)*>  => "Repeated(StateVariableAttributes)[_StateVariableAttribute]".to_string(),
+    StateVariableAttributes<Vis>: String = {
+        // <_ConstantKeyword: ConstantKeyword> <_other: StateVariableAttributes<Vis, "True">> if Const == "False" => format!("Variant(StateVariableAttribute)[{:?}, {:?}]", _ConstantKeyword, _other),
+
+        <_InternalKeyword: InternalKeyword> <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("Variant(StateVariableAttribute)[{:?}, {:?}]", _InternalKeyword, _other),
+        <_PrivateKeyword: PrivateKeyword>   <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("Variant(StateVariableAttribute)[{:?}, {:?}]", _PrivateKeyword, _other),
+        <_PublicKeyword: PublicKeyword>     <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("Variant(StateVariableAttribute)[{:?}, {:?}]", _PublicKeyword, _other),
+
+        () if Vis ~~ "0|m" => "Struct(StateVariableAttributes)[]".to_string(),
         
     };
+    /*
     #[inline]
     StateVariableAttribute: String = {
          
@@ -1239,6 +1261,7 @@ grammar<'source>(source: &'source str);
             <_TransientKeyword: TransientKeyword>  => format!("Variant(StateVariableAttribute)[{:?}]", _TransientKeyword),
         
     };
+    */
     
 
 // Rules for topic Functions
@@ -1511,16 +1534,19 @@ grammar<'source>(source: &'source str);
 // Rules for topic Advanced Types
 
 #[inline]
-    TypeName: String = {
+TypeName = TypeNameInternal<"True">;
+
+// Inlining here makes it a lot slower, think twice
+    TypeNameInternal<Func>: String = {
         // TODO: enable
         // It has problems with Access expression
             //<_TypeName: TypeName0>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => format!("Precedence(ArrayTypeName)[{:?}]", _TypeName),
-            <_TypeName: TypeName0>  => _TypeName,
+            <_TypeName: TypeName0<Func>>  => _TypeName,
     }
 
 #[inline]
-    TypeName0: String = {
-            <_FunctionType: FunctionType>  => format!("Precedence[{:?}]", _FunctionType),
+    TypeName0<Func>: String = {
+            <_FunctionType: FunctionType> if Func == "True" => format!("Precedence[{:?}]", _FunctionType),
             <_MappingType: MappingType>  => format!("Precedence[{:?}]", _MappingType),
             <_ElementaryType: ElementaryType>  => format!("Precedence[{:?}]", _ElementaryType),
             <_IdentifierPath: IdentifierPath>  => format!("Precedence[{:?}]", _IdentifierPath),
@@ -1543,18 +1569,34 @@ grammar<'source>(source: &'source str);
             <_type_name: TypeName>  <_open_bracket: OpenBracket>  <_close_bracket: CloseBracket>  => format!("Struct(NewableArrayType)[{:?}, {:?}, {:?}]", _type_name, _open_bracket, _close_bracket),
         
     };
-    // We dont inline this to break a cycle between type names
+
     FunctionType: String = {
+        FunctionTypeInternalNoReturn<"m"> => <>,
+        FunctionTypeInternalReturn => <>,
+    };
+
+    // We dont inline this to break a cycle between type names
+    FunctionTypeInternalNoReturn<Vis>: String = {
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<Vis>>   => format!("Struct(FunctionType)[{:?}, {:?}, {:?}]", _function_keyword, _parameters, _attributes),
+    };
+    FunctionTypeInternalReturn: String = {
          
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: (ReturnsDeclaration)?>  => format!("Struct(FunctionType)[{:?}, {:?}, {:?}, {:?}]", _function_keyword, _parameters, _attributes, _returns),
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<"m">>  <_returns: ReturnsDeclaration>  => format!("Struct(FunctionType)[{:?}, {:?}, {:?}, {:?}]", _function_keyword, _parameters, _attributes, _returns),
         
     };
     #[inline]
-    FunctionTypeAttributes: String = {
-         
-            <_FunctionTypeAttribute: (FunctionTypeAttribute)*>  => "Repeated(FunctionTypeAttributes)[_FunctionTypeAttribute]".to_string(),
+    FunctionTypeAttributes<Vis>: String = {
+        <_InternalKeyword: InternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("Variant(FunctionTypeAttribute)[{:?}, {:?}]", _InternalKeyword, _other),
+        <_ExternalKeyword: ExternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("Variant(FunctionTypeAttribute)[{:?}, {:?}]", _ExternalKeyword, _other),
+        <_PrivateKeyword: PrivateKeyword>   <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("Variant(FunctionTypeAttribute)[{:?}, {:?}]", _PrivateKeyword, _other),
+        <_PublicKeyword: PublicKeyword>     <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("Variant(FunctionTypeAttribute)[{:?}, {:?}]", _PublicKeyword, _other),
         
+        // <_PureKeyword: PureKeyword>         <_other: FunctionTypeAttributes<Vis, "True">> if Pure == "False" => format!("Variant(FunctionTypeAttribute)[{:?}, {:?}]", _PureKeyword, _other),
+
+        () if Vis ~~ "0|m" => "Struct(FunctionTypeAttributes)[]".to_string(),
+         
     };
+    /*
     #[inline]
     FunctionTypeAttribute: String = {
          
@@ -1573,6 +1615,7 @@ grammar<'source>(source: &'source str);
             <_PayableKeyword: PayableKeyword>  => format!("Variant(FunctionTypeAttribute)[{:?}]", _PayableKeyword),
         
     };
+    */
     // We dont inline this to break a cycle between type names
     MappingType: String = {
          
