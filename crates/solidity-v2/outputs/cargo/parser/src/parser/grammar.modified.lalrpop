@@ -47,7 +47,7 @@ grammar<'source>(source: &'source str);
 //            <_EventDefinition: EventDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_EventDefinition\": {} }}", _EventDefinition),
 //         
 //            <_ConstantDefinition: ConstantDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_ConstantDefinition\": {} }}", _ConstantDefinition),
-    
+        
     };
     
 
@@ -107,7 +107,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     VersionExpressionSets: String = {
          
-            <_VersionExpressionSet: (<VersionExpressionSet> (BarBar <VersionExpressionSet>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"VersionExpressionSets\", \"_VersionExpressionSet\": {} }}", format!("[{}, {}]", _VersionExpressionSet.0, _VersionExpressionSet.1.join(", "))),
+            <_VersionExpressionSet: (<VersionExpressionSet> <(BarBar <VersionExpressionSet>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"VersionExpressionSets\", \"_VersionExpressionSet\": {} }}", format!("[{}, {}]", _VersionExpressionSet.0, _VersionExpressionSet.1.join(", "))),
         
     };
     #[inline]
@@ -166,7 +166,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     SimpleVersionLiteral: String = {
          
-            <_VersionSpecifier: (<VersionSpecifier> (Period <VersionSpecifier>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"SimpleVersionLiteral\", \"_VersionSpecifier\": {} }}", format!("[{}, {}]", _VersionSpecifier.0, _VersionSpecifier.1.join(", "))),
+            <_VersionSpecifier: (<VersionSpecifier> <(Period <VersionSpecifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"SimpleVersionLiteral\", \"_VersionSpecifier\": {} }}", format!("[{}, {}]", _VersionSpecifier.0, _VersionSpecifier.1.join(", "))),
         
     };
     
@@ -209,7 +209,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     ImportDeconstructionSymbols: String = {
          
-            <_ImportDeconstructionSymbol: (<ImportDeconstructionSymbol> (Comma <ImportDeconstructionSymbol>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"ImportDeconstructionSymbols\", \"_ImportDeconstructionSymbol\": {} }}", format!("[{}, {}]", _ImportDeconstructionSymbol.0, _ImportDeconstructionSymbol.1.join(", "))),
+            <_ImportDeconstructionSymbol: (<ImportDeconstructionSymbol> <(Comma <ImportDeconstructionSymbol>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"ImportDeconstructionSymbols\", \"_ImportDeconstructionSymbol\": {} }}", format!("[{}, {}]", _ImportDeconstructionSymbol.0, _ImportDeconstructionSymbol.1.join(", "))),
         
     };
     #[inline]
@@ -248,7 +248,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     UsingDeconstructionSymbols: String = {
          
-            <_UsingDeconstructionSymbol: (<UsingDeconstructionSymbol> (Comma <UsingDeconstructionSymbol>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"UsingDeconstructionSymbols\", \"_UsingDeconstructionSymbol\": {} }}", format!("[{}, {}]", _UsingDeconstructionSymbol.0, _UsingDeconstructionSymbol.1.join(", "))),
+            <_UsingDeconstructionSymbol: (<UsingDeconstructionSymbol> <(Comma <UsingDeconstructionSymbol>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"UsingDeconstructionSymbols\", \"_UsingDeconstructionSymbol\": {} }}", format!("[{}, {}]", _UsingDeconstructionSymbol.0, _UsingDeconstructionSymbol.1.join(", "))),
         
     };
     #[inline]
@@ -1068,7 +1068,6 @@ grammar<'source>(source: &'source str);
             <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => format!("{{ \"item\": \"Variant\", \"name\": \"ContractSpecifier\", \"_StorageLayoutSpecifier\": {} }}", _StorageLayoutSpecifier),
         
     };
-        // Maybe this needs to be inlined
     InheritanceSpecifier: String = {
          
             <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => format!("{{ \"item\": \"Struct\", \"name\": \"InheritanceSpecifier\", \"_is_keyword\": {}, \"_types\": {} }}", _is_keyword, _types),
@@ -1077,7 +1076,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     InheritanceTypes: String = {
          
-            <_InheritanceType: (<InheritanceType> (Comma <InheritanceType>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"InheritanceTypes\", \"_InheritanceType\": {} }}", format!("[{}, {}]", _InheritanceType.0, _InheritanceType.1.join(", "))),
+            <_InheritanceType: (<InheritanceType> <(Comma <InheritanceType>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"InheritanceTypes\", \"_InheritanceType\": {} }}", format!("[{}, {}]", _InheritanceType.0, _InheritanceType.1.join(", "))),
         
     };
     #[inline]
@@ -1187,7 +1186,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     EnumMembers: String = {
          
-            <_Identifier: ((<Identifier> (Comma <Identifier>)*))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"EnumMembers\", \"_Identifier\": {} }}", _Identifier.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
+            <_Identifier: ((<Identifier> <(Comma <Identifier>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"EnumMembers\", \"_Identifier\": {} }}", _Identifier.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
         
     };
     
@@ -1204,7 +1203,7 @@ grammar<'source>(source: &'source str);
 // Rules for topic State Variables
     #[inline]
     StateVariableDefinition: String = {
-
+         
                 // TODO: enable
             //<_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
 
@@ -1222,7 +1221,7 @@ grammar<'source>(source: &'source str);
             <_type_name: FunctionTypeInternalNoReturn<"1">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
             // If there's no Vis, then we cant have a Vis
             <_type_name: FunctionTypeInternalNoReturn<"0">>  <_attributes: StateVariableAttributes<"0">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
-  
+        
     };
     #[inline]
     StateVariableDefinitionValue: String = {
@@ -1287,7 +1286,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     Parameters: String = {
          
-            <_Parameter: ((<Parameter> (Comma <Parameter>)*))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"Parameters\", \"_Parameter\": {} }}", _Parameter.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
+            <_Parameter: ((<Parameter> <(Comma <Parameter>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"Parameters\", \"_Parameter\": {} }}", _Parameter.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
         
     };
     #[inline]
@@ -1340,7 +1339,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     OverridePaths: String = {
          
-            <_IdentifierPath: (<IdentifierPath> (Comma <IdentifierPath>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"OverridePaths\", \"_IdentifierPath\": {} }}", format!("[{}, {}]", _IdentifierPath.0, _IdentifierPath.1.join(", "))),
+            <_IdentifierPath: (<IdentifierPath> <(Comma <IdentifierPath>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"OverridePaths\", \"_IdentifierPath\": {} }}", format!("[{}, {}]", _IdentifierPath.0, _IdentifierPath.1.join(", "))),
         
     };
     ReturnsDeclaration: String = {
@@ -1480,7 +1479,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     EventParameters: String = {
          
-            <_EventParameter: ((<EventParameter> (Comma <EventParameter>)*))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"EventParameters\", \"_EventParameter\": {} }}", _EventParameter.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
+            <_EventParameter: ((<EventParameter> <(Comma <EventParameter>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"EventParameters\", \"_EventParameter\": {} }}", _EventParameter.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
         
     };
     #[inline]
@@ -1514,7 +1513,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     ErrorParameters: String = {
          
-            <_ErrorParameter: ((<ErrorParameter> (Comma <ErrorParameter>)*))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"ErrorParameters\", \"_ErrorParameter\": {} }}", _ErrorParameter.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
+            <_ErrorParameter: ((<ErrorParameter> <(Comma <ErrorParameter>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"ErrorParameters\", \"_ErrorParameter\": {} }}", _ErrorParameter.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
         
     };
     #[inline]
@@ -1584,8 +1583,7 @@ TypeName = TypeNameInternal<"True">;
             <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<"m">>  <_returns: ReturnsDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_returns\": {} }}", _function_keyword, _parameters, _attributes, _returns),
         
     };
-
-#[inline]
+    #[inline]
     FunctionTypeAttributes<Vis>: String = {
         <_InternalKeyword: InternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_InternalKeyword\": {} }}", _InternalKeyword),
         <_ExternalKeyword: ExternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_ExternalKeyword\": {} }}", _ExternalKeyword),
@@ -1595,7 +1593,7 @@ TypeName = TypeNameInternal<"True">;
         // <_PureKeyword: PureKeyword>         <_other: FunctionTypeAttributes<Vis, "True">> if Pure == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PureKeyword\": {} }}", _PureKeyword),
 
         () if Vis ~~ "0|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\" }}"),
-         
+        
     };
     /*
     #[inline]
@@ -1756,7 +1754,7 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     AssemblyFlags: String = {
          
-            <_StringLiteral: (<StringLiteral> (Comma <StringLiteral>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"AssemblyFlags\", \"_StringLiteral\": {} }}", format!("[{}, {}]", _StringLiteral.0, _StringLiteral.1.join(", "))),
+            <_StringLiteral: (<StringLiteral> <(Comma <StringLiteral>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"AssemblyFlags\", \"_StringLiteral\": {} }}", format!("[{}, {}]", _StringLiteral.0, _StringLiteral.1.join(", "))),
         
     };
     
@@ -1775,8 +1773,8 @@ TypeName = TypeNameInternal<"True">;
     TupleDeconstructionElements: String = {
          // A Tuple deconstruction element must have at least one member
          // TODO: The action needs to be coded bu hand
-            Comma* <_TupleDeconstructionElement: (<TupleMember> (Comma (<TupleMember>)?)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"TupleDeconstructionElements\", \"_TupleDeconstructionElement\": {} }}", format!("[{}, {}]", _TupleDeconstructionElement.0, _TupleDeconstructionElement.1.join(", "))),
-
+            Comma* <_TupleDeconstructionElement: (<TupleMember> <(Comma (<TupleMember>)?)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"TupleDeconstructionElements\", \"_TupleDeconstructionElement\": {} }}", format!("[{}, {}]", _TupleDeconstructionElement.0, _TupleDeconstructionElement.1.join(", "))),
+        
     };
     //#[inline]
     //TupleDeconstructionElement: String = {
@@ -1861,7 +1859,7 @@ TypeName = TypeNameInternal<"True">;
 
     // TODO Maybe inline
     ForStatement<DI>: String = {
-
+         
             <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"ForStatement\", \"_for_keyword\": {}, \"_open_paren\": {}, \"_initialization\": {}, \"_condition\": {}, \"_iterator\": {}, \"_close_paren\": {}, \"_body\": {} }}", _for_keyword, _open_paren, _initialization, _condition, _iterator.unwrap_or("\"\"".into()), _close_paren, _body),
         
     };
@@ -1986,7 +1984,7 @@ TypeName = TypeNameInternal<"True">;
         //#[precedence(level="0")] 
             //<_Identifier: Identifier>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_Identifier\": {} }}", _Identifier),
 
-
+        
     };
     Expression1<Ident>: String = {
             <_Expression: Expression1<"True">>  <_operator: Equal>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
@@ -2130,7 +2128,7 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     PositionalArguments: String = {
          
-            <_Expression: ((<Expression> (Comma <Expression>)*))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"PositionalArguments\", \"_Expression\": {} }}", _Expression.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
+            <_Expression: ((<Expression> <(Comma <Expression>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"PositionalArguments\", \"_Expression\": {} }}", _Expression.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
         
     };
     #[inline]
@@ -2148,13 +2146,13 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     NamedArguments: String = {
          
-            <_NamedArgument: ((<NamedArgument> (Comma <NamedArgument>)*))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"NamedArguments\", \"_NamedArgument\": {} }}", _NamedArgument.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
+            <_NamedArgument: ((<NamedArgument> <(Comma <NamedArgument>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"NamedArguments\", \"_NamedArgument\": {} }}", _NamedArgument.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
         
     };
     #[inline]
     CallOptions: String = {
          
-            <_NamedArgument: (<NamedArgument> (Comma <NamedArgument>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"CallOptions\", \"_NamedArgument\": {} }}", format!("[{}, {}]", _NamedArgument.0, _NamedArgument.1.join(", "))),
+            <_NamedArgument: (<NamedArgument> <(Comma <NamedArgument>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"CallOptions\", \"_NamedArgument\": {} }}", format!("[{}, {}]", _NamedArgument.0, _NamedArgument.1.join(", "))),
         
     };
     NamedArgument: String = {
@@ -2189,12 +2187,12 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     TupleValues: String = {
          
-            <_TupleValue: (<TupleValue> (Comma <TupleValue>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"TupleValues\", \"_TupleValue\": {} }}", format!("[{}, {}]", _TupleValue.0, _TupleValue.1.join(", "))),
+            <_TupleValue: (<TupleValue> <(Comma <TupleValue>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"TupleValues\", \"_TupleValue\": {} }}", format!("[{}, {}]", _TupleValue.0, _TupleValue.1.join(", "))),
         
     };
     #[inline]
     TupleValue: String = {
-
+         
                   // A tuple value is an actual value, not a deconstruction
             <_expression: (Expression)>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleValue\", \"_expression\": {} }}", _expression),
         
@@ -2208,7 +2206,7 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     ArrayValues: String = {
          
-            <_Expression: (<Expression> (Comma <Expression>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"ArrayValues\", \"_Expression\": {} }}", format!("[{}, {}]", _Expression.0, _Expression.1.join(", "))),
+            <_Expression: (<Expression> <(Comma <Expression>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"ArrayValues\", \"_Expression\": {} }}", format!("[{}, {}]", _Expression.0, _Expression.1.join(", "))),
         
     };
     
@@ -2303,7 +2301,7 @@ TypeName = TypeNameInternal<"True">;
 // Rules for topic Identifiers
     IdentifierPath: String = {
          
-            <_Identifier: (<Identifier> (Period <Identifier>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"IdentifierPath\", \"_Identifier\": {} }}", format!("[{}, {}]", _Identifier.0, _Identifier.1.join(", "))),
+            <_Identifier: (<Identifier> <(Period <Identifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"IdentifierPath\", \"_Identifier\": {} }}", format!("[{}, {}]", _Identifier.0, _Identifier.1.join(", "))),
         
     };
     
@@ -2366,7 +2364,7 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     YulParameters: String = {
          
-            <_YulIdentifier: ((<YulIdentifier> (Comma <YulIdentifier>)*))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulParameters\", \"_YulIdentifier\": {} }}", _YulIdentifier.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
+            <_YulIdentifier: ((<YulIdentifier> <(Comma <YulIdentifier>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulParameters\", \"_YulIdentifier\": {} }}", _YulIdentifier.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
         
     };
     #[inline]
@@ -2377,7 +2375,7 @@ TypeName = TypeNameInternal<"True">;
     };
     YulVariableNames: String = {
          
-            <_YulIdentifier: (<YulIdentifier> (Comma <YulIdentifier>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulVariableNames\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.join(", "))),
+            <_YulIdentifier: (<YulIdentifier> <(Comma <YulIdentifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulVariableNames\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.join(", "))),
         
     };
     #[inline]
@@ -2480,18 +2478,18 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     YulArguments: String = {
          
-            <_YulExpression: ((<YulExpression> (Comma <YulExpression>)*))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulArguments\", \"_YulExpression\": {} }}", _YulExpression.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
+            <_YulExpression: ((<YulExpression> <(Comma <YulExpression>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulArguments\", \"_YulExpression\": {} }}", _YulExpression.map(|x| format!("[{}, {}]", x.0, x.1.join(", "))).unwrap_or("[]".into())),
         
     };
     #[inline]
     YulPaths: String = {
          
-            <_YulPath: (<YulPath> (Comma <YulPath>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulPaths\", \"_YulPath\": {} }}", format!("[{}, {}]", _YulPath.0, _YulPath.1.join(", "))),
+            <_YulPath: (<YulPath> <(Comma <YulPath>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulPaths\", \"_YulPath\": {} }}", format!("[{}, {}]", _YulPath.0, _YulPath.1.join(", "))),
         
     };
     YulPath: String = {
          
-            <_YulIdentifier: (<YulIdentifier> (Period <YulIdentifier>)*)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulPath\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.join(", "))),
+            <_YulIdentifier: (<YulIdentifier> <(Period <YulIdentifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulPath\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.join(", "))),
         
     };
     YulLiteral: String = {
