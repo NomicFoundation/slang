@@ -1,29 +1,25 @@
 use logos::source;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::lexer::contexts::ContextKind;
-use crate::lexer::definition::Lexer;
-use crate::parser::grammar;
+use crate::parser::tests::test;
 
 #[test]
 fn empty_contract() {
-    let kind = ContextKind::Solidity;
     let source = "contract Foo {}";
-    let version = LanguageVersion::V0_8_30;
-    {
-        let mut lexer = Lexer::new(kind, source.clone(), version);
-        for l in lexer {
-            println!("{:?}", l);
-        }
-        println!("Finished lexing");
-    }
+    test(source, "33");
+}
 
-    let mut lexer = Lexer::new(kind, source.clone(), version);
+#[test]
+fn two_empty_contracts() {
+    let source = "contract Foo {}
+    contract Bar {}";
+    test(source, "33");
+}
 
-    assert_eq!(
-        grammar::SourceUnitParser::new()
-            .parse(&source, lexer)
-            .unwrap(),
-        "33"
-    );
+#[test]
+fn contract_with_function() {
+    let source = "contract Foo {
+        function bar() public {}
+    }";
+    test(source, "33");
 }
