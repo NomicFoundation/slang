@@ -28,26 +28,25 @@ grammar<'source>(source: &'source str);
          
             <_ContractDefinition: ContractDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_ContractDefinition\": {} }}", _ContractDefinition),
          
-// TODO: enable
-//            <_InterfaceDefinition: InterfaceDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_InterfaceDefinition\": {} }}", _InterfaceDefinition),
-//         
-//            <_LibraryDefinition: LibraryDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_LibraryDefinition\": {} }}", _LibraryDefinition),
-//         
-//            <_StructDefinition: StructDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_StructDefinition\": {} }}", _StructDefinition),
-//         
-//            <_EnumDefinition: EnumDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_EnumDefinition\": {} }}", _EnumDefinition),
-//         
-//            <_FunctionDefinition: FunctionDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_FunctionDefinition\": {} }}", _FunctionDefinition),
-//         
-//            <_ErrorDefinition: ErrorDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_ErrorDefinition\": {} }}", _ErrorDefinition),
-//         
-//            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_UserDefinedValueTypeDefinition\": {} }}", _UserDefinedValueTypeDefinition),
-//         
-//            <_UsingDirective: UsingDirective>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_UsingDirective\": {} }}", _UsingDirective),
-//         
-//            <_EventDefinition: EventDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_EventDefinition\": {} }}", _EventDefinition),
-//         
-//            <_ConstantDefinition: ConstantDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_ConstantDefinition\": {} }}", _ConstantDefinition),
+            <_InterfaceDefinition: InterfaceDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_InterfaceDefinition\": {} }}", _InterfaceDefinition),
+         
+            <_LibraryDefinition: LibraryDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_LibraryDefinition\": {} }}", _LibraryDefinition),
+         
+            <_StructDefinition: StructDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_StructDefinition\": {} }}", _StructDefinition),
+         
+            <_EnumDefinition: EnumDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_EnumDefinition\": {} }}", _EnumDefinition),
+         
+            <_FunctionDefinition: FunctionDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_FunctionDefinition\": {} }}", _FunctionDefinition),
+         
+            <_ErrorDefinition: ErrorDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_ErrorDefinition\": {} }}", _ErrorDefinition),
+         
+            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_UserDefinedValueTypeDefinition\": {} }}", _UserDefinedValueTypeDefinition),
+         
+            <_UsingDirective: UsingDirective>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_UsingDirective\": {} }}", _UsingDirective),
+         
+            <_EventDefinition: EventDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_EventDefinition\": {} }}", _EventDefinition),
+         
+            <_ConstantDefinition: ConstantDefinition>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_ConstantDefinition\": {} }}", _ConstantDefinition),
         
     };
     
