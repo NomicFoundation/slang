@@ -1,3 +1,5 @@
+use std::iter::once;
+
 use itertools::Itertools;
 use language_v2_definition::model::{
     EnumItem, Field, Identifier, Item as LanguageItem, KeywordItem, OperatorModel, PrecedenceItem,
@@ -28,6 +30,7 @@ struct LALRPOPOption {
 #[derive(Clone, Debug, Serialize)]
 struct LALRPOPField {
     capturing_name: Option<Identifier>,
+    is_optional: bool,
     rule: RustCode,
     // TODO: we may need some mutable captures, maybe not
     // mutable: bool,
@@ -49,14 +52,34 @@ fn repeated(rule: RustCode, allow_empty: bool) -> RustCode {
     }
 }
 
+/// anonymous capture inside LALRPOP macros
+fn capture(rule: RustCode) -> RustCode {
+    RustCode(format!("<{}>", rule.0))
+}
+
 fn separated(rule: RustCode, separator: RustCode, allow_empty: bool) -> RustCode {
     // TODO is there a perf difference between this and `({} {})* {}`?
     let at_least_one = RustCode(format!("({} ({} {})*)", rule.0, separator.0, rule.0));
     if allow_empty {
-        at_least_one
-    } else {
         optional(at_least_one)
+    } else {
+        at_least_one
     }
+}
+
+fn to_action(
+    item_kind: &str,
+    item_name: &str,
+    captures: impl Iterator<Item = String>,
+    actions: impl Iterator<Item = String>,
+) -> RustCode {
+    RustCode(format!(
+        r#"format!("{{{{ \"item\": \"{}\", \"name\": \"{}\", {} }}}}", {})"#,
+        item_kind,
+        item_name,
+        captures.map(|c| format!(r#"\"{}\": {{}}"#, c)).join(", "),
+        actions.map(|c| c.to_string()).join(", ")
+    ))
 }
 
 impl TryFrom<&StructItem> for LALRPOPItem {
@@ -71,18 +94,23 @@ impl TryFrom<&StructItem> for LALRPOPItem {
 
         let option = LALRPOPOption {
             fields: fields.clone().collect(),
-            action: RustCode(format!(
-                "format!(\"Struct({})[{}]\", {})",
-                item.name,
+            action: to_action(
+                "Struct",
+                &item.name,
                 fields
                     .clone()
-                    .filter_map(|field| { field.capturing_name.map(|_| "{:?}".to_string()) })
-                    .join(", "),
+                    .into_iter()
+                    .filter_map(|field| field.capturing_name.map(|name| name.to_string())),
                 fields
                     .into_iter()
-                    .filter_map(|field| { field.capturing_name.map(|name| name.to_string()) })
-                    .join(", ")
-            )),
+                    .filter_map(|field| match field.capturing_name {
+                        Some(name) if field.is_optional => {
+                            Some(format!("{}.unwrap_or(\"\\\"\\\"\".into())", name))
+                        }
+                        Some(name) => Some(name.to_string()),
+                        None => None,
+                    }),
+            ),
             attributes: RustCode("".to_owned()),
         };
 
@@ -114,15 +142,19 @@ impl TryFrom<&EnumItem> for LALRPOPItem {
                     return None;
                 }
                 let capturing_name = format!("_{}", variant.reference);
+                let fields = vec![LALRPOPField {
+                    is_optional: false,
+                    capturing_name: Some(capturing_name.clone().into()),
+                    rule: RustCode(variant.reference.clone().to_string()),
+                }];
                 Some(LALRPOPOption {
-                    fields: vec![LALRPOPField {
-                        capturing_name: Some(capturing_name.clone().into()),
-                        rule: RustCode(variant.reference.clone().to_string()),
-                    }],
-                    action: RustCode(format!(
-                        "format!(\"Variant({})[{{:?}}]\", {capturing_name})",
-                        item.name
-                    )),
+                    fields: fields.clone(),
+                    action: to_action(
+                        "Variant",
+                        &item.name,
+                        once(capturing_name.clone()),
+                        once(capturing_name),
+                    ),
                     attributes: RustCode("".to_owned()),
                 })
             })
@@ -144,19 +176,25 @@ impl TryFrom<&RepeatedItem> for LALRPOPItem {
             return Err(());
         }
         let capturing_name = format!("_{}", item.reference);
-
+        let fields = vec![LALRPOPField {
+            is_optional: false,
+            capturing_name: Some(capturing_name.clone().into()),
+            rule: repeated(
+                capture(RustCode(item.reference.clone().to_string())),
+                item.allow_empty.unwrap_or(false),
+            ),
+        }];
         let option = LALRPOPOption {
-            fields: vec![LALRPOPField {
-                capturing_name: Some(capturing_name.clone().into()),
-                rule: repeated(
-                    RustCode(item.reference.clone().to_string()),
-                    item.allow_empty.unwrap_or(false),
-                ),
-            }],
-            action: RustCode(format!(
-                "\"Repeated({})[{capturing_name}]\".to_string()",
-                item.name
-            )),
+            fields: fields.clone(),
+            action: to_action(
+                "Repeated",
+                &item.name,
+                once(capturing_name.clone()),
+                once(format!(
+                    "format!(\"[{{}}]\", {}.join(\", \"))",
+                    capturing_name
+                )),
+            ),
             attributes: RustCode("".to_owned()),
         };
 
@@ -177,21 +215,38 @@ impl TryFrom<&SeparatedItem> for LALRPOPItem {
             return Err(());
         }
         let capturing_name = format!("_{}", item.reference);
-        let option = LALRPOPOption {
-            fields: vec![LALRPOPField {
-                capturing_name: Some(capturing_name.clone().into()),
+        let fields = vec![LALRPOPField {
+            is_optional: false,
+            capturing_name: Some(capturing_name.clone().into()),
 
-                rule: separated(
-                    // TODO: Capture internally
-                    RustCode(item.reference.clone().to_string()),
-                    RustCode(item.separator.clone().to_string()),
-                    item.allow_empty.unwrap_or(true),
-                ),
-            }],
-            action: RustCode(format!(
-                "\"Separated({})[{capturing_name}]\".to_string()",
-                item.name
-            )),
+            rule: separated(
+                // Don't capture separator
+                capture(RustCode(item.reference.clone().to_string())),
+                RustCode(item.separator.clone().to_string()),
+                item.allow_empty.unwrap_or(false),
+            ),
+        }];
+        let option = LALRPOPOption {
+            fields: fields.clone(),
+            action: to_action(
+                "Separated",
+                &item.name,
+                once(capturing_name.clone()),
+                if item.allow_empty.unwrap_or(false) {
+                    // If it's allowed to be empty, then we have an Option<(String, Vec<String>)>
+                    // TODO: This is not ideal, we should make something smarter later on
+                    once(format!(
+                        "{}.map(|x| format!(\"[{{}}, {{}}]\", x.0, x.1.join(\", \"))).unwrap_or(\"[]\".into())",
+                        capturing_name
+                    ))
+                } else {
+                    // If it's not allowed to be empty, then we have an (String, Vec<String>)
+                    once(format!(
+                        "format!(\"[{{}}, {{}}]\", {}.0, {}.1.join(\", \"))",
+                        capturing_name, capturing_name
+                    ))
+                },
+            ),
             attributes: RustCode("".to_owned()),
         };
 
@@ -211,6 +266,7 @@ impl From<&KeywordItem> for LALRPOPItem {
         let keyword_option = |reserved: bool| {
             LALRPOPOption {
                 fields: vec![LALRPOPField {
+                    is_optional: false,
                     // Sometimes you want to capture and parse
                     capturing_name: Some(capturing_name.clone().into()),
                     rule: RustCode(format!(
@@ -219,7 +275,15 @@ impl From<&KeywordItem> for LALRPOPItem {
                         if reserved { "Reserved" } else { "Unreserved" }
                     )),
                 }],
-                action: RustCode(format!("\"Keyword[{capturing_name}]\".to_string()")),
+                action: to_action(
+                    "Keyword",
+                    &item.name,
+                    once(capturing_name.clone()),
+                    once(format!(
+                        "format!(\"\\\"{{:?}}\\\"\", {})",
+                        capturing_name.clone()
+                    )),
+                ),
                 attributes: RustCode("".to_owned()),
             }
         };
@@ -253,6 +317,7 @@ fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> Option<LALRPOPFie
     match field {
         Field::Required { reference } => Some(LALRPOPField {
             capturing_name: Some(capturing_name.clone().into()),
+            is_optional: false,
             rule: RustCode(reference.clone().to_string()),
         }),
         Field::Optional { reference, enabled }
@@ -260,6 +325,7 @@ fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> Option<LALRPOPFie
         {
             Some(LALRPOPField {
                 capturing_name: Some(capturing_name.clone().into()),
+                is_optional: true,
                 rule: optional(RustCode(reference.clone().to_string())),
             })
         }
@@ -281,10 +347,16 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
             let capturing_name = format!("_{}", exp.reference);
             Some(LALRPOPOption {
                 fields: vec![LALRPOPField {
+                    is_optional: false,
                     capturing_name: Some(capturing_name.clone().into()),
                     rule: RustCode(exp.reference.clone().to_string()),
                 }],
-                action: RustCode(format!("format!(\"Precedence[{{:?}}]\", {capturing_name})")),
+                action: to_action(
+                    "Precedence-primary",
+                    &item.name,
+                    once(capturing_name.clone()),
+                    once(capturing_name.clone()),
+                ),
                 attributes: RustCode("#[precedence(level=\"0\")]".to_owned()),
             })
         });
@@ -311,6 +383,7 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
                                 .collect::<Vec<_>>();
 
                             fields.push(LALRPOPField {
+                                is_optional: false,
                                 capturing_name: Some(capturing_name.clone().into()),
                                 rule: RustCode(item.name.clone().to_string()),
                             });
@@ -318,6 +391,7 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
                         }
                         OperatorModel::Postfix => {
                             let mut fields = vec![LALRPOPField {
+                                is_optional: false,
                                 capturing_name: Some(capturing_name.clone().into()),
                                 rule: RustCode(item.name.clone().to_string()),
                             }];
@@ -346,11 +420,13 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
                             operator.map(|op| {
                                 vec![
                                     LALRPOPField {
+                                        is_optional: false,
                                         capturing_name: Some(format!("{capturing_name}").into()),
                                         rule: RustCode(item.name.clone().to_string()),
                                     },
                                     op,
                                     LALRPOPField {
+                                        is_optional: false,
                                         capturing_name: Some(format!("{capturing_name}_2").into()),
                                         rule: RustCode(item.name.clone().to_string()),
                                     },
@@ -372,11 +448,23 @@ impl TryFrom<&PrecedenceItem> for LALRPOPItem {
                     };
 
                     fields.map(|fields| LALRPOPOption {
-                        fields,
-                        action: RustCode(format!(
-                            "format!(\"Precedence({})[{{:?}}]\", {capturing_name})",
-                            prec.name
-                        )),
+                        fields: fields.clone(),
+                        action: to_action(
+                            "Precedence-Operator",
+                            &item.name,
+                            fields.clone().into_iter().filter_map(|field| {
+                                field.capturing_name.map(|name| name.to_string())
+                            }),
+                            fields
+                                .into_iter()
+                                .filter_map(|field| match field.capturing_name {
+                                    Some(name) if field.is_optional => {
+                                        Some(format!("{}.unwrap_or(\"\\\"\\\"\".into())", name))
+                                    }
+                                    Some(name) => Some(name.to_string()),
+                                    None => None,
+                                }),
+                        ),
                         attributes,
                     })
                 })
