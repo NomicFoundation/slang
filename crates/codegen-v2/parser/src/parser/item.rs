@@ -280,10 +280,7 @@ impl From<&KeywordItem> for LALRPOPItem {
                     "Keyword",
                     &item.name,
                     once(capturing_name.clone()),
-                    once(format!(
-                        "format!(\"\\\"{{:?}}\\\"\", {})",
-                        capturing_name.clone()
-                    )),
+                    once(format!("format!(\"{{}}\", {})", capturing_name.clone())),
                 ),
                 attributes: RustCode("".to_owned()),
             }
