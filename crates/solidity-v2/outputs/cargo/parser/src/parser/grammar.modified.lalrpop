@@ -166,7 +166,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     SimpleVersionLiteral: String = {
          
-            <_VersionSpecifier: (<VersionSpecifier> <(Period <VersionSpecifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"SimpleVersionLiteral\", \"_VersionSpecifier\": {} }}", format!("[{}, {}]", _VersionSpecifier.0, _VersionSpecifier.1.iter().map(|x| format!("{}", x)).join(", "))),
+            <_VersionSpecifier: (<VersionSpecifier> <(Period <VersionSpecifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"SimpleVersionLiteral\", \"_VersionSpecifier\": {} }}", format!("[{}, {}]", _VersionSpecifier.0, _VersionSpecifier.1.join(", "))),
         
     };
     
@@ -1292,7 +1292,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     Parameter: String = {
          
-            <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"Parameter\", \"_type_name\": {}, \"_storage_location\": {}, \"_name\": {} }}", _type_name, _storage_location.unwrap_or("\"\"".into()), _name.map(|x| format!("{}", x)).unwrap_or("\"\"".into())),
+            <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"Parameter\", \"_type_name\": {}, \"_storage_location\": {}, \"_name\": {} }}", _type_name, _storage_location.unwrap_or("\"\"".into()), _name.unwrap_or("\"\"".into())),
         
     };
     #[inline]
@@ -1485,7 +1485,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     EventParameter: String = {
          
-            <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"EventParameter\", \"_type_name\": {}, \"_indexed_keyword\": {}, \"_name\": {} }}", _type_name, _indexed_keyword.unwrap_or("\"\"".into()), _name.map(|x| format!("{}", x)).unwrap_or("\"\"".into())),
+            <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"EventParameter\", \"_type_name\": {}, \"_indexed_keyword\": {}, \"_name\": {} }}", _type_name, _indexed_keyword.unwrap_or("\"\"".into()), _name.unwrap_or("\"\"".into())),
         
     };
     
@@ -1519,7 +1519,7 @@ grammar<'source>(source: &'source str);
     #[inline]
     ErrorParameter: String = {
          
-            <_type_name: TypeName>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"ErrorParameter\", \"_type_name\": {}, \"_name\": {} }}", _type_name, _name.map(|x| format!("{}", x)).unwrap_or("\"\"".into())),
+            <_type_name: TypeName>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"ErrorParameter\", \"_type_name\": {}, \"_name\": {} }}", _type_name, _name.unwrap_or("\"\"".into())),
         
     };
     
@@ -1551,7 +1551,6 @@ TypeName = TypeNameInternal<"True">;
             <_IdentifierPath: IdentifierPath>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_IdentifierPath\": {} }}", _IdentifierPath),
         
     };
-
     #[inline]
     NewableTypeName: String = {
          
@@ -1624,7 +1623,7 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     MappingKey: String = {
          
-            <_key_type: MappingKeyType>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"MappingKey\", \"_key_type\": {}, \"_name\": {} }}", _key_type, _name.map(|x| format!("{}", x)).unwrap_or("\"\"".into())),
+            <_key_type: MappingKeyType>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"MappingKey\", \"_key_type\": {}, \"_name\": {} }}", _key_type, _name.unwrap_or("\"\"".into())),
         
     };
     #[inline]
@@ -1638,7 +1637,7 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     MappingValue: String = {
          
-            <_type_name: TypeName>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"MappingValue\", \"_type_name\": {}, \"_name\": {} }}", _type_name, _name.map(|x| format!("{}", x)).unwrap_or("\"\"".into())),
+            <_type_name: TypeName>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"MappingValue\", \"_type_name\": {}, \"_name\": {} }}", _type_name, _name.unwrap_or("\"\"".into())),
         
     };
     
@@ -1943,7 +1942,7 @@ TypeName = TypeNameInternal<"True">;
     #[inline]
     CatchClauseError: String = {
          
-            <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"CatchClauseError\", \"_name\": {}, \"_parameters\": {} }}", _name.map(|x| format!("{}", x)).unwrap_or("\"\"".into()), _parameters),
+            <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"CatchClauseError\", \"_name\": {}, \"_parameters\": {} }}", _name.unwrap_or("\"\"".into()), _parameters),
         
     };
     #[inline]
@@ -2301,7 +2300,7 @@ TypeName = TypeNameInternal<"True">;
 // Rules for topic Identifiers
     IdentifierPath: String = {
          
-            <_Identifier: (<Identifier> <(Period <Identifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"IdentifierPath\", \"_Identifier\": {} }}", format!("[{}, {}]", _Identifier.0, _Identifier.1.iter().map(|x| format!("{}", x)).join(", "))),
+            <_Identifier: (<Identifier> <(Period <Identifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"IdentifierPath\", \"_Identifier\": {} }}", format!("[{}, {}]", _Identifier.0, _Identifier.1.join(", "))),
         
     };
     
@@ -2375,7 +2374,7 @@ TypeName = TypeNameInternal<"True">;
     };
     YulVariableNames: String = {
          
-            <_YulIdentifier: (<YulIdentifier> <(Comma <YulIdentifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulVariableNames\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.iter().map(|x| format!("{}", x)).join(", "))),
+            <_YulIdentifier: (<YulIdentifier> <(Comma <YulIdentifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulVariableNames\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.join(", "))),
         
     };
     #[inline]
@@ -2489,7 +2488,7 @@ TypeName = TypeNameInternal<"True">;
     };
     YulPath: String = {
          
-            <_YulIdentifier: (<YulIdentifier> <(Period <YulIdentifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulPath\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.iter().map(|x| format!("{}", x)).join(", "))),
+            <_YulIdentifier: (<YulIdentifier> <(Period <YulIdentifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulPath\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.join(", "))),
         
     };
     YulLiteral: String = {
