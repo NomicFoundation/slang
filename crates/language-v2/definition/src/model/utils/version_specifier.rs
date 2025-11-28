@@ -10,6 +10,13 @@ pub enum VersionSpecifier {
     From { from: Version },
     Till { till: Version },
     Range { from: Version, till: Version },
+    Always,
+}
+
+impl Default for VersionSpecifier {
+    fn default() -> Self {
+        VersionSpecifier::Always
+    }
 }
 
 impl VersionSpecifier {
