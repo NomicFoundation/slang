@@ -1761,40 +1761,27 @@ TypeName = TypeNameInternal<"True">;
 // Rules for topic Declaration Statements
     TupleDeconstructionStatement: String = {
          
-        // We may face other issues here, but for now we need to handle Tuple deconstructions over general
-         // tuples, otherwise we have some conflicts
             <_open_paren: OpenParen>  <_elements: TupleDeconstructionElements>  <_close_paren: CloseParen>  <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_open_paren\": {}, \"_elements\": {}, \"_close_paren\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _open_paren, _elements, _close_paren, _equal, _expression, _semicolon),
         
     };
-
-    // TODO: delete (unless we find a better way to remove the conflict between TupleDeconstructionStatement and TupleValue)
     #[inline]
     TupleDeconstructionElements: String = {
-         // A Tuple deconstruction element must have at least one member
-         // TODO: The action needs to be coded bu hand
-            Comma* <_TupleDeconstructionElement: (<TupleMember> <(Comma <(<TupleMember>)?>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"TupleDeconstructionElements\", \"_TupleDeconstructionElement\": {} }}", format!("[{}, {}]", _TupleDeconstructionElement.0, _TupleDeconstructionElement.1.iter().map(|x| format!("{}", x.clone().unwrap_or("\"\"".into()))).join(", "))),
+         
+            <_TupleDeconstructionElement: (<TupleDeconstructionElement> <(Comma <TupleDeconstructionElement>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"TupleDeconstructionElements\", \"_TupleDeconstructionElement\": {} }}", format!("[{}, {}]", _TupleDeconstructionElement.0, _TupleDeconstructionElement.1.join(", "))),
         
     };
-    //#[inline]
-    //TupleDeconstructionElement: String = {
-    //     
-    //        <_member: (TupleMember)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionElement\", \"_member\": {} }}", _member.unwrap_or("\"\"".into())),
-    //    
-    //};
+    #[inline]
+    TupleDeconstructionElement: String = {
+         
+            <_member: (TupleMember)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionElement\", \"_member\": {} }}", _member.unwrap_or("\"\"".into())),
+        
+    };
     #[inline]
     TupleMember: String = {
          
             <_TypedTupleMember: TypedTupleMember>  => format!("{{ \"item\": \"Variant\", \"name\": \"TupleMember\", \"_TypedTupleMember\": {} }}", _TypedTupleMember),
          
-         // TODO: research if this is allowed, if so, enable
-         // This is a tuple value assigned to an expression rather than a declaration
-         // However, I'm not sure what's going on with the sotrage location bit, is this allowed?
-         // I think at this moment we're missing a case like:
-         // ```solidity
-         // uint b;
-         // (b, ) = (1, 2);
-         // ```
-            //<_UntypedTupleMember: UntypedTupleMember>  => format!("{{ \"item\": \"Variant\", \"name\": \"TupleMember\", \"_UntypedTupleMember\": {} }}", _UntypedTupleMember),
+            <_UntypedTupleMember: UntypedTupleMember>  => format!("{{ \"item\": \"Variant\", \"name\": \"TupleMember\", \"_UntypedTupleMember\": {} }}", _UntypedTupleMember),
         
     };
     #[inline]
