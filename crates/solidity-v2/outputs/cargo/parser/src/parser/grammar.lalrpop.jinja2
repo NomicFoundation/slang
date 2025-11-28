@@ -1,5 +1,5 @@
-use std::str::FromStr;
 use crate::lexer::lexemes;
+use itertools::Itertools;
 
 grammar<'source>(source: &'source str);
 
@@ -27,6 +27,14 @@ grammar<'source>(source: &'source str);
 
 {% endfor %}
 
+// Lexemes formatting
+{% for kind in model.parser.lexer.lexeme_kinds -%}
+#[inline]
+{{ kind }}: String = {
+    <l:@L> L_{{ kind }} <r:@L> => format!("{% raw %} {{ {% endraw %} \"item\": \"Lexeme\", \"name\": \"{{ kind }}\", \"_l\": {}, \"_r\": {}, \"value\": \"{}\" {% raw %} }} {% endraw %}", l, r, &source[l..r]),
+}
+{% endfor %}
+
 
 extern {
     type Location = usize;
@@ -35,7 +43,7 @@ extern {
 
     enum lexemes::LexemeKind {
         {% for kind in model.parser.lexer.lexeme_kinds -%}
-            {{ kind }} => lexemes::LexemeKind::{{ kind }},
+            L_{{ kind }} => lexemes::LexemeKind::{{ kind }},
         {% endfor %}
     }
 }
