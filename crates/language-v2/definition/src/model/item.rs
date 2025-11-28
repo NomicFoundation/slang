@@ -9,6 +9,9 @@ use crate::model::{
     StructItem, TokenItem, TriviaItem,
 };
 
+/// An item is the smallest unit of a language definition.
+///
+/// It represents both terminals and nonterminals.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, EnumDiscriminants, ParseInputTokens, WriteOutputTokens)]
 #[serde(tag = "type")]
