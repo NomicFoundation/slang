@@ -1,6 +1,3 @@
-use logos::source;
-use slang_solidity_v2_common::versions::LanguageVersion;
-
 use crate::parser::tests::test;
 
 #[test]
