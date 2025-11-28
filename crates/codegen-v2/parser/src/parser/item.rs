@@ -237,14 +237,12 @@ impl TryFrom<&SeparatedItem> for LALRPOPItem {
                     // If it's allowed to be empty, then we have an Option<(String, Vec<String>)>
                     // TODO: This is not ideal, we should make something smarter later on
                     once(format!(
-                        "{}.map(|x| format!(\"[{{}}, {{}}]\", x.0, x.1.iter().join(\", \"))).unwrap_or(\"[]\".into())",
-                        capturing_name
+                        "{capturing_name}.map(|x| format!(\"[{{}}, {{}}]\", x.0, x.1.iter().join(\", \"))).unwrap_or(\"[]\".into())"
                     ))
                 } else {
                     // If it's not allowed to be empty, then we have an (String, Vec<String>)
                     once(format!(
-                        "format!(\"[{{}}, {{}}]\", {}.0, {}.1.join(\", \"))",
-                        capturing_name, capturing_name
+                        "format!(\"[{{}}, {{}}]\", {capturing_name}.0, {capturing_name}.1.join(\", \"))"
                     ))
                 },
             ),
