@@ -138,8 +138,14 @@ impl Iterator for Lexer<'_> {
 
     fn next(&mut self) -> Option<Self::Item> {
         while let Some(lexeme) = self.next_lexeme() {
-            if lexeme.kind != LexemeKind::Whitespace && lexeme.kind != LexemeKind::EndOfLine {
-                return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
+            match lexeme.kind {
+                LexemeKind::Whitespace
+                | LexemeKind::EndOfLine
+                | LexemeKind::SingleLineComment
+                | LexemeKind::MultiLineComment
+                | LexemeKind::SingleLineNatSpecComment
+                | LexemeKind::MultiLineNatSpecComment => {}
+                _ => return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end))),
             }
         }
         None

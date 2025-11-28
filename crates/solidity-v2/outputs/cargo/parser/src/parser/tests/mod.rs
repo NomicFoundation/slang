@@ -1,3 +1,4 @@
+mod big;
 mod contract;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -21,8 +22,11 @@ fn test(source: &str, expected: &str) {
     let mut lexer = Lexer::new(kind, source.clone(), version);
 
     let result = grammar::SourceUnitParser::new().parse(&source, lexer);
+    if (result.is_err()) {
+        println!("{:?}", result);
+    }
     // Only checking if it's ok for now, at least until the representation of the AST is fixed
     assert!(result.is_ok());
-    println!("{}", result.unwrap());
     // assert_eq!(result, expected);
+    println!("{}", result.unwrap());
 }
