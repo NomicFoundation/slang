@@ -1759,48 +1759,19 @@ TypeName = TypeNameInternal<"True">;
     
 
 // Rules for topic Declaration Statements
-    TupleDeconstructionStatement: String = {
-         
-            <_open_paren: OpenParen>  <_elements: TupleDeconstructionElements>  <_close_paren: CloseParen>  <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_open_paren\": {}, \"_elements\": {}, \"_close_paren\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _open_paren, _elements, _close_paren, _equal, _expression, _semicolon),
-        
-    };
-    // #[inline]
-    TupleDeconstructionElements: String = {
-         
-            <_TupleDeconstructionElement: (<TupleDeconstructionElement> <(Comma <TupleDeconstructionElement>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"TupleDeconstructionElements\", \"_TupleDeconstructionElement\": {} }}", format!("[{}, {}]", _TupleDeconstructionElement.0, _TupleDeconstructionElement.1.join(", "))),
-        
-    };
-    // #[inline]
-    TupleDeconstructionElement: String = {
-         
-            <_member: (TupleMember)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionElement\", \"_member\": {} }}", _member.unwrap_or("\"\"".into())),
-        
-    };
-    // #[inline]
-    TupleMember: String = {
-         
-            <_TypedTupleMember: TypedTupleMember>  => format!("{{ \"item\": \"Variant\", \"name\": \"TupleMember\", \"_TypedTupleMember\": {} }}", _TypedTupleMember),
-         
-            <_UntypedTupleMember: UntypedTupleMember>  => format!("{{ \"item\": \"Variant\", \"name\": \"TupleMember\", \"_UntypedTupleMember\": {} }}", _UntypedTupleMember),
-        
-    };
-    // #[inline]
-    TypedTupleMember: String = {
-         
-            <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("{{ \"item\": \"Struct\", \"name\": \"TypedTupleMember\", \"_type_name\": {}, \"_storage_location\": {}, \"_name\": {} }}", _type_name, _storage_location.unwrap_or("\"\"".into()), _name),
-        
-    };
-    // #[inline]
-    UntypedTupleMember: String = {
-         
-            <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("{{ \"item\": \"Struct\", \"name\": \"UntypedTupleMember\", \"_storage_location\": {}, \"_name\": {} }}", _storage_location.unwrap_or("\"\"".into()), _name),
-        
-    };
+
     VariableDeclarationStatement: String = {
          
-            <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclarationStatement\", \"_variable_type\": {}, \"_storage_location\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _variable_type, _storage_location.unwrap_or("\"\"".into()), _name, _value.unwrap_or("\"\"".into()), _semicolon),
+            <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclarationStatement\", \"_variable_declaration\": {}, \"_value\": {}, \"_semicolon\": {} }}", _variable_declaration, _value.unwrap_or("\"\"".into()), _semicolon),
         
     };
+
+    VariableDeclaration: String = {
+         
+            <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclaration\", \"_variable_type\": {}, \"_storage_location\": {}, \"_name\": {} }}", _variable_type, _storage_location.unwrap_or("\"\"".into()), _name),
+        
+    };
+
     // #[inline]
     VariableDeclarationType: String = {
          
@@ -1953,7 +1924,7 @@ TypeName = TypeNameInternal<"True">;
     Expression0<Ident>: String = {
             <_IdentifierPath: IdentifierPath> if Ident == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_IdentifierPath\": {} }}", _IdentifierPath),
             <_NewExpression: NewExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_NewExpression\": {} }}", _NewExpression),
-            <_TupleExpression: TupleExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_TupleExpression\": {} }}", _TupleExpression),
+            <_TupleExpression: ProtoTuple<"True">>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_TupleExpression\": {} }}", _TupleExpression),
             <_TypeExpression: TypeExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_TypeExpression\": {} }}", _TypeExpression),
             <_ArrayExpression: ArrayExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_ArrayExpression\": {} }}", _ArrayExpression),
             <_HexNumberExpression: HexNumberExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_HexNumberExpression\": {} }}", _HexNumberExpression),
@@ -2165,23 +2136,50 @@ TypeName = TypeNameInternal<"True">;
         
     };
 
-    // #[inline]
-    TupleExpression: String = {
-         
-            <_open_paren: OpenParen>  <_items: TupleValues?>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleExpression\", \"_open_paren\": {}, \"_items\": {}, \"_close_paren\": {} }}", _open_paren, _items.unwrap_or("\"\"".into()), _close_paren),
+
+    // A ProtoTuple can match both a TupleExpression (ie, a tuple with expressions inside, separated by commas)
+    // as well as a TuplePattern, which is a tuple with optional patterns or declarations inside, separated by commas.
+    // Every Tuple is a TuplePattern, not the other way around, so we also make that distinction with the generics.
+
+    ProtoTuple<Tuple>: String = {
+        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTuple\", \"_open_paren\": {}, \"_elements\": {}, \"_close_paren\": {} }}", _open_paren, _elements, _close_paren),
+    }
+
+    
+    ProtoTupleElements<Tuple>: String = {
+        // TODO: empty tuple
+
+        // A single element can be True or False
+        // Note that ProtoTupleElement<"False"> allows empty elements, we have to change that
+        <_elem: ProtoTupleElement<"True">> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elem)),
+        <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elem)),
         
+        // A ProtoTuple only ProtoTupleElements<True> is a Tuple
+        <_elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+
+        // 
+        //<_elems: ProtoTupleElements<"True">> Comma if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elems)),
+
+        <_elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+        <_elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+        <_elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+
+//        <_elems: ((<ProtoTupleElement<Tuple>> <(Comma <ProtoTupleElement<Tuple>>)*>))> => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems.0, _elems.1.iter().join(", "))).unwrap_or("[]".into()),
     };
-    // #[inline]
-    TupleValues: String = {
-         
-            <_TupleValue: (<TupleValue> <(Comma <TupleValue>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"TupleValues\", \"_TupleValue\": {} }}", format!("[{}, {}]", _TupleValue.0, _TupleValue.1.join(", "))),
+
+    ProtoTupleElement<Tuple>: String = {
+        // A Tuple expression must be present and only be an identifier
+        <_name: Expression> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_name\": {} }}", _name),
+
+        <_decl: VariableDeclaration> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_decl\": {} }}", _decl),
+        <_storage_location: StorageLocation> <_name: Identifier> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_storage_location\": {}, \"_name\": {} }}", _storage_location, _name),
+        () if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\" }}"),
+    };
         
-    };
-    // #[inline]
-    TupleValue: String = {
-         
-                  // A tuple value is an actual value, not a deconstruction
-            <_expression: (Expression)>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleValue\", \"_expression\": {} }}", _expression),
+
+    TupleDeconstructionStatement: String = {
+            // Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
+            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_tuple\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _tuple, _equal, _expression, _semicolon),
         
     };
     // #[inline]
