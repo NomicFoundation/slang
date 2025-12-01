@@ -1,5 +1,6 @@
 mod big;
 mod contract;
+mod tuple;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
 
