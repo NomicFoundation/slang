@@ -149,8 +149,11 @@ fn flatten_state_variable_attributes(mutator: &mut IrModelMutator) {
         &["Public", "Private", "Internal"],
     );
 
-    // State variable mutability, computed from a subset of the attributes
-    // We remove `Constant` because those are transmuted to `ConstantDefinition`
+    // State variable mutability, computed from a subset of the attributes.
+    // NB. Even though most constant declarations are transformed into
+    // `ConstantDefinition`, those with `public` visibility need to generate a
+    // getter and thus we still need to represent them using a
+    // `StateVariableDefinition`.
     mutator.add_enum_type(
         "StateVariableMutability",
         &["Mutable", "Constant", "Immutable", "Transient"],
