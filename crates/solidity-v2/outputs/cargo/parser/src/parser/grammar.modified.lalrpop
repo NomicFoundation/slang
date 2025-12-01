@@ -1060,7 +1060,6 @@ grammar<'source>(source: &'source str);
             <_ContractMember: (<ContractMember>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"ContractMembers\", \"_ContractMember\": {} }}", format!("[{}]", _ContractMember.join(", "))),
         
     };
-        // Maybe this needs to be inlined
     ContractMember: String = {
          
             <_UsingDirective: UsingDirective>  => format!("{{ \"item\": \"Variant\", \"name\": \"ContractMember\", \"_UsingDirective\": {} }}", _UsingDirective),
@@ -1157,8 +1156,13 @@ grammar<'source>(source: &'source str);
 
 // Rules for topic State Variables
     StateVariableDefinition: String = {
-         
-                // TODO: enable
+// TODO[1] This is an annoying hack, the problem is when we have a function type
+// in a variable declaration type, then some attributes (visibility ones) can be both
+// at the end of the type, or just after the type.
+// Right now I'm trying some strange hack for counting used attributes, but I'm
+// leaning towards having the function type take every attribute, and then reparse
+// up here, and extract attributes that belong to the variable
+
             //<_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
 
 
@@ -1177,11 +1181,16 @@ grammar<'source>(source: &'source str);
             <_type_name: FunctionTypeInternalNoReturn<"0">>  <_attributes: StateVariableAttributes<"0">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
         
     };
+
+// ODOT
+
     StateVariableDefinitionValue: String = {
          
             <_equal: Equal>  <_value: Expression>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinitionValue\", \"_equal\": {}, \"_value\": {} }}", _equal, _value),
         
     };
+// TODO[1] See the note at `StateVariableDefinition`, we're using this to count for
+// used attributes
     StateVariableAttributes<Vis>: String = {
         // <_ConstantKeyword: ConstantKeyword> <_other: StateVariableAttributes<Vis, "True">> if Const == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_StateVariableAttribute\": {} }}", format!("[{}]", _StateVariableAttribute.join(", "))),
 
@@ -1211,6 +1220,7 @@ grammar<'source>(source: &'source str);
         
     };
     */
+// ODOT
     
 
 // Rules for topic Functions
@@ -1456,15 +1466,21 @@ grammar<'source>(source: &'source str);
 // Rules for section Types
 
 // Rules for topic Advanced Types
+// TODO[1]: We're doing to things here:
+// 1. expanding the precedence of `TypeName` to its full form, mainly to have full control
+// 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
+// avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
+
 
 TypeName = TypeNameInternal<"True">;
 
 // Inlining here makes it a lot slower, think twice
     TypeNameInternal<Func>: String = {
-        // TODO: enable
+// TODO[2]: enable
         // It has problems with Access expression
             //<_TypeName: TypeName0>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"TypeName\", \"_TypeName\": {}, \"_open_bracket\": {}, \"_index\": {}, \"_close_bracket\": {} }}", _TypeName, _open_bracket, _index.unwrap_or("\"\"".into()), _close_bracket),
                         <_TypeName: TypeName0<Func>>  => _TypeName,
+// ODOT
 
     }
 
@@ -1475,6 +1491,8 @@ TypeName = TypeNameInternal<"True">;
             <_IdentifierPath: IdentifierPath>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_IdentifierPath\": {} }}", _IdentifierPath),
         
     };
+// ODOT
+
     NewableTypeName: String = {
          
             <_NewableArrayType: NewableArrayType>  => format!("{{ \"item\": \"Variant\", \"name\": \"NewableTypeName\", \"_NewableArrayType\": {} }}", _NewableArrayType),
@@ -1489,7 +1507,9 @@ TypeName = TypeNameInternal<"True">;
             <_type_name: TypeName>  <_open_bracket: OpenBracket>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Struct\", \"name\": \"NewableArrayType\", \"_type_name\": {}, \"_open_bracket\": {}, \"_close_bracket\": {} }}", _type_name, _open_bracket, _close_bracket),
         
     };
-
+// TODO[1]: Again with the attributes, we need to differentiate between a `FunctionType` that ends
+// with a `returns` and one that ends with attributes, because the one that ends with attributes
+// has problems in VariableDeclarationStatement
     FunctionType: String = {
         FunctionTypeInternalNoReturn<"m"> => <>,
         FunctionTypeInternalReturn => <>,
@@ -1534,7 +1554,8 @@ TypeName = TypeNameInternal<"True">;
         
     };
     */
-    // We dont inline this to break a cycle between type names
+// ODOT
+
     MappingType: String = {
          
             <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"MappingType\", \"_mapping_keyword\": {}, \"_open_paren\": {}, \"_key_type\": {}, \"_equal_greater_than\": {}, \"_value_type\": {}, \"_close_paren\": {} }}", _mapping_keyword, _open_paren, _key_type, _equal_greater_than, _value_type, _close_paren),
@@ -1602,6 +1623,8 @@ TypeName = TypeNameInternal<"True">;
             <_Statement: (<Statement>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"Statements\", \"_Statement\": {} }}", format!("[{}]", _Statement.join(", "))),
         
     };
+// TODO[3]: We need to disable dangling If's on nested if else statements, but that can
+// also happen with For and While statements, since they have a trailing statement
         // By default statements allos dangling `if`s
     Statement = _Statement<"True">;
          
@@ -1642,6 +1665,7 @@ TypeName = TypeNameInternal<"True">;
             <_ExpressionStatement: ExpressionStatement>  => format!("{{ \"item\": \"Variant\", \"name\": \"Statement\", \"_ExpressionStatement\": {} }}", _ExpressionStatement),
         
     };
+//ODOT
     UncheckedBlock: String = {
          
             <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => format!("{{ \"item\": \"Struct\", \"name\": \"UncheckedBlock\", \"_unchecked_keyword\": {}, \"_block\": {} }}", _unchecked_keyword, _block),
@@ -1670,7 +1694,18 @@ TypeName = TypeNameInternal<"True">;
     
 
 // Rules for topic Declaration Statements
+// TODO[4] We remove the TupleDeconstructionStatement sub NonTerminals from here, it's now a ProtoTuple
+// shared with the tuples
+    TupleDeconstructionStatement: String = {
+            // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
+            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_tuple\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _tuple, _equal, _expression, _semicolon),
+        
+    };
 
+// ODOT
+
+// TODO[4] We split the VariableDeclarationStatement into a VariableDeclaration and a ValueAssignment
+// This way we can use it in more places, in particular with patterns and the like
     VariableDeclarationStatement: String = {
          
             <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclarationStatement\", \"_variable_declaration\": {}, \"_value\": {}, \"_semicolon\": {} }}", _variable_declaration, _value.unwrap_or("\"\"".into()), _semicolon),
@@ -1682,7 +1717,7 @@ TypeName = TypeNameInternal<"True">;
             <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclaration\", \"_variable_type\": {}, \"_storage_location\": {}, \"_name\": {} }}", _variable_type, _storage_location.unwrap_or("\"\"".into()), _name),
         
     };
-
+// ODOT
     VariableDeclarationType: String = {
          
             <_TypeName: TypeName>  => format!("{{ \"item\": \"Variant\", \"name\": \"VariableDeclarationType\", \"_TypeName\": {} }}", _TypeName),
@@ -1705,7 +1740,8 @@ TypeName = TypeNameInternal<"True">;
     
 
 // Rules for topic Control Statements
-// Maybe inline, check
+// TODO[3] IfStatement now tracks whether it has a dangling If, and only allows
+// else branches if there's no dalgnling if
     IfStatement<DI>: String = {
          
          // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
@@ -1715,19 +1751,16 @@ TypeName = TypeNameInternal<"True">;
             <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  ElseKeyword  <_else_branch: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"IfStatement\", \"_if_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {}, \"_else_branch\": {} }}", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
         
     };
-    // TODO: delete once we're sure this works
-    //ElseBranch<DI>: String = {
-    //         
-    //        <_else_keyword: ElseKeyword>  <_body: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"ElseBranch\", \"_else_keyword\": {}, \"_body\": {} }}", _else_keyword, _body),
-    //        
-    //};
+// ODOT
 
+// TODO[3] ForStatement now tracks whether it has a dangling If, and only allows
     // TODO Maybe inline
     ForStatement<DI>: String = {
          
             <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"ForStatement\", \"_for_keyword\": {}, \"_open_paren\": {}, \"_initialization\": {}, \"_condition\": {}, \"_iterator\": {}, \"_close_paren\": {}, \"_body\": {} }}", _for_keyword, _open_paren, _initialization, _condition, _iterator.unwrap_or("\"\"".into()), _close_paren, _body),
         
     };
+// ODOT
     ForStatementInitialization: String = {
          
             <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("{{ \"item\": \"Variant\", \"name\": \"ForStatementInitialization\", \"_TupleDeconstructionStatement\": {} }}", _TupleDeconstructionStatement),
@@ -1746,12 +1779,13 @@ TypeName = TypeNameInternal<"True">;
             <_Semicolon: Semicolon>  => format!("{{ \"item\": \"Variant\", \"name\": \"ForStatementCondition\", \"_Semicolon\": {} }}", _Semicolon),
         
     };
-    // TODO maybe inline
+// TODO[3] WhileStatement now tracks whether it has a dangling If, and only allows
     WhileStatement<DI>: String = {
          
             <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"WhileStatement\", \"_while_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {} }}", _while_keyword, _open_paren, _condition, _close_paren, _body),
         
     };
+// ODOT
     DoWhileStatement: String = {
          
             <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"DoWhileStatement\", \"_do_keyword\": {}, \"_body\": {}, \"_while_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_semicolon\": {} }}", _do_keyword, _body, _while_keyword, _open_paren, _condition, _close_paren, _semicolon),
@@ -1814,6 +1848,7 @@ TypeName = TypeNameInternal<"True">;
 
 // Rules for topic Base Expressions
 
+// TODO[5] Expressions are expanded, this gives us more control
 // Ident is a variable to check whether this expression allows identifier paths or not
 // The problem comes from a.b.c, this can be either an identifier path or a member access, we should
 // always prefer identifier paths
@@ -1832,10 +1867,6 @@ TypeName = TypeNameInternal<"True">;
             <_SuperKeyword: SuperKeyword>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_SuperKeyword\": {} }}", _SuperKeyword),
             <_TrueKeyword: TrueKeyword>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_TrueKeyword\": {} }}", _TrueKeyword),
             <_FalseKeyword: FalseKeyword>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_FalseKeyword\": {} }}", _FalseKeyword),
-            // TODO: delete
-            // it's taken care by the IdentifierPath
-        //#[precedence(level="0")] 
-            //<_Identifier: Identifier>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_Identifier\": {} }}", _Identifier),
 
         
     };
@@ -1936,10 +1967,11 @@ TypeName = TypeNameInternal<"True">;
             Expression15<Ident> => <>,
     };
     Expression17<Ident>: String = {
-        // TODO: enable, doesn't work nicely with try statements
+// TODO[6]: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()
             //<_Expression: Expression16>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_open_brace\": {}, \"_options\": {}, \"_close_brace\": {} }}", _Expression, _open_brace, _options, _close_brace),
             Expression16<Ident> => <>,
+// ODOT
     };
     Expression18<Ident>: String = {
             <_Expression: Expression18<"False">>  <_period: Period>  <_member: Identifier>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_period\": {}, \"_member\": {} }}", _Expression, _period, _member),
@@ -1952,6 +1984,7 @@ TypeName = TypeNameInternal<"True">;
     };
 
     Expression = Expression19;
+// ODOT
         
     IndexAccessEnd: String = {
          
@@ -1965,9 +1998,10 @@ TypeName = TypeNameInternal<"True">;
          
             <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => format!("{{ \"item\": \"Variant\", \"name\": \"ArgumentsDeclaration\", \"_PositionalArgumentsDeclaration\": {} }}", _PositionalArgumentsDeclaration),
          
-         // TODO: enable
+// TODO[7]: enable
                 // Some strange conflict
             //<_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => format!("{{ \"item\": \"Variant\", \"name\": \"ArgumentsDeclaration\", \"_NamedArgumentsDeclaration\": {} }}", _NamedArgumentsDeclaration),
+// ODOT
         
     };
     PositionalArgumentsDeclaration: String = {
@@ -1980,6 +2014,7 @@ TypeName = TypeNameInternal<"True">;
             <_Expression: ((<Expression> <(Comma <Expression>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"PositionalArguments\", \"_Expression\": {} }}", _Expression.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
     };
+// TODO[7] Some attempt at fixing the problem above, right now these terminals are unused
     NamedArgumentsDeclaration: String = {
          
             <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgumentsDeclaration\", \"_open_paren\": {}, \"_arguments\": {}, \"_close_paren\": {} }}", _open_paren, _arguments, _close_paren),
@@ -1990,6 +2025,7 @@ TypeName = TypeNameInternal<"True">;
             <_open_brace: OpenBrace>  <_arguments: (NamedArguments)?>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgumentGroup\", \"_open_brace\": {}, \"_arguments\": {}, \"_close_brace\": {} }}", _open_brace, _arguments.unwrap_or("\"\"".into()), _close_brace),
         
     };
+// ODOT
     NamedArguments: String = {
          
             <_NamedArgument: ((<NamedArgument> <(Comma <NamedArgument>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"NamedArguments\", \"_NamedArgument\": {} }}", _NamedArgument.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
@@ -2013,6 +2049,8 @@ TypeName = TypeNameInternal<"True">;
             <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"TypeExpression\", \"_type_keyword\": {}, \"_open_paren\": {}, \"_type_name\": {}, \"_close_paren\": {} }}", _type_keyword, _open_paren, _type_name, _close_paren),
         
     };
+// TODO[8] New expressions cause a problem, since a type can be an expression (ie a cast) or
+// an argument to the new, now we're adding a call at the end, just to ease our own life
     NewExpression: String = {
          
          // I think Adding the arguments here is correct, it helps disambiguate between a new expression and a index access
@@ -2021,7 +2059,10 @@ TypeName = TypeNameInternal<"True">;
             <_new_keyword: NewKeyword>  <_type_name: NewableTypeName> <pos: PositionalArgumentsDeclaration> => format!("{{ \"item\": \"Struct\", \"name\": \"NewExpression\", \"_new_keyword\": {}, \"_type_name\": {}, \"pos\": {} }}", _new_keyword, _type_name, pos),
         
     };
+//ODOT
 
+// TODO[4] These are the new tuples, we get a prototuple that can be a pattern/declaration
+// or a tuple value, we then disambigguate
 
     // A ProtoTuple can match both a TupleExpression (ie, a tuple with expressions inside, separated by commas)
     // as well as a TuplePattern, which is a tuple with optional patterns or declarations inside, separated by commas.
@@ -2062,12 +2103,7 @@ TypeName = TypeNameInternal<"True">;
         () if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\" }}"),
     };
         
-
-    TupleDeconstructionStatement: String = {
-            // Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
-            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_tuple\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _tuple, _equal, _expression, _semicolon),
-        
-    };
+// ODOT
     ArrayExpression: String = {
          
             <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Struct\", \"name\": \"ArrayExpression\", \"_open_bracket\": {}, \"_items\": {}, \"_close_bracket\": {} }}", _open_bracket, _items, _close_bracket),

@@ -147,11 +147,13 @@ impl<'a> ParserBuilder<'a> {
         }
         .ok()?;
 
-        if let Some(val) = self.references.get(&item.name) {
-            if val == &1 {
-                item.inline = true;
-            }
-        }
+        // This ended up making compilation slower, it may be worth checking the parser performance in the future with
+        // this enabled
+        // if let Some(val) = self.references.get(&item.name) {
+        //     if val == &1 {
+        //         item.inline = true;
+        //     }
+        // }
 
         Some(item)
     }
