@@ -1167,7 +1167,7 @@ grammar<'source>(source: &'source str);
 
 
          // If we're not using functions, then we can have all attributes
-            <_type_name: TypeNameInternal<"False">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
+            <_type_name: TypeName1<"False">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
             // Otherwise, the fun begins
 
             // If the there is a return, the visibility doesnt really matter, it's ignored. 
@@ -2081,7 +2081,7 @@ grammar<'source>(source: &'source str);
     };
     Expression: String = {
          
-            <Expression: Expression_19>  => <>,
+            <Expression: Expression19>  => <>,
         
     };
 // ODOT
@@ -2461,7 +2461,7 @@ grammar<'source>(source: &'source str);
     };
     YulExpression: String = {
          
-            <YulExpression: YulExpression_1>  => <>,
+            <YulExpression: YulExpression1>  => <>,
         
     };
     YulArguments: String = {
