@@ -1,0 +1,39 @@
+  {%- set target = model.ir_model -%}
+
+
+  //
+  // Sequences:
+  //
+
+  {% for parent_type, sequence in target.sequences %}
+    pub type {{ parent_type }} = String;
+
+  {% endfor %}
+
+  //
+  // Choices:
+  //
+
+  {% for parent_type, choice in target.choices %}
+    pub type {{ parent_type }} = String;
+
+  {% endfor %}
+
+  //
+  // Repeated & Separated
+  //
+
+  {% for parent_type, collection in target.collections %}
+    pub type {{ parent_type }} = String;
+
+  {% endfor %}
+
+  //
+  // Terminals
+  //
+
+  {% for parent_type, unique in target.terminals %}
+    pub type {{ parent_type }} = String;
+    
+  {% endfor %}
+

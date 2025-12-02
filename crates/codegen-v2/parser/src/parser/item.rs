@@ -2,8 +2,8 @@ use std::iter::once;
 
 use itertools::Itertools;
 use language_v2_definition::model::{
-    EnumItem, Field, Identifier, Item as LanguageItem, KeywordItem, OperatorModel, PrecedenceItem,
-    RepeatedItem, SeparatedItem, StructItem,
+    EnumItem, Field, Identifier, KeywordItem, OperatorModel, PrecedenceItem, RepeatedItem,
+    SeparatedItem, StructItem,
 };
 use semver::Version;
 use serde::Serialize;
@@ -35,8 +35,6 @@ struct LALRPOPField {
     // TODO: we may need some mutable captures, maybe not
     // mutable: bool,
 }
-
-const PRODUCING_TYPE: &str = "String";
 
 const VERSION: Version = Version::new(0, 8, 29);
 
@@ -117,7 +115,7 @@ impl TryFrom<&StructItem> for LALRPOPItem {
 
         Ok(LALRPOPItem {
             name: item.name.clone(),
-            producing_type: PRODUCING_TYPE.into(),
+            producing_type: item.name.clone(),
             options: vec![option],
             inline: false,
         })
@@ -163,7 +161,7 @@ impl TryFrom<&EnumItem> for LALRPOPItem {
 
         Ok(LALRPOPItem {
             name: item.name.clone(),
-            producing_type: PRODUCING_TYPE.into(),
+            producing_type: item.name.clone(),
             options,
             inline: false,
         })
@@ -201,7 +199,7 @@ impl TryFrom<&RepeatedItem> for LALRPOPItem {
 
         Ok(LALRPOPItem {
             name: item.name.clone(),
-            producing_type: PRODUCING_TYPE.into(),
+            producing_type: item.name.clone(),
             options: vec![option],
             inline: false,
         })
@@ -251,7 +249,7 @@ impl TryFrom<&SeparatedItem> for LALRPOPItem {
 
         Ok(LALRPOPItem {
             name: item.name.clone(),
-            producing_type: PRODUCING_TYPE.into(),
+            producing_type: item.name.clone(),
             options: vec![option],
             inline: false,
         })
@@ -301,7 +299,7 @@ impl From<&KeywordItem> for LALRPOPItem {
 
         LALRPOPItem {
             name: item.name.clone(),
-            producing_type: PRODUCING_TYPE.into(),
+            producing_type: item.name.clone(),
             options,
             inline: true,
         }
@@ -366,7 +364,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
 
     ans.push(LALRPOPItem {
         name: format!("{}{}", item.name, prec_counter).into(),
-        producing_type: PRODUCING_TYPE.into(),
+        producing_type: item.name.clone(),
         options: primaries,
         inline: false,
     });
@@ -490,7 +488,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
 
         ans.push(LALRPOPItem {
             name: format!("{}{}", item.name, prec_counter).into(),
-            producing_type: PRODUCING_TYPE.into(),
+            producing_type: item.name.clone(),
             options: options,
             inline: false,
         });
@@ -499,7 +497,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
     // Adding the entry case
     ans.push(LALRPOPItem {
         name: item.name.clone(),
-        producing_type: PRODUCING_TYPE.into(),
+        producing_type: item.name.clone(),
         options: vec![LALRPOPOption {
             attributes: RustCode("".to_owned()),
             fields: vec![LALRPOPField {

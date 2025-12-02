@@ -1,6 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use crate::lexer::lexemes;
+use crate::parser::nodes::*;
 use itertools::Itertools;
 
 grammar<'source>(source: &'source str);
@@ -8,17 +9,17 @@ grammar<'source>(source: &'source str);
 // Rules for section File Structure
 
 // Rules for topic Source Unit
-    pub SourceUnit: String = {
+    pub SourceUnit: SourceUnit = {
          
             <_members: SourceUnitMembers>  => format!("{{ \"item\": \"Struct\", \"name\": \"SourceUnit\", \"_members\": {} }}", _members),
         
     };
-    SourceUnitMembers: String = {
+    SourceUnitMembers: SourceUnitMembers = {
          
             <_SourceUnitMember: (<SourceUnitMember>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"SourceUnitMembers\", \"_SourceUnitMember\": {} }}", format!("[{}]", _SourceUnitMember.join(", "))),
         
     };
-    SourceUnitMember: String = {
+    SourceUnitMember: SourceUnitMember = {
          
             <_PragmaDirective: PragmaDirective>  => format!("{{ \"item\": \"Variant\", \"name\": \"SourceUnitMember\", \"_PragmaDirective\": {} }}", _PragmaDirective),
          
@@ -50,12 +51,12 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Pragma Directives
-    PragmaDirective: String = {
+    PragmaDirective: PragmaDirective = {
          
             <_pragma_keyword: PragmaKeyword>  <_pragma: Pragma>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"PragmaDirective\", \"_pragma_keyword\": {}, \"_pragma\": {}, \"_semicolon\": {} }}", _pragma_keyword, _pragma, _semicolon),
         
     };
-    Pragma: String = {
+    Pragma: Pragma = {
          
             <_VersionPragma: VersionPragma>  => format!("{{ \"item\": \"Variant\", \"name\": \"Pragma\", \"_VersionPragma\": {} }}", _VersionPragma),
          
@@ -64,24 +65,24 @@ grammar<'source>(source: &'source str);
             <_ExperimentalPragma: ExperimentalPragma>  => format!("{{ \"item\": \"Variant\", \"name\": \"Pragma\", \"_ExperimentalPragma\": {} }}", _ExperimentalPragma),
         
     };
-    AbicoderPragma: String = {
+    AbicoderPragma: AbicoderPragma = {
          
             <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => format!("{{ \"item\": \"Struct\", \"name\": \"AbicoderPragma\", \"_abicoder_keyword\": {}, \"_version\": {} }}", _abicoder_keyword, _version),
         
     };
-    ExperimentalPragma: String = {
+    ExperimentalPragma: ExperimentalPragma = {
          
             <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => format!("{{ \"item\": \"Struct\", \"name\": \"ExperimentalPragma\", \"_experimental_keyword\": {}, \"_feature\": {} }}", _experimental_keyword, _feature),
         
     };
-    AbicoderVersion: String = {
+    AbicoderVersion: AbicoderVersion = {
          
             <_AbicoderV1Keyword: AbicoderV1Keyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"AbicoderVersion\", \"_AbicoderV1Keyword\": {} }}", _AbicoderV1Keyword),
          
             <_AbicoderV2Keyword: AbicoderV2Keyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"AbicoderVersion\", \"_AbicoderV2Keyword\": {} }}", _AbicoderV2Keyword),
         
     };
-    ExperimentalFeature: String = {
+    ExperimentalFeature: ExperimentalFeature = {
          
             <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"ExperimentalFeature\", \"_ABIEncoderV2Keyword\": {} }}", _ABIEncoderV2Keyword),
          
@@ -90,39 +91,39 @@ grammar<'source>(source: &'source str);
             <_StringLiteral: StringLiteral>  => format!("{{ \"item\": \"Variant\", \"name\": \"ExperimentalFeature\", \"_StringLiteral\": {} }}", _StringLiteral),
         
     };
-    VersionPragma: String = {
+    VersionPragma: VersionPragma = {
          
             <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => format!("{{ \"item\": \"Struct\", \"name\": \"VersionPragma\", \"_solidity_keyword\": {}, \"_sets\": {} }}", _solidity_keyword, _sets),
         
     };
-    VersionExpressionSets: String = {
+    VersionExpressionSets: VersionExpressionSets = {
          
             <_VersionExpressionSet: (<VersionExpressionSet> <(BarBar <VersionExpressionSet>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"VersionExpressionSets\", \"_VersionExpressionSet\": {} }}", format!("[{}, {}]", _VersionExpressionSet.0, _VersionExpressionSet.1.join(", "))),
         
     };
-    VersionExpressionSet: String = {
+    VersionExpressionSet: VersionExpressionSet = {
          
             <_VersionExpression: (<VersionExpression>)+>  => format!("{{ \"item\": \"Repeated\", \"name\": \"VersionExpressionSet\", \"_VersionExpression\": {} }}", format!("[{}]", _VersionExpression.join(", "))),
         
     };
-    VersionExpression: String = {
+    VersionExpression: VersionExpression = {
          
             <_VersionRange: VersionRange>  => format!("{{ \"item\": \"Variant\", \"name\": \"VersionExpression\", \"_VersionRange\": {} }}", _VersionRange),
          
             <_VersionTerm: VersionTerm>  => format!("{{ \"item\": \"Variant\", \"name\": \"VersionExpression\", \"_VersionTerm\": {} }}", _VersionTerm),
         
     };
-    VersionRange: String = {
+    VersionRange: VersionRange = {
          
             <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => format!("{{ \"item\": \"Struct\", \"name\": \"VersionRange\", \"_start\": {}, \"_minus\": {}, \"_end\": {} }}", _start, _minus, _end),
         
     };
-    VersionTerm: String = {
+    VersionTerm: VersionTerm = {
          
             <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => format!("{{ \"item\": \"Struct\", \"name\": \"VersionTerm\", \"_operator\": {}, \"_literal\": {} }}", _operator.unwrap_or("\"\"".into()), _literal),
         
     };
-    VersionOperator: String = {
+    VersionOperator: VersionOperator = {
          
             <_Caret: Caret>  => format!("{{ \"item\": \"Variant\", \"name\": \"VersionOperator\", \"_Caret\": {} }}", _Caret),
          
@@ -139,7 +140,7 @@ grammar<'source>(source: &'source str);
             <_GreaterThanEqual: GreaterThanEqual>  => format!("{{ \"item\": \"Variant\", \"name\": \"VersionOperator\", \"_GreaterThanEqual\": {} }}", _GreaterThanEqual),
         
     };
-    VersionLiteral: String = {
+    VersionLiteral: VersionLiteral = {
          
             <_SimpleVersionLiteral: SimpleVersionLiteral>  => format!("{{ \"item\": \"Variant\", \"name\": \"VersionLiteral\", \"_SimpleVersionLiteral\": {} }}", _SimpleVersionLiteral),
          
@@ -148,7 +149,7 @@ grammar<'source>(source: &'source str);
             <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => format!("{{ \"item\": \"Variant\", \"name\": \"VersionLiteral\", \"_DoubleQuotedVersionLiteral\": {} }}", _DoubleQuotedVersionLiteral),
         
     };
-    SimpleVersionLiteral: String = {
+    SimpleVersionLiteral: SimpleVersionLiteral = {
          
             <_VersionSpecifier: (<VersionSpecifier> <(Period <VersionSpecifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"SimpleVersionLiteral\", \"_VersionSpecifier\": {} }}", format!("[{}, {}]", _VersionSpecifier.0, _VersionSpecifier.1.join(", "))),
         
@@ -156,12 +157,12 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Import Directives
-    ImportDirective: String = {
+    ImportDirective: ImportDirective = {
          
             <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"ImportDirective\", \"_import_keyword\": {}, \"_clause\": {}, \"_semicolon\": {} }}", _import_keyword, _clause, _semicolon),
         
     };
-    ImportClause: String = {
+    ImportClause: ImportClause = {
          
             <_PathImport: PathImport>  => format!("{{ \"item\": \"Variant\", \"name\": \"ImportClause\", \"_PathImport\": {} }}", _PathImport),
          
@@ -170,32 +171,32 @@ grammar<'source>(source: &'source str);
             <_ImportDeconstruction: ImportDeconstruction>  => format!("{{ \"item\": \"Variant\", \"name\": \"ImportClause\", \"_ImportDeconstruction\": {} }}", _ImportDeconstruction),
         
     };
-    PathImport: String = {
+    PathImport: PathImport = {
          
             <_path: StringLiteral>  <_alias: (ImportAlias)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"PathImport\", \"_path\": {}, \"_alias\": {} }}", _path, _alias.unwrap_or("\"\"".into())),
         
     };
-    NamedImport: String = {
+    NamedImport: NamedImport = {
          
             <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedImport\", \"_asterisk\": {}, \"_alias\": {}, \"_from_keyword\": {}, \"_path\": {} }}", _asterisk, _alias, _from_keyword, _path),
         
     };
-    ImportDeconstruction: String = {
+    ImportDeconstruction: ImportDeconstruction = {
          
             <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => format!("{{ \"item\": \"Struct\", \"name\": \"ImportDeconstruction\", \"_open_brace\": {}, \"_symbols\": {}, \"_close_brace\": {}, \"_from_keyword\": {}, \"_path\": {} }}", _open_brace, _symbols, _close_brace, _from_keyword, _path),
         
     };
-    ImportDeconstructionSymbols: String = {
+    ImportDeconstructionSymbols: ImportDeconstructionSymbols = {
          
             <_ImportDeconstructionSymbol: (<ImportDeconstructionSymbol> <(Comma <ImportDeconstructionSymbol>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"ImportDeconstructionSymbols\", \"_ImportDeconstructionSymbol\": {} }}", format!("[{}, {}]", _ImportDeconstructionSymbol.0, _ImportDeconstructionSymbol.1.join(", "))),
         
     };
-    ImportDeconstructionSymbol: String = {
+    ImportDeconstructionSymbol: ImportDeconstructionSymbol = {
          
             <_name: Identifier>  <_alias: (ImportAlias)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"ImportDeconstructionSymbol\", \"_name\": {}, \"_alias\": {} }}", _name, _alias.unwrap_or("\"\"".into())),
         
     };
-    ImportAlias: String = {
+    ImportAlias: ImportAlias = {
          
             <_as_keyword: AsKeyword>  <_identifier: Identifier>  => format!("{{ \"item\": \"Struct\", \"name\": \"ImportAlias\", \"_as_keyword\": {}, \"_identifier\": {} }}", _as_keyword, _identifier),
         
@@ -203,39 +204,39 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Using Directives
-    UsingDirective: String = {
+    UsingDirective: UsingDirective = {
          
             <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"UsingDirective\", \"_using_keyword\": {}, \"_clause\": {}, \"_for_keyword\": {}, \"_target\": {}, \"_global_keyword\": {}, \"_semicolon\": {} }}", _using_keyword, _clause, _for_keyword, _target, _global_keyword.unwrap_or("\"\"".into()), _semicolon),
         
     };
-    UsingClause: String = {
+    UsingClause: UsingClause = {
          
             <_IdentifierPath: IdentifierPath>  => format!("{{ \"item\": \"Variant\", \"name\": \"UsingClause\", \"_IdentifierPath\": {} }}", _IdentifierPath),
          
             <_UsingDeconstruction: UsingDeconstruction>  => format!("{{ \"item\": \"Variant\", \"name\": \"UsingClause\", \"_UsingDeconstruction\": {} }}", _UsingDeconstruction),
         
     };
-    UsingDeconstruction: String = {
+    UsingDeconstruction: UsingDeconstruction = {
          
             <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"UsingDeconstruction\", \"_open_brace\": {}, \"_symbols\": {}, \"_close_brace\": {} }}", _open_brace, _symbols, _close_brace),
         
     };
-    UsingDeconstructionSymbols: String = {
+    UsingDeconstructionSymbols: UsingDeconstructionSymbols = {
          
             <_UsingDeconstructionSymbol: (<UsingDeconstructionSymbol> <(Comma <UsingDeconstructionSymbol>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"UsingDeconstructionSymbols\", \"_UsingDeconstructionSymbol\": {} }}", format!("[{}, {}]", _UsingDeconstructionSymbol.0, _UsingDeconstructionSymbol.1.join(", "))),
         
     };
-    UsingDeconstructionSymbol: String = {
+    UsingDeconstructionSymbol: UsingDeconstructionSymbol = {
          
             <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"UsingDeconstructionSymbol\", \"_name\": {}, \"_alias\": {} }}", _name, _alias.unwrap_or("\"\"".into())),
         
     };
-    UsingAlias: String = {
+    UsingAlias: UsingAlias = {
          
             <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => format!("{{ \"item\": \"Struct\", \"name\": \"UsingAlias\", \"_as_keyword\": {}, \"_operator\": {} }}", _as_keyword, _operator),
         
     };
-    UsingOperator: String = {
+    UsingOperator: UsingOperator = {
          
             <_Ampersand: Ampersand>  => format!("{{ \"item\": \"Variant\", \"name\": \"UsingOperator\", \"_Ampersand\": {} }}", _Ampersand),
          
@@ -268,7 +269,7 @@ grammar<'source>(source: &'source str);
             <_Tilde: Tilde>  => format!("{{ \"item\": \"Variant\", \"name\": \"UsingOperator\", \"_Tilde\": {} }}", _Tilde),
         
     };
-    UsingTarget: String = {
+    UsingTarget: UsingTarget = {
          
             <_TypeName: TypeName>  => format!("{{ \"item\": \"Variant\", \"name\": \"UsingTarget\", \"_TypeName\": {} }}", _TypeName),
          
@@ -282,727 +283,727 @@ grammar<'source>(source: &'source str);
 
 // Rules for topic Keywords
     #[inline]
-    AbicoderKeyword: String = {
+    AbicoderKeyword: AbicoderKeyword = {
          
             <_AbicoderKeyword: AbicoderKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AbicoderKeyword\", \"_AbicoderKeyword\": {} }}", format!("{}", _AbicoderKeyword)),
         
     };
     #[inline]
-    AbicoderV1Keyword: String = {
+    AbicoderV1Keyword: AbicoderV1Keyword = {
          
             <_AbicoderV1Keyword: AbicoderV1Keyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AbicoderV1Keyword\", \"_AbicoderV1Keyword\": {} }}", format!("{}", _AbicoderV1Keyword)),
         
     };
     #[inline]
-    AbicoderV2Keyword: String = {
+    AbicoderV2Keyword: AbicoderV2Keyword = {
          
             <_AbicoderV2Keyword: AbicoderV2Keyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AbicoderV2Keyword\", \"_AbicoderV2Keyword\": {} }}", format!("{}", _AbicoderV2Keyword)),
         
     };
     #[inline]
-    ABIEncoderV2Keyword: String = {
+    ABIEncoderV2Keyword: ABIEncoderV2Keyword = {
          
             <_ABIEncoderV2Keyword: ABIEncoderV2Keyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ABIEncoderV2Keyword\", \"_ABIEncoderV2Keyword\": {} }}", format!("{}", _ABIEncoderV2Keyword)),
         
     };
     #[inline]
-    AbstractKeyword: String = {
+    AbstractKeyword: AbstractKeyword = {
          
             <_AbstractKeyword: AbstractKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AbstractKeyword\", \"_AbstractKeyword\": {} }}", format!("{}", _AbstractKeyword)),
         
     };
     #[inline]
-    AddressKeyword: String = {
+    AddressKeyword: AddressKeyword = {
          
             <_AddressKeyword: AddressKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AddressKeyword\", \"_AddressKeyword\": {} }}", format!("{}", _AddressKeyword)),
         
     };
     #[inline]
-    AfterKeyword: String = {
+    AfterKeyword: AfterKeyword = {
          
             <_AfterKeyword: AfterKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AfterKeyword\", \"_AfterKeyword\": {} }}", format!("{}", _AfterKeyword)),
         
     };
     #[inline]
-    AliasKeyword: String = {
+    AliasKeyword: AliasKeyword = {
          
             <_AliasKeyword: AliasKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AliasKeyword\", \"_AliasKeyword\": {} }}", format!("{}", _AliasKeyword)),
         
     };
     #[inline]
-    AnonymousKeyword: String = {
+    AnonymousKeyword: AnonymousKeyword = {
          
             <_AnonymousKeyword: AnonymousKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AnonymousKeyword\", \"_AnonymousKeyword\": {} }}", format!("{}", _AnonymousKeyword)),
         
     };
     #[inline]
-    ApplyKeyword: String = {
+    ApplyKeyword: ApplyKeyword = {
          
             <_ApplyKeyword: ApplyKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ApplyKeyword\", \"_ApplyKeyword\": {} }}", format!("{}", _ApplyKeyword)),
         
     };
     #[inline]
-    AsKeyword: String = {
+    AsKeyword: AsKeyword = {
          
             <_AsKeyword: AsKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AsKeyword\", \"_AsKeyword\": {} }}", format!("{}", _AsKeyword)),
         
     };
     #[inline]
-    AssemblyKeyword: String = {
+    AssemblyKeyword: AssemblyKeyword = {
          
             <_AssemblyKeyword: AssemblyKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AssemblyKeyword\", \"_AssemblyKeyword\": {} }}", format!("{}", _AssemblyKeyword)),
         
     };
     #[inline]
-    AtKeyword: String = {
+    AtKeyword: AtKeyword = {
          
             <_AtKeyword: AtKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AtKeyword\", \"_AtKeyword\": {} }}", format!("{}", _AtKeyword)),
         
     };
     #[inline]
-    AutoKeyword: String = {
+    AutoKeyword: AutoKeyword = {
          
             <_AutoKeyword: AutoKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"AutoKeyword\", \"_AutoKeyword\": {} }}", format!("{}", _AutoKeyword)),
         
     };
     #[inline]
-    BoolKeyword: String = {
+    BoolKeyword: BoolKeyword = {
          
             <_BoolKeyword: BoolKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"BoolKeyword\", \"_BoolKeyword\": {} }}", format!("{}", _BoolKeyword)),
         
     };
     #[inline]
-    BreakKeyword: String = {
+    BreakKeyword: BreakKeyword = {
          
             <_BreakKeyword: BreakKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"BreakKeyword\", \"_BreakKeyword\": {} }}", format!("{}", _BreakKeyword)),
         
     };
     #[inline]
-    ByteKeyword: String = {
+    ByteKeyword: ByteKeyword = {
          
             <_ByteKeyword: ByteKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ByteKeyword\", \"_ByteKeyword\": {} }}", format!("{}", _ByteKeyword)),
         
     };
     #[inline]
-    BytesKeyword: String = {
+    BytesKeyword: BytesKeyword = {
          
             <_BytesKeyword: BytesKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"BytesKeyword\", \"_BytesKeyword\": {} }}", format!("{}", _BytesKeyword)),
         
     };
     #[inline]
-    CallDataKeyword: String = {
+    CallDataKeyword: CallDataKeyword = {
          
             <_CallDataKeyword: CallDataKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"CallDataKeyword\", \"_CallDataKeyword\": {} }}", format!("{}", _CallDataKeyword)),
         
     };
     #[inline]
-    CaseKeyword: String = {
+    CaseKeyword: CaseKeyword = {
          
             <_CaseKeyword: CaseKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"CaseKeyword\", \"_CaseKeyword\": {} }}", format!("{}", _CaseKeyword)),
         
     };
     #[inline]
-    CatchKeyword: String = {
+    CatchKeyword: CatchKeyword = {
          
             <_CatchKeyword: CatchKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"CatchKeyword\", \"_CatchKeyword\": {} }}", format!("{}", _CatchKeyword)),
         
     };
     #[inline]
-    ConstantKeyword: String = {
+    ConstantKeyword: ConstantKeyword = {
          
             <_ConstantKeyword: ConstantKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ConstantKeyword\", \"_ConstantKeyword\": {} }}", format!("{}", _ConstantKeyword)),
         
     };
     #[inline]
-    ConstructorKeyword: String = {
+    ConstructorKeyword: ConstructorKeyword = {
          
             <_ConstructorKeyword: ConstructorKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ConstructorKeyword\", \"_ConstructorKeyword\": {} }}", format!("{}", _ConstructorKeyword)),
         
     };
     #[inline]
-    ContinueKeyword: String = {
+    ContinueKeyword: ContinueKeyword = {
          
             <_ContinueKeyword: ContinueKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ContinueKeyword\", \"_ContinueKeyword\": {} }}", format!("{}", _ContinueKeyword)),
         
     };
     #[inline]
-    ContractKeyword: String = {
+    ContractKeyword: ContractKeyword = {
          
             <_ContractKeyword: ContractKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ContractKeyword\", \"_ContractKeyword\": {} }}", format!("{}", _ContractKeyword)),
         
     };
     #[inline]
-    CopyOfKeyword: String = {
+    CopyOfKeyword: CopyOfKeyword = {
          
             <_CopyOfKeyword: CopyOfKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"CopyOfKeyword\", \"_CopyOfKeyword\": {} }}", format!("{}", _CopyOfKeyword)),
         
     };
     #[inline]
-    DaysKeyword: String = {
+    DaysKeyword: DaysKeyword = {
          
             <_DaysKeyword: DaysKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"DaysKeyword\", \"_DaysKeyword\": {} }}", format!("{}", _DaysKeyword)),
         
     };
     #[inline]
-    DefaultKeyword: String = {
+    DefaultKeyword: DefaultKeyword = {
          
             <_DefaultKeyword: DefaultKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"DefaultKeyword\", \"_DefaultKeyword\": {} }}", format!("{}", _DefaultKeyword)),
         
     };
     #[inline]
-    DefineKeyword: String = {
+    DefineKeyword: DefineKeyword = {
          
             <_DefineKeyword: DefineKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"DefineKeyword\", \"_DefineKeyword\": {} }}", format!("{}", _DefineKeyword)),
         
     };
     #[inline]
-    DeleteKeyword: String = {
+    DeleteKeyword: DeleteKeyword = {
          
             <_DeleteKeyword: DeleteKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"DeleteKeyword\", \"_DeleteKeyword\": {} }}", format!("{}", _DeleteKeyword)),
         
     };
     #[inline]
-    DoKeyword: String = {
+    DoKeyword: DoKeyword = {
          
             <_DoKeyword: DoKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"DoKeyword\", \"_DoKeyword\": {} }}", format!("{}", _DoKeyword)),
         
     };
     #[inline]
-    ElseKeyword: String = {
+    ElseKeyword: ElseKeyword = {
          
             <_ElseKeyword: ElseKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ElseKeyword\", \"_ElseKeyword\": {} }}", format!("{}", _ElseKeyword)),
         
     };
     #[inline]
-    EmitKeyword: String = {
+    EmitKeyword: EmitKeyword = {
          
             <_EmitKeyword: EmitKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"EmitKeyword\", \"_EmitKeyword\": {} }}", format!("{}", _EmitKeyword)),
         
     };
     #[inline]
-    EnumKeyword: String = {
+    EnumKeyword: EnumKeyword = {
          
             <_EnumKeyword: EnumKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"EnumKeyword\", \"_EnumKeyword\": {} }}", format!("{}", _EnumKeyword)),
         
     };
     #[inline]
-    ErrorKeyword: String = {
+    ErrorKeyword: ErrorKeyword = {
          
             <_ErrorKeyword: ErrorKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ErrorKeyword\", \"_ErrorKeyword\": {} }}", format!("{}", _ErrorKeyword)),
         
     };
     #[inline]
-    EtherKeyword: String = {
+    EtherKeyword: EtherKeyword = {
          
             <_EtherKeyword: EtherKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"EtherKeyword\", \"_EtherKeyword\": {} }}", format!("{}", _EtherKeyword)),
         
     };
     #[inline]
-    EventKeyword: String = {
+    EventKeyword: EventKeyword = {
          
             <_EventKeyword: EventKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"EventKeyword\", \"_EventKeyword\": {} }}", format!("{}", _EventKeyword)),
         
     };
     #[inline]
-    ExperimentalKeyword: String = {
+    ExperimentalKeyword: ExperimentalKeyword = {
          
             <_ExperimentalKeyword: ExperimentalKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ExperimentalKeyword\", \"_ExperimentalKeyword\": {} }}", format!("{}", _ExperimentalKeyword)),
         
     };
     #[inline]
-    ExternalKeyword: String = {
+    ExternalKeyword: ExternalKeyword = {
          
             <_ExternalKeyword: ExternalKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ExternalKeyword\", \"_ExternalKeyword\": {} }}", format!("{}", _ExternalKeyword)),
         
     };
     #[inline]
-    FallbackKeyword: String = {
+    FallbackKeyword: FallbackKeyword = {
          
             <_FallbackKeyword: FallbackKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"FallbackKeyword\", \"_FallbackKeyword\": {} }}", format!("{}", _FallbackKeyword)),
         
     };
     #[inline]
-    FalseKeyword: String = {
+    FalseKeyword: FalseKeyword = {
          
             <_FalseKeyword: FalseKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"FalseKeyword\", \"_FalseKeyword\": {} }}", format!("{}", _FalseKeyword)),
         
     };
     #[inline]
-    FinalKeyword: String = {
+    FinalKeyword: FinalKeyword = {
          
             <_FinalKeyword: FinalKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"FinalKeyword\", \"_FinalKeyword\": {} }}", format!("{}", _FinalKeyword)),
         
     };
     #[inline]
-    FinneyKeyword: String = {
+    FinneyKeyword: FinneyKeyword = {
          
             <_FinneyKeyword: FinneyKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"FinneyKeyword\", \"_FinneyKeyword\": {} }}", format!("{}", _FinneyKeyword)),
         
     };
     #[inline]
-    FixedKeyword: String = {
+    FixedKeyword: FixedKeyword = {
          
             <_FixedKeyword: FixedKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"FixedKeyword\", \"_FixedKeyword\": {} }}", format!("{}", _FixedKeyword)),
         
     };
     #[inline]
-    ForKeyword: String = {
+    ForKeyword: ForKeyword = {
          
             <_ForKeyword: ForKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ForKeyword\", \"_ForKeyword\": {} }}", format!("{}", _ForKeyword)),
         
     };
     #[inline]
-    FromKeyword: String = {
+    FromKeyword: FromKeyword = {
          
             <_FromKeyword: FromKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"FromKeyword\", \"_FromKeyword\": {} }}", format!("{}", _FromKeyword)),
         
     };
     #[inline]
-    FunctionKeyword: String = {
+    FunctionKeyword: FunctionKeyword = {
          
             <_FunctionKeyword: FunctionKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"FunctionKeyword\", \"_FunctionKeyword\": {} }}", format!("{}", _FunctionKeyword)),
         
     };
     #[inline]
-    GlobalKeyword: String = {
+    GlobalKeyword: GlobalKeyword = {
          
             <_GlobalKeyword: GlobalKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"GlobalKeyword\", \"_GlobalKeyword\": {} }}", format!("{}", _GlobalKeyword)),
         
     };
     #[inline]
-    GweiKeyword: String = {
+    GweiKeyword: GweiKeyword = {
          
             <_GweiKeyword: GweiKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"GweiKeyword\", \"_GweiKeyword\": {} }}", format!("{}", _GweiKeyword)),
         
     };
     #[inline]
-    HexKeyword: String = {
+    HexKeyword: HexKeyword = {
          
             <_HexKeyword: HexKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"HexKeyword\", \"_HexKeyword\": {} }}", format!("{}", _HexKeyword)),
         
     };
     #[inline]
-    HoursKeyword: String = {
+    HoursKeyword: HoursKeyword = {
          
             <_HoursKeyword: HoursKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"HoursKeyword\", \"_HoursKeyword\": {} }}", format!("{}", _HoursKeyword)),
         
     };
     #[inline]
-    IfKeyword: String = {
+    IfKeyword: IfKeyword = {
          
             <_IfKeyword: IfKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"IfKeyword\", \"_IfKeyword\": {} }}", format!("{}", _IfKeyword)),
         
     };
     #[inline]
-    ImmutableKeyword: String = {
+    ImmutableKeyword: ImmutableKeyword = {
          
             <_ImmutableKeyword: ImmutableKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ImmutableKeyword\", \"_ImmutableKeyword\": {} }}", format!("{}", _ImmutableKeyword)),
         
     };
     #[inline]
-    ImplementsKeyword: String = {
+    ImplementsKeyword: ImplementsKeyword = {
          
             <_ImplementsKeyword: ImplementsKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ImplementsKeyword\", \"_ImplementsKeyword\": {} }}", format!("{}", _ImplementsKeyword)),
         
     };
     #[inline]
-    ImportKeyword: String = {
+    ImportKeyword: ImportKeyword = {
          
             <_ImportKeyword: ImportKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ImportKeyword\", \"_ImportKeyword\": {} }}", format!("{}", _ImportKeyword)),
         
     };
     #[inline]
-    IndexedKeyword: String = {
+    IndexedKeyword: IndexedKeyword = {
          
             <_IndexedKeyword: IndexedKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"IndexedKeyword\", \"_IndexedKeyword\": {} }}", format!("{}", _IndexedKeyword)),
         
     };
     #[inline]
-    InKeyword: String = {
+    InKeyword: InKeyword = {
          
             <_InKeyword: InKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"InKeyword\", \"_InKeyword\": {} }}", format!("{}", _InKeyword)),
         
     };
     #[inline]
-    InlineKeyword: String = {
+    InlineKeyword: InlineKeyword = {
          
             <_InlineKeyword: InlineKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"InlineKeyword\", \"_InlineKeyword\": {} }}", format!("{}", _InlineKeyword)),
         
     };
     #[inline]
-    InterfaceKeyword: String = {
+    InterfaceKeyword: InterfaceKeyword = {
          
             <_InterfaceKeyword: InterfaceKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"InterfaceKeyword\", \"_InterfaceKeyword\": {} }}", format!("{}", _InterfaceKeyword)),
         
     };
     #[inline]
-    InternalKeyword: String = {
+    InternalKeyword: InternalKeyword = {
          
             <_InternalKeyword: InternalKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"InternalKeyword\", \"_InternalKeyword\": {} }}", format!("{}", _InternalKeyword)),
         
     };
     #[inline]
-    IntKeyword: String = {
+    IntKeyword: IntKeyword = {
          
             <_IntKeyword: IntKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"IntKeyword\", \"_IntKeyword\": {} }}", format!("{}", _IntKeyword)),
         
     };
     #[inline]
-    IsKeyword: String = {
+    IsKeyword: IsKeyword = {
          
             <_IsKeyword: IsKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"IsKeyword\", \"_IsKeyword\": {} }}", format!("{}", _IsKeyword)),
         
     };
     #[inline]
-    LayoutKeyword: String = {
+    LayoutKeyword: LayoutKeyword = {
          
             <_LayoutKeyword: LayoutKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"LayoutKeyword\", \"_LayoutKeyword\": {} }}", format!("{}", _LayoutKeyword)),
         
     };
     #[inline]
-    LetKeyword: String = {
+    LetKeyword: LetKeyword = {
          
             <_LetKeyword: LetKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"LetKeyword\", \"_LetKeyword\": {} }}", format!("{}", _LetKeyword)),
         
     };
     #[inline]
-    LibraryKeyword: String = {
+    LibraryKeyword: LibraryKeyword = {
          
             <_LibraryKeyword: LibraryKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"LibraryKeyword\", \"_LibraryKeyword\": {} }}", format!("{}", _LibraryKeyword)),
         
     };
     #[inline]
-    MacroKeyword: String = {
+    MacroKeyword: MacroKeyword = {
          
             <_MacroKeyword: MacroKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"MacroKeyword\", \"_MacroKeyword\": {} }}", format!("{}", _MacroKeyword)),
         
     };
     #[inline]
-    MappingKeyword: String = {
+    MappingKeyword: MappingKeyword = {
          
             <_MappingKeyword: MappingKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"MappingKeyword\", \"_MappingKeyword\": {} }}", format!("{}", _MappingKeyword)),
         
     };
     #[inline]
-    MatchKeyword: String = {
+    MatchKeyword: MatchKeyword = {
          
             <_MatchKeyword: MatchKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"MatchKeyword\", \"_MatchKeyword\": {} }}", format!("{}", _MatchKeyword)),
         
     };
     #[inline]
-    MemoryKeyword: String = {
+    MemoryKeyword: MemoryKeyword = {
          
             <_MemoryKeyword: MemoryKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"MemoryKeyword\", \"_MemoryKeyword\": {} }}", format!("{}", _MemoryKeyword)),
         
     };
     #[inline]
-    MinutesKeyword: String = {
+    MinutesKeyword: MinutesKeyword = {
          
             <_MinutesKeyword: MinutesKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"MinutesKeyword\", \"_MinutesKeyword\": {} }}", format!("{}", _MinutesKeyword)),
         
     };
     #[inline]
-    ModifierKeyword: String = {
+    ModifierKeyword: ModifierKeyword = {
          
             <_ModifierKeyword: ModifierKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ModifierKeyword\", \"_ModifierKeyword\": {} }}", format!("{}", _ModifierKeyword)),
         
     };
     #[inline]
-    MutableKeyword: String = {
+    MutableKeyword: MutableKeyword = {
          
             <_MutableKeyword: MutableKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"MutableKeyword\", \"_MutableKeyword\": {} }}", format!("{}", _MutableKeyword)),
         
     };
     #[inline]
-    NewKeyword: String = {
+    NewKeyword: NewKeyword = {
          
             <_NewKeyword: NewKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"NewKeyword\", \"_NewKeyword\": {} }}", format!("{}", _NewKeyword)),
         
     };
     #[inline]
-    NullKeyword: String = {
+    NullKeyword: NullKeyword = {
          
             <_NullKeyword: NullKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"NullKeyword\", \"_NullKeyword\": {} }}", format!("{}", _NullKeyword)),
         
     };
     #[inline]
-    OfKeyword: String = {
+    OfKeyword: OfKeyword = {
          
             <_OfKeyword: OfKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"OfKeyword\", \"_OfKeyword\": {} }}", format!("{}", _OfKeyword)),
         
     };
     #[inline]
-    OverrideKeyword: String = {
+    OverrideKeyword: OverrideKeyword = {
          
             <_OverrideKeyword: OverrideKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"OverrideKeyword\", \"_OverrideKeyword\": {} }}", format!("{}", _OverrideKeyword)),
         
     };
     #[inline]
-    PartialKeyword: String = {
+    PartialKeyword: PartialKeyword = {
          
             <_PartialKeyword: PartialKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"PartialKeyword\", \"_PartialKeyword\": {} }}", format!("{}", _PartialKeyword)),
         
     };
     #[inline]
-    PayableKeyword: String = {
+    PayableKeyword: PayableKeyword = {
          
             <_PayableKeyword: PayableKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"PayableKeyword\", \"_PayableKeyword\": {} }}", format!("{}", _PayableKeyword)),
         
     };
     #[inline]
-    PragmaKeyword: String = {
+    PragmaKeyword: PragmaKeyword = {
          
             <_PragmaKeyword: PragmaKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"PragmaKeyword\", \"_PragmaKeyword\": {} }}", format!("{}", _PragmaKeyword)),
         
     };
     #[inline]
-    PrivateKeyword: String = {
+    PrivateKeyword: PrivateKeyword = {
          
             <_PrivateKeyword: PrivateKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"PrivateKeyword\", \"_PrivateKeyword\": {} }}", format!("{}", _PrivateKeyword)),
         
     };
     #[inline]
-    PromiseKeyword: String = {
+    PromiseKeyword: PromiseKeyword = {
          
             <_PromiseKeyword: PromiseKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"PromiseKeyword\", \"_PromiseKeyword\": {} }}", format!("{}", _PromiseKeyword)),
         
     };
     #[inline]
-    PublicKeyword: String = {
+    PublicKeyword: PublicKeyword = {
          
             <_PublicKeyword: PublicKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"PublicKeyword\", \"_PublicKeyword\": {} }}", format!("{}", _PublicKeyword)),
         
     };
     #[inline]
-    PureKeyword: String = {
+    PureKeyword: PureKeyword = {
          
             <_PureKeyword: PureKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"PureKeyword\", \"_PureKeyword\": {} }}", format!("{}", _PureKeyword)),
         
     };
     #[inline]
-    ReceiveKeyword: String = {
+    ReceiveKeyword: ReceiveKeyword = {
          
             <_ReceiveKeyword: ReceiveKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ReceiveKeyword\", \"_ReceiveKeyword\": {} }}", format!("{}", _ReceiveKeyword)),
         
     };
     #[inline]
-    ReferenceKeyword: String = {
+    ReferenceKeyword: ReferenceKeyword = {
          
             <_ReferenceKeyword: ReferenceKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ReferenceKeyword\", \"_ReferenceKeyword\": {} }}", format!("{}", _ReferenceKeyword)),
         
     };
     #[inline]
-    RelocatableKeyword: String = {
+    RelocatableKeyword: RelocatableKeyword = {
          
             <_RelocatableKeyword: RelocatableKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"RelocatableKeyword\", \"_RelocatableKeyword\": {} }}", format!("{}", _RelocatableKeyword)),
         
     };
     #[inline]
-    ReturnKeyword: String = {
+    ReturnKeyword: ReturnKeyword = {
          
             <_ReturnKeyword: ReturnKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ReturnKeyword\", \"_ReturnKeyword\": {} }}", format!("{}", _ReturnKeyword)),
         
     };
     #[inline]
-    ReturnsKeyword: String = {
+    ReturnsKeyword: ReturnsKeyword = {
          
             <_ReturnsKeyword: ReturnsKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ReturnsKeyword\", \"_ReturnsKeyword\": {} }}", format!("{}", _ReturnsKeyword)),
         
     };
     #[inline]
-    RevertKeyword: String = {
+    RevertKeyword: RevertKeyword = {
          
             <_RevertKeyword: RevertKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"RevertKeyword\", \"_RevertKeyword\": {} }}", format!("{}", _RevertKeyword)),
         
     };
     #[inline]
-    SealedKeyword: String = {
+    SealedKeyword: SealedKeyword = {
          
             <_SealedKeyword: SealedKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SealedKeyword\", \"_SealedKeyword\": {} }}", format!("{}", _SealedKeyword)),
         
     };
     #[inline]
-    SecondsKeyword: String = {
+    SecondsKeyword: SecondsKeyword = {
          
             <_SecondsKeyword: SecondsKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SecondsKeyword\", \"_SecondsKeyword\": {} }}", format!("{}", _SecondsKeyword)),
         
     };
     #[inline]
-    SizeOfKeyword: String = {
+    SizeOfKeyword: SizeOfKeyword = {
          
             <_SizeOfKeyword: SizeOfKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SizeOfKeyword\", \"_SizeOfKeyword\": {} }}", format!("{}", _SizeOfKeyword)),
         
     };
     #[inline]
-    SMTCheckerKeyword: String = {
+    SMTCheckerKeyword: SMTCheckerKeyword = {
          
             <_SMTCheckerKeyword: SMTCheckerKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SMTCheckerKeyword\", \"_SMTCheckerKeyword\": {} }}", format!("{}", _SMTCheckerKeyword)),
         
     };
     #[inline]
-    SolidityKeyword: String = {
+    SolidityKeyword: SolidityKeyword = {
          
             <_SolidityKeyword: SolidityKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SolidityKeyword\", \"_SolidityKeyword\": {} }}", format!("{}", _SolidityKeyword)),
         
     };
     #[inline]
-    StaticKeyword: String = {
+    StaticKeyword: StaticKeyword = {
          
             <_StaticKeyword: StaticKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"StaticKeyword\", \"_StaticKeyword\": {} }}", format!("{}", _StaticKeyword)),
         
     };
     #[inline]
-    StorageKeyword: String = {
+    StorageKeyword: StorageKeyword = {
          
             <_StorageKeyword: StorageKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"StorageKeyword\", \"_StorageKeyword\": {} }}", format!("{}", _StorageKeyword)),
         
     };
     #[inline]
-    StringKeyword: String = {
+    StringKeyword: StringKeyword = {
          
             <_StringKeyword: StringKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"StringKeyword\", \"_StringKeyword\": {} }}", format!("{}", _StringKeyword)),
         
     };
     #[inline]
-    StructKeyword: String = {
+    StructKeyword: StructKeyword = {
          
             <_StructKeyword: StructKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"StructKeyword\", \"_StructKeyword\": {} }}", format!("{}", _StructKeyword)),
         
     };
     #[inline]
-    SuperKeyword: String = {
+    SuperKeyword: SuperKeyword = {
          
             <_SuperKeyword: SuperKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SuperKeyword\", \"_SuperKeyword\": {} }}", format!("{}", _SuperKeyword)),
         
     };
     #[inline]
-    SupportsKeyword: String = {
+    SupportsKeyword: SupportsKeyword = {
          
             <_SupportsKeyword: SupportsKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SupportsKeyword\", \"_SupportsKeyword\": {} }}", format!("{}", _SupportsKeyword)),
         
     };
     #[inline]
-    SwitchKeyword: String = {
+    SwitchKeyword: SwitchKeyword = {
          
             <_SwitchKeyword: SwitchKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SwitchKeyword\", \"_SwitchKeyword\": {} }}", format!("{}", _SwitchKeyword)),
         
     };
     #[inline]
-    SzaboKeyword: String = {
+    SzaboKeyword: SzaboKeyword = {
          
             <_SzaboKeyword: SzaboKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"SzaboKeyword\", \"_SzaboKeyword\": {} }}", format!("{}", _SzaboKeyword)),
         
     };
     #[inline]
-    ThisKeyword: String = {
+    ThisKeyword: ThisKeyword = {
          
             <_ThisKeyword: ThisKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ThisKeyword\", \"_ThisKeyword\": {} }}", format!("{}", _ThisKeyword)),
         
     };
     #[inline]
-    ThrowKeyword: String = {
+    ThrowKeyword: ThrowKeyword = {
          
             <_ThrowKeyword: ThrowKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ThrowKeyword\", \"_ThrowKeyword\": {} }}", format!("{}", _ThrowKeyword)),
         
     };
     #[inline]
-    TransientKeyword: String = {
+    TransientKeyword: TransientKeyword = {
          
             <_TransientKeyword: TransientKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"TransientKeyword\", \"_TransientKeyword\": {} }}", format!("{}", _TransientKeyword)),
         
     };
     #[inline]
-    TrueKeyword: String = {
+    TrueKeyword: TrueKeyword = {
          
             <_TrueKeyword: TrueKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"TrueKeyword\", \"_TrueKeyword\": {} }}", format!("{}", _TrueKeyword)),
         
     };
     #[inline]
-    TryKeyword: String = {
+    TryKeyword: TryKeyword = {
          
             <_TryKeyword: TryKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"TryKeyword\", \"_TryKeyword\": {} }}", format!("{}", _TryKeyword)),
         
     };
     #[inline]
-    TypeDefKeyword: String = {
+    TypeDefKeyword: TypeDefKeyword = {
          
             <_TypeDefKeyword: TypeDefKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"TypeDefKeyword\", \"_TypeDefKeyword\": {} }}", format!("{}", _TypeDefKeyword)),
         
     };
     #[inline]
-    TypeKeyword: String = {
+    TypeKeyword: TypeKeyword = {
          
             <_TypeKeyword: TypeKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"TypeKeyword\", \"_TypeKeyword\": {} }}", format!("{}", _TypeKeyword)),
         
     };
     #[inline]
-    TypeOfKeyword: String = {
+    TypeOfKeyword: TypeOfKeyword = {
          
             <_TypeOfKeyword: TypeOfKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"TypeOfKeyword\", \"_TypeOfKeyword\": {} }}", format!("{}", _TypeOfKeyword)),
         
     };
     #[inline]
-    UfixedKeyword: String = {
+    UfixedKeyword: UfixedKeyword = {
          
             <_UfixedKeyword: UfixedKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"UfixedKeyword\", \"_UfixedKeyword\": {} }}", format!("{}", _UfixedKeyword)),
         
     };
     #[inline]
-    UintKeyword: String = {
+    UintKeyword: UintKeyword = {
          
             <_UintKeyword: UintKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"UintKeyword\", \"_UintKeyword\": {} }}", format!("{}", _UintKeyword)),
         
     };
     #[inline]
-    UncheckedKeyword: String = {
+    UncheckedKeyword: UncheckedKeyword = {
          
             <_UncheckedKeyword: UncheckedKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"UncheckedKeyword\", \"_UncheckedKeyword\": {} }}", format!("{}", _UncheckedKeyword)),
         
     };
     #[inline]
-    UsingKeyword: String = {
+    UsingKeyword: UsingKeyword = {
          
             <_UsingKeyword: UsingKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"UsingKeyword\", \"_UsingKeyword\": {} }}", format!("{}", _UsingKeyword)),
         
     };
     #[inline]
-    VarKeyword: String = {
+    VarKeyword: VarKeyword = {
          
             <_VarKeyword: VarKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"VarKeyword\", \"_VarKeyword\": {} }}", format!("{}", _VarKeyword)),
         
     };
     #[inline]
-    ViewKeyword: String = {
+    ViewKeyword: ViewKeyword = {
          
             <_ViewKeyword: ViewKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"ViewKeyword\", \"_ViewKeyword\": {} }}", format!("{}", _ViewKeyword)),
         
     };
     #[inline]
-    VirtualKeyword: String = {
+    VirtualKeyword: VirtualKeyword = {
          
             <_VirtualKeyword: VirtualKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"VirtualKeyword\", \"_VirtualKeyword\": {} }}", format!("{}", _VirtualKeyword)),
         
     };
     #[inline]
-    WeeksKeyword: String = {
+    WeeksKeyword: WeeksKeyword = {
          
             <_WeeksKeyword: WeeksKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"WeeksKeyword\", \"_WeeksKeyword\": {} }}", format!("{}", _WeeksKeyword)),
         
     };
     #[inline]
-    WeiKeyword: String = {
+    WeiKeyword: WeiKeyword = {
          
             <_WeiKeyword: WeiKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"WeiKeyword\", \"_WeiKeyword\": {} }}", format!("{}", _WeiKeyword)),
         
     };
     #[inline]
-    WhileKeyword: String = {
+    WhileKeyword: WhileKeyword = {
          
             <_WhileKeyword: WhileKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"WhileKeyword\", \"_WhileKeyword\": {} }}", format!("{}", _WhileKeyword)),
         
     };
     #[inline]
-    YearsKeyword: String = {
+    YearsKeyword: YearsKeyword = {
          
             <_YearsKeyword: YearsKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YearsKeyword\", \"_YearsKeyword\": {} }}", format!("{}", _YearsKeyword)),
         
@@ -1018,49 +1019,49 @@ grammar<'source>(source: &'source str);
 // Rules for section Definitions
 
 // Rules for topic Contracts
-    ContractDefinition: String = {
+    ContractDefinition: ContractDefinition = {
          
             <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"ContractDefinition\", \"_abstract_keyword\": {}, \"_contract_keyword\": {}, \"_name\": {}, \"_specifiers\": {}, \"_open_brace\": {}, \"_members\": {}, \"_close_brace\": {} }}", _abstract_keyword.unwrap_or("\"\"".into()), _contract_keyword, _name, _specifiers, _open_brace, _members, _close_brace),
         
     };
-    ContractSpecifiers: String = {
+    ContractSpecifiers: ContractSpecifiers = {
          
             <_ContractSpecifier: (<ContractSpecifier>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"ContractSpecifiers\", \"_ContractSpecifier\": {} }}", format!("[{}]", _ContractSpecifier.join(", "))),
         
     };
-    ContractSpecifier: String = {
+    ContractSpecifier: ContractSpecifier = {
          
             <_InheritanceSpecifier: InheritanceSpecifier>  => format!("{{ \"item\": \"Variant\", \"name\": \"ContractSpecifier\", \"_InheritanceSpecifier\": {} }}", _InheritanceSpecifier),
          
             <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => format!("{{ \"item\": \"Variant\", \"name\": \"ContractSpecifier\", \"_StorageLayoutSpecifier\": {} }}", _StorageLayoutSpecifier),
         
     };
-    InheritanceSpecifier: String = {
+    InheritanceSpecifier: InheritanceSpecifier = {
          
             <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => format!("{{ \"item\": \"Struct\", \"name\": \"InheritanceSpecifier\", \"_is_keyword\": {}, \"_types\": {} }}", _is_keyword, _types),
         
     };
-    InheritanceTypes: String = {
+    InheritanceTypes: InheritanceTypes = {
          
             <_InheritanceType: (<InheritanceType> <(Comma <InheritanceType>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"InheritanceTypes\", \"_InheritanceType\": {} }}", format!("[{}, {}]", _InheritanceType.0, _InheritanceType.1.join(", "))),
         
     };
-    InheritanceType: String = {
+    InheritanceType: InheritanceType = {
          
             <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"InheritanceType\", \"_type_name\": {}, \"_arguments\": {} }}", _type_name, _arguments.unwrap_or("\"\"".into())),
         
     };
-    StorageLayoutSpecifier: String = {
+    StorageLayoutSpecifier: StorageLayoutSpecifier = {
          
             <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => format!("{{ \"item\": \"Struct\", \"name\": \"StorageLayoutSpecifier\", \"_layout_keyword\": {}, \"_at_keyword\": {}, \"_expression\": {} }}", _layout_keyword, _at_keyword, _expression),
         
     };
-    ContractMembers: String = {
+    ContractMembers: ContractMembers = {
          
             <_ContractMember: (<ContractMember>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"ContractMembers\", \"_ContractMember\": {} }}", format!("[{}]", _ContractMember.join(", "))),
         
     };
-    ContractMember: String = {
+    ContractMember: ContractMember = {
          
             <_UsingDirective: UsingDirective>  => format!("{{ \"item\": \"Variant\", \"name\": \"ContractMember\", \"_UsingDirective\": {} }}", _UsingDirective),
          
@@ -1090,12 +1091,12 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Interfaces
-    InterfaceDefinition: String = {
+    InterfaceDefinition: InterfaceDefinition = {
          
             <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"InterfaceDefinition\", \"_interface_keyword\": {}, \"_name\": {}, \"_inheritance\": {}, \"_open_brace\": {}, \"_members\": {}, \"_close_brace\": {} }}", _interface_keyword, _name, _inheritance.unwrap_or("\"\"".into()), _open_brace, _members, _close_brace),
         
     };
-    InterfaceMembers: String = {
+    InterfaceMembers: InterfaceMembers = {
          
             <_ContractMember: (<ContractMember>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"InterfaceMembers\", \"_ContractMember\": {} }}", format!("[{}]", _ContractMember.join(", "))),
         
@@ -1103,12 +1104,12 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Libraries
-    LibraryDefinition: String = {
+    LibraryDefinition: LibraryDefinition = {
          
             <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"LibraryDefinition\", \"_library_keyword\": {}, \"_name\": {}, \"_open_brace\": {}, \"_members\": {}, \"_close_brace\": {} }}", _library_keyword, _name, _open_brace, _members, _close_brace),
         
     };
-    LibraryMembers: String = {
+    LibraryMembers: LibraryMembers = {
          
             <_ContractMember: (<ContractMember>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"LibraryMembers\", \"_ContractMember\": {} }}", format!("[{}]", _ContractMember.join(", "))),
         
@@ -1116,17 +1117,17 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Structs
-    StructDefinition: String = {
+    StructDefinition: StructDefinition = {
          
             <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"StructDefinition\", \"_struct_keyword\": {}, \"_name\": {}, \"_open_brace\": {}, \"_members\": {}, \"_close_brace\": {} }}", _struct_keyword, _name, _open_brace, _members, _close_brace),
         
     };
-    StructMembers: String = {
+    StructMembers: StructMembers = {
          
             <_StructMember: (<StructMember>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"StructMembers\", \"_StructMember\": {} }}", format!("[{}]", _StructMember.join(", "))),
         
     };
-    StructMember: String = {
+    StructMember: StructMember = {
          
             <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StructMember\", \"_type_name\": {}, \"_name\": {}, \"_semicolon\": {} }}", _type_name, _name, _semicolon),
         
@@ -1134,12 +1135,12 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Enums
-    EnumDefinition: String = {
+    EnumDefinition: EnumDefinition = {
          
             <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"EnumDefinition\", \"_enum_keyword\": {}, \"_name\": {}, \"_open_brace\": {}, \"_members\": {}, \"_close_brace\": {} }}", _enum_keyword, _name, _open_brace, _members, _close_brace),
         
     };
-    EnumMembers: String = {
+    EnumMembers: EnumMembers = {
          
             <_Identifier: ((<Identifier> <(Comma <Identifier>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"EnumMembers\", \"_Identifier\": {} }}", _Identifier.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
@@ -1147,7 +1148,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Constants
-    ConstantDefinition: String = {
+    ConstantDefinition: ConstantDefinition = {
          
             <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"ConstantDefinition\", \"_type_name\": {}, \"_constant_keyword\": {}, \"_name\": {}, \"_equal\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _constant_keyword, _name, _equal, _value, _semicolon),
         
@@ -1155,7 +1156,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic State Variables
-    StateVariableDefinition: String = {
+    StateVariableDefinition: StateVariableDefinition = {
 // TODO[1] This is an annoying hack, the problem is when we have a function type
 // in a variable declaration type, then some attributes (visibility ones) can be both
 // at the end of the type, or just after the type.
@@ -1184,14 +1185,14 @@ grammar<'source>(source: &'source str);
 
 // ODOT
 
-    StateVariableDefinitionValue: String = {
+    StateVariableDefinitionValue: StateVariableDefinitionValue = {
          
             <_equal: Equal>  <_value: Expression>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinitionValue\", \"_equal\": {}, \"_value\": {} }}", _equal, _value),
         
     };
 // TODO[1] See the note at `StateVariableDefinition`, we're using this to count for
 // used attributes
-    StateVariableAttributes<Vis>: String = {
+    StateVariableAttributes<Vis>: StateVariableAttributes = {
         // <_ConstantKeyword: ConstantKeyword> <_other: StateVariableAttributes<Vis, "True">> if Const == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_StateVariableAttribute\": {} }}", format!("[{}]", _StateVariableAttribute.join(", "))),
 
         <_InternalKeyword: InternalKeyword> <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_InternalKeyword\": {},  \"_other\": {} }}", _InternalKeyword, format!("[{}]", _other)),
@@ -1224,12 +1225,12 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Functions
-    FunctionDefinition: String = {
+    FunctionDefinition: FunctionDefinition = {
          
             <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionDefinition\", \"_function_keyword\": {}, \"_name\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_returns\": {}, \"_body\": {} }}", _function_keyword, _name, _parameters, _attributes, _returns.unwrap_or("\"\"".into()), _body),
         
     };
-    FunctionName: String = {
+    FunctionName: FunctionName = {
          
             <_Identifier: Identifier>  => format!("{{ \"item\": \"Variant\", \"name\": \"FunctionName\", \"_Identifier\": {} }}", _Identifier),
          
@@ -1238,27 +1239,27 @@ grammar<'source>(source: &'source str);
             <_ReceiveKeyword: ReceiveKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"FunctionName\", \"_ReceiveKeyword\": {} }}", _ReceiveKeyword),
         
     };
-    ParametersDeclaration: String = {
+    ParametersDeclaration: ParametersDeclaration = {
          
             <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"ParametersDeclaration\", \"_open_paren\": {}, \"_parameters\": {}, \"_close_paren\": {} }}", _open_paren, _parameters, _close_paren),
         
     };
-    Parameters: String = {
+    Parameters: Parameters = {
          
             <_Parameter: ((<Parameter> <(Comma <Parameter>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"Parameters\", \"_Parameter\": {} }}", _Parameter.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
     };
-    Parameter: String = {
+    Parameter: Parameter = {
          
             <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"Parameter\", \"_type_name\": {}, \"_storage_location\": {}, \"_name\": {} }}", _type_name, _storage_location.unwrap_or("\"\"".into()), _name.unwrap_or("\"\"".into())),
         
     };
-    FunctionAttributes: String = {
+    FunctionAttributes: FunctionAttributes = {
          
             <_FunctionAttribute: (<FunctionAttribute>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionAttributes\", \"_FunctionAttribute\": {} }}", format!("[{}]", _FunctionAttribute.join(", "))),
         
     };
-    FunctionAttribute: String = {
+    FunctionAttribute: FunctionAttribute = {
          
             <_ModifierInvocation: ModifierInvocation>  => format!("{{ \"item\": \"Variant\", \"name\": \"FunctionAttribute\", \"_ModifierInvocation\": {} }}", _ModifierInvocation),
          
@@ -1281,44 +1282,44 @@ grammar<'source>(source: &'source str);
             <_VirtualKeyword: VirtualKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"FunctionAttribute\", \"_VirtualKeyword\": {} }}", _VirtualKeyword),
         
     };
-    OverrideSpecifier: String = {
+    OverrideSpecifier: OverrideSpecifier = {
          
             <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"OverrideSpecifier\", \"_override_keyword\": {}, \"_overridden\": {} }}", _override_keyword, _overridden.unwrap_or("\"\"".into())),
         
     };
-    OverridePathsDeclaration: String = {
+    OverridePathsDeclaration: OverridePathsDeclaration = {
          
             <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"OverridePathsDeclaration\", \"_open_paren\": {}, \"_paths\": {}, \"_close_paren\": {} }}", _open_paren, _paths, _close_paren),
         
     };
-    OverridePaths: String = {
+    OverridePaths: OverridePaths = {
          
             <_IdentifierPath: (<IdentifierPath> <(Comma <IdentifierPath>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"OverridePaths\", \"_IdentifierPath\": {} }}", format!("[{}, {}]", _IdentifierPath.0, _IdentifierPath.1.join(", "))),
         
     };
-    ReturnsDeclaration: String = {
+    ReturnsDeclaration: ReturnsDeclaration = {
          
             <_returns_keyword: ReturnsKeyword>  <_variables: ParametersDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"ReturnsDeclaration\", \"_returns_keyword\": {}, \"_variables\": {} }}", _returns_keyword, _variables),
         
     };
-    FunctionBody: String = {
+    FunctionBody: FunctionBody = {
          
             <_Block: Block>  => format!("{{ \"item\": \"Variant\", \"name\": \"FunctionBody\", \"_Block\": {} }}", _Block),
          
             <_Semicolon: Semicolon>  => format!("{{ \"item\": \"Variant\", \"name\": \"FunctionBody\", \"_Semicolon\": {} }}", _Semicolon),
         
     };
-    ConstructorDefinition: String = {
+    ConstructorDefinition: ConstructorDefinition = {
          
             <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => format!("{{ \"item\": \"Struct\", \"name\": \"ConstructorDefinition\", \"_constructor_keyword\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_body\": {} }}", _constructor_keyword, _parameters, _attributes, _body),
         
     };
-    ConstructorAttributes: String = {
+    ConstructorAttributes: ConstructorAttributes = {
          
             <_ConstructorAttribute: (<ConstructorAttribute>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"ConstructorAttributes\", \"_ConstructorAttribute\": {} }}", format!("[{}]", _ConstructorAttribute.join(", "))),
         
     };
-    ConstructorAttribute: String = {
+    ConstructorAttribute: ConstructorAttribute = {
          
             <_ModifierInvocation: ModifierInvocation>  => format!("{{ \"item\": \"Variant\", \"name\": \"ConstructorAttribute\", \"_ModifierInvocation\": {} }}", _ModifierInvocation),
          
@@ -1329,17 +1330,17 @@ grammar<'source>(source: &'source str);
             <_PublicKeyword: PublicKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"ConstructorAttribute\", \"_PublicKeyword\": {} }}", _PublicKeyword),
         
     };
-    FallbackFunctionDefinition: String = {
+    FallbackFunctionDefinition: FallbackFunctionDefinition = {
          
             <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => format!("{{ \"item\": \"Struct\", \"name\": \"FallbackFunctionDefinition\", \"_fallback_keyword\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_returns\": {}, \"_body\": {} }}", _fallback_keyword, _parameters, _attributes, _returns.unwrap_or("\"\"".into()), _body),
         
     };
-    FallbackFunctionAttributes: String = {
+    FallbackFunctionAttributes: FallbackFunctionAttributes = {
          
             <_FallbackFunctionAttribute: (<FallbackFunctionAttribute>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"FallbackFunctionAttributes\", \"_FallbackFunctionAttribute\": {} }}", format!("[{}]", _FallbackFunctionAttribute.join(", "))),
         
     };
-    FallbackFunctionAttribute: String = {
+    FallbackFunctionAttribute: FallbackFunctionAttribute = {
          
             <_ModifierInvocation: ModifierInvocation>  => format!("{{ \"item\": \"Variant\", \"name\": \"FallbackFunctionAttribute\", \"_ModifierInvocation\": {} }}", _ModifierInvocation),
          
@@ -1356,17 +1357,17 @@ grammar<'source>(source: &'source str);
             <_VirtualKeyword: VirtualKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"FallbackFunctionAttribute\", \"_VirtualKeyword\": {} }}", _VirtualKeyword),
         
     };
-    ReceiveFunctionDefinition: String = {
+    ReceiveFunctionDefinition: ReceiveFunctionDefinition = {
          
             <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => format!("{{ \"item\": \"Struct\", \"name\": \"ReceiveFunctionDefinition\", \"_receive_keyword\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_body\": {} }}", _receive_keyword, _parameters, _attributes, _body),
         
     };
-    ReceiveFunctionAttributes: String = {
+    ReceiveFunctionAttributes: ReceiveFunctionAttributes = {
          
             <_ReceiveFunctionAttribute: (<ReceiveFunctionAttribute>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"ReceiveFunctionAttributes\", \"_ReceiveFunctionAttribute\": {} }}", format!("[{}]", _ReceiveFunctionAttribute.join(", "))),
         
     };
-    ReceiveFunctionAttribute: String = {
+    ReceiveFunctionAttribute: ReceiveFunctionAttribute = {
          
             <_ModifierInvocation: ModifierInvocation>  => format!("{{ \"item\": \"Variant\", \"name\": \"ReceiveFunctionAttribute\", \"_ModifierInvocation\": {} }}", _ModifierInvocation),
          
@@ -1382,24 +1383,24 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Modifiers
-    ModifierDefinition: String = {
+    ModifierDefinition: ModifierDefinition = {
          
             <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => format!("{{ \"item\": \"Struct\", \"name\": \"ModifierDefinition\", \"_modifier_keyword\": {}, \"_name\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_body\": {} }}", _modifier_keyword, _name, _parameters.unwrap_or("\"\"".into()), _attributes, _body),
         
     };
-    ModifierAttributes: String = {
+    ModifierAttributes: ModifierAttributes = {
          
             <_ModifierAttribute: (<ModifierAttribute>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"ModifierAttributes\", \"_ModifierAttribute\": {} }}", format!("[{}]", _ModifierAttribute.join(", "))),
         
     };
-    ModifierAttribute: String = {
+    ModifierAttribute: ModifierAttribute = {
          
             <_OverrideSpecifier: OverrideSpecifier>  => format!("{{ \"item\": \"Variant\", \"name\": \"ModifierAttribute\", \"_OverrideSpecifier\": {} }}", _OverrideSpecifier),
          
             <_VirtualKeyword: VirtualKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"ModifierAttribute\", \"_VirtualKeyword\": {} }}", _VirtualKeyword),
         
     };
-    ModifierInvocation: String = {
+    ModifierInvocation: ModifierInvocation = {
          
             <_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"ModifierInvocation\", \"_name\": {}, \"_arguments\": {} }}", _name, _arguments.unwrap_or("\"\"".into())),
         
@@ -1407,22 +1408,22 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Events
-    EventDefinition: String = {
+    EventDefinition: EventDefinition = {
          
             <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"EventDefinition\", \"_event_keyword\": {}, \"_name\": {}, \"_parameters\": {}, \"_anonymous_keyword\": {}, \"_semicolon\": {} }}", _event_keyword, _name, _parameters, _anonymous_keyword.unwrap_or("\"\"".into()), _semicolon),
         
     };
-    EventParametersDeclaration: String = {
+    EventParametersDeclaration: EventParametersDeclaration = {
          
             <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"EventParametersDeclaration\", \"_open_paren\": {}, \"_parameters\": {}, \"_close_paren\": {} }}", _open_paren, _parameters, _close_paren),
         
     };
-    EventParameters: String = {
+    EventParameters: EventParameters = {
          
             <_EventParameter: ((<EventParameter> <(Comma <EventParameter>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"EventParameters\", \"_EventParameter\": {} }}", _EventParameter.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
     };
-    EventParameter: String = {
+    EventParameter: EventParameter = {
          
             <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"EventParameter\", \"_type_name\": {}, \"_indexed_keyword\": {}, \"_name\": {} }}", _type_name, _indexed_keyword.unwrap_or("\"\"".into()), _name.unwrap_or("\"\"".into())),
         
@@ -1430,7 +1431,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic User Defined Value Types
-    UserDefinedValueTypeDefinition: String = {
+    UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition = {
          
             <_type_keyword: TypeKeyword>  <_name: Identifier>  <_is_keyword: IsKeyword>  <_value_type: ElementaryType>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"UserDefinedValueTypeDefinition\", \"_type_keyword\": {}, \"_name\": {}, \"_is_keyword\": {}, \"_value_type\": {}, \"_semicolon\": {} }}", _type_keyword, _name, _is_keyword, _value_type, _semicolon),
         
@@ -1438,22 +1439,22 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Errors
-    ErrorDefinition: String = {
+    ErrorDefinition: ErrorDefinition = {
          
             <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"ErrorDefinition\", \"_error_keyword\": {}, \"_name\": {}, \"_members\": {}, \"_semicolon\": {} }}", _error_keyword, _name, _members, _semicolon),
         
     };
-    ErrorParametersDeclaration: String = {
+    ErrorParametersDeclaration: ErrorParametersDeclaration = {
          
             <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"ErrorParametersDeclaration\", \"_open_paren\": {}, \"_parameters\": {}, \"_close_paren\": {} }}", _open_paren, _parameters, _close_paren),
         
     };
-    ErrorParameters: String = {
+    ErrorParameters: ErrorParameters = {
          
             <_ErrorParameter: ((<ErrorParameter> <(Comma <ErrorParameter>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"ErrorParameters\", \"_ErrorParameter\": {} }}", _ErrorParameter.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
     };
-    ErrorParameter: String = {
+    ErrorParameter: ErrorParameter = {
          
             <_type_name: TypeName>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"ErrorParameter\", \"_type_name\": {}, \"_name\": {} }}", _type_name, _name.unwrap_or("\"\"".into())),
         
@@ -1471,7 +1472,7 @@ grammar<'source>(source: &'source str);
 // 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
 // avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
 
-    TypeName0<Func>: String = {
+    TypeName0<Func>: TypeName = {
 
             <_FunctionType: FunctionType> if Func == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_FunctionType\": {} }}", _FunctionType),
 
@@ -1483,7 +1484,7 @@ grammar<'source>(source: &'source str);
         
     };
 // Inlining here makes it a lot slower, think twice
-    TypeName1<Func>: String = {
+    TypeName1<Func>: TypeName = {
 // TODO[2]: enable
         // It has problems with Access expression
             //<_TypeName: TypeName0>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"TypeName\", \"_TypeName\": {}, \"_open_bracket\": {}, \"_index\": {}, \"_close_bracket\": {} }}", _TypeName, _open_bracket, _index.unwrap_or("\"\"".into()), _close_bracket),
@@ -1491,14 +1492,14 @@ grammar<'source>(source: &'source str);
 // ODOT
 
     }
-    TypeName: String = {
+    TypeName: TypeName = {
          
             <TypeName: TypeName1<"True">>  => <>,
         
     };
 // ODOT
 
-    NewableTypeName: String = {
+    NewableTypeName: NewableTypeName = {
          
             <_NewableArrayType: NewableArrayType>  => format!("{{ \"item\": \"Variant\", \"name\": \"NewableTypeName\", \"_NewableArrayType\": {} }}", _NewableArrayType),
          
@@ -1507,7 +1508,7 @@ grammar<'source>(source: &'source str);
             <_IdentifierPath: IdentifierPath>  => format!("{{ \"item\": \"Variant\", \"name\": \"NewableTypeName\", \"_IdentifierPath\": {} }}", _IdentifierPath),
         
     };
-    NewableArrayType: String = {
+    NewableArrayType: NewableArrayType = {
          
             <_type_name: TypeName>  <_open_bracket: OpenBracket>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Struct\", \"name\": \"NewableArrayType\", \"_type_name\": {}, \"_open_bracket\": {}, \"_close_bracket\": {} }}", _type_name, _open_bracket, _close_bracket),
         
@@ -1515,21 +1516,21 @@ grammar<'source>(source: &'source str);
 // TODO[1]: Again with the attributes, we need to differentiate between a `FunctionType` that ends
 // with a `returns` and one that ends with attributes, because the one that ends with attributes
 // has problems in VariableDeclarationStatement
-    FunctionType: String = {
+    FunctionType: FunctionType = {
         FunctionTypeInternalNoReturn<"m"> => <>,
         FunctionTypeInternalReturn => <>,
     };
 
     // We dont inline this to break a cycle between type names
-    FunctionTypeInternalNoReturn<Vis>: String = {
+    FunctionTypeInternalNoReturn<Vis>: FunctionType = {
             <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<Vis>>   => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {} }}", _function_keyword, _parameters, _attributes),
     };
-    FunctionTypeInternalReturn: String = {
+    FunctionTypeInternalReturn: FunctionType = {
          
             <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<"m">>  <_returns: ReturnsDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_returns\": {} }}", _function_keyword, _parameters, _attributes, _returns),
         
     };
-    FunctionTypeAttributes<Vis>: String = {
+    FunctionTypeAttributes<Vis>: FunctionTypeAttributes = {
         <_InternalKeyword: InternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_InternalKeyword\": {} }}", _InternalKeyword),
         <_ExternalKeyword: ExternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_ExternalKeyword\": {} }}", _ExternalKeyword),
         <_PrivateKeyword: PrivateKeyword>   <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PrivateKeyword\": {} }}", _PrivateKeyword),
@@ -1541,7 +1542,7 @@ grammar<'source>(source: &'source str);
         
     };
     /*
-    FunctionTypeAttribute: String = {
+    FunctionTypeAttribute: FunctionTypeAttribute = {
          
             <_InternalKeyword: InternalKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"FunctionTypeAttribute\", \"_InternalKeyword\": {} }}", _InternalKeyword),
          
@@ -1561,24 +1562,24 @@ grammar<'source>(source: &'source str);
     */
 // ODOT
 
-    MappingType: String = {
+    MappingType: MappingType = {
          
             <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"MappingType\", \"_mapping_keyword\": {}, \"_open_paren\": {}, \"_key_type\": {}, \"_equal_greater_than\": {}, \"_value_type\": {}, \"_close_paren\": {} }}", _mapping_keyword, _open_paren, _key_type, _equal_greater_than, _value_type, _close_paren),
         
     };
-    MappingKey: String = {
+    MappingKey: MappingKey = {
          
             <_key_type: MappingKeyType>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"MappingKey\", \"_key_type\": {}, \"_name\": {} }}", _key_type, _name.unwrap_or("\"\"".into())),
         
     };
-    MappingKeyType: String = {
+    MappingKeyType: MappingKeyType = {
          
             <_ElementaryType: ElementaryType>  => format!("{{ \"item\": \"Variant\", \"name\": \"MappingKeyType\", \"_ElementaryType\": {} }}", _ElementaryType),
          
             <_IdentifierPath: IdentifierPath>  => format!("{{ \"item\": \"Variant\", \"name\": \"MappingKeyType\", \"_IdentifierPath\": {} }}", _IdentifierPath),
         
     };
-    MappingValue: String = {
+    MappingValue: MappingValue = {
          
             <_type_name: TypeName>  <_name: (Identifier)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"MappingValue\", \"_type_name\": {}, \"_name\": {} }}", _type_name, _name.unwrap_or("\"\"".into())),
         
@@ -1586,7 +1587,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Elementary Types
-    ElementaryType: String = {
+    ElementaryType: ElementaryType = {
          
             <_BoolKeyword: BoolKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"ElementaryType\", \"_BoolKeyword\": {} }}", _BoolKeyword),
          
@@ -1605,7 +1606,7 @@ grammar<'source>(source: &'source str);
             <_UfixedKeyword: UfixedKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"ElementaryType\", \"_UfixedKeyword\": {} }}", _UfixedKeyword),
         
     };
-    AddressType: String = {
+    AddressType: AddressType = {
          
             <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"AddressType\", \"_address_keyword\": {}, \"_payable_keyword\": {} }}", _address_keyword, _payable_keyword.unwrap_or("\"\"".into())),
         
@@ -1618,12 +1619,12 @@ grammar<'source>(source: &'source str);
 // Rules for section Statements
 
 // Rules for topic Blocks
-    Block: String = {
+    Block: Block = {
          
             <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"Block\", \"_open_brace\": {}, \"_statements\": {}, \"_close_brace\": {} }}", _open_brace, _statements, _close_brace),
         
     };
-    Statements: String = {
+    Statements: Statements = {
          
             <_Statement: (<Statement>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"Statements\", \"_Statement\": {} }}", format!("[{}]", _Statement.join(", "))),
         
@@ -1635,7 +1636,7 @@ grammar<'source>(source: &'source str);
          
         // A Statement that either allows (DI == "True") or disallows (DI == "False")
         // dangling `if`s
-    _Statement<DI>: String = {
+    _Statement<DI>: Statement = {
          
             <_IfStatement: IfStatement<DI>>  => format!("{{ \"item\": \"Variant\", \"name\": \"Statement\", \"_IfStatement\": {} }}", _IfStatement),
          
@@ -1671,27 +1672,27 @@ grammar<'source>(source: &'source str);
         
     };
 //ODOT
-    UncheckedBlock: String = {
+    UncheckedBlock: UncheckedBlock = {
          
             <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => format!("{{ \"item\": \"Struct\", \"name\": \"UncheckedBlock\", \"_unchecked_keyword\": {}, \"_block\": {} }}", _unchecked_keyword, _block),
         
     };
-    ExpressionStatement: String = {
+    ExpressionStatement: ExpressionStatement = {
          
             <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"ExpressionStatement\", \"_expression\": {}, \"_semicolon\": {} }}", _expression, _semicolon),
         
     };
-    AssemblyStatement: String = {
+    AssemblyStatement: AssemblyStatement = {
          
             <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => format!("{{ \"item\": \"Struct\", \"name\": \"AssemblyStatement\", \"_assembly_keyword\": {}, \"_label\": {}, \"_flags\": {}, \"_body\": {} }}", _assembly_keyword, _label.unwrap_or("\"\"".into()), _flags.unwrap_or("\"\"".into()), _body),
         
     };
-    AssemblyFlagsDeclaration: String = {
+    AssemblyFlagsDeclaration: AssemblyFlagsDeclaration = {
          
             <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"AssemblyFlagsDeclaration\", \"_open_paren\": {}, \"_flags\": {}, \"_close_paren\": {} }}", _open_paren, _flags, _close_paren),
         
     };
-    AssemblyFlags: String = {
+    AssemblyFlags: AssemblyFlags = {
          
             <_StringLiteral: (<StringLiteral> <(Comma <StringLiteral>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"AssemblyFlags\", \"_StringLiteral\": {} }}", format!("[{}, {}]", _StringLiteral.0, _StringLiteral.1.join(", "))),
         
@@ -1701,7 +1702,7 @@ grammar<'source>(source: &'source str);
 // Rules for topic Declaration Statements
 // TODO[4] We remove the TupleDeconstructionStatement sub NonTerminals from here, it's now a ProtoTuple
 // shared with the tuples
-    TupleDeconstructionStatement: String = {
+    TupleDeconstructionStatement: TupleDeconstructionStatement = {
             // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
             <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_tuple\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _tuple, _equal, _expression, _semicolon),
         
@@ -1711,7 +1712,7 @@ grammar<'source>(source: &'source str);
 
 // TODO[4] We split the VariableDeclarationStatement into a VariableDeclaration and a ValueAssignment
 // This way we can use it in more places, in particular with patterns and the like
-    VariableDeclarationStatement: String = {
+    VariableDeclarationStatement: VariableDeclarationStatement = {
          
             <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclarationStatement\", \"_variable_declaration\": {}, \"_value\": {}, \"_semicolon\": {} }}", _variable_declaration, _value.unwrap_or("\"\"".into()), _semicolon),
         
@@ -1723,17 +1724,17 @@ grammar<'source>(source: &'source str);
         
     };
 // ODOT
-    VariableDeclarationType: String = {
+    VariableDeclarationType: VariableDeclarationType = {
          
             <_TypeName: TypeName>  => format!("{{ \"item\": \"Variant\", \"name\": \"VariableDeclarationType\", \"_TypeName\": {} }}", _TypeName),
         
     };
-    VariableDeclarationValue: String = {
+    VariableDeclarationValue: VariableDeclarationValue = {
          
             <_equal: Equal>  <_expression: Expression>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclarationValue\", \"_equal\": {}, \"_expression\": {} }}", _equal, _expression),
         
     };
-    StorageLocation: String = {
+    StorageLocation: StorageLocation = {
          
             <_MemoryKeyword: MemoryKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"StorageLocation\", \"_MemoryKeyword\": {} }}", _MemoryKeyword),
          
@@ -1747,7 +1748,7 @@ grammar<'source>(source: &'source str);
 // Rules for topic Control Statements
 // TODO[3] IfStatement now tracks whether it has a dangling If, and only allows
 // else branches if there's no dalgnling if
-    IfStatement<DI>: String = {
+    IfStatement<DI>: IfStatement = {
          
          // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
             <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True"  => format!("{{ \"item\": \"Struct\", \"name\": \"IfStatement\", \"_if_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {} }}", _if_keyword, _open_paren, _condition, _close_paren, _body),
@@ -1760,13 +1761,13 @@ grammar<'source>(source: &'source str);
 
 // TODO[3] ForStatement now tracks whether it has a dangling If, and only allows
     // TODO Maybe inline
-    ForStatement<DI>: String = {
+    ForStatement<DI>: ForStatement = {
          
             <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"ForStatement\", \"_for_keyword\": {}, \"_open_paren\": {}, \"_initialization\": {}, \"_condition\": {}, \"_iterator\": {}, \"_close_paren\": {}, \"_body\": {} }}", _for_keyword, _open_paren, _initialization, _condition, _iterator.unwrap_or("\"\"".into()), _close_paren, _body),
         
     };
 // ODOT
-    ForStatementInitialization: String = {
+    ForStatementInitialization: ForStatementInitialization = {
          
             <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => format!("{{ \"item\": \"Variant\", \"name\": \"ForStatementInitialization\", \"_TupleDeconstructionStatement\": {} }}", _TupleDeconstructionStatement),
          
@@ -1777,7 +1778,7 @@ grammar<'source>(source: &'source str);
             <_Semicolon: Semicolon>  => format!("{{ \"item\": \"Variant\", \"name\": \"ForStatementInitialization\", \"_Semicolon\": {} }}", _Semicolon),
         
     };
-    ForStatementCondition: String = {
+    ForStatementCondition: ForStatementCondition = {
          
             <_ExpressionStatement: ExpressionStatement>  => format!("{{ \"item\": \"Variant\", \"name\": \"ForStatementCondition\", \"_ExpressionStatement\": {} }}", _ExpressionStatement),
          
@@ -1785,33 +1786,33 @@ grammar<'source>(source: &'source str);
         
     };
 // TODO[3] WhileStatement now tracks whether it has a dangling If, and only allows
-    WhileStatement<DI>: String = {
+    WhileStatement<DI>: WhileStatement = {
          
             <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"WhileStatement\", \"_while_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {} }}", _while_keyword, _open_paren, _condition, _close_paren, _body),
         
     };
 // ODOT
-    DoWhileStatement: String = {
+    DoWhileStatement: DoWhileStatement = {
          
             <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"DoWhileStatement\", \"_do_keyword\": {}, \"_body\": {}, \"_while_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_semicolon\": {} }}", _do_keyword, _body, _while_keyword, _open_paren, _condition, _close_paren, _semicolon),
         
     };
-    ContinueStatement: String = {
+    ContinueStatement: ContinueStatement = {
          
             <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"ContinueStatement\", \"_continue_keyword\": {}, \"_semicolon\": {} }}", _continue_keyword, _semicolon),
         
     };
-    BreakStatement: String = {
+    BreakStatement: BreakStatement = {
          
             <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"BreakStatement\", \"_break_keyword\": {}, \"_semicolon\": {} }}", _break_keyword, _semicolon),
         
     };
-    ReturnStatement: String = {
+    ReturnStatement: ReturnStatement = {
          
             <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"ReturnStatement\", \"_return_keyword\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _return_keyword, _expression.unwrap_or("\"\"".into()), _semicolon),
         
     };
-    EmitStatement: String = {
+    EmitStatement: EmitStatement = {
          
             <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"EmitStatement\", \"_emit_keyword\": {}, \"_event\": {}, \"_arguments\": {}, \"_semicolon\": {} }}", _emit_keyword, _event, _arguments, _semicolon),
         
@@ -1819,27 +1820,27 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Error Handling
-    TryStatement: String = {
+    TryStatement: TryStatement = {
          
             <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)?>  <_body: Block>  <_catch_clauses: CatchClauses>  => format!("{{ \"item\": \"Struct\", \"name\": \"TryStatement\", \"_try_keyword\": {}, \"_expression\": {}, \"_returns\": {}, \"_body\": {}, \"_catch_clauses\": {} }}", _try_keyword, _expression, _returns.unwrap_or("\"\"".into()), _body, _catch_clauses),
         
     };
-    CatchClauses: String = {
+    CatchClauses: CatchClauses = {
          
             <_CatchClause: (<CatchClause>)+>  => format!("{{ \"item\": \"Repeated\", \"name\": \"CatchClauses\", \"_CatchClause\": {} }}", format!("[{}]", _CatchClause.join(", "))),
         
     };
-    CatchClause: String = {
+    CatchClause: CatchClause = {
          
             <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => format!("{{ \"item\": \"Struct\", \"name\": \"CatchClause\", \"_catch_keyword\": {}, \"_error\": {}, \"_body\": {} }}", _catch_keyword, _error.unwrap_or("\"\"".into()), _body),
         
     };
-    CatchClauseError: String = {
+    CatchClauseError: CatchClauseError = {
          
             <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"CatchClauseError\", \"_name\": {}, \"_parameters\": {} }}", _name.unwrap_or("\"\"".into()), _parameters),
         
     };
-    RevertStatement: String = {
+    RevertStatement: RevertStatement = {
          
             <_revert_keyword: RevertKeyword>  <_error: (IdentifierPath)?>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"RevertStatement\", \"_revert_keyword\": {}, \"_error\": {}, \"_arguments\": {}, \"_semicolon\": {} }}", _revert_keyword, _error.unwrap_or("\"\"".into()), _arguments, _semicolon),
         
@@ -1857,7 +1858,7 @@ grammar<'source>(source: &'source str);
 // Ident is a variable to check whether this expression allows identifier paths or not
 // The problem comes from a.b.c, this can be either an identifier path or a member access, we should
 // always prefer identifier paths
-    Expression0<Ident>: String = {
+    Expression0<Ident>: Expression = {
             <_IdentifierPath: IdentifierPath> if Ident == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_IdentifierPath\": {} }}", _IdentifierPath),
          
             <_NewExpression: NewExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_NewExpression\": {} }}", _NewExpression),
@@ -1888,7 +1889,7 @@ grammar<'source>(source: &'source str);
 
         
     };
-    Expression1<Ident>: String = {
+    Expression1<Ident>: Expression = {
 
             <_Expression: Expression1<"True">>  <_operator: Equal>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
@@ -1919,27 +1920,27 @@ grammar<'source>(source: &'source str);
 
 
 
-    Expression2<Ident>: String = {
+    Expression2<Ident>: Expression = {
         // TODO: Not really sure the associativity is correct, we need to check
 
             <_Expression: Expression1<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression2<"True">>  <_colon: Colon>  <_false_expression: Expression2<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_question_mark\": {}, \"_true_expression\": {}, \"_colon\": {}, \"_false_expression\": {} }}", _Expression, _question_mark, _true_expression, _colon, _false_expression),
                 Expression1<Ident> => <>,
     };
-    Expression3<Ident>: String = {
+    Expression3<Ident>: Expression = {
 
             <_Expression: Expression3<"True">>  <_operator: BarBar>  <_Expression_2: Expression2<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
             Expression2<Ident> => <>,
 
     };
-    Expression4<Ident>: String = {
+    Expression4<Ident>: Expression = {
 
             <_Expression: Expression4<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression3<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
             Expression3<Ident> => <>,
 
     };
-    Expression5<Ident>: String = {
+    Expression5<Ident>: Expression = {
 
             <_Expression: Expression5<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression4<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
@@ -1948,7 +1949,7 @@ grammar<'source>(source: &'source str);
             Expression4<Ident> => <>,
             
     };
-    Expression6<Ident>: String = {
+    Expression6<Ident>: Expression = {
 
             <_Expression: Expression6<"True">>  <_operator: LessThan>  <_Expression_2: Expression5<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
@@ -1961,28 +1962,28 @@ grammar<'source>(source: &'source str);
             Expression5<Ident> => <>,
 
     };
-    Expression7<Ident>: String = {
+    Expression7<Ident>: Expression = {
 
             <_Expression: Expression7<"True">>  <_operator: Bar>  <_Expression_2: Expression6<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
             Expression6<Ident> => <>,
 
     };
-    Expression8<Ident>: String = {
+    Expression8<Ident>: Expression = {
 
             <_Expression: Expression8<"True">>  <_operator: Caret>  <_Expression_2: Expression7<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
             Expression7<Ident> => <>,
 
     };
-    Expression9<Ident>: String = {
+    Expression9<Ident>: Expression = {
 
             <_Expression: Expression9<"True">>  <_operator: Ampersand>  <_Expression_2: Expression8<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
             Expression8<Ident> => <>,
 
     };
-    Expression10<Ident>: String = {
+    Expression10<Ident>: Expression = {
 
             <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
@@ -1993,7 +1994,7 @@ grammar<'source>(source: &'source str);
             Expression9<Ident> => <>,
 
     };
-    Expression11<Ident>: String = {
+    Expression11<Ident>: Expression = {
 
             <_Expression: Expression11<"True">>  <_operator: Plus>  <_Expression_2: Expression10<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
@@ -2002,7 +2003,7 @@ grammar<'source>(source: &'source str);
             Expression10<Ident> => <>,
 
     };
-    Expression12<Ident>: String = {
+    Expression12<Ident>: Expression = {
 
             <_Expression: Expression12<"True">>  <_operator: Asterisk>  <_Expression_2: Expression11<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
@@ -2013,14 +2014,14 @@ grammar<'source>(source: &'source str);
             Expression11<Ident> => <>,
 
     };
-    Expression13<Ident>: String = {
+    Expression13<Ident>: Expression = {
 
             <_Expression: Expression12<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression13<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
 
             Expression12<Ident> => <>,
 
     };
-    Expression14<Ident>: String = {
+    Expression14<Ident>: Expression = {
 
             <_Expression: Expression14<"True">>  <_operator: PlusPlus>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {} }}", _Expression, _operator),
 
@@ -2029,7 +2030,7 @@ grammar<'source>(source: &'source str);
             Expression13<Ident> => <>,
 
     };
-    Expression15<Ident>: String = {
+    Expression15<Ident>: Expression = {
 
             <_operator: PlusPlus>  <_Expression: Expression15<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_operator\": {}, \"_Expression\": {} }}", _operator, _Expression),
 
@@ -2046,7 +2047,7 @@ grammar<'source>(source: &'source str);
             Expression14<Ident> => <>,
 
     };
-    Expression16<Ident>: String = {
+    Expression16<Ident>: Expression = {
 
             // This sets it back to "True" since there's a separator now, is this reasonable?
             <_Expression: Expression16<"True">>  <_arguments: ArgumentsDeclaration>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_arguments\": {} }}", _Expression, _arguments),
@@ -2054,7 +2055,7 @@ grammar<'source>(source: &'source str);
             Expression15<Ident> => <>,
 
     };
-    Expression17<Ident>: String = {
+    Expression17<Ident>: Expression = {
 
 // TODO[6]: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()
@@ -2064,7 +2065,7 @@ grammar<'source>(source: &'source str);
 
 // ODOT
     };
-    Expression18<Ident>: String = {
+    Expression18<Ident>: Expression = {
 
             <_Expression: Expression18<"False">>  <_period: Period>  <_member: Identifier>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_period\": {}, \"_member\": {} }}", _Expression, _period, _member),
 
@@ -2072,21 +2073,21 @@ grammar<'source>(source: &'source str);
 
     };
 
-    Expression19: String = {
+    Expression19: Expression = {
 
             <_Expression: Expression19>  <_open_bracket: OpenBracket>  <_start: (Expression19)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_open_bracket\": {}, \"_start\": {}, \"_end\": {}, \"_close_bracket\": {} }}", _Expression, _open_bracket, _start.unwrap_or("\"\"".into()), _end.unwrap_or("\"\"".into()), _close_bracket),
 
             Expression18<"True"> => <>,
 
     };
-    Expression: String = {
+    Expression: Expression = {
          
             <Expression: Expression19>  => <>,
         
     };
 // ODOT
 
-    IndexAccessEnd: String = {
+    IndexAccessEnd: IndexAccessEnd = {
          
             <_colon: Colon>  <_end: (Expression)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"IndexAccessEnd\", \"_colon\": {}, \"_end\": {} }}", _colon, _end.unwrap_or("\"\"".into())),
         
@@ -2094,7 +2095,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Function Calls
-    ArgumentsDeclaration: String = {
+    ArgumentsDeclaration: ArgumentsDeclaration = {
          
             <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => format!("{{ \"item\": \"Variant\", \"name\": \"ArgumentsDeclaration\", \"_PositionalArgumentsDeclaration\": {} }}", _PositionalArgumentsDeclaration),
          
@@ -2104,39 +2105,39 @@ grammar<'source>(source: &'source str);
 // ODOT
         
     };
-    PositionalArgumentsDeclaration: String = {
+    PositionalArgumentsDeclaration: PositionalArgumentsDeclaration = {
          
             <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"PositionalArgumentsDeclaration\", \"_open_paren\": {}, \"_arguments\": {}, \"_close_paren\": {} }}", _open_paren, _arguments, _close_paren),
         
     };
-    PositionalArguments: String = {
+    PositionalArguments: PositionalArguments = {
          
             <_Expression: ((<Expression> <(Comma <Expression>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"PositionalArguments\", \"_Expression\": {} }}", _Expression.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
     };
 // TODO[7] Some attempt at fixing the problem above, right now these terminals are unused
-    NamedArgumentsDeclaration: String = {
+    NamedArgumentsDeclaration: NamedArgumentsDeclaration = {
          
             <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgumentsDeclaration\", \"_open_paren\": {}, \"_arguments\": {}, \"_close_paren\": {} }}", _open_paren, _arguments, _close_paren),
         
     };
-    NamedArgumentGroup: String = {
+    NamedArgumentGroup: NamedArgumentGroup = {
          
             <_open_brace: OpenBrace>  <_arguments: (NamedArguments)?>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgumentGroup\", \"_open_brace\": {}, \"_arguments\": {}, \"_close_brace\": {} }}", _open_brace, _arguments.unwrap_or("\"\"".into()), _close_brace),
         
     };
 // ODOT
-    NamedArguments: String = {
+    NamedArguments: NamedArguments = {
          
             <_NamedArgument: ((<NamedArgument> <(Comma <NamedArgument>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"NamedArguments\", \"_NamedArgument\": {} }}", _NamedArgument.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
     };
-    CallOptions: String = {
+    CallOptions: CallOptions = {
          
             <_NamedArgument: (<NamedArgument> <(Comma <NamedArgument>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"CallOptions\", \"_NamedArgument\": {} }}", format!("[{}, {}]", _NamedArgument.0, _NamedArgument.1.join(", "))),
         
     };
-    NamedArgument: String = {
+    NamedArgument: NamedArgument = {
          
             <_name: Identifier>  <_colon: Colon>  <_value: Expression>  => format!("{{ \"item\": \"Struct\", \"name\": \"NamedArgument\", \"_name\": {}, \"_colon\": {}, \"_value\": {} }}", _name, _colon, _value),
         
@@ -2144,14 +2145,14 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Primary Expressions
-    TypeExpression: String = {
+    TypeExpression: TypeExpression = {
          
             <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"TypeExpression\", \"_type_keyword\": {}, \"_open_paren\": {}, \"_type_name\": {}, \"_close_paren\": {} }}", _type_keyword, _open_paren, _type_name, _close_paren),
         
     };
 // TODO[8] New expressions cause a problem, since a type can be an expression (ie a cast) or
 // an argument to the new, now we're adding a call at the end, just to ease our own life
-    NewExpression: String = {
+    NewExpression: NewExpression = {
          
          // I think Adding the arguments here is correct, it helps disambiguate between a new expression and a index access
          // TODO: Check if the newable type name makes sense
@@ -2204,12 +2205,12 @@ grammar<'source>(source: &'source str);
     };
         
 // ODOT
-    ArrayExpression: String = {
+    ArrayExpression: ArrayExpression = {
          
             <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Struct\", \"name\": \"ArrayExpression\", \"_open_bracket\": {}, \"_items\": {}, \"_close_bracket\": {} }}", _open_bracket, _items, _close_bracket),
         
     };
-    ArrayValues: String = {
+    ArrayValues: ArrayValues = {
          
             <_Expression: (<Expression> <(Comma <Expression>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"ArrayValues\", \"_Expression\": {} }}", format!("[{}, {}]", _Expression.0, _Expression.1.join(", "))),
         
@@ -2217,17 +2218,17 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Numbers
-    HexNumberExpression: String = {
+    HexNumberExpression: HexNumberExpression = {
          
             <_literal: HexLiteral>  => format!("{{ \"item\": \"Struct\", \"name\": \"HexNumberExpression\", \"_literal\": {} }}", _literal),
         
     };
-    DecimalNumberExpression: String = {
+    DecimalNumberExpression: DecimalNumberExpression = {
          
             <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"DecimalNumberExpression\", \"_literal\": {}, \"_unit\": {} }}", _literal, _unit.unwrap_or("\"\"".into())),
         
     };
-    NumberUnit: String = {
+    NumberUnit: NumberUnit = {
          
             <_WeiKeyword: WeiKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"NumberUnit\", \"_WeiKeyword\": {} }}", _WeiKeyword),
          
@@ -2249,7 +2250,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Strings
-    StringExpression: String = {
+    StringExpression: StringExpression = {
          
             <_StringLiterals: StringLiterals>  => format!("{{ \"item\": \"Variant\", \"name\": \"StringExpression\", \"_StringLiterals\": {} }}", _StringLiterals),
          
@@ -2258,36 +2259,36 @@ grammar<'source>(source: &'source str);
             <_UnicodeStringLiterals: UnicodeStringLiterals>  => format!("{{ \"item\": \"Variant\", \"name\": \"StringExpression\", \"_UnicodeStringLiterals\": {} }}", _UnicodeStringLiterals),
         
     };
-    StringLiterals: String = {
+    StringLiterals: StringLiterals = {
          
             <_StringLiteral: (<StringLiteral>)+>  => format!("{{ \"item\": \"Repeated\", \"name\": \"StringLiterals\", \"_StringLiteral\": {} }}", format!("[{}]", _StringLiteral.join(", "))),
         
     };
-    StringLiteral: String = {
+    StringLiteral: StringLiteral = {
          
             <_SingleQuotedStringLiteral: SingleQuotedStringLiteral>  => format!("{{ \"item\": \"Variant\", \"name\": \"StringLiteral\", \"_SingleQuotedStringLiteral\": {} }}", _SingleQuotedStringLiteral),
          
             <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => format!("{{ \"item\": \"Variant\", \"name\": \"StringLiteral\", \"_DoubleQuotedStringLiteral\": {} }}", _DoubleQuotedStringLiteral),
         
     };
-    HexStringLiterals: String = {
+    HexStringLiterals: HexStringLiterals = {
          
             <_HexStringLiteral: (<HexStringLiteral>)+>  => format!("{{ \"item\": \"Repeated\", \"name\": \"HexStringLiterals\", \"_HexStringLiteral\": {} }}", format!("[{}]", _HexStringLiteral.join(", "))),
         
     };
-    HexStringLiteral: String = {
+    HexStringLiteral: HexStringLiteral = {
          
             <_SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral>  => format!("{{ \"item\": \"Variant\", \"name\": \"HexStringLiteral\", \"_SingleQuotedHexStringLiteral\": {} }}", _SingleQuotedHexStringLiteral),
          
             <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => format!("{{ \"item\": \"Variant\", \"name\": \"HexStringLiteral\", \"_DoubleQuotedHexStringLiteral\": {} }}", _DoubleQuotedHexStringLiteral),
         
     };
-    UnicodeStringLiterals: String = {
+    UnicodeStringLiterals: UnicodeStringLiterals = {
          
             <_UnicodeStringLiteral: (<UnicodeStringLiteral>)+>  => format!("{{ \"item\": \"Repeated\", \"name\": \"UnicodeStringLiterals\", \"_UnicodeStringLiteral\": {} }}", format!("[{}]", _UnicodeStringLiteral.join(", "))),
         
     };
-    UnicodeStringLiteral: String = {
+    UnicodeStringLiteral: UnicodeStringLiteral = {
          
             <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => format!("{{ \"item\": \"Variant\", \"name\": \"UnicodeStringLiteral\", \"_SingleQuotedUnicodeStringLiteral\": {} }}", _SingleQuotedUnicodeStringLiteral),
          
@@ -2297,7 +2298,7 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Identifiers
-    IdentifierPath: String = {
+    IdentifierPath: IdentifierPath = {
          
             <_Identifier: (<Identifier> <(Period <Identifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"IdentifierPath\", \"_Identifier\": {} }}", format!("[{}, {}]", _Identifier.0, _Identifier.1.join(", "))),
         
@@ -2310,17 +2311,17 @@ grammar<'source>(source: &'source str);
 // Rules for section Yul
 
 // Rules for topic Yul Statements
-    YulBlock: String = {
+    YulBlock: YulBlock = {
          
             <_open_brace: OpenBrace>  <_statements: YulStatements>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulBlock\", \"_open_brace\": {}, \"_statements\": {}, \"_close_brace\": {} }}", _open_brace, _statements, _close_brace),
         
     };
-    YulStatements: String = {
+    YulStatements: YulStatements = {
          
             <_YulStatement: (<YulStatement>)*>  => format!("{{ \"item\": \"Repeated\", \"name\": \"YulStatements\", \"_YulStatement\": {} }}", format!("[{}]", _YulStatement.join(", "))),
         
     };
-    YulStatement: String = {
+    YulStatement: YulStatement = {
          
             <_YulBlock: YulBlock>  => format!("{{ \"item\": \"Variant\", \"name\": \"YulStatement\", \"_YulBlock\": {} }}", _YulBlock),
          
@@ -2345,99 +2346,99 @@ grammar<'source>(source: &'source str);
             <_YulExpression: YulExpression>  => format!("{{ \"item\": \"Variant\", \"name\": \"YulStatement\", \"_YulExpression\": {} }}", _YulExpression),
         
     };
-    YulFunctionDefinition: String = {
+    YulFunctionDefinition: YulFunctionDefinition = {
          
             <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulFunctionDefinition\", \"_function_keyword\": {}, \"_name\": {}, \"_parameters\": {}, \"_returns\": {}, \"_body\": {} }}", _function_keyword, _name, _parameters, _returns.unwrap_or("\"\"".into()), _body),
         
     };
-    YulParametersDeclaration: String = {
+    YulParametersDeclaration: YulParametersDeclaration = {
          
             <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulParametersDeclaration\", \"_open_paren\": {}, \"_parameters\": {}, \"_close_paren\": {} }}", _open_paren, _parameters, _close_paren),
         
     };
-    YulParameters: String = {
+    YulParameters: YulParameters = {
          
             <_YulIdentifier: ((<YulIdentifier> <(Comma <YulIdentifier>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulParameters\", \"_YulIdentifier\": {} }}", _YulIdentifier.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
     };
-    YulReturnsDeclaration: String = {
+    YulReturnsDeclaration: YulReturnsDeclaration = {
          
             <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulReturnsDeclaration\", \"_minus_greater_than\": {}, \"_variables\": {} }}", _minus_greater_than, _variables),
         
     };
-    YulVariableNames: String = {
+    YulVariableNames: YulVariableNames = {
          
             <_YulIdentifier: (<YulIdentifier> <(Comma <YulIdentifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulVariableNames\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.join(", "))),
         
     };
-    YulVariableDeclarationStatement: String = {
+    YulVariableDeclarationStatement: YulVariableDeclarationStatement = {
          
             <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulVariableDeclarationStatement\", \"_let_keyword\": {}, \"_variables\": {}, \"_value\": {} }}", _let_keyword, _variables, _value.unwrap_or("\"\"".into())),
         
     };
-    YulVariableDeclarationValue: String = {
+    YulVariableDeclarationValue: YulVariableDeclarationValue = {
          
             <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulVariableDeclarationValue\", \"_assignment\": {}, \"_expression\": {} }}", _assignment, _expression),
         
     };
-    YulVariableAssignmentStatement: String = {
+    YulVariableAssignmentStatement: YulVariableAssignmentStatement = {
          
             <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulVariableAssignmentStatement\", \"_variables\": {}, \"_assignment\": {}, \"_expression\": {} }}", _variables, _assignment, _expression),
         
     };
-    YulAssignmentOperator: String = {
+    YulAssignmentOperator: YulAssignmentOperator = {
          
             <_ColonEqual: ColonEqual>  => format!("{{ \"item\": \"Variant\", \"name\": \"YulAssignmentOperator\", \"_ColonEqual\": {} }}", _ColonEqual),
         
     };
-    YulIfStatement: String = {
+    YulIfStatement: YulIfStatement = {
          
             <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulIfStatement\", \"_if_keyword\": {}, \"_condition\": {}, \"_body\": {} }}", _if_keyword, _condition, _body),
         
     };
-    YulForStatement: String = {
+    YulForStatement: YulForStatement = {
          
             <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulForStatement\", \"_for_keyword\": {}, \"_initialization\": {}, \"_condition\": {}, \"_iterator\": {}, \"_body\": {} }}", _for_keyword, _initialization, _condition, _iterator, _body),
         
     };
-    YulSwitchStatement: String = {
+    YulSwitchStatement: YulSwitchStatement = {
          
             <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulSwitchStatement\", \"_switch_keyword\": {}, \"_expression\": {}, \"_cases\": {} }}", _switch_keyword, _expression, _cases),
         
     };
-    YulSwitchCases: String = {
+    YulSwitchCases: YulSwitchCases = {
          
             <_YulSwitchCase: (<YulSwitchCase>)+>  => format!("{{ \"item\": \"Repeated\", \"name\": \"YulSwitchCases\", \"_YulSwitchCase\": {} }}", format!("[{}]", _YulSwitchCase.join(", "))),
         
     };
-    YulSwitchCase: String = {
+    YulSwitchCase: YulSwitchCase = {
          
             <_YulDefaultCase: YulDefaultCase>  => format!("{{ \"item\": \"Variant\", \"name\": \"YulSwitchCase\", \"_YulDefaultCase\": {} }}", _YulDefaultCase),
          
             <_YulValueCase: YulValueCase>  => format!("{{ \"item\": \"Variant\", \"name\": \"YulSwitchCase\", \"_YulValueCase\": {} }}", _YulValueCase),
         
     };
-    YulDefaultCase: String = {
+    YulDefaultCase: YulDefaultCase = {
          
             <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulDefaultCase\", \"_default_keyword\": {}, \"_body\": {} }}", _default_keyword, _body),
         
     };
-    YulValueCase: String = {
+    YulValueCase: YulValueCase = {
          
             <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulValueCase\", \"_case_keyword\": {}, \"_value\": {}, \"_body\": {} }}", _case_keyword, _value, _body),
         
     };
-    YulLeaveStatement: String = {
+    YulLeaveStatement: YulLeaveStatement = {
          
             <_leave_keyword: YulLeaveKeyword>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulLeaveStatement\", \"_leave_keyword\": {} }}", _leave_keyword),
         
     };
-    YulBreakStatement: String = {
+    YulBreakStatement: YulBreakStatement = {
          
             <_break_keyword: YulBreakKeyword>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulBreakStatement\", \"_break_keyword\": {} }}", _break_keyword),
         
     };
-    YulContinueStatement: String = {
+    YulContinueStatement: YulContinueStatement = {
          
             <_continue_keyword: YulContinueKeyword>  => format!("{{ \"item\": \"Struct\", \"name\": \"YulContinueStatement\", \"_continue_keyword\": {} }}", _continue_keyword),
         
@@ -2445,41 +2446,41 @@ grammar<'source>(source: &'source str);
     
 
 // Rules for topic Yul Expressions
-    YulExpression0: String = {
+    YulExpression0: YulExpression = {
          
             <_YulLiteral: YulLiteral>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"YulExpression\", \"_YulLiteral\": {} }}", _YulLiteral),
          
             <_YulPath: YulPath>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"YulExpression\", \"_YulPath\": {} }}", _YulPath),
         
     };
-    YulExpression1: String = {
+    YulExpression1: YulExpression = {
          
             <_YulExpression: YulExpression1>  <_open_paren: OpenParen>  <_arguments: YulArguments>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"YulExpression\", \"_YulExpression\": {}, \"_open_paren\": {}, \"_arguments\": {}, \"_close_paren\": {} }}", _YulExpression, _open_paren, _arguments, _close_paren),
          
             <YulExpression: YulExpression0>  => <>,
         
     };
-    YulExpression: String = {
+    YulExpression: YulExpression = {
          
             <YulExpression: YulExpression1>  => <>,
         
     };
-    YulArguments: String = {
+    YulArguments: YulArguments = {
          
             <_YulExpression: ((<YulExpression> <(Comma <YulExpression>)*>))?>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulArguments\", \"_YulExpression\": {} }}", _YulExpression.map(|x| format!("[{}, {}]", x.0, x.1.iter().join(", "))).unwrap_or("[]".into())),
         
     };
-    YulPaths: String = {
+    YulPaths: YulPaths = {
          
             <_YulPath: (<YulPath> <(Comma <YulPath>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulPaths\", \"_YulPath\": {} }}", format!("[{}, {}]", _YulPath.0, _YulPath.1.join(", "))),
         
     };
-    YulPath: String = {
+    YulPath: YulPath = {
          
             <_YulIdentifier: (<YulIdentifier> <(Period <YulIdentifier>)*>)>  => format!("{{ \"item\": \"Separated\", \"name\": \"YulPath\", \"_YulIdentifier\": {} }}", format!("[{}, {}]", _YulIdentifier.0, _YulIdentifier.1.join(", "))),
         
     };
-    YulLiteral: String = {
+    YulLiteral: YulLiteral = {
          
             <_YulTrueKeyword: YulTrueKeyword>  => format!("{{ \"item\": \"Variant\", \"name\": \"YulLiteral\", \"_YulTrueKeyword\": {} }}", _YulTrueKeyword),
          
@@ -2498,631 +2499,631 @@ grammar<'source>(source: &'source str);
 
 // Rules for topic Yul Keywords
     #[inline]
-    YulAbstractKeyword: String = {
+    YulAbstractKeyword: YulAbstractKeyword = {
          
             <_YulAbstractKeyword: YulAbstractKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulAbstractKeyword\", \"_YulAbstractKeyword\": {} }}", format!("{}", _YulAbstractKeyword)),
         
     };
     #[inline]
-    YulAfterKeyword: String = {
+    YulAfterKeyword: YulAfterKeyword = {
          
             <_YulAfterKeyword: YulAfterKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulAfterKeyword\", \"_YulAfterKeyword\": {} }}", format!("{}", _YulAfterKeyword)),
         
     };
     #[inline]
-    YulAliasKeyword: String = {
+    YulAliasKeyword: YulAliasKeyword = {
          
             <_YulAliasKeyword: YulAliasKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulAliasKeyword\", \"_YulAliasKeyword\": {} }}", format!("{}", _YulAliasKeyword)),
         
     };
     #[inline]
-    YulAnonymousKeyword: String = {
+    YulAnonymousKeyword: YulAnonymousKeyword = {
          
             <_YulAnonymousKeyword: YulAnonymousKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulAnonymousKeyword\", \"_YulAnonymousKeyword\": {} }}", format!("{}", _YulAnonymousKeyword)),
         
     };
     #[inline]
-    YulApplyKeyword: String = {
+    YulApplyKeyword: YulApplyKeyword = {
          
             <_YulApplyKeyword: YulApplyKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulApplyKeyword\", \"_YulApplyKeyword\": {} }}", format!("{}", _YulApplyKeyword)),
         
     };
     #[inline]
-    YulAsKeyword: String = {
+    YulAsKeyword: YulAsKeyword = {
          
             <_YulAsKeyword: YulAsKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulAsKeyword\", \"_YulAsKeyword\": {} }}", format!("{}", _YulAsKeyword)),
         
     };
     #[inline]
-    YulAssemblyKeyword: String = {
+    YulAssemblyKeyword: YulAssemblyKeyword = {
          
             <_YulAssemblyKeyword: YulAssemblyKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulAssemblyKeyword\", \"_YulAssemblyKeyword\": {} }}", format!("{}", _YulAssemblyKeyword)),
         
     };
     #[inline]
-    YulAutoKeyword: String = {
+    YulAutoKeyword: YulAutoKeyword = {
          
             <_YulAutoKeyword: YulAutoKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulAutoKeyword\", \"_YulAutoKeyword\": {} }}", format!("{}", _YulAutoKeyword)),
         
     };
     #[inline]
-    YulBoolKeyword: String = {
+    YulBoolKeyword: YulBoolKeyword = {
          
             <_YulBoolKeyword: YulBoolKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulBoolKeyword\", \"_YulBoolKeyword\": {} }}", format!("{}", _YulBoolKeyword)),
         
     };
     #[inline]
-    YulBreakKeyword: String = {
+    YulBreakKeyword: YulBreakKeyword = {
          
             <_YulBreakKeyword: YulBreakKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulBreakKeyword\", \"_YulBreakKeyword\": {} }}", format!("{}", _YulBreakKeyword)),
         
     };
     #[inline]
-    YulBytesKeyword: String = {
+    YulBytesKeyword: YulBytesKeyword = {
          
             <_YulBytesKeyword: YulBytesKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulBytesKeyword\", \"_YulBytesKeyword\": {} }}", format!("{}", _YulBytesKeyword)),
         
     };
     #[inline]
-    YulCallDataKeyword: String = {
+    YulCallDataKeyword: YulCallDataKeyword = {
          
             <_YulCallDataKeyword: YulCallDataKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulCallDataKeyword\", \"_YulCallDataKeyword\": {} }}", format!("{}", _YulCallDataKeyword)),
         
     };
     #[inline]
-    YulCaseKeyword: String = {
+    YulCaseKeyword: YulCaseKeyword = {
          
             <_YulCaseKeyword: YulCaseKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulCaseKeyword\", \"_YulCaseKeyword\": {} }}", format!("{}", _YulCaseKeyword)),
         
     };
     #[inline]
-    YulCatchKeyword: String = {
+    YulCatchKeyword: YulCatchKeyword = {
          
             <_YulCatchKeyword: YulCatchKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulCatchKeyword\", \"_YulCatchKeyword\": {} }}", format!("{}", _YulCatchKeyword)),
         
     };
     #[inline]
-    YulConstantKeyword: String = {
+    YulConstantKeyword: YulConstantKeyword = {
          
             <_YulConstantKeyword: YulConstantKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulConstantKeyword\", \"_YulConstantKeyword\": {} }}", format!("{}", _YulConstantKeyword)),
         
     };
     #[inline]
-    YulConstructorKeyword: String = {
+    YulConstructorKeyword: YulConstructorKeyword = {
          
             <_YulConstructorKeyword: YulConstructorKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulConstructorKeyword\", \"_YulConstructorKeyword\": {} }}", format!("{}", _YulConstructorKeyword)),
         
     };
     #[inline]
-    YulContinueKeyword: String = {
+    YulContinueKeyword: YulContinueKeyword = {
          
             <_YulContinueKeyword: YulContinueKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulContinueKeyword\", \"_YulContinueKeyword\": {} }}", format!("{}", _YulContinueKeyword)),
         
     };
     #[inline]
-    YulContractKeyword: String = {
+    YulContractKeyword: YulContractKeyword = {
          
             <_YulContractKeyword: YulContractKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulContractKeyword\", \"_YulContractKeyword\": {} }}", format!("{}", _YulContractKeyword)),
         
     };
     #[inline]
-    YulCopyOfKeyword: String = {
+    YulCopyOfKeyword: YulCopyOfKeyword = {
          
             <_YulCopyOfKeyword: YulCopyOfKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulCopyOfKeyword\", \"_YulCopyOfKeyword\": {} }}", format!("{}", _YulCopyOfKeyword)),
         
     };
     #[inline]
-    YulDaysKeyword: String = {
+    YulDaysKeyword: YulDaysKeyword = {
          
             <_YulDaysKeyword: YulDaysKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulDaysKeyword\", \"_YulDaysKeyword\": {} }}", format!("{}", _YulDaysKeyword)),
         
     };
     #[inline]
-    YulDefaultKeyword: String = {
+    YulDefaultKeyword: YulDefaultKeyword = {
          
             <_YulDefaultKeyword: YulDefaultKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulDefaultKeyword\", \"_YulDefaultKeyword\": {} }}", format!("{}", _YulDefaultKeyword)),
         
     };
     #[inline]
-    YulDefineKeyword: String = {
+    YulDefineKeyword: YulDefineKeyword = {
          
             <_YulDefineKeyword: YulDefineKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulDefineKeyword\", \"_YulDefineKeyword\": {} }}", format!("{}", _YulDefineKeyword)),
         
     };
     #[inline]
-    YulDeleteKeyword: String = {
+    YulDeleteKeyword: YulDeleteKeyword = {
          
             <_YulDeleteKeyword: YulDeleteKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulDeleteKeyword\", \"_YulDeleteKeyword\": {} }}", format!("{}", _YulDeleteKeyword)),
         
     };
     #[inline]
-    YulDoKeyword: String = {
+    YulDoKeyword: YulDoKeyword = {
          
             <_YulDoKeyword: YulDoKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulDoKeyword\", \"_YulDoKeyword\": {} }}", format!("{}", _YulDoKeyword)),
         
     };
     #[inline]
-    YulElseKeyword: String = {
+    YulElseKeyword: YulElseKeyword = {
          
             <_YulElseKeyword: YulElseKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulElseKeyword\", \"_YulElseKeyword\": {} }}", format!("{}", _YulElseKeyword)),
         
     };
     #[inline]
-    YulEmitKeyword: String = {
+    YulEmitKeyword: YulEmitKeyword = {
          
             <_YulEmitKeyword: YulEmitKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulEmitKeyword\", \"_YulEmitKeyword\": {} }}", format!("{}", _YulEmitKeyword)),
         
     };
     #[inline]
-    YulEnumKeyword: String = {
+    YulEnumKeyword: YulEnumKeyword = {
          
             <_YulEnumKeyword: YulEnumKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulEnumKeyword\", \"_YulEnumKeyword\": {} }}", format!("{}", _YulEnumKeyword)),
         
     };
     #[inline]
-    YulEtherKeyword: String = {
+    YulEtherKeyword: YulEtherKeyword = {
          
             <_YulEtherKeyword: YulEtherKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulEtherKeyword\", \"_YulEtherKeyword\": {} }}", format!("{}", _YulEtherKeyword)),
         
     };
     #[inline]
-    YulEventKeyword: String = {
+    YulEventKeyword: YulEventKeyword = {
          
             <_YulEventKeyword: YulEventKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulEventKeyword\", \"_YulEventKeyword\": {} }}", format!("{}", _YulEventKeyword)),
         
     };
     #[inline]
-    YulExternalKeyword: String = {
+    YulExternalKeyword: YulExternalKeyword = {
          
             <_YulExternalKeyword: YulExternalKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulExternalKeyword\", \"_YulExternalKeyword\": {} }}", format!("{}", _YulExternalKeyword)),
         
     };
     #[inline]
-    YulFallbackKeyword: String = {
+    YulFallbackKeyword: YulFallbackKeyword = {
          
             <_YulFallbackKeyword: YulFallbackKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulFallbackKeyword\", \"_YulFallbackKeyword\": {} }}", format!("{}", _YulFallbackKeyword)),
         
     };
     #[inline]
-    YulFalseKeyword: String = {
+    YulFalseKeyword: YulFalseKeyword = {
          
             <_YulFalseKeyword: YulFalseKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulFalseKeyword\", \"_YulFalseKeyword\": {} }}", format!("{}", _YulFalseKeyword)),
         
     };
     #[inline]
-    YulFinalKeyword: String = {
+    YulFinalKeyword: YulFinalKeyword = {
          
             <_YulFinalKeyword: YulFinalKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulFinalKeyword\", \"_YulFinalKeyword\": {} }}", format!("{}", _YulFinalKeyword)),
         
     };
     #[inline]
-    YulFinneyKeyword: String = {
+    YulFinneyKeyword: YulFinneyKeyword = {
          
             <_YulFinneyKeyword: YulFinneyKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulFinneyKeyword\", \"_YulFinneyKeyword\": {} }}", format!("{}", _YulFinneyKeyword)),
         
     };
     #[inline]
-    YulFixedKeyword: String = {
+    YulFixedKeyword: YulFixedKeyword = {
          
             <_YulFixedKeyword: YulFixedKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulFixedKeyword\", \"_YulFixedKeyword\": {} }}", format!("{}", _YulFixedKeyword)),
         
     };
     #[inline]
-    YulForKeyword: String = {
+    YulForKeyword: YulForKeyword = {
          
             <_YulForKeyword: YulForKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulForKeyword\", \"_YulForKeyword\": {} }}", format!("{}", _YulForKeyword)),
         
     };
     #[inline]
-    YulFunctionKeyword: String = {
+    YulFunctionKeyword: YulFunctionKeyword = {
          
             <_YulFunctionKeyword: YulFunctionKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulFunctionKeyword\", \"_YulFunctionKeyword\": {} }}", format!("{}", _YulFunctionKeyword)),
         
     };
     #[inline]
-    YulGweiKeyword: String = {
+    YulGweiKeyword: YulGweiKeyword = {
          
             <_YulGweiKeyword: YulGweiKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulGweiKeyword\", \"_YulGweiKeyword\": {} }}", format!("{}", _YulGweiKeyword)),
         
     };
     #[inline]
-    YulHexKeyword: String = {
+    YulHexKeyword: YulHexKeyword = {
          
             <_YulHexKeyword: YulHexKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulHexKeyword\", \"_YulHexKeyword\": {} }}", format!("{}", _YulHexKeyword)),
         
     };
     #[inline]
-    YulHoursKeyword: String = {
+    YulHoursKeyword: YulHoursKeyword = {
          
             <_YulHoursKeyword: YulHoursKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulHoursKeyword\", \"_YulHoursKeyword\": {} }}", format!("{}", _YulHoursKeyword)),
         
     };
     #[inline]
-    YulIfKeyword: String = {
+    YulIfKeyword: YulIfKeyword = {
          
             <_YulIfKeyword: YulIfKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulIfKeyword\", \"_YulIfKeyword\": {} }}", format!("{}", _YulIfKeyword)),
         
     };
     #[inline]
-    YulImmutableKeyword: String = {
+    YulImmutableKeyword: YulImmutableKeyword = {
          
             <_YulImmutableKeyword: YulImmutableKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulImmutableKeyword\", \"_YulImmutableKeyword\": {} }}", format!("{}", _YulImmutableKeyword)),
         
     };
     #[inline]
-    YulImplementsKeyword: String = {
+    YulImplementsKeyword: YulImplementsKeyword = {
          
             <_YulImplementsKeyword: YulImplementsKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulImplementsKeyword\", \"_YulImplementsKeyword\": {} }}", format!("{}", _YulImplementsKeyword)),
         
     };
     #[inline]
-    YulImportKeyword: String = {
+    YulImportKeyword: YulImportKeyword = {
          
             <_YulImportKeyword: YulImportKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulImportKeyword\", \"_YulImportKeyword\": {} }}", format!("{}", _YulImportKeyword)),
         
     };
     #[inline]
-    YulIndexedKeyword: String = {
+    YulIndexedKeyword: YulIndexedKeyword = {
          
             <_YulIndexedKeyword: YulIndexedKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulIndexedKeyword\", \"_YulIndexedKeyword\": {} }}", format!("{}", _YulIndexedKeyword)),
         
     };
     #[inline]
-    YulInKeyword: String = {
+    YulInKeyword: YulInKeyword = {
          
             <_YulInKeyword: YulInKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulInKeyword\", \"_YulInKeyword\": {} }}", format!("{}", _YulInKeyword)),
         
     };
     #[inline]
-    YulInlineKeyword: String = {
+    YulInlineKeyword: YulInlineKeyword = {
          
             <_YulInlineKeyword: YulInlineKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulInlineKeyword\", \"_YulInlineKeyword\": {} }}", format!("{}", _YulInlineKeyword)),
         
     };
     #[inline]
-    YulInterfaceKeyword: String = {
+    YulInterfaceKeyword: YulInterfaceKeyword = {
          
             <_YulInterfaceKeyword: YulInterfaceKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulInterfaceKeyword\", \"_YulInterfaceKeyword\": {} }}", format!("{}", _YulInterfaceKeyword)),
         
     };
     #[inline]
-    YulInternalKeyword: String = {
+    YulInternalKeyword: YulInternalKeyword = {
          
             <_YulInternalKeyword: YulInternalKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulInternalKeyword\", \"_YulInternalKeyword\": {} }}", format!("{}", _YulInternalKeyword)),
         
     };
     #[inline]
-    YulIntKeyword: String = {
+    YulIntKeyword: YulIntKeyword = {
          
             <_YulIntKeyword: YulIntKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulIntKeyword\", \"_YulIntKeyword\": {} }}", format!("{}", _YulIntKeyword)),
         
     };
     #[inline]
-    YulIsKeyword: String = {
+    YulIsKeyword: YulIsKeyword = {
          
             <_YulIsKeyword: YulIsKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulIsKeyword\", \"_YulIsKeyword\": {} }}", format!("{}", _YulIsKeyword)),
         
     };
     #[inline]
-    YulLeaveKeyword: String = {
+    YulLeaveKeyword: YulLeaveKeyword = {
          
             <_YulLeaveKeyword: YulLeaveKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulLeaveKeyword\", \"_YulLeaveKeyword\": {} }}", format!("{}", _YulLeaveKeyword)),
         
     };
     #[inline]
-    YulLetKeyword: String = {
+    YulLetKeyword: YulLetKeyword = {
          
             <_YulLetKeyword: YulLetKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulLetKeyword\", \"_YulLetKeyword\": {} }}", format!("{}", _YulLetKeyword)),
         
     };
     #[inline]
-    YulLibraryKeyword: String = {
+    YulLibraryKeyword: YulLibraryKeyword = {
          
             <_YulLibraryKeyword: YulLibraryKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulLibraryKeyword\", \"_YulLibraryKeyword\": {} }}", format!("{}", _YulLibraryKeyword)),
         
     };
     #[inline]
-    YulMacroKeyword: String = {
+    YulMacroKeyword: YulMacroKeyword = {
          
             <_YulMacroKeyword: YulMacroKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulMacroKeyword\", \"_YulMacroKeyword\": {} }}", format!("{}", _YulMacroKeyword)),
         
     };
     #[inline]
-    YulMappingKeyword: String = {
+    YulMappingKeyword: YulMappingKeyword = {
          
             <_YulMappingKeyword: YulMappingKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulMappingKeyword\", \"_YulMappingKeyword\": {} }}", format!("{}", _YulMappingKeyword)),
         
     };
     #[inline]
-    YulMatchKeyword: String = {
+    YulMatchKeyword: YulMatchKeyword = {
          
             <_YulMatchKeyword: YulMatchKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulMatchKeyword\", \"_YulMatchKeyword\": {} }}", format!("{}", _YulMatchKeyword)),
         
     };
     #[inline]
-    YulMemoryKeyword: String = {
+    YulMemoryKeyword: YulMemoryKeyword = {
          
             <_YulMemoryKeyword: YulMemoryKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulMemoryKeyword\", \"_YulMemoryKeyword\": {} }}", format!("{}", _YulMemoryKeyword)),
         
     };
     #[inline]
-    YulMinutesKeyword: String = {
+    YulMinutesKeyword: YulMinutesKeyword = {
          
             <_YulMinutesKeyword: YulMinutesKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulMinutesKeyword\", \"_YulMinutesKeyword\": {} }}", format!("{}", _YulMinutesKeyword)),
         
     };
     #[inline]
-    YulModifierKeyword: String = {
+    YulModifierKeyword: YulModifierKeyword = {
          
             <_YulModifierKeyword: YulModifierKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulModifierKeyword\", \"_YulModifierKeyword\": {} }}", format!("{}", _YulModifierKeyword)),
         
     };
     #[inline]
-    YulMutableKeyword: String = {
+    YulMutableKeyword: YulMutableKeyword = {
          
             <_YulMutableKeyword: YulMutableKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulMutableKeyword\", \"_YulMutableKeyword\": {} }}", format!("{}", _YulMutableKeyword)),
         
     };
     #[inline]
-    YulNewKeyword: String = {
+    YulNewKeyword: YulNewKeyword = {
          
             <_YulNewKeyword: YulNewKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulNewKeyword\", \"_YulNewKeyword\": {} }}", format!("{}", _YulNewKeyword)),
         
     };
     #[inline]
-    YulNullKeyword: String = {
+    YulNullKeyword: YulNullKeyword = {
          
             <_YulNullKeyword: YulNullKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulNullKeyword\", \"_YulNullKeyword\": {} }}", format!("{}", _YulNullKeyword)),
         
     };
     #[inline]
-    YulOfKeyword: String = {
+    YulOfKeyword: YulOfKeyword = {
          
             <_YulOfKeyword: YulOfKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulOfKeyword\", \"_YulOfKeyword\": {} }}", format!("{}", _YulOfKeyword)),
         
     };
     #[inline]
-    YulOverrideKeyword: String = {
+    YulOverrideKeyword: YulOverrideKeyword = {
          
             <_YulOverrideKeyword: YulOverrideKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulOverrideKeyword\", \"_YulOverrideKeyword\": {} }}", format!("{}", _YulOverrideKeyword)),
         
     };
     #[inline]
-    YulPartialKeyword: String = {
+    YulPartialKeyword: YulPartialKeyword = {
          
             <_YulPartialKeyword: YulPartialKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulPartialKeyword\", \"_YulPartialKeyword\": {} }}", format!("{}", _YulPartialKeyword)),
         
     };
     #[inline]
-    YulPayableKeyword: String = {
+    YulPayableKeyword: YulPayableKeyword = {
          
             <_YulPayableKeyword: YulPayableKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulPayableKeyword\", \"_YulPayableKeyword\": {} }}", format!("{}", _YulPayableKeyword)),
         
     };
     #[inline]
-    YulPragmaKeyword: String = {
+    YulPragmaKeyword: YulPragmaKeyword = {
          
             <_YulPragmaKeyword: YulPragmaKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulPragmaKeyword\", \"_YulPragmaKeyword\": {} }}", format!("{}", _YulPragmaKeyword)),
         
     };
     #[inline]
-    YulPrivateKeyword: String = {
+    YulPrivateKeyword: YulPrivateKeyword = {
          
             <_YulPrivateKeyword: YulPrivateKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulPrivateKeyword\", \"_YulPrivateKeyword\": {} }}", format!("{}", _YulPrivateKeyword)),
         
     };
     #[inline]
-    YulPromiseKeyword: String = {
+    YulPromiseKeyword: YulPromiseKeyword = {
          
             <_YulPromiseKeyword: YulPromiseKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulPromiseKeyword\", \"_YulPromiseKeyword\": {} }}", format!("{}", _YulPromiseKeyword)),
         
     };
     #[inline]
-    YulPublicKeyword: String = {
+    YulPublicKeyword: YulPublicKeyword = {
          
             <_YulPublicKeyword: YulPublicKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulPublicKeyword\", \"_YulPublicKeyword\": {} }}", format!("{}", _YulPublicKeyword)),
         
     };
     #[inline]
-    YulPureKeyword: String = {
+    YulPureKeyword: YulPureKeyword = {
          
             <_YulPureKeyword: YulPureKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulPureKeyword\", \"_YulPureKeyword\": {} }}", format!("{}", _YulPureKeyword)),
         
     };
     #[inline]
-    YulReceiveKeyword: String = {
+    YulReceiveKeyword: YulReceiveKeyword = {
          
             <_YulReceiveKeyword: YulReceiveKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulReceiveKeyword\", \"_YulReceiveKeyword\": {} }}", format!("{}", _YulReceiveKeyword)),
         
     };
     #[inline]
-    YulReferenceKeyword: String = {
+    YulReferenceKeyword: YulReferenceKeyword = {
          
             <_YulReferenceKeyword: YulReferenceKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulReferenceKeyword\", \"_YulReferenceKeyword\": {} }}", format!("{}", _YulReferenceKeyword)),
         
     };
     #[inline]
-    YulRelocatableKeyword: String = {
+    YulRelocatableKeyword: YulRelocatableKeyword = {
          
             <_YulRelocatableKeyword: YulRelocatableKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulRelocatableKeyword\", \"_YulRelocatableKeyword\": {} }}", format!("{}", _YulRelocatableKeyword)),
         
     };
     #[inline]
-    YulReturnsKeyword: String = {
+    YulReturnsKeyword: YulReturnsKeyword = {
          
             <_YulReturnsKeyword: YulReturnsKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulReturnsKeyword\", \"_YulReturnsKeyword\": {} }}", format!("{}", _YulReturnsKeyword)),
         
     };
     #[inline]
-    YulSealedKeyword: String = {
+    YulSealedKeyword: YulSealedKeyword = {
          
             <_YulSealedKeyword: YulSealedKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulSealedKeyword\", \"_YulSealedKeyword\": {} }}", format!("{}", _YulSealedKeyword)),
         
     };
     #[inline]
-    YulSecondsKeyword: String = {
+    YulSecondsKeyword: YulSecondsKeyword = {
          
             <_YulSecondsKeyword: YulSecondsKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulSecondsKeyword\", \"_YulSecondsKeyword\": {} }}", format!("{}", _YulSecondsKeyword)),
         
     };
     #[inline]
-    YulSizeOfKeyword: String = {
+    YulSizeOfKeyword: YulSizeOfKeyword = {
          
             <_YulSizeOfKeyword: YulSizeOfKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulSizeOfKeyword\", \"_YulSizeOfKeyword\": {} }}", format!("{}", _YulSizeOfKeyword)),
         
     };
     #[inline]
-    YulStaticKeyword: String = {
+    YulStaticKeyword: YulStaticKeyword = {
          
             <_YulStaticKeyword: YulStaticKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulStaticKeyword\", \"_YulStaticKeyword\": {} }}", format!("{}", _YulStaticKeyword)),
         
     };
     #[inline]
-    YulStorageKeyword: String = {
+    YulStorageKeyword: YulStorageKeyword = {
          
             <_YulStorageKeyword: YulStorageKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulStorageKeyword\", \"_YulStorageKeyword\": {} }}", format!("{}", _YulStorageKeyword)),
         
     };
     #[inline]
-    YulStringKeyword: String = {
+    YulStringKeyword: YulStringKeyword = {
          
             <_YulStringKeyword: YulStringKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulStringKeyword\", \"_YulStringKeyword\": {} }}", format!("{}", _YulStringKeyword)),
         
     };
     #[inline]
-    YulStructKeyword: String = {
+    YulStructKeyword: YulStructKeyword = {
          
             <_YulStructKeyword: YulStructKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulStructKeyword\", \"_YulStructKeyword\": {} }}", format!("{}", _YulStructKeyword)),
         
     };
     #[inline]
-    YulSuperKeyword: String = {
+    YulSuperKeyword: YulSuperKeyword = {
          
             <_YulSuperKeyword: YulSuperKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulSuperKeyword\", \"_YulSuperKeyword\": {} }}", format!("{}", _YulSuperKeyword)),
         
     };
     #[inline]
-    YulSupportsKeyword: String = {
+    YulSupportsKeyword: YulSupportsKeyword = {
          
             <_YulSupportsKeyword: YulSupportsKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulSupportsKeyword\", \"_YulSupportsKeyword\": {} }}", format!("{}", _YulSupportsKeyword)),
         
     };
     #[inline]
-    YulSwitchKeyword: String = {
+    YulSwitchKeyword: YulSwitchKeyword = {
          
             <_YulSwitchKeyword: YulSwitchKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulSwitchKeyword\", \"_YulSwitchKeyword\": {} }}", format!("{}", _YulSwitchKeyword)),
         
     };
     #[inline]
-    YulSzaboKeyword: String = {
+    YulSzaboKeyword: YulSzaboKeyword = {
          
             <_YulSzaboKeyword: YulSzaboKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulSzaboKeyword\", \"_YulSzaboKeyword\": {} }}", format!("{}", _YulSzaboKeyword)),
         
     };
     #[inline]
-    YulThisKeyword: String = {
+    YulThisKeyword: YulThisKeyword = {
          
             <_YulThisKeyword: YulThisKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulThisKeyword\", \"_YulThisKeyword\": {} }}", format!("{}", _YulThisKeyword)),
         
     };
     #[inline]
-    YulThrowKeyword: String = {
+    YulThrowKeyword: YulThrowKeyword = {
          
             <_YulThrowKeyword: YulThrowKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulThrowKeyword\", \"_YulThrowKeyword\": {} }}", format!("{}", _YulThrowKeyword)),
         
     };
     #[inline]
-    YulTrueKeyword: String = {
+    YulTrueKeyword: YulTrueKeyword = {
          
             <_YulTrueKeyword: YulTrueKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulTrueKeyword\", \"_YulTrueKeyword\": {} }}", format!("{}", _YulTrueKeyword)),
         
     };
     #[inline]
-    YulTryKeyword: String = {
+    YulTryKeyword: YulTryKeyword = {
          
             <_YulTryKeyword: YulTryKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulTryKeyword\", \"_YulTryKeyword\": {} }}", format!("{}", _YulTryKeyword)),
         
     };
     #[inline]
-    YulTypeDefKeyword: String = {
+    YulTypeDefKeyword: YulTypeDefKeyword = {
          
             <_YulTypeDefKeyword: YulTypeDefKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulTypeDefKeyword\", \"_YulTypeDefKeyword\": {} }}", format!("{}", _YulTypeDefKeyword)),
         
     };
     #[inline]
-    YulTypeKeyword: String = {
+    YulTypeKeyword: YulTypeKeyword = {
          
             <_YulTypeKeyword: YulTypeKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulTypeKeyword\", \"_YulTypeKeyword\": {} }}", format!("{}", _YulTypeKeyword)),
         
     };
     #[inline]
-    YulTypeOfKeyword: String = {
+    YulTypeOfKeyword: YulTypeOfKeyword = {
          
             <_YulTypeOfKeyword: YulTypeOfKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulTypeOfKeyword\", \"_YulTypeOfKeyword\": {} }}", format!("{}", _YulTypeOfKeyword)),
         
     };
     #[inline]
-    YulUfixedKeyword: String = {
+    YulUfixedKeyword: YulUfixedKeyword = {
          
             <_YulUfixedKeyword: YulUfixedKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulUfixedKeyword\", \"_YulUfixedKeyword\": {} }}", format!("{}", _YulUfixedKeyword)),
         
     };
     #[inline]
-    YulUintKeyword: String = {
+    YulUintKeyword: YulUintKeyword = {
          
             <_YulUintKeyword: YulUintKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulUintKeyword\", \"_YulUintKeyword\": {} }}", format!("{}", _YulUintKeyword)),
         
     };
     #[inline]
-    YulUncheckedKeyword: String = {
+    YulUncheckedKeyword: YulUncheckedKeyword = {
          
             <_YulUncheckedKeyword: YulUncheckedKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulUncheckedKeyword\", \"_YulUncheckedKeyword\": {} }}", format!("{}", _YulUncheckedKeyword)),
         
     };
     #[inline]
-    YulUsingKeyword: String = {
+    YulUsingKeyword: YulUsingKeyword = {
          
             <_YulUsingKeyword: YulUsingKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulUsingKeyword\", \"_YulUsingKeyword\": {} }}", format!("{}", _YulUsingKeyword)),
         
     };
     #[inline]
-    YulVarKeyword: String = {
+    YulVarKeyword: YulVarKeyword = {
          
             <_YulVarKeyword: YulVarKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulVarKeyword\", \"_YulVarKeyword\": {} }}", format!("{}", _YulVarKeyword)),
         
     };
     #[inline]
-    YulViewKeyword: String = {
+    YulViewKeyword: YulViewKeyword = {
          
             <_YulViewKeyword: YulViewKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulViewKeyword\", \"_YulViewKeyword\": {} }}", format!("{}", _YulViewKeyword)),
         
     };
     #[inline]
-    YulVirtualKeyword: String = {
+    YulVirtualKeyword: YulVirtualKeyword = {
          
             <_YulVirtualKeyword: YulVirtualKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulVirtualKeyword\", \"_YulVirtualKeyword\": {} }}", format!("{}", _YulVirtualKeyword)),
         
     };
     #[inline]
-    YulWeeksKeyword: String = {
+    YulWeeksKeyword: YulWeeksKeyword = {
          
             <_YulWeeksKeyword: YulWeeksKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulWeeksKeyword\", \"_YulWeeksKeyword\": {} }}", format!("{}", _YulWeeksKeyword)),
         
     };
     #[inline]
-    YulWeiKeyword: String = {
+    YulWeiKeyword: YulWeiKeyword = {
          
             <_YulWeiKeyword: YulWeiKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulWeiKeyword\", \"_YulWeiKeyword\": {} }}", format!("{}", _YulWeiKeyword)),
         
     };
     #[inline]
-    YulWhileKeyword: String = {
+    YulWhileKeyword: YulWhileKeyword = {
          
             <_YulWhileKeyword: YulWhileKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulWhileKeyword\", \"_YulWhileKeyword\": {} }}", format!("{}", _YulWhileKeyword)),
         
     };
     #[inline]
-    YulYearsKeyword: String = {
+    YulYearsKeyword: YulYearsKeyword = {
          
             <_YulYearsKeyword: YulYearsKeyword_Unreserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YulYearsKeyword\", \"_YulYearsKeyword\": {} }}", format!("{}", _YulYearsKeyword)),
         

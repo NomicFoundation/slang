@@ -730,6 +730,7 @@ dependencies = [
 name = "codegen_v2_parser"
 version = "1.3.2"
 dependencies = [
+ "indexmap",
  "itertools 0.13.0",
  "language_v2_definition",
  "semver 1.0.26",
