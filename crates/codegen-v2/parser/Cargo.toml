@@ -11,6 +11,7 @@ language_v2_definition = { workspace = true }
 serde = { workspace = true }
 semver = { workspace = true }
 itertools = { workspace = true }
+indexmap = { workspace = true }
 
 [lints]
 workspace = true
