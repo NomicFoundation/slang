@@ -1007,7 +1007,7 @@ grammar<'source>(source: &'source str);
             <_YearsKeyword: YearsKeyword_Reserved>  => format!("{{ \"item\": \"Keyword\", \"name\": \"YearsKeyword\", \"_YearsKeyword\": {} }}", format!("{}", _YearsKeyword)),
         
     };
-   
+    
 
 // Rules for topic Punctuation
     
@@ -1471,11 +1471,19 @@ grammar<'source>(source: &'source str);
 // 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
 // avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
 
+    TypeName0<Func>: String = {
 
-TypeName = TypeNameInternal<"True">;
+            <_FunctionType: FunctionType> if Func == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_FunctionType\": {} }}", _FunctionType),
 
+            <_MappingType: MappingType>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_MappingType\": {} }}", _MappingType),
+
+            <_ElementaryType: ElementaryType>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_ElementaryType\": {} }}", _ElementaryType),
+            
+            <_IdentifierPath: IdentifierPath>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_IdentifierPath\": {} }}", _IdentifierPath),
+        
+    };
 // Inlining here makes it a lot slower, think twice
-    TypeNameInternal<Func>: String = {
+    TypeName1<Func>: String = {
 // TODO[2]: enable
         // It has problems with Access expression
             //<_TypeName: TypeName0>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"TypeName\", \"_TypeName\": {}, \"_open_bracket\": {}, \"_index\": {}, \"_close_bracket\": {} }}", _TypeName, _open_bracket, _index.unwrap_or("\"\"".into()), _close_bracket),
@@ -1483,12 +1491,9 @@ TypeName = TypeNameInternal<"True">;
 // ODOT
 
     }
-
-    TypeName0<Func>: String = {
-            <_FunctionType: FunctionType> if Func == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_FunctionType\": {} }}", _FunctionType),
-            <_MappingType: MappingType>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_MappingType\": {} }}", _MappingType),
-            <_ElementaryType: ElementaryType>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_ElementaryType\": {} }}", _ElementaryType),
-            <_IdentifierPath: IdentifierPath>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"TypeName\", \"_IdentifierPath\": {} }}", _IdentifierPath),
+    TypeName: String = {
+         
+            <TypeName: TypeName1<"True">>  => <>,
         
     };
 // ODOT
@@ -1854,36 +1859,62 @@ TypeName = TypeNameInternal<"True">;
 // always prefer identifier paths
     Expression0<Ident>: String = {
             <_IdentifierPath: IdentifierPath> if Ident == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_IdentifierPath\": {} }}", _IdentifierPath),
+         
             <_NewExpression: NewExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_NewExpression\": {} }}", _NewExpression),
+         
             <_TupleExpression: ProtoTuple<"True">>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_TupleExpression\": {} }}", _TupleExpression),
+         
             <_TypeExpression: TypeExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_TypeExpression\": {} }}", _TypeExpression),
+         
             <_ArrayExpression: ArrayExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_ArrayExpression\": {} }}", _ArrayExpression),
+         
             <_HexNumberExpression: HexNumberExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_HexNumberExpression\": {} }}", _HexNumberExpression),
+         
             <_DecimalNumberExpression: DecimalNumberExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_DecimalNumberExpression\": {} }}", _DecimalNumberExpression),
+         
             <_StringExpression: StringExpression>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_StringExpression\": {} }}", _StringExpression),
+         
             <_ElementaryType: ElementaryType>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_ElementaryType\": {} }}", _ElementaryType),
+         
             <_PayableKeyword: PayableKeyword>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_PayableKeyword\": {} }}", _PayableKeyword),
+         
             <_ThisKeyword: ThisKeyword>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_ThisKeyword\": {} }}", _ThisKeyword),
+         
             <_SuperKeyword: SuperKeyword>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_SuperKeyword\": {} }}", _SuperKeyword),
+         
             <_TrueKeyword: TrueKeyword>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_TrueKeyword\": {} }}", _TrueKeyword),
+         
             <_FalseKeyword: FalseKeyword>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_FalseKeyword\": {} }}", _FalseKeyword),
 
         
     };
     Expression1<Ident>: String = {
+
             <_Expression: Expression1<"True">>  <_operator: Equal>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: BarEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression1<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression0<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
-            Expression0<Ident> => <>,
+
+            <Expression: Expression0<Ident>> => <>,
     };
 
 
@@ -1895,97 +1926,166 @@ TypeName = TypeNameInternal<"True">;
                 Expression1<Ident> => <>,
     };
     Expression3<Ident>: String = {
+
             <_Expression: Expression3<"True">>  <_operator: BarBar>  <_Expression_2: Expression2<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression2<Ident> => <>,
+
     };
     Expression4<Ident>: String = {
+
             <_Expression: Expression4<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression3<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression3<Ident> => <>,
+
     };
     Expression5<Ident>: String = {
+
             <_Expression: Expression5<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression4<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression5<"True">>  <_operator: BangEqual>  <_Expression_2: Expression4<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression4<Ident> => <>,
+            
     };
     Expression6<Ident>: String = {
+
             <_Expression: Expression6<"True">>  <_operator: LessThan>  <_Expression_2: Expression5<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression6<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression5<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression6<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression5<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression6<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression5<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression5<Ident> => <>,
+
     };
     Expression7<Ident>: String = {
+
             <_Expression: Expression7<"True">>  <_operator: Bar>  <_Expression_2: Expression6<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression6<Ident> => <>,
+
     };
     Expression8<Ident>: String = {
+
             <_Expression: Expression8<"True">>  <_operator: Caret>  <_Expression_2: Expression7<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression7<Ident> => <>,
+
     };
     Expression9<Ident>: String = {
+
             <_Expression: Expression9<"True">>  <_operator: Ampersand>  <_Expression_2: Expression8<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression8<Ident> => <>,
+
     };
     Expression10<Ident>: String = {
+
             <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression9<Ident> => <>,
+
     };
     Expression11<Ident>: String = {
+
             <_Expression: Expression11<"True">>  <_operator: Plus>  <_Expression_2: Expression10<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression11<"True">>  <_operator: Minus>  <_Expression_2: Expression10<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression10<Ident> => <>,
+
     };
     Expression12<Ident>: String = {
+
             <_Expression: Expression12<"True">>  <_operator: Asterisk>  <_Expression_2: Expression11<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression12<"True">>  <_operator: Slash>  <_Expression_2: Expression11<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             <_Expression: Expression12<"True">>  <_operator: Percent>  <_Expression_2: Expression11<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression11<Ident> => <>,
+
     };
     Expression13<Ident>: String = {
+
             <_Expression: Expression12<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression13<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {}, \"_Expression_2\": {} }}", _Expression, _operator, _Expression_2),
+
             Expression12<Ident> => <>,
+
     };
     Expression14<Ident>: String = {
+
             <_Expression: Expression14<"True">>  <_operator: PlusPlus>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {} }}", _Expression, _operator),
+
             <_Expression: Expression14<"True">>  <_operator: MinusMinus>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_operator\": {} }}", _Expression, _operator),
+
             Expression13<Ident> => <>,
+
     };
     Expression15<Ident>: String = {
+
             <_operator: PlusPlus>  <_Expression: Expression15<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_operator\": {}, \"_Expression\": {} }}", _operator, _Expression),
+
             <_operator: MinusMinus>  <_Expression: Expression15<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_operator\": {}, \"_Expression\": {} }}", _operator, _Expression),
+
             <_operator: Tilde>  <_Expression: Expression15<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_operator\": {}, \"_Expression\": {} }}", _operator, _Expression),
+
             <_operator: Bang>  <_Expression: Expression15<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_operator\": {}, \"_Expression\": {} }}", _operator, _Expression),
+
             <_operator: Minus>  <_Expression: Expression15<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_operator\": {}, \"_Expression\": {} }}", _operator, _Expression),
+
             <_operator: DeleteKeyword>  <_Expression: Expression15<Ident>>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_operator\": {}, \"_Expression\": {} }}", _operator, _Expression),
+
             Expression14<Ident> => <>,
+
     };
     Expression16<Ident>: String = {
+
             // This sets it back to "True" since there's a separator now, is this reasonable?
             <_Expression: Expression16<"True">>  <_arguments: ArgumentsDeclaration>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_arguments\": {} }}", _Expression, _arguments),
+
             Expression15<Ident> => <>,
+
     };
     Expression17<Ident>: String = {
+
 // TODO[6]: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()
             //<_Expression: Expression16>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_open_brace\": {}, \"_options\": {}, \"_close_brace\": {} }}", _Expression, _open_brace, _options, _close_brace),
+
             Expression16<Ident> => <>,
+
 // ODOT
     };
     Expression18<Ident>: String = {
+
             <_Expression: Expression18<"False">>  <_period: Period>  <_member: Identifier>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_period\": {}, \"_member\": {} }}", _Expression, _period, _member),
+
             Expression17<Ident> => <>,
+
     };
 
     Expression19: String = {
-            <_Expression: Expression19>  <_open_bracket: OpenBracket>  <_start: (Expression19)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_open_bracket\": {}, \"_start\": {}, \"_end\": {}, \"_close_bracket\": {} }}", _Expression, _open_bracket, _start.unwrap_or("\"\"".into()), _end.unwrap_or("\"\"".into()), _close_bracket),
-            Expression18<"True"> => <>,
-    };
 
-    Expression = Expression19;
-// ODOT
+            <_Expression: Expression19>  <_open_bracket: OpenBracket>  <_start: (Expression19)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"Expression\", \"_Expression\": {}, \"_open_bracket\": {}, \"_start\": {}, \"_end\": {}, \"_close_bracket\": {} }}", _Expression, _open_bracket, _start.unwrap_or("\"\"".into()), _end.unwrap_or("\"\"".into()), _close_bracket),
+
+            Expression18<"True"> => <>,
+
+    };
+    Expression: String = {
+         
+            <Expression: Expression_19>  => <>,
         
+    };
+// ODOT
+
     IndexAccessEnd: String = {
          
             <_colon: Colon>  <_end: (Expression)?>  => format!("{{ \"item\": \"Struct\", \"name\": \"IndexAccessEnd\", \"_colon\": {}, \"_end\": {} }}", _colon, _end.unwrap_or("\"\"".into())),
@@ -2345,13 +2445,23 @@ TypeName = TypeNameInternal<"True">;
     
 
 // Rules for topic Yul Expressions
-    YulExpression: String = {
-        #[precedence(level="1")] 
-            <_YulExpression: YulExpression>  <_open_paren: OpenParen>  <_arguments: YulArguments>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"YulExpression\", \"_YulExpression\": {}, \"_open_paren\": {}, \"_arguments\": {}, \"_close_paren\": {} }}", _YulExpression, _open_paren, _arguments, _close_paren),
-        #[precedence(level="0")] 
+    YulExpression0: String = {
+         
             <_YulLiteral: YulLiteral>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"YulExpression\", \"_YulLiteral\": {} }}", _YulLiteral),
-        #[precedence(level="0")] 
+         
             <_YulPath: YulPath>  => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"YulExpression\", \"_YulPath\": {} }}", _YulPath),
+        
+    };
+    YulExpression1: String = {
+         
+            <_YulExpression: YulExpression1>  <_open_paren: OpenParen>  <_arguments: YulArguments>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Precedence-Operator\", \"name\": \"YulExpression\", \"_YulExpression\": {}, \"_open_paren\": {}, \"_arguments\": {}, \"_close_paren\": {} }}", _YulExpression, _open_paren, _arguments, _close_paren),
+         
+            <YulExpression: YulExpression0>  => <>,
+        
+    };
+    YulExpression: String = {
+         
+            <YulExpression: YulExpression_1>  => <>,
         
     };
     YulArguments: String = {
@@ -2385,7 +2495,7 @@ TypeName = TypeNameInternal<"True">;
         
     };
     
-    
+
 // Rules for topic Yul Keywords
     #[inline]
     YulAbstractKeyword: String = {
