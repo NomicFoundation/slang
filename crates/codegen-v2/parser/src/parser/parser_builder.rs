@@ -4,7 +4,7 @@ use language_v2_definition::model::{
     Field, Identifier, Item as LanguageItem, Language, Section, Topic,
 };
 
-use crate::parser::item::LALRPOPItem;
+use crate::parser::item::{precedence_item_to_lalrpop_items, LALRPOPItem};
 use crate::parser::{ParserSection, ParserTopic};
 
 pub(crate) struct ParserBuilder<'a> {
@@ -119,33 +119,38 @@ impl<'a> ParserBuilder<'a> {
             items: topic
                 .items
                 .iter()
-                .filter_map(|item| self.language_item_to_lalrpop_item(item))
+                .flat_map(|item| self.language_item_to_lalrpop_item(item))
                 .collect(),
         }
     }
 
-    fn language_item_to_lalrpop_item(&self, item: &LanguageItem) -> Option<LALRPOPItem> {
+    fn language_item_to_lalrpop_item(&self, item: &LanguageItem) -> Vec<LALRPOPItem> {
         // TODO: we're ignoring versions for now
 
         // TODO: use an actual type rather than string
 
-        let mut item: LALRPOPItem = match item {
-            LanguageItem::Struct { item } => item.as_ref().try_into(),
-            LanguageItem::Enum { item } => item.as_ref().try_into(),
-            LanguageItem::Repeated { item } => item.as_ref().try_into(),
-            LanguageItem::Separated { item } => item.as_ref().try_into(),
+        match item {
+            LanguageItem::Struct { item } => {
+                item.as_ref().try_into().ok().iter().cloned().collect()
+            }
+            LanguageItem::Enum { item } => item.as_ref().try_into().ok().iter().cloned().collect(),
+            LanguageItem::Repeated { item } => {
+                item.as_ref().try_into().ok().iter().cloned().collect()
+            }
+            LanguageItem::Separated { item } => {
+                item.as_ref().try_into().ok().iter().cloned().collect()
+            }
             // TODO: No idea how to do this yet
-            LanguageItem::Precedence { item } => item.as_ref().try_into(),
+            LanguageItem::Precedence { item } => precedence_item_to_lalrpop_items(item),
             // I don't think we care about fragments at all
             // ... but we'll see once versioning comes in place
 
             // Actually, trivia, keyword, and token should translate to references
-            LanguageItem::Keyword { item } => Ok(item.as_ref().into()),
+            LanguageItem::Keyword { item } => vec![item.as_ref().into()],
             LanguageItem::Trivia { .. }
             | LanguageItem::Token { .. }
-            | LanguageItem::Fragment { .. } => Err(()),
+            | LanguageItem::Fragment { .. } => vec![],
         }
-        .ok()?;
 
         // This ended up making compilation slower, it may be worth checking the parser performance in the future with
         // this enabled
@@ -154,7 +159,5 @@ impl<'a> ParserBuilder<'a> {
         //         item.inline = true;
         //     }
         // }
-
-        Some(item)
     }
 }
