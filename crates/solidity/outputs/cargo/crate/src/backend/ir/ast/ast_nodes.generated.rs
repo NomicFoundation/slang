@@ -199,8 +199,11 @@ impl PathImportStruct {
         }
     }
 
-    pub fn alias(&self) -> Option<Rc<TerminalNode>> {
-        self.ir_node.alias.as_ref().map(Rc::clone)
+    pub fn alias(&self) -> Option<Identifier> {
+        self.ir_node
+            .alias
+            .as_ref()
+            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
     }
 
     pub fn path(&self) -> Rc<TerminalNode> {
@@ -258,12 +261,15 @@ impl ImportDeconstructionSymbolStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
-    pub fn alias(&self) -> Option<Rc<TerminalNode>> {
-        self.ir_node.alias.as_ref().map(Rc::clone)
+    pub fn alias(&self) -> Option<Identifier> {
+        self.ir_node
+            .alias
+            .as_ref()
+            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
     }
 }
 
@@ -350,8 +356,11 @@ impl UsingDeconstructionSymbolStruct {
         }
     }
 
-    pub fn name(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-        self.ir_node.name.iter().map(Rc::clone)
+    pub fn name(&self) -> IdentifierPath {
+        Rc::new(IdentifierPathStruct::create(
+            &self.ir_node.name,
+            &self.semantic,
+        ))
     }
 
     pub fn alias(&self) -> Option<UsingOperator> {
@@ -384,8 +393,8 @@ impl ContractDefinitionStruct {
         self.ir_node.abstract_keyword
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn members(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
@@ -428,8 +437,11 @@ impl InheritanceTypeStruct {
         }
     }
 
-    pub fn type_name(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-        self.ir_node.type_name.iter().map(Rc::clone)
+    pub fn type_name(&self) -> IdentifierPath {
+        Rc::new(IdentifierPathStruct::create(
+            &self.ir_node.type_name,
+            &self.semantic,
+        ))
     }
 
     pub fn arguments(&self) -> Option<ArgumentsDeclaration> {
@@ -458,8 +470,8 @@ impl InterfaceDefinitionStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn members(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
@@ -488,8 +500,8 @@ impl LibraryDefinitionStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn members(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
@@ -518,8 +530,8 @@ impl StructDefinitionStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn members(&self) -> impl Iterator<Item = StructMember> + use<'_> {
@@ -555,8 +567,8 @@ impl StructMemberStruct {
         ))
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 }
 
@@ -578,8 +590,8 @@ impl EnumDefinitionStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn members(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
@@ -612,8 +624,8 @@ impl ConstantDefinitionStruct {
         ))
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn visibility(&self) -> Option<StateVariableVisibility> {
@@ -658,8 +670,8 @@ impl StateVariableDefinitionStruct {
         ))
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn value(&self) -> Option<Expression> {
@@ -716,8 +728,11 @@ impl FunctionDefinitionStruct {
         ))
     }
 
-    pub fn name(&self) -> Option<Rc<TerminalNode>> {
-        self.ir_node.name.as_ref().map(Rc::clone)
+    pub fn name(&self) -> Option<Identifier> {
+        self.ir_node
+            .name
+            .as_ref()
+            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
     }
 
     pub fn body(&self) -> Option<Block> {
@@ -782,8 +797,11 @@ impl ParameterStruct {
             .map(|ir_node| Rc::new(StorageLocationStruct::create(ir_node, &self.semantic)))
     }
 
-    pub fn name(&self) -> Option<Rc<TerminalNode>> {
-        self.ir_node.name.as_ref().map(Rc::clone)
+    pub fn name(&self) -> Option<Identifier> {
+        self.ir_node
+            .name
+            .as_ref()
+            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
     }
 
     pub fn indexed(&self) -> bool {
@@ -828,8 +846,11 @@ impl ModifierInvocationStruct {
         }
     }
 
-    pub fn name(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-        self.ir_node.name.iter().map(Rc::clone)
+    pub fn name(&self) -> IdentifierPath {
+        Rc::new(IdentifierPathStruct::create(
+            &self.ir_node.name,
+            &self.semantic,
+        ))
     }
 
     pub fn arguments(&self) -> Option<ArgumentsDeclaration> {
@@ -858,8 +879,8 @@ impl EventDefinitionStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn anonymous_keyword(&self) -> bool {
@@ -892,8 +913,8 @@ impl UserDefinedValueTypeDefinitionStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn value_type(&self) -> ElementaryType {
@@ -922,8 +943,8 @@ impl ErrorDefinitionStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn parameters(&self) -> impl Iterator<Item = Parameter> + use<'_> {
@@ -1220,8 +1241,8 @@ impl VariableDeclarationStatementStruct {
             .map(|ir_node| Rc::new(StorageLocationStruct::create(ir_node, &self.semantic)))
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn value(&self) -> Option<Expression> {
@@ -1459,8 +1480,11 @@ impl EmitStatementStruct {
         }
     }
 
-    pub fn event(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-        self.ir_node.event.iter().map(Rc::clone)
+    pub fn event(&self) -> IdentifierPath {
+        Rc::new(IdentifierPathStruct::create(
+            &self.ir_node.event,
+            &self.semantic,
+        ))
     }
 
     pub fn arguments(&self) -> ArgumentsDeclaration {
@@ -1553,8 +1577,11 @@ impl CatchClauseErrorStruct {
         }
     }
 
-    pub fn name(&self) -> Option<Rc<TerminalNode>> {
-        self.ir_node.name.as_ref().map(Rc::clone)
+    pub fn name(&self) -> Option<Identifier> {
+        self.ir_node
+            .name
+            .as_ref()
+            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
     }
 
     pub fn parameters(&self) -> impl Iterator<Item = Parameter> + use<'_> {
@@ -2225,8 +2252,11 @@ impl MemberAccessExpressionStruct {
         ))
     }
 
-    pub fn member(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.member)
+    pub fn member(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(
+            &self.ir_node.member,
+            &self.semantic,
+        ))
     }
 }
 
@@ -2288,8 +2318,8 @@ impl NamedArgumentStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> Identifier {
+        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
     pub fn value(&self) -> Expression {
@@ -3549,9 +3579,12 @@ impl UsingClauseStruct {
         matches!(self.ir_node, input_ir::UsingClause::IdentifierPath(_))
     }
 
-    pub fn as_identifier_path(&self) -> Option<impl Iterator<Item = Rc<TerminalNode>> + use<'_>> {
+    pub fn as_identifier_path(&self) -> Option<IdentifierPath> {
         if let input_ir::UsingClause::IdentifierPath(variant) = &self.ir_node {
-            Some(variant.iter().map(Rc::clone))
+            Some(Rc::new(IdentifierPathStruct::create(
+                variant,
+                &self.semantic,
+            )))
         } else {
             None
         }
@@ -3923,9 +3956,12 @@ impl TypeNameStruct {
         matches!(self.ir_node, input_ir::TypeName::IdentifierPath(_))
     }
 
-    pub fn as_identifier_path(&self) -> Option<impl Iterator<Item = Rc<TerminalNode>> + use<'_>> {
+    pub fn as_identifier_path(&self) -> Option<IdentifierPath> {
         if let input_ir::TypeName::IdentifierPath(variant) = &self.ir_node {
-            Some(variant.iter().map(Rc::clone))
+            Some(Rc::new(IdentifierPathStruct::create(
+                variant,
+                &self.semantic,
+            )))
         } else {
             None
         }
@@ -4871,6 +4907,14 @@ impl ExpressionStruct {
     pub fn is_identifier(&self) -> bool {
         matches!(self.ir_node, input_ir::Expression::Identifier(_))
     }
+
+    pub fn as_identifier(&self) -> Option<Identifier> {
+        if let input_ir::Expression::Identifier(variant) = &self.ir_node {
+            Some(Rc::new(IdentifierStruct::create(variant, &self.semantic)))
+        } else {
+            None
+        }
+    }
 }
 
 pub type ArgumentsDeclaration = Rc<ArgumentsDeclarationStruct>;
@@ -5706,6 +5750,14 @@ impl TupleDeconstructionMemberStruct {
             self.ir_node,
             input_ir::TupleDeconstructionMember::Identifier(_)
         )
+    }
+
+    pub fn as_identifier(&self) -> Option<Identifier> {
+        if let input_ir::TupleDeconstructionMember::Identifier(variant) = &self.ir_node {
+            Some(Rc::new(IdentifierStruct::create(variant, &self.semantic)))
+        } else {
+            None
+        }
     }
 
     pub fn is_variable_declaration_statement(&self) -> bool {

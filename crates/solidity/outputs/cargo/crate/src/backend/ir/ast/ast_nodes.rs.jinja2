@@ -25,7 +25,13 @@
 
     {% for field in sequence.fields -%}
       {% if field.is_optional %}
-        {% if field.type.kind == "UniqueTerminal" %}
+        {% if field.type.name == "Identifier" %}
+          pub fn {{ field.label }}(&self) -> Option<Identifier> {
+            self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
+              Rc::new(IdentifierStruct::create(ir_node, &self.semantic))
+            })
+          }
+        {% elif field.type.kind == "UniqueTerminal" %}
           pub fn {{ field.label }}(&self) -> bool {
             self.ir_node.{{ field.label }}
           }
@@ -42,7 +48,15 @@
           }
         {% endif %}
       {% else %}
-        {% if field.type.is_terminal %}
+        {% if field.type.name == "Identifier" %}
+          pub fn {{ field.label }}(&self) -> Identifier {
+            Rc::new(IdentifierStruct::create(&self.ir_node.{{ field.label }}, &self.semantic))
+          }
+        {% elif field.type.name == "IdentifierPath" %}
+          pub fn {{ field.label }}(&self) -> IdentifierPath {
+            Rc::new(IdentifierPathStruct::create(&self.ir_node.{{ field.label }}, &self.semantic))
+          }
+        {% elif field.type.is_terminal %}
           pub fn {{ field.label }}(&self) -> Rc<TerminalNode> {
             Rc::clone(&self.ir_node.{{ field.label }})
           }
@@ -100,7 +114,24 @@
           {%- endif -%}
         )
       }
-      {% if variant.kind == "Nonterminal" %}
+      {% if variant.name == "Identifier" %}
+        pub fn as_identifier(&self) -> Option<Identifier> {
+          if let input_ir::{{ parent_type }}::Identifier(variant) = &self.ir_node {
+            Some(Rc::new(IdentifierStruct::create(variant, &self.semantic)))
+          } else {
+            None
+          }
+        }
+      {% elif variant.name == "IdentifierPath" %}
+        pub fn as_identifier_path(&self) -> Option<IdentifierPath> {
+          if let input_ir::{{ parent_type }}::IdentifierPath(variant) = &self.ir_node {
+            Some(Rc::new(IdentifierPathStruct::create(variant, &self.semantic)))
+          } else {
+            None
+          }
+        }
+
+      {% elif variant.kind == "Nonterminal" %}
         {% if target.collections is containing(variant.name) %}
           {% set item_type = target.collections[variant.name].item_type %}
           {% if item_type.is_terminal %}
