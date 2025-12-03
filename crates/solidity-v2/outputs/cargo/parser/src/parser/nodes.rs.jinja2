@@ -1,5 +1,9 @@
   {%- set target = model.ir_model -%}
 
+  // TODO:
+  // - (correctness) use actual structs and types
+  // - (perf) don't use terminals that are not needed
+
 
   //
   // Sequences:
@@ -7,6 +11,16 @@
 
   {% for parent_type, sequence in target.sequences %}
     pub type {{ parent_type }} = String;
+
+      pub fn new_{{ parent_type | snake_case }}({% for field in sequence.fields -%}
+          {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.type.name }}{% if field.is_optional %}>{% endif %},
+        {%- endfor %}) -> {{ parent_type }} {
+        format!("{% raw %} {{ {% endraw %} \"item\": \"Struct\", \"name\": \"{{ parent_type }}\", {% for field in sequence.fields -%}
+          \"{{ field.label }}\": {},{{ " " }}
+        {%- endfor %}{% raw %} }} {% endraw %}", {% for field in sequence.fields -%}
+          {{ field.label | snake_case }}{% if field.is_optional %}.unwrap_or("".into()){% endif %},{{ " " }}
+        {%- endfor %})
+      }
 
   {% endfor %}
 
@@ -17,6 +31,13 @@
   {% for parent_type, choice in target.choices %}
     pub type {{ parent_type }} = String;
 
+    {% for variant in choice.variants %}
+      pub fn new_{{ parent_type | snake_case }}_{{ variant.name | snake_case }}( element: {{ variant.name }}) -> {{ parent_type }} {
+        format!("{% raw %} {{ {% endraw %} \"item\": \"Choice\", \"name\": \"{{ parent_type }}\", \"{{ variant.name }}\": {}, {% raw %}}} {% endraw %}", element)
+      }
+    {% endfor %}
+
+
   {% endfor %}
 
   //
@@ -26,6 +47,10 @@
   {% for parent_type, collection in target.collections %}
     pub type {{ parent_type }} = String;
 
+    pub fn new_{{ parent_type | snake_case }}(elements: Vec<{{ collection.item_type.name }}>) -> {{ parent_type }} {
+      format!("{% raw %} {{ {% endraw %} \"item\": \"Separated\", \"name\": \"{{ parent_type }}\", \"elements\": [{}], {% raw %}}} {% endraw %}", elements.join(", "))
+    }
+
   {% endfor %}
 
   //
@@ -34,6 +59,10 @@
 
   {% for parent_type, unique in target.terminals %}
     pub type {{ parent_type }} = String;
+
+    pub fn new_{{ parent_type | snake_case }}(element: String) -> {{ parent_type }} {
+      format!("{% raw %} {{ {% endraw %} \"item\": \"Terminal\", \"name\": \"{{ parent_type }}\", \"value\": {}, {% raw %}}} {% endraw %}", element)
+    }
     
   {% endfor %}
 

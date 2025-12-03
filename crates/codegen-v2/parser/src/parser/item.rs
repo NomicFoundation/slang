@@ -22,9 +22,11 @@ pub(crate) struct LALRPOPItem {
 
 #[derive(Clone, Debug, Serialize)]
 struct LALRPOPOption {
+    name: Option<Identifier>,
+    prebuild: bool,
     attributes: RustCode,
     fields: Vec<LALRPOPField>,
-    action: RustCode,
+    forward: bool,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -58,27 +60,11 @@ fn capture(rule: RustCode) -> RustCode {
 fn separated(rule: RustCode, separator: RustCode, allow_empty: bool) -> RustCode {
     // TODO is there a perf difference between this and `({} {})* {}`?
     // Hack, I'm capturing the repeating element
-    let at_least_one = RustCode(format!("({} <({} {})*>)", rule.0, separator.0, rule.0));
     if allow_empty {
-        optional(at_least_one)
+        RustCode(format!("Sep<{}, {}>", separator.0, rule.0))
     } else {
-        at_least_one
+        RustCode(format!("SepOne<{}, {}>", separator.0, rule.0))
     }
-}
-
-fn to_action(
-    item_kind: &str,
-    item_name: &str,
-    captures: impl Iterator<Item = String>,
-    actions: impl Iterator<Item = String>,
-) -> RustCode {
-    RustCode(format!(
-        r#"format!("{{{{ \"item\": \"{}\", \"name\": \"{}\", {} }}}}", {})"#,
-        item_kind,
-        item_name,
-        captures.map(|c| format!(r#"\"{}\": {{}}"#, c)).join(", "),
-        actions.map(|c| c.to_string()).join(", ")
-    ))
 }
 
 impl TryFrom<&StructItem> for LALRPOPItem {
@@ -92,24 +78,10 @@ impl TryFrom<&StructItem> for LALRPOPItem {
             .filter_map(|(name, field)| field_to_lalrpop_field(&name, &field));
 
         let option = LALRPOPOption {
+            name: None,
             fields: fields.clone().collect(),
-            action: to_action(
-                "Struct",
-                &item.name,
-                fields
-                    .clone()
-                    .into_iter()
-                    .filter_map(|field| field.capturing_name.map(|name| name.to_string())),
-                fields
-                    .into_iter()
-                    .filter_map(|field| match field.capturing_name {
-                        Some(name) if field.is_optional => {
-                            Some(format!("{}.unwrap_or(\"\\\"\\\"\".into())", name))
-                        }
-                        Some(name) => Some(name.to_string()),
-                        None => None,
-                    }),
-            ),
+            forward: false,
+            prebuild: false,
             attributes: RustCode("".to_owned()),
         };
 
@@ -147,13 +119,10 @@ impl TryFrom<&EnumItem> for LALRPOPItem {
                     rule: RustCode(variant.reference.clone().to_string()),
                 }];
                 Some(LALRPOPOption {
+                    name: Some(variant.reference.clone()),
                     fields: fields.clone(),
-                    action: to_action(
-                        "Variant",
-                        &item.name,
-                        once(capturing_name.clone()),
-                        once(capturing_name),
-                    ),
+                    forward: false,
+                    prebuild: false,
                     attributes: RustCode("".to_owned()),
                 })
             })
@@ -184,16 +153,10 @@ impl TryFrom<&RepeatedItem> for LALRPOPItem {
             ),
         }];
         let option = LALRPOPOption {
+            name: None,
             fields: fields.clone(),
-            action: to_action(
-                "Repeated",
-                &item.name,
-                once(capturing_name.clone()),
-                once(format!(
-                    "format!(\"[{{}}]\", {}.join(\", \"))",
-                    capturing_name
-                )),
-            ),
+            forward: false,
+            prebuild: false,
             attributes: RustCode("".to_owned()),
         };
 
@@ -226,24 +189,10 @@ impl TryFrom<&SeparatedItem> for LALRPOPItem {
             ),
         }];
         let option = LALRPOPOption {
+            name: None,
             fields: fields.clone(),
-            action: to_action(
-                "Separated",
-                &item.name,
-                once(capturing_name.clone()),
-                if item.allow_empty.unwrap_or(false) {
-                    // If it's allowed to be empty, then we have an Option<(String, Vec<String>)>
-                    // TODO: This is not ideal, we should make something smarter later on
-                    once(format!(
-                        "{capturing_name}.map(|x| format!(\"[{{}}, {{}}]\", x.0, x.1.iter().join(\", \"))).unwrap_or(\"[]\".into())"
-                    ))
-                } else {
-                    // If it's not allowed to be empty, then we have an (String, Vec<String>)
-                    once(format!(
-                        "format!(\"[{{}}, {{}}]\", {capturing_name}.0, {capturing_name}.1.join(\", \"))"
-                    ))
-                },
-            ),
+            forward: false,
+            prebuild: false,
             attributes: RustCode("".to_owned()),
         };
 
@@ -262,6 +211,8 @@ impl From<&KeywordItem> for LALRPOPItem {
         let capturing_name = format!("_{}", item.name);
         let keyword_option = |reserved: bool| {
             LALRPOPOption {
+                prebuild: false,
+                name: None,
                 fields: vec![LALRPOPField {
                     is_optional: false,
                     // Sometimes you want to capture and parse
@@ -272,12 +223,7 @@ impl From<&KeywordItem> for LALRPOPItem {
                         if reserved { "Reserved" } else { "Unreserved" }
                     )),
                 }],
-                action: to_action(
-                    "Keyword",
-                    &item.name,
-                    once(capturing_name.clone()),
-                    once(format!("format!(\"{{}}\", {})", capturing_name.clone())),
-                ),
+                forward: false,
                 attributes: RustCode("".to_owned()),
             }
         };
@@ -344,17 +290,14 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
             }
             let capturing_name = format!("_{}", exp.reference);
             Some(LALRPOPOption {
+                name: Some(exp.reference.clone()),
                 fields: vec![LALRPOPField {
                     is_optional: false,
                     capturing_name: Some(capturing_name.clone().into()),
                     rule: RustCode(exp.reference.clone().to_string()),
                 }],
-                action: to_action(
-                    "Precedence-primary",
-                    &item.name,
-                    once(capturing_name.clone()),
-                    once(capturing_name.clone()),
-                ),
+                forward: false,
+                prebuild: false,
                 attributes: RustCode("".to_owned()),
             })
         })
@@ -452,24 +395,10 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 };
 
                 fields.map(|fields| LALRPOPOption {
+                    name: Some(prec.name.clone()),
                     fields: fields.clone(),
-                    action: to_action(
-                        "Precedence-Operator",
-                        &item.name,
-                        fields
-                            .clone()
-                            .into_iter()
-                            .filter_map(|field| field.capturing_name.map(|name| name.to_string())),
-                        fields
-                            .into_iter()
-                            .filter_map(|field| match field.capturing_name {
-                                Some(name) if field.is_optional => {
-                                    Some(format!("{}.unwrap_or(\"\\\"\\\"\".into())", name))
-                                }
-                                Some(name) => Some(name.to_string()),
-                                None => None,
-                            }),
-                    ),
+                    forward: false,
+                    prebuild: true,
                     attributes: RustCode("".to_owned()),
                 })
             })
@@ -477,13 +406,15 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
 
         // Add next case
         options.push(LALRPOPOption {
+            name: None,
+            prebuild: false,
             attributes: RustCode("".to_owned()),
             fields: vec![LALRPOPField {
                 capturing_name: Some(item.name.clone()),
                 is_optional: false,
                 rule: RustCode(format!("{}{}", item.name, prec_counter - 1)),
             }],
-            action: RustCode("<>".to_owned()),
+            forward: true,
         });
 
         ans.push(LALRPOPItem {
@@ -499,13 +430,15 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
         name: item.name.clone(),
         producing_type: item.name.clone(),
         options: vec![LALRPOPOption {
+            name: None,
+            prebuild: false,
             attributes: RustCode("".to_owned()),
             fields: vec![LALRPOPField {
                 capturing_name: Some(item.name.clone()),
                 is_optional: false,
                 rule: RustCode(format!("{}{}", item.name, prec_counter)),
             }],
-            action: RustCode("<>".to_owned()),
+            forward: true,
         }],
         inline: false,
     });
