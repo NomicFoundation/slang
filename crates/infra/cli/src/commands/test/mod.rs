@@ -19,7 +19,7 @@ impl TestController {
                 test_cargo()?.run();
                 test_npm().run();
             }
-        };
+        }
         Ok(())
     }
 }
