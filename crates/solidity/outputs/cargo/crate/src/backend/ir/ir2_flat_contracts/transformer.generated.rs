@@ -93,21 +93,7 @@ pub trait Transformer {
         })
     }
 
-    fn transform_import_directive(
-        &mut self,
-        source: &input::ImportDirective,
-    ) -> output::ImportDirective {
-        let clause = self.transform_import_clause(&source.clause);
-
-        Rc::new(output::ImportDirectiveStruct {
-            node_id: source.node_id,
-            clause,
-        })
-    }
-
     fn transform_path_import(&mut self, source: &input::PathImport) -> output::PathImport;
-
-    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport;
 
     fn transform_import_deconstruction(
         &mut self,
@@ -273,18 +259,7 @@ pub trait Transformer {
     fn transform_constant_definition(
         &mut self,
         source: &input::ConstantDefinition,
-    ) -> output::ConstantDefinition {
-        let type_name = self.transform_type_name(&source.type_name);
-        let name = Rc::clone(&source.name);
-        let value = self.transform_expression(&source.value);
-
-        Rc::new(output::ConstantDefinitionStruct {
-            node_id: source.node_id,
-            type_name,
-            name,
-            value,
-        })
-    }
+    ) -> output::ConstantDefinition;
 
     fn transform_state_variable_definition(
         &mut self,
@@ -296,21 +271,7 @@ pub trait Transformer {
         source: &input::FunctionDefinition,
     ) -> output::FunctionDefinition;
 
-    fn transform_parameter(&mut self, source: &input::Parameter) -> output::Parameter {
-        let type_name = self.transform_type_name(&source.type_name);
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.transform_storage_location(value));
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::ParameterStruct {
-            node_id: source.node_id,
-            type_name,
-            storage_location,
-            name,
-        })
-    }
+    fn transform_parameter(&mut self, source: &input::Parameter) -> output::Parameter;
 
     fn transform_override_specifier(
         &mut self,
@@ -347,34 +308,7 @@ pub trait Transformer {
     fn transform_event_definition(
         &mut self,
         source: &input::EventDefinition,
-    ) -> output::EventDefinition {
-        let name = Rc::clone(&source.name);
-        let parameters = self.transform_event_parameters_declaration(&source.parameters);
-        let anonymous_keyword = source.anonymous_keyword;
-
-        Rc::new(output::EventDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            parameters,
-            anonymous_keyword,
-        })
-    }
-
-    fn transform_event_parameter(
-        &mut self,
-        source: &input::EventParameter,
-    ) -> output::EventParameter {
-        let type_name = self.transform_type_name(&source.type_name);
-        let indexed_keyword = source.indexed_keyword;
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::EventParameterStruct {
-            node_id: source.node_id,
-            type_name,
-            indexed_keyword,
-            name,
-        })
-    }
+    ) -> output::EventDefinition;
 
     fn transform_user_defined_value_type_definition(
         &mut self,
@@ -393,30 +327,7 @@ pub trait Transformer {
     fn transform_error_definition(
         &mut self,
         source: &input::ErrorDefinition,
-    ) -> output::ErrorDefinition {
-        let name = Rc::clone(&source.name);
-        let members = self.transform_error_parameters_declaration(&source.members);
-
-        Rc::new(output::ErrorDefinitionStruct {
-            node_id: source.node_id,
-            name,
-            members,
-        })
-    }
-
-    fn transform_error_parameter(
-        &mut self,
-        source: &input::ErrorParameter,
-    ) -> output::ErrorParameter {
-        let type_name = self.transform_type_name(&source.type_name);
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::ErrorParameterStruct {
-            node_id: source.node_id,
-            type_name,
-            name,
-        })
-    }
+    ) -> output::ErrorDefinition;
 
     fn transform_array_type_name(
         &mut self,
@@ -437,38 +348,7 @@ pub trait Transformer {
 
     fn transform_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType;
 
-    fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
-        let key_type = self.transform_mapping_key(&source.key_type);
-        let value_type = self.transform_mapping_value(&source.value_type);
-
-        Rc::new(output::MappingTypeStruct {
-            node_id: source.node_id,
-            key_type,
-            value_type,
-        })
-    }
-
-    fn transform_mapping_key(&mut self, source: &input::MappingKey) -> output::MappingKey {
-        let key_type = self.transform_mapping_key_type(&source.key_type);
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::MappingKeyStruct {
-            node_id: source.node_id,
-            key_type,
-            name,
-        })
-    }
-
-    fn transform_mapping_value(&mut self, source: &input::MappingValue) -> output::MappingValue {
-        let type_name = self.transform_type_name(&source.type_name);
-        let name = source.name.as_ref().map(Rc::clone);
-
-        Rc::new(output::MappingValueStruct {
-            node_id: source.node_id,
-            type_name,
-            name,
-        })
-    }
+    fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType;
 
     fn transform_address_type(&mut self, source: &input::AddressType) -> output::AddressType {
         let payable_keyword = source.payable_keyword;
@@ -520,93 +400,12 @@ pub trait Transformer {
     fn transform_tuple_deconstruction_statement(
         &mut self,
         source: &input::TupleDeconstructionStatement,
-    ) -> output::TupleDeconstructionStatement {
-        let var_keyword = source.var_keyword;
-        let elements = self.transform_tuple_deconstruction_elements(&source.elements);
-        let expression = self.transform_expression(&source.expression);
-
-        Rc::new(output::TupleDeconstructionStatementStruct {
-            node_id: source.node_id,
-            var_keyword,
-            elements,
-            expression,
-        })
-    }
-
-    fn transform_tuple_deconstruction_element(
-        &mut self,
-        source: &input::TupleDeconstructionElement,
-    ) -> output::TupleDeconstructionElement {
-        let member = source
-            .member
-            .as_ref()
-            .map(|value| self.transform_tuple_member(value));
-
-        Rc::new(output::TupleDeconstructionElementStruct {
-            node_id: source.node_id,
-            member,
-        })
-    }
-
-    fn transform_typed_tuple_member(
-        &mut self,
-        source: &input::TypedTupleMember,
-    ) -> output::TypedTupleMember {
-        let type_name = self.transform_type_name(&source.type_name);
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.transform_storage_location(value));
-        let name = Rc::clone(&source.name);
-
-        Rc::new(output::TypedTupleMemberStruct {
-            node_id: source.node_id,
-            type_name,
-            storage_location,
-            name,
-        })
-    }
-
-    fn transform_untyped_tuple_member(
-        &mut self,
-        source: &input::UntypedTupleMember,
-    ) -> output::UntypedTupleMember {
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.transform_storage_location(value));
-        let name = Rc::clone(&source.name);
-
-        Rc::new(output::UntypedTupleMemberStruct {
-            node_id: source.node_id,
-            storage_location,
-            name,
-        })
-    }
+    ) -> output::TupleDeconstructionStatement;
 
     fn transform_variable_declaration_statement(
         &mut self,
         source: &input::VariableDeclarationStatement,
-    ) -> output::VariableDeclarationStatement {
-        let variable_type = self.transform_variable_declaration_type(&source.variable_type);
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.transform_storage_location(value));
-        let name = Rc::clone(&source.name);
-        let value = source
-            .value
-            .as_ref()
-            .map(|value| self.transform_variable_declaration_value(value));
-
-        Rc::new(output::VariableDeclarationStatementStruct {
-            node_id: source.node_id,
-            variable_type,
-            storage_location,
-            name,
-            value,
-        })
-    }
+    ) -> output::VariableDeclarationStatement;
 
     fn transform_if_statement(&mut self, source: &input::IfStatement) -> output::IfStatement {
         let condition = self.transform_expression(&source.condition);
@@ -1429,20 +1228,6 @@ pub trait Transformer {
         self.transform_yul_variable_names(&source.variables)
     }
 
-    fn transform_event_parameters_declaration(
-        &mut self,
-        source: &input::EventParametersDeclaration,
-    ) -> output::EventParameters {
-        self.transform_event_parameters(&source.parameters)
-    }
-
-    fn transform_error_parameters_declaration(
-        &mut self,
-        source: &input::ErrorParametersDeclaration,
-    ) -> output::ErrorParameters {
-        self.transform_error_parameters(&source.parameters)
-    }
-
     fn transform_import_alias(&mut self, source: &input::ImportAlias) -> Rc<TerminalNode> {
         Rc::clone(&source.identifier)
     }
@@ -1483,6 +1268,13 @@ pub trait Transformer {
         self.transform_named_arguments(&source.arguments)
     }
 
+    fn transform_import_directive(
+        &mut self,
+        source: &input::ImportDirective,
+    ) -> output::ImportClause {
+        self.transform_import_clause(&source.clause)
+    }
+
     //
     // Choices:
     //
@@ -1497,11 +1289,6 @@ pub trait Transformer {
             input::SourceUnitMember::PragmaDirective(ref pragma_directive) => {
                 output::SourceUnitMember::PragmaDirective(
                     self.transform_pragma_directive(pragma_directive),
-                )
-            }
-            input::SourceUnitMember::ImportDirective(ref import_directive) => {
-                output::SourceUnitMember::ImportDirective(
-                    self.transform_import_directive(import_directive),
                 )
             }
             input::SourceUnitMember::ContractDefinition(ref contract_definition) => {
@@ -1561,6 +1348,7 @@ pub trait Transformer {
                     self.transform_constant_definition(constant_definition),
                 )
             }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_source_unit_member(
@@ -1714,14 +1502,12 @@ pub trait Transformer {
             input::ImportClause::PathImport(ref path_import) => {
                 output::ImportClause::PathImport(self.transform_path_import(path_import))
             }
-            input::ImportClause::NamedImport(ref named_import) => {
-                output::ImportClause::NamedImport(self.transform_named_import(named_import))
-            }
             input::ImportClause::ImportDeconstruction(ref import_deconstruction) => {
                 output::ImportClause::ImportDeconstruction(
                     self.transform_import_deconstruction(import_deconstruction),
                 )
             }
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn transform_import_clause(&mut self, source: &input::ImportClause) -> output::ImportClause {
@@ -1878,32 +1664,6 @@ pub trait Transformer {
         self.default_transform_type_name(source)
     }
 
-    fn default_transform_mapping_key_type(
-        &mut self,
-        source: &input::MappingKeyType,
-    ) -> output::MappingKeyType {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::MappingKeyType::ElementaryType(ref elementary_type) => {
-                output::MappingKeyType::ElementaryType(
-                    self.transform_elementary_type(elementary_type),
-                )
-            }
-            input::MappingKeyType::IdentifierPath(ref identifier_path) => {
-                output::MappingKeyType::IdentifierPath(
-                    self.transform_identifier_path(identifier_path),
-                )
-            }
-        }
-    }
-    fn transform_mapping_key_type(
-        &mut self,
-        source: &input::MappingKeyType,
-    ) -> output::MappingKeyType {
-        self.default_transform_mapping_key_type(source)
-    }
-
     fn default_transform_elementary_type(
         &mut self,
         source: &input::ElementaryType,
@@ -2016,51 +1776,6 @@ pub trait Transformer {
     }
     fn transform_statement(&mut self, source: &input::Statement) -> output::Statement {
         self.default_transform_statement(source)
-    }
-
-    fn default_transform_tuple_member(
-        &mut self,
-        source: &input::TupleMember,
-    ) -> output::TupleMember {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::TupleMember::TypedTupleMember(ref typed_tuple_member) => {
-                output::TupleMember::TypedTupleMember(
-                    self.transform_typed_tuple_member(typed_tuple_member),
-                )
-            }
-            input::TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
-                output::TupleMember::UntypedTupleMember(
-                    self.transform_untyped_tuple_member(untyped_tuple_member),
-                )
-            }
-        }
-    }
-    fn transform_tuple_member(&mut self, source: &input::TupleMember) -> output::TupleMember {
-        self.default_transform_tuple_member(source)
-    }
-
-    fn default_transform_variable_declaration_type(
-        &mut self,
-        source: &input::VariableDeclarationType,
-    ) -> output::VariableDeclarationType {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::VariableDeclarationType::TypeName(ref type_name) => {
-                output::VariableDeclarationType::TypeName(self.transform_type_name(type_name))
-            }
-            input::VariableDeclarationType::VarKeyword => {
-                output::VariableDeclarationType::VarKeyword
-            }
-        }
-    }
-    fn transform_variable_declaration_type(
-        &mut self,
-        source: &input::VariableDeclarationType,
-    ) -> output::VariableDeclarationType {
-        self.default_transform_variable_declaration_type(source)
     }
 
     fn default_transform_storage_location(
@@ -2647,40 +2362,10 @@ pub trait Transformer {
             .collect()
     }
 
-    fn transform_event_parameters(
-        &mut self,
-        source: &input::EventParameters,
-    ) -> output::EventParameters {
-        source
-            .iter()
-            .map(|item| self.transform_event_parameter(item))
-            .collect()
-    }
-
-    fn transform_error_parameters(
-        &mut self,
-        source: &input::ErrorParameters,
-    ) -> output::ErrorParameters {
-        source
-            .iter()
-            .map(|item| self.transform_error_parameter(item))
-            .collect()
-    }
-
     fn transform_statements(&mut self, source: &input::Statements) -> output::Statements {
         source
             .iter()
             .map(|item| self.transform_statement(item))
-            .collect()
-    }
-
-    fn transform_tuple_deconstruction_elements(
-        &mut self,
-        source: &input::TupleDeconstructionElements,
-    ) -> output::TupleDeconstructionElements {
-        source
-            .iter()
-            .map(|item| self.transform_tuple_deconstruction_element(item))
             .collect()
     }
 
