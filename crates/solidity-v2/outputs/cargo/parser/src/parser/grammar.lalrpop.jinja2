@@ -4,6 +4,19 @@ use itertools::Itertools;
 
 grammar<'source>(source: &'source str);
 
+Sep<S, T>: Vec<T> = {
+    => Vec::new(),
+    SepOne<S, T> => <>,
+};
+
+SepOne<S, T>: Vec<T> = {
+    <e:T> <v:(S <T>)*> => {
+        let mut v = v;
+        v.insert(0, e);
+        v
+    }
+};
+
 {% for section in model.parser.sections -%}
 
 // Rules for section {{ section.title }}
@@ -18,7 +31,13 @@ grammar<'source>(source: &'source str);
             {{ option.attributes }} 
             {% for field in option.fields -%}   
                 <{{ field.capturing_name }}: {{ field.rule }}> {{ " " }}
-            {%- endfor %}=> {{ option.action }},
+            {%- endfor %}=> {% if option.forward %}<>{% else -%}
+            new_{{ item.producing_type | snake_case }}{% if option.name %}_{{ option.name | snake_case }}{% endif %}({% if option.prebuild -%}
+            new_{{option.name | snake_case}}(<>)
+            {%- else -%}
+            <>
+            {%- endif %})
+            {%- endif %},
         {% endfor %}
     };
     {% endfor %}
