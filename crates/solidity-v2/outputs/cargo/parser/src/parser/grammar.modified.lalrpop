@@ -1169,73 +1169,13 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic State Variables
-    StateVariableDefinition: StateVariableDefinition = {
-// TODO[1] This is an annoying hack, the problem is when we have a function type
-// in a variable declaration type, then some attributes (visibility ones) can be both
-// at the end of the type, or just after the type.
-// Right now I'm trying some strange hack for counting used attributes, but I'm
-// leaning towards having the function type take every attribute, and then reparse
-// up here, and extract attributes that belong to the variable
-
-            //<_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
-
-
-         // If we're not using functions, then we can have all attributes
-            <_type_name: TypeName1<"False">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
-            // Otherwise, the fun begins
-
-            // If the there is a return, the visibility doesnt really matter, it's ignored. 
-            // So we can either have or not have a vis
-            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
-
-            // If there is no return, then we need to check the visibility
-            // If there's a Vis then we can have a Vis
-            <_type_name: FunctionTypeInternalNoReturn<"1">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
-            // If there's no Vis, then we cant have a Vis
-            <_type_name: FunctionTypeInternalNoReturn<"0">>  <_attributes: StateVariableAttributes<"0">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
-        
-    };
-
-// ODOT
 
     StateVariableDefinitionValue: StateVariableDefinitionValue = {
          
             <_equal: Equal>  <_value: Expression>  => new_state_variable_definition_value(<>),
         
     };
-// TODO[1] See the note at `StateVariableDefinition`, we're using this to count for
-// used attributes
-    StateVariableAttributes<Vis>: StateVariableAttributes = {
-        // <_ConstantKeyword: ConstantKeyword> <_other: StateVariableAttributes<Vis, "True">> if Const == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_StateVariableAttribute\": {} }}", format!("[{}]", _StateVariableAttribute.join(", "))),
 
-        <_InternalKeyword: InternalKeyword> <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_InternalKeyword\": {},  \"_other\": {} }}", _InternalKeyword, format!("[{}]", _other)),
-        <_PrivateKeyword: PrivateKeyword>   <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_PrivateKeyword\": {},  \"_other\": {} }}", _PrivateKeyword, format!("[{}]", _other)),
-        <_PublicKeyword: PublicKeyword>     <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_PublicKeyword\": {},  \"_other\": {} }}", _PublicKeyword, format!("[{}]", _other)),
-
-        () if Vis ~~ "0|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\" }}"),
-
-    };
-    /*
-    StateVariableAttribute: StateVariableAttribute = {
-         
-            <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
-         
-            <_ConstantKeyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
-         
-            <_InternalKeyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(<>),
-         
-            <_PrivateKeyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(<>),
-         
-            <_PublicKeyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(<>),
-         
-            <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
-         
-            <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
-        
-    };
-    */
-// ODOT
-    
 
 // Rules for topic Functions
     FunctionDefinition: FunctionDefinition = {
@@ -1480,38 +1420,6 @@ SepOne<S, T>: Vec<T> = {
 // Rules for section Types
 
 // Rules for topic Advanced Types
-// TODO[1]: We're doing to things here:
-// 1. expanding the precedence of `TypeName` to its full form, mainly to have full control
-// 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
-// avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
-
-    TypeName0<Func>: TypeName = {
-         
-            <_FunctionType: FunctionType> if Func == "True" => new_type_name_function_type(<>),
-         
-            <_MappingType: MappingType>  => new_type_name_mapping_type(<>),
-         
-            <_ElementaryType: ElementaryType>  => new_type_name_elementary_type(<>),
-         
-            <_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(<>),
-        
-    };
-    TypeName1<Func>: TypeName = {
-// TODO[2]: enable
-        // It has problems with Access expression
-            //<_TypeName: TypeName1>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(<>),
-            <TypeName: TypeName0<Func>>  => <>,
-// ODOT
-         
-         
-        
-    };
-    TypeName: TypeName = {
-         
-            <TypeName: TypeName1<"True">>  => <>,
-        
-    };
-// ODOT
 
     NewableTypeName: NewableTypeName = {
          
@@ -1528,54 +1436,6 @@ SepOne<S, T>: Vec<T> = {
         
     };
 
-// TODO[1]: Again with the attributes, we need to differentiate between a `FunctionType` that ends
-// with a `returns` and one that ends with attributes, because the one that ends with attributes
-// has problems in VariableDeclarationStatement
-    FunctionType: FunctionType = {
-        FunctionTypeInternalNoReturn<"m"> => <>,
-        FunctionTypeInternalReturn => <>,
-    };
-
-    // We dont inline this to break a cycle between type names
-    FunctionTypeInternalNoReturn<Vis>: FunctionType = {
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<Vis>>   => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {} }}", _function_keyword, _parameters, _attributes),
-    };
-    FunctionTypeInternalReturn: FunctionType = {
-         
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<"m">>  <_returns: ReturnsDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_returns\": {} }}", _function_keyword, _parameters, _attributes, _returns),
-        
-    };
-    FunctionTypeAttributes<Vis>: FunctionTypeAttributes = {
-        <_InternalKeyword: InternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_InternalKeyword\": {} }}", _InternalKeyword),
-        <_ExternalKeyword: ExternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_ExternalKeyword\": {} }}", _ExternalKeyword),
-        <_PrivateKeyword: PrivateKeyword>   <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PrivateKeyword\": {} }}", _PrivateKeyword),
-        <_PublicKeyword: PublicKeyword>     <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PublicKeyword\": {} }}", _PublicKeyword),
-        
-        // <_PureKeyword: PureKeyword>         <_other: FunctionTypeAttributes<Vis, "True">> if Pure == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PureKeyword\": {} }}", _PureKeyword),
-
-        () if Vis ~~ "0|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\" }}"),
-        
-    };
-    /*
-    FunctionTypeAttribute: FunctionTypeAttribute = {
-         
-            <_InternalKeyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(<>),
-         
-            <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(<>),
-         
-            <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(<>),
-         
-            <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(<>),
-         
-            <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(<>),
-         
-            <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(<>),
-         
-            <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(<>),
-        
-    };
-    */
-// ODOT
 
     MappingType: MappingType = {
          
@@ -1644,49 +1504,7 @@ SepOne<S, T>: Vec<T> = {
             <_Statement: (<Statement>)*>  => new_statements(<>),
         
     };
-// TODO[3]: We need to disable dangling If's on nested if else statements, but that can
-// also happen with For and While statements, since they have a trailing statement
-        // By default statements allos dangling `if`s
-    Statement = _Statement<"True">;
-         
-        // A Statement that either allows (DI == "True") or disallows (DI == "False")
-        // dangling `if`s
-    _Statement<DI>: Statement = {
-         
-            <_IfStatement: IfStatement<DI>>  => new_statement_if_statement(<>),
-         
-            <_ForStatement: ForStatement<DI>>  => new_statement_for_statement(<>),
-         
-            <_WhileStatement: WhileStatement<DI>>  => new_statement_while_statement(<>),
-         
-            <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(<>),
-         
-            <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(<>),
-         
-            <_BreakStatement: BreakStatement>  => new_statement_break_statement(<>),
-         
-            <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(<>),
-         
-            <_EmitStatement: EmitStatement>  => new_statement_emit_statement(<>),
-         
-            <_TryStatement: TryStatement>  => new_statement_try_statement(<>),
-         
-            <_RevertStatement: RevertStatement>  => new_statement_revert_statement(<>),
-         
-            <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
-         
-            <_Block: Block>  => new_statement_block(<>),
-         
-            <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
-         
-            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(<>),
-         
-            <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_statement_variable_declaration_statement(<>),
-         
-            <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
-        
-    };
-//ODOT
+
     UncheckedBlock: UncheckedBlock = {
          
             <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => new_unchecked_block(<>),
@@ -1715,30 +1533,7 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Declaration Statements
-// TODO[4] We remove the TupleDeconstructionStatement sub NonTerminals from here, it's now a ProtoTuple
-// shared with the tuples
-    TupleDeconstructionStatement: TupleDeconstructionStatement = {
-            // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
-            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_tuple\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _tuple, _equal, _expression, _semicolon),
-        
-    };
 
-// ODOT
-
-// TODO[4] We split the VariableDeclarationStatement into a VariableDeclaration and a ValueAssignment
-// This way we can use it in more places, in particular with patterns and the like
-    VariableDeclarationStatement: VariableDeclarationStatement = {
-         
-            <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclarationStatement\", \"_variable_declaration\": {}, \"_value\": {}, \"_semicolon\": {} }}", _variable_declaration, _value.unwrap_or("\"\"".into()), _semicolon),
-        
-    };
-
-    VariableDeclaration: String = {
-         
-            <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclaration\", \"_variable_type\": {}, \"_storage_location\": {}, \"_name\": {} }}", _variable_type, _storage_location.unwrap_or("\"\"".into()), _name),
-        
-    };
-// ODOT
     VariableDeclarationType: VariableDeclarationType = {
          
             <_TypeName: TypeName>  => new_variable_declaration_type_type_name(<>),
@@ -1761,27 +1556,7 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Control Statements
-// TODO[3] IfStatement now tracks whether it has a dangling If, and only allows
-// else branches if there's no dalgnling if
-    IfStatement<DI>: IfStatement = {
-         
-            // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True"  => format!("{{ \"item\": \"Struct\", \"name\": \"IfStatement\", \"_if_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {} }}", _if_keyword, _open_paren, _condition, _close_paren, _body),
 
-            // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  ElseKeyword  <_else_branch: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"IfStatement\", \"_if_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {}, \"_else_branch\": {} }}", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
-        
-    };
-// ODOT
-
-// TODO[3] ForStatement now tracks whether it has a dangling If, and only allows
-    // TODO Maybe inline
-    ForStatement<DI>: ForStatement = {
-         
-            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_for_statement(<>),
-        
-    };
-// ODOT
     ForStatementInitialization: ForStatementInitialization = {
          
             <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_for_statement_initialization_tuple_deconstruction_statement(<>),
@@ -1800,13 +1575,7 @@ SepOne<S, T>: Vec<T> = {
             <_Semicolon: Semicolon>  => new_for_statement_condition_semicolon(<>),
         
     };
-// TODO[3] WhileStatement now tracks whether it has a dangling If, and only allows
-    WhileStatement<DI>: WhileStatement = {
-         
-            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_while_statement(<>),
-        
-    };
-// ODOT
+
     DoWhileStatement: DoWhileStatement = {
          
             <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => new_do_while_statement(<>),
@@ -1869,241 +1638,7 @@ SepOne<S, T>: Vec<T> = {
 
 // Rules for topic Base Expressions
 
-// TODO[5] Expressions are expanded, this gives us more control
-// Ident is a variable to check whether this expression allows identifier paths or not
-// The problem comes from a.b.c, this can be either an identifier path or a member access, we should
-// always prefer identifier paths
-    Expression0<Ident>: Expression = {
-            <_IdentifierPath: IdentifierPath> if Ident == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_IdentifierPath\": {} }}", _IdentifierPath),
-         
-            <_NewExpression: NewExpression>  => new_expression_new_expression(<>),
-         
-            <_TupleExpression: ProtoTuple<"True">>  => new_expression_tuple_expression(<>),
-         
-            <_TypeExpression: TypeExpression>  => new_expression_type_expression(<>),
-         
-            <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(<>),
-         
-            <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
-         
-            <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
-         
-            <_StringExpression: StringExpression>  => new_expression_string_expression(<>),
-         
-            <_ElementaryType: ElementaryType>  => new_expression_elementary_type(<>),
-         
-            <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(<>),
-         
-            <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(<>),
-         
-            <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(<>),
-         
-            <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(<>),
-         
-            <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
-        
-    };
-    Expression1<Ident>: Expression = {
-         
-            <_Expression: Expression1<"True">>  <_operator: Equal>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: BarEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression1<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <Expression: Expression0<Ident>>  => <>,
-        
-    };
 
-
-
-    Expression2<Ident>: Expression = {
-        // TODO: Not really sure the associativity is correct, we need to check
-
-            <_Expression: Expression1<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression2<"True">>  <_colon: Colon>  <_false_expression: Expression2<Ident>> => new_expression_conditional_expression(new_conditional_expression(<>)),
-         
-            <Expression: Expression1<Ident>>  => <>,
-        
-    };
-    Expression3<Ident>: Expression = {
-         
-            <_Expression: Expression3<"True">>  <_operator: BarBar>  <_Expression_2: Expression2<Ident>>  => new_expression_or_expression(new_or_expression(<>)),
-         
-            <Expression: Expression2<Ident>>  => <>,
-        
-    };
-    Expression4<Ident>: Expression = {
-         
-            <_Expression: Expression4<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression3<Ident>>  => new_expression_and_expression(new_and_expression(<>)),
-         
-            <Expression: Expression3<Ident>>  => <>,
-        
-    };
-    Expression5<Ident>: Expression = {
-         
-            <_Expression: Expression5<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression4<Ident>>  => new_expression_equality_expression(new_equality_expression(<>)),
-         
-            <_Expression: Expression5<"True">>  <_operator: BangEqual>  <_Expression_2: Expression4<Ident>>  => new_expression_equality_expression(new_equality_expression(<>)),
-         
-            <Expression: Expression4<Ident>>  => <>,
-        
-    };
-    Expression6<Ident>: Expression = {
-         
-            <_Expression: Expression6<"True">>  <_operator: LessThan>  <_Expression_2: Expression5<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
-         
-            <_Expression: Expression6<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression5<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
-         
-            <_Expression: Expression6<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression5<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
-         
-            <_Expression: Expression6<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression5<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
-         
-            <Expression: Expression5<Ident>>  => <>,
-        
-    };
-    Expression7<Ident>: Expression = {
-         
-            <_Expression: Expression7<"True">>  <_operator: Bar>  <_Expression_2: Expression6<Ident>>  => new_expression_bitwise_or_expression(new_bitwise_or_expression(<>)),
-         
-            <Expression: Expression6<Ident>>  => <>,
-        
-    };
-    Expression8<Ident>: Expression = {
-         
-            <_Expression: Expression8<"True">>  <_operator: Caret>  <_Expression_2: Expression7<Ident>>  => new_expression_bitwise_xor_expression(new_bitwise_xor_expression(<>)),
-         
-            <Expression: Expression7<Ident>>  => <>,
-        
-    };
-    Expression9<Ident>: Expression = {
-         
-            <_Expression: Expression9<"True">>  <_operator: Ampersand>  <_Expression_2: Expression8<Ident>>  => new_expression_bitwise_and_expression(new_bitwise_and_expression(<>)),
-         
-            <Expression: Expression8<Ident>>  => <>,
-        
-    };
-    Expression10<Ident>: Expression = {
-         
-            <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
-         
-            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
-         
-            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
-         
-            <Expression: Expression9<Ident>>  => <>,
-        
-    };
-    Expression11<Ident>: Expression = {
-         
-            <_Expression: Expression11<"True">>  <_operator: Plus>  <_Expression_2: Expression10<Ident>>  => new_expression_additive_expression(new_additive_expression(<>)),
-         
-            <_Expression: Expression11<"True">>  <_operator: Minus>  <_Expression_2: Expression10<Ident>>  => new_expression_additive_expression(new_additive_expression(<>)),
-         
-            <Expression: Expression10<Ident>>  => <>,
-        
-    };
-    Expression12<Ident>: Expression = {
-         
-            <_Expression: Expression12<"True">>  <_operator: Asterisk>  <_Expression_2: Expression11<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
-         
-            <_Expression: Expression12<"True">>  <_operator: Slash>  <_Expression_2: Expression11<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
-         
-            <_Expression: Expression12<"True">>  <_operator: Percent>  <_Expression_2: Expression11<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
-         
-            <Expression: Expression11<Ident>>  => <>,
-        
-    };
-    Expression13<Ident>: Expression = {
-         
-            <_Expression: Expression12<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression13<Ident>>  => new_expression_exponentiation_expression(new_exponentiation_expression(<>)),
-         
-            <Expression: Expression12<Ident>>  => <>,
-        
-    };
-    Expression14<Ident>: Expression = {
-         
-            <_Expression: Expression14<"True">>  <_operator: PlusPlus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
-         
-            <_Expression: Expression14<"True">>  <_operator: MinusMinus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
-         
-            <Expression: Expression13<Ident>>  => <>,
-        
-    };
-    Expression15<Ident>: Expression = {
-         
-            <_operator: PlusPlus>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: MinusMinus>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: Tilde>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: Bang>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: Minus>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: DeleteKeyword>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <Expression: Expression14<Ident>>  => <>,
-        
-    };
-    Expression16<Ident>: Expression = {
-         
-            // This sets it back to "True" since there's a separator now, is this reasonable?
-            <_Expression: Expression16<"True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
-         
-            <Expression: Expression15<Ident>>  => <>,
-        
-    };
-    Expression17<Ident>: Expression = {
-         
-         // TODO[6]: enable, doesn't work nicely with try statements
-        // in particular try foo {...} ()
-
-            //<_Expression: Expression17<"True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
-         
-            <Expression: Expression16<Ident>>  => <>,
-        
-// ODOT
-    };
-
-    Expression18<Ident>: Expression = {
-         
-            <_Expression: Expression18<"False">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
-         
-            <Expression: Expression17<Ident>>  => <>,
-        
-    };
-    Expression19: Expression = {
-         
-            <_Expression: Expression19>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
-         
-            <Expression: Expression18<"True">>  => <>,
-        
-    };
-    Expression: Expression = {
-         
-            <Expression: Expression19>  => <>,
-        
-    };
-// ODOT
 
     IndexAccessEnd: IndexAccessEnd = {
          
@@ -2117,11 +1652,7 @@ SepOne<S, T>: Vec<T> = {
          
             <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
          
-// TODO[7]: enable
-                // Some strange conflict
 
-            //<_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
-// ODOT
         
     };
     PositionalArgumentsDeclaration: PositionalArgumentsDeclaration = {
@@ -2134,18 +1665,7 @@ SepOne<S, T>: Vec<T> = {
             <_Expression: Sep<Comma, <Expression>>>  => new_positional_arguments(<>),
         
     };
-// TODO[7] Some attempt at fixing the problem above, right now these terminals are unused
-    NamedArgumentsDeclaration: NamedArgumentsDeclaration = {
-         
-            <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(_open_paren, Some(_arguments), _close_paren),
-        
-    };
-    NamedArgumentGroup: NamedArgumentGroup = {
-         
-            <_open_brace: OpenBrace>  <_arguments: (NamedArguments)?>  <_close_brace: CloseBrace>  => new_named_argument_group(_open_brace, _arguments.unwrap_or("".into()), _close_brace),
-        
-    };
-// ODOT
+
     NamedArguments: NamedArguments = {
          
             <_NamedArgument: Sep<Comma, <NamedArgument>>>  => new_named_arguments(<>),
@@ -2169,61 +1689,7 @@ SepOne<S, T>: Vec<T> = {
             <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => new_type_expression(<>),
         
     };
-// TODO[8] New expressions cause a problem, since a type can be an expression (ie a cast) or
-// an argument to the new, now we're adding a call at the end, just to ease our own life
-    NewExpression: NewExpression = {
-         
-         // I think Adding the arguments here is correct, it helps disambiguate between a new expression and a index access
-         // TODO: Check if the newable type name makes sense
-         // TODO I dont think it makes sense, since you may want a new expression that is not invoked (i think)
-            <_new_keyword: NewKeyword>  <_type_name: NewableTypeName> <pos: PositionalArgumentsDeclaration> => format!("{{ \"item\": \"Struct\", \"name\": \"NewExpression\", \"_new_keyword\": {}, \"_type_name\": {}, \"pos\": {} }}", _new_keyword, _type_name, pos),
-        
-    };
-//ODOT
 
-// TODO[4] These are the new tuples, we get a prototuple that can be a pattern/declaration
-// or a tuple value, we then disambigguate
-
-    // A ProtoTuple can match both a TupleExpression (ie, a tuple with expressions inside, separated by commas)
-    // as well as a TuplePattern, which is a tuple with optional patterns or declarations inside, separated by commas.
-    // Every Tuple is a TuplePattern, not the other way around, so we also make that distinction with the generics.
-
-    ProtoTuple<Tuple>: String = {
-        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTuple\", \"_open_paren\": {}, \"_elements\": {}, \"_close_paren\": {} }}", _open_paren, _elements, _close_paren),
-    }
-
-    
-    ProtoTupleElements<Tuple>: String = {
-        // TODO: empty tuple
-
-        // A single element can be True or False
-        // Note that ProtoTupleElement<"False"> allows empty elements, we have to change that
-        <_elem: ProtoTupleElement<"True">> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elem)),
-        <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elem)),
-        
-        // A ProtoTuple only ProtoTupleElements<True> is a Tuple
-        <_elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
-
-        // 
-        //<_elems: ProtoTupleElements<"True">> Comma if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elems)),
-
-        <_elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
-        <_elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
-        <_elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
-
-//        <_elems: ((<ProtoTupleElement<Tuple>> <(Comma <ProtoTupleElement<Tuple>>)*>))> => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems.0, _elems.1.iter().join(", "))).unwrap_or("[]".into()),
-    };
-
-    ProtoTupleElement<Tuple>: String = {
-        // A Tuple expression must be present and only be an identifier
-        <_name: Expression> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_name\": {} }}", _name),
-
-        <_decl: VariableDeclaration> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_decl\": {} }}", _decl),
-        <_storage_location: StorageLocation> <_name: Identifier> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_storage_location\": {}, \"_name\": {} }}", _storage_location, _name),
-        () if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\" }}"),
-    };
-        
-// ODOT
     ArrayExpression: ArrayExpression = {
          
             <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => new_array_expression(<>),
@@ -2237,12 +1703,7 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Numbers
-    HexNumberExpression: HexNumberExpression = {
-// TODO This is just because the function is not prepared for 0.8.30
-            <_literal: HexLiteral>  => new_hex_number_expression(<>, None),
-// ODOT
-        
-    };
+
     DecimalNumberExpression: DecimalNumberExpression = {
          
             <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => new_decimal_number_expression(<>),
@@ -5278,3 +4739,566 @@ extern {
         
     }
 }
+
+// Added rules
+
+    StateVariableDefinition: StateVariableDefinition = {
+// TODO[1] This is an annoying hack, the problem is when we have a function type
+// in a variable declaration type, then some attributes (visibility ones) can be both
+// at the end of the type, or just after the type.
+// Right now I'm trying some strange hack for counting used attributes, but I'm
+// leaning towards having the function type take every attribute, and then reparse
+// up here, and extract attributes that belong to the variable
+
+            //<_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
+
+
+         // If we're not using functions, then we can have all attributes
+            <_type_name: TypeName1<"False">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+            // Otherwise, the fun begins
+
+            // If the there is a return, the visibility doesnt really matter, it's ignored. 
+            // So we can either have or not have a vis
+            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+
+            // If there is no return, then we need to check the visibility
+            // If there's a Vis then we can have a Vis
+            <_type_name: FunctionTypeInternalNoReturn<"1">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+            // If there's no Vis, then we cant have a Vis
+            <_type_name: FunctionTypeInternalNoReturn<"0">>  <_attributes: StateVariableAttributes<"0">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+        
+    };
+
+// ODOT
+
+// TODO[1] See the note at `StateVariableDefinition`, we're using this to count for
+// used attributes
+    StateVariableAttributes<Vis>: StateVariableAttributes = {
+        // <_ConstantKeyword: ConstantKeyword> <_other: StateVariableAttributes<Vis, "True">> if Const == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_StateVariableAttribute\": {} }}", format!("[{}]", _StateVariableAttribute.join(", "))),
+
+        <_InternalKeyword: InternalKeyword> <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_InternalKeyword\": {},  \"_other\": {} }}", _InternalKeyword, format!("[{}]", _other)),
+        <_PrivateKeyword: PrivateKeyword>   <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_PrivateKeyword\": {},  \"_other\": {} }}", _PrivateKeyword, format!("[{}]", _other)),
+        <_PublicKeyword: PublicKeyword>     <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_PublicKeyword\": {},  \"_other\": {} }}", _PublicKeyword, format!("[{}]", _other)),
+
+        () if Vis ~~ "0|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\" }}"),
+
+    };
+    /*
+    StateVariableAttribute: StateVariableAttribute = {
+         
+            <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
+         
+            <_ConstantKeyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
+         
+            <_InternalKeyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(<>),
+         
+            <_PrivateKeyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(<>),
+         
+            <_PublicKeyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(<>),
+         
+            <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
+         
+            <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
+        
+    };
+    */
+// ODOT
+    
+// TODO[1]: We're doing to things here:
+// 1. expanding the precedence of `TypeName` to its full form, mainly to have full control
+// 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
+// avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
+
+    TypeName0<Func>: TypeName = {
+         
+            <_FunctionType: FunctionType> if Func == "True" => new_type_name_function_type(<>),
+         
+            <_MappingType: MappingType>  => new_type_name_mapping_type(<>),
+         
+            <_ElementaryType: ElementaryType>  => new_type_name_elementary_type(<>),
+         
+            <_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(<>),
+        
+    };
+    TypeName1<Func>: TypeName = {
+// TODO[2]: enable
+        // It has problems with Access expression
+            //<_TypeName: TypeName1>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(<>),
+            <TypeName: TypeName0<Func>>  => <>,
+// ODOT
+         
+         
+        
+    };
+    TypeName: TypeName = {
+         
+            <TypeName: TypeName1<"True">>  => <>,
+        
+    };
+// ODOT
+
+// TODO[1]: Again with the attributes, we need to differentiate between a `FunctionType` that ends
+// with a `returns` and one that ends with attributes, because the one that ends with attributes
+// has problems in VariableDeclarationStatement
+    FunctionType: FunctionType = {
+        FunctionTypeInternalNoReturn<"m"> => <>,
+        FunctionTypeInternalReturn => <>,
+    };
+
+    // We dont inline this to break a cycle between type names
+    FunctionTypeInternalNoReturn<Vis>: FunctionType = {
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<Vis>>   => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {} }}", _function_keyword, _parameters, _attributes),
+    };
+    FunctionTypeInternalReturn: FunctionType = {
+         
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<"m">>  <_returns: ReturnsDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_returns\": {} }}", _function_keyword, _parameters, _attributes, _returns),
+        
+    };
+    FunctionTypeAttributes<Vis>: FunctionTypeAttributes = {
+        <_InternalKeyword: InternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_InternalKeyword\": {} }}", _InternalKeyword),
+        <_ExternalKeyword: ExternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_ExternalKeyword\": {} }}", _ExternalKeyword),
+        <_PrivateKeyword: PrivateKeyword>   <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PrivateKeyword\": {} }}", _PrivateKeyword),
+        <_PublicKeyword: PublicKeyword>     <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PublicKeyword\": {} }}", _PublicKeyword),
+        
+        // <_PureKeyword: PureKeyword>         <_other: FunctionTypeAttributes<Vis, "True">> if Pure == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PureKeyword\": {} }}", _PureKeyword),
+
+        () if Vis ~~ "0|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\" }}"),
+        
+    };
+    /*
+    FunctionTypeAttribute: FunctionTypeAttribute = {
+         
+            <_InternalKeyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(<>),
+         
+            <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(<>),
+         
+            <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(<>),
+         
+            <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(<>),
+         
+            <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(<>),
+         
+            <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(<>),
+         
+            <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(<>),
+        
+    };
+    */
+// ODOT
+
+// TODO[3]: We need to disable dangling If's on nested if else statements, but that can
+// also happen with For and While statements, since they have a trailing statement
+        // By default statements allos dangling `if`s
+    Statement = _Statement<"True">;
+         
+        // A Statement that either allows (DI == "True") or disallows (DI == "False")
+        // dangling `if`s
+    _Statement<DI>: Statement = {
+         
+            <_IfStatement: IfStatement<DI>>  => new_statement_if_statement(<>),
+         
+            <_ForStatement: ForStatement<DI>>  => new_statement_for_statement(<>),
+         
+            <_WhileStatement: WhileStatement<DI>>  => new_statement_while_statement(<>),
+         
+            <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(<>),
+         
+            <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(<>),
+         
+            <_BreakStatement: BreakStatement>  => new_statement_break_statement(<>),
+         
+            <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(<>),
+         
+            <_EmitStatement: EmitStatement>  => new_statement_emit_statement(<>),
+         
+            <_TryStatement: TryStatement>  => new_statement_try_statement(<>),
+         
+            <_RevertStatement: RevertStatement>  => new_statement_revert_statement(<>),
+         
+            <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
+         
+            <_Block: Block>  => new_statement_block(<>),
+         
+            <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
+         
+            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(<>),
+         
+            <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_statement_variable_declaration_statement(<>),
+         
+            <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
+        
+    };
+//ODOT
+
+// TODO[4] We remove the TupleDeconstructionStatement sub NonTerminals from here, it's now a ProtoTuple
+// shared with the tuples
+    TupleDeconstructionStatement: TupleDeconstructionStatement = {
+            // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
+            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_tuple\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _tuple, _equal, _expression, _semicolon),
+        
+    };
+
+// ODOT
+
+// TODO[4] We split the VariableDeclarationStatement into a VariableDeclaration and a ValueAssignment
+// This way we can use it in more places, in particular with patterns and the like
+    VariableDeclarationStatement: VariableDeclarationStatement = {
+         
+            <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclarationStatement\", \"_variable_declaration\": {}, \"_value\": {}, \"_semicolon\": {} }}", _variable_declaration, _value.unwrap_or("\"\"".into()), _semicolon),
+        
+    };
+
+    VariableDeclaration: String = {
+         
+            <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclaration\", \"_variable_type\": {}, \"_storage_location\": {}, \"_name\": {} }}", _variable_type, _storage_location.unwrap_or("\"\"".into()), _name),
+        
+    };
+// ODOT
+
+// TODO[3] IfStatement now tracks whether it has a dangling If, and only allows
+// else branches if there's no dalgnling if
+    IfStatement<DI>: IfStatement = {
+         
+            // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True"  => format!("{{ \"item\": \"Struct\", \"name\": \"IfStatement\", \"_if_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {} }}", _if_keyword, _open_paren, _condition, _close_paren, _body),
+
+            // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  ElseKeyword  <_else_branch: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"IfStatement\", \"_if_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {}, \"_else_branch\": {} }}", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
+        
+    };
+// ODOT
+
+// TODO[3] ForStatement now tracks whether it has a dangling If, and only allows
+    // TODO Maybe inline
+    ForStatement<DI>: ForStatement = {
+         
+            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_for_statement(<>),
+        
+    };
+// ODOT
+
+// TODO[3] WhileStatement now tracks whether it has a dangling If, and only allows
+    WhileStatement<DI>: WhileStatement = {
+         
+            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_while_statement(<>),
+        
+    };
+// ODOT
+
+// TODO[5] Expressions are expanded, this gives us more control
+// Ident is a variable to check whether this expression allows identifier paths or not
+// The problem comes from a.b.c, this can be either an identifier path or a member access, we should
+// always prefer identifier paths
+    Expression0<Ident>: Expression = {
+            <_IdentifierPath: IdentifierPath> if Ident == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_IdentifierPath\": {} }}", _IdentifierPath),
+         
+            <_NewExpression: NewExpression>  => new_expression_new_expression(<>),
+         
+            <_TupleExpression: ProtoTuple<"True">>  => new_expression_tuple_expression(<>),
+         
+            <_TypeExpression: TypeExpression>  => new_expression_type_expression(<>),
+         
+            <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(<>),
+         
+            <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
+         
+            <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
+         
+            <_StringExpression: StringExpression>  => new_expression_string_expression(<>),
+         
+            <_ElementaryType: ElementaryType>  => new_expression_elementary_type(<>),
+         
+            <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(<>),
+         
+            <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(<>),
+         
+            <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(<>),
+         
+            <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(<>),
+         
+            <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
+        
+    };
+    Expression1<Ident>: Expression = {
+         
+            <_Expression: Expression1<"True">>  <_operator: Equal>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: BarEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression1<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression0<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <Expression: Expression0<Ident>>  => <>,
+        
+    };
+
+
+
+    Expression2<Ident>: Expression = {
+        // TODO: Not really sure the associativity is correct, we need to check
+
+            <_Expression: Expression1<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression2<"True">>  <_colon: Colon>  <_false_expression: Expression2<Ident>> => new_expression_conditional_expression(new_conditional_expression(<>)),
+         
+            <Expression: Expression1<Ident>>  => <>,
+        
+    };
+    Expression3<Ident>: Expression = {
+         
+            <_Expression: Expression3<"True">>  <_operator: BarBar>  <_Expression_2: Expression2<Ident>>  => new_expression_or_expression(new_or_expression(<>)),
+         
+            <Expression: Expression2<Ident>>  => <>,
+        
+    };
+    Expression4<Ident>: Expression = {
+         
+            <_Expression: Expression4<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression3<Ident>>  => new_expression_and_expression(new_and_expression(<>)),
+         
+            <Expression: Expression3<Ident>>  => <>,
+        
+    };
+    Expression5<Ident>: Expression = {
+         
+            <_Expression: Expression5<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression4<Ident>>  => new_expression_equality_expression(new_equality_expression(<>)),
+         
+            <_Expression: Expression5<"True">>  <_operator: BangEqual>  <_Expression_2: Expression4<Ident>>  => new_expression_equality_expression(new_equality_expression(<>)),
+         
+            <Expression: Expression4<Ident>>  => <>,
+        
+    };
+    Expression6<Ident>: Expression = {
+         
+            <_Expression: Expression6<"True">>  <_operator: LessThan>  <_Expression_2: Expression5<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+         
+            <_Expression: Expression6<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression5<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+         
+            <_Expression: Expression6<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression5<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+         
+            <_Expression: Expression6<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression5<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+         
+            <Expression: Expression5<Ident>>  => <>,
+        
+    };
+    Expression7<Ident>: Expression = {
+         
+            <_Expression: Expression7<"True">>  <_operator: Bar>  <_Expression_2: Expression6<Ident>>  => new_expression_bitwise_or_expression(new_bitwise_or_expression(<>)),
+         
+            <Expression: Expression6<Ident>>  => <>,
+        
+    };
+    Expression8<Ident>: Expression = {
+         
+            <_Expression: Expression8<"True">>  <_operator: Caret>  <_Expression_2: Expression7<Ident>>  => new_expression_bitwise_xor_expression(new_bitwise_xor_expression(<>)),
+         
+            <Expression: Expression7<Ident>>  => <>,
+        
+    };
+    Expression9<Ident>: Expression = {
+         
+            <_Expression: Expression9<"True">>  <_operator: Ampersand>  <_Expression_2: Expression8<Ident>>  => new_expression_bitwise_and_expression(new_bitwise_and_expression(<>)),
+         
+            <Expression: Expression8<Ident>>  => <>,
+        
+    };
+    Expression10<Ident>: Expression = {
+         
+            <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+         
+            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+         
+            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+         
+            <Expression: Expression9<Ident>>  => <>,
+        
+    };
+    Expression11<Ident>: Expression = {
+         
+            <_Expression: Expression11<"True">>  <_operator: Plus>  <_Expression_2: Expression10<Ident>>  => new_expression_additive_expression(new_additive_expression(<>)),
+         
+            <_Expression: Expression11<"True">>  <_operator: Minus>  <_Expression_2: Expression10<Ident>>  => new_expression_additive_expression(new_additive_expression(<>)),
+         
+            <Expression: Expression10<Ident>>  => <>,
+        
+    };
+    Expression12<Ident>: Expression = {
+         
+            <_Expression: Expression12<"True">>  <_operator: Asterisk>  <_Expression_2: Expression11<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+         
+            <_Expression: Expression12<"True">>  <_operator: Slash>  <_Expression_2: Expression11<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+         
+            <_Expression: Expression12<"True">>  <_operator: Percent>  <_Expression_2: Expression11<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+         
+            <Expression: Expression11<Ident>>  => <>,
+        
+    };
+    Expression13<Ident>: Expression = {
+         
+            <_Expression: Expression12<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression13<Ident>>  => new_expression_exponentiation_expression(new_exponentiation_expression(<>)),
+         
+            <Expression: Expression12<Ident>>  => <>,
+        
+    };
+    Expression14<Ident>: Expression = {
+         
+            <_Expression: Expression14<"True">>  <_operator: PlusPlus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
+         
+            <_Expression: Expression14<"True">>  <_operator: MinusMinus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
+         
+            <Expression: Expression13<Ident>>  => <>,
+        
+    };
+    Expression15<Ident>: Expression = {
+         
+            <_operator: PlusPlus>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: MinusMinus>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: Tilde>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: Bang>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: Minus>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: DeleteKeyword>  <_Expression: Expression15<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <Expression: Expression14<Ident>>  => <>,
+        
+    };
+    Expression16<Ident>: Expression = {
+         
+            // This sets it back to "True" since there's a separator now, is this reasonable?
+            <_Expression: Expression16<"True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+         
+            <Expression: Expression15<Ident>>  => <>,
+        
+    };
+    Expression17<Ident>: Expression = {
+         
+         // TODO[6]: enable, doesn't work nicely with try statements
+        // in particular try foo {...} ()
+
+            //<_Expression: Expression17<"True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+         
+            <Expression: Expression16<Ident>>  => <>,
+        
+// ODOT
+    };
+
+    Expression18<Ident>: Expression = {
+         
+            <_Expression: Expression18<"False">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+         
+            <Expression: Expression17<Ident>>  => <>,
+        
+    };
+    Expression19: Expression = {
+         
+            <_Expression: Expression19>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+         
+            <Expression: Expression18<"True">>  => <>,
+        
+    };
+    Expression: Expression = {
+         
+            <Expression: Expression19>  => <>,
+        
+    };
+// ODOT
+
+// TODO[7]: enable
+                // Some strange conflict
+
+            //<_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
+// ODOT
+
+// TODO[7] Some attempt at fixing the problem above, right now these terminals are unused
+    NamedArgumentsDeclaration: NamedArgumentsDeclaration = {
+         
+            <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(_open_paren, Some(_arguments), _close_paren),
+        
+    };
+    NamedArgumentGroup: NamedArgumentGroup = {
+         
+            <_open_brace: OpenBrace>  <_arguments: (NamedArguments)?>  <_close_brace: CloseBrace>  => new_named_argument_group(_open_brace, _arguments.unwrap_or("".into()), _close_brace),
+        
+    };
+// ODOT
+
+// TODO[8] New expressions cause a problem, since a type can be an expression (ie a cast) or
+// an argument to the new, now we're adding a call at the end, just to ease our own life
+    NewExpression: NewExpression = {
+         
+         // I think Adding the arguments here is correct, it helps disambiguate between a new expression and a index access
+         // TODO: Check if the newable type name makes sense
+         // TODO I dont think it makes sense, since you may want a new expression that is not invoked (i think)
+            <_new_keyword: NewKeyword>  <_type_name: NewableTypeName> <pos: PositionalArgumentsDeclaration> => format!("{{ \"item\": \"Struct\", \"name\": \"NewExpression\", \"_new_keyword\": {}, \"_type_name\": {}, \"pos\": {} }}", _new_keyword, _type_name, pos),
+        
+    };
+//ODOT
+
+// TODO[4] These are the new tuples, we get a prototuple that can be a pattern/declaration
+// or a tuple value, we then disambigguate
+
+    // A ProtoTuple can match both a TupleExpression (ie, a tuple with expressions inside, separated by commas)
+    // as well as a TuplePattern, which is a tuple with optional patterns or declarations inside, separated by commas.
+    // Every Tuple is a TuplePattern, not the other way around, so we also make that distinction with the generics.
+
+    ProtoTuple<Tuple>: String = {
+        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTuple\", \"_open_paren\": {}, \"_elements\": {}, \"_close_paren\": {} }}", _open_paren, _elements, _close_paren),
+    }
+
+    
+    ProtoTupleElements<Tuple>: String = {
+        // TODO: empty tuple
+
+        // A single element can be True or False
+        // Note that ProtoTupleElement<"False"> allows empty elements, we have to change that
+        <_elem: ProtoTupleElement<"True">> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elem)),
+        <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elem)),
+        
+        // A ProtoTuple only ProtoTupleElements<True> is a Tuple
+        <_elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+
+        // 
+        //<_elems: ProtoTupleElements<"True">> Comma if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elems)),
+
+        <_elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+        <_elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+        <_elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+
+//        <_elems: ((<ProtoTupleElement<Tuple>> <(Comma <ProtoTupleElement<Tuple>>)*>))> => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems.0, _elems.1.iter().join(", "))).unwrap_or("[]".into()),
+    };
+
+    ProtoTupleElement<Tuple>: String = {
+        // A Tuple expression must be present and only be an identifier
+        <_name: Expression> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_name\": {} }}", _name),
+
+        <_decl: VariableDeclaration> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_decl\": {} }}", _decl),
+        <_storage_location: StorageLocation> <_name: Identifier> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_storage_location\": {}, \"_name\": {} }}", _storage_location, _name),
+        () if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\" }}"),
+    };
+        
+// ODOT
+
+    HexNumberExpression: HexNumberExpression = {
+// TODO This is just because the function is not prepared for 0.8.30
+            <_literal: HexLiteral>  => new_hex_number_expression(<>, None),
+// ODOT
+        
+    };
