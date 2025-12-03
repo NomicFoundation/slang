@@ -156,7 +156,13 @@ impl IrModelBuilder {
                     self.terminals.insert(item.name.clone(), false);
                 }
                 model::Item::Keyword { item } => {
-                    self.terminals.insert(item.name.clone(), item.is_unique());
+                    // For now we add everything, we need better representations
+                    self.terminals
+                        .insert(format!("{}_Reserved", item.name).into(), item.is_unique());
+                    self.terminals
+                        .insert(format!("{}_Unreserved", item.name).into(), item.is_unique());
+                    self.terminals
+                        .insert(format!("{}", item.name).into(), item.is_unique());
                 }
                 model::Item::Token { item } => {
                     self.terminals.insert(item.name.clone(), item.is_unique());

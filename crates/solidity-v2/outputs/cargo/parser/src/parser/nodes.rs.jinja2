@@ -1,4 +1,7 @@
   {%- set target = model.ir_model -%}
+  #![allow(non_camel_case_types)]
+  #![allow(dead_code)]
+
 
   // TODO:
   // - (correctness) use actual structs and types
@@ -60,8 +63,8 @@
   {% for parent_type, unique in target.terminals %}
     pub type {{ parent_type }} = String;
 
-    pub fn new_{{ parent_type | snake_case }}(element: String) -> {{ parent_type }} {
-      format!("{% raw %} {{ {% endraw %} \"item\": \"Terminal\", \"name\": \"{{ parent_type }}\", \"value\": {}, {% raw %}}} {% endraw %}", element)
+    pub fn new_{{ parent_type | snake_case }}<'source>(l: usize, r: usize, source: &'source str) -> {{ parent_type }} {
+      format!("{% raw %} {{ {% endraw %} \"item\": \"Terminal\", \"name\": \"{{ parent_type }}\", \"_l\": {}, \"_r\": {}, \"value\": \"{}\" {% raw %} }} {% endraw %}", l, r, &source[l..r])
     }
     
   {% endfor %}

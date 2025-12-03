@@ -1,6 +1,5 @@
 use crate::lexer::lexemes;
 use crate::parser::nodes::*;
-use itertools::Itertools;
 
 grammar<'source>(source: &'source str);
 
@@ -50,8 +49,8 @@ SepOne<S, T>: Vec<T> = {
 // Lexemes formatting
 {% for kind in model.parser.lexer.lexeme_kinds -%}
 #[inline]
-{{ kind }}: String = {
-    <l:@L> L_{{ kind }} <r:@L> => format!("{% raw %} {{ {% endraw %} \"item\": \"Lexeme\", \"name\": \"{{ kind }}\", \"_l\": {}, \"_r\": {}, \"value\": \"{}\" {% raw %} }} {% endraw %}", l, r, &source[l..r]),
+{{ kind }}: {{ kind }} = {
+    <l:@L> L_{{ kind }} <r:@L> => new_{{kind | snake_case}}(<>, source),
 }
 {% endfor %}
 
