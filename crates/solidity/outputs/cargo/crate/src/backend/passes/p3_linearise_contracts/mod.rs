@@ -3,8 +3,8 @@ use std::rc::Rc;
 
 use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
-    Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
-    LibraryDefinition, Reference, Resolution, ScopeId,
+    Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, Reference,
+    Resolution, ScopeId,
 };
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::compilation::CompilationUnit;
@@ -157,11 +157,9 @@ impl Pass {
                     }) => resolved_file_id.as_ref().and_then(|resolved_file_id| {
                         self.binder.scope_id_for_file_id(resolved_file_id)
                     }),
-                    Definition::Contract(ContractDefinition { node_id, .. })
-                    | Definition::Interface(InterfaceDefinition { node_id, .. })
-                    | Definition::Library(LibraryDefinition { node_id, .. }) => {
+                    Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
                         use_lexical_resolution = false;
-                        self.binder.scope_id_for_node_id(*node_id)
+                        self.binder.scope_id_for_node_id(definition.node_id())
                     }
                     _ => None,
                 });
@@ -202,17 +200,16 @@ impl Pass {
             let Some(definition) = self.binder.find_definition_by_id(node_id) else {
                 unreachable!("Unable to resolve the definition for node {node_id:?}");
             };
-            let (Definition::Contract(ContractDefinition {
-                identifier, bases, ..
-            })
-            | Definition::Interface(InterfaceDefinition {
-                identifier, bases, ..
-            })) = definition
+            let (Definition::Contract(ContractDefinition { bases, .. })
+            | Definition::Interface(InterfaceDefinition { bases, .. })) = definition
             else {
                 unreachable!("Node {node_id:?} isn't a contract or interface");
             };
             let bases = bases.as_ref().unwrap_or_else(|| {
-                unreachable!("Contract {identifier:?} hasn't got the bases resolved")
+                unreachable!(
+                    "Contract {identifier:?} hasn't got the bases resolved",
+                    identifier = definition.identifier()
+                )
             });
 
             queue.extend(bases);
