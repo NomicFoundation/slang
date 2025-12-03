@@ -1,6 +1,3 @@
-use std::iter::once;
-
-use itertools::Itertools;
 use language_v2_definition::model::{
     EnumItem, Field, Identifier, KeywordItem, OperatorModel, PrecedenceItem, RepeatedItem,
     SeparatedItem, StructItem,
@@ -223,7 +220,7 @@ impl From<&KeywordItem> for LALRPOPItem {
                         if reserved { "Reserved" } else { "Unreserved" }
                     )),
                 }],
-                forward: false,
+                forward: true,
                 attributes: RustCode("".to_owned()),
             }
         };
