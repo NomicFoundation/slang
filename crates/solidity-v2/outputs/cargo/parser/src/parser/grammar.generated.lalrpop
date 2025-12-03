@@ -1169,13 +1169,12 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic State Variables
-
     StateVariableDefinitionValue: StateVariableDefinitionValue = {
          
             <_equal: Equal>  <_value: Expression>  => new_state_variable_definition_value(<>),
         
     };
-
+    
 
 // Rules for topic Functions
     FunctionDefinition: FunctionDefinition = {
@@ -1420,7 +1419,6 @@ SepOne<S, T>: Vec<T> = {
 // Rules for section Types
 
 // Rules for topic Advanced Types
-
     NewableTypeName: NewableTypeName = {
          
             <_NewableArrayType: NewableArrayType>  => new_newable_type_name_newable_array_type(<>),
@@ -1435,8 +1433,6 @@ SepOne<S, T>: Vec<T> = {
             <_type_name: TypeName>  <_open_bracket: OpenBracket>  <_close_bracket: CloseBracket>  => new_newable_array_type(<>),
         
     };
-
-
     MappingType: MappingType = {
          
             <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => new_mapping_type(<>),
@@ -1504,7 +1500,6 @@ SepOne<S, T>: Vec<T> = {
             <_Statement: (<Statement>)*>  => new_statements(<>),
         
     };
-
     UncheckedBlock: UncheckedBlock = {
          
             <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => new_unchecked_block(<>),
@@ -1533,7 +1528,6 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Declaration Statements
-
     VariableDeclarationType: VariableDeclarationType = {
          
             <_TypeName: TypeName>  => new_variable_declaration_type_type_name(<>),
@@ -1556,7 +1550,6 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Control Statements
-
     ForStatementInitialization: ForStatementInitialization = {
          
             <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_for_statement_initialization_tuple_deconstruction_statement(<>),
@@ -1575,7 +1568,6 @@ SepOne<S, T>: Vec<T> = {
             <_Semicolon: Semicolon>  => new_for_statement_condition_semicolon(<>),
         
     };
-
     DoWhileStatement: DoWhileStatement = {
          
             <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => new_do_while_statement(<>),
@@ -1637,9 +1629,6 @@ SepOne<S, T>: Vec<T> = {
 // Rules for section Expressions
 
 // Rules for topic Base Expressions
-
-
-
     IndexAccessEnd: IndexAccessEnd = {
          
             <_colon: Colon>  <_end: (Expression)?>  => new_index_access_end(<>),
@@ -1648,13 +1637,6 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Function Calls
-    ArgumentsDeclaration: ArgumentsDeclaration = {
-         
-            <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
-         
-
-        
-    };
     PositionalArgumentsDeclaration: PositionalArgumentsDeclaration = {
          
             <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => new_positional_arguments_declaration(<>),
@@ -1665,7 +1647,6 @@ SepOne<S, T>: Vec<T> = {
             <_Expression: Sep<Comma, <Expression>>>  => new_positional_arguments(<>),
         
     };
-
     NamedArguments: NamedArguments = {
          
             <_NamedArgument: Sep<Comma, <NamedArgument>>>  => new_named_arguments(<>),
@@ -1689,7 +1670,6 @@ SepOne<S, T>: Vec<T> = {
             <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => new_type_expression(<>),
         
     };
-
     ArrayExpression: ArrayExpression = {
          
             <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => new_array_expression(<>),
@@ -1703,7 +1683,6 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Numbers
-
     DecimalNumberExpression: DecimalNumberExpression = {
          
             <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => new_decimal_number_expression(<>),
@@ -4740,6 +4719,7 @@ extern {
     }
 }
 
+
 // Added rules
 
     StateVariableDefinition: StateVariableDefinition = {
@@ -5222,9 +5202,15 @@ extern {
 // ODOT
 
 // TODO[7]: enable
+    ArgumentsDeclaration: ArgumentsDeclaration = {
+         
+            <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
+         
+
                 // Some strange conflict
 
             //<_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
+    };
 // ODOT
 
 // TODO[7] Some attempt at fixing the problem above, right now these terminals are unused
@@ -5302,3 +5288,4 @@ extern {
 // ODOT
         
     };
+

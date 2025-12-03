@@ -129,7 +129,7 @@ impl<'a> ParserBuilder<'a> {
 
         // TODO: use an actual type rather than string
 
-        match item {
+        let mut items = match item {
             LanguageItem::Struct { item } => {
                 item.as_ref().try_into().ok().iter().cloned().collect()
             }
@@ -150,7 +150,65 @@ impl<'a> ParserBuilder<'a> {
             LanguageItem::Trivia { .. }
             | LanguageItem::Token { .. }
             | LanguageItem::Fragment { .. } => vec![],
-        }
+        };
+
+        // Remove all rules that we generate by hand, a bit hacky
+        const EXCLUDED_ITEMS: [&str; 50] = [
+            "StateVariableDefinition",
+            "StateVariableAttributes",
+            "StateVariableAttribute",
+            "TypeName0",
+            "ArgumentsDeclaration",
+            "TypeName1",
+            "TypeName",
+            "FunctionType",
+            "FunctionTypeAttributes",
+            "FunctionTypeAttribute",
+            "Statement",
+            "TupleDeconstructionStatement",
+            "TupleDeconstructionElements",
+            "TupleDeconstructionElement",
+            "TupleMember",
+            "TypedTupleMember",
+            "UntypedTupleMember",
+            "VariableDeclarationStatement",
+            "IfStatement",
+            "ElseBranch",
+            "ForStatement",
+            "WhileStatement",
+            "Expression0",
+            "Expression1",
+            "Expression2",
+            "Expression3",
+            "Expression4",
+            "Expression5",
+            "Expression6",
+            "Expression7",
+            "Expression8",
+            "Expression9",
+            "Expression10",
+            "Expression11",
+            "Expression12",
+            "Expression13",
+            "Expression14",
+            "Expression15",
+            "Expression16",
+            "Expression17",
+            "Expression18",
+            "Expression19",
+            "Expression",
+            "NamedArgumentsDeclaration",
+            "NamedArgumentGroup",
+            "NewExpression",
+            "TupleExpression",
+            "TupleValues",
+            "TupleValue",
+            "HexNumberExpression",
+        ];
+
+        items.retain(|item| !EXCLUDED_ITEMS.contains(&(*item.name).as_str()));
+
+        items
 
         // This ended up making compilation slower, it may be worth checking the parser performance in the future with
         // this enabled
