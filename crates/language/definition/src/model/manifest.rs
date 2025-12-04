@@ -38,10 +38,18 @@ impl Language {
         self.topics().flat_map(|topic| &topic.items)
     }
 
-    /// Collects all versions that change the language grammar in a breaking way.
+    /// Collects all versions that change the language in a breaking way.
     ///
     /// Includes the first supported version.
     pub fn collect_breaking_versions(&self) -> BTreeSet<Version> {
+        let mut ans = self.collect_grammar_breaking_versions();
+        ans.append(&mut self.collect_built_ins_versions());
+
+        ans
+    }
+
+    /// Collects all versions that change the language grammar in a breaking way.
+    pub fn collect_grammar_breaking_versions(&self) -> BTreeSet<Version> {
         let first = self.versions.first().unwrap().clone();
         let mut res = BTreeSet::from_iter([first]);
 
