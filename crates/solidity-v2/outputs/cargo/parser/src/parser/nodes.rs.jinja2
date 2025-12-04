@@ -2,27 +2,138 @@
   #![allow(non_camel_case_types)]
   #![allow(dead_code)]
 
+  use std::rc::Rc;
+
+
 
   // TODO:
   // - (correctness) use actual structs and types
   // - (perf) don't use terminals that are not needed
 
+// Special cases
+
+#[derive(Debug)]
+pub struct ProtoTuple {
+    // Do we care about range in source code?
+    pub _open_paren: OpenParen,
+    pub _elements: Vec<ProtoTupleElement>,
+    pub _close_paren: CloseParen,
+}
+
+pub fn new_proto_tuple(
+    _open_paren: OpenParen,
+    _elements: Vec<ProtoTupleElement>,
+    _close_paren: CloseParen,
+) -> ProtoTuple {
+    ProtoTuple {
+        _open_paren,
+        _elements,
+        _close_paren,
+    }
+}
+
+pub fn new_tuple_expression_from_proto_tuple(proto_tuple: ProtoTuple) -> TupleExpression {
+  let elements: Vec<TupleValue> = proto_tuple._elements.into_iter().map(|element| match element {
+      ProtoTupleElement::Expression(name) => new_tuple_value(Some(name)),
+      ProtoTupleElement::Declaration(_) => panic!("Tuples can't have declarations"),
+      ProtoTupleElement::StorageLocation(_, _) => panic!("Tuples can't have storage locations"),
+      ProtoTupleElement::Empty => new_tuple_value(None),
+  }).collect();
+  new_tuple_expression(proto_tuple._open_paren, new_tuple_values(elements), proto_tuple._close_paren)
+}
+
+pub fn new_tuple_deconstruction_statement_from_proto_tuple(proto_tuple: ProtoTuple, equal: Equal, expression: Expression, semicolon: Semicolon) -> TupleDeconstructionStatement {
+  let elements: Vec<TupleDeconstructionElement> = proto_tuple._elements.into_iter().map(|element| match element {
+      ProtoTupleElement::Expression(name) => {
+          match name {
+              Expression::Identifier(name) => new_tuple_deconstruction_element(Some(new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(None, name)))),
+              _ => panic!("Tuples deconstruction can only be used with identifiers"),
+          }
+          
+      },
+      ProtoTupleElement::Declaration(decl) => {
+          let tuple_member = match &decl.variable_type {
+              VariableDeclarationType::TypeName(type_name) => new_tuple_member_typed_tuple_member(new_typed_tuple_member(type_name.clone(), decl.storage_location.clone(), decl.name.clone())),
+              VariableDeclarationType::VarKeyword(_) => new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(decl.storage_location.clone(), decl.name.clone())),
+          };
+          new_tuple_deconstruction_element(Some(tuple_member))
+      },
+      ProtoTupleElement::StorageLocation(storage_location, name) => new_tuple_deconstruction_element(Some(new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(Some(storage_location), name)))),
+      ProtoTupleElement::Empty => new_tuple_deconstruction_element(None),
+  }).collect();
+  new_tuple_deconstruction_statement(
+      None,
+      proto_tuple._open_paren,
+      elements,
+      proto_tuple._close_paren,
+      equal,
+      expression,
+      semicolon,
+  )}
+
+#[derive(Debug)]
+pub enum ProtoTupleElement {
+    Expression(Expression),
+    Declaration(VariableDeclaration),
+    StorageLocation(StorageLocation, Identifier),
+    Empty,
+}
+
+pub fn new_proto_tuple_element_expression(name: Expression) -> ProtoTupleElement {
+    ProtoTupleElement::Expression(name)
+}
+
+pub fn new_proto_tuple_element_declaration(decl: VariableDeclaration) -> ProtoTupleElement {
+    ProtoTupleElement::Declaration(decl)
+}
+
+pub fn new_proto_tuple_element_storage_location(
+    storage_location: StorageLocation,
+    name: Identifier,
+) -> ProtoTupleElement {
+    ProtoTupleElement::StorageLocation(storage_location, name)
+}
+
+pub fn new_proto_tuple_element_empty() -> ProtoTupleElement {
+    ProtoTupleElement::Empty
+}
+
+pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
+  // TODO: This is just a placeholder, we need to fix this
+  let base: Expression = new_expression_identifier(identifier_path[0].clone());
+  identifier_path[1..].iter().fold(base, |acc, id| {
+    new_expression_member_access_expression(new_member_access_expression(acc, new_empty_terminal(), id.clone()))
+  })
+}
 
   //
   // Sequences:
   //
 
   {% for parent_type, sequence in target.sequences %}
-    pub type {{ parent_type }} = String;
+    pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+    #[derive(Debug)]
+    pub struct {{ parent_type }}Struct {
+      // Do we care about range in source code?
+      {%- for field in sequence.fields %}
+        pub {{ field.label | snake_case }}:
+          {%- if field.is_optional -%}
+            Option<{{ field.type.name }}>,
+          {%- else -%}
+            {{ field.type.name }},
+          {%- endif -%}
+      {% endfor -%}
+    }
 
       pub fn new_{{ parent_type | snake_case }}({% for field in sequence.fields -%}
           {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.type.name }}{% if field.is_optional %}>{% endif %},
         {%- endfor %}) -> {{ parent_type }} {
-        format!("{% raw %} {{ {% endraw %} \"item\": \"Struct\", \"name\": \"{{ parent_type }}\", {% for field in sequence.fields -%}
-          \"{{ field.label }}\": {},{{ " " }}
-        {%- endfor %}{% raw %} }} {% endraw %}", {% for field in sequence.fields -%}
-          {{ field.label | snake_case }}{% if field.is_optional %}.unwrap_or("".into()){% endif %},{{ " " }}
-        {%- endfor %})
+          Rc::new({{ parent_type }}Struct {
+            {%- for field in sequence.fields %}
+              {{ field.label | snake_case }},
+            {%- endfor -%}
+          })
       }
 
   {% endfor %}
@@ -31,12 +142,18 @@
   // Choices:
   //
 
+
   {% for parent_type, choice in target.choices %}
-    pub type {{ parent_type }} = String;
+    #[derive(Debug, Clone)]
+    pub enum {{ parent_type }} {
+      {% for variant in choice.variants -%}
+        {{ variant.name }}({{ variant.name }}),
+      {%- endfor -%}
+    }
 
     {% for variant in choice.variants %}
       pub fn new_{{ parent_type | snake_case }}_{{ variant.name | snake_case }}( element: {{ variant.name }}) -> {{ parent_type }} {
-        format!("{% raw %} {{ {% endraw %} \"item\": \"Choice\", \"name\": \"{{ parent_type }}\", \"{{ variant.name }}\": {}, {% raw %}}} {% endraw %}", element)
+        {{ parent_type }}::{{ variant.name }}(element)
       }
     {% endfor %}
 
@@ -48,10 +165,13 @@
   //
 
   {% for parent_type, collection in target.collections %}
-    pub type {{ parent_type }} = String;
+    pub type {{ parent_type }} = Vec<
+        {{ collection.item_type.name }}
+    >;
+
 
     pub fn new_{{ parent_type | snake_case }}(elements: Vec<{{ collection.item_type.name }}>) -> {{ parent_type }} {
-      format!("{% raw %} {{ {% endraw %} \"item\": \"Separated\", \"name\": \"{{ parent_type }}\", \"elements\": [{}], {% raw %}}} {% endraw %}", elements.join(", "))
+      elements
     }
 
   {% endfor %}
@@ -59,12 +179,31 @@
   //
   // Terminals
   //
+  #[derive(Debug, Clone)]
+  pub struct TerminalType {
+      pub value: String,
+      pub _l: usize,
+      pub _r: usize,
+    }
+
+pub fn new_empty_terminal() -> TerminalType {
+  TerminalType {
+    value: "".into(),
+    _l: 0,
+    _r: 0,
+  }
+}
+
 
   {% for parent_type, unique in target.terminals %}
-    pub type {{ parent_type }} = String;
+    pub type {{ parent_type }} = TerminalType;
 
     pub fn new_{{ parent_type | snake_case }}<'source>(l: usize, r: usize, source: &'source str) -> {{ parent_type }} {
-      format!("{% raw %} {{ {% endraw %} \"item\": \"Terminal\", \"name\": \"{{ parent_type }}\", \"_l\": {}, \"_r\": {}, \"value\": \"{}\" {% raw %} }} {% endraw %}", l, r, &source[l..r])
+      TerminalType {
+        value: source[l..r].to_owned(),
+        _l: l,
+        _r: r,
+      }
     }
     
   {% endfor %}

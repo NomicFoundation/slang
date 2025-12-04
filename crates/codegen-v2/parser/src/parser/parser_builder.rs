@@ -153,7 +153,7 @@ impl<'a> ParserBuilder<'a> {
         };
 
         // Remove all rules that we generate by hand, a bit hacky
-        const EXCLUDED_ITEMS: [&str; 50] = [
+        const EXCLUDED_ITEMS: [&str; 46] = [
             "StateVariableDefinition",
             "StateVariableAttributes",
             "StateVariableAttribute",
@@ -171,7 +171,6 @@ impl<'a> ParserBuilder<'a> {
             "TupleMember",
             "TypedTupleMember",
             "UntypedTupleMember",
-            "VariableDeclarationStatement",
             "IfStatement",
             "ElseBranch",
             "ForStatement",
@@ -197,9 +196,6 @@ impl<'a> ParserBuilder<'a> {
             "Expression18",
             "Expression19",
             "Expression",
-            "NamedArgumentsDeclaration",
-            "NamedArgumentGroup",
-            "NewExpression",
             "TupleExpression",
             "TupleValues",
             "TupleValue",

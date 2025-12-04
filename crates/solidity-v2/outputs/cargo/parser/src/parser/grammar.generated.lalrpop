@@ -1527,6 +1527,16 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Declaration Statements
+    VariableDeclarationStatement: VariableDeclarationStatement = {
+         
+            <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+        
+    };
+    VariableDeclaration: VariableDeclaration = {
+         
+            <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
+        
+    };
     VariableDeclarationType: VariableDeclarationType = {
          
             <_TypeName: TypeName>  => new_variable_declaration_type_type_name(<>),
@@ -1646,6 +1656,16 @@ SepOne<S, T>: Vec<T> = {
             <_Expression: Sep<Comma, <Expression>>>  => new_positional_arguments(<>),
         
     };
+    NamedArgumentsDeclaration: NamedArgumentsDeclaration = {
+         
+            <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(<>),
+        
+    };
+    NamedArgumentGroup: NamedArgumentGroup = {
+         
+            <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => new_named_argument_group(<>),
+        
+    };
     NamedArguments: NamedArguments = {
          
             <_NamedArgument: Sep<Comma, <NamedArgument>>>  => new_named_arguments(<>),
@@ -1667,6 +1687,11 @@ SepOne<S, T>: Vec<T> = {
     TypeExpression: TypeExpression = {
          
             <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => new_type_expression(<>),
+        
+    };
+    NewExpression: NewExpression = {
+         
+            <_new_keyword: NewKeyword>  <_type_name: NewableTypeName>  <_arguments: PositionalArgumentsDeclaration>  => new_new_expression(<>),
         
     };
     ArrayExpression: ArrayExpression = {
@@ -4738,13 +4763,13 @@ extern {
 
             // If the there is a return, the visibility doesnt really matter, it's ignored. 
             // So we can either have or not have a vis
-            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(new_type_name_function_type(_type_name), _attributes, _name, _value, _semicolon),
 
             // If there is no return, then we need to check the visibility
             // If there's a Vis then we can have a Vis
-            <_type_name: FunctionTypeInternalNoReturn<"1">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+            <_type_name: FunctionTypeInternalNoReturn<"1">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(new_type_name_function_type(_type_name), _attributes, _name, _value, _semicolon),
             // If there's no Vis, then we cant have a Vis
-            <_type_name: FunctionTypeInternalNoReturn<"0">>  <_attributes: StateVariableAttributes<"0">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+            <_type_name: FunctionTypeInternalNoReturn<"0">>  <_attributes: StateVariableAttributes<"0">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(new_type_name_function_type(_type_name), _attributes, _name, _value, _semicolon),
         
     };
 
@@ -4755,11 +4780,20 @@ extern {
     StateVariableAttributes<Vis>: StateVariableAttributes = {
         // <_ConstantKeyword: ConstantKeyword> <_other: StateVariableAttributes<Vis, "True">> if Const == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_StateVariableAttribute\": {} }}", format!("[{}]", _StateVariableAttribute.join(", "))),
 
-        <_InternalKeyword: InternalKeyword> <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_InternalKeyword\": {},  \"_other\": {} }}", _InternalKeyword, format!("[{}]", _other)),
-        <_PrivateKeyword: PrivateKeyword>   <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_PrivateKeyword\": {},  \"_other\": {} }}", _PrivateKeyword, format!("[{}]", _other)),
-        <_PublicKeyword: PublicKeyword>     <_other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_PublicKeyword\": {},  \"_other\": {} }}", _PublicKeyword, format!("[{}]", _other)),
+        <_InternalKeyword: InternalKeyword> <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
+            _other.push(new_state_variable_attribute_internal_keyword(_InternalKeyword));
+            _other
+        },
+        <_PrivateKeyword: PrivateKeyword>   <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
+            _other.push(new_state_variable_attribute_private_keyword(_PrivateKeyword));
+            _other
+        },
+        <_PublicKeyword: PublicKeyword>     <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
+            _other.push(new_state_variable_attribute_public_keyword(_PublicKeyword));
+            _other
+        },
 
-        () if Vis ~~ "0|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\" }}"),
+        () if Vis ~~ "0|m" => vec![],
 
     };
     /*
@@ -4826,22 +4860,34 @@ extern {
 
     // We dont inline this to break a cycle between type names
     FunctionTypeInternalNoReturn<Vis>: FunctionType = {
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<Vis>>   => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {} }}", _function_keyword, _parameters, _attributes),
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<Vis>>   => new_function_type(_function_keyword, _parameters, _attributes, None),
     };
     FunctionTypeInternalReturn: FunctionType = {
          
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<"m">>  <_returns: ReturnsDeclaration>  => format!("{{ \"item\": \"Struct\", \"name\": \"FunctionType\", \"_function_keyword\": {}, \"_parameters\": {}, \"_attributes\": {}, \"_returns\": {} }}", _function_keyword, _parameters, _attributes, _returns),
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<"m">>  <_returns: ReturnsDeclaration>  => new_function_type(_function_keyword, _parameters, _attributes, Some(_returns)),
         
     };
     FunctionTypeAttributes<Vis>: FunctionTypeAttributes = {
-        <_InternalKeyword: InternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_InternalKeyword\": {} }}", _InternalKeyword),
-        <_ExternalKeyword: ExternalKeyword> <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_ExternalKeyword\": {} }}", _ExternalKeyword),
-        <_PrivateKeyword: PrivateKeyword>   <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PrivateKeyword\": {} }}", _PrivateKeyword),
-        <_PublicKeyword: PublicKeyword>     <_other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PublicKeyword\": {} }}", _PublicKeyword),
+        <_InternalKeyword: InternalKeyword> <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
+            _other.push(new_function_type_attribute_internal_keyword(_InternalKeyword));
+            _other
+        },
+        <_ExternalKeyword: ExternalKeyword> <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
+            _other.push(new_function_type_attribute_external_keyword(_ExternalKeyword));
+            _other
+        },
+        <_PrivateKeyword: PrivateKeyword>   <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
+            _other.push(new_function_type_attribute_private_keyword(_PrivateKeyword));
+            _other
+        },
+        <_PublicKeyword: PublicKeyword>     <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
+            _other.push(new_function_type_attribute_public_keyword(_PublicKeyword));
+            _other
+        },
         
         // <_PureKeyword: PureKeyword>         <_other: FunctionTypeAttributes<Vis, "True">> if Pure == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PureKeyword\": {} }}", _PureKeyword),
 
-        () if Vis ~~ "0|m" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\" }}"),
+        () if Vis ~~ "0|m" => vec![],
         
     };
     /*
@@ -4913,36 +4959,23 @@ extern {
 // shared with the tuples
     TupleDeconstructionStatement: TupleDeconstructionStatement = {
             // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
-            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"TupleDeconstructionStatement\", \"_tuple\": {}, \"_equal\": {}, \"_expression\": {}, \"_semicolon\": {} }}", _tuple, _equal, _expression, _semicolon),
+            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => new_tuple_deconstruction_statement_from_proto_tuple(<>),
         
     };
 
 // ODOT
 
-// TODO[4] We split the VariableDeclarationStatement into a VariableDeclaration and a ValueAssignment
-// This way we can use it in more places, in particular with patterns and the like
-    VariableDeclarationStatement: VariableDeclarationStatement = {
-         
-            <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclarationStatement\", \"_variable_declaration\": {}, \"_value\": {}, \"_semicolon\": {} }}", _variable_declaration, _value.unwrap_or("\"\"".into()), _semicolon),
-        
-    };
 
-    VariableDeclaration: String = {
-         
-            <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => format!("{{ \"item\": \"Struct\", \"name\": \"VariableDeclaration\", \"_variable_type\": {}, \"_storage_location\": {}, \"_name\": {} }}", _variable_type, _storage_location.unwrap_or("\"\"".into()), _name),
-        
-    };
-// ODOT
 
 // TODO[3] IfStatement now tracks whether it has a dangling If, and only allows
 // else branches if there's no dalgnling if
     IfStatement<DI>: IfStatement = {
          
             // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True"  => format!("{{ \"item\": \"Struct\", \"name\": \"IfStatement\", \"_if_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {} }}", _if_keyword, _open_paren, _condition, _close_paren, _body),
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True"  => new_if_statement(<>, None),
 
             // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  ElseKeyword  <_else_branch: _Statement<DI>>  => format!("{{ \"item\": \"Struct\", \"name\": \"IfStatement\", \"_if_keyword\": {}, \"_open_paren\": {}, \"_condition\": {}, \"_close_paren\": {}, \"_body\": {}, \"_else_branch\": {} }}", _if_keyword, _open_paren, _condition, _close_paren, _body, _else_branch),
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<DI>>  => new_if_statement(_if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(_else_keyword, _else_branch))),
         
     };
 // ODOT
@@ -4969,11 +5002,11 @@ extern {
 // The problem comes from a.b.c, this can be either an identifier path or a member access, we should
 // always prefer identifier paths
     Expression0<Ident>: Expression = {
-            <_IdentifierPath: IdentifierPath> if Ident == "True" => format!("{{ \"item\": \"Precedence-primary\", \"name\": \"Expression\", \"_IdentifierPath\": {} }}", _IdentifierPath),
+            <_IdentifierPath: IdentifierPath> if Ident == "True" => new_expression_identifier_path(<>),
          
             <_NewExpression: NewExpression>  => new_expression_new_expression(<>),
          
-            <_TupleExpression: ProtoTuple<"True">>  => new_expression_tuple_expression(<>),
+            <_TupleExpression: ProtoTuple<"True">>  => new_expression_tuple_expression(new_tuple_expression_from_proto_tuple(<>)),
          
             <_TypeExpression: TypeExpression>  => new_expression_type_expression(<>),
          
@@ -5212,30 +5245,6 @@ extern {
     };
 // ODOT
 
-// TODO[7] Some attempt at fixing the problem above, right now these terminals are unused
-    NamedArgumentsDeclaration: NamedArgumentsDeclaration = {
-         
-            <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(_open_paren, Some(_arguments), _close_paren),
-        
-    };
-    NamedArgumentGroup: NamedArgumentGroup = {
-         
-            <_open_brace: OpenBrace>  <_arguments: (NamedArguments)?>  <_close_brace: CloseBrace>  => new_named_argument_group(_open_brace, _arguments.unwrap_or("".into()), _close_brace),
-        
-    };
-// ODOT
-
-// TODO[8] New expressions cause a problem, since a type can be an expression (ie a cast) or
-// an argument to the new, now we're adding a call at the end, just to ease our own life
-    NewExpression: NewExpression = {
-         
-         // I think Adding the arguments here is correct, it helps disambiguate between a new expression and a index access
-         // TODO: Check if the newable type name makes sense
-         // TODO I dont think it makes sense, since you may want a new expression that is not invoked (i think)
-            <_new_keyword: NewKeyword>  <_type_name: NewableTypeName> <pos: PositionalArgumentsDeclaration> => format!("{{ \"item\": \"Struct\", \"name\": \"NewExpression\", \"_new_keyword\": {}, \"_type_name\": {}, \"pos\": {} }}", _new_keyword, _type_name, pos),
-        
-    };
-//ODOT
 
 // TODO[4] These are the new tuples, we get a prototuple that can be a pattern/declaration
 // or a tuple value, we then disambigguate
@@ -5244,39 +5253,57 @@ extern {
     // as well as a TuplePattern, which is a tuple with optional patterns or declarations inside, separated by commas.
     // Every Tuple is a TuplePattern, not the other way around, so we also make that distinction with the generics.
 
-    ProtoTuple<Tuple>: String = {
-        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTuple\", \"_open_paren\": {}, \"_elements\": {}, \"_close_paren\": {} }}", _open_paren, _elements, _close_paren),
+    ProtoTuple<Tuple>: ProtoTuple = {
+        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(_open_paren, _elements, _close_paren),
     }
 
     
-    ProtoTupleElements<Tuple>: String = {
+    ProtoTupleElements<Tuple>: Vec<ProtoTupleElement> = {
         // TODO: empty tuple
 
         // A single element can be True or False
         // Note that ProtoTupleElement<"False"> allows empty elements, we have to change that
-        <_elem: ProtoTupleElement<"True">> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elem)),
-        <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elem)),
+        <_elem: ProtoTupleElement<"True">> if Tuple == "True" => vec![<>],
+        <_elem: ProtoTupleElement<"False">> if Tuple == "False" => vec![<>],
         
         // A ProtoTuple only ProtoTupleElements<True> is a Tuple
-        <_elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+        <mut _elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "True" => {
+            _elems.push(_elem);
+            _elems
+        },
 
         // 
-        //<_elems: ProtoTupleElements<"True">> Comma if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}]", _elems)),
+        //<mut _elems: ProtoTupleElements<"True">> Comma if Tuple == "False" => {
+        //    _elems.push(_elem);
+        //    _elems
+        //}
 
-        <_elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
-        <_elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
-        <_elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems, _elem)),
+        <mut _elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => {
+            _elems.push(_elem);
+            _elems
+        },
+
+        <mut _elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => {
+            _elems.push(_elem);
+            _elems
+        },
+
+        <mut _elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "False" => {
+            _elems.push(_elem);
+            _elems
+        },
+
 
 //        <_elems: ((<ProtoTupleElement<Tuple>> <(Comma <ProtoTupleElement<Tuple>>)*>))> => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems.0, _elems.1.iter().join(", "))).unwrap_or("[]".into()),
     };
 
-    ProtoTupleElement<Tuple>: String = {
+    ProtoTupleElement<Tuple>: ProtoTupleElement = {
         // A Tuple expression must be present and only be an identifier
-        <_name: Expression> if Tuple == "True" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_name\": {} }}", _name),
+        <_name: Expression> if Tuple == "True" => new_proto_tuple_element_expression(_name),
 
-        <_decl: VariableDeclaration> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_decl\": {} }}", _decl),
-        <_storage_location: StorageLocation> <_name: Identifier> if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\", \"_storage_location\": {}, \"_name\": {} }}", _storage_location, _name),
-        () if Tuple == "False" => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElement\" }}"),
+        <_decl: VariableDeclaration> if Tuple == "False" => new_proto_tuple_element_declaration(_decl),
+        <_storage_location: StorageLocation> <_name: Identifier> if Tuple == "False" => new_proto_tuple_element_storage_location(_storage_location, _name),
+        () if Tuple == "False" => new_proto_tuple_element_empty(),
     };
         
 // ODOT
