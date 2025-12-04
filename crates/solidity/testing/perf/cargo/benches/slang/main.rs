@@ -8,10 +8,10 @@ use iai_callgrind::{
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
 use paste::paste;
-use slang_solidity::backend::BinderOutput;
 use slang_solidity::compilation::CompilationUnit;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
+use solidity_testing_perf_cargo::tests::binder_v2_run::BuiltSemanticAnalysis;
 use solidity_testing_perf_cargo::tests::bindings_build::BuiltBindingGraph;
 
 mod __dependencies_used_in_lib__ {
@@ -72,14 +72,14 @@ macro_rules! slang_define_full_tests {
 
             #[library_benchmark(setup = tests::binder_v2_run::setup)]
             #[bench::test(stringify!($prj))]
-            fn [< $prj _binder_v2_run >](unit: CompilationUnit) -> BinderOutput {
+            fn [< $prj _binder_v2_run >](unit: Rc<CompilationUnit>) -> BuiltSemanticAnalysis {
                 black_box(tests::binder_v2_run::run(unit))
             }
 
             #[library_benchmark(setup = tests::binder_v2_cleanup::setup)]
             #[bench::test(stringify!($prj))]
-            fn [< $prj _binder_v2_cleanup >](output: BinderOutput) {
-                black_box(output);
+            fn [< $prj _binder_v2_cleanup >](unit: BuiltSemanticAnalysis) {
+                black_box(unit);
             }
 
             library_benchmark_group!(
