@@ -6,8 +6,8 @@ use crate::cst::NodeId;
 use crate::utils::versions::{
     VERSION_0_4_12, VERSION_0_4_17, VERSION_0_4_21, VERSION_0_4_22, VERSION_0_5_0, VERSION_0_5_3,
     VERSION_0_6_0, VERSION_0_6_2, VERSION_0_6_7, VERSION_0_6_8, VERSION_0_7_0, VERSION_0_8_0,
-    VERSION_0_8_11, VERSION_0_8_15, VERSION_0_8_18, VERSION_0_8_2, VERSION_0_8_24, VERSION_0_8_4,
-    VERSION_0_8_7, VERSION_0_8_8,
+    VERSION_0_8_11, VERSION_0_8_15, VERSION_0_8_18, VERSION_0_8_2, VERSION_0_8_24, VERSION_0_8_31,
+    VERSION_0_8_4, VERSION_0_8_7, VERSION_0_8_8,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -109,6 +109,7 @@ pub enum BuiltIn {
     YulCallvalue,
     YulChainid,
     YulCodecopy,
+    YulClz,
     YulCodesize,
     YulCoinbase,
     YulCreate,
@@ -238,6 +239,8 @@ impl<'a> BuiltInsResolver<'a> {
 
     #[allow(clippy::too_many_lines)]
     pub(crate) fn lookup_yul_global(&self, symbol: &str) -> Option<BuiltIn> {
+        // TODO(validation): Yul built-in function names should be considered reserved words.
+        // They're currently parsed as Identifiers to facilitate their manipulation.
         match symbol {
             "add" => Some(BuiltIn::YulAdd),
             "addmod" => Some(BuiltIn::YulAddmod),
@@ -296,6 +299,7 @@ impl<'a> BuiltInsResolver<'a> {
             }
             "lt" => Some(BuiltIn::YulLt),
             "mcopy" if self.language_version >= VERSION_0_8_24 => Some(BuiltIn::YulMcopy),
+            "clz" if self.language_version >= VERSION_0_8_31 => Some(BuiltIn::YulClz),
             "mload" => Some(BuiltIn::YulMload),
             "mod" => Some(BuiltIn::YulMod),
             "msize" => Some(BuiltIn::YulMsize),

@@ -250,6 +250,9 @@ References and definitions:
  83 │             xor()
     │             ─┬─  
     │              ╰─── ref: built-in
+ 84 │             clz()
+    │             ─┬─  
+    │              ╰─── unresolved
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]
@@ -257,10 +260,10 @@ Definiens:
   1 │ ╭─│ ▶ contract Test {
   2 │ │ ╭─▶     function test() public {
     ┆ ┆ ┆   
- 85 │ │ ├─▶     }
+ 86 │ │ ├─▶     }
     │ │ │           
     │ │ ╰─────────── definiens: 2
- 86 │ ├───▶ }
+ 87 │ ├───▶ }
     │ │         
     │ ╰───────── definiens: 1
 ────╯

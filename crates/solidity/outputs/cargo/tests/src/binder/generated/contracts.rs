@@ -177,6 +177,11 @@ fn storage_layout_constant() -> Result<()> {
 }
 
 #[test]
+fn storage_layout_constant_number() -> Result<()> {
+    run(T, "storage_layout_constant_number")
+}
+
+#[test]
 fn storage_layout_inner_constant() -> Result<()> {
     run(T, "storage_layout_inner_constant")
 }
