@@ -2998,11 +2998,19 @@ language_v2_macros::compile!(Language(
                             name = VariableDeclarationStatement,
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
-                                variable_type = Required(VariableDeclarationType),
-                                storage_location = Optional(reference = StorageLocation),
-                                name = Required(Identifier),
+                                variable_declaration = Required(VariableDeclaration),
                                 value = Optional(reference = VariableDeclarationValue),
                                 semicolon = Required(Semicolon)
+                            )
+                        ),
+                        // This is reused on the ProtoTuple construct
+                        // It's useful to have it split
+                        Struct(
+                            name = VariableDeclaration,
+                            fields = (
+                                variable_type = Required(VariableDeclarationType),
+                                storage_location = Optional(reference = StorageLocation),
+                                name = Required(Identifier)
                             )
                         ),
                         Enum(
@@ -3610,9 +3618,11 @@ language_v2_macros::compile!(Language(
                                 delimiters =
                                     FieldDelimiters(open = open_paren, close = close_paren)
                             ),
+                            // We need this to be required, otherwise it's just an unnamed argument group
+                            // TODO double check
                             fields = (
                                 open_paren = Required(OpenParen),
-                                arguments = Optional(reference = NamedArgumentGroup),
+                                arguments = Required(NamedArgumentGroup),
                                 close_paren = Required(CloseParen)
                             )
                         ),
@@ -3674,7 +3684,9 @@ language_v2_macros::compile!(Language(
                             name = NewExpression,
                             fields = (
                                 new_keyword = Required(NewKeyword),
-                                type_name = Required(NewableTypeName)
+                                type_name = Required(NewableTypeName),
+                                // TODO: This is a hack to avoid some grammar ambiguities
+                                arguments = Required(PositionalArgumentsDeclaration)
                             )
                         ),
                         Struct(

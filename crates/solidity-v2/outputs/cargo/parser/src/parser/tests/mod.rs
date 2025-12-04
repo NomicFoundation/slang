@@ -24,10 +24,10 @@ fn test(source: &str, _expected: &str) {
 
     let result = grammar::SourceUnitParser::new().parse(&source, lexer);
     if result.is_err() {
-        println!("{:?}", result);
+        println!("{result:?}");
     }
     // Only checking if it's ok for now, at least until the representation of the AST is fixed
     assert!(result.is_ok());
     // assert_eq!(result, expected);
-    println!("{}", result.unwrap());
+    println!("{:#?}", result.unwrap());
 }
