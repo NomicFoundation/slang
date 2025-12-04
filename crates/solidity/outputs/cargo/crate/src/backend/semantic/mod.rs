@@ -11,28 +11,6 @@ use crate::compilation::File;
 use crate::cst::{Cursor, NonterminalNode};
 use crate::parser::ParseError;
 
-pub struct SemanticBuilder {
-    language_version: Version,
-    files: Vec<Rc<File>>,
-}
-
-impl SemanticBuilder {
-    pub fn create(language_version: Version) -> Self {
-        Self {
-            language_version,
-            files: Vec::new(),
-        }
-    }
-
-    pub fn add_file(&mut self, file: Rc<File>) {
-        self.files.push(file);
-    }
-
-    pub fn build(self) -> SemanticAnalysis {
-        SemanticAnalysis::create(self.language_version, self.files)
-    }
-}
-
 #[derive(Clone)]
 pub struct SemanticFile {
     file: Rc<File>,
@@ -76,12 +54,15 @@ pub struct SemanticAnalysis {
 }
 
 impl SemanticAnalysis {
-    fn create(language_version: Version, files: Vec<Rc<File>>) -> Self {
+    pub(crate) fn create<'a>(
+        language_version: Version,
+        files: impl Iterator<Item = &'a Rc<File>>,
+    ) -> Self {
         let mut semantic_analysis = Self::new(language_version);
 
         for file in files {
             let file_id = file.id().to_string();
-            let Some(structured_ast) = passes::p0_build_ast::run_file(&file) else {
+            let Some(structured_ast) = passes::p0_build_ast::run_file(file) else {
                 // TODO(validation): the file is not valid and cannot be turned
                 // into a typed IR tree
                 continue;
@@ -90,7 +71,10 @@ impl SemanticAnalysis {
                 semantic_analysis.language_version(),
                 &structured_ast,
             );
-            let semantic_file = SemanticFile { file, ir_root };
+            let semantic_file = SemanticFile {
+                file: Rc::clone(file),
+                ir_root,
+            };
             semantic_analysis.files.insert(file_id, semantic_file);
         }
 

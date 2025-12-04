@@ -7,6 +7,10 @@ use crate::backend::ir::ir2_flat_contracts::{self as output, input};
 use crate::cst::TerminalNode;
 use crate::utils::versions::VERSION_0_5_0;
 
+/// This pass makes ergonomic changes to the AST in order to make it easier to
+/// use. It includes changes such as removing redundant intermediate nodes,
+/// unifying similar node types and computing visibility/mutability from
+/// collections of attributes.
 pub fn run_file(language_version: &Version, source_unit: &input::SourceUnit) -> output::SourceUnit {
     let mut pass = Pass {
         language_version: language_version.clone(),

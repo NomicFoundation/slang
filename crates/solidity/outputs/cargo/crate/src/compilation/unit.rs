@@ -78,14 +78,11 @@ impl CompilationUnit {
     #[cfg(feature = "__private_backend_api")]
     #[doc(hidden)]
     pub fn semantic_analysis(&self) -> &Rc<SemanticAnalysis> {
-        use crate::backend::semantic::SemanticBuilder;
-
         self.semantic_analysis.get_or_init(|| {
-            let mut builder = SemanticBuilder::create(self.language_version.clone());
-            for file in self.files.values() {
-                builder.add_file(Rc::clone(file));
-            }
-            Rc::new(builder.build())
+            Rc::new(SemanticAnalysis::create(
+                self.language_version.clone(),
+                self.files.values(),
+            ))
         })
     }
 }
