@@ -4,11 +4,11 @@ use std::rc::Rc;
 use semver::Version;
 
 use crate::backend::binder::Binder;
-pub use crate::backend::ir::ir2_flat_contracts as output_ir;
+pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
 use crate::backend::passes;
 use crate::backend::types::TypeRegistry;
 use crate::compilation::File;
-use crate::cst::{Cursor, NonterminalNode};
+use crate::cst::{Cursor, NodeId, NonterminalNode};
 use crate::parser::ParseError;
 
 #[derive(Clone)]
@@ -26,7 +26,7 @@ impl SemanticFile {
         &self.file
     }
 
-    pub fn ir_root(&self) -> &output_ir::SourceUnit {
+    pub(crate) fn ir_root(&self) -> &output_ir::SourceUnit {
         &self.ir_root
     }
 
@@ -118,5 +118,21 @@ impl SemanticAnalysis {
     #[cfg(feature = "__private_testing_utils")]
     pub fn types(&self) -> &TypeRegistry {
         &self.types
+    }
+
+    pub fn get_file_ast_root(
+        self: &Rc<SemanticAnalysis>,
+        file_id: &str,
+    ) -> Option<ast::SourceUnit> {
+        self.files
+            .get(file_id)
+            .map(|file| Rc::new(ast::SourceUnitStruct::create(file.ir_root(), self)))
+    }
+
+    pub(crate) fn node_id_to_file_id(&self, node_id: NodeId) -> Option<String> {
+        self.files
+            .values()
+            .find(|file| file.ir_root.node_id == node_id)
+            .map(|file| file.id().to_string())
     }
 }
