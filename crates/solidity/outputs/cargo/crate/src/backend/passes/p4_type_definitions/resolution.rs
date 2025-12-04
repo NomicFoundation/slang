@@ -1,14 +1,11 @@
 use std::rc::Rc;
 
 use super::Pass;
-use crate::backend::binder::{
-    ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, LibraryDefinition,
-    Reference, Resolution, ScopeId,
-};
+use crate::backend::binder::{Definition, ImportDefinition, Reference, Resolution, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, Type, TypeId};
 
-impl Pass {
+impl Pass<'_> {
     // Resolves an IdentifierPath. It starts resolution at the "contract" scope
     // level, or at the file level if there's no contract scope open. It will
     // follow through in contracts/intrefaces/libraries as well as imports and
@@ -50,11 +47,9 @@ impl Pass {
                     }) => resolved_file_id.as_ref().and_then(|resolved_file_id| {
                         self.binder.scope_id_for_file_id(resolved_file_id)
                     }),
-                    Definition::Contract(ContractDefinition { node_id, .. })
-                    | Definition::Interface(InterfaceDefinition { node_id, .. })
-                    | Definition::Library(LibraryDefinition { node_id, .. }) => {
+                    Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
                         use_lexical_resolution = false;
-                        self.binder.scope_id_for_node_id(*node_id)
+                        self.binder.scope_id_for_node_id(definition.node_id())
                     }
                     _ => None,
                 });
@@ -124,14 +119,8 @@ impl Pass {
             }
             input_ir::TypeName::MappingType(mapping_type) => {
                 let data_location = Some(DataLocation::Storage);
-                let key_type_id = match &mapping_type.key_type.key_type {
-                    input_ir::MappingKeyType::ElementaryType(elementary_type) => {
-                        self.type_of_elementary_type(elementary_type, data_location)
-                    }
-                    input_ir::MappingKeyType::IdentifierPath(identifier_path) => {
-                        self.type_of_identifier_path(identifier_path, data_location)
-                    }
-                }?;
+                let key_type_id =
+                    self.resolve_type_name(&mapping_type.key_type.type_name, data_location)?;
                 let value_type_id =
                     self.resolve_type_name(&mapping_type.value_type.type_name, data_location)?;
                 Some(self.types.register_type(Type::Mapping {

@@ -69,29 +69,12 @@ pub struct VersionTermStruct {
     pub literal: VersionLiteral,
 }
 
-pub type ImportDirective = Rc<ImportDirectiveStruct>;
-
-#[derive(Debug)]
-pub struct ImportDirectiveStruct {
-    pub node_id: NodeId,
-    pub clause: ImportClause,
-}
-
 pub type PathImport = Rc<PathImportStruct>;
 
 #[derive(Debug)]
 pub struct PathImportStruct {
     pub node_id: NodeId,
     pub alias: Option<Rc<TerminalNode>>,
-    pub path: Rc<TerminalNode>,
-}
-
-pub type NamedImport = Rc<NamedImportStruct>;
-
-#[derive(Debug)]
-pub struct NamedImportStruct {
-    pub node_id: NodeId,
-    pub alias: Rc<TerminalNode>,
     pub path: Rc<TerminalNode>,
 }
 
@@ -214,7 +197,8 @@ pub struct ConstantDefinitionStruct {
     pub node_id: NodeId,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
-    pub value: Expression,
+    pub visibility: Option<StateVariableVisibility>,
+    pub value: Option<Expression>,
 }
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
@@ -255,6 +239,7 @@ pub struct ParameterStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Option<Rc<TerminalNode>>,
+    pub indexed: bool,
 }
 
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
@@ -280,18 +265,8 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 pub struct EventDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: EventParameters,
     pub anonymous_keyword: bool,
-}
-
-pub type EventParameter = Rc<EventParameterStruct>;
-
-#[derive(Debug)]
-pub struct EventParameterStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub indexed_keyword: bool,
-    pub name: Option<Rc<TerminalNode>>,
+    pub parameters: Parameters,
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
@@ -309,16 +284,7 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 pub struct ErrorDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub members: ErrorParameters,
-}
-
-pub type ErrorParameter = Rc<ErrorParameterStruct>;
-
-#[derive(Debug)]
-pub struct ErrorParameterStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub name: Option<Rc<TerminalNode>>,
+    pub parameters: Parameters,
 }
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
@@ -346,26 +312,8 @@ pub type MappingType = Rc<MappingTypeStruct>;
 #[derive(Debug)]
 pub struct MappingTypeStruct {
     pub node_id: NodeId,
-    pub key_type: MappingKey,
-    pub value_type: MappingValue,
-}
-
-pub type MappingKey = Rc<MappingKeyStruct>;
-
-#[derive(Debug)]
-pub struct MappingKeyStruct {
-    pub node_id: NodeId,
-    pub key_type: MappingKeyType,
-    pub name: Option<Rc<TerminalNode>>,
-}
-
-pub type MappingValue = Rc<MappingValueStruct>;
-
-#[derive(Debug)]
-pub struct MappingValueStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub name: Option<Rc<TerminalNode>>,
+    pub key_type: Parameter,
+    pub value_type: Parameter,
 }
 
 pub type AddressType = Rc<AddressTypeStruct>;
@@ -415,36 +363,8 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
     pub node_id: NodeId,
-    pub var_keyword: bool,
-    pub elements: TupleDeconstructionElements,
     pub expression: Expression,
-}
-
-pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
-
-#[derive(Debug)]
-pub struct TupleDeconstructionElementStruct {
-    pub node_id: NodeId,
-    pub member: Option<TupleMember>,
-}
-
-pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
-
-#[derive(Debug)]
-pub struct TypedTupleMemberStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Rc<TerminalNode>,
-}
-
-pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
-
-#[derive(Debug)]
-pub struct UntypedTupleMemberStruct {
-    pub node_id: NodeId,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Rc<TerminalNode>,
+    pub members: TupleDeconstructionMembers,
 }
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
@@ -452,10 +372,10 @@ pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 #[derive(Debug)]
 pub struct VariableDeclarationStatementStruct {
     pub node_id: NodeId,
-    pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
     pub value: Option<Expression>,
+    pub type_name: Option<TypeName>,
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -978,10 +898,9 @@ pub struct YulFunctionCallExpressionStruct {
 // Choices:
 //
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
-    ImportDirective(ImportDirective),
     ContractDefinition(ContractDefinition),
     InterfaceDefinition(InterfaceDefinition),
     LibraryDefinition(LibraryDefinition),
@@ -993,35 +912,36 @@ pub enum SourceUnitMember {
     UsingDirective(UsingDirective),
     EventDefinition(EventDefinition),
     ConstantDefinition(ConstantDefinition),
+    ImportClause(ImportClause),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ExperimentalFeature {
     StringLiteral(Rc<TerminalNode>),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionOperator {
     Caret,
     Tilde,
@@ -1032,27 +952,26 @@ pub enum VersionOperator {
     GreaterThanEqual,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     SingleQuotedVersionLiteral(Rc<TerminalNode>),
     DoubleQuotedVersionLiteral(Rc<TerminalNode>),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ImportClause {
     PathImport(PathImport),
-    NamedImport(NamedImport),
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -1071,13 +990,13 @@ pub enum UsingOperator {
     Tilde,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -1087,9 +1006,10 @@ pub enum ContractMember {
     ErrorDefinition(ErrorDefinition),
     UserDefinedValueTypeDefinition(UserDefinedValueTypeDefinition),
     StateVariableDefinition(StateVariableDefinition),
+    ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -1098,13 +1018,7 @@ pub enum TypeName {
     IdentifierPath(IdentifierPath),
 }
 
-#[derive(Debug)]
-pub enum MappingKeyType {
-    ElementaryType(ElementaryType),
-    IdentifierPath(IdentifierPath),
-}
-
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ElementaryType {
     AddressType(AddressType),
     BytesKeyword(Rc<TerminalNode>),
@@ -1117,7 +1031,7 @@ pub enum ElementaryType {
     StringKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -1138,26 +1052,14 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Debug)]
-pub enum TupleMember {
-    TypedTupleMember(TypedTupleMember),
-    UntypedTupleMember(UntypedTupleMember),
-}
-
-#[derive(Debug)]
-pub enum VariableDeclarationType {
-    TypeName(TypeName),
-    VarKeyword,
-}
-
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
     CallDataKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ForStatementInitialization {
     TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
@@ -1165,13 +1067,13 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -1208,13 +1110,13 @@ pub enum Expression {
     FalseKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -1229,14 +1131,14 @@ pub enum NumberUnit {
     YearsKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StringExpression {
     Strings(Strings),
     HexStrings(HexStrings),
     UnicodeStrings(UnicodeStrings),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -1253,32 +1155,32 @@ pub enum YulStatement {
     YulExpression(YulExpression),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulAssignmentOperator {
     YulColonAndEqual(YulColonAndEqual),
     ColonEqual,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulStackAssignmentOperator {
     YulEqualAndColon(YulEqualAndColon),
     EqualColon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
     YulPath(YulPath),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulLiteral {
     YulDecimalLiteral(Rc<TerminalNode>),
     YulHexLiteral(Rc<TerminalNode>),
@@ -1288,7 +1190,7 @@ pub enum YulLiteral {
     YulFalseKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionKind {
     Regular,
     Constructor,
@@ -1298,7 +1200,7 @@ pub enum FunctionKind {
     Modifier,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -1306,7 +1208,7 @@ pub enum FunctionVisibility {
     External,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -1314,19 +1216,26 @@ pub enum FunctionMutability {
     Payable,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StateVariableVisibility {
     Public,
     Private,
     Internal,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
     Immutable,
     Transient,
+}
+
+#[derive(Clone, Debug)]
+pub enum TupleDeconstructionMember {
+    VariableDeclarationStatement(VariableDeclarationStatement),
+    Identifier(Rc<TerminalNode>),
+    None,
 }
 
 //
@@ -1361,13 +1270,7 @@ pub type Parameters = Vec<Parameter>;
 
 pub type OverridePaths = Vec<IdentifierPath>;
 
-pub type EventParameters = Vec<EventParameter>;
-
-pub type ErrorParameters = Vec<ErrorParameter>;
-
 pub type Statements = Vec<Statement>;
-
-pub type TupleDeconstructionElements = Vec<TupleDeconstructionElement>;
 
 pub type CatchClauses = Vec<CatchClause>;
 
@@ -1406,3 +1309,5 @@ pub type HexStrings = Vec<Rc<TerminalNode>>;
 pub type UnicodeStrings = Vec<Rc<TerminalNode>>;
 
 pub type AssemblyFlags = Vec<Rc<TerminalNode>>;
+
+pub type TupleDeconstructionMembers = Vec<TupleDeconstructionMember>;

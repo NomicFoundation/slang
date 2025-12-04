@@ -1,55 +1,35 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
-    Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
-    LibraryDefinition, Reference, Resolution, ScopeId,
+    Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, Reference,
+    Resolution, ScopeId,
 };
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::compilation::CompilationUnit;
+use crate::backend::semantic::SemanticAnalysis;
 use crate::cst::NodeId;
 
 mod c3;
 
-pub struct Output {
-    pub compilation_unit: CompilationUnit,
-    pub files: HashMap<String, input_ir::SourceUnit>,
-    pub binder: Binder,
-}
-
 /// In this pass we collect all bases of contracts and interfaces and then
 /// compute the linearisation for each of them.
-pub fn run(input: Input) -> Output {
-    let files = input.files;
-    let mut pass = Pass::new(input.compilation_unit, input.binder);
-    for source_unit in files.values() {
-        pass.visit_file_collect_bases(source_unit);
+pub fn run(semantic_analysis: &mut SemanticAnalysis) {
+    let mut pass = Pass::new(&mut semantic_analysis.binder);
+    for semantic_file in semantic_analysis.files.values() {
+        pass.visit_file_collect_bases(semantic_file.ir_root());
     }
-    for source_unit in files.values() {
-        pass.visit_file_linearise_contracts(source_unit);
-    }
-
-    let compilation_unit = pass.compilation_unit;
-    let binder = pass.binder;
-    Output {
-        compilation_unit,
-        files,
-        binder,
+    for semantic_file in semantic_analysis.files.values() {
+        pass.visit_file_linearise_contracts(semantic_file.ir_root());
     }
 }
 
-pub struct Pass {
-    pub compilation_unit: CompilationUnit,
-    pub binder: Binder,
+pub struct Pass<'a> {
+    pub binder: &'a mut Binder,
 }
 
-impl Pass {
-    pub fn new(compilation_unit: CompilationUnit, binder: Binder) -> Self {
-        Self {
-            compilation_unit,
-            binder,
-        }
+impl<'a> Pass<'a> {
+    pub fn new(binder: &'a mut Binder) -> Self {
+        Self { binder }
     }
 
     fn visit_file_collect_bases(&mut self, source_unit: &input_ir::SourceUnit) {
@@ -157,11 +137,9 @@ impl Pass {
                     }) => resolved_file_id.as_ref().and_then(|resolved_file_id| {
                         self.binder.scope_id_for_file_id(resolved_file_id)
                     }),
-                    Definition::Contract(ContractDefinition { node_id, .. })
-                    | Definition::Interface(InterfaceDefinition { node_id, .. })
-                    | Definition::Library(LibraryDefinition { node_id, .. }) => {
+                    Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
                         use_lexical_resolution = false;
-                        self.binder.scope_id_for_node_id(*node_id)
+                        self.binder.scope_id_for_node_id(definition.node_id())
                     }
                     _ => None,
                 });
@@ -202,17 +180,16 @@ impl Pass {
             let Some(definition) = self.binder.find_definition_by_id(node_id) else {
                 unreachable!("Unable to resolve the definition for node {node_id:?}");
             };
-            let (Definition::Contract(ContractDefinition {
-                identifier, bases, ..
-            })
-            | Definition::Interface(InterfaceDefinition {
-                identifier, bases, ..
-            })) = definition
+            let (Definition::Contract(ContractDefinition { bases, .. })
+            | Definition::Interface(InterfaceDefinition { bases, .. })) = definition
             else {
                 unreachable!("Node {node_id:?} isn't a contract or interface");
             };
             let bases = bases.as_ref().unwrap_or_else(|| {
-                unreachable!("Contract {identifier:?} hasn't got the bases resolved")
+                unreachable!(
+                    "Contract {identifier:?} hasn't got the bases resolved",
+                    identifier = definition.identifier()
+                )
             });
 
             queue.extend(bases);

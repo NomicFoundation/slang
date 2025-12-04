@@ -1,13 +1,10 @@
-use std::collections::HashMap;
-
 use semver::Version;
 
-use super::p4_type_definitions::Output as Input;
 use crate::backend::binder::{Binder, Scope, ScopeId};
 use crate::backend::built_ins::BuiltInsResolver;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
+use crate::backend::semantic::SemanticAnalysis;
 use crate::backend::types::TypeRegistry;
-use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;
 
 mod disambiguation;
@@ -15,37 +12,19 @@ mod resolution;
 mod typing;
 mod visitor;
 
-pub struct Output {
-    pub compilation_unit: CompilationUnit,
-    pub files: HashMap<String, input_ir::SourceUnit>,
-    pub binder: Binder,
-    pub types: TypeRegistry,
-}
-
 /// This pass will find identifiers used as references, resolve them to the
 /// appropriate definitions, and compute typing information for AST nodes
 /// containing expressions and statements. Both these actions are co-dependant
 /// and happen concurrently for each node, and their results are store in the
 /// `Binder` instance.
-pub fn run(input: Input) -> Output {
-    let files = input.files;
-    let compilation_unit = input.compilation_unit;
+pub fn run(semantic_analysis: &mut SemanticAnalysis) {
     let mut pass = Pass::new(
-        input.binder,
-        input.types,
-        compilation_unit.language_version(),
+        semantic_analysis.language_version().clone(),
+        &mut semantic_analysis.binder,
+        &mut semantic_analysis.types,
     );
-    for source_unit in files.values() {
-        pass.visit_file(source_unit);
-    }
-    let binder = pass.binder;
-    let types = pass.types;
-
-    Output {
-        compilation_unit,
-        files,
-        binder,
-        types,
+    for semantic_file in semantic_analysis.files.values() {
+        pass.visit_file(semantic_file.ir_root());
     }
 }
 
@@ -57,17 +36,17 @@ struct ScopeFrame {
     lexical_scope_id: ScopeId,
 }
 
-struct Pass {
+struct Pass<'a> {
     language_version: Version,
     scope_stack: Vec<ScopeFrame>,
-    binder: Binder,
-    types: TypeRegistry,
+    binder: &'a mut Binder,
+    types: &'a mut TypeRegistry,
 }
 
-impl Pass {
-    fn new(binder: Binder, types: TypeRegistry, language_version: &Version) -> Self {
+impl<'a> Pass<'a> {
+    fn new(language_version: Version, binder: &'a mut Binder, types: &'a mut TypeRegistry) -> Self {
         Self {
-            language_version: language_version.clone(),
+            language_version,
             scope_stack: Vec::new(),
             binder,
             types,
@@ -75,7 +54,7 @@ impl Pass {
     }
 
     fn built_ins_resolver(&self) -> BuiltInsResolver<'_> {
-        BuiltInsResolver::new(self.language_version.clone(), &self.binder, &self.types)
+        BuiltInsResolver::new(self.language_version.clone(), self.binder, self.types)
     }
 
     fn visit_file(&mut self, source_unit: &input_ir::SourceUnit) {

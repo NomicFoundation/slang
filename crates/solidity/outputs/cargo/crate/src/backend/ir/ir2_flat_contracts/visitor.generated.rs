@@ -42,20 +42,10 @@ pub trait Visitor {
     }
     fn leave_version_term(&mut self, _node: &VersionTerm) {}
 
-    fn enter_import_directive(&mut self, _node: &ImportDirective) -> bool {
-        true
-    }
-    fn leave_import_directive(&mut self, _node: &ImportDirective) {}
-
     fn enter_path_import(&mut self, _node: &PathImport) -> bool {
         true
     }
     fn leave_path_import(&mut self, _node: &PathImport) {}
-
-    fn enter_named_import(&mut self, _node: &NamedImport) -> bool {
-        true
-    }
-    fn leave_named_import(&mut self, _node: &NamedImport) {}
 
     fn enter_import_deconstruction(&mut self, _node: &ImportDeconstruction) -> bool {
         true
@@ -152,11 +142,6 @@ pub trait Visitor {
     }
     fn leave_event_definition(&mut self, _node: &EventDefinition) {}
 
-    fn enter_event_parameter(&mut self, _node: &EventParameter) -> bool {
-        true
-    }
-    fn leave_event_parameter(&mut self, _node: &EventParameter) {}
-
     fn enter_user_defined_value_type_definition(
         &mut self,
         _node: &UserDefinedValueTypeDefinition,
@@ -170,11 +155,6 @@ pub trait Visitor {
         true
     }
     fn leave_error_definition(&mut self, _node: &ErrorDefinition) {}
-
-    fn enter_error_parameter(&mut self, _node: &ErrorParameter) -> bool {
-        true
-    }
-    fn leave_error_parameter(&mut self, _node: &ErrorParameter) {}
 
     fn enter_array_type_name(&mut self, _node: &ArrayTypeName) -> bool {
         true
@@ -190,16 +170,6 @@ pub trait Visitor {
         true
     }
     fn leave_mapping_type(&mut self, _node: &MappingType) {}
-
-    fn enter_mapping_key(&mut self, _node: &MappingKey) -> bool {
-        true
-    }
-    fn leave_mapping_key(&mut self, _node: &MappingKey) {}
-
-    fn enter_mapping_value(&mut self, _node: &MappingValue) -> bool {
-        true
-    }
-    fn leave_mapping_value(&mut self, _node: &MappingValue) {}
 
     fn enter_address_type(&mut self, _node: &AddressType) -> bool {
         true
@@ -233,21 +203,6 @@ pub trait Visitor {
         true
     }
     fn leave_tuple_deconstruction_statement(&mut self, _node: &TupleDeconstructionStatement) {}
-
-    fn enter_tuple_deconstruction_element(&mut self, _node: &TupleDeconstructionElement) -> bool {
-        true
-    }
-    fn leave_tuple_deconstruction_element(&mut self, _node: &TupleDeconstructionElement) {}
-
-    fn enter_typed_tuple_member(&mut self, _node: &TypedTupleMember) -> bool {
-        true
-    }
-    fn leave_typed_tuple_member(&mut self, _node: &TypedTupleMember) {}
-
-    fn enter_untyped_tuple_member(&mut self, _node: &UntypedTupleMember) -> bool {
-        true
-    }
-    fn leave_untyped_tuple_member(&mut self, _node: &UntypedTupleMember) {}
 
     fn enter_variable_declaration_statement(
         &mut self,
@@ -628,11 +583,6 @@ pub trait Visitor {
     }
     fn leave_type_name(&mut self, _node: &TypeName) {}
 
-    fn enter_mapping_key_type(&mut self, _node: &MappingKeyType) -> bool {
-        true
-    }
-    fn leave_mapping_key_type(&mut self, _node: &MappingKeyType) {}
-
     fn enter_elementary_type(&mut self, _node: &ElementaryType) -> bool {
         true
     }
@@ -642,16 +592,6 @@ pub trait Visitor {
         true
     }
     fn leave_statement(&mut self, _node: &Statement) {}
-
-    fn enter_tuple_member(&mut self, _node: &TupleMember) -> bool {
-        true
-    }
-    fn leave_tuple_member(&mut self, _node: &TupleMember) {}
-
-    fn enter_variable_declaration_type(&mut self, _node: &VariableDeclarationType) -> bool {
-        true
-    }
-    fn leave_variable_declaration_type(&mut self, _node: &VariableDeclarationType) {}
 
     fn enter_storage_location(&mut self, _node: &StorageLocation) -> bool {
         true
@@ -743,6 +683,11 @@ pub trait Visitor {
     }
     fn leave_state_variable_mutability(&mut self, _node: &StateVariableMutability) {}
 
+    fn enter_tuple_deconstruction_member(&mut self, _node: &TupleDeconstructionMember) -> bool {
+        true
+    }
+    fn leave_tuple_deconstruction_member(&mut self, _node: &TupleDeconstructionMember) {}
+
     fn enter_source_unit_members(&mut self, _items: &SourceUnitMembers) -> bool {
         true
     }
@@ -816,28 +761,10 @@ pub trait Visitor {
     }
     fn leave_override_paths(&mut self, _items: &OverridePaths) {}
 
-    fn enter_event_parameters(&mut self, _items: &EventParameters) -> bool {
-        true
-    }
-    fn leave_event_parameters(&mut self, _items: &EventParameters) {}
-
-    fn enter_error_parameters(&mut self, _items: &ErrorParameters) -> bool {
-        true
-    }
-    fn leave_error_parameters(&mut self, _items: &ErrorParameters) {}
-
     fn enter_statements(&mut self, _items: &Statements) -> bool {
         true
     }
     fn leave_statements(&mut self, _items: &Statements) {}
-
-    fn enter_tuple_deconstruction_elements(
-        &mut self,
-        _items: &TupleDeconstructionElements,
-    ) -> bool {
-        true
-    }
-    fn leave_tuple_deconstruction_elements(&mut self, _items: &TupleDeconstructionElements) {}
 
     fn enter_catch_clauses(&mut self, _items: &CatchClauses) -> bool {
         true
@@ -933,6 +860,11 @@ pub trait Visitor {
         true
     }
     fn leave_assembly_flags(&mut self, _items: &AssemblyFlags) {}
+
+    fn enter_tuple_deconstruction_members(&mut self, _items: &TupleDeconstructionMembers) -> bool {
+        true
+    }
+    fn leave_tuple_deconstruction_members(&mut self, _items: &TupleDeconstructionMembers) {}
 }
 
 //
@@ -999,26 +931,11 @@ pub fn accept_version_term(node: &VersionTerm, visitor: &mut impl Visitor) {
     visitor.leave_version_term(node);
 }
 
-pub fn accept_import_directive(node: &ImportDirective, visitor: &mut impl Visitor) {
-    if !visitor.enter_import_directive(node) {
-        return;
-    }
-    accept_import_clause(&node.clause, visitor);
-    visitor.leave_import_directive(node);
-}
-
 pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
     if !visitor.enter_path_import(node) {
         return;
     }
     visitor.leave_path_import(node);
-}
-
-pub fn accept_named_import(node: &NamedImport, visitor: &mut impl Visitor) {
-    if !visitor.enter_named_import(node) {
-        return;
-    }
-    visitor.leave_named_import(node);
 }
 
 pub fn accept_import_deconstruction(node: &ImportDeconstruction, visitor: &mut impl Visitor) {
@@ -1141,7 +1058,12 @@ pub fn accept_constant_definition(node: &ConstantDefinition, visitor: &mut impl 
         return;
     }
     accept_type_name(&node.type_name, visitor);
-    accept_expression(&node.value, visitor);
+    if let Some(ref visibility) = node.visibility {
+        accept_state_variable_visibility(visibility, visitor);
+    }
+    if let Some(ref value) = node.value {
+        accept_expression(value, visitor);
+    }
     visitor.leave_constant_definition(node);
 }
 
@@ -1221,16 +1143,8 @@ pub fn accept_event_definition(node: &EventDefinition, visitor: &mut impl Visito
     if !visitor.enter_event_definition(node) {
         return;
     }
-    accept_event_parameters(&node.parameters, visitor);
+    accept_parameters(&node.parameters, visitor);
     visitor.leave_event_definition(node);
-}
-
-pub fn accept_event_parameter(node: &EventParameter, visitor: &mut impl Visitor) {
-    if !visitor.enter_event_parameter(node) {
-        return;
-    }
-    accept_type_name(&node.type_name, visitor);
-    visitor.leave_event_parameter(node);
 }
 
 pub fn accept_user_defined_value_type_definition(
@@ -1248,16 +1162,8 @@ pub fn accept_error_definition(node: &ErrorDefinition, visitor: &mut impl Visito
     if !visitor.enter_error_definition(node) {
         return;
     }
-    accept_error_parameters(&node.members, visitor);
+    accept_parameters(&node.parameters, visitor);
     visitor.leave_error_definition(node);
-}
-
-pub fn accept_error_parameter(node: &ErrorParameter, visitor: &mut impl Visitor) {
-    if !visitor.enter_error_parameter(node) {
-        return;
-    }
-    accept_type_name(&node.type_name, visitor);
-    visitor.leave_error_parameter(node);
 }
 
 pub fn accept_array_type_name(node: &ArrayTypeName, visitor: &mut impl Visitor) {
@@ -1288,25 +1194,9 @@ pub fn accept_mapping_type(node: &MappingType, visitor: &mut impl Visitor) {
     if !visitor.enter_mapping_type(node) {
         return;
     }
-    accept_mapping_key(&node.key_type, visitor);
-    accept_mapping_value(&node.value_type, visitor);
+    accept_parameter(&node.key_type, visitor);
+    accept_parameter(&node.value_type, visitor);
     visitor.leave_mapping_type(node);
-}
-
-pub fn accept_mapping_key(node: &MappingKey, visitor: &mut impl Visitor) {
-    if !visitor.enter_mapping_key(node) {
-        return;
-    }
-    accept_mapping_key_type(&node.key_type, visitor);
-    visitor.leave_mapping_key(node);
-}
-
-pub fn accept_mapping_value(node: &MappingValue, visitor: &mut impl Visitor) {
-    if !visitor.enter_mapping_value(node) {
-        return;
-    }
-    accept_type_name(&node.type_name, visitor);
-    visitor.leave_mapping_value(node);
 }
 
 pub fn accept_address_type(node: &AddressType, visitor: &mut impl Visitor) {
@@ -1356,43 +1246,9 @@ pub fn accept_tuple_deconstruction_statement(
     if !visitor.enter_tuple_deconstruction_statement(node) {
         return;
     }
-    accept_tuple_deconstruction_elements(&node.elements, visitor);
     accept_expression(&node.expression, visitor);
+    accept_tuple_deconstruction_members(&node.members, visitor);
     visitor.leave_tuple_deconstruction_statement(node);
-}
-
-pub fn accept_tuple_deconstruction_element(
-    node: &TupleDeconstructionElement,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_tuple_deconstruction_element(node) {
-        return;
-    }
-    if let Some(ref member) = node.member {
-        accept_tuple_member(member, visitor);
-    }
-    visitor.leave_tuple_deconstruction_element(node);
-}
-
-pub fn accept_typed_tuple_member(node: &TypedTupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_typed_tuple_member(node) {
-        return;
-    }
-    accept_type_name(&node.type_name, visitor);
-    if let Some(ref storage_location) = node.storage_location {
-        accept_storage_location(storage_location, visitor);
-    }
-    visitor.leave_typed_tuple_member(node);
-}
-
-pub fn accept_untyped_tuple_member(node: &UntypedTupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_untyped_tuple_member(node) {
-        return;
-    }
-    if let Some(ref storage_location) = node.storage_location {
-        accept_storage_location(storage_location, visitor);
-    }
-    visitor.leave_untyped_tuple_member(node);
 }
 
 pub fn accept_variable_declaration_statement(
@@ -1402,12 +1258,14 @@ pub fn accept_variable_declaration_statement(
     if !visitor.enter_variable_declaration_statement(node) {
         return;
     }
-    accept_variable_declaration_type(&node.variable_type, visitor);
     if let Some(ref storage_location) = node.storage_location {
         accept_storage_location(storage_location, visitor);
     }
     if let Some(ref value) = node.value {
         accept_expression(value, visitor);
+    }
+    if let Some(ref type_name) = node.type_name {
+        accept_type_name(type_name, visitor);
     }
     visitor.leave_variable_declaration_statement(node);
 }
@@ -1973,9 +1831,6 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         SourceUnitMember::PragmaDirective(ref pragma_directive) => {
             accept_pragma_directive(pragma_directive, visitor);
         }
-        SourceUnitMember::ImportDirective(ref import_directive) => {
-            accept_import_directive(import_directive, visitor);
-        }
         SourceUnitMember::ContractDefinition(ref contract_definition) => {
             accept_contract_definition(contract_definition, visitor);
         }
@@ -2010,6 +1865,9 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         }
         SourceUnitMember::ConstantDefinition(ref constant_definition) => {
             accept_constant_definition(constant_definition, visitor);
+        }
+        SourceUnitMember::ImportClause(ref import_clause) => {
+            accept_import_clause(import_clause, visitor);
         }
     }
     visitor.leave_source_unit_member(node);
@@ -2075,9 +1933,6 @@ pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     match node {
         ImportClause::PathImport(ref path_import) => {
             accept_path_import(path_import, visitor);
-        }
-        ImportClause::NamedImport(ref named_import) => {
-            accept_named_import(named_import, visitor);
         }
         ImportClause::ImportDeconstruction(ref import_deconstruction) => {
             accept_import_deconstruction(import_deconstruction, visitor);
@@ -2145,6 +2000,9 @@ pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor)
         ContractMember::StateVariableDefinition(ref state_variable_definition) => {
             accept_state_variable_definition(state_variable_definition, visitor);
         }
+        ContractMember::ConstantDefinition(ref constant_definition) => {
+            accept_constant_definition(constant_definition, visitor);
+        }
     }
     visitor.leave_contract_member(node);
 }
@@ -2171,21 +2029,6 @@ pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
         }
     }
     visitor.leave_type_name(node);
-}
-
-pub fn accept_mapping_key_type(node: &MappingKeyType, visitor: &mut impl Visitor) {
-    if !visitor.enter_mapping_key_type(node) {
-        return;
-    }
-    match node {
-        MappingKeyType::ElementaryType(ref elementary_type) => {
-            accept_elementary_type(elementary_type, visitor);
-        }
-        MappingKeyType::IdentifierPath(ref identifier_path) => {
-            accept_identifier_path(identifier_path, visitor);
-        }
-    }
-    visitor.leave_mapping_key_type(node);
 }
 
 pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor) {
@@ -2266,37 +2109,6 @@ pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
         }
     }
     visitor.leave_statement(node);
-}
-
-pub fn accept_tuple_member(node: &TupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_tuple_member(node) {
-        return;
-    }
-    match node {
-        TupleMember::TypedTupleMember(ref typed_tuple_member) => {
-            accept_typed_tuple_member(typed_tuple_member, visitor);
-        }
-        TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
-            accept_untyped_tuple_member(untyped_tuple_member, visitor);
-        }
-    }
-    visitor.leave_tuple_member(node);
-}
-
-pub fn accept_variable_declaration_type(
-    node: &VariableDeclarationType,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_variable_declaration_type(node) {
-        return;
-    }
-    match node {
-        VariableDeclarationType::TypeName(ref type_name) => {
-            accept_type_name(type_name, visitor);
-        }
-        VariableDeclarationType::VarKeyword => {}
-    }
-    visitor.leave_variable_declaration_type(node);
 }
 
 pub fn accept_storage_location(_node: &StorageLocation, _visitor: &mut impl Visitor) {}
@@ -2601,6 +2413,25 @@ pub fn accept_state_variable_mutability(
 ) {
 }
 
+pub fn accept_tuple_deconstruction_member(
+    node: &TupleDeconstructionMember,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_tuple_deconstruction_member(node) {
+        return;
+    }
+    match node {
+        TupleDeconstructionMember::VariableDeclarationStatement(
+            ref variable_declaration_statement,
+        ) => {
+            accept_variable_declaration_statement(variable_declaration_statement, visitor);
+        }
+        TupleDeconstructionMember::Identifier(_) => {}
+        TupleDeconstructionMember::None => {}
+    }
+    visitor.leave_tuple_deconstruction_member(node);
+}
+
 //
 // Repeated & Separated
 //
@@ -2758,28 +2589,6 @@ fn accept_override_paths(items: &Vec<IdentifierPath>, visitor: &mut impl Visitor
 }
 
 #[inline]
-fn accept_event_parameters(items: &Vec<EventParameter>, visitor: &mut impl Visitor) {
-    if !visitor.enter_event_parameters(items) {
-        return;
-    }
-    for item in items {
-        accept_event_parameter(item, visitor);
-    }
-    visitor.leave_event_parameters(items);
-}
-
-#[inline]
-fn accept_error_parameters(items: &Vec<ErrorParameter>, visitor: &mut impl Visitor) {
-    if !visitor.enter_error_parameters(items) {
-        return;
-    }
-    for item in items {
-        accept_error_parameter(item, visitor);
-    }
-    visitor.leave_error_parameters(items);
-}
-
-#[inline]
 fn accept_statements(items: &Vec<Statement>, visitor: &mut impl Visitor) {
     if !visitor.enter_statements(items) {
         return;
@@ -2788,20 +2597,6 @@ fn accept_statements(items: &Vec<Statement>, visitor: &mut impl Visitor) {
         accept_statement(item, visitor);
     }
     visitor.leave_statements(items);
-}
-
-#[inline]
-fn accept_tuple_deconstruction_elements(
-    items: &Vec<TupleDeconstructionElement>,
-    visitor: &mut impl Visitor,
-) {
-    if !visitor.enter_tuple_deconstruction_elements(items) {
-        return;
-    }
-    for item in items {
-        accept_tuple_deconstruction_element(item, visitor);
-    }
-    visitor.leave_tuple_deconstruction_elements(items);
 }
 
 #[inline]
@@ -2979,4 +2774,18 @@ fn accept_assembly_flags(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visit
     if visitor.enter_assembly_flags(items) {
         visitor.leave_assembly_flags(items);
     }
+}
+
+#[inline]
+fn accept_tuple_deconstruction_members(
+    items: &Vec<TupleDeconstructionMember>,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_tuple_deconstruction_members(items) {
+        return;
+    }
+    for item in items {
+        accept_tuple_deconstruction_member(item, visitor);
+    }
+    visitor.leave_tuple_deconstruction_members(items);
 }

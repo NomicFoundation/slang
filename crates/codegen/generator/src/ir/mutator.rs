@@ -366,6 +366,7 @@ impl IrModelMutator {
             !replace_field.is_optional,
             "Cannot collapse sequence {sequence_id} of an optional field"
         );
+        let replaced_type = self.find_node_type(&sequence_id.into());
 
         // Iterate remaining sequences and replace any fields referencing the
         // removed type by the target type
@@ -374,6 +375,20 @@ impl IrModelMutator {
                 if field.target_type == identifier {
                     field.target_type = replace_field.target_type.clone();
                 }
+            }
+        }
+
+        // Iterate choice types, remove type to be collapsed and add the
+        // replacement variant instead
+        // TODO: the transformer for this case is not generated automatically,
+        // but if we change the structure of `MutatedChoice` we could accomodate it
+        for (_, choice) in &mut self.choices {
+            if choice.variants.contains(&replaced_type) {
+                choice.has_removed_variants = true;
+                choice.variants.retain(|item| *item != identifier);
+                choice
+                    .added_variants
+                    .push(replace_field.target_type.clone());
             }
         }
 
