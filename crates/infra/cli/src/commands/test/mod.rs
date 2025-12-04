@@ -1,3 +1,5 @@
+use std::iter::empty;
+
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use infra_utils::cargo::{CargoWorkspace, CargoWorkspaceCommands};
@@ -7,17 +9,17 @@ use infra_utils::terminal::Terminal;
 #[derive(Clone, Debug, Default, Parser)]
 pub struct TestController {
     #[clap(subcommand)]
-    commands: Option<TestCommand>,
+    command: Option<TestCommand>,
 }
 
 impl TestController {
     pub fn execute(&self) -> Result<()> {
-        match &self.commands {
-            Some(TestCommand::Cargo { passthrough }) => test_cargo()?.args(passthrough).run(),
-            Some(TestCommand::Npm { passthrough }) => test_npm().args(passthrough).run(),
+        match &self.command {
+            Some(TestCommand::Cargo { passthrough }) => test_cargo(passthrough)?,
+            Some(TestCommand::Npm { passthrough }) => test_npm(passthrough),
             None => {
-                test_cargo()?.run();
-                test_npm().run();
+                test_cargo(empty::<String>())?;
+                test_npm(empty::<String>());
             }
         }
         Ok(())
@@ -41,12 +43,12 @@ enum TestCommand {
     },
 }
 
-fn test_cargo() -> Result<Command> {
+fn test_cargo(passthrough: impl IntoIterator<Item = impl Into<String>>) -> Result<()> {
     Terminal::step("test Cargo");
 
     CargoWorkspace::install_binary("cargo-nextest")?;
 
-    Ok(Command::new("cargo")
+    Command::new("cargo")
         .args(["nextest", "run"])
         .flag("--workspace")
         .flag("--all-features")
@@ -55,13 +57,19 @@ fn test_cargo() -> Result<Command> {
         .flag("--bins")
         .flag("--examples")
         .flag("--no-fail-fast")
-        .add_build_rustflags())
+        .add_build_rustflags()
+        .args(passthrough)
+        .run();
+
+    Ok(())
 }
 
-fn test_npm() -> Command {
+fn test_npm(passthrough: impl IntoIterator<Item = impl Into<String>>) {
     Terminal::step("test Npm");
 
     Command::new("jest")
         .env("NODE_OPTIONS", "--experimental-vm-modules") // because we are executing ESM tests
         .env("NODE_NO_WARNINGS", "1") // disable warnings about experimental feature above (too much noise)
+        .args(passthrough)
+        .run();
 }
