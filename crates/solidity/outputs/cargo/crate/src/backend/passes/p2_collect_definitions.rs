@@ -1,21 +1,14 @@
-use std::collections::HashMap;
 use std::rc::Rc;
 
 use semver::Version;
 
-use super::p1_flatten_contracts::Output as Input;
 use crate::backend::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::compilation::{CompilationUnit, File};
+use crate::backend::semantic::SemanticAnalysis;
+use crate::compilation::File;
 use crate::cst::{NodeId, TerminalNode};
 use crate::utils::versions::VERSION_0_5_0;
-
-pub struct Output {
-    pub compilation_unit: CompilationUnit,
-    pub files: HashMap<String, input_ir::SourceUnit>,
-    pub binder: Binder,
-}
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
@@ -23,20 +16,13 @@ pub struct Output {
 /// instantiates a `Binder` object which will store all this information as well
 /// as references and typing information for the nodes, to be resolved in later
 /// passes.
-pub fn run(input: Input) -> Output {
-    let files = input.files;
-    let compilation_unit = input.compilation_unit;
-    let mut pass = Pass::new(compilation_unit.language_version());
-    for (file_id, source_unit) in &files {
-        let file = compilation_unit.file(file_id).unwrap();
-        pass.visit_file(file, source_unit);
-    }
-    let binder = pass.binder;
-
-    Output {
-        compilation_unit,
-        files,
-        binder,
+pub fn run(semantic_analysis: &mut SemanticAnalysis) {
+    let mut pass = Pass::new(
+        semantic_analysis.language_version().clone(),
+        &mut semantic_analysis.binder,
+    );
+    for semantic_file in semantic_analysis.files.values() {
+        pass.visit_file(semantic_file.file(), semantic_file.ir_root());
     }
 }
 
@@ -48,27 +34,27 @@ struct ScopeFrame {
     lexical_scope_id: ScopeId,
 }
 
-struct Pass {
+struct Pass<'a> {
     language_version: Version,
     current_file: Option<Rc<File>>, // needed to resolve imports on the file
     scope_stack: Vec<ScopeFrame>,
-    binder: Binder,
+    binder: &'a mut Binder,
 }
 
-impl Pass {
-    fn new(language_version: &Version) -> Self {
+impl<'a> Pass<'a> {
+    fn new(language_version: Version, binder: &'a mut Binder) -> Self {
         Self {
-            language_version: language_version.clone(),
+            language_version,
             current_file: None,
             scope_stack: Vec::new(),
-            binder: Binder::new(),
+            binder,
         }
     }
 
-    fn visit_file(&mut self, file: Rc<File>, source_unit: &input_ir::SourceUnit) {
+    fn visit_file(&mut self, file: &Rc<File>, source_unit: &input_ir::SourceUnit) {
         assert!(self.current_file.is_none());
 
-        self.current_file = Some(file);
+        self.current_file = Some(Rc::clone(file));
         input_ir::visitor::accept_source_unit(source_unit, self);
         self.current_file = None;
 
@@ -233,7 +219,7 @@ impl Pass {
     }
 }
 
-impl Visitor for Pass {
+impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &input_ir::SourceUnit) -> bool {
         let Some(current_file) = &self.current_file else {
             unreachable!("visiting SourceUnit without a current file being set");

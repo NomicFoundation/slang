@@ -8,7 +8,7 @@ use crate::backend::binder::{
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, Type, TypeId};
 
-impl Pass {
+impl Pass<'_> {
     // Resolves an IdentifierPath. It starts resolution at the "contract" scope
     // level, or at the file level if there's no contract scope open. It will
     // follow through in contracts/intrefaces/libraries as well as imports and

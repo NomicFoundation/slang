@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+use std::rc::Rc;
+
 use anyhow::Result;
 use slang_solidity::backend::ir::ir2_flat_contracts;
 use slang_solidity::backend::passes::{p0_build_ast, p1_flatten_contracts};
@@ -33,12 +36,21 @@ contract Test is Base layout at 0 {}
 
     let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, Config {})?;
     assert!(builder.add_file("main.sol").is_ok());
-    let compilation_unit = builder.build();
+    let compilation_unit = Rc::new(builder.build());
 
-    let data = p0_build_ast::run(compilation_unit);
-    let data = p1_flatten_contracts::run(data);
+    let language_version = compilation_unit.language_version();
+    let files = compilation_unit
+        .files()
+        .iter()
+        .filter_map(|file| {
+            let file_id = file.id().to_string();
+            p0_build_ast::run_file(file)
+                .map(|file| p1_flatten_contracts::run_file(language_version, &file))
+                .map(|file| (file_id, file))
+        })
+        .collect::<HashMap<_, _>>();
 
-    let l2 = &data.files["main.sol"];
+    let l2 = &files["main.sol"];
 
     assert_eq!(2, l2.members.len());
 

@@ -8,7 +8,7 @@ use crate::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeI
 use crate::cst::{NodeId, TerminalNode};
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_8_0};
 
-impl Pass {
+impl Pass<'_> {
     pub(super) fn typing_of_expression(&self, node: &input_ir::Expression) -> Typing {
         match node {
             input_ir::Expression::AssignmentExpression(assignment_expression) => {
@@ -528,7 +528,7 @@ fn reference_node_id_for_expression(node: &input_ir::Expression) -> Option<NodeI
 }
 
 /// Typing functions for literals
-impl Pass {
+impl Pass<'_> {
     pub(super) fn type_of_string_expression(node: &input_ir::StringExpression) -> Type {
         let kind = match node {
             input_ir::StringExpression::Strings(strings) => {
