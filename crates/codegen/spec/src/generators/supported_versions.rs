@@ -27,7 +27,7 @@ pub fn generate_supported_versions(model: &SpecModel) -> Result<String> {
 
     let breaking_versions = model
         .language
-        .collect_breaking_versions()
+        .collect_all_breaking_versions()
         .iter()
         .map(|version| format!("`{version}`"))
         .collect_vec();
