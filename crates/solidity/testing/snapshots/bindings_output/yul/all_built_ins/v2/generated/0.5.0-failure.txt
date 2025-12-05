@@ -6,7 +6,7 @@ Definitions (2):
 
 ------------------------------------------------------------------------
 
-References (80):
+References (81):
 - Ref: ["add" @ input.sol:4:13] -> built-in
 - Ref: ["addmod" @ input.sol:5:13] -> built-in
 - Ref: ["address" @ input.sol:6:13] -> built-in
@@ -87,6 +87,7 @@ References (80):
 - Ref: ["tload" @ input.sol:81:13] -> unresolved
 - Ref: ["tstore" @ input.sol:82:13] -> unresolved
 - Ref: ["xor" @ input.sol:83:13] -> built-in
+- Ref: ["clz" @ input.sol:84:13] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -344,4 +345,7 @@ Bindings:
  83 │             xor()
     │             ─┬─  
     │              ╰─── built-in
+ 84 │             clz()
+    │             ─┬─  
+    │              ╰─── unresolved
 ────╯

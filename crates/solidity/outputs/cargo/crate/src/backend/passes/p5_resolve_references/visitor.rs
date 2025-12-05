@@ -32,6 +32,8 @@ impl Visitor for Pass {
             input_ir::visitor::accept_inheritance_type(inheritance_type, self);
         }
         if let Some(ref storage_layout) = node.storage_layout {
+            // TODO(validation): check that the expression is not binding constant variables up until 0.8.31
+            // https://www.soliditylang.org/blog/2025/12/03/solidity-0.8.31-release-announcement
             input_ir::visitor::accept_expression(storage_layout, self);
         }
 

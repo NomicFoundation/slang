@@ -81,6 +81,7 @@ contract Test {
             tload()
             tstore()
             xor()
+            clz()
         }
     }
 }

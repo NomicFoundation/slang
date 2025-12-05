@@ -13,8 +13,8 @@ References (81):
 - Ref: ["and" @ input.sol:7:13] -> built-in
 - Ref: ["balance" @ input.sol:8:13] -> built-in
 - Ref: ["basefee" @ input.sol:9:13] -> built-in
-- Ref: ["blobbasefee" @ input.sol:10:13] -> unresolved
-- Ref: ["blobhash" @ input.sol:11:13] -> unresolved
+- Ref: ["blobbasefee" @ input.sol:10:13] -> built-in
+- Ref: ["blobhash" @ input.sol:11:13] -> built-in
 - Ref: ["blockhash" @ input.sol:12:13] -> built-in
 - Ref: ["byte" @ input.sol:13:13] -> built-in
 - Ref: ["call" @ input.sol:14:13] -> built-in
@@ -50,7 +50,7 @@ References (81):
 - Ref: ["log3" @ input.sol:44:13] -> built-in
 - Ref: ["log4" @ input.sol:45:13] -> built-in
 - Ref: ["lt" @ input.sol:46:13] -> built-in
-- Ref: ["mcopy" @ input.sol:47:13] -> unresolved
+- Ref: ["mcopy" @ input.sol:47:13] -> built-in
 - Ref: ["mload" @ input.sol:48:13] -> built-in
 - Ref: ["mod" @ input.sol:49:13] -> built-in
 - Ref: ["msize" @ input.sol:50:13] -> built-in
@@ -84,8 +84,8 @@ References (81):
 - Ref: ["stop" @ input.sol:78:13] -> built-in
 - Ref: ["sub" @ input.sol:79:13] -> built-in
 - Ref: ["timestamp" @ input.sol:80:13] -> built-in
-- Ref: ["tload" @ input.sol:81:13] -> unresolved
-- Ref: ["tstore" @ input.sol:82:13] -> unresolved
+- Ref: ["tload" @ input.sol:81:13] -> built-in
+- Ref: ["tstore" @ input.sol:82:13] -> built-in
 - Ref: ["xor" @ input.sol:83:13] -> built-in
 - Ref: ["clz" @ input.sol:84:13] -> unresolved
 
@@ -125,10 +125,10 @@ Bindings:
     │                ╰───── built-in
  10 │             blobbasefee()
     │             ─────┬─────  
-    │                  ╰─────── unresolved
+    │                  ╰─────── built-in
  11 │             blobhash()
     │             ────┬───  
-    │                 ╰───── unresolved
+    │                 ╰───── built-in
  12 │             blockhash()
     │             ────┬────  
     │                 ╰────── built-in
@@ -236,7 +236,7 @@ Bindings:
     │              ╰── built-in
  47 │             mcopy()
     │             ──┬──  
-    │               ╰──── unresolved
+    │               ╰──── built-in
  48 │             mload()
     │             ──┬──  
     │               ╰──── built-in
@@ -338,10 +338,10 @@ Bindings:
     │                 ╰────── built-in
  81 │             tload()
     │             ──┬──  
-    │               ╰──── unresolved
+    │               ╰──── built-in
  82 │             tstore()
     │             ───┬──  
-    │                ╰──── unresolved
+    │                ╰──── built-in
  83 │             xor()
     │             ─┬─  
     │              ╰─── built-in

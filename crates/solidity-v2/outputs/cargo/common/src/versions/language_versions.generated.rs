@@ -93,6 +93,7 @@ pub enum LanguageVersion {
     V0_8_28,
     V0_8_29,
     V0_8_30,
+    V0_8_31,
 }
 
 #[derive(Debug, Error, PartialEq)]
@@ -205,6 +206,7 @@ impl TryFrom<Version> for LanguageVersion {
             (0, 8, 28) => LanguageVersion::V0_8_28,
             (0, 8, 29) => LanguageVersion::V0_8_29,
             (0, 8, 30) => LanguageVersion::V0_8_30,
+            (0, 8, 31) => LanguageVersion::V0_8_31,
             _ => return Err(FromSemverError::UnsupportedVersion),
         })
     }

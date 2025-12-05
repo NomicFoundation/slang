@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract C layout at 0xAAAA {
+   │          ┬  
+   │          ╰── name: 1
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ contract C layout at 0xAAAA {
+ 2 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+───╯
