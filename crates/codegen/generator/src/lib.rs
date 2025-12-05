@@ -68,7 +68,7 @@ impl RuntimeModel {
             slang_version: CargoWorkspace::local_version()?,
             language_name: language.name.to_string(),
             all_language_versions: language.versions.iter().cloned().collect(),
-            breaking_language_versions: language.collect_breaking_versions(),
+            breaking_language_versions: language.collect_grammar_breaking_versions(),
 
             ast: AstModel::from_language(language),
             bindings: BindingsModel::from_language(language)?,
