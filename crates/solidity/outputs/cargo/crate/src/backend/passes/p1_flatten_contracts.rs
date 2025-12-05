@@ -61,8 +61,6 @@ impl Transformer for Pass {
             .unwrap_or_default();
         let storage_layout = source.specifiers.iter().find_map(|specifier| {
             if let input::ContractSpecifier::StorageLayoutSpecifier(storage_layout) = specifier {
-                // TODO(validation): check that the expression is not binding constant variables up until 0.8.31
-                // https://www.soliditylang.org/blog/2025/12/03/solidity-0.8.31-release-announcement
                 Some(self.transform_storage_layout_specifier(storage_layout))
             } else {
                 None
