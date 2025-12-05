@@ -3,10 +3,11 @@ use std::rc::Rc;
 
 use semver::Version;
 
+use self::ast::{ContractDefinition, ContractDefinitionStruct, Definition, DefinitionStruct};
 use crate::backend::binder::Binder;
 pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
-use crate::backend::passes;
 use crate::backend::types::TypeRegistry;
+use crate::backend::{binder, passes};
 use crate::compilation::File;
 use crate::cst::{Cursor, NodeId, NonterminalNode};
 use crate::parser::ParseError;
@@ -120,10 +121,7 @@ impl SemanticAnalysis {
         &self.types
     }
 
-    pub fn get_file_ast_root(
-        self: &Rc<SemanticAnalysis>,
-        file_id: &str,
-    ) -> Option<ast::SourceUnit> {
+    pub fn get_file_ast_root(self: &Rc<Self>, file_id: &str) -> Option<ast::SourceUnit> {
         self.files
             .get(file_id)
             .map(|file| Rc::new(ast::SourceUnitStruct::create(file.ir_root(), self)))
@@ -134,5 +132,29 @@ impl SemanticAnalysis {
             .values()
             .find(|file| file.ir_root.node_id == node_id)
             .map(|file| file.id().to_string())
+    }
+
+    pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition> + use<'_> {
+        self.binder
+            .definitions()
+            .values()
+            .map(|definition| Rc::new(DefinitionStruct::create(definition.node_id(), self)))
+    }
+
+    pub fn find_contract_by_name(self: &Rc<Self>, name: &str) -> Option<ContractDefinition> {
+        self.binder
+            .definitions()
+            .values()
+            .find_map(|definition| {
+                let binder::Definition::Contract(contract) = definition else {
+                    return None;
+                };
+                if definition.identifier().unparse() == name {
+                    Some(contract)
+                } else {
+                    None
+                }
+            })
+            .map(|contract| Rc::new(ContractDefinitionStruct::create(&contract.ir_node, self)))
     }
 }

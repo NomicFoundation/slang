@@ -124,7 +124,7 @@ macro_rules! define_variant {
 }
 
 impl DefinitionStruct {
-    fn create(definition_id: NodeId, semantic: &Rc<SemanticAnalysis>) -> Self {
+    pub(crate) fn create(definition_id: NodeId, semantic: &Rc<SemanticAnalysis>) -> Self {
         assert!(semantic
             .binder()
             .find_definition_by_id(definition_id)

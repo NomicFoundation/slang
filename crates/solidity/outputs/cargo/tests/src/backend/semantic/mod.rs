@@ -3,7 +3,7 @@ use anyhow::Result;
 use super::sample::build_compilation_unit;
 
 #[test]
-fn test_create_semantic_analysis() -> Result<()> {
+fn test_semantic_analysis_and_ast_tree() -> Result<()> {
     let unit = build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
@@ -35,6 +35,35 @@ fn test_create_semantic_analysis() -> Result<()> {
         .expect("Counter base is a contract");
 
     assert_eq!(ownable_contract.name().unparse(), "Ownable");
+
+    Ok(())
+}
+
+#[test]
+fn test_get_all_definitions() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    assert_eq!(semantic.all_definitions().count(), 18);
+
+    Ok(())
+}
+
+#[test]
+fn test_find_contract_by_name() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("Counter contract is found");
+    let ownable = semantic
+        .find_contract_by_name("Ownable")
+        .expect("Ownable contract is found");
+
+    assert_eq!(counter.name().unparse(), "Counter");
+    assert_eq!(ownable.name().unparse(), "Ownable");
+    assert!(ownable.abstract_keyword());
 
     Ok(())
 }
