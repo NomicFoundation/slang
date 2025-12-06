@@ -4,6 +4,8 @@ use std::rc::Rc;
 use metaslang_cst::nodes::NodeId;
 use metaslang_cst::text_index::TextIndex;
 
+#[cfg(feature = "__private_backend_api")]
+use crate::cst::SyntaxNode;
 use crate::cst::{Cursor, NonterminalNode};
 use crate::parser::{ParseError, ParseOutput};
 
@@ -38,6 +40,12 @@ impl File {
     /// Returns the syntax tree of this file.
     pub fn tree(&self) -> &Rc<NonterminalNode> {
         &self.tree
+    }
+
+    /// Returns the root syntax node of the parse tree.
+    #[cfg(feature = "__private_backend_api")]
+    pub fn syntax_tree(&self) -> Rc<SyntaxNode> {
+        SyntaxNode::create_root(crate::cst::Node::Nonterminal(Rc::clone(&self.tree)))
     }
 
     /// Returns a list of all errors encountered during parsing this file.

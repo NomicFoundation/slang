@@ -1,7 +1,7 @@
 {% macro render_visitor(language) -%}
   {%- set target = model.ir_languages[language].target -%}
   use std::rc::Rc;
-  use crate::cst::TerminalNode;
+  use crate::cst::SyntaxNode;
   #[allow(clippy::wildcard_imports)]
   use super::nodes::*;
 
@@ -93,7 +93,7 @@
   {% for parent_type, collection in target.collections -%}
     {%- if collection.item_type.is_terminal %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor) {
+      fn accept_{{ parent_type | snake_case }}(items: &Vec<Rc<SyntaxNode>>, visitor: &mut impl Visitor) {
         if visitor.enter_{{ parent_type | snake_case }}(items) {
           visitor.leave_{{ parent_type | snake_case }}(items);
         }

@@ -3,7 +3,7 @@ use std::rc::Rc;
 use anyhow::Result;
 use slang_solidity::backend::ir::ir1_structured_ast;
 use slang_solidity::backend::ir::ir1_structured_ast::rewriter::Rewriter;
-use slang_solidity::cst::{TerminalKind, TerminalNode};
+use slang_solidity::cst::{Node, SyntaxNode, TerminalKind, TerminalNode};
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 
@@ -32,7 +32,7 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let source = ir1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    let source = ir1_structured_ast::builder::build_source_unit(output.syntax_tree()).unwrap();
 
     let mut cloner = Cloner {};
     let ast = cloner.rewrite_source_unit(&source);
@@ -129,19 +129,22 @@ impl Rewriter for ConstantFolder {
                 // also, any decimal number should be parseable as a 64-bit floating point
                 let result = left_decimal.literal.unparse().parse::<f64>().unwrap()
                     * right_decimal.literal.unparse().parse::<f64>().unwrap();
+                let literal_terminal = Rc::new(TerminalNode {
+                    kind: TerminalKind::DecimalLiteral,
+                    text: format!("{result}"),
+                });
+                // FIXME: this creates an isolated tree, not connected to the expression node
+                let literal = SyntaxNode::create_root(Node::Terminal(literal_terminal));
                 let number = Rc::new(ir1_structured_ast::DecimalNumberExpressionStruct {
-                    node_id: multiplicative_expression.node_id,
-                    literal: Rc::new(TerminalNode {
-                        kind: TerminalKind::DecimalLiteral,
-                        text: format!("{result}"),
-                    }),
+                    node: Rc::clone(&multiplicative_expression.node),
+                    literal,
                     unit: None,
                 });
                 ir1_structured_ast::Expression::DecimalNumberExpression(number)
             } else {
                 ir1_structured_ast::Expression::MultiplicativeExpression(Rc::new(
                     ir1_structured_ast::MultiplicativeExpressionStruct {
-                        node_id: multiplicative_expression.node_id,
+                        node: Rc::clone(&multiplicative_expression.node),
                         operator: Rc::clone(&multiplicative_expression.operator),
                         left_operand,
                         right_operand,
@@ -166,7 +169,7 @@ function weeksToSeconds(uint _weeks) returns (uint) {
     );
     assert!(output.is_valid());
 
-    let source = ir1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    let source = ir1_structured_ast::builder::build_source_unit(output.syntax_tree()).unwrap();
 
     let mut constant_folder = ConstantFolder {};
     let ast = constant_folder.rewrite_source_unit(&source);

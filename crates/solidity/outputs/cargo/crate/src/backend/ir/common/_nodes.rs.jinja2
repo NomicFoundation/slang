@@ -2,7 +2,7 @@
   {%- set target = model.ir_languages[language].target -%}
   use std::rc::Rc;
   use std::vec::Vec;
-  use crate::cst::TerminalNode;
+  use crate::cst::SyntaxNode;
   use metaslang_cst::nodes::NodeId;
 
   //
@@ -14,20 +14,20 @@
 
     #[derive(Debug)]
     pub struct {{ parent_type }}Struct {
-      pub node_id: NodeId,
+      pub node: Rc<SyntaxNode>,
       {%- for field in sequence.fields %}
         pub {{ field.label | snake_case }}:
         {%- if field.type.kind == "Terminal" -%}
           {%- if field.is_optional -%}
-            Option<Rc<TerminalNode>>,
+            Option<Rc<SyntaxNode>>,
           {%- else -%}
-            Rc<TerminalNode>,
+            Rc<SyntaxNode>,
           {%- endif -%}
         {%- elif field.type.kind == "UniqueTerminal" -%}
           {%- if field.is_optional -%}
             bool,
           {%- else -%}
-            Rc<TerminalNode>,
+            Rc<SyntaxNode>,
           {%- endif -%}
         {%- else -%}
           {%- if field.is_optional -%}
@@ -37,6 +37,12 @@
           {%- endif -%}
         {%- endif -%}
       {% endfor -%}
+    }
+
+    impl {{ parent_type }}Struct {
+      pub fn id(&self) -> NodeId {
+        self.node.id()
+      }
     }
 
   {% endfor %}
@@ -52,7 +58,7 @@
         {{ nonterminal.name }}({{ nonterminal.name }}),
       {%- endfor -%}
       {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
-        {{ terminal.name }}(Rc<TerminalNode>),
+        {{ terminal.name }}(Rc<SyntaxNode>),
       {%- endfor -%}
       {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
         {{ terminal.name }},
@@ -67,7 +73,7 @@
   {% for parent_type, collection in target.collections %}
     pub type {{ parent_type }} = Vec<
       {%- if collection.item_type.is_terminal -%}
-        Rc<TerminalNode>
+        Rc<SyntaxNode>
       {%- else -%}
         {{ collection.item_type.name }}
       {%- endif -%}
