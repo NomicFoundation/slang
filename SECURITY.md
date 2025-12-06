@@ -1,12 +1,11 @@
 # Security Policy
 
-This project is currently in alpha, and some features are still in development, or require further testing. However, any feedback, bug reports, or suggestions are very much welcomed.
-
 ## Supported Versions
 
 | Version | Supported |
 | ------- | --------- |
-| 0.x     | ✅        |
+| 0.x     | ❌        |
+| 1.x     | ✅        |
 
 ## Reporting a Vulnerability
 
