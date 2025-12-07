@@ -9,7 +9,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::Result;
-use codegen_v2_parser::ir::model::IrModel as IrModelV2;
+use codegen_v2_ast::ir::model::IrModel as IrModelV2;
 use codegen_v2_parser::parser::ParserModel as ParserModelV2;
 use indexmap::IndexSet;
 use infra_utils::cargo::CargoWorkspace;

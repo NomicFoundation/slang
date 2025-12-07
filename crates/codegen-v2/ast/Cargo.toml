@@ -1,6 +1,6 @@
 [package]
-name = "codegen_v2_parser"
-description = "Utilities to generate a parser from a language definition."
+name = "codegen_v2_ast"
+description = "Utilities to generate an AST from a language definition."
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
@@ -9,7 +9,7 @@ publish = false
 [dependencies]
 language_v2_definition = { workspace = true }
 serde = { workspace = true }
-semver = { workspace = true }
+indexmap = { workspace = true }
 
 [lints]
 workspace = true

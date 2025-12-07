@@ -47,6 +47,13 @@ fn main() {
             generate_in_place_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
+                "slang_solidity_v2_ast",
+            )
+        },
+        || {
+            generate_in_place_v2(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinitionV2::create(),
                 "slang_solidity_v2_parser",
             )
         },
