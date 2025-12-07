@@ -8,7 +8,6 @@
 
 
   // TODO:
-  // - (correctness) use actual structs and types
   // - (perf) don't use terminals that are not needed
 
 // Special cases
@@ -65,7 +64,7 @@ pub fn new_tuple_deconstruction_statement_from_proto_tuple(proto_tuple: ProtoTup
   new_tuple_deconstruction_statement(
       None,
       proto_tuple._open_paren,
-      elements,
+      new_tuple_deconstruction_elements(elements),
       proto_tuple._close_paren,
       equal,
       expression,
@@ -101,8 +100,8 @@ pub fn new_proto_tuple_element_empty() -> ProtoTupleElement {
 
 pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
   // TODO: This is just a placeholder, we need to fix this
-  let base: Expression = new_expression_identifier(identifier_path[0].clone());
-  identifier_path[1..].iter().fold(base, |acc, id| {
+  let base: Expression = new_expression_identifier(identifier_path.elements[0].clone());
+  identifier_path.elements[1..].iter().fold(base, |acc, id| {
     new_expression_member_access_expression(new_member_access_expression(acc, new_empty_terminal(), id.clone()))
   })
 }
@@ -166,13 +165,13 @@ pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expres
   //
 
   {% for parent_type, collection in target.collections %}
-    pub type {{ parent_type }} = Vec<
-        {{ collection.item_type.name }}
-    >;
-
+    #[derive(Debug, Clone)]
+    pub struct {{ parent_type }} {
+       pub elements: Vec<{{ collection.item_type.name }}>,
+    }
 
     pub fn new_{{ parent_type | snake_case }}(elements: Vec<{{ collection.item_type.name }}>) -> {{ parent_type }} {
-      elements
+      {{ parent_type }} { elements }
     }
 
   {% endfor %}
@@ -185,7 +184,7 @@ pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expres
       pub value: String,
       pub _l: usize,
       pub _r: usize,
-      kind: LexemeKind,
+      pub kind: LexemeKind,
     }
 
 pub fn new_empty_terminal() -> TerminalType {
@@ -209,7 +208,7 @@ pub type {{ parent_type }} = TerminalType;
         value: source[l..r].to_owned(),
         _l: l,
         _r: r,
-        kind: LexemeKind::{{ parent_type  }},
+        kind: LexemeKind::{{ parent_type }},
       }
     }
     
