@@ -96,34 +96,37 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
         let output = Parser::create(version)?.parse_nonterminal(tested_kind, &source);
 
-        match parser_name {
+        let parsed = match parser_name {
             // For now we only have a SourceUnit parser, having all parsers with LALRPOP is expensive
             "SourceUnit" => {
-                let parsed = ParserV2::parse(&source, LanguageVersion::V0_8_30);
-                assert_eq!(
-                    parsed.is_ok(),
-                    output.is_valid(),
-                    "V1 Parser got {} but V2 Parser got {}",
-                    output.is_valid(),
-                    parsed.is_ok()
-                );
-
-                let status: TestStatus = if parsed.is_ok() {
-                    TestStatus::Success
-                } else {
-                    TestStatus::Failure
-                };
-
-                let snapshot_path = test_dir
-                    .join("v2/generated")
-                    .join(format!("0.8.30-{status}.yml"));
-
-                fs.write_file_raw(snapshot_path, format!("{:#?}", parsed))?;
+                ParserV2::parse(&source, LanguageVersion::V0_8_30).map(|node| format!("{node:#?}"))
             }
+            "Expression" => ParserV2::parse_expression(&source, LanguageVersion::V0_8_30)
+                .map(|node| format!("{node:#?}")),
             _ => {
                 // Ignore everything else
+                return Ok(());
             }
-        }
+        };
+
+        let status: TestStatus = if parsed.is_ok() {
+            TestStatus::Success
+        } else {
+            TestStatus::Failure
+        };
+
+        let snapshot_path = test_dir
+            .join("v2/generated")
+            .join(format!("0.8.30-{status}.yml"));
+
+        fs.write_file_raw(snapshot_path, format!("{:#?}", parsed))?;
+        assert_eq!(
+            parsed.is_ok(),
+            output.is_valid(),
+            "V1 Parser got {} but V2 Parser got {}",
+            output.is_valid(),
+            parsed.is_ok()
+        );
     }
 
     Ok(())

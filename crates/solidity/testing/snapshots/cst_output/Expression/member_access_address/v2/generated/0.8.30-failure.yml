@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Err(
+    "UnrecognizedToken { token: (2, AddressKeyword_Unreserved, 9), expected: [\"L_Identifier\"] }",
+)

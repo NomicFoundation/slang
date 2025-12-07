@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    "Identifier(\n    TerminalType {\n        value: \"_\",\n        _l: 0,\n        _r: 1,\n        kind: Identifier,\n    },\n)",
+)

@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    "StringExpression(\n    UnicodeStringLiterals(\n        UnicodeStringLiterals {\n            elements: [\n                DoubleQuotedUnicodeStringLiteral(\n                    TerminalType {\n                        value: \"unicode\\\"This Emoji: 😃\\\"\",\n                        _l: 0,\n                        _r: 25,\n                        kind: DoubleQuotedUnicodeStringLiteral,\n                    },\n                ),\n            ],\n        },\n    ),\n)",
+)
