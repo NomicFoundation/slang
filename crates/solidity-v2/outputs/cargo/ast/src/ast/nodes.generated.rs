@@ -5,7 +5,7 @@
 
 use std::rc::Rc;
 
-use crate::lexer::lexemes::LexemeKind;
+use crate::ast::lexemes::LexemeKind;
 
 // TODO:
 // - (perf) don't use terminals that are not needed

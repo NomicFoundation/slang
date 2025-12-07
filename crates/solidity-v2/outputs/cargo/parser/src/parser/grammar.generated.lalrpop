@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::lexer::lexemes;
-use crate::parser::nodes::*;
+use slang_solidity_v2_ast::ast::lexemes;
+use slang_solidity_v2_ast::ast::nodes::*;
 
 grammar<'source>(source: &'source str);
 

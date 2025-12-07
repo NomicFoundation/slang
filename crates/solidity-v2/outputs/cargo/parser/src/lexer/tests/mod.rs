@@ -6,11 +6,11 @@ mod yul;
 
 use std::ops::Range;
 
+use slang_solidity_v2_ast::ast::lexemes::LexemeKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
 use crate::lexer::definition::Lexer;
-use crate::lexer::lexemes::LexemeKind;
 
 fn test_lexer_output(
     source: &str,
