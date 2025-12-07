@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    "PostfixExpression(\n    PostfixExpressionStruct {\n        operand: Identifier(\n            TerminalType {\n                value: \"foo\",\n                _l: 0,\n                _r: 3,\n                kind: Identifier,\n            },\n        ),\n        operator: TerminalType {\n            value: \"--\",\n            _l: 3,\n            _r: 5,\n            kind: MinusMinus,\n        },\n    },\n)",
+)

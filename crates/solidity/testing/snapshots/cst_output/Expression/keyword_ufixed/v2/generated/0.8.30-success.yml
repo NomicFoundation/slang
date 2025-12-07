@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    "ElementaryType(\n    UfixedKeyword(\n        TerminalType {\n            value: \"ufixed\",\n            _l: 0,\n            _r: 6,\n            kind: UfixedKeyword_Reserved,\n        },\n    ),\n)",
+)

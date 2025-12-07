@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Err(
+    "UnrecognizedToken { token: (10, OpenParen, 11), expected: [\"L_OpenBracket\", \"L_Period\"] }",
+)

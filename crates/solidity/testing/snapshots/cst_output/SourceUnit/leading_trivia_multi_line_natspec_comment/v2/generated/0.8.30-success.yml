@@ -1,9 +1,5 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Ok(
-    SourceUnitStruct {
-        members: SourceUnitMembers {
-            elements: [],
-        },
-    },
+    "SourceUnitStruct {\n    members: SourceUnitMembers {\n        elements: [],\n    },\n}",
 )

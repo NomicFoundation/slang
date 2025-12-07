@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Err(
+    "UnrecognizedEof { location: 7, expected: [\"L_AddressKeyword_Unreserved\", \"L_BoolKeyword_Reserved\", \"L_BytesKeyword_Reserved\", \"L_FixedKeyword_Reserved\", \"L_FunctionKeyword_Reserved\", \"L_Identifier\", \"L_IntKeyword_Reserved\", \"L_MappingKeyword_Reserved\", \"L_StringKeyword_Reserved\", \"L_UfixedKeyword_Reserved\", \"L_UintKeyword_Reserved\"] }",
+)

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use lalrpop_util::lalrpop_mod;
-use slang_solidity_v2_ast::ast::nodes::SourceUnitStruct;
+use slang_solidity_v2_ast::ast::nodes::{Expression, SourceUnitStruct};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
@@ -27,6 +27,16 @@ impl Parser {
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         grammar::SourceUnitParser::new()
+            .parse(input, lexer)
+            // TODO(v2): Improve on showing the error
+            .map_err(|e| format!("{e:?}"))
+    }
+
+    pub fn parse_expression(input: &str, version: LanguageVersion) -> Result<Expression, String> {
+        assert!(version == LanguageVersion::V0_8_30);
+
+        let lexer = Lexer::new(ContextKind::Solidity, input, version);
+        grammar::ExpressionParser::new()
             .parse(input, lexer)
             // TODO(v2): Improve on showing the error
             .map_err(|e| format!("{e:?}"))
