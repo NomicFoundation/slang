@@ -1,0 +1,487 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    SourceUnitStruct {
+        members: SourceUnitMembers {
+            elements: [
+                LibraryDefinition(
+                    LibraryDefinitionStruct {
+                        library_keyword: TerminalType {
+                            value: "library",
+                            _l: 0,
+                            _r: 7,
+                            kind: LibraryKeyword_Reserved,
+                        },
+                        name: TerminalType {
+                            value: "SafeMath",
+                            _l: 8,
+                            _r: 16,
+                            kind: Identifier,
+                        },
+                        open_brace: TerminalType {
+                            value: "{",
+                            _l: 17,
+                            _r: 18,
+                            kind: OpenBrace,
+                        },
+                        members: LibraryMembers {
+                            elements: [
+                                FunctionDefinition(
+                                    FunctionDefinitionStruct {
+                                        function_keyword: TerminalType {
+                                            value: "function",
+                                            _l: 21,
+                                            _r: 29,
+                                            kind: FunctionKeyword_Reserved,
+                                        },
+                                        name: Identifier(
+                                            TerminalType {
+                                                value: "tryAdd",
+                                                _l: 30,
+                                                _r: 36,
+                                                kind: Identifier,
+                                            },
+                                        ),
+                                        parameters: ParametersDeclarationStruct {
+                                            open_paren: TerminalType {
+                                                value: "(",
+                                                _l: 36,
+                                                _r: 37,
+                                                kind: OpenParen,
+                                            },
+                                            parameters: Parameters {
+                                                elements: [
+                                                    ParameterStruct {
+                                                        type_name: ElementaryType(
+                                                            UintKeyword(
+                                                                TerminalType {
+                                                                    value: "uint256",
+                                                                    _l: 37,
+                                                                    _r: 44,
+                                                                    kind: UintKeyword_Reserved,
+                                                                },
+                                                            ),
+                                                        ),
+                                                        storage_location: None,
+                                                        name: Some(
+                                                            TerminalType {
+                                                                value: "a",
+                                                                _l: 45,
+                                                                _r: 46,
+                                                                kind: Identifier,
+                                                            },
+                                                        ),
+                                                    },
+                                                    ParameterStruct {
+                                                        type_name: ElementaryType(
+                                                            UintKeyword(
+                                                                TerminalType {
+                                                                    value: "uint256",
+                                                                    _l: 48,
+                                                                    _r: 55,
+                                                                    kind: UintKeyword_Reserved,
+                                                                },
+                                                            ),
+                                                        ),
+                                                        storage_location: None,
+                                                        name: Some(
+                                                            TerminalType {
+                                                                value: "b",
+                                                                _l: 56,
+                                                                _r: 57,
+                                                                kind: Identifier,
+                                                            },
+                                                        ),
+                                                    },
+                                                ],
+                                            },
+                                            close_paren: TerminalType {
+                                                value: ")",
+                                                _l: 57,
+                                                _r: 58,
+                                                kind: CloseParen,
+                                            },
+                                        },
+                                        attributes: FunctionAttributes {
+                                            elements: [
+                                                InternalKeyword(
+                                                    TerminalType {
+                                                        value: "internal",
+                                                        _l: 59,
+                                                        _r: 67,
+                                                        kind: InternalKeyword_Reserved,
+                                                    },
+                                                ),
+                                                PureKeyword(
+                                                    TerminalType {
+                                                        value: "pure",
+                                                        _l: 68,
+                                                        _r: 72,
+                                                        kind: PureKeyword_Reserved,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        returns: Some(
+                                            ReturnsDeclarationStruct {
+                                                returns_keyword: TerminalType {
+                                                    value: "returns",
+                                                    _l: 73,
+                                                    _r: 80,
+                                                    kind: ReturnsKeyword_Reserved,
+                                                },
+                                                variables: ParametersDeclarationStruct {
+                                                    open_paren: TerminalType {
+                                                        value: "(",
+                                                        _l: 81,
+                                                        _r: 82,
+                                                        kind: OpenParen,
+                                                    },
+                                                    parameters: Parameters {
+                                                        elements: [
+                                                            ParameterStruct {
+                                                                type_name: ElementaryType(
+                                                                    BoolKeyword(
+                                                                        TerminalType {
+                                                                            value: "bool",
+                                                                            _l: 82,
+                                                                            _r: 86,
+                                                                            kind: BoolKeyword_Reserved,
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                                storage_location: None,
+                                                                name: None,
+                                                            },
+                                                            ParameterStruct {
+                                                                type_name: ElementaryType(
+                                                                    UintKeyword(
+                                                                        TerminalType {
+                                                                            value: "uint256",
+                                                                            _l: 88,
+                                                                            _r: 95,
+                                                                            kind: UintKeyword_Reserved,
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                                storage_location: None,
+                                                                name: None,
+                                                            },
+                                                        ],
+                                                    },
+                                                    close_paren: TerminalType {
+                                                        value: ")",
+                                                        _l: 95,
+                                                        _r: 96,
+                                                        kind: CloseParen,
+                                                    },
+                                                },
+                                            },
+                                        ),
+                                        body: Block(
+                                            BlockStruct {
+                                                open_brace: TerminalType {
+                                                    value: "{",
+                                                    _l: 97,
+                                                    _r: 98,
+                                                    kind: OpenBrace,
+                                                },
+                                                statements: Statements {
+                                                    elements: [
+                                                        UncheckedBlock(
+                                                            UncheckedBlockStruct {
+                                                                unchecked_keyword: TerminalType {
+                                                                    value: "unchecked",
+                                                                    _l: 103,
+                                                                    _r: 112,
+                                                                    kind: UncheckedKeyword_Reserved,
+                                                                },
+                                                                block: BlockStruct {
+                                                                    open_brace: TerminalType {
+                                                                        value: "{",
+                                                                        _l: 113,
+                                                                        _r: 114,
+                                                                        kind: OpenBrace,
+                                                                    },
+                                                                    statements: Statements {
+                                                                        elements: [
+                                                                            VariableDeclarationStatement(
+                                                                                VariableDeclarationStatementStruct {
+                                                                                    variable_declaration: VariableDeclarationStruct {
+                                                                                        variable_type: TypeName(
+                                                                                            ElementaryType(
+                                                                                                UintKeyword(
+                                                                                                    TerminalType {
+                                                                                                        value: "uint256",
+                                                                                                        _l: 121,
+                                                                                                        _r: 128,
+                                                                                                        kind: UintKeyword_Reserved,
+                                                                                                    },
+                                                                                                ),
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: TerminalType {
+                                                                                            value: "c",
+                                                                                            _l: 129,
+                                                                                            _r: 130,
+                                                                                            kind: Identifier,
+                                                                                        },
+                                                                                    },
+                                                                                    value: Some(
+                                                                                        VariableDeclarationValueStruct {
+                                                                                            equal: TerminalType {
+                                                                                                value: "=",
+                                                                                                _l: 131,
+                                                                                                _r: 132,
+                                                                                                kind: Equal,
+                                                                                            },
+                                                                                            expression: AdditiveExpression(
+                                                                                                AdditiveExpressionStruct {
+                                                                                                    left_operand: Identifier(
+                                                                                                        TerminalType {
+                                                                                                            value: "a",
+                                                                                                            _l: 133,
+                                                                                                            _r: 134,
+                                                                                                            kind: Identifier,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                    operator: TerminalType {
+                                                                                                        value: "+",
+                                                                                                        _l: 135,
+                                                                                                        _r: 136,
+                                                                                                        kind: Plus,
+                                                                                                    },
+                                                                                                    right_operand: Identifier(
+                                                                                                        TerminalType {
+                                                                                                            value: "b",
+                                                                                                            _l: 137,
+                                                                                                            _r: 138,
+                                                                                                            kind: Identifier,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                },
+                                                                                            ),
+                                                                                        },
+                                                                                    ),
+                                                                                    semicolon: TerminalType {
+                                                                                        value: ";",
+                                                                                        _l: 138,
+                                                                                        _r: 139,
+                                                                                        kind: Semicolon,
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                            IfStatement(
+                                                                                IfStatementStruct {
+                                                                                    if_keyword: TerminalType {
+                                                                                        value: "if",
+                                                                                        _l: 146,
+                                                                                        _r: 148,
+                                                                                        kind: IfKeyword_Reserved,
+                                                                                    },
+                                                                                    open_paren: TerminalType {
+                                                                                        value: "(",
+                                                                                        _l: 149,
+                                                                                        _r: 150,
+                                                                                        kind: OpenParen,
+                                                                                    },
+                                                                                    condition: InequalityExpression(
+                                                                                        InequalityExpressionStruct {
+                                                                                            left_operand: Identifier(
+                                                                                                TerminalType {
+                                                                                                    value: "c",
+                                                                                                    _l: 150,
+                                                                                                    _r: 151,
+                                                                                                    kind: Identifier,
+                                                                                                },
+                                                                                            ),
+                                                                                            operator: TerminalType {
+                                                                                                value: "<",
+                                                                                                _l: 152,
+                                                                                                _r: 153,
+                                                                                                kind: LessThan,
+                                                                                            },
+                                                                                            right_operand: Identifier(
+                                                                                                TerminalType {
+                                                                                                    value: "a",
+                                                                                                    _l: 154,
+                                                                                                    _r: 155,
+                                                                                                    kind: Identifier,
+                                                                                                },
+                                                                                            ),
+                                                                                        },
+                                                                                    ),
+                                                                                    close_paren: TerminalType {
+                                                                                        value: ")",
+                                                                                        _l: 155,
+                                                                                        _r: 156,
+                                                                                        kind: CloseParen,
+                                                                                    },
+                                                                                    body: ReturnStatement(
+                                                                                        ReturnStatementStruct {
+                                                                                            return_keyword: TerminalType {
+                                                                                                value: "return",
+                                                                                                _l: 157,
+                                                                                                _r: 163,
+                                                                                                kind: ReturnKeyword_Reserved,
+                                                                                            },
+                                                                                            expression: Some(
+                                                                                                TupleExpression(
+                                                                                                    TupleExpressionStruct {
+                                                                                                        open_paren: TerminalType {
+                                                                                                            value: "(",
+                                                                                                            _l: 164,
+                                                                                                            _r: 165,
+                                                                                                            kind: OpenParen,
+                                                                                                        },
+                                                                                                        items: TupleValues {
+                                                                                                            elements: [
+                                                                                                                TupleValueStruct {
+                                                                                                                    expression: Some(
+                                                                                                                        FalseKeyword(
+                                                                                                                            TerminalType {
+                                                                                                                                value: "false",
+                                                                                                                                _l: 165,
+                                                                                                                                _r: 170,
+                                                                                                                                kind: FalseKeyword_Reserved,
+                                                                                                                            },
+                                                                                                                        ),
+                                                                                                                    ),
+                                                                                                                },
+                                                                                                                TupleValueStruct {
+                                                                                                                    expression: Some(
+                                                                                                                        DecimalNumberExpression(
+                                                                                                                            DecimalNumberExpressionStruct {
+                                                                                                                                literal: TerminalType {
+                                                                                                                                    value: "0",
+                                                                                                                                    _l: 172,
+                                                                                                                                    _r: 173,
+                                                                                                                                    kind: DecimalLiteral,
+                                                                                                                                },
+                                                                                                                                unit: None,
+                                                                                                                            },
+                                                                                                                        ),
+                                                                                                                    ),
+                                                                                                                },
+                                                                                                            ],
+                                                                                                        },
+                                                                                                        close_paren: TerminalType {
+                                                                                                            value: ")",
+                                                                                                            _l: 173,
+                                                                                                            _r: 174,
+                                                                                                            kind: CloseParen,
+                                                                                                        },
+                                                                                                    },
+                                                                                                ),
+                                                                                            ),
+                                                                                            semicolon: TerminalType {
+                                                                                                value: ";",
+                                                                                                _l: 174,
+                                                                                                _r: 175,
+                                                                                                kind: Semicolon,
+                                                                                            },
+                                                                                        },
+                                                                                    ),
+                                                                                    else_branch: None,
+                                                                                },
+                                                                            ),
+                                                                            ReturnStatement(
+                                                                                ReturnStatementStruct {
+                                                                                    return_keyword: TerminalType {
+                                                                                        value: "return",
+                                                                                        _l: 182,
+                                                                                        _r: 188,
+                                                                                        kind: ReturnKeyword_Reserved,
+                                                                                    },
+                                                                                    expression: Some(
+                                                                                        TupleExpression(
+                                                                                            TupleExpressionStruct {
+                                                                                                open_paren: TerminalType {
+                                                                                                    value: "(",
+                                                                                                    _l: 189,
+                                                                                                    _r: 190,
+                                                                                                    kind: OpenParen,
+                                                                                                },
+                                                                                                items: TupleValues {
+                                                                                                    elements: [
+                                                                                                        TupleValueStruct {
+                                                                                                            expression: Some(
+                                                                                                                TrueKeyword(
+                                                                                                                    TerminalType {
+                                                                                                                        value: "true",
+                                                                                                                        _l: 190,
+                                                                                                                        _r: 194,
+                                                                                                                        kind: TrueKeyword_Reserved,
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        },
+                                                                                                        TupleValueStruct {
+                                                                                                            expression: Some(
+                                                                                                                Identifier(
+                                                                                                                    TerminalType {
+                                                                                                                        value: "c",
+                                                                                                                        _l: 196,
+                                                                                                                        _r: 197,
+                                                                                                                        kind: Identifier,
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                                close_paren: TerminalType {
+                                                                                                    value: ")",
+                                                                                                    _l: 197,
+                                                                                                    _r: 198,
+                                                                                                    kind: CloseParen,
+                                                                                                },
+                                                                                            },
+                                                                                        ),
+                                                                                    ),
+                                                                                    semicolon: TerminalType {
+                                                                                        value: ";",
+                                                                                        _l: 198,
+                                                                                        _r: 199,
+                                                                                        kind: Semicolon,
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                        ],
+                                                                    },
+                                                                    close_brace: TerminalType {
+                                                                        value: "}",
+                                                                        _l: 204,
+                                                                        _r: 205,
+                                                                        kind: CloseBrace,
+                                                                    },
+                                                                },
+                                                            },
+                                                        ),
+                                                    ],
+                                                },
+                                                close_brace: TerminalType {
+                                                    value: "}",
+                                                    _l: 208,
+                                                    _r: 209,
+                                                    kind: CloseBrace,
+                                                },
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ],
+                        },
+                        close_brace: TerminalType {
+                            value: "}",
+                            _l: 210,
+                            _r: 211,
+                            kind: CloseBrace,
+                        },
+                    },
+                ),
+            ],
+        },
+    },
+)

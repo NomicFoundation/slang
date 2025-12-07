@@ -1,0 +1,80 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    SourceUnitStruct {
+        members: SourceUnitMembers {
+            elements: [
+                ContractDefinition(
+                    ContractDefinitionStruct {
+                        abstract_keyword: None,
+                        contract_keyword: TerminalType {
+                            value: "contract",
+                            _l: 0,
+                            _r: 8,
+                            kind: ContractKeyword_Reserved,
+                        },
+                        name: TerminalType {
+                            value: "A",
+                            _l: 9,
+                            _r: 10,
+                            kind: Identifier,
+                        },
+                        specifiers: ContractSpecifiers {
+                            elements: [],
+                        },
+                        open_brace: TerminalType {
+                            value: "{",
+                            _l: 11,
+                            _r: 12,
+                            kind: OpenBrace,
+                        },
+                        members: ContractMembers {
+                            elements: [],
+                        },
+                        close_brace: TerminalType {
+                            value: "}",
+                            _l: 12,
+                            _r: 13,
+                            kind: CloseBrace,
+                        },
+                    },
+                ),
+                ContractDefinition(
+                    ContractDefinitionStruct {
+                        abstract_keyword: None,
+                        contract_keyword: TerminalType {
+                            value: "contract",
+                            _l: 32,
+                            _r: 40,
+                            kind: ContractKeyword_Reserved,
+                        },
+                        name: TerminalType {
+                            value: "B",
+                            _l: 41,
+                            _r: 42,
+                            kind: Identifier,
+                        },
+                        specifiers: ContractSpecifiers {
+                            elements: [],
+                        },
+                        open_brace: TerminalType {
+                            value: "{",
+                            _l: 43,
+                            _r: 44,
+                            kind: OpenBrace,
+                        },
+                        members: ContractMembers {
+                            elements: [],
+                        },
+                        close_brace: TerminalType {
+                            value: "}",
+                            _l: 44,
+                            _r: 45,
+                            kind: CloseBrace,
+                        },
+                    },
+                ),
+            ],
+        },
+    },
+)

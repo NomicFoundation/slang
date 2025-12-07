@@ -1,4 +1,11 @@
+use std::rc::Rc;
+
 use lalrpop_util::lalrpop_mod;
+use slang_solidity_v2_ast::ast::nodes::SourceUnitStruct;
+use slang_solidity_v2_common::versions::LanguageVersion;
+
+use crate::lexer::contexts::ContextKind;
+use crate::lexer::definition::Lexer;
 
 // TODO: How do I get rid of the squiggly line here?
 lalrpop_mod!(
@@ -7,3 +14,21 @@ lalrpop_mod!(
 
 #[cfg(test)]
 mod tests;
+
+/// A Solidity Parser
+///
+/// TODO(v2): Error recovery, for now we just fail
+/// TODO(v2): Support multiple versions, for now only 0.8.30 is supported
+pub struct Parser {}
+
+impl Parser {
+    pub fn parse(input: &str, version: LanguageVersion) -> Result<Rc<SourceUnitStruct>, String> {
+        assert!(version == LanguageVersion::V0_8_30);
+
+        let lexer = Lexer::new(ContextKind::Solidity, input, version);
+        grammar::SourceUnitParser::new()
+            .parse(input, lexer)
+            // TODO(v2): Improve on showing the error
+            .map_err(|e| format!("{e:?}"))
+    }
+}

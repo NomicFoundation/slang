@@ -4,8 +4,11 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
+use semver::Version;
 use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
+use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_parser::Parser as ParserV2;
 use strum_macros::Display;
 
 use crate::cst::cst_output::renderer::render;
@@ -80,6 +83,47 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .join(format!("{version}-{status}.yml"));
 
         fs.write_file_raw(snapshot_path, &snapshot)?;
+    }
+
+    // Checking V2
+    // for now we only check that either both fail or both succeed, and we write the debug output
+    // TODO(v2): Check the cursor and the tree are equivalent
+    // TODO(v2): We only check 0.8.30 for now, we should eventually check all versions
+    {
+        // Get V1 output for 0.8.30
+        let version = Version::new(0, 8, 30);
+        let tested_kind = NonterminalKind::from_str(parser_name)
+            .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
+        let output = Parser::create(version)?.parse_nonterminal(tested_kind, &source);
+
+        match parser_name {
+            // For now we only have a SourceUnit parser, having all parsers with LALRPOP is expensive
+            "SourceUnit" => {
+                let parsed = ParserV2::parse(&source, LanguageVersion::V0_8_30);
+                assert_eq!(
+                    parsed.is_ok(),
+                    output.is_valid(),
+                    "V1 Parser got {} but V2 Parser got {}",
+                    output.is_valid(),
+                    parsed.is_ok()
+                );
+
+                let status: TestStatus = if parsed.is_ok() {
+                    TestStatus::Success
+                } else {
+                    TestStatus::Failure
+                };
+
+                let snapshot_path = test_dir
+                    .join("v2/generated")
+                    .join(format!("0.8.30-{status}.yml"));
+
+                fs.write_file_raw(snapshot_path, format!("{:#?}", parsed))?;
+            }
+            _ => {
+                // Ignore everything else
+            }
+        }
     }
 
     Ok(())
