@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    SourceUnitStruct {
+        members: SourceUnitMembers {
+            elements: [
+                FunctionDefinition(
+                    FunctionDefinitionStruct {
+                        function_keyword: TerminalType {
+                            value: "function",
+                            _l: 0,
+                            _r: 8,
+                            kind: FunctionKeyword_Reserved,
+                        },
+                        name: Identifier(
+                            TerminalType {
+                                value: "foo",
+                                _l: 9,
+                                _r: 12,
+                                kind: Identifier,
+                            },
+                        ),
+                        parameters: ParametersDeclarationStruct {
+                            open_paren: TerminalType {
+                                value: "(",
+                                _l: 12,
+                                _r: 13,
+                                kind: OpenParen,
+                            },
+                            parameters: Parameters {
+                                elements: [],
+                            },
+                            close_paren: TerminalType {
+                                value: ")",
+                                _l: 13,
+                                _r: 14,
+                                kind: CloseParen,
+                            },
+                        },
+                        attributes: FunctionAttributes {
+                            elements: [],
+                        },
+                        returns: None,
+                        body: Block(
+                            BlockStruct {
+                                open_brace: TerminalType {
+                                    value: "{",
+                                    _l: 15,
+                                    _r: 16,
+                                    kind: OpenBrace,
+                                },
+                                statements: Statements {
+                                    elements: [],
+                                },
+                                close_brace: TerminalType {
+                                    value: "}",
+                                    _l: 17,
+                                    _r: 18,
+                                    kind: CloseBrace,
+                                },
+                            },
+                        ),
+                    },
+                ),
+            ],
+        },
+    },
+)

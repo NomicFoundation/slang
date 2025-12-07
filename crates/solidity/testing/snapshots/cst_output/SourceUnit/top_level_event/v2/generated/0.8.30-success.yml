@@ -1,0 +1,72 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    SourceUnitStruct {
+        members: SourceUnitMembers {
+            elements: [
+                EventDefinition(
+                    EventDefinitionStruct {
+                        event_keyword: TerminalType {
+                            value: "event",
+                            _l: 0,
+                            _r: 5,
+                            kind: EventKeyword_Reserved,
+                        },
+                        name: TerminalType {
+                            value: "E1",
+                            _l: 6,
+                            _r: 8,
+                            kind: Identifier,
+                        },
+                        parameters: EventParametersDeclarationStruct {
+                            open_paren: TerminalType {
+                                value: "(",
+                                _l: 8,
+                                _r: 9,
+                                kind: OpenParen,
+                            },
+                            parameters: EventParameters {
+                                elements: [
+                                    EventParameterStruct {
+                                        type_name: ElementaryType(
+                                            UintKeyword(
+                                                TerminalType {
+                                                    value: "uint256",
+                                                    _l: 9,
+                                                    _r: 16,
+                                                    kind: UintKeyword_Reserved,
+                                                },
+                                            ),
+                                        ),
+                                        indexed_keyword: None,
+                                        name: Some(
+                                            TerminalType {
+                                                value: "value",
+                                                _l: 17,
+                                                _r: 22,
+                                                kind: Identifier,
+                                            },
+                                        ),
+                                    },
+                                ],
+                            },
+                            close_paren: TerminalType {
+                                value: ")",
+                                _l: 22,
+                                _r: 23,
+                                kind: CloseParen,
+                            },
+                        },
+                        anonymous_keyword: None,
+                        semicolon: TerminalType {
+                            value: ";",
+                            _l: 23,
+                            _r: 24,
+                            kind: Semicolon,
+                        },
+                    },
+                ),
+            ],
+        },
+    },
+)

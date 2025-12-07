@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ok(
+    SourceUnitStruct {
+        members: SourceUnitMembers {
+            elements: [
+                ContractDefinition(
+                    ContractDefinitionStruct {
+                        abstract_keyword: None,
+                        contract_keyword: TerminalType {
+                            value: "contract",
+                            _l: 98,
+                            _r: 106,
+                            kind: ContractKeyword_Reserved,
+                        },
+                        name: TerminalType {
+                            value: "Foo",
+                            _l: 107,
+                            _r: 110,
+                            kind: Identifier,
+                        },
+                        specifiers: ContractSpecifiers {
+                            elements: [],
+                        },
+                        open_brace: TerminalType {
+                            value: "{",
+                            _l: 111,
+                            _r: 112,
+                            kind: OpenBrace,
+                        },
+                        members: ContractMembers {
+                            elements: [],
+                        },
+                        close_brace: TerminalType {
+                            value: "}",
+                            _l: 120,
+                            _r: 121,
+                            kind: CloseBrace,
+                        },
+                    },
+                ),
+            ],
+        },
+    },
+)

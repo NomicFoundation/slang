@@ -1,0 +1,3 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Err("UnrecognizedToken { token: (49, DecimalLiteral, 52), expected: [\"L_DoubleQuotedVersionLiteral\", \"L_SingleQuotedVersionLiteral\", \"L_VersionSpecifier\"] }")

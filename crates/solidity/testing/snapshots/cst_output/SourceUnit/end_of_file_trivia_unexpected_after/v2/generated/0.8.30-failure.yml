@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Err(
+    "UnrecognizedEof { location: 63, expected: [\"L_ConstantKeyword_Reserved\", \"L_Period\"] }",
+)
