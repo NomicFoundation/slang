@@ -1418,20 +1418,6 @@ SepOne<S, T>: Vec<T> = {
 // Rules for section Types
 
 // Rules for topic Advanced Types
-    NewableTypeName: NewableTypeName = {
-         
-            <_NewableArrayType: NewableArrayType>  => new_newable_type_name_newable_array_type(<>),
-         
-            <_ElementaryType: ElementaryType>  => new_newable_type_name_elementary_type(<>),
-         
-            <_IdentifierPath: IdentifierPath>  => new_newable_type_name_identifier_path(<>),
-        
-    };
-    NewableArrayType: NewableArrayType = {
-         
-            <_type_name: TypeName>  <_open_bracket: OpenBracket>  <_close_bracket: CloseBracket>  => new_newable_array_type(<>),
-        
-    };
     MappingType: MappingType = {
          
             <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => new_mapping_type(<>),
@@ -1691,7 +1677,7 @@ SepOne<S, T>: Vec<T> = {
     };
     NewExpression: NewExpression = {
          
-            <_new_keyword: NewKeyword>  <_type_name: NewableTypeName>  <_arguments: PositionalArgumentsDeclaration>  => new_new_expression(<>),
+            <_new_keyword: NewKeyword>  <_type_name: TypeName>  <_arguments: PositionalArgumentsDeclaration>  => new_new_expression(<>),
         
     };
     ArrayExpression: ArrayExpression = {

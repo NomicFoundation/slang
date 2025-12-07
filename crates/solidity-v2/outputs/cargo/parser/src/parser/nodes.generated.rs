@@ -1242,28 +1242,6 @@ pub fn new_array_type_name(
     })
 }
 
-pub type NewableArrayType = Rc<NewableArrayTypeStruct>;
-
-#[derive(Debug)]
-pub struct NewableArrayTypeStruct {
-    // Do we care about range in source code?
-    pub type_name: TypeName,
-    pub open_bracket: OpenBracket,
-    pub close_bracket: CloseBracket,
-}
-
-pub fn new_newable_array_type(
-    type_name: TypeName,
-    open_bracket: OpenBracket,
-    close_bracket: CloseBracket,
-) -> NewableArrayType {
-    Rc::new(NewableArrayTypeStruct {
-        type_name,
-        open_bracket,
-        close_bracket,
-    })
-}
-
 pub type FunctionType = Rc<FunctionTypeStruct>;
 
 #[derive(Debug)]
@@ -2474,13 +2452,13 @@ pub type NewExpression = Rc<NewExpressionStruct>;
 pub struct NewExpressionStruct {
     // Do we care about range in source code?
     pub new_keyword: NewKeyword,
-    pub type_name: NewableTypeName,
+    pub type_name: TypeName,
     pub arguments: PositionalArgumentsDeclaration,
 }
 
 pub fn new_new_expression(
     new_keyword: NewKeyword,
-    type_name: NewableTypeName,
+    type_name: TypeName,
     arguments: PositionalArgumentsDeclaration,
 ) -> NewExpression {
     Rc::new(NewExpressionStruct {
@@ -3782,25 +3760,6 @@ pub fn new_type_name_elementary_type(element: ElementaryType) -> TypeName {
 
 pub fn new_type_name_identifier_path(element: IdentifierPath) -> TypeName {
     TypeName::IdentifierPath(element)
-}
-
-#[derive(Debug, Clone)]
-pub enum NewableTypeName {
-    NewableArrayType(NewableArrayType),
-    ElementaryType(ElementaryType),
-    IdentifierPath(IdentifierPath),
-}
-
-pub fn new_newable_type_name_newable_array_type(element: NewableArrayType) -> NewableTypeName {
-    NewableTypeName::NewableArrayType(element)
-}
-
-pub fn new_newable_type_name_elementary_type(element: ElementaryType) -> NewableTypeName {
-    NewableTypeName::ElementaryType(element)
-}
-
-pub fn new_newable_type_name_identifier_path(element: IdentifierPath) -> NewableTypeName {
-    NewableTypeName::IdentifierPath(element)
 }
 
 #[derive(Debug, Clone)]
