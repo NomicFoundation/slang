@@ -105,19 +105,19 @@ extern {
         // <_ConstantKeyword: ConstantKeyword> <_other: StateVariableAttributes<Vis, "True">> if Const == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_StateVariableAttribute\": {} }}", format!("[{}]", _StateVariableAttribute.join(", "))),
 
         <_InternalKeyword: InternalKeyword> <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.push(new_state_variable_attribute_internal_keyword(_InternalKeyword));
+            _other.elements.push(new_state_variable_attribute_internal_keyword(_InternalKeyword));
             _other
         },
         <_PrivateKeyword: PrivateKeyword>   <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.push(new_state_variable_attribute_private_keyword(_PrivateKeyword));
+            _other.elements.push(new_state_variable_attribute_private_keyword(_PrivateKeyword));
             _other
         },
         <_PublicKeyword: PublicKeyword>     <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.push(new_state_variable_attribute_public_keyword(_PublicKeyword));
+            _other.elements.push(new_state_variable_attribute_public_keyword(_PublicKeyword));
             _other
         },
 
-        () if Vis ~~ "0|m" => vec![],
+        () if Vis ~~ "0|m" => new_state_variable_attributes(vec![]),
 
     };
     /*
@@ -193,25 +193,25 @@ extern {
     };
     FunctionTypeAttributes<Vis>: FunctionTypeAttributes = {
         <_InternalKeyword: InternalKeyword> <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.push(new_function_type_attribute_internal_keyword(_InternalKeyword));
+            _other.elements.push(new_function_type_attribute_internal_keyword(_InternalKeyword));
             _other
         },
         <_ExternalKeyword: ExternalKeyword> <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.push(new_function_type_attribute_external_keyword(_ExternalKeyword));
+            _other.elements.push(new_function_type_attribute_external_keyword(_ExternalKeyword));
             _other
         },
         <_PrivateKeyword: PrivateKeyword>   <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.push(new_function_type_attribute_private_keyword(_PrivateKeyword));
+            _other.elements.push(new_function_type_attribute_private_keyword(_PrivateKeyword));
             _other
         },
         <_PublicKeyword: PublicKeyword>     <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.push(new_function_type_attribute_public_keyword(_PublicKeyword));
+            _other.elements.push(new_function_type_attribute_public_keyword(_PublicKeyword));
             _other
         },
         
         // <_PureKeyword: PureKeyword>         <_other: FunctionTypeAttributes<Vis, "True">> if Pure == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PureKeyword\": {} }}", _PureKeyword),
 
-        () if Vis ~~ "0|m" => vec![],
+        () if Vis ~~ "0|m" => new_function_type_attributes(vec![]),
         
     };
     /*

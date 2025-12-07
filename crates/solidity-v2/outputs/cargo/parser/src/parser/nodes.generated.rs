@@ -8,7 +8,6 @@ use std::rc::Rc;
 use crate::lexer::lexemes::LexemeKind;
 
 // TODO:
-// - (correctness) use actual structs and types
 // - (perf) don't use terminals that are not needed
 
 // Special cases
@@ -98,7 +97,7 @@ pub fn new_tuple_deconstruction_statement_from_proto_tuple(
     new_tuple_deconstruction_statement(
         None,
         proto_tuple._open_paren,
-        elements,
+        new_tuple_deconstruction_elements(elements),
         proto_tuple._close_paren,
         equal,
         expression,
@@ -135,8 +134,8 @@ pub fn new_proto_tuple_element_empty() -> ProtoTupleElement {
 
 pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
     // TODO: This is just a placeholder, we need to fix this
-    let base: Expression = new_expression_identifier(identifier_path[0].clone());
-    identifier_path[1..].iter().fold(base, |acc, id| {
+    let base: Expression = new_expression_identifier(identifier_path.elements[0].clone());
+    identifier_path.elements[1..].iter().fold(base, |acc, id| {
         new_expression_member_access_expression(new_member_access_expression(
             acc,
             new_empty_terminal(),
@@ -4580,290 +4579,425 @@ pub fn new_yul_literal_string_literal(element: StringLiteral) -> YulLiteral {
 // Repeated & Separated
 //
 
-pub type SourceUnitMembers = Vec<SourceUnitMember>;
+#[derive(Debug, Clone)]
+pub struct SourceUnitMembers {
+    pub elements: Vec<SourceUnitMember>,
+}
 
 pub fn new_source_unit_members(elements: Vec<SourceUnitMember>) -> SourceUnitMembers {
-    elements
+    SourceUnitMembers { elements }
 }
 
-pub type VersionExpressionSets = Vec<VersionExpressionSet>;
+#[derive(Debug, Clone)]
+pub struct VersionExpressionSets {
+    pub elements: Vec<VersionExpressionSet>,
+}
 
 pub fn new_version_expression_sets(elements: Vec<VersionExpressionSet>) -> VersionExpressionSets {
-    elements
+    VersionExpressionSets { elements }
 }
 
-pub type VersionExpressionSet = Vec<VersionExpression>;
+#[derive(Debug, Clone)]
+pub struct VersionExpressionSet {
+    pub elements: Vec<VersionExpression>,
+}
 
 pub fn new_version_expression_set(elements: Vec<VersionExpression>) -> VersionExpressionSet {
-    elements
+    VersionExpressionSet { elements }
 }
 
-pub type SimpleVersionLiteral = Vec<VersionSpecifier>;
+#[derive(Debug, Clone)]
+pub struct SimpleVersionLiteral {
+    pub elements: Vec<VersionSpecifier>,
+}
 
 pub fn new_simple_version_literal(elements: Vec<VersionSpecifier>) -> SimpleVersionLiteral {
-    elements
+    SimpleVersionLiteral { elements }
 }
 
-pub type ImportDeconstructionSymbols = Vec<ImportDeconstructionSymbol>;
+#[derive(Debug, Clone)]
+pub struct ImportDeconstructionSymbols {
+    pub elements: Vec<ImportDeconstructionSymbol>,
+}
 
 pub fn new_import_deconstruction_symbols(
     elements: Vec<ImportDeconstructionSymbol>,
 ) -> ImportDeconstructionSymbols {
-    elements
+    ImportDeconstructionSymbols { elements }
 }
 
-pub type UsingDeconstructionSymbols = Vec<UsingDeconstructionSymbol>;
+#[derive(Debug, Clone)]
+pub struct UsingDeconstructionSymbols {
+    pub elements: Vec<UsingDeconstructionSymbol>,
+}
 
 pub fn new_using_deconstruction_symbols(
     elements: Vec<UsingDeconstructionSymbol>,
 ) -> UsingDeconstructionSymbols {
-    elements
+    UsingDeconstructionSymbols { elements }
 }
 
-pub type ContractSpecifiers = Vec<ContractSpecifier>;
+#[derive(Debug, Clone)]
+pub struct ContractSpecifiers {
+    pub elements: Vec<ContractSpecifier>,
+}
 
 pub fn new_contract_specifiers(elements: Vec<ContractSpecifier>) -> ContractSpecifiers {
-    elements
+    ContractSpecifiers { elements }
 }
 
-pub type InheritanceTypes = Vec<InheritanceType>;
+#[derive(Debug, Clone)]
+pub struct InheritanceTypes {
+    pub elements: Vec<InheritanceType>,
+}
 
 pub fn new_inheritance_types(elements: Vec<InheritanceType>) -> InheritanceTypes {
-    elements
+    InheritanceTypes { elements }
 }
 
-pub type ContractMembers = Vec<ContractMember>;
+#[derive(Debug, Clone)]
+pub struct ContractMembers {
+    pub elements: Vec<ContractMember>,
+}
 
 pub fn new_contract_members(elements: Vec<ContractMember>) -> ContractMembers {
-    elements
+    ContractMembers { elements }
 }
 
-pub type InterfaceMembers = Vec<ContractMember>;
+#[derive(Debug, Clone)]
+pub struct InterfaceMembers {
+    pub elements: Vec<ContractMember>,
+}
 
 pub fn new_interface_members(elements: Vec<ContractMember>) -> InterfaceMembers {
-    elements
+    InterfaceMembers { elements }
 }
 
-pub type LibraryMembers = Vec<ContractMember>;
+#[derive(Debug, Clone)]
+pub struct LibraryMembers {
+    pub elements: Vec<ContractMember>,
+}
 
 pub fn new_library_members(elements: Vec<ContractMember>) -> LibraryMembers {
-    elements
+    LibraryMembers { elements }
 }
 
-pub type StructMembers = Vec<StructMember>;
+#[derive(Debug, Clone)]
+pub struct StructMembers {
+    pub elements: Vec<StructMember>,
+}
 
 pub fn new_struct_members(elements: Vec<StructMember>) -> StructMembers {
-    elements
+    StructMembers { elements }
 }
 
-pub type EnumMembers = Vec<Identifier>;
+#[derive(Debug, Clone)]
+pub struct EnumMembers {
+    pub elements: Vec<Identifier>,
+}
 
 pub fn new_enum_members(elements: Vec<Identifier>) -> EnumMembers {
-    elements
+    EnumMembers { elements }
 }
 
-pub type StateVariableAttributes = Vec<StateVariableAttribute>;
+#[derive(Debug, Clone)]
+pub struct StateVariableAttributes {
+    pub elements: Vec<StateVariableAttribute>,
+}
 
 pub fn new_state_variable_attributes(
     elements: Vec<StateVariableAttribute>,
 ) -> StateVariableAttributes {
-    elements
+    StateVariableAttributes { elements }
 }
 
-pub type Parameters = Vec<Parameter>;
+#[derive(Debug, Clone)]
+pub struct Parameters {
+    pub elements: Vec<Parameter>,
+}
 
 pub fn new_parameters(elements: Vec<Parameter>) -> Parameters {
-    elements
+    Parameters { elements }
 }
 
-pub type FunctionAttributes = Vec<FunctionAttribute>;
+#[derive(Debug, Clone)]
+pub struct FunctionAttributes {
+    pub elements: Vec<FunctionAttribute>,
+}
 
 pub fn new_function_attributes(elements: Vec<FunctionAttribute>) -> FunctionAttributes {
-    elements
+    FunctionAttributes { elements }
 }
 
-pub type OverridePaths = Vec<IdentifierPath>;
+#[derive(Debug, Clone)]
+pub struct OverridePaths {
+    pub elements: Vec<IdentifierPath>,
+}
 
 pub fn new_override_paths(elements: Vec<IdentifierPath>) -> OverridePaths {
-    elements
+    OverridePaths { elements }
 }
 
-pub type ConstructorAttributes = Vec<ConstructorAttribute>;
+#[derive(Debug, Clone)]
+pub struct ConstructorAttributes {
+    pub elements: Vec<ConstructorAttribute>,
+}
 
 pub fn new_constructor_attributes(elements: Vec<ConstructorAttribute>) -> ConstructorAttributes {
-    elements
+    ConstructorAttributes { elements }
 }
 
-pub type UnnamedFunctionAttributes = Vec<UnnamedFunctionAttribute>;
+#[derive(Debug, Clone)]
+pub struct UnnamedFunctionAttributes {
+    pub elements: Vec<UnnamedFunctionAttribute>,
+}
 
 pub fn new_unnamed_function_attributes(
     elements: Vec<UnnamedFunctionAttribute>,
 ) -> UnnamedFunctionAttributes {
-    elements
+    UnnamedFunctionAttributes { elements }
 }
 
-pub type FallbackFunctionAttributes = Vec<FallbackFunctionAttribute>;
+#[derive(Debug, Clone)]
+pub struct FallbackFunctionAttributes {
+    pub elements: Vec<FallbackFunctionAttribute>,
+}
 
 pub fn new_fallback_function_attributes(
     elements: Vec<FallbackFunctionAttribute>,
 ) -> FallbackFunctionAttributes {
-    elements
+    FallbackFunctionAttributes { elements }
 }
 
-pub type ReceiveFunctionAttributes = Vec<ReceiveFunctionAttribute>;
+#[derive(Debug, Clone)]
+pub struct ReceiveFunctionAttributes {
+    pub elements: Vec<ReceiveFunctionAttribute>,
+}
 
 pub fn new_receive_function_attributes(
     elements: Vec<ReceiveFunctionAttribute>,
 ) -> ReceiveFunctionAttributes {
-    elements
+    ReceiveFunctionAttributes { elements }
 }
 
-pub type ModifierAttributes = Vec<ModifierAttribute>;
+#[derive(Debug, Clone)]
+pub struct ModifierAttributes {
+    pub elements: Vec<ModifierAttribute>,
+}
 
 pub fn new_modifier_attributes(elements: Vec<ModifierAttribute>) -> ModifierAttributes {
-    elements
+    ModifierAttributes { elements }
 }
 
-pub type EventParameters = Vec<EventParameter>;
+#[derive(Debug, Clone)]
+pub struct EventParameters {
+    pub elements: Vec<EventParameter>,
+}
 
 pub fn new_event_parameters(elements: Vec<EventParameter>) -> EventParameters {
-    elements
+    EventParameters { elements }
 }
 
-pub type ErrorParameters = Vec<ErrorParameter>;
+#[derive(Debug, Clone)]
+pub struct ErrorParameters {
+    pub elements: Vec<ErrorParameter>,
+}
 
 pub fn new_error_parameters(elements: Vec<ErrorParameter>) -> ErrorParameters {
-    elements
+    ErrorParameters { elements }
 }
 
-pub type FunctionTypeAttributes = Vec<FunctionTypeAttribute>;
+#[derive(Debug, Clone)]
+pub struct FunctionTypeAttributes {
+    pub elements: Vec<FunctionTypeAttribute>,
+}
 
 pub fn new_function_type_attributes(
     elements: Vec<FunctionTypeAttribute>,
 ) -> FunctionTypeAttributes {
-    elements
+    FunctionTypeAttributes { elements }
 }
 
-pub type Statements = Vec<Statement>;
+#[derive(Debug, Clone)]
+pub struct Statements {
+    pub elements: Vec<Statement>,
+}
 
 pub fn new_statements(elements: Vec<Statement>) -> Statements {
-    elements
+    Statements { elements }
 }
 
-pub type AssemblyFlags = Vec<StringLiteral>;
+#[derive(Debug, Clone)]
+pub struct AssemblyFlags {
+    pub elements: Vec<StringLiteral>,
+}
 
 pub fn new_assembly_flags(elements: Vec<StringLiteral>) -> AssemblyFlags {
-    elements
+    AssemblyFlags { elements }
 }
 
-pub type TupleDeconstructionElements = Vec<TupleDeconstructionElement>;
+#[derive(Debug, Clone)]
+pub struct TupleDeconstructionElements {
+    pub elements: Vec<TupleDeconstructionElement>,
+}
 
 pub fn new_tuple_deconstruction_elements(
     elements: Vec<TupleDeconstructionElement>,
 ) -> TupleDeconstructionElements {
-    elements
+    TupleDeconstructionElements { elements }
 }
 
-pub type CatchClauses = Vec<CatchClause>;
+#[derive(Debug, Clone)]
+pub struct CatchClauses {
+    pub elements: Vec<CatchClause>,
+}
 
 pub fn new_catch_clauses(elements: Vec<CatchClause>) -> CatchClauses {
-    elements
+    CatchClauses { elements }
 }
 
-pub type PositionalArguments = Vec<Expression>;
+#[derive(Debug, Clone)]
+pub struct PositionalArguments {
+    pub elements: Vec<Expression>,
+}
 
 pub fn new_positional_arguments(elements: Vec<Expression>) -> PositionalArguments {
-    elements
+    PositionalArguments { elements }
 }
 
-pub type NamedArguments = Vec<NamedArgument>;
+#[derive(Debug, Clone)]
+pub struct NamedArguments {
+    pub elements: Vec<NamedArgument>,
+}
 
 pub fn new_named_arguments(elements: Vec<NamedArgument>) -> NamedArguments {
-    elements
+    NamedArguments { elements }
 }
 
-pub type CallOptions = Vec<NamedArgument>;
+#[derive(Debug, Clone)]
+pub struct CallOptions {
+    pub elements: Vec<NamedArgument>,
+}
 
 pub fn new_call_options(elements: Vec<NamedArgument>) -> CallOptions {
-    elements
+    CallOptions { elements }
 }
 
-pub type TupleValues = Vec<TupleValue>;
+#[derive(Debug, Clone)]
+pub struct TupleValues {
+    pub elements: Vec<TupleValue>,
+}
 
 pub fn new_tuple_values(elements: Vec<TupleValue>) -> TupleValues {
-    elements
+    TupleValues { elements }
 }
 
-pub type ArrayValues = Vec<Expression>;
+#[derive(Debug, Clone)]
+pub struct ArrayValues {
+    pub elements: Vec<Expression>,
+}
 
 pub fn new_array_values(elements: Vec<Expression>) -> ArrayValues {
-    elements
+    ArrayValues { elements }
 }
 
-pub type StringLiterals = Vec<StringLiteral>;
+#[derive(Debug, Clone)]
+pub struct StringLiterals {
+    pub elements: Vec<StringLiteral>,
+}
 
 pub fn new_string_literals(elements: Vec<StringLiteral>) -> StringLiterals {
-    elements
+    StringLiterals { elements }
 }
 
-pub type HexStringLiterals = Vec<HexStringLiteral>;
+#[derive(Debug, Clone)]
+pub struct HexStringLiterals {
+    pub elements: Vec<HexStringLiteral>,
+}
 
 pub fn new_hex_string_literals(elements: Vec<HexStringLiteral>) -> HexStringLiterals {
-    elements
+    HexStringLiterals { elements }
 }
 
-pub type UnicodeStringLiterals = Vec<UnicodeStringLiteral>;
+#[derive(Debug, Clone)]
+pub struct UnicodeStringLiterals {
+    pub elements: Vec<UnicodeStringLiteral>,
+}
 
 pub fn new_unicode_string_literals(elements: Vec<UnicodeStringLiteral>) -> UnicodeStringLiterals {
-    elements
+    UnicodeStringLiterals { elements }
 }
 
-pub type IdentifierPath = Vec<Identifier>;
+#[derive(Debug, Clone)]
+pub struct IdentifierPath {
+    pub elements: Vec<Identifier>,
+}
 
 pub fn new_identifier_path(elements: Vec<Identifier>) -> IdentifierPath {
-    elements
+    IdentifierPath { elements }
 }
 
-pub type YulStatements = Vec<YulStatement>;
+#[derive(Debug, Clone)]
+pub struct YulStatements {
+    pub elements: Vec<YulStatement>,
+}
 
 pub fn new_yul_statements(elements: Vec<YulStatement>) -> YulStatements {
-    elements
+    YulStatements { elements }
 }
 
-pub type YulParameters = Vec<YulIdentifier>;
+#[derive(Debug, Clone)]
+pub struct YulParameters {
+    pub elements: Vec<YulIdentifier>,
+}
 
 pub fn new_yul_parameters(elements: Vec<YulIdentifier>) -> YulParameters {
-    elements
+    YulParameters { elements }
 }
 
-pub type YulVariableNames = Vec<YulIdentifier>;
+#[derive(Debug, Clone)]
+pub struct YulVariableNames {
+    pub elements: Vec<YulIdentifier>,
+}
 
 pub fn new_yul_variable_names(elements: Vec<YulIdentifier>) -> YulVariableNames {
-    elements
+    YulVariableNames { elements }
 }
 
-pub type YulSwitchCases = Vec<YulSwitchCase>;
+#[derive(Debug, Clone)]
+pub struct YulSwitchCases {
+    pub elements: Vec<YulSwitchCase>,
+}
 
 pub fn new_yul_switch_cases(elements: Vec<YulSwitchCase>) -> YulSwitchCases {
-    elements
+    YulSwitchCases { elements }
 }
 
-pub type YulArguments = Vec<YulExpression>;
+#[derive(Debug, Clone)]
+pub struct YulArguments {
+    pub elements: Vec<YulExpression>,
+}
 
 pub fn new_yul_arguments(elements: Vec<YulExpression>) -> YulArguments {
-    elements
+    YulArguments { elements }
 }
 
-pub type YulPaths = Vec<YulPath>;
+#[derive(Debug, Clone)]
+pub struct YulPaths {
+    pub elements: Vec<YulPath>,
+}
 
 pub fn new_yul_paths(elements: Vec<YulPath>) -> YulPaths {
-    elements
+    YulPaths { elements }
 }
 
-pub type YulPath = Vec<YulIdentifier>;
+#[derive(Debug, Clone)]
+pub struct YulPath {
+    pub elements: Vec<YulIdentifier>,
+}
 
 pub fn new_yul_path(elements: Vec<YulIdentifier>) -> YulPath {
-    elements
+    YulPath { elements }
 }
 
 //
@@ -4874,7 +5008,7 @@ pub struct TerminalType {
     pub value: String,
     pub _l: usize,
     pub _r: usize,
-    kind: LexemeKind,
+    pub kind: LexemeKind,
 }
 
 pub fn new_empty_terminal() -> TerminalType {
