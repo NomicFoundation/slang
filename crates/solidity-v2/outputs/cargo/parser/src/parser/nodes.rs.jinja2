@@ -2,6 +2,7 @@
   #![allow(non_camel_case_types)]
   #![allow(dead_code)]
 
+  use crate::lexer::lexemes::LexemeKind;
   use std::rc::Rc;
 
 
@@ -184,6 +185,7 @@ pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expres
       pub value: String,
       pub _l: usize,
       pub _r: usize,
+      kind: LexemeKind,
     }
 
 pub fn new_empty_terminal() -> TerminalType {
@@ -191,9 +193,13 @@ pub fn new_empty_terminal() -> TerminalType {
     value: "".into(),
     _l: 0,
     _r: 0,
+    kind: LexemeKind::UNRECOGNIZED,
   }
 }
 
+{% for parent_type in target.terminal_wrappers %}
+pub type {{ parent_type }} = TerminalType;
+{% endfor %}
 
   {% for parent_type, unique in target.terminals %}
     pub type {{ parent_type }} = TerminalType;
@@ -203,6 +209,7 @@ pub fn new_empty_terminal() -> TerminalType {
         value: source[l..r].to_owned(),
         _l: l,
         _r: r,
+        kind: LexemeKind::{{ parent_type  }},
       }
     }
     

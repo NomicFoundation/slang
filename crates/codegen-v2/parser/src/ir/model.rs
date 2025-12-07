@@ -1,7 +1,7 @@
 // Copied from V1
 
-use indexmap::IndexMap;
-use language_v2_definition::model;
+use indexmap::{IndexMap, IndexSet};
+use language_v2_definition::model::{self, Identifier, VersionSpecifier};
 use serde::ser::SerializeMap;
 use serde::Serialize;
 
@@ -11,6 +11,7 @@ pub struct IrModel {
     // content. The collection is not needed for generating the code, so it's
     // not necessary to serialize it.
     pub terminals: IndexMap<model::Identifier, bool>,
+    pub terminal_wrappers: IndexSet<model::Identifier>,
 
     pub sequences: IndexMap<model::Identifier, Sequence>,
     pub choices: IndexMap<model::Identifier, Choice>,
@@ -101,6 +102,7 @@ impl IrModel {
 
         Self {
             terminals: builder.terminals,
+            terminal_wrappers: builder.terminal_wrappers,
             sequences: builder.sequences,
             choices: builder.choices,
             collections: builder.collections,
@@ -110,6 +112,7 @@ impl IrModel {
     pub fn from_model(model: &Self) -> Self {
         Self {
             terminals: model.terminals.clone(),
+            terminal_wrappers: model.terminal_wrappers.clone(),
             sequences: model.sequences.clone(),
             choices: model.choices.clone(),
             collections: model.collections.clone(),
@@ -119,6 +122,7 @@ impl IrModel {
 
 struct IrModelBuilder {
     pub terminals: IndexMap<model::Identifier, bool>,
+    pub terminal_wrappers: IndexSet<model::Identifier>,
     pub sequences: IndexMap<model::Identifier, Sequence>,
     pub choices: IndexMap<model::Identifier, Choice>,
     pub collections: IndexMap<model::Identifier, Collection>,
@@ -128,6 +132,7 @@ impl IrModelBuilder {
     fn create(language: &model::Language) -> Self {
         let mut builder = Self {
             terminals: IndexMap::new(),
+            terminal_wrappers: IndexSet::new(),
             sequences: IndexMap::new(),
             choices: IndexMap::new(),
             collections: IndexMap::new(),
@@ -156,13 +161,24 @@ impl IrModelBuilder {
                     self.terminals.insert(item.name.clone(), false);
                 }
                 model::Item::Keyword { item } => {
-                    // For now we add everything, we need better representations
-                    self.terminals
-                        .insert(format!("{}_Reserved", item.name).into(), item.is_unique());
-                    self.terminals
-                        .insert(format!("{}_Unreserved", item.name).into(), item.is_unique());
-                    self.terminals
-                        .insert(format!("{}", item.name).into(), item.is_unique());
+                    if item.definitions.iter().all(|def| {
+                        def.reserved
+                            .clone()
+                            .is_none_or(|rng| rng != VersionSpecifier::Never)
+                    }) {
+                        let id: Identifier = format!("{}_Reserved", item.name).into();
+                        self.terminals.insert(id.clone(), item.is_unique());
+                    }
+                    if item
+                        .definitions
+                        .iter()
+                        .any(|def| def.reserved.clone().is_some())
+                    {
+                        let id: Identifier = format!("{}_Unreserved", item.name).into();
+                        self.terminals.insert(id.clone(), item.is_unique());
+                    }
+
+                    self.terminal_wrappers.insert(item.name.clone());
                 }
                 model::Item::Token { item } => {
                     self.terminals.insert(item.name.clone(), item.is_unique());
