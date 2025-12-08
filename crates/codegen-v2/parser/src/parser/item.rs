@@ -309,7 +309,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
         inline: false,
     });
 
-    for prec in &item.precedence_expressions {
+    for prec in item.precedence_expressions.iter().rev() {
         let prev_name = format!("{}{}", item.name, prec_counter);
         prec_counter += 1;
         let cur_name = format!("{}{}", item.name, prec_counter);
