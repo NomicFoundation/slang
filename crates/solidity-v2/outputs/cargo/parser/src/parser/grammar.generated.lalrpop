@@ -1632,6 +1632,13 @@ SepOne<S, T>: Vec<T> = {
     
 
 // Rules for topic Function Calls
+    ArgumentsDeclaration: ArgumentsDeclaration = {
+         
+            <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
+         
+            <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
+        
+    };
     PositionalArgumentsDeclaration: PositionalArgumentsDeclaration = {
          
             <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => new_positional_arguments_declaration(<>),
@@ -5223,17 +5230,6 @@ extern {
     };
 // ODOT
 
-// TODO[7]: enable
-    ArgumentsDeclaration: ArgumentsDeclaration = {
-         
-            <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
-         
-
-                // Some strange conflict
-
-            //<_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
-    };
-// ODOT
 
 
 // TODO[4] These are the new tuples, we get a prototuple that can be a pattern/declaration

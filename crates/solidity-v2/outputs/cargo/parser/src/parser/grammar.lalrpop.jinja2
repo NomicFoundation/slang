@@ -561,17 +561,6 @@ extern {
     };
 // ODOT
 
-// TODO[7]: enable
-    ArgumentsDeclaration: ArgumentsDeclaration = {
-         
-            <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
-         
-
-                // Some strange conflict
-
-            //<_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
-    };
-// ODOT
 
 
 // TODO[4] These are the new tuples, we get a prototuple that can be a pattern/declaration
@@ -636,10 +625,12 @@ extern {
         
 // ODOT
 
-    HexNumberExpression: HexNumberExpression = {
 // TODO This is just because the function is not prepared for 0.8.30
+// The grammar rule is correct, but the builder function expects an optional unit
+// Yes, this is a silly hack for now
+    HexNumberExpression: HexNumberExpression = {
             <_literal: HexLiteral>  => new_hex_number_expression(<>, None),
-// ODOT
         
     };
+// ODOT
 {% endraw %}
