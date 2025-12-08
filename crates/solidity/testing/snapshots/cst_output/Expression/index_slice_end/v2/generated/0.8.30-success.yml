@@ -1,5 +1,47 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "IndexAccessExpression(\n    IndexAccessExpressionStruct {\n        operand: Identifier(\n            TerminalType {\n                value: \"arr\",\n                _l: 0,\n                _r: 3,\n                kind: Identifier,\n            },\n        ),\n        open_bracket: TerminalType {\n            value: \"[\",\n            _l: 3,\n            _r: 4,\n            kind: OpenBracket,\n        },\n        start: None,\n        end: Some(\n            IndexAccessEndStruct {\n                colon: TerminalType {\n                    value: \":\",\n                    _l: 4,\n                    _r: 5,\n                    kind: Colon,\n                },\n                end: Some(\n                    Identifier(\n                        TerminalType {\n                            value: \"end\",\n                            _l: 5,\n                            _r: 8,\n                            kind: Identifier,\n                        },\n                    ),\n                ),\n            },\n        ),\n        close_bracket: TerminalType {\n            value: \"]\",\n            _l: 8,\n            _r: 9,\n            kind: CloseBracket,\n        },\n    },\n)",
+IndexAccessExpression(
+    IndexAccessExpressionStruct {
+        operand: Identifier(
+            TerminalType {
+                value: "arr",
+                _l: 0,
+                _r: 3,
+                kind: Identifier,
+            },
+        ),
+        open_bracket: TerminalType {
+            value: "[",
+            _l: 3,
+            _r: 4,
+            kind: OpenBracket,
+        },
+        start: None,
+        end: Some(
+            IndexAccessEndStruct {
+                colon: TerminalType {
+                    value: ":",
+                    _l: 4,
+                    _r: 5,
+                    kind: Colon,
+                },
+                end: Some(
+                    Identifier(
+                        TerminalType {
+                            value: "end",
+                            _l: 5,
+                            _r: 8,
+                            kind: Identifier,
+                        },
+                    ),
+                ),
+            },
+        ),
+        close_bracket: TerminalType {
+            value: "]",
+            _l: 8,
+            _r: 9,
+            kind: CloseBracket,
+        },
+    },
 )

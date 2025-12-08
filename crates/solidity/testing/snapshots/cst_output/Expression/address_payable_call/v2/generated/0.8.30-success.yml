@@ -1,5 +1,54 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "FunctionCallExpression(\n    FunctionCallExpressionStruct {\n        operand: ElementaryType(\n            AddressType(\n                AddressTypeStruct {\n                    address_keyword: TerminalType {\n                        value: \"address\",\n                        _l: 0,\n                        _r: 7,\n                        kind: AddressKeyword_Unreserved,\n                    },\n                    payable_keyword: Some(\n                        TerminalType {\n                            value: \"payable\",\n                            _l: 8,\n                            _r: 15,\n                            kind: PayableKeyword_Reserved,\n                        },\n                    ),\n                },\n            ),\n        ),\n        arguments: PositionalArgumentsDeclaration(\n            PositionalArgumentsDeclarationStruct {\n                open_paren: TerminalType {\n                    value: \"(\",\n                    _l: 15,\n                    _r: 16,\n                    kind: OpenParen,\n                },\n                arguments: PositionalArguments {\n                    elements: [\n                        Identifier(\n                            TerminalType {\n                                value: \"value\",\n                                _l: 16,\n                                _r: 21,\n                                kind: Identifier,\n                            },\n                        ),\n                    ],\n                },\n                close_paren: TerminalType {\n                    value: \")\",\n                    _l: 21,\n                    _r: 22,\n                    kind: CloseParen,\n                },\n            },\n        ),\n    },\n)",
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: ElementaryType(
+            AddressType(
+                AddressTypeStruct {
+                    address_keyword: TerminalType {
+                        value: "address",
+                        _l: 0,
+                        _r: 7,
+                        kind: AddressKeyword_Unreserved,
+                    },
+                    payable_keyword: Some(
+                        TerminalType {
+                            value: "payable",
+                            _l: 8,
+                            _r: 15,
+                            kind: PayableKeyword_Reserved,
+                        },
+                    ),
+                },
+            ),
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: TerminalType {
+                    value: "(",
+                    _l: 15,
+                    _r: 16,
+                    kind: OpenParen,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        Identifier(
+                            TerminalType {
+                                value: "value",
+                                _l: 16,
+                                _r: 21,
+                                kind: Identifier,
+                            },
+                        ),
+                    ],
+                },
+                close_paren: TerminalType {
+                    value: ")",
+                    _l: 21,
+                    _r: 22,
+                    kind: CloseParen,
+                },
+            },
+        ),
+    },
 )

@@ -1,5 +1,56 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "FunctionCallExpression(\n    FunctionCallExpressionStruct {\n        operand: Identifier(\n            TerminalType {\n                value: \"x\",\n                _l: 0,\n                _r: 1,\n                kind: Identifier,\n            },\n        ),\n        arguments: PositionalArgumentsDeclaration(\n            PositionalArgumentsDeclarationStruct {\n                open_paren: TerminalType {\n                    value: \"(\",\n                    _l: 1,\n                    _r: 2,\n                    kind: OpenParen,\n                },\n                arguments: PositionalArguments {\n                    elements: [\n                        DecimalNumberExpression(\n                            DecimalNumberExpressionStruct {\n                                literal: TerminalType {\n                                    value: \"1\",\n                                    _l: 2,\n                                    _r: 3,\n                                    kind: DecimalLiteral,\n                                },\n                                unit: None,\n                            },\n                        ),\n                        DecimalNumberExpression(\n                            DecimalNumberExpressionStruct {\n                                literal: TerminalType {\n                                    value: \"2\",\n                                    _l: 5,\n                                    _r: 6,\n                                    kind: DecimalLiteral,\n                                },\n                                unit: None,\n                            },\n                        ),\n                    ],\n                },\n                close_paren: TerminalType {\n                    value: \")\",\n                    _l: 6,\n                    _r: 7,\n                    kind: CloseParen,\n                },\n            },\n        ),\n    },\n)",
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: Identifier(
+            TerminalType {
+                value: "x",
+                _l: 0,
+                _r: 1,
+                kind: Identifier,
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: TerminalType {
+                    value: "(",
+                    _l: 1,
+                    _r: 2,
+                    kind: OpenParen,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        DecimalNumberExpression(
+                            DecimalNumberExpressionStruct {
+                                literal: TerminalType {
+                                    value: "1",
+                                    _l: 2,
+                                    _r: 3,
+                                    kind: DecimalLiteral,
+                                },
+                                unit: None,
+                            },
+                        ),
+                        DecimalNumberExpression(
+                            DecimalNumberExpressionStruct {
+                                literal: TerminalType {
+                                    value: "2",
+                                    _l: 5,
+                                    _r: 6,
+                                    kind: DecimalLiteral,
+                                },
+                                unit: None,
+                            },
+                        ),
+                    ],
+                },
+                close_paren: TerminalType {
+                    value: ")",
+                    _l: 6,
+                    _r: 7,
+                    kind: CloseParen,
+                },
+            },
+        ),
+    },
 )

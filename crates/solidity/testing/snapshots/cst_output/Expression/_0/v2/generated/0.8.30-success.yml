@@ -1,5 +1,10 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "Identifier(\n    TerminalType {\n        value: \"_0\",\n        _l: 0,\n        _r: 2,\n        kind: Identifier,\n    },\n)",
+Identifier(
+    TerminalType {
+        value: "_0",
+        _l: 0,
+        _r: 2,
+        kind: Identifier,
+    },
 )

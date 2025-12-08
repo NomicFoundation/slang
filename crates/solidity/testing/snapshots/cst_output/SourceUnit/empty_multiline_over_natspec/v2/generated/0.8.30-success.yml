@@ -1,5 +1,43 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "SourceUnitStruct {\n    members: SourceUnitMembers {\n        elements: [\n            ContractDefinition(\n                ContractDefinitionStruct {\n                    abstract_keyword: None,\n                    contract_keyword: TerminalType {\n                        value: \"contract\",\n                        _l: 98,\n                        _r: 106,\n                        kind: ContractKeyword_Reserved,\n                    },\n                    name: TerminalType {\n                        value: \"Foo\",\n                        _l: 107,\n                        _r: 110,\n                        kind: Identifier,\n                    },\n                    specifiers: ContractSpecifiers {\n                        elements: [],\n                    },\n                    open_brace: TerminalType {\n                        value: \"{\",\n                        _l: 111,\n                        _r: 112,\n                        kind: OpenBrace,\n                    },\n                    members: ContractMembers {\n                        elements: [],\n                    },\n                    close_brace: TerminalType {\n                        value: \"}\",\n                        _l: 120,\n                        _r: 121,\n                        kind: CloseBrace,\n                    },\n                },\n            ),\n        ],\n    },\n}",
-)
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: TerminalType {
+                        value: "contract",
+                        _l: 98,
+                        _r: 106,
+                        kind: ContractKeyword_Reserved,
+                    },
+                    name: TerminalType {
+                        value: "Foo",
+                        _l: 107,
+                        _r: 110,
+                        kind: Identifier,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: TerminalType {
+                        value: "{",
+                        _l: 111,
+                        _r: 112,
+                        kind: OpenBrace,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: TerminalType {
+                        value: "}",
+                        _l: 120,
+                        _r: 121,
+                        kind: CloseBrace,
+                    },
+                },
+            ),
+        ],
+    },
+}

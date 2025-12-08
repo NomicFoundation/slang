@@ -15,6 +15,8 @@ lalrpop_mod!(
 #[cfg(test)]
 mod tests;
 
+pub mod temp_cst_output;
+
 /// A Solidity Parser
 ///
 /// TODO(v2): Error recovery, for now we just fail

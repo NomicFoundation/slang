@@ -1,0 +1,305 @@
+{%- set target = model.ir_model -%}
+
+use slang_solidity_v2_ast::ast::nodes::*;
+use slang_solidity::cst::{NonterminalKind, NodeKind, Node, EdgeLabel, Edge};
+use crate::temp_sourcify::Comparator;
+
+#[derive(Clone, Debug)]
+pub struct NodeCheckerError {
+    pub err: String,
+}
+
+impl NodeCheckerError {
+    fn new(err: String) -> NodeCheckerError {
+        NodeCheckerError { err }
+    }
+}
+
+pub trait NodeChecker {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError>;
+}
+
+/// Extract the first element that satisfies the predicate, and remove it from the vector.
+fn extract_first<T>(v: &mut Vec<T>, finder: impl Fn(&T) -> bool) -> Option<T> {
+    if let Some(idx) = v.iter().position(finder) {
+        return Some(v.remove(idx));
+    }
+    None
+}
+
+/// Remove all trivia nodes from the vector.
+fn remove_trivia(v: &mut Vec<Edge>) {
+    v.retain(|edge| !edge.node.is_trivia());
+    // Also remove separators
+    v.retain(|edge| edge.label != EdgeLabel::Separator);
+}
+
+//
+// Sequences:
+//
+
+
+{% for parent_type, sequence in target.sequences %}
+{% if parent_type == "VariableDeclaration" %}
+// We skip NodeChecker for VariableDeclaration
+
+{% elif parent_type == "VariableDeclarationStatement" %}
+
+// NodeChecker for VariableDeclarationStatement is done by hand, since in V2 is represented a bit differently
+impl NodeChecker for VariableDeclarationStatement {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::VariableDeclarationStatement) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be {}, but it was {}",
+                NonterminalKind::VariableDeclarationStatement,
+                node.kind()
+            ))];
+        }
+
+        let mut children = node.children().to_vec();
+        remove_trivia(&mut children);
+        let mut errors = vec![];
+
+        // variable_declaration
+
+
+        // variable_type
+        {
+            let variable_type = &self.variable_declaration.variable_type;
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::VariableType
+            }) {
+                let child_errors = variable_type.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected variable_type to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        // storage_location
+        if let Some(storage_location) = &self.variable_declaration.storage_location {
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::StorageLocation
+            }) {
+                let child_errors = storage_location.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected storage_location to be present in the CST, but it was not"
+                )));
+            }
+        } else {
+            // If it's not there on the AST, it shouldn't be in the CST
+            if let Some(_) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::StorageLocation
+            }) {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected storage_location to not be present in the CST, but it was there"
+                )));
+            }
+        }
+
+        // name
+
+        {
+            let name = &self.variable_declaration.name;
+            if let Some(child) =
+                extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
+            {
+                let child_errors = name.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected name to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        // value
+        if let Some(value) = &self.value {
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::Value
+            }) {
+                let child_errors = value.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected value to be present in the CST, but it was not"
+                )));
+            }
+        } else {
+            // If it's not there on the AST, it shouldn't be in the CST
+            if let Some(_) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::Value
+            }) {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected value to not be present in the CST, but it was there"
+                )));
+            }
+        }
+
+        // semicolon
+
+        {
+            let semicolon = &self.semicolon;
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::Semicolon
+            }) {
+                let child_errors = semicolon.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected semicolon to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        errors
+    }
+}
+
+
+{% else %}
+impl NodeChecker for {{ parent_type }} {
+fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+    if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
+        // Don't even check the rest
+        return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ parent_type }}, node.kind()))];
+    }
+
+    let mut children = node.children().to_vec();
+    remove_trivia(&mut children);
+
+    let mut errors = vec![];
+
+    {% for field in sequence.fields %}
+    // {{ field.label }}
+    {% if field.is_optional -%}
+    if let Some({{ field.label | snake_case }}) = &self.{{ field.label | snake_case }}
+    {
+    {% else %}
+    {
+    let {{ field.label | snake_case }} = &self.{{ field.label | snake_case }};
+    {%- endif %}
+        if let Some(child) = extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::{{ field.label | pascal_case }}) {
+            let child_errors = {{ field.label | snake_case }}.check_node(&child.node);
+            errors.extend(child_errors);
+        } else {
+            errors.push(NodeCheckerError::new(format!("Expected {{ field.label }} to be present in the CST, but it was not")));
+        }
+    } {% if field.is_optional -%}
+    else {
+        // If it's not there on the AST, it shouldn't be in the CST
+        if let Some(child) = extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::{{ field.label | pascal_case }}) {
+            errors.push(NodeCheckerError::new(format!("Expected {{ field.label }} to not be present in the CST, but it was there: {:#?}", child)));
+        }
+    }
+    {%- endif %}
+    {% endfor %}
+
+    if !children.is_empty() {
+        errors.push(NodeCheckerError::new(format!("Expected 0 children left, but there's some left {:#?}", children)));
+    }
+
+    errors
+}
+}
+{% endif %}
+{% endfor %}
+
+
+//
+// Choices:
+//
+
+
+{% for parent_type, choice in target.choices %}
+impl NodeChecker for {{ parent_type }} {
+fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+    if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
+        // Don't even check the rest
+        return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ parent_type }}, node.kind()))];
+    }
+
+    let mut children = node.children().to_vec();
+    remove_trivia(&mut children);
+
+    if children.len() != 1 {
+        return vec![NodeCheckerError::new(format!("Expected exactly one child for {}, but got: {:#?}", NonterminalKind::{{ parent_type }}, children))];
+    }
+
+    let child = &children[0];
+
+    if child.label != EdgeLabel::Variant {
+        return vec![NodeCheckerError::new(format!("Expected child to be of variant type, but it was {}", child.label))];
+    }
+
+    let mut errors = vec![];
+
+    match self {
+        {% for variant in choice.variants %}
+        Self::{{ variant.name }}(element) => {
+            errors.extend(element.check_node(&child.node));
+        }
+        {% endfor %}
+    }
+
+    errors
+}
+}
+{% endfor %}
+
+  //
+  // Repeated & Separated
+  //
+
+  {% for parent_type, collection in target.collections %}
+    impl NodeChecker for {{ parent_type }} {
+fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+    if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
+        // Don't even check the rest
+        return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ parent_type }}, node.kind()))];
+    }
+
+    let mut children = node.children().to_vec();
+    remove_trivia(&mut children);
+
+    if children.len() != self.elements.len() {
+        return vec![NodeCheckerError::new(format!("Expected {} elements, but got: {:#?}", self.elements.len(), children))];
+    }
+
+    let mut errors = vec![];
+
+    for (i, child) in children.iter().enumerate() {
+        let element = &self.elements[i];
+        errors.extend(element.check_node(child));
+    }
+    errors
+}
+    }
+
+  {% endfor %}
+
+
+// Terminals
+
+impl NodeChecker for TerminalType {
+fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+    let mut errors = vec![];
+    if let NodeKind::Terminal(terminal_kind) = node.kind() {
+        let v1_kind = terminal_kind.as_ref();
+        let v2_kind: &'static str = self.kind.clone().into();
+
+        if !Comparator::match_terminal(v1_kind, v2_kind) {
+            errors.push(NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", v2_kind, v1_kind)));
+        }
+    } else {
+        errors.push(NodeCheckerError::new(format!("Expected node kind to be a terminal, but it was {}", node.kind())));
+
+    }
+    return errors;
+}
+}

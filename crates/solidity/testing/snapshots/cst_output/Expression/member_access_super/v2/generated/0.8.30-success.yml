@@ -1,5 +1,26 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "MemberAccessExpression(\n    MemberAccessExpressionStruct {\n        operand: SuperKeyword(\n            TerminalType {\n                value: \"super\",\n                _l: 0,\n                _r: 5,\n                kind: SuperKeyword_Reserved,\n            },\n        ),\n        period: TerminalType {\n            value: \".\",\n            _l: 5,\n            _r: 6,\n            kind: Period,\n        },\n        member: TerminalType {\n            value: \"x\",\n            _l: 6,\n            _r: 7,\n            kind: Identifier,\n        },\n    },\n)",
+MemberAccessExpression(
+    MemberAccessExpressionStruct {
+        operand: SuperKeyword(
+            TerminalType {
+                value: "super",
+                _l: 0,
+                _r: 5,
+                kind: SuperKeyword_Reserved,
+            },
+        ),
+        period: TerminalType {
+            value: ".",
+            _l: 5,
+            _r: 6,
+            kind: Period,
+        },
+        member: TerminalType {
+            value: "x",
+            _l: 6,
+            _r: 7,
+            kind: Identifier,
+        },
+    },
 )

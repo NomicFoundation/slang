@@ -1,5 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "PrefixExpression(\n    PrefixExpressionStruct {\n        operator: TerminalType {\n            value: \"--\",\n            _l: 0,\n            _r: 2,\n            kind: MinusMinus,\n        },\n        operand: Identifier(\n            TerminalType {\n                value: \"foo\",\n                _l: 2,\n                _r: 5,\n                kind: Identifier,\n            },\n        ),\n    },\n)",
+PrefixExpression(
+    PrefixExpressionStruct {
+        operator: TerminalType {
+            value: "--",
+            _l: 0,
+            _r: 2,
+            kind: MinusMinus,
+        },
+        operand: Identifier(
+            TerminalType {
+                value: "foo",
+                _l: 2,
+                _r: 5,
+                kind: Identifier,
+            },
+        ),
+    },
 )

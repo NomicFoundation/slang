@@ -1,0 +1,116 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ConditionalExpression(
+    ConditionalExpressionStruct {
+        operand: Identifier(
+            TerminalType {
+                value: "cond",
+                _l: 0,
+                _r: 4,
+                kind: Identifier,
+            },
+        ),
+        question_mark: TerminalType {
+            value: "?",
+            _l: 5,
+            _r: 6,
+            kind: QuestionMark,
+        },
+        true_expression: PrefixExpression(
+            PrefixExpressionStruct {
+                operator: TerminalType {
+                    value: "delete",
+                    _l: 7,
+                    _r: 13,
+                    kind: DeleteKeyword_Reserved,
+                },
+                operand: IndexAccessExpression(
+                    IndexAccessExpressionStruct {
+                        operand: Identifier(
+                            TerminalType {
+                                value: "obj",
+                                _l: 14,
+                                _r: 17,
+                                kind: Identifier,
+                            },
+                        ),
+                        open_bracket: TerminalType {
+                            value: "[",
+                            _l: 17,
+                            _r: 18,
+                            kind: OpenBracket,
+                        },
+                        start: Some(
+                            Identifier(
+                                TerminalType {
+                                    value: "slot1",
+                                    _l: 18,
+                                    _r: 23,
+                                    kind: Identifier,
+                                },
+                            ),
+                        ),
+                        end: None,
+                        close_bracket: TerminalType {
+                            value: "]",
+                            _l: 23,
+                            _r: 24,
+                            kind: CloseBracket,
+                        },
+                    },
+                ),
+            },
+        ),
+        colon: TerminalType {
+            value: ":",
+            _l: 25,
+            _r: 26,
+            kind: Colon,
+        },
+        false_expression: PrefixExpression(
+            PrefixExpressionStruct {
+                operator: TerminalType {
+                    value: "delete",
+                    _l: 27,
+                    _r: 33,
+                    kind: DeleteKeyword_Reserved,
+                },
+                operand: IndexAccessExpression(
+                    IndexAccessExpressionStruct {
+                        operand: Identifier(
+                            TerminalType {
+                                value: "obj",
+                                _l: 34,
+                                _r: 37,
+                                kind: Identifier,
+                            },
+                        ),
+                        open_bracket: TerminalType {
+                            value: "[",
+                            _l: 37,
+                            _r: 38,
+                            kind: OpenBracket,
+                        },
+                        start: Some(
+                            Identifier(
+                                TerminalType {
+                                    value: "slot2",
+                                    _l: 38,
+                                    _r: 43,
+                                    kind: Identifier,
+                                },
+                            ),
+                        ),
+                        end: None,
+                        close_bracket: TerminalType {
+                            value: "]",
+                            _l: 43,
+                            _r: 44,
+                            kind: CloseBracket,
+                        },
+                    },
+                ),
+            },
+        ),
+    },
+)

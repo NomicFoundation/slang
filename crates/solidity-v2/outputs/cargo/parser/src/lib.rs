@@ -4,4 +4,4 @@ pub(crate) mod lexer;
 pub(crate) mod parser;
 
 pub use lexer::temp_sourcify;
-pub use parser::Parser;
+pub use parser::{temp_cst_output, Parser};

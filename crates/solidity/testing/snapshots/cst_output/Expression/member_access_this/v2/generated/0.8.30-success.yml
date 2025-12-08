@@ -1,5 +1,26 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "MemberAccessExpression(\n    MemberAccessExpressionStruct {\n        operand: ThisKeyword(\n            TerminalType {\n                value: \"this\",\n                _l: 0,\n                _r: 4,\n                kind: ThisKeyword_Reserved,\n            },\n        ),\n        period: TerminalType {\n            value: \".\",\n            _l: 4,\n            _r: 5,\n            kind: Period,\n        },\n        member: TerminalType {\n            value: \"x\",\n            _l: 5,\n            _r: 6,\n            kind: Identifier,\n        },\n    },\n)",
+MemberAccessExpression(
+    MemberAccessExpressionStruct {
+        operand: ThisKeyword(
+            TerminalType {
+                value: "this",
+                _l: 0,
+                _r: 4,
+                kind: ThisKeyword_Reserved,
+            },
+        ),
+        period: TerminalType {
+            value: ".",
+            _l: 4,
+            _r: 5,
+            kind: Period,
+        },
+        member: TerminalType {
+            value: "x",
+            _l: 5,
+            _r: 6,
+            kind: Identifier,
+        },
+    },
 )
