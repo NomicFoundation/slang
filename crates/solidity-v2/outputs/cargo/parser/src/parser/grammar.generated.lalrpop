@@ -5019,14 +5019,14 @@ extern {
     };
     Expression1<Ident>: Expression = {
          
-            <_Expression: Expression1<"True">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+            <_Expression: InternalExpression<"True">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
          
             <Expression: Expression0<Ident>>  => <>,
         
     };
     Expression2<Ident>: Expression = {
          
-            <_Expression: Expression2<"False">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+            <_Expression: InternalExpression<"False">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
          
             <Expression: Expression1<Ident>>  => <>,
         
@@ -5036,15 +5036,15 @@ extern {
          // TODO[6]: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()
 
-            //<_Expression: Expression3<"True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+            //<_Expression: InternalExpression<"True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
          
-            <Expression: Expression2<"True">>  => <>,
+            <Expression: Expression2<Ident>>  => <>,
         
 // ODOT
     };
     Expression4<Ident>: Expression = {
          
-            <_Expression: Expression4<"True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+            <_Expression: InternalExpression<"True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
          
             <Expression: Expression3<Ident>>  => <>,
         
@@ -5207,7 +5207,14 @@ extern {
             <Expression: Expression18<Ident>>  => <>,
         
     };
-    
+
+    #[inline]
+    InternalExpression<Ident>: Expression = {
+         
+            <_Expression: Expression4<Ident>>  => <>,
+        
+    };
+
     // TODO(v2): We're making this pub to allow testing Expressions
     pub Expression: Expression = {
          
