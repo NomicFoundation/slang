@@ -1,4 +1,5 @@
 use anyhow::Result;
+use slang_solidity::backend::ir::ast::ContractBase;
 
 use super::sample::build_compilation_unit;
 
@@ -82,6 +83,56 @@ fn test_find_contract_by_name() -> Result<()> {
     assert!(ownable.abstract_keyword());
     assert_eq!(activatable.name().unparse(), "Activatable");
     assert!(activatable.abstract_keyword());
+
+    Ok(())
+}
+
+#[test]
+fn test_get_direct_contract_bases() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("can find Counter contract");
+    let bases = counter.direct_bases().collect::<Vec<_>>();
+    assert_eq!(bases.len(), 2);
+
+    let ContractBase::Contract(activatable) = &bases[0] else {
+        panic!("Base is not a contract");
+    };
+    assert_eq!(activatable.name().unparse(), "Activatable");
+    let ContractBase::Contract(ownable) = &bases[1] else {
+        panic!("Base is not a contract");
+    };
+    assert_eq!(ownable.name().unparse(), "Ownable");
+
+    Ok(())
+}
+
+#[test]
+fn test_get_linearised_contract_bases() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("can find Counter contract");
+    let bases = counter.linearised_bases().collect::<Vec<_>>();
+    assert_eq!(bases.len(), 3);
+
+    let ContractBase::Contract(counter) = &bases[0] else {
+        panic!("Base is not a contract");
+    };
+    assert_eq!(counter.name().unparse(), "Counter");
+    let ContractBase::Contract(activatable) = &bases[1] else {
+        panic!("Base is not a contract");
+    };
+    assert_eq!(activatable.name().unparse(), "Activatable");
+    let ContractBase::Contract(ownable) = &bases[2] else {
+        panic!("Base is not a contract");
+    };
+    assert_eq!(ownable.name().unparse(), "Ownable");
 
     Ok(())
 }
