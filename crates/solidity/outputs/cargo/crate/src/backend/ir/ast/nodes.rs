@@ -181,3 +181,39 @@ impl SourceUnitStruct {
             .filter_map(|member| member.as_contract_definition())
     }
 }
+
+pub enum ContractBase {
+    Contract(ContractDefinition),
+    Interface(InterfaceDefinition),
+}
+
+impl ContractBase {
+    fn from_definition(definition: &Definition) -> Option<Self> {
+        definition
+            .as_contract()
+            .map(Self::Contract)
+            .or_else(|| definition.as_interface().map(Self::Interface))
+    }
+}
+
+impl ContractDefinitionStruct {
+    pub fn direct_bases(&self) -> impl Iterator<Item = ContractBase> + use<'_> {
+        self.inheritance_types().filter_map(|inheritance_type| {
+            let base = inheritance_type.type_name().resolve_to_definition()?;
+            ContractBase::from_definition(&base)
+        })
+    }
+
+    pub fn linearised_bases(&self) -> impl Iterator<Item = ContractBase> + use<'_> {
+        let base_node_ids = self
+            .semantic
+            .binder()
+            .get_linearised_bases(self.ir_node.node_id)
+            .expect("Contract should be linearised");
+        base_node_ids.iter().map(|node_id| {
+            let base_definition = Rc::new(DefinitionStruct::create(*node_id, &self.semantic));
+            ContractBase::from_definition(&base_definition)
+                .expect("Linearised base is either a contract or interface")
+        })
+    }
+}
