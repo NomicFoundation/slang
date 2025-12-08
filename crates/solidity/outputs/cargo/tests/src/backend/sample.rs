@@ -10,34 +10,21 @@ pub const MAIN_SOL_CONTENTS: &str = r#"
 pragma solidity ^0.8.29;
 
 import {Ownable} from "ownable.sol";
+import {Activatable} from "activatable.sol";
 
-contract Counter is Ownable {
-    enum State { DISABLED, ENABLED }
-
-    State _state;
-    uint _count;
+contract Counter is Ownable, Activatable {
+    uint public count;
     mapping (address => uint) _clickers;
 
-    constructor(uint initial) Ownable() {
-        _count = initial;
-        _state = State.DISABLED;
-    }
-    function count() public view returns (uint) {
-        return _count;
+    constructor(uint initial) {
+        count = initial;
     }
     function increment(uint delta) public onlyOwner returns (uint) {
-        _count += delta;
-        return _count;
+        count += delta;
+        return count;
     }
-    function enable() public onlyOwner {
-        _state = State.ENABLED;
-    }
-    function disable() public onlyOwner {
-        _state = State.DISABLED;
-    }
-    function click() public returns (uint) {
-        require(_state == State.ENABLED, "counter is disabled");
-        _count += 1;
+    function click() public checkEnabled returns (uint) {
+        count += 1;
         _clickers[msg.sender] += 1;
         return _clickers[msg.sender];
     }
@@ -61,6 +48,37 @@ abstract contract Ownable {
 }
 "#;
 
+pub const ACTIVATABLE_ID: &str = "activatable.sol";
+pub const ACTIVATABLE_SOL_CONTENTS: &str = r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.29;
+
+import {Ownable} from "ownable.sol";
+
+abstract contract Activatable is Ownable {
+    enum State { DISABLED, ENABLED }
+
+    State _state;
+
+    constructor() {
+        _state = State.DISABLED;
+    }
+    function enable() public onlyOwner {
+        _state = State.ENABLED;
+    }
+    function disable() public onlyOwner {
+        _state = State.DISABLED;
+    }
+    function isEnabled() public view returns (bool) {
+        return _state == State.ENABLED;
+    }
+    modifier checkEnabled() {
+        require(_state == State.ENABLED, "Contract is disabled");
+        _;
+    }
+}
+"#;
+
 struct Config {}
 
 impl CompilationBuilderConfig for Config {
@@ -70,18 +88,21 @@ impl CompilationBuilderConfig for Config {
         match file_id {
             MAIN_ID => Ok(Some(MAIN_SOL_CONTENTS.to_owned())),
             OWNABLE_ID => Ok(Some(OWNABLE_SOL_CONTENTS.to_owned())),
+            ACTIVATABLE_ID => Ok(Some(ACTIVATABLE_SOL_CONTENTS.to_owned())),
             _ => Ok(None),
         }
     }
 
     fn resolve_import(
         &mut self,
-        source_file_id: &str,
+        _source_file_id: &str,
         import_path_cursor: &slang_solidity::cst::Cursor,
     ) -> Result<Option<String>> {
-        assert_eq!(source_file_id, MAIN_ID);
-        assert_eq!(import_path_cursor.node().unparse(), "\"ownable.sol\"");
-        Ok(Some(OWNABLE_ID.to_owned()))
+        match import_path_cursor.node().unparse().as_str() {
+            "\"ownable.sol\"" => Ok(Some(OWNABLE_ID.to_owned())),
+            "\"activatable.sol\"" => Ok(Some(ACTIVATABLE_ID.to_owned())),
+            _ => Ok(None),
+        }
     }
 }
 
