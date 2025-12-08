@@ -1,0 +1,8 @@
+{
+  "name": "@slang-private/solidity-user-guide",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@nomicfoundation/slang": "workspace:"
+  }
+}
