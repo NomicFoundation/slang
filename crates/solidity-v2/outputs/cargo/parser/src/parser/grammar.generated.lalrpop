@@ -5017,193 +5017,6 @@ extern {
             <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
         
     };
-    Expression19: Expression = {
-         
-            <_Expression: Expression19>  <_operator: Equal>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: BarEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: PlusEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: MinusEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: CaretEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: SlashEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: PercentEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: AsteriskEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: AmpersandEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <_Expression: Expression19>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression18>  => new_expression_assignment_expression(new_assignment_expression(<>)),
-         
-            <Expression: Expression18>  => <>,
-        
-    };
-
-
-
-    Expression18: Expression = {
-        // TODO: Not really sure the associativity is correct, we need to check
-
-            <_Expression: Expression17>  <_question_mark: QuestionMark>  <_true_expression: Expression18>  <_colon: Colon>  <_false_expression: Expression18>  => new_expression_conditional_expression(new_conditional_expression(<>)),
-         
-            <Expression: Expression17>  => <>,
-        
-    };
-    Expression17: Expression = {
-         
-            <_Expression: Expression17>  <_operator: BarBar>  <_Expression_2: Expression16>  => new_expression_or_expression(new_or_expression(<>)),
-         
-            <Expression: Expression16>  => <>,
-        
-    };
-    Expression16: Expression = {
-         
-            <_Expression: Expression16>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15>  => new_expression_and_expression(new_and_expression(<>)),
-         
-            <Expression: Expression15>  => <>,
-        
-    };
-    Expression15: Expression = {
-         
-            <_Expression: Expression15>  <_operator: EqualEqual>  <_Expression_2: Expression14>  => new_expression_equality_expression(new_equality_expression(<>)),
-         
-            <_Expression: Expression15>  <_operator: BangEqual>  <_Expression_2: Expression14>  => new_expression_equality_expression(new_equality_expression(<>)),
-         
-            <Expression: Expression14>  => <>,
-        
-    };
-    Expression14: Expression = {
-         
-            <_Expression: Expression14>  <_operator: LessThan>  <_Expression_2: Expression13>  => new_expression_inequality_expression(new_inequality_expression(<>)),
-         
-            <_Expression: Expression14>  <_operator: GreaterThan>  <_Expression_2: Expression13>  => new_expression_inequality_expression(new_inequality_expression(<>)),
-         
-            <_Expression: Expression14>  <_operator: LessThanEqual>  <_Expression_2: Expression13>  => new_expression_inequality_expression(new_inequality_expression(<>)),
-         
-            <_Expression: Expression14>  <_operator: GreaterThanEqual>  <_Expression_2: Expression13>  => new_expression_inequality_expression(new_inequality_expression(<>)),
-         
-            <Expression: Expression13>  => <>,
-        
-    };
-    Expression13: Expression = {
-         
-            <_Expression: Expression13>  <_operator: Bar>  <_Expression_2: Expression12>  => new_expression_bitwise_or_expression(new_bitwise_or_expression(<>)),
-         
-            <Expression: Expression12>  => <>,
-        
-    };
-    Expression12: Expression = {
-         
-            <_Expression: Expression12>  <_operator: Caret>  <_Expression_2: Expression11>  => new_expression_bitwise_xor_expression(new_bitwise_xor_expression(<>)),
-         
-            <Expression: Expression11>  => <>,
-        
-    };
-    Expression11: Expression = {
-         
-            <_Expression: Expression11>  <_operator: Ampersand>  <_Expression_2: Expression10>  => new_expression_bitwise_and_expression(new_bitwise_and_expression(<>)),
-         
-            <Expression: Expression10>  => <>,
-        
-    };
-    Expression10: Expression = {
-         
-            <_Expression: Expression10>  <_operator: LessThanLessThan>  <_Expression_2: Expression9>  => new_expression_shift_expression(new_shift_expression(<>)),
-         
-            <_Expression: Expression10>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9>  => new_expression_shift_expression(new_shift_expression(<>)),
-         
-            <_Expression: Expression10>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9>  => new_expression_shift_expression(new_shift_expression(<>)),
-         
-            <Expression: Expression9>  => <>,
-        
-    };
-    Expression9: Expression = {
-         
-            <_Expression: Expression9>  <_operator: Plus>  <_Expression_2: Expression8>  => new_expression_additive_expression(new_additive_expression(<>)),
-         
-            <_Expression: Expression9>  <_operator: Minus>  <_Expression_2: Expression8>  => new_expression_additive_expression(new_additive_expression(<>)),
-         
-            <Expression: Expression8>  => <>,
-        
-    };
-    Expression8: Expression = {
-         
-            <_Expression: Expression8>  <_operator: Asterisk>  <_Expression_2: Expression7>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
-         
-            <_Expression: Expression8>  <_operator: Slash>  <_Expression_2: Expression7>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
-         
-            <_Expression: Expression8>  <_operator: Percent>  <_Expression_2: Expression7>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
-         
-            <Expression: Expression7>  => <>,
-        
-    };
-    Expression7: Expression = {
-         
-            <_Expression: Expression6>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression7>  => new_expression_exponentiation_expression(new_exponentiation_expression(<>)),
-         
-            <Expression: Expression6>  => <>,
-        
-    };
-    Expression6: Expression = {
-         
-            <_Expression: Expression6>  <_operator: PlusPlus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
-         
-            <_Expression: Expression6>  <_operator: MinusMinus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
-         
-            <Expression: Expression5>  => <>,
-        
-    };
-    Expression5: Expression = {
-         
-            <_operator: PlusPlus>  <_Expression: Expression5>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: MinusMinus>  <_Expression: Expression5>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: Tilde>  <_Expression: Expression5>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: Bang>  <_Expression: Expression5>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: Minus>  <_Expression: Expression5>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <_operator: DeleteKeyword>  <_Expression: Expression5>  => new_expression_prefix_expression(new_prefix_expression(<>)),
-         
-            <Expression: Expression4>  => <>,
-        
-    };
-    Expression4: Expression = {
-         
-            <_Expression: Expression4>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
-         
-            <Expression: Expression3>  => <>,
-        
-    };
-    Expression3: Expression = {
-         
-         // TODO[6]: enable, doesn't work nicely with try statements
-        // in particular try foo {...} ()
-
-            //<_Expression: Expression3>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
-         
-            <Expression: Expression2<"True">>  => <>,
-        
-// ODOT
-    };
-
-    Expression2<Ident>: Expression = {
-         
-            <_Expression: Expression2<"False">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
-         
-            <Expression: Expression1<Ident>>  => <>,
-        
-    };
     Expression1<Ident>: Expression = {
          
             <_Expression: Expression1<"True">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
@@ -5211,10 +5024,194 @@ extern {
             <Expression: Expression0<Ident>>  => <>,
         
     };
+    Expression2<Ident>: Expression = {
+         
+            <_Expression: Expression2<"False">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+         
+            <Expression: Expression1<Ident>>  => <>,
+        
+    };
+    Expression3<Ident>: Expression = {
+         
+         // TODO[6]: enable, doesn't work nicely with try statements
+        // in particular try foo {...} ()
+
+            //<_Expression: Expression3<"True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+         
+            <Expression: Expression2<"True">>  => <>,
+        
+// ODOT
+    };
+    Expression4<Ident>: Expression = {
+         
+            <_Expression: Expression4<"True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+         
+            <Expression: Expression3<Ident>>  => <>,
+        
+    };
+    Expression5<Ident>: Expression = {
+         
+            <_operator: PlusPlus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: MinusMinus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: Tilde>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: Bang>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: Minus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <_operator: DeleteKeyword>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+         
+            <Expression: Expression4<Ident>>  => <>,
+        
+    };
+    Expression6<Ident>: Expression = {
+         
+            <_Expression: Expression6<"True">>  <_operator: PlusPlus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
+         
+            <_Expression: Expression6<"True">>  <_operator: MinusMinus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
+         
+            <Expression: Expression5<Ident>>  => <>,
+        
+    };
+    Expression7<Ident>: Expression = {
+         
+            <_Expression: Expression6<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_exponentiation_expression(new_exponentiation_expression(<>)),
+         
+            <Expression: Expression6<Ident>>  => <>,
+        
+    };
+    Expression8<Ident>: Expression = {
+         
+            <_Expression: Expression8<"True">>  <_operator: Asterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+         
+            <_Expression: Expression8<"True">>  <_operator: Slash>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+         
+            <_Expression: Expression8<"True">>  <_operator: Percent>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+         
+            <Expression: Expression7<Ident>>  => <>,
+        
+    };
+    Expression9<Ident>: Expression = {
+         
+            <_Expression: Expression9<"True">>  <_operator: Plus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(new_additive_expression(<>)),
+         
+            <_Expression: Expression9<"True">>  <_operator: Minus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(new_additive_expression(<>)),
+         
+            <Expression: Expression8<Ident>>  => <>,
+        
+    };
+    Expression10<Ident>: Expression = {
+         
+            <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+         
+            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+         
+            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+         
+            <Expression: Expression9<Ident>>  => <>,
+        
+    };
+    Expression11<Ident>: Expression = {
+         
+            <_Expression: Expression11<"True">>  <_operator: Ampersand>  <_Expression_2: Expression10<Ident>>  => new_expression_bitwise_and_expression(new_bitwise_and_expression(<>)),
+         
+            <Expression: Expression10<Ident>>  => <>,
+        
+    };
+    Expression12<Ident>: Expression = {
+         
+            <_Expression: Expression12<"True">>  <_operator: Caret>  <_Expression_2: Expression11<Ident>>  => new_expression_bitwise_xor_expression(new_bitwise_xor_expression(<>)),
+         
+            <Expression: Expression11<Ident>>  => <>,
+        
+    };
+    Expression13<Ident>: Expression = {
+         
+            <_Expression: Expression13<"True">>  <_operator: Bar>  <_Expression_2: Expression12<Ident>>  => new_expression_bitwise_or_expression(new_bitwise_or_expression(<>)),
+         
+            <Expression: Expression12<Ident>>  => <>,
+        
+    };
+    Expression14<Ident>: Expression = {
+         
+            <_Expression: Expression14<"True">>  <_operator: LessThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+         
+            <_Expression: Expression14<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+         
+            <_Expression: Expression14<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+         
+            <_Expression: Expression14<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+         
+            <Expression: Expression13<Ident>>  => <>,
+        
+    };
+    Expression15<Ident>: Expression = {
+         
+            <_Expression: Expression15<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(new_equality_expression(<>)),
+         
+            <_Expression: Expression15<"True">>  <_operator: BangEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(new_equality_expression(<>)),
+         
+            <Expression: Expression14<Ident>>  => <>,
+        
+    };
+    Expression16<Ident>: Expression = {
+         
+            <_Expression: Expression16<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Ident>>  => new_expression_and_expression(new_and_expression(<>)),
+         
+            <Expression: Expression15<Ident>>  => <>,
+        
+    };
+    Expression17<Ident>: Expression = {
+         
+            <_Expression: Expression17<"True">>  <_operator: BarBar>  <_Expression_2: Expression16<Ident>>  => new_expression_or_expression(new_or_expression(<>)),
+         
+            <Expression: Expression16<Ident>>  => <>,
+        
+    };
+    Expression18<Ident>: Expression = {
+        // TODO: Not really sure the associativity is correct, we need to check
+
+            <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18<Ident>>  => new_expression_conditional_expression(new_conditional_expression(<>)),
+         
+            <Expression: Expression17<Ident>>  => <>,
+        
+    };
+    Expression19<Ident>: Expression = {
+         
+            <_Expression: Expression19<"True">>  <_operator: Equal>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: BarEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+         
+            <Expression: Expression18<Ident>>  => <>,
+        
+    };
+    
     // TODO(v2): We're making this pub to allow testing Expressions
     pub Expression: Expression = {
          
-            <Expression: Expression19>  => <>,
+            <Expression: Expression19<"True">>  => <>,
         
     };
 // ODOT
