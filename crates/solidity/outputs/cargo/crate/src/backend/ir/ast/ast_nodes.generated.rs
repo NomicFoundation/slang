@@ -1610,6 +1610,13 @@ impl RevertStatementStruct {
         }
     }
 
+    pub fn error(&self) -> Option<IdentifierPath> {
+        self.ir_node
+            .error
+            .as_ref()
+            .map(|ir_node| Rc::new(IdentifierPathStruct::create(ir_node, &self.semantic)))
+    }
+
     pub fn arguments(&self) -> ArgumentsDeclaration {
         Rc::new(ArgumentsDeclarationStruct::create(
             &self.ir_node.arguments,

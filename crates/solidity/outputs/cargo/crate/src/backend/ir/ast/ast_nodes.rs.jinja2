@@ -1,4 +1,5 @@
 {%- set target = model.ir_languages['ir2_flat_contracts'].target -%}
+{%- set custom_types = ["Identifier", "IdentifierPath"] -%}
 
 //
 // Sequences:
@@ -25,10 +26,10 @@
 
     {% for field in sequence.fields -%}
       {% if field.is_optional %}
-        {% if field.type.name == "Identifier" %}
-          pub fn {{ field.label }}(&self) -> Option<Identifier> {
+        {% if custom_types is containing(field.type.name) %}
+          pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
             self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
-              Rc::new(IdentifierStruct::create(ir_node, &self.semantic))
+              Rc::new({{ field.type.name }}Struct::create(ir_node, &self.semantic))
             })
           }
         {% elif field.type.kind == "UniqueTerminal" %}
@@ -48,13 +49,9 @@
           }
         {% endif %}
       {% else %}
-        {% if field.type.name == "Identifier" %}
-          pub fn {{ field.label }}(&self) -> Identifier {
-            Rc::new(IdentifierStruct::create(&self.ir_node.{{ field.label }}, &self.semantic))
-          }
-        {% elif field.type.name == "IdentifierPath" %}
-          pub fn {{ field.label }}(&self) -> IdentifierPath {
-            Rc::new(IdentifierPathStruct::create(&self.ir_node.{{ field.label }}, &self.semantic))
+        {% if custom_types is containing(field.type.name) %}
+          pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
+            Rc::new({{ field.type.name }}Struct::create(&self.ir_node.{{ field.label }}, &self.semantic))
           }
         {% elif field.type.is_terminal %}
           pub fn {{ field.label }}(&self) -> Rc<TerminalNode> {
@@ -114,18 +111,10 @@
           {%- endif -%}
         )
       }
-      {% if variant.name == "Identifier" %}
-        pub fn as_identifier(&self) -> Option<Identifier> {
-          if let input_ir::{{ parent_type }}::Identifier(variant) = &self.ir_node {
-            Some(Rc::new(IdentifierStruct::create(variant, &self.semantic)))
-          } else {
-            None
-          }
-        }
-      {% elif variant.name == "IdentifierPath" %}
-        pub fn as_identifier_path(&self) -> Option<IdentifierPath> {
-          if let input_ir::{{ parent_type }}::IdentifierPath(variant) = &self.ir_node {
-            Some(Rc::new(IdentifierPathStruct::create(variant, &self.semantic)))
+      {% if custom_types is containing(variant.name) %}
+        pub fn as_{{ variant.name | snake_case }}(&self) -> Option<{{ variant.name }}> {
+          if let input_ir::{{ parent_type }}::{{ variant.name }}(variant) = &self.ir_node {
+            Some(Rc::new({{ variant.name }}Struct::create(variant, &self.semantic)))
           } else {
             None
           }
