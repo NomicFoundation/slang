@@ -1,5 +1,3 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Err(
-    "UnrecognizedEof { location: 28, expected: [\"L_FallbackKeyword_Reserved\", \"L_Identifier\", \"L_OpenParen\", \"L_ReceiveKeyword_Reserved\"] }",
-)
+"UnrecognizedEof { location: 28, expected: [\"L_FallbackKeyword_Reserved\", \"L_Identifier\", \"L_OpenParen\", \"L_ReceiveKeyword_Reserved\"] }"

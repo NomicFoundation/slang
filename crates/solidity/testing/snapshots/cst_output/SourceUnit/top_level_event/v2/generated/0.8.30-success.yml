@@ -1,5 +1,70 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "SourceUnitStruct {\n    members: SourceUnitMembers {\n        elements: [\n            EventDefinition(\n                EventDefinitionStruct {\n                    event_keyword: TerminalType {\n                        value: \"event\",\n                        _l: 0,\n                        _r: 5,\n                        kind: EventKeyword_Reserved,\n                    },\n                    name: TerminalType {\n                        value: \"E1\",\n                        _l: 6,\n                        _r: 8,\n                        kind: Identifier,\n                    },\n                    parameters: EventParametersDeclarationStruct {\n                        open_paren: TerminalType {\n                            value: \"(\",\n                            _l: 8,\n                            _r: 9,\n                            kind: OpenParen,\n                        },\n                        parameters: EventParameters {\n                            elements: [\n                                EventParameterStruct {\n                                    type_name: ElementaryType(\n                                        UintKeyword(\n                                            TerminalType {\n                                                value: \"uint256\",\n                                                _l: 9,\n                                                _r: 16,\n                                                kind: UintKeyword_Reserved,\n                                            },\n                                        ),\n                                    ),\n                                    indexed_keyword: None,\n                                    name: Some(\n                                        TerminalType {\n                                            value: \"value\",\n                                            _l: 17,\n                                            _r: 22,\n                                            kind: Identifier,\n                                        },\n                                    ),\n                                },\n                            ],\n                        },\n                        close_paren: TerminalType {\n                            value: \")\",\n                            _l: 22,\n                            _r: 23,\n                            kind: CloseParen,\n                        },\n                    },\n                    anonymous_keyword: None,\n                    semicolon: TerminalType {\n                        value: \";\",\n                        _l: 23,\n                        _r: 24,\n                        kind: Semicolon,\n                    },\n                },\n            ),\n        ],\n    },\n}",
-)
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            EventDefinition(
+                EventDefinitionStruct {
+                    event_keyword: TerminalType {
+                        value: "event",
+                        _l: 0,
+                        _r: 5,
+                        kind: EventKeyword_Reserved,
+                    },
+                    name: TerminalType {
+                        value: "E1",
+                        _l: 6,
+                        _r: 8,
+                        kind: Identifier,
+                    },
+                    parameters: EventParametersDeclarationStruct {
+                        open_paren: TerminalType {
+                            value: "(",
+                            _l: 8,
+                            _r: 9,
+                            kind: OpenParen,
+                        },
+                        parameters: EventParameters {
+                            elements: [
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            TerminalType {
+                                                value: "uint256",
+                                                _l: 9,
+                                                _r: 16,
+                                                kind: UintKeyword_Reserved,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: None,
+                                    name: Some(
+                                        TerminalType {
+                                            value: "value",
+                                            _l: 17,
+                                            _r: 22,
+                                            kind: Identifier,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: TerminalType {
+                            value: ")",
+                            _l: 22,
+                            _r: 23,
+                            kind: CloseParen,
+                        },
+                    },
+                    anonymous_keyword: None,
+                    semicolon: TerminalType {
+                        value: ";",
+                        _l: 23,
+                        _r: 24,
+                        kind: Semicolon,
+                    },
+                },
+            ),
+        ],
+    },
+}

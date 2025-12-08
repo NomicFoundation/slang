@@ -5,9 +5,10 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use semver::Version;
-use slang_solidity::cst::NonterminalKind;
+use slang_solidity::cst::{Node, NonterminalKind};
 use slang_solidity::parser::Parser;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_parser::temp_cst_output::cursor_checker::NodeChecker;
 use slang_solidity_v2_parser::Parser as ParserV2;
 use strum_macros::Display;
 
@@ -98,11 +99,10 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
         let parsed = match parser_name {
             // For now we only have a SourceUnit parser, having all parsers with LALRPOP is expensive
-            "SourceUnit" => {
-                ParserV2::parse(&source, LanguageVersion::V0_8_30).map(|node| format!("{node:#?}"))
-            }
+            "SourceUnit" => ParserV2::parse(&source, LanguageVersion::V0_8_30)
+                .map(|node| (format!("{node:#?}"), Box::new(node) as Box<dyn NodeChecker>)),
             "Expression" => ParserV2::parse_expression(&source, LanguageVersion::V0_8_30)
-                .map(|node| format!("{node:#?}")),
+                .map(|node| (format!("{node:#?}"), Box::new(node) as Box<dyn NodeChecker>)),
             _ => {
                 // Ignore everything else
                 return Ok(());
@@ -119,14 +119,36 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .join("v2/generated")
             .join(format!("0.8.30-{status}.yml"));
 
-        fs.write_file_raw(snapshot_path, format!("{:#?}", parsed))?;
-        assert_eq!(
-            parsed.is_ok(),
-            output.is_valid(),
-            "V1 Parser got {} but V2 Parser got {}",
-            output.is_valid(),
-            parsed.is_ok()
-        );
+        match parsed {
+            Ok((parsed, checker)) => {
+                let mut s = String::new();
+
+                s.push_str(&format!("{parsed}"));
+
+                assert!(
+                    output.is_valid(),
+                    "V1 parser is not valid, but V2 Parser is"
+                );
+
+                let checked = checker.check_node(&Node::Nonterminal(output.tree().clone()));
+                if !checked.is_empty() {
+                    s.push_str(&"\n----------------\n");
+                    for err in &checked {
+                        s.push_str(&format!("{}\n\n", err.err));
+                    }
+                }
+                fs.write_file_raw(&snapshot_path, s)?;
+                assert!(
+                    checked.is_empty(),
+                    "The AST is different between both parsers",
+                );
+            }
+            Err(err) => {
+                // We don't care about the errors for now, we just write them
+                fs.write_file_raw(&snapshot_path, format!("{err:#?}"))?;
+                assert!(!output.is_valid(), "V1 parser is valid, but V2 is not");
+            }
+        }
     }
 
     Ok(())

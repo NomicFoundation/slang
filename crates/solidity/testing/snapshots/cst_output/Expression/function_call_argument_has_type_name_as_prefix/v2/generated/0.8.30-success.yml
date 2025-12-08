@@ -1,5 +1,42 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "FunctionCallExpression(\n    FunctionCallExpressionStruct {\n        operand: Identifier(\n            TerminalType {\n                value: \"x\",\n                _l: 0,\n                _r: 1,\n                kind: Identifier,\n            },\n        ),\n        arguments: PositionalArgumentsDeclaration(\n            PositionalArgumentsDeclarationStruct {\n                open_paren: TerminalType {\n                    value: \"(\",\n                    _l: 1,\n                    _r: 2,\n                    kind: OpenParen,\n                },\n                arguments: PositionalArguments {\n                    elements: [\n                        Identifier(\n                            TerminalType {\n                                value: \"interested\",\n                                _l: 2,\n                                _r: 12,\n                                kind: Identifier,\n                            },\n                        ),\n                    ],\n                },\n                close_paren: TerminalType {\n                    value: \")\",\n                    _l: 12,\n                    _r: 13,\n                    kind: CloseParen,\n                },\n            },\n        ),\n    },\n)",
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: Identifier(
+            TerminalType {
+                value: "x",
+                _l: 0,
+                _r: 1,
+                kind: Identifier,
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: TerminalType {
+                    value: "(",
+                    _l: 1,
+                    _r: 2,
+                    kind: OpenParen,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        Identifier(
+                            TerminalType {
+                                value: "interested",
+                                _l: 2,
+                                _r: 12,
+                                kind: Identifier,
+                            },
+                        ),
+                    ],
+                },
+                close_paren: TerminalType {
+                    value: ")",
+                    _l: 12,
+                    _r: 13,
+                    kind: CloseParen,
+                },
+            },
+        ),
+    },
 )

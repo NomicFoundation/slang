@@ -1,5 +1,64 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Ok(
-    "IndexAccessExpression(\n    IndexAccessExpressionStruct {\n        operand: IndexAccessExpression(\n            IndexAccessExpressionStruct {\n                operand: Identifier(\n                    TerminalType {\n                        value: \"arr\",\n                        _l: 0,\n                        _r: 3,\n                        kind: Identifier,\n                    },\n                ),\n                open_bracket: TerminalType {\n                    value: \"[\",\n                    _l: 3,\n                    _r: 4,\n                    kind: OpenBracket,\n                },\n                start: Some(\n                    Identifier(\n                        TerminalType {\n                            value: \"index1\",\n                            _l: 4,\n                            _r: 10,\n                            kind: Identifier,\n                        },\n                    ),\n                ),\n                end: None,\n                close_bracket: TerminalType {\n                    value: \"]\",\n                    _l: 10,\n                    _r: 11,\n                    kind: CloseBracket,\n                },\n            },\n        ),\n        open_bracket: TerminalType {\n            value: \"[\",\n            _l: 11,\n            _r: 12,\n            kind: OpenBracket,\n        },\n        start: Some(\n            Identifier(\n                TerminalType {\n                    value: \"index2\",\n                    _l: 12,\n                    _r: 18,\n                    kind: Identifier,\n                },\n            ),\n        ),\n        end: None,\n        close_bracket: TerminalType {\n            value: \"]\",\n            _l: 18,\n            _r: 19,\n            kind: CloseBracket,\n        },\n    },\n)",
+IndexAccessExpression(
+    IndexAccessExpressionStruct {
+        operand: IndexAccessExpression(
+            IndexAccessExpressionStruct {
+                operand: Identifier(
+                    TerminalType {
+                        value: "arr",
+                        _l: 0,
+                        _r: 3,
+                        kind: Identifier,
+                    },
+                ),
+                open_bracket: TerminalType {
+                    value: "[",
+                    _l: 3,
+                    _r: 4,
+                    kind: OpenBracket,
+                },
+                start: Some(
+                    Identifier(
+                        TerminalType {
+                            value: "index1",
+                            _l: 4,
+                            _r: 10,
+                            kind: Identifier,
+                        },
+                    ),
+                ),
+                end: None,
+                close_bracket: TerminalType {
+                    value: "]",
+                    _l: 10,
+                    _r: 11,
+                    kind: CloseBracket,
+                },
+            },
+        ),
+        open_bracket: TerminalType {
+            value: "[",
+            _l: 11,
+            _r: 12,
+            kind: OpenBracket,
+        },
+        start: Some(
+            Identifier(
+                TerminalType {
+                    value: "index2",
+                    _l: 12,
+                    _r: 18,
+                    kind: Identifier,
+                },
+            ),
+        ),
+        end: None,
+        close_bracket: TerminalType {
+            value: "]",
+            _l: 18,
+            _r: 19,
+            kind: CloseBracket,
+        },
+    },
 )

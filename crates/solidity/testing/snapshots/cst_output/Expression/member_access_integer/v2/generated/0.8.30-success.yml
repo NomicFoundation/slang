@@ -4,24 +4,27 @@ FunctionCallExpression(
     FunctionCallExpressionStruct {
         operand: MemberAccessExpression(
             MemberAccessExpressionStruct {
-                operand: Identifier(
-                    TerminalType {
-                        value: "x",
-                        _l: 0,
-                        _r: 1,
-                        kind: Identifier,
+                operand: DecimalNumberExpression(
+                    DecimalNumberExpressionStruct {
+                        literal: TerminalType {
+                            value: "5",
+                            _l: 0,
+                            _r: 1,
+                            kind: DecimalLiteral,
+                        },
+                        unit: None,
                     },
                 ),
                 period: TerminalType {
-                    value: "",
-                    _l: 0,
-                    _r: 0,
-                    kind: UNRECOGNIZED,
+                    value: ".",
+                    _l: 1,
+                    _r: 2,
+                    kind: Period,
                 },
                 member: TerminalType {
-                    value: "y",
+                    value: "fromUint",
                     _l: 2,
-                    _r: 3,
+                    _r: 10,
                     kind: Identifier,
                 },
             },
@@ -30,8 +33,8 @@ FunctionCallExpression(
             PositionalArgumentsDeclarationStruct {
                 open_paren: TerminalType {
                     value: "(",
-                    _l: 3,
-                    _r: 4,
+                    _l: 10,
+                    _r: 11,
                     kind: OpenParen,
                 },
                 arguments: PositionalArguments {
@@ -39,14 +42,11 @@ FunctionCallExpression(
                 },
                 close_paren: TerminalType {
                     value: ")",
-                    _l: 4,
-                    _r: 5,
+                    _l: 11,
+                    _r: 12,
                     kind: CloseParen,
                 },
             },
         ),
     },
 )
-----------------
-Expected node kind to be UNRECOGNIZED, but it was Period
-
