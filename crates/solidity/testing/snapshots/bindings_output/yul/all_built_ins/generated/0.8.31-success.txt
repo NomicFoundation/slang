@@ -27,13 +27,13 @@ References and definitions:
     │                ╰───── ref: built-in
   9 │             basefee()
     │             ───┬───  
-    │                ╰───── unresolved
+    │                ╰───── ref: built-in
  10 │             blobbasefee()
     │             ─────┬─────  
-    │                  ╰─────── unresolved
+    │                  ╰─────── ref: built-in
  11 │             blobhash()
     │             ────┬───  
-    │                 ╰───── unresolved
+    │                 ╰───── ref: built-in
  12 │             blockhash()
     │             ────┬────  
     │                 ╰────── ref: built-in
@@ -141,7 +141,7 @@ References and definitions:
     │              ╰── ref: built-in
  47 │             mcopy()
     │             ──┬──  
-    │               ╰──── unresolved
+    │               ╰──── ref: built-in
  48 │             mload()
     │             ──┬──  
     │               ╰──── ref: built-in
@@ -180,7 +180,7 @@ References and definitions:
     │              ╰─── ref: built-in
  60 │             prevrandao()
     │             ─────┬────  
-    │                  ╰────── unresolved
+    │                  ╰────── ref: built-in
  61 │             return()
     │             ───┬──  
     │                ╰──── ref: built-in
@@ -243,16 +243,16 @@ References and definitions:
     │                 ╰────── ref: built-in
  81 │             tload()
     │             ──┬──  
-    │               ╰──── unresolved
+    │               ╰──── ref: built-in
  82 │             tstore()
     │             ───┬──  
-    │                ╰──── unresolved
+    │                ╰──── ref: built-in
  83 │             xor()
     │             ─┬─  
     │              ╰─── ref: built-in
  84 │             clz()
     │             ─┬─  
-    │              ╰─── unresolved
+    │              ╰─── ref: built-in
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

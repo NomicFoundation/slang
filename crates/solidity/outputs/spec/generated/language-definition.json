@@ -112,7 +112,8 @@
     "0.8.27",
     "0.8.28",
     "0.8.29",
-    "0.8.30"
+    "0.8.30",
+    "0.8.31"
   ],
   "sections": [
     {
@@ -9597,6 +9598,16 @@
               "name": "mcopy",
               "parameters": ["uint256 t", "uint256 f", "uint256 s"],
               "enabled": { "From": { "from": "0.8.24" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "clz",
+              "parameters": ["uint256 x"],
+              "return_type": "uint256",
+              "enabled": { "From": { "from": "0.8.31" } }
             }
           }
         }

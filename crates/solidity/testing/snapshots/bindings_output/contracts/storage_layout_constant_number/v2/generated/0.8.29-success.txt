@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (1):
+- Def: #1 ["C" @ input.sol:1:10] (contract)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract C layout at 0xAAAA {
+   │          ┬  
+   │          ╰── name: 1
+───╯
