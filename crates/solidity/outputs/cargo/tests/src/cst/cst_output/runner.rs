@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use std::str::FromStr;
 
 use anyhow::Result;
@@ -21,6 +22,10 @@ enum TestStatus {
     Success,
     Failure,
 }
+
+trait NodeCheckerDebug: NodeChecker + Debug {}
+
+impl<T> NodeCheckerDebug for T where T: NodeChecker + Debug {}
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
@@ -97,12 +102,12 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
         let output = Parser::create(version)?.parse_nonterminal(tested_kind, &source);
 
-        let parsed = match parser_name {
+        let parsed: Result<Box<dyn NodeCheckerDebug>, _> = match parser_name {
             // For now we only have a SourceUnit parser, having all parsers with LALRPOP is expensive
             "SourceUnit" => ParserV2::parse(&source, LanguageVersion::V0_8_30)
-                .map(|node| (format!("{node:#?}"), Box::new(node) as Box<dyn NodeChecker>)),
+                .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
             "Expression" => ParserV2::parse_expression(&source, LanguageVersion::V0_8_30)
-                .map(|node| (format!("{node:#?}"), Box::new(node) as Box<dyn NodeChecker>)),
+                .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
             _ => {
                 // Ignore everything else
                 return Ok(());
@@ -120,17 +125,17 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .join(format!("0.8.30-{status}.yml"));
 
         match parsed {
-            Ok((parsed, checker)) => {
+            Ok(parsed_checker) => {
                 let mut s = String::new();
 
-                s.push_str(&format!("{parsed}"));
+                s.push_str(&format!("{parsed_checker:#?}"));
 
                 assert!(
                     output.is_valid(),
                     "V1 parser is not valid, but V2 Parser is"
                 );
 
-                let checked = checker.check_node(&Node::Nonterminal(output.tree().clone()));
+                let checked = parsed_checker.check_node(&Node::Nonterminal(output.tree().clone()));
                 if !checked.is_empty() {
                     s.push_str(&"\n----------------\n");
                     for err in &checked {
