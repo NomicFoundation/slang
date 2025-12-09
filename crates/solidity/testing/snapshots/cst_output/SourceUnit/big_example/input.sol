@@ -130,7 +130,7 @@ abstract contract Ownable2Step is Ownable {
      * @dev Starts the ownership transfer of the contract to a new account. Replaces the pending transfer if there is one.
      * Can only be called by the current owner.
      */
-    function transferOwnership(address newOwner) public virtual   onlyOwner {
+    function transferOwnership(address newOwner) public virtual override onlyOwner {
         _pendingOwner = newOwner;
         emit OwnershipTransferStarted(owner(), newOwner);
     }
@@ -139,7 +139,7 @@ abstract contract Ownable2Step is Ownable {
      * @dev Transfers ownership of the contract to a new account (`newOwner`) and deletes any pending owner.
      * Internal function without access restriction.
      */
-    function _transferOwnership(address newOwner) internal virtual   {
+    function _transferOwnership(address newOwner) internal virtual override {
         delete _pendingOwner;
         super._transferOwnership(newOwner);
     }
@@ -1470,7 +1470,7 @@ interface IPositionManager is IFeeCollector {
 abstract contract PositionManagerDependent is IPositionManagerDependent {
     // --- Immutable variables ---
 
-    address public positionManager;
+    address public immutable override positionManager;
 
     // --- Modifiers ---
 
@@ -1700,7 +1700,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     /**
      * @dev Returns the name of the token.
      */
-    function name() public view virtual   returns(string memory) {
+    function name() public view virtual override returns(string memory) {
         return _name;
     }
 
@@ -1708,7 +1708,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * @dev Returns the symbol of the token, usually a shorter version of the
      * name.
      */
-    function symbol() public view virtual   returns(string memory) {
+    function symbol() public view virtual override returns(string memory) {
         return _symbol;
     }
 
@@ -1725,21 +1725,21 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * no way affects any of the arithmetic of the contract, including
      * {IERC20-balanceOf} and {IERC20-transfer}.
      */
-    function decimals() public view virtual   returns(uint8) {
+    function decimals() public view virtual override returns(uint8) {
         return 18;
     }
 
     /**
      * @dev See {IERC20-totalSupply}.
      */
-    function totalSupply() public view virtual   returns(uint256) {
+    function totalSupply() public view virtual override returns(uint256) {
         return _totalSupply;
     }
 
     /**
      * @dev See {IERC20-balanceOf}.
      */
-    function balanceOf(address account) public view virtual   returns(uint256) {
+    function balanceOf(address account) public view virtual override returns(uint256) {
         return _balances[account];
     }
 
@@ -1751,7 +1751,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * - `to` cannot be the zero address.
      * - the caller must have a balance of at least `amount`.
      */
-    function transfer(address to, uint256 amount) public virtual   returns(bool) {
+    function transfer(address to, uint256 amount) public virtual override returns(bool) {
         address owner = _msgSender();
         _transfer(owner, to, amount);
         return true;
@@ -1760,7 +1760,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     /**
      * @dev See {IERC20-allowance}.
      */
-    function allowance(address owner, address spender) public view virtual   returns(uint256) {
+    function allowance(address owner, address spender) public view virtual override returns(uint256) {
         return _allowances[owner][spender];
     }
 
@@ -1774,7 +1774,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      *
      * - `spender` cannot be the zero address.
      */
-    function approve(address spender, uint256 amount) public virtual   returns(bool) {
+    function approve(address spender, uint256 amount) public virtual override returns(bool) {
         address owner = _msgSender();
         _approve(owner, spender, amount);
         return true;
@@ -1800,7 +1800,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         address from2,
         address to,
         uint256 amount
-    ) public virtual   returns(bool) {
+    ) public virtual override returns(bool) {
         address spender = _msgSender();
         _spendAllowance(from2, spender, amount);
         _transfer(from2, to, amount);
@@ -2041,7 +2041,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
  * _Available since v4.2._
  */
 abstract contract ERC20Wrapper is ERC20 {
-    IERC20 public  underlying;
+    IERC20 public immutable underlying;
 
     constructor(IERC20 underlyingToken) {
         underlying = underlyingToken;
@@ -2050,7 +2050,7 @@ abstract contract ERC20Wrapper is ERC20 {
     /**
      * @dev See {ERC20-decimals}.
      */
-    function decimals() public view virtual   returns(uint8) {
+    function decimals() public view virtual override returns(uint8) {
         try IERC20Metadata(address(underlying)).decimals() returns(uint8 value) {
             return value;
         } catch {
@@ -2423,8 +2423,8 @@ library Math {
  * @dev String operations.
  */
 library Strings {
-    bytes16 private  _SYMBOLS = "0123456789abcdef";
-    uint8 private  _ADDRESS_LENGTH = 20;
+    bytes16 private constant _SYMBOLS = "0123456789abcdef";
+    uint8 private constant _ADDRESS_LENGTH = 20;
 
     /**
      * @dev Converts a `uint256` to its ASCII `string` decimal representation.
@@ -2710,13 +2710,13 @@ abstract contract EIP712 {
     /* solhint-disable var-name-mixedcase */
     // Cache the domain separator as an immutable value, but also store the chain id that it corresponds to, in order to
     // invalidate the cached domain separator if the chain id changes.
-    bytes32 private  _CACHED_DOMAIN_SEPARATOR;
-    uint256 private  _CACHED_CHAIN_ID;
-    address private  _CACHED_THIS;
+    bytes32 private immutable _CACHED_DOMAIN_SEPARATOR;
+    uint256 private immutable _CACHED_CHAIN_ID;
+    address private immutable _CACHED_THIS;
 
-    bytes32 private  _HASHED_NAME;
-    bytes32 private  _HASHED_VERSION;
-    bytes32 private  _TYPE_HASH;
+    bytes32 private immutable _HASHED_NAME;
+    bytes32 private immutable _HASHED_VERSION;
+    bytes32 private immutable _TYPE_HASH;
 
     /* solhint-enable var-name-mixedcase */
 
@@ -2842,7 +2842,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
         mapping(address => Counters.Counter) private _nonces;
 
     // solhint-disable-next-line var-name-mixedcase
-    bytes32 private  _PERMIT_TYPEHASH =
+    bytes32 private constant _PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
     /**
      * @dev In previous versions `_PERMIT_TYPEHASH` was declared as `immutable`.
@@ -2871,7 +2871,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) public virtual  {
+    ) public virtual override {
         require(block.timestamp <= deadline, "ERC20Permit: expired deadline");
 
         bytes32 structHash = keccak256(abi.encode(_PERMIT_TYPEHASH, owner, spender, value, _useNonce(owner), deadline));
@@ -2887,7 +2887,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
     /**
      * @dev See {IERC20Permit-nonces}.
      */
-    function nonces(address owner) public view virtual  returns(uint256) {
+    function nonces(address owner) public view virtual override returns(uint256) {
         return _nonces[owner].current();
     }
 
@@ -2895,7 +2895,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
      * @dev See {IERC20Permit-DOMAIN_SEPARATOR}.
      */
     // solhint-disable-next-line func-name-mixedcase
-    function DOMAIN_SEPARATOR() external view  returns(bytes32) {
+    function DOMAIN_SEPARATOR() external view override returns(bytes32) {
         return _domainSeparatorV4();
     }
 
@@ -2981,11 +2981,11 @@ IWrappedCollateralToken,
 {
     // --- Variables ---
 
-    uint256 public  maxBalance;
+    uint256 public override maxBalance;
 
-    uint256 public  cap;
+    uint256 public override cap;
 
-    mapping(address whitelistAddress => bool isWhitelisted) public  isWhitelisted;
+    mapping(address whitelistAddress => bool isWhitelisted) public override isWhitelisted;
 
     constructor(
         IERC20 underlying_,
@@ -3023,17 +3023,17 @@ IWrappedCollateralToken,
         _;
     }
 
-    function setMaxBalance(uint256 newMaxBalance) public   onlyOwner {
+    function setMaxBalance(uint256 newMaxBalance) public override onlyOwner {
         maxBalance = newMaxBalance;
         emit MaxBalanceSet(newMaxBalance);
     }
 
-    function setCap(uint256 newCap) public   onlyOwner {
+    function setCap(uint256 newCap) public override onlyOwner {
         cap = newCap;
         emit CapSet(newCap);
     }
 
-    function whitelistAddress(address addressForWhitelist, bool whitelisted) external   onlyOwner {
+    function whitelistAddress(address addressForWhitelist, bool whitelisted) external override onlyOwner {
         if (addressForWhitelist == address(0)) {
             revert InvalidWhitelistAddress();
         }
@@ -3042,15 +3042,15 @@ IWrappedCollateralToken,
         emit AddressWhitelisted(addressForWhitelist, whitelisted);
     }
 
-    function decimals() public view virtual returns(uint8) {
+    function decimals() public view virtual override(ERC20, ERC20Wrapper) returns(uint8) {
         return ERC20Wrapper.decimals();
     }
 
-    function recover(address account) external   onlyOwner returns(uint256) {
+    function recover(address account) external override onlyOwner returns(uint256) {
         return _recover(account);
     }
 
-    function depositFor(address, uint256) public virtual   returns(bool) {
+    function depositFor(address, uint256) public virtual override returns(bool) {
         revert Unsupported();
     }
 
@@ -3060,7 +3060,7 @@ IWrappedCollateralToken,
         uint256 amount
     )
     external
-     
+    override
     checkWhitelist
     checkLimits(accountToCheck, amount)
     returns(bool)
@@ -3068,7 +3068,7 @@ IWrappedCollateralToken,
         return super.depositFor(to, amount);
     }
 
-    function _transfer(address from2, address to, uint256 amount) internal   onlyPositionManager {
+    function _transfer(address from2, address to, uint256 amount) internal override onlyPositionManager {
         super._transfer(from2, to, amount);
     }
 }
@@ -3076,13 +3076,13 @@ IWrappedCollateralToken,
 contract OneStepLeverage is IOneStepLeverage, PositionManagerDependent, Ownable2Step {
     using SafeERC20 for IERC20;
 
-        IAMM public    amm;
-    IERC20 public    collateralToken;
-    IERC20 public    underlyingCollateralToken;
-    IERC20Indexable public    raftDebtToken;
-    IERC20Indexable public    raftCollateralToken;
+        IAMM public immutable override amm;
+    IERC20 public immutable override collateralToken;
+    IERC20 public immutable override underlyingCollateralToken;
+    IERC20Indexable public immutable override raftDebtToken;
+    IERC20Indexable public immutable override raftCollateralToken;
 
-    uint256 public   MAX_LEFTOVER_R = 1e18;
+    uint256 public constant override MAX_LEFTOVER_R = 1e18;
 
     constructor(
         IPositionManager positionManager_,
@@ -3130,7 +3130,7 @@ contract OneStepLeverage is IOneStepLeverage, PositionManagerDependent, Ownable2
         uint256 maxFeePercentage
     )
     external
-     
+    override
     {
         if (principalCollateralIncrease && principalCollateralChange > 0) {
             underlyingCollateralToken.safeTransferFrom(msg.sender, address(this), principalCollateralChange);
@@ -3204,7 +3204,7 @@ contract OneStepLeverage is IOneStepLeverage, PositionManagerDependent, Ownable2
         bytes calldata data
     )
     external
-     
+    override
     returns(bytes32)
     {
         IERC20 rToken = IPositionManager(positionManager).rToken();
@@ -3288,7 +3288,7 @@ contract OneStepLeverage is IOneStepLeverage, PositionManagerDependent, Ownable2
         return keccak256("ERC3156FlashBorrower.onFlashLoan");
     }
 
-    function rescueTokens(IERC20 token, address to) external   onlyOwner {
+    function rescueTokens(IERC20 token, address to) external override onlyOwner {
         if (token == collateralToken) {
             uint256 balance = token.balanceOf(address(this));
             if (balance > 0) {
