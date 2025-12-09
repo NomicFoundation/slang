@@ -10,8 +10,8 @@ use crate::lexer::tests::test_lexer_output;
 fn unreserved_keyword() {
     test(
         "error",
-        &[(L::ErrorKeyword_Unreserved, 0..5)],
-        &[(L::ErrorKeyword_Unreserved, 0..5)],
+        &[(L::ErrorKeyword_Reserved, 0..5)],
+        &[(L::ErrorKeyword_Reserved, 0..5)],
     );
 }
 
