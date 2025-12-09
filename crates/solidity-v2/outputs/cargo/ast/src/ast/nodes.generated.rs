@@ -144,6 +144,71 @@ pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expres
     })
 }
 
+/// We use this function to share attributes between a state variable that has a function type.
+/// We find and split the attributes from the function type as needed
+/// TODO(v2) fail gracefully if a wrong attribute is found
+pub fn extract_extra_attributes(
+    mut fun_type: FunctionType,
+) -> (FunctionType, Vec<StateVariableAttribute>) {
+    // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
+    let mut seen_constant = false;
+    let mut seen_internal = false;
+    let mut seen_private = false;
+    let mut seen_public = false;
+    let mut duplicate_found = false;
+
+    let mut extra_attributes: Vec<StateVariableAttribute> = Vec::new();
+    fn add_to_extra(
+        attr: &FunctionTypeAttribute,
+        extra_attributes: &mut Vec<StateVariableAttribute>,
+    ) {
+        match attr {
+      FunctionTypeAttribute::ConstantKeyword(terminal) => {
+        extra_attributes.push(StateVariableAttribute::ConstantKeyword(terminal.clone()));
+      }
+      FunctionTypeAttribute::InternalKeyword(terminal) => {
+        extra_attributes.push(StateVariableAttribute::InternalKeyword(terminal.clone()));
+      }
+      FunctionTypeAttribute::PrivateKeyword(terminal) => {
+        extra_attributes.push(StateVariableAttribute::PrivateKeyword(terminal.clone()));
+      }
+      FunctionTypeAttribute::PublicKeyword(terminal) => {
+        extra_attributes.push(StateVariableAttribute::PublicKeyword(terminal.clone()));
+      }
+      _ => panic!("This is wrong, I don't really know what to do for now, but it should fail gracefully (like a parser error)")
+    }
+    }
+
+    Rc::get_mut(&mut fun_type)
+        .unwrap()
+        .attributes
+        .elements
+        .retain(|attr| {
+            if duplicate_found {
+                add_to_extra(attr, &mut extra_attributes);
+                return false;
+            }
+            let &mut seen = match attr {
+                FunctionTypeAttribute::ConstantKeyword(_) => &mut seen_constant,
+                FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
+                FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
+                FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
+                _ => return true,
+            };
+
+            if seen {
+                duplicate_found = true;
+                add_to_extra(attr, &mut extra_attributes);
+                false
+            } else {
+                seen_constant = true;
+                true
+            }
+        });
+
+    (fun_type, extra_attributes)
+}
+
 //
 // Sequences:
 //

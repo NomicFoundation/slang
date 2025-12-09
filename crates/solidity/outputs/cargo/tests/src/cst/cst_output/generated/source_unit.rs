@@ -7,6 +7,11 @@ use crate::cst::cst_output::runner::run;
 const T: &str = "SourceUnit";
 
 #[test]
+fn big_example() -> Result<()> {
+    run(T, "big_example")
+}
+
+#[test]
 fn empty_file() -> Result<()> {
     run(T, "empty_file")
 }
