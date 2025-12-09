@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Identifier(
+    TerminalType {
+        value: "szabo",
+        _l: 0,
+        _r: 5,
+        kind: Identifier,
+    },
+)

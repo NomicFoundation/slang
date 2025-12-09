@@ -193,7 +193,7 @@ interface IERC20 {
      *
      * Note that `value` may be zero.
      */
-    event Transfer(address indexed from2, address indexed to, uint256 value);
+    event Transfer(address indexed from, address indexed to, uint256 value);
 
     /**
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
@@ -255,7 +255,7 @@ function approve(address spender, uint256 amount) external returns(bool);
  * Emits a {Transfer} event.
  */
 function transferFrom(
-    address from2,
+    address from,
     address to,
     uint256 amount
 ) external returns(bool);
@@ -583,11 +583,11 @@ library SafeERC20 {
 
     function safeTransferFrom(
         IERC20 token,
-        address from2,
+        address from,
         address to,
         uint256 value
     ) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from2, to, value));
+        _callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
     }
 
     /**
@@ -750,7 +750,7 @@ interface IERC20Indexable is IERC20, IPositionManagerDependent {
     /// @dev Mints new tokens. Callable only by PositionManager contract.
     /// @param from Address of user whose tokens are burnt.
     /// @param amount Amount of tokens to burn.
-    function burn(address from2, uint256 amount) external;
+    function burn(address from, uint256 amount) external;
 }
 
 /// @dev Interface to be used by contracts that collect fees. Contains fee recipient that can be changed by owner.
@@ -952,7 +952,7 @@ interface IRToken is IERC20, IERC20Permit, IERC3156FlashLender, IFeeCollector, I
     /// @dev Mints new tokens. Callable only by PositionManager contract.
     /// @param from Address of user whose tokens are burnt.
     /// @param amount Amount of tokens to burn.
-    function burn(address from2, uint256 amount) external;
+    function burn(address from, uint256 amount) external;
 
     /// @return Maximum flash mint fee percentage that can be set by owner.
     function MAX_FLASH_MINT_FEE_PERCENTAGE() external view returns(uint256);
@@ -1797,13 +1797,13 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * `amount`.
      */
     function transferFrom(
-        address from2,
+        address from,
         address to,
         uint256 amount
     ) public virtual override returns(bool) {
         address spender = _msgSender();
-        _spendAllowance(from2, spender, amount);
-        _transfer(from2, to, amount);
+        _spendAllowance(from, spender, amount);
+        _transfer(from, to, amount);
         return true;
     }
 
@@ -1865,27 +1865,27 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * - `from` must have a balance of at least `amount`.
      */
     function _transfer(
-        address from2,
+        address from,
         address to,
         uint256 amount
     ) internal virtual {
-        require(from2 != address(0), "ERC20: transfer from the zero address");
+        require(from != address(0), "ERC20: transfer from the zero address");
         require(to != address(0), "ERC20: transfer to the zero address");
 
-        _beforeTokenTransfer(from2, to, amount);
+        _beforeTokenTransfer(from, to, amount);
 
-        uint256 fromBalance = _balances[from2];
+        uint256 fromBalance = _balances[from];
         require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
         unchecked {
-            _balances[from2] = fromBalance - amount;
+            _balances[from] = fromBalance - amount;
             // Overflow not possible: the sum of all balances is capped by totalSupply, and the sum is preserved by
             // decrementing then incrementing.
             _balances[to] += amount;
         }
 
-        emit Transfer(from2, to, amount);
+        emit Transfer(from, to, amount);
 
-        _afterTokenTransfer(from2, to, amount);
+        _afterTokenTransfer(from, to, amount);
     }
 
     /** @dev Creates `amount` tokens and assigns them to `account`, increasing
@@ -2003,7 +2003,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(
-        address from2,
+        address from,
         address to,
         uint256 amount
     ) internal virtual { }
@@ -2023,7 +2023,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _afterTokenTransfer(
-        address from2,
+        address from,
         address to,
         uint256 amount
     ) internal virtual { }
@@ -3068,8 +3068,8 @@ IWrappedCollateralToken,
         return super.depositFor(to, amount);
     }
 
-    function _transfer(address from2, address to, uint256 amount) internal override onlyPositionManager {
-        super._transfer(from2, to, amount);
+    function _transfer(address from, address to, uint256 amount) internal override onlyPositionManager {
+        super._transfer(from, to, amount);
     }
 }
 
