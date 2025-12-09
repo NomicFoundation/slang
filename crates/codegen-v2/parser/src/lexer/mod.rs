@@ -11,6 +11,7 @@ use crate::lexer::builder::LexerModelBuilder;
 pub struct LexerModel {
     pub contexts: Vec<LexicalContext>,
     pub lexeme_kinds: BTreeSet<String>,
+    pub unreserved_keywords: BTreeSet<String>,
 }
 
 impl LexerModel {
