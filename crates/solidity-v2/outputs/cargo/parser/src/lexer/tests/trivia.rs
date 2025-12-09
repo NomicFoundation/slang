@@ -40,8 +40,10 @@ fn multi_line_comment() {
 
     test("/", &[(L::Slash, 0..1)]);
     test("/*", &[(L::Slash, 0..1), (L::Asterisk, 1..2)]);
-    test("/* ", &[(L::UNRECOGNIZED, 0..3)]);
-    test("/* *", &[(L::UNRECOGNIZED, 0..4)]);
+    test(
+        "/* ",
+        &[(L::Slash, 0..1), (L::Asterisk, 1..2), (L::Whitespace, 2..3)],
+    );
 }
 
 #[test]
@@ -67,11 +69,14 @@ fn multi_line_nat_spec_comment() {
     test("/", &[(L::Slash, 0..1)]);
     test("/*", &[(L::Slash, 0..1), (L::Asterisk, 1..2)]);
     test("/**", &[(L::Slash, 0..1), (L::AsteriskAsterisk, 1..3)]);
-
-    // TODO(v2): bug in 'logos' crate, only impacting invalid inputs:
-    // https://github.com/maciejhirsz/logos/issues/509
-    test("/** ", &[(L::Slash, 0..4)]);
-    test("/** *", &[(L::Slash, 0..5)]);
+    test(
+        "/** ",
+        &[
+            (L::Slash, 0..1),
+            (L::AsteriskAsterisk, 1..3),
+            (L::Whitespace, 3..4),
+        ],
+    );
 }
 
 fn test(source: &str, expected: &[(L, Range<usize>)]) {

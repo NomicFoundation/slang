@@ -101,12 +101,12 @@ pub enum PragmaContext {
     #[regex(r#"(([0-9]|x|X|\*)+)"#, |_| { LexemeKind::VersionSpecifier }, priority = 2000001)]
     #[regex(r#"'(([0-9]|x|X|\*)+)(\.(([0-9]|x|X|\*)+))*'"#, |_| { LexemeKind::SingleQuotedVersionLiteral }, priority = 2000002)]
     #[regex(r#""(([0-9]|x|X|\*)+)(\.(([0-9]|x|X|\*)+))*""#, |_| { LexemeKind::DoubleQuotedVersionLiteral }, priority = 2000003)]
-    #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000004)]
-    #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000005)]
-    #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000006)]
-    #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000007)]
-    #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000008)]
-    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000009)]
+    #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000004, allow_greedy = true)]
+    #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000005, allow_greedy = true)]
+    #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000006, allow_greedy = true)]
+    #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000007, allow_greedy = true)]
+    #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000008, allow_greedy = true)]
+    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000009, allow_greedy = true)]
     Lexeme(LexemeKind),
 }
 
@@ -303,12 +303,12 @@ pub enum SolidityContext {
     #[regex(r#"unicode'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^'\\\r\n])*'"#, |_| { LexemeKind::SingleQuotedUnicodeStringLiteral }, priority = 2000188)]
     #[regex(r#"unicode"(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^"\\\r\n])*""#, |_| { LexemeKind::DoubleQuotedUnicodeStringLiteral }, priority = 2000189)]
     #[regex(r#"((_|\$|[a-z]|[A-Z]))((((_|\$|[a-z]|[A-Z]))|[0-9]))*"#, |_| { LexemeKind::Identifier }, priority = 2000190)]
-    #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000191)]
-    #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000192)]
-    #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000193)]
-    #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000194)]
-    #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000195)]
-    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000196)]
+    #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000191, allow_greedy = true)]
+    #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000192, allow_greedy = true)]
+    #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000193, allow_greedy = true)]
+    #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000194, allow_greedy = true)]
+    #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000195, allow_greedy = true)]
+    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000196, allow_greedy = true)]
     Lexeme(LexemeKind),
 }
 
@@ -431,11 +431,11 @@ pub enum YulContext {
     #[regex(r#"wei"#, |lexer| { if lexer.extras.language_version < LanguageVersion::V0_7_1 { LexemeKind::YulWeiKeyword_Reserved } else { LexemeKind::YulWeiKeyword_Unreserved } }, priority = 3000114)]
     #[regex(r#"while"#, |lexer| { if lexer.extras.language_version < LanguageVersion::V0_7_1 { LexemeKind::YulWhileKeyword_Reserved } else { LexemeKind::YulWhileKeyword_Unreserved } }, priority = 3000115)]
     #[regex(r#"years"#, |lexer| { if lexer.extras.language_version < LanguageVersion::V0_7_1 { LexemeKind::YulYearsKeyword_Reserved } else { LexemeKind::YulYearsKeyword_Unreserved } }, priority = 3000116)]
-    #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000117)]
-    #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000118)]
-    #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000119)]
-    #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000120)]
-    #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000121)]
-    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000122)]
+    #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000117, allow_greedy = true)]
+    #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000118, allow_greedy = true)]
+    #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000119, allow_greedy = true)]
+    #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000120, allow_greedy = true)]
+    #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000121, allow_greedy = true)]
+    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000122, allow_greedy = true)]
     Lexeme(LexemeKind),
 }
