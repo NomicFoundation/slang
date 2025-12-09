@@ -373,6 +373,9 @@ extern {
          
          // TODO[6]: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()
+        // In solidity parser they do two look ahead
+        // https://github.com/argotorg/solidity/blob/0f6d9db4987d91c9ccaf991b6a1a6515655ed745/libsolidity/parsing/Parser.cpp#L2332-L2349
+        // I'm still unsure how to solve this, so not worrying for now
 
             //<_Expression: InternalExpression<"True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
          
