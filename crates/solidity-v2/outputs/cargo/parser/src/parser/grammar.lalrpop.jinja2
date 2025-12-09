@@ -82,64 +82,44 @@ extern {
 
 
          // If we're not using functions, then we can have all attributes
-            <_type_name: TypeName1<"False">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+            <_type_name: TypeName1<"False">>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
             // Otherwise, the fun begins
 
             // If the there is a return, the visibility doesnt really matter, it's ignored. 
             // So we can either have or not have a vis
-            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(new_type_name_function_type(_type_name), _attributes, _name, _value, _semicolon),
+            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(new_type_name_function_type(_type_name), _attributes, _name, _value, _semicolon),
 
-            // If there is no return, then we need to check the visibility
-            // If there's a Vis then we can have a Vis
-            <_type_name: FunctionTypeInternalNoReturn<"1">>  <_attributes: StateVariableAttributes<"m">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(new_type_name_function_type(_type_name), _attributes, _name, _value, _semicolon),
-            // If there's no Vis, then we cant have a Vis
-            <_type_name: FunctionTypeInternalNoReturn<"0">>  <_attributes: StateVariableAttributes<"0">>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(new_type_name_function_type(_type_name), _attributes, _name, _value, _semicolon),
+            // If there is no return, then we need to post process the attributes
+            <_type_name: FunctionTypeInternalNoReturn> <special_attributes: SpecialStateVariableAttributes> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
+                let (function_type, mut extra_attributes) = extract_extra_attributes(_type_name);
+                extra_attributes.extend(special_attributes);
+                new_state_variable_definition(new_type_name_function_type(function_type), new_state_variable_attributes(extra_attributes), _name, _value, _semicolon)
+            },
         
     };
 
-// ODOT
-
-// TODO[1] See the note at `StateVariableDefinition`, we're using this to count for
-// used attributes
-    StateVariableAttributes<Vis>: StateVariableAttributes = {
-        // <_ConstantKeyword: ConstantKeyword> <_other: StateVariableAttributes<Vis, "True">> if Const == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"StateVariableAttributes\", \"_StateVariableAttribute\": {} }}", format!("[{}]", _StateVariableAttribute.join(", "))),
-
-        <_InternalKeyword: InternalKeyword> <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.elements.push(new_state_variable_attribute_internal_keyword(_InternalKeyword));
-            _other
-        },
-        <_PrivateKeyword: PrivateKeyword>   <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.elements.push(new_state_variable_attribute_private_keyword(_PrivateKeyword));
-            _other
-        },
-        <_PublicKeyword: PublicKeyword>     <mut _other: StateVariableAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.elements.push(new_state_variable_attribute_public_keyword(_PublicKeyword));
-            _other
-        },
-
-        () if Vis ~~ "0|m" => new_state_variable_attributes(vec![]),
-
+    SpecialStateVariableAttributes: Vec<StateVariableAttribute> = {
+                <_StateVariableAttribute: (<SpecialStateVariableAttribute>)*>  => <>,
+        
     };
-    /*
-    StateVariableAttribute: StateVariableAttribute = {
+    // Only these ones, since they're not shared with functions:
+    //    OverrideSpecifier(OverrideSpecifier),
+    //.   ImmutableKeyword(ImmutableKeyword),
+    //.   TransientKeyword(TransientKeyword),
+
+    SpecialStateVariableAttribute: StateVariableAttribute = {
          
             <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
-         
-            <_ConstantKeyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
-         
-            <_InternalKeyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(<>),
-         
-            <_PrivateKeyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(<>),
-         
-            <_PublicKeyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(<>),
          
             <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
          
             <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
         
     };
-    */
+
+
 // ODOT
+
     
 // TODO[1]: We're doing to things here:
 // 1. expanding the precedence of `TypeName` to its full form, mainly to have full control
@@ -178,61 +158,19 @@ extern {
 // with a `returns` and one that ends with attributes, because the one that ends with attributes
 // has problems in VariableDeclarationStatement
     FunctionType: FunctionType = {
-        FunctionTypeInternalNoReturn<"m"> => <>,
+        FunctionTypeInternalNoReturn => <>,
         FunctionTypeInternalReturn => <>,
     };
 
     // We dont inline this to break a cycle between type names
-    FunctionTypeInternalNoReturn<Vis>: FunctionType = {
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<Vis>>   => new_function_type(_function_keyword, _parameters, _attributes, None),
+    FunctionTypeInternalNoReturn: FunctionType = {
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(_function_keyword, _parameters, _attributes, None),
     };
     FunctionTypeInternalReturn: FunctionType = {
          
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes<"m">>  <_returns: ReturnsDeclaration>  => new_function_type(_function_keyword, _parameters, _attributes, Some(_returns)),
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(_function_keyword, _parameters, _attributes, Some(_returns)),
         
     };
-    FunctionTypeAttributes<Vis>: FunctionTypeAttributes = {
-        <_InternalKeyword: InternalKeyword> <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.elements.push(new_function_type_attribute_internal_keyword(_InternalKeyword));
-            _other
-        },
-        <_ExternalKeyword: ExternalKeyword> <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.elements.push(new_function_type_attribute_external_keyword(_ExternalKeyword));
-            _other
-        },
-        <_PrivateKeyword: PrivateKeyword>   <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.elements.push(new_function_type_attribute_private_keyword(_PrivateKeyword));
-            _other
-        },
-        <_PublicKeyword: PublicKeyword>     <mut _other: FunctionTypeAttributes<"0">> if Vis ~~ "1|m" => {
-            _other.elements.push(new_function_type_attribute_public_keyword(_PublicKeyword));
-            _other
-        },
-        
-        // <_PureKeyword: PureKeyword>         <_other: FunctionTypeAttributes<Vis, "True">> if Pure == "False" => format!("{{ \"item\": \"Repeated\", \"name\": \"FunctionTypeAttributes\", \"_PureKeyword\": {} }}", _PureKeyword),
-
-        () if Vis ~~ "0|m" => new_function_type_attributes(vec![]),
-        
-    };
-    /*
-    FunctionTypeAttribute: FunctionTypeAttribute = {
-         
-            <_InternalKeyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(<>),
-         
-            <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(<>),
-         
-            <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(<>),
-         
-            <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(<>),
-         
-            <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(<>),
-         
-            <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(<>),
-         
-            <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(<>),
-        
-    };
-    */
 // ODOT
 
 // TODO[3]: We need to disable dangling If's on nested if else statements, but that can
@@ -592,12 +530,6 @@ extern {
             _elems
         },
 
-        // 
-        //<mut _elems: ProtoTupleElements<"True">> Comma if Tuple == "False" => {
-        //    _elems.push(_elem);
-        //    _elems
-        //}
-
         <mut _elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => {
             _elems.push(_elem);
             _elems
@@ -614,7 +546,6 @@ extern {
         },
 
 
-//        <_elems: ((<ProtoTupleElement<Tuple>> <(Comma <ProtoTupleElement<Tuple>>)*>))> => format!("{{ \"item\": \"Special\", \"name\": \"ProtoTupleElements\", \"_elems\": {} }}", format!("[{}, {}]", _elems.0, _elems.1.iter().join(", "))).unwrap_or("[]".into()),
     };
 
     ProtoTupleElement<Tuple>: ProtoTupleElement = {
