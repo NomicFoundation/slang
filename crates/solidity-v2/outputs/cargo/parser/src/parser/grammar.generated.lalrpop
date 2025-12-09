@@ -327,7 +327,7 @@ SepOne<S, T>: Vec<T> = {
     #[inline]
     AddressKeyword: AddressKeyword = {
          
-            <_AddressKeyword: AddressKeyword_Unreserved>  => <>,
+            <_AddressKeyword: AddressKeyword_Reserved>  => <>,
         
     };
     #[inline]
@@ -501,7 +501,7 @@ SepOne<S, T>: Vec<T> = {
     #[inline]
     ErrorKeyword: ErrorKeyword = {
          
-            <_ErrorKeyword: ErrorKeyword_Unreserved>  => <>,
+            <_ErrorKeyword: ErrorKeyword_Reserved>  => <>,
         
     };
     #[inline]
@@ -825,7 +825,7 @@ SepOne<S, T>: Vec<T> = {
     #[inline]
     RevertKeyword: RevertKeyword = {
          
-            <_RevertKeyword: RevertKeyword_Unreserved>  => <>,
+            <_RevertKeyword: RevertKeyword_Reserved>  => <>,
         
     };
     #[inline]
@@ -921,7 +921,7 @@ SepOne<S, T>: Vec<T> = {
     #[inline]
     TransientKeyword: TransientKeyword = {
          
-            <_TransientKeyword: TransientKeyword_Unreserved>  => <>,
+            <_TransientKeyword: TransientKeyword_Reserved>  => <>,
         
     };
     #[inline]
@@ -2678,8 +2678,8 @@ AbstractKeyword_Reserved: AbstractKeyword_Reserved = {
     <l:@L> L_AbstractKeyword_Reserved <r:@L> => new_abstract_keyword_reserved(<>, source),
 }
 #[inline]
-AddressKeyword_Unreserved: AddressKeyword_Unreserved = {
-    <l:@L> L_AddressKeyword_Unreserved <r:@L> => new_address_keyword_unreserved(<>, source),
+AddressKeyword_Reserved: AddressKeyword_Reserved = {
+    <l:@L> L_AddressKeyword_Reserved <r:@L> => new_address_keyword_reserved(<>, source),
 }
 #[inline]
 AfterKeyword_Reserved: AfterKeyword_Reserved = {
@@ -2942,8 +2942,8 @@ EqualGreaterThan: EqualGreaterThan = {
     <l:@L> L_EqualGreaterThan <r:@L> => new_equal_greater_than(<>, source),
 }
 #[inline]
-ErrorKeyword_Unreserved: ErrorKeyword_Unreserved = {
-    <l:@L> L_ErrorKeyword_Unreserved <r:@L> => new_error_keyword_unreserved(<>, source),
+ErrorKeyword_Reserved: ErrorKeyword_Reserved = {
+    <l:@L> L_ErrorKeyword_Reserved <r:@L> => new_error_keyword_reserved(<>, source),
 }
 #[inline]
 EtherKeyword_Reserved: EtherKeyword_Reserved = {
@@ -3053,9 +3053,283 @@ HexLiteral: HexLiteral = {
 HoursKeyword_Reserved: HoursKeyword_Reserved = {
     <l:@L> L_HoursKeyword_Reserved <r:@L> => new_hours_keyword_reserved(<>, source),
 }
-#[inline]
+
 Identifier: Identifier = {
     <l:@L> L_Identifier <r:@L> => new_identifier(<>, source),
+// TODO: The identifier should also consider unreserved keywords
+      
+        <l:@L> L_ABIEncoderV2Keyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_AbicoderKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_AbicoderV1Keyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_AbicoderV2Keyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_AliasKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_ApplyKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_AtKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_AutoKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_CallDataKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_ConstructorKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_CopyOfKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_DefineKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_EmitKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_FallbackKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_FinneyKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_FixedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_FromKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_GlobalKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_GweiKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_ImmutableKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_ImplementsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_LayoutKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_MacroKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_MutableKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_OverrideKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_PartialKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_PromiseKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_ReceiveKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_ReferenceKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_SMTCheckerKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_SealedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_SizeOfKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_SolidityKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_SuperKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_SupportsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_SzaboKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_ThisKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_TypeDefKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_UfixedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_UncheckedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_VirtualKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulBoolKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulLeaveKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulSuperKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulThisKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+     
+        <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_identifier(<>, source),
+    
+// ODOT
+    
 }
 #[inline]
 IfKeyword_Reserved: IfKeyword_Reserved = {
@@ -3322,8 +3596,8 @@ ReturnsKeyword_Reserved: ReturnsKeyword_Reserved = {
     <l:@L> L_ReturnsKeyword_Reserved <r:@L> => new_returns_keyword_reserved(<>, source),
 }
 #[inline]
-RevertKeyword_Unreserved: RevertKeyword_Unreserved = {
-    <l:@L> L_RevertKeyword_Unreserved <r:@L> => new_revert_keyword_unreserved(<>, source),
+RevertKeyword_Reserved: RevertKeyword_Reserved = {
+    <l:@L> L_RevertKeyword_Reserved <r:@L> => new_revert_keyword_reserved(<>, source),
 }
 #[inline]
 SMTCheckerKeyword_Unreserved: SMTCheckerKeyword_Unreserved = {
@@ -3450,8 +3724,8 @@ Tilde: Tilde = {
     <l:@L> L_Tilde <r:@L> => new_tilde(<>, source),
 }
 #[inline]
-TransientKeyword_Unreserved: TransientKeyword_Unreserved = {
-    <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_transient_keyword_unreserved(<>, source),
+TransientKeyword_Reserved: TransientKeyword_Reserved = {
+    <l:@L> L_TransientKeyword_Reserved <r:@L> => new_transient_keyword_reserved(<>, source),
 }
 #[inline]
 TrueKeyword_Reserved: TrueKeyword_Reserved = {
@@ -4359,7 +4633,7 @@ extern {
         L_AbicoderV1Keyword_Unreserved => lexemes::LexemeKind::AbicoderV1Keyword_Unreserved,
         L_AbicoderV2Keyword_Unreserved => lexemes::LexemeKind::AbicoderV2Keyword_Unreserved,
         L_AbstractKeyword_Reserved => lexemes::LexemeKind::AbstractKeyword_Reserved,
-        L_AddressKeyword_Unreserved => lexemes::LexemeKind::AddressKeyword_Unreserved,
+        L_AddressKeyword_Reserved => lexemes::LexemeKind::AddressKeyword_Reserved,
         L_AfterKeyword_Reserved => lexemes::LexemeKind::AfterKeyword_Reserved,
         L_AliasKeyword_Reserved => lexemes::LexemeKind::AliasKeyword_Reserved,
         L_AliasKeyword_Unreserved => lexemes::LexemeKind::AliasKeyword_Unreserved,
@@ -4425,7 +4699,7 @@ extern {
         L_EqualColon => lexemes::LexemeKind::EqualColon,
         L_EqualEqual => lexemes::LexemeKind::EqualEqual,
         L_EqualGreaterThan => lexemes::LexemeKind::EqualGreaterThan,
-        L_ErrorKeyword_Unreserved => lexemes::LexemeKind::ErrorKeyword_Unreserved,
+        L_ErrorKeyword_Reserved => lexemes::LexemeKind::ErrorKeyword_Reserved,
         L_EtherKeyword_Reserved => lexemes::LexemeKind::EtherKeyword_Reserved,
         L_EventKeyword_Reserved => lexemes::LexemeKind::EventKeyword_Reserved,
         L_ExperimentalKeyword_Unreserved => lexemes::LexemeKind::ExperimentalKeyword_Unreserved,
@@ -4520,7 +4794,7 @@ extern {
         L_RelocatableKeyword_Reserved => lexemes::LexemeKind::RelocatableKeyword_Reserved,
         L_ReturnKeyword_Reserved => lexemes::LexemeKind::ReturnKeyword_Reserved,
         L_ReturnsKeyword_Reserved => lexemes::LexemeKind::ReturnsKeyword_Reserved,
-        L_RevertKeyword_Unreserved => lexemes::LexemeKind::RevertKeyword_Unreserved,
+        L_RevertKeyword_Reserved => lexemes::LexemeKind::RevertKeyword_Reserved,
         L_SMTCheckerKeyword_Unreserved => lexemes::LexemeKind::SMTCheckerKeyword_Unreserved,
         L_SealedKeyword_Reserved => lexemes::LexemeKind::SealedKeyword_Reserved,
         L_SealedKeyword_Unreserved => lexemes::LexemeKind::SealedKeyword_Unreserved,
@@ -4552,7 +4826,7 @@ extern {
         L_ThisKeyword_Unreserved => lexemes::LexemeKind::ThisKeyword_Unreserved,
         L_ThrowKeyword_Reserved => lexemes::LexemeKind::ThrowKeyword_Reserved,
         L_Tilde => lexemes::LexemeKind::Tilde,
-        L_TransientKeyword_Unreserved => lexemes::LexemeKind::TransientKeyword_Unreserved,
+        L_TransientKeyword_Reserved => lexemes::LexemeKind::TransientKeyword_Reserved,
         L_TrueKeyword_Reserved => lexemes::LexemeKind::TrueKeyword_Reserved,
         L_TryKeyword_Reserved => lexemes::LexemeKind::TryKeyword_Reserved,
         L_TypeDefKeyword_Reserved => lexemes::LexemeKind::TypeDefKeyword_Reserved,

@@ -5739,18 +5739,18 @@ pub fn new_abstract_keyword_reserved<'source>(
     }
 }
 
-pub type AddressKeyword_Unreserved = TerminalType;
+pub type AddressKeyword_Reserved = TerminalType;
 
-pub fn new_address_keyword_unreserved<'source>(
+pub fn new_address_keyword_reserved<'source>(
     l: usize,
     r: usize,
     source: &'source str,
-) -> AddressKeyword_Unreserved {
+) -> AddressKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
         _l: l,
         _r: r,
-        kind: LexemeKind::AddressKeyword_Unreserved,
+        kind: LexemeKind::AddressKeyword_Reserved,
     }
 }
 
@@ -6294,18 +6294,18 @@ pub fn new_enum_keyword_reserved<'source>(
     }
 }
 
-pub type ErrorKeyword_Unreserved = TerminalType;
+pub type ErrorKeyword_Reserved = TerminalType;
 
-pub fn new_error_keyword_unreserved<'source>(
+pub fn new_error_keyword_reserved<'source>(
     l: usize,
     r: usize,
     source: &'source str,
-) -> ErrorKeyword_Unreserved {
+) -> ErrorKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
         _l: l,
         _r: r,
-        kind: LexemeKind::ErrorKeyword_Unreserved,
+        kind: LexemeKind::ErrorKeyword_Reserved,
     }
 }
 
@@ -7299,18 +7299,18 @@ pub fn new_returns_keyword_reserved<'source>(
     }
 }
 
-pub type RevertKeyword_Unreserved = TerminalType;
+pub type RevertKeyword_Reserved = TerminalType;
 
-pub fn new_revert_keyword_unreserved<'source>(
+pub fn new_revert_keyword_reserved<'source>(
     l: usize,
     r: usize,
     source: &'source str,
-) -> RevertKeyword_Unreserved {
+) -> RevertKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
         _l: l,
         _r: r,
-        kind: LexemeKind::RevertKeyword_Unreserved,
+        kind: LexemeKind::RevertKeyword_Reserved,
     }
 }
 
@@ -7629,18 +7629,18 @@ pub fn new_throw_keyword_reserved<'source>(
     }
 }
 
-pub type TransientKeyword_Unreserved = TerminalType;
+pub type TransientKeyword_Reserved = TerminalType;
 
-pub fn new_transient_keyword_unreserved<'source>(
+pub fn new_transient_keyword_reserved<'source>(
     l: usize,
     r: usize,
     source: &'source str,
-) -> TransientKeyword_Unreserved {
+) -> TransientKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
         _l: l,
         _r: r,
-        kind: LexemeKind::TransientKeyword_Unreserved,
+        kind: LexemeKind::TransientKeyword_Reserved,
     }
 }
 

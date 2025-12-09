@@ -21,10 +21,12 @@ impl LexerModelBuilder {
 
         let contexts = instance.collect_contexts(language);
         let lexeme_kinds = Self::collect_lexeme_kinds(&contexts);
+        let unreserved_keywords = Self::collect_unreserved_keywords(&contexts);
 
         LexerModel {
             contexts,
             lexeme_kinds,
+            unreserved_keywords,
         }
     }
 
@@ -113,6 +115,22 @@ impl LexerModelBuilder {
         }
 
         kinds
+    }
+
+    fn collect_unreserved_keywords(contexts: &Vec<LexicalContext>) -> BTreeSet<String> {
+        let mut unreserved_keywords = BTreeSet::new();
+
+        for context in contexts {
+            for lexeme in &context.lexemes {
+                if let Lexeme::Keyword { kind, reserved, .. } = lexeme {
+                    if reserved.is_some() {
+                        unreserved_keywords.insert(format!("{kind}_Unreserved"));
+                    }
+                }
+            }
+        }
+
+        unreserved_keywords
     }
 
     fn convert_trivia(&self, item: &TriviaItem) -> Lexeme {

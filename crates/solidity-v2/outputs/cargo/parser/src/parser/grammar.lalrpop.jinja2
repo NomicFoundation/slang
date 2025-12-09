@@ -48,9 +48,16 @@ SepOne<S, T>: Vec<T> = {
 
 // Lexemes formatting
 {% for kind in model.parser.lexer.lexeme_kinds -%}
-#[inline]
+{% if kind != "Identifier" %}#[inline]{% endif %}
 {{ kind }}: {{ kind }} = {
     <l:@L> L_{{ kind }} <r:@L> => new_{{kind | snake_case}}(<>, source),
+    {%- if kind == "Identifier" %}
+// TODO: The identifier should also consider unreserved keywords
+     {% for kw in model.parser.lexer.unreserved_keywords %} 
+        <l:@L> L_{{ kw }} <r:@L> => new_{{kind | snake_case}}(<>, source),
+    {% endfor %}
+// ODOT
+    {% endif %}
 }
 {% endfor %}
 
