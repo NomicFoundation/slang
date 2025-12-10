@@ -134,7 +134,7 @@ Inflector = { version = "0.11.4" }
 itertools = { version = "0.13.0" }
 libc = { version = "0.2.0" }
 log = { version = "0.4.27" }
-logos = { version = "0.15.1" }
+logos = { version = "0.16.0" }
 lsp-positions = { version = "0.3.0" } 
 markdown = { version = "0.3.0" }
 nom = { version = "7.1.3" }
