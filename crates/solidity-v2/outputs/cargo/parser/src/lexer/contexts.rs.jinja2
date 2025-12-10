@@ -89,7 +89,7 @@ impl<'source> ContextWrapper<'source> {
     pub enum {{ context.name }}Context {
         {% for lexeme in context.lexemes -%}
             {%- if lexeme.type == "Trivia" -%}
-                {# TODO(v2): temporarily 'allow_greedy' on trivia because of https://github.com/maciejhirsz/logos/issues/520 #}
+                {# use 'allow_greedy' on trivia: https://github.com/maciejhirsz/logos/issues/520 #}
                 #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 1000000 + loop.index }}, allow_greedy = true)]
             {%- elif lexeme.type == "Token" -%}
                 #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 2000000 + loop.index }})]
