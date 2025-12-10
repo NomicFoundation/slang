@@ -68,8 +68,6 @@ jobs:
       - name: "infra publish npm"
         if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
         run: "./scripts/bin/infra publish npm"
-        env:
-          NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"
 
       - name: "infra publish cargo"
         if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
