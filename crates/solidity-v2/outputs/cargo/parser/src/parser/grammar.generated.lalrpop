@@ -11,9 +11,8 @@ Sep<S, T>: Vec<T> = {
 };
 
 SepOne<S, T>: Vec<T> = {
-    <e:T> <v:(S <T>)*> => {
-        let mut v = v;
-        v.insert(0, e);
+    <mut v:(<T> S)*> <e:T>  => {
+        v.push(e);
         v
     }
 };

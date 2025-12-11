@@ -1,13 +1,12 @@
 use std::rc::Rc;
 
 use lalrpop_util::lalrpop_mod;
-use slang_solidity_v2_ast::ast::nodes::{Expression, SourceUnitStruct};
+use slang_solidity_v2_ast::ast::nodes::{Expression, SourceUnit, SourceUnitStruct};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
 use crate::lexer::definition::Lexer;
 
-// TODO: How do I get rid of the squiggly line here?
 lalrpop_mod!(
     #[allow(non_snake_case)]
     pub grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
@@ -24,7 +23,7 @@ pub mod temp_cst_output;
 pub struct Parser {}
 
 impl Parser {
-    pub fn parse(input: &str, version: LanguageVersion) -> Result<Rc<SourceUnitStruct>, String> {
+    pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, String> {
         assert!(version == LanguageVersion::V0_8_30);
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
