@@ -24,7 +24,7 @@ jobs:
 
     permissions:
       contents: "write" # to create new branches and releases
-      id-token: "write" # OIDC token for publishing to NPM with provenance
+      id-token: "write" # OIDC token (needed for trusted publishing)
       pull-requests: "write" # to create new pull requests for changesets
 
     steps:
