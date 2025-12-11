@@ -102,7 +102,7 @@ pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expres
   // TODO: This is just a placeholder, we need to fix this
   let base: Expression = new_expression_identifier(identifier_path.elements[0].clone());
   identifier_path.elements[1..].iter().fold(base, |acc, id| {
-    new_expression_member_access_expression(new_member_access_expression(acc, new_empty_terminal(), id.clone()))
+    new_expression_member_access_expression(new_member_access_expression(acc, new_empty_terminal(LexemeKind::Period), id.clone()))
   })
 }
 
@@ -244,12 +244,12 @@ pub fn extract_extra_attributes(mut fun_type: FunctionType) -> (FunctionType, Ve
       pub kind: LexemeKind,
     }
 
-pub fn new_empty_terminal() -> TerminalType {
+pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType {
   TerminalType {
     value: "".into(),
     _l: 0,
     _r: 0,
-    kind: LexemeKind::UNRECOGNIZED,
+    kind: kind,
   }
 }
 

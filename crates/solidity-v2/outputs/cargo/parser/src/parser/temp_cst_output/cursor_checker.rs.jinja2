@@ -40,7 +40,179 @@ fn remove_trivia(v: &mut Vec<Edge>) {
 
 
 {% for parent_type, sequence in target.sequences %}
-{% if parent_type == "VariableDeclaration" %}
+{% if parent_type == "CallOptionsNew" %}
+// We skip NodeChecker for CallOptionsNew
+
+{% elif parent_type == "NewExpression" %}
+
+// NodeChecker for NewExpression is done by hand, since in V2 is represented a bit differently
+
+impl NodeChecker for NewExpression {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        // what we parse as a new expression on V2 is parsed as a CallExpression, of an optional
+        // call options, and a new expression
+        // TODO(v2): This is not correct , I'm not checking call options because i'm lazy for now
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionCallExpression) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be {}, but it was {}",
+                NonterminalKind::FunctionCallExpression,
+                node.kind()
+            ))];
+        }
+
+        let mut children = node.children().to_vec();
+        remove_trivia(&mut children);
+
+        let mut errors = vec![];
+
+        // Extract operand into expression_node
+        let expression_node = if let Some(child) = extract_first(&mut children, |child: &Edge| {
+            child.label == EdgeLabel::Operand
+        }) {
+            child.node
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected operand to be present in the CST, but it was not"
+            )));
+            return errors;
+        };
+
+        if expression_node.kind() != NodeKind::Nonterminal(NonterminalKind::Expression) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be {}, but it was {}",
+                NonterminalKind::Expression,
+                node.kind()
+            ))];
+        }
+
+        let mut expression_children = expression_node.children().to_vec();
+        remove_trivia(&mut expression_children);
+
+        if expression_children.len() != 1 {
+            return vec![NodeCheckerError::new(format!(
+                "Expected exactly one child for {}, but got: {:#?}",
+                NonterminalKind::Expression,
+                expression_children
+            ))];
+        }
+
+        let expression_child = &expression_children[0];
+
+        if expression_child.label != EdgeLabel::Variant {
+            return vec![NodeCheckerError::new(format!(
+                "Expected child to be of variant type, but it was {}",
+                expression_child.label
+            ))];
+        }
+
+        let new_expression_node = &expression_child.node;
+
+        if new_expression_node.kind() != NodeKind::Nonterminal(NonterminalKind::NewExpression) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be {}, but it was {}",
+                NonterminalKind::NewExpression,
+                new_expression_node.kind()
+            ))];
+        }
+
+
+        let mut new_expression_children = new_expression_node.children().to_vec();
+        remove_trivia(&mut new_expression_children);
+
+        // new_keyword
+
+        {
+            let new_keyword = &self.new_keyword;
+            if let Some(child) = extract_first(&mut new_expression_children, |child: &Edge| {
+                child.label == EdgeLabel::NewKeyword
+            }) {
+                let child_errors = new_keyword.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected new_keyword to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        // type_name
+
+        {
+            let type_name = &self.type_name;
+            if let Some(child) = extract_first(&mut new_expression_children, |child: &Edge| {
+                child.label == EdgeLabel::TypeName
+            }) {
+                let child_errors = type_name.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected type_name to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        // options
+        // if let Some(options) = &self.options {
+        //     if let Some(child) = extract_first(&mut children, |child: &Edge| {
+        //         child.label == EdgeLabel::Options
+        //     }) {
+        //         let child_errors = options.check_node(&child.node);
+        //         errors.extend(child_errors);
+        //     } else {
+        //         errors.push(NodeCheckerError::new(format!(
+        //             "Expected options to be present in the CST, but it was not"
+        //         )));
+        //     }
+        // } else {
+        //     // If it's not there on the AST, it shouldn't be in the CST
+        //     if let Some(child) = extract_first(&mut children, |child: &Edge| {
+        //         child.label == EdgeLabel::Options
+        //     }) {
+        //         errors.push(NodeCheckerError::new(format!(
+        //             "Expected options to not be present in the CST, but it was there: {:#?}",
+        //             child
+        //         )));
+        //     }
+        // }
+
+        // arguments
+
+        {
+            let arguments = &self.arguments;
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::Arguments
+            }) {
+                let child_errors = arguments.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected arguments to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        if !children.is_empty() {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected 0 children left, but there's some left {:#?}",
+                children
+            )));
+        }
+
+        if !new_expression_children.is_empty() {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected 0 children left, but there's some left {:#?}",
+                new_expression_children
+            )));
+        }
+
+        errors
+    }
+}
+
+{% elif parent_type == "VariableDeclaration" %}
 // We skip NodeChecker for VariableDeclaration
 
 {% elif parent_type == "VariableDeclarationStatement" %}

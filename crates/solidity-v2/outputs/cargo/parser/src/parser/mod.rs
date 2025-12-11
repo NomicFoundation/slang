@@ -1,7 +1,5 @@
-use std::rc::Rc;
-
 use lalrpop_util::lalrpop_mod;
-use slang_solidity_v2_ast::ast::nodes::{Expression, SourceUnit, SourceUnitStruct};
+use slang_solidity_v2_ast::ast::nodes::{Expression, SourceUnit};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;

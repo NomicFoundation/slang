@@ -138,7 +138,7 @@ pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expres
     identifier_path.elements[1..].iter().fold(base, |acc, id| {
         new_expression_member_access_expression(new_member_access_expression(
             acc,
-            new_empty_terminal(),
+            new_empty_terminal(LexemeKind::Period),
             id.clone(),
         ))
     })
@@ -2517,18 +2517,43 @@ pub struct NewExpressionStruct {
     // Do we care about range in source code?
     pub new_keyword: NewKeyword,
     pub type_name: TypeName,
-    pub arguments: PositionalArgumentsDeclaration,
+    pub options: Option<CallOptionsNew>,
+    pub arguments: ArgumentsDeclaration,
 }
 
 pub fn new_new_expression(
     new_keyword: NewKeyword,
     type_name: TypeName,
-    arguments: PositionalArgumentsDeclaration,
+    options: Option<CallOptionsNew>,
+    arguments: ArgumentsDeclaration,
 ) -> NewExpression {
     Rc::new(NewExpressionStruct {
         new_keyword,
         type_name,
+        options,
         arguments,
+    })
+}
+
+pub type CallOptionsNew = Rc<CallOptionsNewStruct>;
+
+#[derive(Debug)]
+pub struct CallOptionsNewStruct {
+    // Do we care about range in source code?
+    pub open_brace: OpenBrace,
+    pub options: CallOptions,
+    pub close_brace: CloseBrace,
+}
+
+pub fn new_call_options_new(
+    open_brace: OpenBrace,
+    options: CallOptions,
+    close_brace: CloseBrace,
+) -> CallOptionsNew {
+    Rc::new(CallOptionsNewStruct {
+        open_brace,
+        options,
+        close_brace,
     })
 }
 
@@ -5076,12 +5101,12 @@ pub struct TerminalType {
     pub kind: LexemeKind,
 }
 
-pub fn new_empty_terminal() -> TerminalType {
+pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType {
     TerminalType {
         value: "".into(),
         _l: 0,
         _r: 0,
-        kind: LexemeKind::UNRECOGNIZED,
+        kind: kind,
     }
 }
 

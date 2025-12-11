@@ -1727,7 +1727,12 @@ SepOne<S, T>: Vec<T> = {
     };
     NewExpression: NewExpression = {
          
-            <_new_keyword: NewKeyword>  <_type_name: TypeName>  <_arguments: PositionalArgumentsDeclaration>  => new_new_expression(<>),
+            <_new_keyword: NewKeyword>  <_type_name: TypeName>  <_options: (CallOptionsNew)?>  <_arguments: ArgumentsDeclaration>  => new_new_expression(<>),
+        
+    };
+    CallOptionsNew: CallOptionsNew = {
+         
+            <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_call_options_new(<>),
         
     };
     ArrayExpression: ArrayExpression = {
