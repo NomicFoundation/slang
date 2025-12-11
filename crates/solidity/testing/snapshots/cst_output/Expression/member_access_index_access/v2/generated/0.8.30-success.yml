@@ -16,7 +16,7 @@ IndexAccessExpression(
                     value: "",
                     _l: 0,
                     _r: 0,
-                    kind: UNRECOGNIZED,
+                    kind: Period,
                 },
                 member: TerminalType {
                     value: "y",
@@ -51,6 +51,3 @@ IndexAccessExpression(
         },
     },
 )
-----------------
-Expected node kind to be UNRECOGNIZED, but it was Period
-

@@ -16,7 +16,7 @@ MemberAccessExpression(
                     value: "",
                     _l: 0,
                     _r: 0,
-                    kind: UNRECOGNIZED,
+                    kind: Period,
                 },
                 member: TerminalType {
                     value: "y",
@@ -30,7 +30,7 @@ MemberAccessExpression(
             value: "",
             _l: 0,
             _r: 0,
-            kind: UNRECOGNIZED,
+            kind: Period,
         },
         member: TerminalType {
             value: "z",
@@ -40,8 +40,3 @@ MemberAccessExpression(
         },
     },
 )
-----------------
-Expected node kind to be UNRECOGNIZED, but it was Period
-
-Expected node kind to be UNRECOGNIZED, but it was Period
-
