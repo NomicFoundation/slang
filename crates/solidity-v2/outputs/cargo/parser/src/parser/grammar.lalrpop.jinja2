@@ -127,8 +127,7 @@ extern {
 // ODOT
 
     
-// TODO[1]: We're doing to things here:
-// 1. expanding the precedence of `TypeName` to its full form, mainly to have full control
+// TODO[1]: We're doing two things here:
 // 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
 // avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
 
@@ -148,14 +147,9 @@ extern {
     };
     
     TypeName1<Func, IAP>: TypeName = {
-// TODO[2]: enable
-        // It has problems with Access expression
             // The base expression shouldn't end in a trailing IAP
             <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(new_array_type_name(<>)),
             <TypeName: TypeName0<Func, IAP>>  => <>,
-// ODOT
-         
-         
         
     };
     TypeName: TypeName = {
