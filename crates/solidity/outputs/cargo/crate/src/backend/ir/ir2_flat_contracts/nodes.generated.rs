@@ -69,29 +69,12 @@ pub struct VersionTermStruct {
     pub literal: VersionLiteral,
 }
 
-pub type ImportDirective = Rc<ImportDirectiveStruct>;
-
-#[derive(Debug)]
-pub struct ImportDirectiveStruct {
-    pub node_id: NodeId,
-    pub clause: ImportClause,
-}
-
 pub type PathImport = Rc<PathImportStruct>;
 
 #[derive(Debug)]
 pub struct PathImportStruct {
     pub node_id: NodeId,
     pub alias: Option<Rc<TerminalNode>>,
-    pub path: Rc<TerminalNode>,
-}
-
-pub type NamedImport = Rc<NamedImportStruct>;
-
-#[derive(Debug)]
-pub struct NamedImportStruct {
-    pub node_id: NodeId,
-    pub alias: Rc<TerminalNode>,
     pub path: Rc<TerminalNode>,
 }
 
@@ -214,7 +197,8 @@ pub struct ConstantDefinitionStruct {
     pub node_id: NodeId,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
-    pub value: Expression,
+    pub visibility: Option<StateVariableVisibility>,
+    pub value: Option<Expression>,
 }
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
@@ -255,6 +239,7 @@ pub struct ParameterStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Option<Rc<TerminalNode>>,
+    pub indexed: bool,
 }
 
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
@@ -280,18 +265,8 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 pub struct EventDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub parameters: EventParameters,
     pub anonymous_keyword: bool,
-}
-
-pub type EventParameter = Rc<EventParameterStruct>;
-
-#[derive(Debug)]
-pub struct EventParameterStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub indexed_keyword: bool,
-    pub name: Option<Rc<TerminalNode>>,
+    pub parameters: Parameters,
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
@@ -309,16 +284,7 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 pub struct ErrorDefinitionStruct {
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
-    pub members: ErrorParameters,
-}
-
-pub type ErrorParameter = Rc<ErrorParameterStruct>;
-
-#[derive(Debug)]
-pub struct ErrorParameterStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub name: Option<Rc<TerminalNode>>,
+    pub parameters: Parameters,
 }
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
@@ -346,26 +312,8 @@ pub type MappingType = Rc<MappingTypeStruct>;
 #[derive(Debug)]
 pub struct MappingTypeStruct {
     pub node_id: NodeId,
-    pub key_type: MappingKey,
-    pub value_type: MappingValue,
-}
-
-pub type MappingKey = Rc<MappingKeyStruct>;
-
-#[derive(Debug)]
-pub struct MappingKeyStruct {
-    pub node_id: NodeId,
-    pub key_type: MappingKeyType,
-    pub name: Option<Rc<TerminalNode>>,
-}
-
-pub type MappingValue = Rc<MappingValueStruct>;
-
-#[derive(Debug)]
-pub struct MappingValueStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub name: Option<Rc<TerminalNode>>,
+    pub key_type: Parameter,
+    pub value_type: Parameter,
 }
 
 pub type AddressType = Rc<AddressTypeStruct>;
@@ -415,36 +363,8 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
     pub node_id: NodeId,
-    pub var_keyword: bool,
-    pub elements: TupleDeconstructionElements,
     pub expression: Expression,
-}
-
-pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
-
-#[derive(Debug)]
-pub struct TupleDeconstructionElementStruct {
-    pub node_id: NodeId,
-    pub member: Option<TupleMember>,
-}
-
-pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
-
-#[derive(Debug)]
-pub struct TypedTupleMemberStruct {
-    pub node_id: NodeId,
-    pub type_name: TypeName,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Rc<TerminalNode>,
-}
-
-pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
-
-#[derive(Debug)]
-pub struct UntypedTupleMemberStruct {
-    pub node_id: NodeId,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Rc<TerminalNode>,
+    pub members: TupleDeconstructionMembers,
 }
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
@@ -452,10 +372,10 @@ pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 #[derive(Debug)]
 pub struct VariableDeclarationStatementStruct {
     pub node_id: NodeId,
-    pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
     pub value: Option<Expression>,
+    pub type_name: Option<TypeName>,
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -981,7 +901,6 @@ pub struct YulFunctionCallExpressionStruct {
 #[derive(Debug)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
-    ImportDirective(ImportDirective),
     ContractDefinition(ContractDefinition),
     InterfaceDefinition(InterfaceDefinition),
     LibraryDefinition(LibraryDefinition),
@@ -993,6 +912,7 @@ pub enum SourceUnitMember {
     UsingDirective(UsingDirective),
     EventDefinition(EventDefinition),
     ConstantDefinition(ConstantDefinition),
+    ImportClause(ImportClause),
 }
 
 #[derive(Debug)]
@@ -1042,7 +962,6 @@ pub enum VersionLiteral {
 #[derive(Debug)]
 pub enum ImportClause {
     PathImport(PathImport),
-    NamedImport(NamedImport),
     ImportDeconstruction(ImportDeconstruction),
 }
 
@@ -1087,6 +1006,7 @@ pub enum ContractMember {
     ErrorDefinition(ErrorDefinition),
     UserDefinedValueTypeDefinition(UserDefinedValueTypeDefinition),
     StateVariableDefinition(StateVariableDefinition),
+    ConstantDefinition(ConstantDefinition),
 }
 
 #[derive(Debug)]
@@ -1094,12 +1014,6 @@ pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
     MappingType(MappingType),
-    ElementaryType(ElementaryType),
-    IdentifierPath(IdentifierPath),
-}
-
-#[derive(Debug)]
-pub enum MappingKeyType {
     ElementaryType(ElementaryType),
     IdentifierPath(IdentifierPath),
 }
@@ -1136,18 +1050,6 @@ pub enum Statement {
     TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
-}
-
-#[derive(Debug)]
-pub enum TupleMember {
-    TypedTupleMember(TypedTupleMember),
-    UntypedTupleMember(UntypedTupleMember),
-}
-
-#[derive(Debug)]
-pub enum VariableDeclarationType {
-    TypeName(TypeName),
-    VarKeyword,
 }
 
 #[derive(Debug)]
@@ -1329,6 +1231,13 @@ pub enum StateVariableMutability {
     Transient,
 }
 
+#[derive(Debug)]
+pub enum TupleDeconstructionMember {
+    VariableDeclarationStatement(VariableDeclarationStatement),
+    Identifier(Rc<TerminalNode>),
+    None,
+}
+
 //
 // Repeated & Separated
 //
@@ -1361,13 +1270,7 @@ pub type Parameters = Vec<Parameter>;
 
 pub type OverridePaths = Vec<IdentifierPath>;
 
-pub type EventParameters = Vec<EventParameter>;
-
-pub type ErrorParameters = Vec<ErrorParameter>;
-
 pub type Statements = Vec<Statement>;
-
-pub type TupleDeconstructionElements = Vec<TupleDeconstructionElement>;
 
 pub type CatchClauses = Vec<CatchClause>;
 
@@ -1406,3 +1309,5 @@ pub type HexStrings = Vec<Rc<TerminalNode>>;
 pub type UnicodeStrings = Vec<Rc<TerminalNode>>;
 
 pub type AssemblyFlags = Vec<Rc<TerminalNode>>;
+
+pub type TupleDeconstructionMembers = Vec<TupleDeconstructionMember>;

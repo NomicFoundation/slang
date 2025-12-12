@@ -23,6 +23,29 @@ struct Pass {
 }
 
 impl Transformer for Pass {
+    fn transform_source_unit_member(
+        &mut self,
+        source: &input::SourceUnitMember,
+    ) -> output::SourceUnitMember {
+        match source {
+            input::SourceUnitMember::ImportDirective(import_directive) => {
+                output::SourceUnitMember::ImportClause(
+                    self.transform_import_clause(&import_directive.clause),
+                )
+            }
+            _ => self.default_transform_source_unit_member(source),
+        }
+    }
+
+    fn transform_import_clause(&mut self, source: &input::ImportClause) -> output::ImportClause {
+        match source {
+            input::ImportClause::NamedImport(named_import) => {
+                output::ImportClause::PathImport(self.transform_named_import(named_import))
+            }
+            _ => self.default_transform_import_clause(source),
+        }
+    }
+
     fn transform_contract_definition(
         &mut self,
         source: &input::ContractDefinition,
@@ -133,6 +156,21 @@ impl Transformer for Pass {
                     self.transform_modifier_definition(modifier_definition),
                 )
             }
+            input::ContractMember::StateVariableDefinition(state_variable_definition) => {
+                let output = self.transform_state_variable_definition(state_variable_definition);
+                if matches!(output.mutability, output::StateVariableMutability::Constant)
+                    && !matches!(output.visibility, output::StateVariableVisibility::Public)
+                {
+                    // Transmute the `StateVariableDefinition` into a `ConstantDefinition`
+                    output::ContractMember::ConstantDefinition(
+                        Self::state_variable_definition_as_constant_definition(
+                            Rc::into_inner(output).expect("Created node is not yet shared"),
+                        ),
+                    )
+                } else {
+                    output::ContractMember::StateVariableDefinition(output)
+                }
+            }
             _ => self.default_transform_contract_member(source),
         }
     }
@@ -200,6 +238,25 @@ impl Transformer for Pass {
                 )
             }
         }
+    }
+
+    fn transform_constant_definition(
+        &mut self,
+        source: &input::ConstantDefinition,
+    ) -> output::ConstantDefinition {
+        let node_id = source.node_id;
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = Rc::clone(&source.name);
+        let visibility = None;
+        let value = Some(self.transform_expression(&source.value));
+
+        Rc::new(output::ConstantDefinitionStruct {
+            node_id,
+            type_name,
+            name,
+            visibility,
+            value,
+        })
     }
 
     fn transform_state_variable_definition(
@@ -285,18 +342,6 @@ impl Transformer for Pass {
         })
     }
 
-    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::NamedImport {
-        let node_id = source.node_id;
-        let alias = self.transform_import_alias(&source.alias);
-        let path = Self::string_literal_terminal_node(&source.path);
-
-        Rc::new(output::NamedImportStruct {
-            node_id,
-            alias,
-            path,
-        })
-    }
-
     fn transform_import_deconstruction(
         &mut self,
         source: &input::ImportDeconstruction,
@@ -365,9 +410,123 @@ impl Transformer for Pass {
             _ => self.default_transform_yul_literal(source),
         }
     }
+
+    fn transform_variable_declaration_statement(
+        &mut self,
+        source: &input::VariableDeclarationStatement,
+    ) -> output::VariableDeclarationStatement {
+        let type_name = match &source.variable_type {
+            input::VariableDeclarationType::TypeName(type_name) => {
+                Some(self.transform_type_name(type_name))
+            }
+            input::VariableDeclarationType::VarKeyword => None,
+        };
+        let storage_location = source
+            .storage_location
+            .as_ref()
+            .map(|value| self.transform_storage_location(value));
+        let name = Rc::clone(&source.name);
+        let value = source
+            .value
+            .as_ref()
+            .map(|value| self.transform_variable_declaration_value(value));
+
+        Rc::new(output::VariableDeclarationStatementStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location,
+            name,
+            value,
+        })
+    }
+
+    fn transform_tuple_deconstruction_statement(
+        &mut self,
+        source: &input::TupleDeconstructionStatement,
+    ) -> output::TupleDeconstructionStatement {
+        let expression = self.transform_expression(&source.expression);
+        let members =
+            self.transform_tuple_deconstruction_elements(&source.elements, source.var_keyword);
+
+        Rc::new(output::TupleDeconstructionStatementStruct {
+            node_id: source.node_id,
+            expression,
+            members,
+        })
+    }
+
+    fn transform_parameter(&mut self, source: &input::Parameter) -> output::Parameter {
+        let type_name = self.transform_type_name(&source.type_name);
+        let storage_location = source
+            .storage_location
+            .as_ref()
+            .map(|location| self.transform_storage_location(location));
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location,
+            name,
+            indexed: false,
+        })
+    }
+
+    fn transform_event_definition(
+        &mut self,
+        source: &input::EventDefinition,
+    ) -> output::EventDefinition {
+        let name = Rc::clone(&source.name);
+        let anonymous_keyword = source.anonymous_keyword;
+        let parameters = self.transform_event_parameters(&source.parameters.parameters);
+
+        Rc::new(output::EventDefinitionStruct {
+            node_id: source.node_id,
+            name,
+            anonymous_keyword,
+            parameters,
+        })
+    }
+
+    fn transform_error_definition(
+        &mut self,
+        source: &input::ErrorDefinition,
+    ) -> output::ErrorDefinition {
+        let name = Rc::clone(&source.name);
+        let parameters = self.transform_error_parameters(&source.members.parameters);
+
+        Rc::new(output::ErrorDefinitionStruct {
+            node_id: source.node_id,
+            name,
+            parameters,
+        })
+    }
+
+    fn transform_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
+        let key_type = self.transform_mapping_key(&source.key_type);
+        let value_type = self.transform_mapping_value(&source.value_type);
+
+        Rc::new(output::MappingTypeStruct {
+            node_id: source.node_id,
+            key_type,
+            value_type,
+        })
+    }
 }
 
 impl Pass {
+    fn transform_named_import(&mut self, source: &input::NamedImport) -> output::PathImport {
+        let node_id = source.node_id;
+        let alias = Some(self.transform_import_alias(&source.alias));
+        let path = Self::string_literal_terminal_node(&source.path);
+
+        Rc::new(output::PathImportStruct {
+            node_id,
+            alias,
+            path,
+        })
+    }
+
     fn function_visibility(
         &self,
         attributes: &input::FunctionAttributes,
@@ -915,6 +1074,24 @@ impl Pass {
         })
     }
 
+    fn state_variable_definition_as_constant_definition(
+        state_variable_definition: output::StateVariableDefinitionStruct,
+    ) -> output::ConstantDefinition {
+        let node_id = state_variable_definition.node_id;
+        let type_name = state_variable_definition.type_name;
+        let name = Rc::clone(&state_variable_definition.name);
+        let value = state_variable_definition.value;
+        let visibility = Some(state_variable_definition.visibility);
+
+        Rc::new(output::ConstantDefinitionStruct {
+            node_id,
+            type_name,
+            name,
+            visibility,
+            value,
+        })
+    }
+
     fn string_literal_terminal_node(value: &input::StringLiteral) -> Rc<TerminalNode> {
         match value {
             input::StringLiteral::SingleQuotedStringLiteral(terminal_node)
@@ -942,5 +1119,166 @@ impl Pass {
                 Rc::clone(terminal_node)
             }
         }
+    }
+
+    fn transform_tuple_deconstruction_elements(
+        &mut self,
+        source: &input::TupleDeconstructionElements,
+        var_keyword: bool,
+    ) -> output::TupleDeconstructionMembers {
+        source
+            .iter()
+            .map(|element| {
+                match &element.member {
+                    Some(member) => match member {
+                        input::TupleMember::TypedTupleMember(typed_tuple_member) => {
+                            // TODO(validation): `var_keyword` should be false here,
+                            // since we have a typed tuple member
+                            output::TupleDeconstructionMember::VariableDeclarationStatement(
+                                self.transform_typed_tuple_member(typed_tuple_member),
+                            )
+                        }
+                        input::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
+                            if var_keyword {
+                                output::TupleDeconstructionMember::VariableDeclarationStatement(
+                                    self.transform_untyped_tuple_member(untyped_tuple_member),
+                                )
+                            } else {
+                                // TODO(validation): the storage location of the
+                                // member should be absent, since this is an
+                                // assignment and not a declaration
+                                output::TupleDeconstructionMember::Identifier(Rc::clone(
+                                    &untyped_tuple_member.name,
+                                ))
+                            }
+                        }
+                    },
+                    None => output::TupleDeconstructionMember::None,
+                }
+            })
+            .collect()
+    }
+
+    fn transform_typed_tuple_member(
+        &mut self,
+        source: &input::TypedTupleMember,
+    ) -> output::VariableDeclarationStatement {
+        let storage_location = source
+            .storage_location
+            .as_ref()
+            .map(|location| self.transform_storage_location(location));
+        let name = Rc::clone(&source.name);
+        let type_name = Some(self.transform_type_name(&source.type_name));
+
+        Rc::new(output::VariableDeclarationStatementStruct {
+            node_id: source.node_id,
+            storage_location,
+            name,
+            value: None,
+            type_name,
+        })
+    }
+
+    fn transform_untyped_tuple_member(
+        &mut self,
+        source: &input::UntypedTupleMember,
+    ) -> output::VariableDeclarationStatement {
+        let storage_location = source
+            .storage_location
+            .as_ref()
+            .map(|location| self.transform_storage_location(location));
+        let name = Rc::clone(&source.name);
+
+        Rc::new(output::VariableDeclarationStatementStruct {
+            node_id: source.node_id,
+            storage_location,
+            name,
+            value: None,
+            type_name: None,
+        })
+    }
+
+    fn transform_event_parameters(
+        &mut self,
+        source: &input::EventParameters,
+    ) -> output::Parameters {
+        source
+            .iter()
+            .map(|parameter| self.transform_event_parameter(parameter))
+            .collect()
+    }
+
+    fn transform_event_parameter(&mut self, source: &input::EventParameter) -> output::Parameter {
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = source.name.as_ref().map(Rc::clone);
+        let indexed = source.indexed_keyword;
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location: None,
+            name,
+            indexed,
+        })
+    }
+
+    fn transform_error_parameters(
+        &mut self,
+        source: &input::ErrorParameters,
+    ) -> output::Parameters {
+        source
+            .iter()
+            .map(|parameter| self.transform_error_parameter(parameter))
+            .collect()
+    }
+
+    fn transform_error_parameter(&mut self, source: &input::ErrorParameter) -> output::Parameter {
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location: None,
+            name,
+            indexed: false,
+        })
+    }
+
+    fn transform_mapping_key(&mut self, source: &input::MappingKey) -> output::Parameter {
+        let type_name = self.transform_mapping_key_type(&source.key_type);
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location: None,
+            name,
+            indexed: false,
+        })
+    }
+
+    fn transform_mapping_key_type(&mut self, source: &input::MappingKeyType) -> output::TypeName {
+        match source {
+            input::MappingKeyType::ElementaryType(elementary_type) => {
+                output::TypeName::ElementaryType(self.transform_elementary_type(elementary_type))
+            }
+            input::MappingKeyType::IdentifierPath(terminal_nodes) => {
+                output::TypeName::IdentifierPath(self.transform_identifier_path(terminal_nodes))
+            }
+        }
+    }
+
+    fn transform_mapping_value(&mut self, source: &input::MappingValue) -> output::Parameter {
+        let type_name = self.transform_type_name(&source.type_name);
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(output::ParameterStruct {
+            node_id: source.node_id,
+            type_name,
+            storage_location: None,
+            name,
+            indexed: false,
+        })
     }
 }

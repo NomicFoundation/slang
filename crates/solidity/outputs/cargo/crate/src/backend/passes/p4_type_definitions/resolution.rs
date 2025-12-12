@@ -124,14 +124,8 @@ impl Pass<'_> {
             }
             input_ir::TypeName::MappingType(mapping_type) => {
                 let data_location = Some(DataLocation::Storage);
-                let key_type_id = match &mapping_type.key_type.key_type {
-                    input_ir::MappingKeyType::ElementaryType(elementary_type) => {
-                        self.type_of_elementary_type(elementary_type, data_location)
-                    }
-                    input_ir::MappingKeyType::IdentifierPath(identifier_path) => {
-                        self.type_of_identifier_path(identifier_path, data_location)
-                    }
-                }?;
+                let key_type_id =
+                    self.resolve_type_name(&mapping_type.key_type.type_name, data_location)?;
                 let value_type_id =
                     self.resolve_type_name(&mapping_type.value_type.type_name, data_location)?;
                 Some(self.types.register_type(Type::Mapping {

@@ -164,32 +164,6 @@ impl<'a> Pass<'a> {
         self.binder.insert_scope(Scope::Parameters(scope))
     }
 
-    // Collect parameters in error definition
-    fn collect_error_parameters(&mut self, parameters: &input_ir::ErrorParameters) -> ScopeId {
-        let mut scope = ParametersScope::new();
-        for parameter in parameters {
-            scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
-                self.binder.insert_definition_no_scope(definition);
-            }
-        }
-        self.binder.insert_scope(Scope::Parameters(scope))
-    }
-
-    // Collect parameters in event definition
-    fn collect_event_parameters(&mut self, parameters: &input_ir::EventParameters) -> ScopeId {
-        let mut scope = ParametersScope::new();
-        for parameter in parameters {
-            scope.add_parameter(parameter.name.as_ref(), parameter.node_id);
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
-                self.binder.insert_definition_no_scope(definition);
-            }
-        }
-        self.binder.insert_scope(Scope::Parameters(scope))
-    }
-
     // This is used to collect only named parameters and insert their
     // definitions into an existing scope. Used mostly for return parameters,
     // where position and types are not used for binding.
@@ -286,15 +260,6 @@ impl Visitor for Pass<'_> {
             self.current_file_scope()
                 .add_imported_file(imported_file_id);
         }
-
-        false
-    }
-
-    fn enter_named_import(&mut self, node: &input_ir::NamedImport) -> bool {
-        let imported_file_id = self.resolve_import_path(&node.path);
-
-        let definition = Definition::new_import(node.node_id, &node.alias, imported_file_id);
-        self.insert_definition_in_current_scope(definition);
 
         false
     }
@@ -434,7 +399,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
-        let parameters_scope_id = self.collect_error_parameters(&node.members);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_error(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
@@ -442,7 +407,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_event_definition(&mut self, node: &input_ir::EventDefinition) -> bool {
-        let parameters_scope_id = self.collect_event_parameters(&node.parameters);
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_event(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
@@ -453,16 +418,8 @@ impl Visitor for Pass<'_> {
         &mut self,
         node: &input_ir::StateVariableDefinition,
     ) -> bool {
-        let is_constant = matches!(node.mutability, input_ir::StateVariableMutability::Constant);
-        let is_public = matches!(node.visibility, input_ir::StateVariableVisibility::Public);
-        // Public state variables define a getter, so we don't register them as
-        // constants here
-        let definition = if is_constant && !is_public {
-            Definition::new_constant(node.node_id, &node.name)
-        } else {
-            let visibility = (&node.visibility).into();
-            Definition::new_state_variable(node.node_id, &node.name, visibility)
-        };
+        let visibility = (&node.visibility).into();
+        let definition = Definition::new_state_variable(node.node_id, &node.name, visibility);
         self.insert_definition_in_current_scope(definition);
 
         // there may be more definitions in the type of the state variable (eg.
@@ -501,41 +458,6 @@ impl Visitor for Pass<'_> {
 
         let definition = Definition::new_variable(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
-    }
-
-    fn leave_tuple_deconstruction_statement(
-        &mut self,
-        node: &input_ir::TupleDeconstructionStatement,
-    ) {
-        if self.language_version >= VERSION_0_5_0 {
-            // In Solidity >= 0.5.0 the definitions should only be available for
-            // statements after this one. So we open a new scope that replaces
-            // but is linked to the current one
-            let scope = Scope::new_block(node.node_id, self.current_scope_id());
-            self.replace_scope(scope);
-        }
-
-        let is_untyped_declaration = node.var_keyword;
-        for element in &node.elements {
-            let Some(tuple_member) = &element.member else {
-                continue;
-            };
-            let definition = match tuple_member {
-                input_ir::TupleMember::TypedTupleMember(typed_tuple_member) => {
-                    Definition::new_variable(typed_tuple_member.node_id, &typed_tuple_member.name)
-                }
-                input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
-                    if !is_untyped_declaration {
-                        continue;
-                    }
-                    Definition::new_variable(
-                        untyped_tuple_member.node_id,
-                        &untyped_tuple_member.name,
-                    )
-                }
-            };
-            self.insert_definition_in_current_scope(definition);
-        }
     }
 
     fn enter_block(&mut self, node: &input_ir::Block) -> bool {

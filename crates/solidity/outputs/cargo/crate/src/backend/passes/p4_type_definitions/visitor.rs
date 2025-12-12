@@ -85,10 +85,6 @@ impl Visitor for Pass<'_> {
         }
     }
 
-    fn leave_named_import(&mut self, node: &input_ir::NamedImport) {
-        self.binder.mark_user_meta_type_node(node.node_id);
-    }
-
     fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
         for symbol in &node.symbols {
             let target_symbol = if let Some(alias) = &symbol.alias {
@@ -181,15 +177,6 @@ impl Visitor for Pass<'_> {
         }
     }
 
-    fn enter_mapping_key_type(&mut self, node: &input_ir::MappingKeyType) -> bool {
-        if let input_ir::MappingKeyType::IdentifierPath(identifier_path) = node {
-            self.resolve_identifier_path(identifier_path);
-            false
-        } else {
-            true
-        }
-    }
-
     fn enter_override_paths(&mut self, items: &input_ir::OverridePaths) -> bool {
         for identifier_path in items {
             self.resolve_identifier_path(identifier_path);
@@ -200,11 +187,18 @@ impl Visitor for Pass<'_> {
     fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
         self.binder.mark_user_meta_type_node(node.node_id);
 
-        let parameter_types: Vec<_> = node
-            .parameters
-            .iter()
-            .map(|parameter| self.binder.node_typing(parameter.node_id).as_type_id())
-            .collect();
+        // Resolve and collect the types of the parameters, saving them in the
+        // scope to use in overload disambiguation when invoking an event as a
+        // function
+        let mut parameter_types = Vec::new();
+        for parameter in &node.parameters {
+            // TODO: the data location is not strictly correct, but strings, bytes
+            // and structs are allowed as event parameters and they won't type if we
+            // pass None here
+            let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
+            self.binder.set_node_type(parameter.node_id, type_id);
+            parameter_types.push(type_id);
+        }
 
         let Some(parameters_scope_id) = self
             .binder
@@ -220,24 +214,17 @@ impl Visitor for Pass<'_> {
         parameters_scope.set_parameter_types(&parameter_types);
     }
 
-    fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {
-        // TODO: the data location is not strictly correct, but strings, bytes
-        // and structs are allowed as event parameters and they won't type if we
-        // pass None here
-        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        self.binder.set_node_type(node.node_id, type_id);
-    }
-
     fn leave_error_definition(&mut self, node: &input_ir::ErrorDefinition) {
         self.binder.mark_user_meta_type_node(node.node_id);
-    }
 
-    fn leave_error_parameter(&mut self, node: &input_ir::ErrorParameter) {
-        // TODO: the data location is not strictly correct, but strings, bytes
-        // and structs are allowed as error parameters and they won't type if we
-        // pass None here
-        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        self.binder.set_node_type(node.node_id, type_id);
+        // Resolve the types of the parameters
+        for parameter in &node.parameters {
+            // TODO: the data location is not strictly correct, but strings, bytes
+            // and structs are allowed as error parameters and they won't type if we
+            // pass None here
+            let type_id = self.resolve_type_name(&parameter.type_name, Some(DataLocation::Memory));
+            self.binder.set_node_type(parameter.node_id, type_id);
+        }
     }
 
     fn leave_state_variable_definition(&mut self, node: &input_ir::StateVariableDefinition) {
@@ -256,62 +243,24 @@ impl Visitor for Pass<'_> {
         &mut self,
         node: &input_ir::VariableDeclarationStatement,
     ) {
-        let type_id =
-            if let input_ir::VariableDeclarationType::TypeName(type_name) = &node.variable_type {
-                self.resolve_type_name(
-                    type_name,
-                    node.storage_location.as_ref().map(Into::into).or_else(|| {
-                        if self.language_version < VERSION_0_5_0 {
-                            // default data location is storage for variables
-                            Some(DataLocation::Storage)
-                        } else {
-                            None
-                        }
-                    }),
-                )
-            } else {
-                // this is for `var` variables (in Solidity < 0.5.0) we cannot
-                // resolve the type at this point (will fixup in p5)
-                None
-            };
+        let type_id = if let Some(type_name) = &node.type_name {
+            self.resolve_type_name(
+                type_name,
+                node.storage_location.as_ref().map(Into::into).or_else(|| {
+                    if self.language_version < VERSION_0_5_0 {
+                        // default data location is storage for variables
+                        Some(DataLocation::Storage)
+                    } else {
+                        None
+                    }
+                }),
+            )
+        } else {
+            // this is for `var` variables (in Solidity < 0.5.0) we cannot
+            // resolve the type at this point (will fixup in p5)
+            None
+        };
         self.binder.set_node_type(node.node_id, type_id);
-    }
-
-    fn leave_typed_tuple_member(&mut self, node: &input_ir::TypedTupleMember) {
-        let type_id = self.resolve_type_name(
-            &node.type_name,
-            node.storage_location.as_ref().map(Into::into).or_else(|| {
-                if self.language_version < VERSION_0_5_0 {
-                    // default data location is storage for variables
-                    Some(DataLocation::Storage)
-                } else {
-                    None
-                }
-            }),
-        );
-        self.binder.set_node_type(node.node_id, type_id);
-    }
-
-    fn leave_tuple_deconstruction_statement(
-        &mut self,
-        node: &input_ir::TupleDeconstructionStatement,
-    ) {
-        if !node.var_keyword {
-            return;
-        }
-        // this handles adding type information to the `var` declarations in Solidity < 0.5.0
-        for element in &node.elements {
-            let Some(member) = &element.member else {
-                continue;
-            };
-            if let input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) = member {
-                // the variable types cannot be typed at this point, but we
-                // should be able to infer it after typing the initialization
-                // value
-                self.binder
-                    .set_node_type(untyped_tuple_member.node_id, None);
-            }
-        }
     }
 
     fn leave_struct_definition(&mut self, node: &input_ir::StructDefinition) {
