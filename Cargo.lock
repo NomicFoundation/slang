@@ -3634,7 +3634,6 @@ dependencies = [
  "slang_solidity",
  "slang_solidity_v2_ast",
  "slang_solidity_v2_common",
- "strum_macros 0.26.4",
 ]
 
 [[package]]
