@@ -7,37 +7,37 @@ IndexAccessExpression(
                 operand: Identifier(
                     TerminalType {
                         value: "x",
-                        _l: 0,
-                        _r: 1,
+                        l: 0,
+                        r: 1,
                         kind: Identifier,
                     },
                 ),
                 period: TerminalType {
                     value: "",
-                    _l: 0,
-                    _r: 0,
+                    l: 0,
+                    r: 0,
                     kind: Period,
                 },
                 member: TerminalType {
                     value: "y",
-                    _l: 2,
-                    _r: 3,
+                    l: 2,
+                    r: 3,
                     kind: Identifier,
                 },
             },
         ),
         open_bracket: TerminalType {
             value: "[",
-            _l: 3,
-            _r: 4,
+            l: 3,
+            r: 4,
             kind: OpenBracket,
         },
         start: Some(
             Identifier(
                 TerminalType {
                     value: "index",
-                    _l: 4,
-                    _r: 9,
+                    l: 4,
+                    r: 9,
                     kind: Identifier,
                 },
             ),
@@ -45,8 +45,8 @@ IndexAccessExpression(
         end: None,
         close_bracket: TerminalType {
             value: "]",
-            _l: 9,
-            _r: 10,
+            l: 9,
+            r: 10,
             kind: CloseBracket,
         },
     },

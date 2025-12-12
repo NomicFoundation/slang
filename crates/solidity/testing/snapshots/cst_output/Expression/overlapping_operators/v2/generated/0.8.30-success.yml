@@ -7,22 +7,22 @@ AndExpression(
                 left_operand: Identifier(
                     TerminalType {
                         value: "a",
-                        _l: 0,
-                        _r: 1,
+                        l: 0,
+                        r: 1,
                         kind: Identifier,
                     },
                 ),
                 operator: TerminalType {
                     value: "&",
-                    _l: 2,
-                    _r: 3,
+                    l: 2,
+                    r: 3,
                     kind: Ampersand,
                 },
                 right_operand: Identifier(
                     TerminalType {
                         value: "b",
-                        _l: 4,
-                        _r: 5,
+                        l: 4,
+                        r: 5,
                         kind: Identifier,
                     },
                 ),
@@ -30,15 +30,15 @@ AndExpression(
         ),
         operator: TerminalType {
             value: "&&",
-            _l: 6,
-            _r: 8,
+            l: 6,
+            r: 8,
             kind: AmpersandAmpersand,
         },
         right_operand: Identifier(
             TerminalType {
                 value: "c",
-                _l: 9,
-                _r: 10,
+                l: 9,
+                r: 10,
                 kind: Identifier,
             },
         ),

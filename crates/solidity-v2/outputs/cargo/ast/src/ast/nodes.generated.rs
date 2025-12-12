@@ -10,314 +10,6 @@ use crate::ast::lexemes::LexemeKind;
 // TODO:
 // - (perf) don't use terminals that are not needed
 
-// Special cases
-
-// An IndexAccessPath represents a path or elementary type followed by
-// zero or more index accesses, e.g. foo.bar[0][1:3] or uint256[5][]
-//
-// It's heavily inspired by solc
-// https://github.com/argotorg/solidity/blob/194b114664c7daebc2ff68af3c573272f5d28913/libsolidity/parsing/Parser.h#L198-L209
-#[derive(Debug)]
-pub struct IndexAccessPath {
-    pub path: Path,
-    pub indices: Vec<Index>,
-}
-
-#[derive(Debug)]
-pub enum Path {
-    IdentifierPath(IdentifierPath),
-    ElementaryType(ElementaryType),
-}
-
-#[derive(Debug)]
-pub struct Index {
-    pub open_bracket: OpenBracket,
-    pub start: Option<Expression>,
-    pub end: Option<IndexAccessEnd>,
-    pub close_bracket: CloseBracket,
-}
-
-pub fn index_access_path_add_index(
-    mut iap: IndexAccessPath,
-    open_bracket: OpenBracket,
-    start: Option<Expression>,
-    end: Option<IndexAccessEnd>,
-    close_bracket: CloseBracket,
-) -> IndexAccessPath {
-    iap.indices.push(Index {
-        open_bracket,
-        start,
-        end,
-        close_bracket,
-    });
-    iap
-}
-
-pub fn new_index_access_path_from_identifier_path(
-    identifier_path: IdentifierPath,
-) -> IndexAccessPath {
-    IndexAccessPath {
-        path: Path::IdentifierPath(identifier_path),
-        indices: Vec::new(),
-    }
-}
-
-pub fn new_index_access_path_from_elementary_type(
-    elementary_type: ElementaryType,
-) -> IndexAccessPath {
-    IndexAccessPath {
-        path: Path::ElementaryType(elementary_type),
-        indices: Vec::new(),
-    }
-}
-
-pub fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> TypeName {
-    let IndexAccessPath { path, indices } = index_access_path;
-
-    let mut type_name = Some(match path {
-        Path::IdentifierPath(path) => new_type_name_identifier_path(path),
-        Path::ElementaryType(elem_type) => new_type_name_elementary_type(elem_type),
-    });
-
-    for index in indices.into_iter() {
-        assert!(
-            index.end.is_none(),
-            "Slicing is not supported in type names yet"
-        );
-        let array_type = new_array_type_name(
-            type_name
-                .take()
-                .expect("There surely is something in there"),
-            index.open_bracket,
-            index.start,
-            index.close_bracket,
-        );
-        type_name = Some(new_type_name_array_type_name(array_type));
-    }
-
-    type_name.expect("There surely is something in there")
-}
-
-pub fn new_expression_index_access_path(index_access_path: IndexAccessPath) -> Expression {
-    let IndexAccessPath { path, indices } = index_access_path;
-
-    let mut expression = Some(match path {
-        Path::IdentifierPath(path) => new_expression_identifier_path(path),
-        Path::ElementaryType(elem_type) => new_expression_elementary_type(elem_type),
-    });
-
-    for index in indices.into_iter() {
-        let array_expression = new_index_access_expression(
-            expression
-                .take()
-                .expect("There surely is something in there"),
-            index.open_bracket,
-            index.start,
-            index.end,
-            index.close_bracket,
-        );
-        expression = Some(new_expression_index_access_expression(array_expression));
-    }
-
-    expression.expect("There surely is something in there")
-}
-
-#[derive(Debug)]
-pub struct ProtoTuple {
-    // Do we care about range in source code?
-    pub _open_paren: OpenParen,
-    pub _elements: Vec<ProtoTupleElement>,
-    pub _close_paren: CloseParen,
-}
-
-pub fn new_proto_tuple(
-    _open_paren: OpenParen,
-    _elements: Vec<ProtoTupleElement>,
-    _close_paren: CloseParen,
-) -> ProtoTuple {
-    ProtoTuple {
-        _open_paren,
-        _elements,
-        _close_paren,
-    }
-}
-
-pub fn new_tuple_expression_from_proto_tuple(proto_tuple: ProtoTuple) -> TupleExpression {
-    let elements: Vec<TupleValue> = proto_tuple
-        ._elements
-        .into_iter()
-        .map(|element| match element {
-            ProtoTupleElement::Expression(name) => new_tuple_value(Some(name)),
-            ProtoTupleElement::Declaration(_) => panic!("Tuples can't have declarations"),
-            ProtoTupleElement::StorageLocation(_, _) => {
-                panic!("Tuples can't have storage locations")
-            }
-            ProtoTupleElement::Empty => new_tuple_value(None),
-        })
-        .collect();
-    new_tuple_expression(
-        proto_tuple._open_paren,
-        new_tuple_values(elements),
-        proto_tuple._close_paren,
-    )
-}
-
-pub fn new_tuple_deconstruction_statement_from_proto_tuple(
-    proto_tuple: ProtoTuple,
-    equal: Equal,
-    expression: Expression,
-    semicolon: Semicolon,
-) -> TupleDeconstructionStatement {
-    let elements: Vec<TupleDeconstructionElement> = proto_tuple
-        ._elements
-        .into_iter()
-        .map(|element| match element {
-            ProtoTupleElement::Expression(name) => match name {
-                Expression::Identifier(name) => new_tuple_deconstruction_element(Some(
-                    new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(None, name)),
-                )),
-                _ => panic!("Tuples deconstruction can only be used with identifiers"),
-            },
-            ProtoTupleElement::Declaration(decl) => {
-                let tuple_member = match &decl.variable_type {
-                    VariableDeclarationType::TypeName(type_name) => {
-                        new_tuple_member_typed_tuple_member(new_typed_tuple_member(
-                            type_name.clone(),
-                            decl.storage_location.clone(),
-                            decl.name.clone(),
-                        ))
-                    }
-                    VariableDeclarationType::VarKeyword(_) => {
-                        new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(
-                            decl.storage_location.clone(),
-                            decl.name.clone(),
-                        ))
-                    }
-                };
-                new_tuple_deconstruction_element(Some(tuple_member))
-            }
-            ProtoTupleElement::StorageLocation(storage_location, name) => {
-                new_tuple_deconstruction_element(Some(new_tuple_member_untyped_tuple_member(
-                    new_untyped_tuple_member(Some(storage_location), name),
-                )))
-            }
-            ProtoTupleElement::Empty => new_tuple_deconstruction_element(None),
-        })
-        .collect();
-    new_tuple_deconstruction_statement(
-        None,
-        proto_tuple._open_paren,
-        new_tuple_deconstruction_elements(elements),
-        proto_tuple._close_paren,
-        equal,
-        expression,
-        semicolon,
-    )
-}
-
-#[derive(Debug)]
-pub enum ProtoTupleElement {
-    Expression(Expression),
-    Declaration(VariableDeclaration),
-    StorageLocation(StorageLocation, Identifier),
-    Empty,
-}
-
-pub fn new_proto_tuple_element_expression(name: Expression) -> ProtoTupleElement {
-    ProtoTupleElement::Expression(name)
-}
-
-pub fn new_proto_tuple_element_declaration(decl: VariableDeclaration) -> ProtoTupleElement {
-    ProtoTupleElement::Declaration(decl)
-}
-
-pub fn new_proto_tuple_element_storage_location(
-    storage_location: StorageLocation,
-    name: Identifier,
-) -> ProtoTupleElement {
-    ProtoTupleElement::StorageLocation(storage_location, name)
-}
-
-pub fn new_proto_tuple_element_empty() -> ProtoTupleElement {
-    ProtoTupleElement::Empty
-}
-
-pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
-    let base: Expression = new_expression_identifier(identifier_path.elements[0].clone());
-    identifier_path.elements[1..].iter().fold(base, |acc, id| {
-        new_expression_member_access_expression(new_member_access_expression(
-            acc,
-            new_empty_terminal(LexemeKind::Period),
-            id.clone(),
-        ))
-    })
-}
-
-/// We use this function to share attributes between a state variable that has a function type.
-/// We find and split the attributes from the function type as needed
-/// TODO(v2) fail gracefully if a wrong attribute is found
-pub fn extract_extra_attributes(
-    mut fun_type: FunctionType,
-) -> (FunctionType, Vec<StateVariableAttribute>) {
-    // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
-    let mut seen_constant = false;
-    let mut seen_internal = false;
-    let mut seen_private = false;
-    let mut seen_public = false;
-    let mut duplicate_found = false;
-
-    let mut extra_attributes: Vec<StateVariableAttribute> = Vec::new();
-    fn add_to_extra(
-        attr: &FunctionTypeAttribute,
-        extra_attributes: &mut Vec<StateVariableAttribute>,
-    ) {
-        match attr {
-      FunctionTypeAttribute::ConstantKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::ConstantKeyword(terminal.clone()));
-      }
-      FunctionTypeAttribute::InternalKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::InternalKeyword(terminal.clone()));
-      }
-      FunctionTypeAttribute::PrivateKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::PrivateKeyword(terminal.clone()));
-      }
-      FunctionTypeAttribute::PublicKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::PublicKeyword(terminal.clone()));
-      }
-      _ => panic!("This is wrong, I don't really know what to do for now, but it should fail gracefully (like a parser error)")
-    }
-    }
-
-    Rc::get_mut(&mut fun_type)
-        .unwrap()
-        .attributes
-        .elements
-        .retain(|attr| {
-            if duplicate_found {
-                add_to_extra(attr, &mut extra_attributes);
-                return false;
-            }
-            let &mut seen = match attr {
-                FunctionTypeAttribute::ConstantKeyword(_) => &mut seen_constant,
-                FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
-                FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
-                FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
-                _ => return true,
-            };
-
-            if seen {
-                duplicate_found = true;
-                add_to_extra(attr, &mut extra_attributes);
-                false
-            } else {
-                seen_constant = true;
-                true
-            }
-        });
-
-    (fun_type, extra_attributes)
-}
-
 //
 // Sequences:
 //
@@ -5205,17 +4897,17 @@ pub fn new_yul_path(elements: Vec<YulIdentifier>) -> YulPath {
 #[derive(Debug, Clone)]
 pub struct TerminalType {
     pub value: String,
-    pub _l: usize,
-    pub _r: usize,
+    pub l: usize,
+    pub r: usize,
     pub kind: LexemeKind,
 }
 
 pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType {
     TerminalType {
-        value: "".into(),
-        _l: 0,
-        _r: 0,
-        kind: kind,
+        value: String::new(),
+        l: 0,
+        r: 0,
+        kind,
     }
 }
 
@@ -5673,6142 +5365,5486 @@ pub type YulYearsKeyword = TerminalType;
 
 pub type VersionSpecifier = TerminalType;
 
-pub fn new_version_specifier<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> VersionSpecifier {
+pub fn new_version_specifier(l: usize, r: usize, source: &str) -> VersionSpecifier {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::VersionSpecifier,
     }
 }
 
 pub type SingleQuotedVersionLiteral = TerminalType;
 
-pub fn new_single_quoted_version_literal<'source>(
+pub fn new_single_quoted_version_literal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SingleQuotedVersionLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SingleQuotedVersionLiteral,
     }
 }
 
 pub type DoubleQuotedVersionLiteral = TerminalType;
 
-pub fn new_double_quoted_version_literal<'source>(
+pub fn new_double_quoted_version_literal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> DoubleQuotedVersionLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DoubleQuotedVersionLiteral,
     }
 }
 
 pub type Whitespace = TerminalType;
 
-pub fn new_whitespace<'source>(l: usize, r: usize, source: &'source str) -> Whitespace {
+pub fn new_whitespace(l: usize, r: usize, source: &str) -> Whitespace {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Whitespace,
     }
 }
 
 pub type EndOfLine = TerminalType;
 
-pub fn new_end_of_line<'source>(l: usize, r: usize, source: &'source str) -> EndOfLine {
+pub fn new_end_of_line(l: usize, r: usize, source: &str) -> EndOfLine {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EndOfLine,
     }
 }
 
 pub type SingleLineComment = TerminalType;
 
-pub fn new_single_line_comment<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SingleLineComment {
+pub fn new_single_line_comment(l: usize, r: usize, source: &str) -> SingleLineComment {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SingleLineComment,
     }
 }
 
 pub type MultiLineComment = TerminalType;
 
-pub fn new_multi_line_comment<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MultiLineComment {
+pub fn new_multi_line_comment(l: usize, r: usize, source: &str) -> MultiLineComment {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MultiLineComment,
     }
 }
 
 pub type SingleLineNatSpecComment = TerminalType;
 
-pub fn new_single_line_nat_spec_comment<'source>(
+pub fn new_single_line_nat_spec_comment(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SingleLineNatSpecComment {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SingleLineNatSpecComment,
     }
 }
 
 pub type MultiLineNatSpecComment = TerminalType;
 
-pub fn new_multi_line_nat_spec_comment<'source>(
+pub fn new_multi_line_nat_spec_comment(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> MultiLineNatSpecComment {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MultiLineNatSpecComment,
     }
 }
 
 pub type AbicoderKeyword_Unreserved = TerminalType;
 
-pub fn new_abicoder_keyword_unreserved<'source>(
+pub fn new_abicoder_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> AbicoderKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AbicoderKeyword_Unreserved,
     }
 }
 
 pub type AbicoderV1Keyword_Unreserved = TerminalType;
 
-pub fn new_abicoder_v1_keyword_unreserved<'source>(
+pub fn new_abicoder_v1_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> AbicoderV1Keyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AbicoderV1Keyword_Unreserved,
     }
 }
 
 pub type AbicoderV2Keyword_Unreserved = TerminalType;
 
-pub fn new_abicoder_v2_keyword_unreserved<'source>(
+pub fn new_abicoder_v2_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> AbicoderV2Keyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AbicoderV2Keyword_Unreserved,
     }
 }
 
 pub type ABIEncoderV2Keyword_Unreserved = TerminalType;
 
-pub fn new_abi_encoder_v2_keyword_unreserved<'source>(
+pub fn new_abi_encoder_v2_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ABIEncoderV2Keyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ABIEncoderV2Keyword_Unreserved,
     }
 }
 
 pub type AbstractKeyword_Reserved = TerminalType;
 
-pub fn new_abstract_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AbstractKeyword_Reserved {
+pub fn new_abstract_keyword_reserved(l: usize, r: usize, source: &str) -> AbstractKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AbstractKeyword_Reserved,
     }
 }
 
 pub type AddressKeyword_Reserved = TerminalType;
 
-pub fn new_address_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AddressKeyword_Reserved {
+pub fn new_address_keyword_reserved(l: usize, r: usize, source: &str) -> AddressKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AddressKeyword_Reserved,
     }
 }
 
 pub type AfterKeyword_Reserved = TerminalType;
 
-pub fn new_after_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AfterKeyword_Reserved {
+pub fn new_after_keyword_reserved(l: usize, r: usize, source: &str) -> AfterKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AfterKeyword_Reserved,
     }
 }
 
 pub type AliasKeyword_Reserved = TerminalType;
 
-pub fn new_alias_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AliasKeyword_Reserved {
+pub fn new_alias_keyword_reserved(l: usize, r: usize, source: &str) -> AliasKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AliasKeyword_Reserved,
     }
 }
 
 pub type AliasKeyword_Unreserved = TerminalType;
 
-pub fn new_alias_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AliasKeyword_Unreserved {
+pub fn new_alias_keyword_unreserved(l: usize, r: usize, source: &str) -> AliasKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AliasKeyword_Unreserved,
     }
 }
 
 pub type AnonymousKeyword_Reserved = TerminalType;
 
-pub fn new_anonymous_keyword_reserved<'source>(
+pub fn new_anonymous_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> AnonymousKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AnonymousKeyword_Reserved,
     }
 }
 
 pub type ApplyKeyword_Reserved = TerminalType;
 
-pub fn new_apply_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ApplyKeyword_Reserved {
+pub fn new_apply_keyword_reserved(l: usize, r: usize, source: &str) -> ApplyKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ApplyKeyword_Reserved,
     }
 }
 
 pub type ApplyKeyword_Unreserved = TerminalType;
 
-pub fn new_apply_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ApplyKeyword_Unreserved {
+pub fn new_apply_keyword_unreserved(l: usize, r: usize, source: &str) -> ApplyKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ApplyKeyword_Unreserved,
     }
 }
 
 pub type AsKeyword_Reserved = TerminalType;
 
-pub fn new_as_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AsKeyword_Reserved {
+pub fn new_as_keyword_reserved(l: usize, r: usize, source: &str) -> AsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AsKeyword_Reserved,
     }
 }
 
 pub type AssemblyKeyword_Reserved = TerminalType;
 
-pub fn new_assembly_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AssemblyKeyword_Reserved {
+pub fn new_assembly_keyword_reserved(l: usize, r: usize, source: &str) -> AssemblyKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AssemblyKeyword_Reserved,
     }
 }
 
 pub type AtKeyword_Unreserved = TerminalType;
 
-pub fn new_at_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AtKeyword_Unreserved {
+pub fn new_at_keyword_unreserved(l: usize, r: usize, source: &str) -> AtKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AtKeyword_Unreserved,
     }
 }
 
 pub type AutoKeyword_Reserved = TerminalType;
 
-pub fn new_auto_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AutoKeyword_Reserved {
+pub fn new_auto_keyword_reserved(l: usize, r: usize, source: &str) -> AutoKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AutoKeyword_Reserved,
     }
 }
 
 pub type AutoKeyword_Unreserved = TerminalType;
 
-pub fn new_auto_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AutoKeyword_Unreserved {
+pub fn new_auto_keyword_unreserved(l: usize, r: usize, source: &str) -> AutoKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AutoKeyword_Unreserved,
     }
 }
 
 pub type BoolKeyword_Reserved = TerminalType;
 
-pub fn new_bool_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> BoolKeyword_Reserved {
+pub fn new_bool_keyword_reserved(l: usize, r: usize, source: &str) -> BoolKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::BoolKeyword_Reserved,
     }
 }
 
 pub type BreakKeyword_Reserved = TerminalType;
 
-pub fn new_break_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> BreakKeyword_Reserved {
+pub fn new_break_keyword_reserved(l: usize, r: usize, source: &str) -> BreakKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::BreakKeyword_Reserved,
     }
 }
 
 pub type ByteKeyword_Reserved = TerminalType;
 
-pub fn new_byte_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ByteKeyword_Reserved {
+pub fn new_byte_keyword_reserved(l: usize, r: usize, source: &str) -> ByteKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ByteKeyword_Reserved,
     }
 }
 
 pub type BytesKeyword_Reserved = TerminalType;
 
-pub fn new_bytes_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> BytesKeyword_Reserved {
+pub fn new_bytes_keyword_reserved(l: usize, r: usize, source: &str) -> BytesKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::BytesKeyword_Reserved,
     }
 }
 
 pub type CallDataKeyword_Reserved = TerminalType;
 
-pub fn new_call_data_keyword_reserved<'source>(
+pub fn new_call_data_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> CallDataKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CallDataKeyword_Reserved,
     }
 }
 
 pub type CallDataKeyword_Unreserved = TerminalType;
 
-pub fn new_call_data_keyword_unreserved<'source>(
+pub fn new_call_data_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> CallDataKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CallDataKeyword_Unreserved,
     }
 }
 
 pub type CaseKeyword_Reserved = TerminalType;
 
-pub fn new_case_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> CaseKeyword_Reserved {
+pub fn new_case_keyword_reserved(l: usize, r: usize, source: &str) -> CaseKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CaseKeyword_Reserved,
     }
 }
 
 pub type CatchKeyword_Reserved = TerminalType;
 
-pub fn new_catch_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> CatchKeyword_Reserved {
+pub fn new_catch_keyword_reserved(l: usize, r: usize, source: &str) -> CatchKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CatchKeyword_Reserved,
     }
 }
 
 pub type ConstantKeyword_Reserved = TerminalType;
 
-pub fn new_constant_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ConstantKeyword_Reserved {
+pub fn new_constant_keyword_reserved(l: usize, r: usize, source: &str) -> ConstantKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ConstantKeyword_Reserved,
     }
 }
 
 pub type ConstructorKeyword_Reserved = TerminalType;
 
-pub fn new_constructor_keyword_reserved<'source>(
+pub fn new_constructor_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ConstructorKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ConstructorKeyword_Reserved,
     }
 }
 
 pub type ConstructorKeyword_Unreserved = TerminalType;
 
-pub fn new_constructor_keyword_unreserved<'source>(
+pub fn new_constructor_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ConstructorKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ConstructorKeyword_Unreserved,
     }
 }
 
 pub type ContinueKeyword_Reserved = TerminalType;
 
-pub fn new_continue_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ContinueKeyword_Reserved {
+pub fn new_continue_keyword_reserved(l: usize, r: usize, source: &str) -> ContinueKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ContinueKeyword_Reserved,
     }
 }
 
 pub type ContractKeyword_Reserved = TerminalType;
 
-pub fn new_contract_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ContractKeyword_Reserved {
+pub fn new_contract_keyword_reserved(l: usize, r: usize, source: &str) -> ContractKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ContractKeyword_Reserved,
     }
 }
 
 pub type CopyOfKeyword_Reserved = TerminalType;
 
-pub fn new_copy_of_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> CopyOfKeyword_Reserved {
+pub fn new_copy_of_keyword_reserved(l: usize, r: usize, source: &str) -> CopyOfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CopyOfKeyword_Reserved,
     }
 }
 
 pub type CopyOfKeyword_Unreserved = TerminalType;
 
-pub fn new_copy_of_keyword_unreserved<'source>(
+pub fn new_copy_of_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> CopyOfKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CopyOfKeyword_Unreserved,
     }
 }
 
 pub type DaysKeyword_Reserved = TerminalType;
 
-pub fn new_days_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> DaysKeyword_Reserved {
+pub fn new_days_keyword_reserved(l: usize, r: usize, source: &str) -> DaysKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DaysKeyword_Reserved,
     }
 }
 
 pub type DefaultKeyword_Reserved = TerminalType;
 
-pub fn new_default_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> DefaultKeyword_Reserved {
+pub fn new_default_keyword_reserved(l: usize, r: usize, source: &str) -> DefaultKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DefaultKeyword_Reserved,
     }
 }
 
 pub type DefineKeyword_Reserved = TerminalType;
 
-pub fn new_define_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> DefineKeyword_Reserved {
+pub fn new_define_keyword_reserved(l: usize, r: usize, source: &str) -> DefineKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DefineKeyword_Reserved,
     }
 }
 
 pub type DefineKeyword_Unreserved = TerminalType;
 
-pub fn new_define_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> DefineKeyword_Unreserved {
+pub fn new_define_keyword_unreserved(l: usize, r: usize, source: &str) -> DefineKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DefineKeyword_Unreserved,
     }
 }
 
 pub type DeleteKeyword_Reserved = TerminalType;
 
-pub fn new_delete_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> DeleteKeyword_Reserved {
+pub fn new_delete_keyword_reserved(l: usize, r: usize, source: &str) -> DeleteKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DeleteKeyword_Reserved,
     }
 }
 
 pub type DoKeyword_Reserved = TerminalType;
 
-pub fn new_do_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> DoKeyword_Reserved {
+pub fn new_do_keyword_reserved(l: usize, r: usize, source: &str) -> DoKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DoKeyword_Reserved,
     }
 }
 
 pub type ElseKeyword_Reserved = TerminalType;
 
-pub fn new_else_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ElseKeyword_Reserved {
+pub fn new_else_keyword_reserved(l: usize, r: usize, source: &str) -> ElseKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ElseKeyword_Reserved,
     }
 }
 
 pub type EmitKeyword_Reserved = TerminalType;
 
-pub fn new_emit_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> EmitKeyword_Reserved {
+pub fn new_emit_keyword_reserved(l: usize, r: usize, source: &str) -> EmitKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EmitKeyword_Reserved,
     }
 }
 
 pub type EmitKeyword_Unreserved = TerminalType;
 
-pub fn new_emit_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> EmitKeyword_Unreserved {
+pub fn new_emit_keyword_unreserved(l: usize, r: usize, source: &str) -> EmitKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EmitKeyword_Unreserved,
     }
 }
 
 pub type EnumKeyword_Reserved = TerminalType;
 
-pub fn new_enum_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> EnumKeyword_Reserved {
+pub fn new_enum_keyword_reserved(l: usize, r: usize, source: &str) -> EnumKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EnumKeyword_Reserved,
     }
 }
 
 pub type ErrorKeyword_Reserved = TerminalType;
 
-pub fn new_error_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ErrorKeyword_Reserved {
+pub fn new_error_keyword_reserved(l: usize, r: usize, source: &str) -> ErrorKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ErrorKeyword_Reserved,
     }
 }
 
 pub type EtherKeyword_Reserved = TerminalType;
 
-pub fn new_ether_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> EtherKeyword_Reserved {
+pub fn new_ether_keyword_reserved(l: usize, r: usize, source: &str) -> EtherKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EtherKeyword_Reserved,
     }
 }
 
 pub type EventKeyword_Reserved = TerminalType;
 
-pub fn new_event_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> EventKeyword_Reserved {
+pub fn new_event_keyword_reserved(l: usize, r: usize, source: &str) -> EventKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EventKeyword_Reserved,
     }
 }
 
 pub type ExperimentalKeyword_Unreserved = TerminalType;
 
-pub fn new_experimental_keyword_unreserved<'source>(
+pub fn new_experimental_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ExperimentalKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ExperimentalKeyword_Unreserved,
     }
 }
 
 pub type ExternalKeyword_Reserved = TerminalType;
 
-pub fn new_external_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ExternalKeyword_Reserved {
+pub fn new_external_keyword_reserved(l: usize, r: usize, source: &str) -> ExternalKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ExternalKeyword_Reserved,
     }
 }
 
 pub type FallbackKeyword_Reserved = TerminalType;
 
-pub fn new_fallback_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FallbackKeyword_Reserved {
+pub fn new_fallback_keyword_reserved(l: usize, r: usize, source: &str) -> FallbackKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FallbackKeyword_Reserved,
     }
 }
 
 pub type FallbackKeyword_Unreserved = TerminalType;
 
-pub fn new_fallback_keyword_unreserved<'source>(
+pub fn new_fallback_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> FallbackKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FallbackKeyword_Unreserved,
     }
 }
 
 pub type FalseKeyword_Reserved = TerminalType;
 
-pub fn new_false_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FalseKeyword_Reserved {
+pub fn new_false_keyword_reserved(l: usize, r: usize, source: &str) -> FalseKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FalseKeyword_Reserved,
     }
 }
 
 pub type FinalKeyword_Reserved = TerminalType;
 
-pub fn new_final_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FinalKeyword_Reserved {
+pub fn new_final_keyword_reserved(l: usize, r: usize, source: &str) -> FinalKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FinalKeyword_Reserved,
     }
 }
 
 pub type FinneyKeyword_Reserved = TerminalType;
 
-pub fn new_finney_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FinneyKeyword_Reserved {
+pub fn new_finney_keyword_reserved(l: usize, r: usize, source: &str) -> FinneyKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FinneyKeyword_Reserved,
     }
 }
 
 pub type FinneyKeyword_Unreserved = TerminalType;
 
-pub fn new_finney_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FinneyKeyword_Unreserved {
+pub fn new_finney_keyword_unreserved(l: usize, r: usize, source: &str) -> FinneyKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FinneyKeyword_Unreserved,
     }
 }
 
 pub type FixedKeyword_Reserved = TerminalType;
 
-pub fn new_fixed_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FixedKeyword_Reserved {
+pub fn new_fixed_keyword_reserved(l: usize, r: usize, source: &str) -> FixedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FixedKeyword_Reserved,
     }
 }
 
 pub type FixedKeyword_Unreserved = TerminalType;
 
-pub fn new_fixed_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FixedKeyword_Unreserved {
+pub fn new_fixed_keyword_unreserved(l: usize, r: usize, source: &str) -> FixedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FixedKeyword_Unreserved,
     }
 }
 
 pub type ForKeyword_Reserved = TerminalType;
 
-pub fn new_for_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ForKeyword_Reserved {
+pub fn new_for_keyword_reserved(l: usize, r: usize, source: &str) -> ForKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ForKeyword_Reserved,
     }
 }
 
 pub type FromKeyword_Unreserved = TerminalType;
 
-pub fn new_from_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FromKeyword_Unreserved {
+pub fn new_from_keyword_unreserved(l: usize, r: usize, source: &str) -> FromKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FromKeyword_Unreserved,
     }
 }
 
 pub type FunctionKeyword_Reserved = TerminalType;
 
-pub fn new_function_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> FunctionKeyword_Reserved {
+pub fn new_function_keyword_reserved(l: usize, r: usize, source: &str) -> FunctionKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::FunctionKeyword_Reserved,
     }
 }
 
 pub type GlobalKeyword_Unreserved = TerminalType;
 
-pub fn new_global_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> GlobalKeyword_Unreserved {
+pub fn new_global_keyword_unreserved(l: usize, r: usize, source: &str) -> GlobalKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GlobalKeyword_Unreserved,
     }
 }
 
 pub type GweiKeyword_Reserved = TerminalType;
 
-pub fn new_gwei_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> GweiKeyword_Reserved {
+pub fn new_gwei_keyword_reserved(l: usize, r: usize, source: &str) -> GweiKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GweiKeyword_Reserved,
     }
 }
 
 pub type GweiKeyword_Unreserved = TerminalType;
 
-pub fn new_gwei_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> GweiKeyword_Unreserved {
+pub fn new_gwei_keyword_unreserved(l: usize, r: usize, source: &str) -> GweiKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GweiKeyword_Unreserved,
     }
 }
 
 pub type HexKeyword_Reserved = TerminalType;
 
-pub fn new_hex_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> HexKeyword_Reserved {
+pub fn new_hex_keyword_reserved(l: usize, r: usize, source: &str) -> HexKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::HexKeyword_Reserved,
     }
 }
 
 pub type HoursKeyword_Reserved = TerminalType;
 
-pub fn new_hours_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> HoursKeyword_Reserved {
+pub fn new_hours_keyword_reserved(l: usize, r: usize, source: &str) -> HoursKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::HoursKeyword_Reserved,
     }
 }
 
 pub type IfKeyword_Reserved = TerminalType;
 
-pub fn new_if_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> IfKeyword_Reserved {
+pub fn new_if_keyword_reserved(l: usize, r: usize, source: &str) -> IfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::IfKeyword_Reserved,
     }
 }
 
 pub type ImmutableKeyword_Reserved = TerminalType;
 
-pub fn new_immutable_keyword_reserved<'source>(
+pub fn new_immutable_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ImmutableKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ImmutableKeyword_Reserved,
     }
 }
 
 pub type ImmutableKeyword_Unreserved = TerminalType;
 
-pub fn new_immutable_keyword_unreserved<'source>(
+pub fn new_immutable_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ImmutableKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ImmutableKeyword_Unreserved,
     }
 }
 
 pub type ImplementsKeyword_Reserved = TerminalType;
 
-pub fn new_implements_keyword_reserved<'source>(
+pub fn new_implements_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ImplementsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ImplementsKeyword_Reserved,
     }
 }
 
 pub type ImplementsKeyword_Unreserved = TerminalType;
 
-pub fn new_implements_keyword_unreserved<'source>(
+pub fn new_implements_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ImplementsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ImplementsKeyword_Unreserved,
     }
 }
 
 pub type ImportKeyword_Reserved = TerminalType;
 
-pub fn new_import_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ImportKeyword_Reserved {
+pub fn new_import_keyword_reserved(l: usize, r: usize, source: &str) -> ImportKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ImportKeyword_Reserved,
     }
 }
 
 pub type IndexedKeyword_Reserved = TerminalType;
 
-pub fn new_indexed_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> IndexedKeyword_Reserved {
+pub fn new_indexed_keyword_reserved(l: usize, r: usize, source: &str) -> IndexedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::IndexedKeyword_Reserved,
     }
 }
 
 pub type InKeyword_Reserved = TerminalType;
 
-pub fn new_in_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> InKeyword_Reserved {
+pub fn new_in_keyword_reserved(l: usize, r: usize, source: &str) -> InKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::InKeyword_Reserved,
     }
 }
 
 pub type InlineKeyword_Reserved = TerminalType;
 
-pub fn new_inline_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> InlineKeyword_Reserved {
+pub fn new_inline_keyword_reserved(l: usize, r: usize, source: &str) -> InlineKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::InlineKeyword_Reserved,
     }
 }
 
 pub type InterfaceKeyword_Reserved = TerminalType;
 
-pub fn new_interface_keyword_reserved<'source>(
+pub fn new_interface_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> InterfaceKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::InterfaceKeyword_Reserved,
     }
 }
 
 pub type InternalKeyword_Reserved = TerminalType;
 
-pub fn new_internal_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> InternalKeyword_Reserved {
+pub fn new_internal_keyword_reserved(l: usize, r: usize, source: &str) -> InternalKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::InternalKeyword_Reserved,
     }
 }
 
 pub type IntKeyword_Reserved = TerminalType;
 
-pub fn new_int_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> IntKeyword_Reserved {
+pub fn new_int_keyword_reserved(l: usize, r: usize, source: &str) -> IntKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::IntKeyword_Reserved,
     }
 }
 
 pub type IsKeyword_Reserved = TerminalType;
 
-pub fn new_is_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> IsKeyword_Reserved {
+pub fn new_is_keyword_reserved(l: usize, r: usize, source: &str) -> IsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::IsKeyword_Reserved,
     }
 }
 
 pub type LayoutKeyword_Unreserved = TerminalType;
 
-pub fn new_layout_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> LayoutKeyword_Unreserved {
+pub fn new_layout_keyword_unreserved(l: usize, r: usize, source: &str) -> LayoutKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::LayoutKeyword_Unreserved,
     }
 }
 
 pub type LetKeyword_Reserved = TerminalType;
 
-pub fn new_let_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> LetKeyword_Reserved {
+pub fn new_let_keyword_reserved(l: usize, r: usize, source: &str) -> LetKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::LetKeyword_Reserved,
     }
 }
 
 pub type LibraryKeyword_Reserved = TerminalType;
 
-pub fn new_library_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> LibraryKeyword_Reserved {
+pub fn new_library_keyword_reserved(l: usize, r: usize, source: &str) -> LibraryKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::LibraryKeyword_Reserved,
     }
 }
 
 pub type MacroKeyword_Reserved = TerminalType;
 
-pub fn new_macro_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MacroKeyword_Reserved {
+pub fn new_macro_keyword_reserved(l: usize, r: usize, source: &str) -> MacroKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MacroKeyword_Reserved,
     }
 }
 
 pub type MacroKeyword_Unreserved = TerminalType;
 
-pub fn new_macro_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MacroKeyword_Unreserved {
+pub fn new_macro_keyword_unreserved(l: usize, r: usize, source: &str) -> MacroKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MacroKeyword_Unreserved,
     }
 }
 
 pub type MappingKeyword_Reserved = TerminalType;
 
-pub fn new_mapping_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MappingKeyword_Reserved {
+pub fn new_mapping_keyword_reserved(l: usize, r: usize, source: &str) -> MappingKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MappingKeyword_Reserved,
     }
 }
 
 pub type MatchKeyword_Reserved = TerminalType;
 
-pub fn new_match_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MatchKeyword_Reserved {
+pub fn new_match_keyword_reserved(l: usize, r: usize, source: &str) -> MatchKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MatchKeyword_Reserved,
     }
 }
 
 pub type MemoryKeyword_Reserved = TerminalType;
 
-pub fn new_memory_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MemoryKeyword_Reserved {
+pub fn new_memory_keyword_reserved(l: usize, r: usize, source: &str) -> MemoryKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MemoryKeyword_Reserved,
     }
 }
 
 pub type MinutesKeyword_Reserved = TerminalType;
 
-pub fn new_minutes_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MinutesKeyword_Reserved {
+pub fn new_minutes_keyword_reserved(l: usize, r: usize, source: &str) -> MinutesKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MinutesKeyword_Reserved,
     }
 }
 
 pub type ModifierKeyword_Reserved = TerminalType;
 
-pub fn new_modifier_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ModifierKeyword_Reserved {
+pub fn new_modifier_keyword_reserved(l: usize, r: usize, source: &str) -> ModifierKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ModifierKeyword_Reserved,
     }
 }
 
 pub type MutableKeyword_Reserved = TerminalType;
 
-pub fn new_mutable_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MutableKeyword_Reserved {
+pub fn new_mutable_keyword_reserved(l: usize, r: usize, source: &str) -> MutableKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MutableKeyword_Reserved,
     }
 }
 
 pub type MutableKeyword_Unreserved = TerminalType;
 
-pub fn new_mutable_keyword_unreserved<'source>(
+pub fn new_mutable_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> MutableKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MutableKeyword_Unreserved,
     }
 }
 
 pub type NewKeyword_Reserved = TerminalType;
 
-pub fn new_new_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> NewKeyword_Reserved {
+pub fn new_new_keyword_reserved(l: usize, r: usize, source: &str) -> NewKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::NewKeyword_Reserved,
     }
 }
 
 pub type NullKeyword_Reserved = TerminalType;
 
-pub fn new_null_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> NullKeyword_Reserved {
+pub fn new_null_keyword_reserved(l: usize, r: usize, source: &str) -> NullKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::NullKeyword_Reserved,
     }
 }
 
 pub type OfKeyword_Reserved = TerminalType;
 
-pub fn new_of_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> OfKeyword_Reserved {
+pub fn new_of_keyword_reserved(l: usize, r: usize, source: &str) -> OfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::OfKeyword_Reserved,
     }
 }
 
 pub type OverrideKeyword_Reserved = TerminalType;
 
-pub fn new_override_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> OverrideKeyword_Reserved {
+pub fn new_override_keyword_reserved(l: usize, r: usize, source: &str) -> OverrideKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::OverrideKeyword_Reserved,
     }
 }
 
 pub type OverrideKeyword_Unreserved = TerminalType;
 
-pub fn new_override_keyword_unreserved<'source>(
+pub fn new_override_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> OverrideKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::OverrideKeyword_Unreserved,
     }
 }
 
 pub type PartialKeyword_Reserved = TerminalType;
 
-pub fn new_partial_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> PartialKeyword_Reserved {
+pub fn new_partial_keyword_reserved(l: usize, r: usize, source: &str) -> PartialKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PartialKeyword_Reserved,
     }
 }
 
 pub type PartialKeyword_Unreserved = TerminalType;
 
-pub fn new_partial_keyword_unreserved<'source>(
+pub fn new_partial_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> PartialKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PartialKeyword_Unreserved,
     }
 }
 
 pub type PayableKeyword_Reserved = TerminalType;
 
-pub fn new_payable_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> PayableKeyword_Reserved {
+pub fn new_payable_keyword_reserved(l: usize, r: usize, source: &str) -> PayableKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PayableKeyword_Reserved,
     }
 }
 
 pub type PragmaKeyword_Reserved = TerminalType;
 
-pub fn new_pragma_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> PragmaKeyword_Reserved {
+pub fn new_pragma_keyword_reserved(l: usize, r: usize, source: &str) -> PragmaKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PragmaKeyword_Reserved,
     }
 }
 
 pub type PrivateKeyword_Reserved = TerminalType;
 
-pub fn new_private_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> PrivateKeyword_Reserved {
+pub fn new_private_keyword_reserved(l: usize, r: usize, source: &str) -> PrivateKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PrivateKeyword_Reserved,
     }
 }
 
 pub type PromiseKeyword_Reserved = TerminalType;
 
-pub fn new_promise_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> PromiseKeyword_Reserved {
+pub fn new_promise_keyword_reserved(l: usize, r: usize, source: &str) -> PromiseKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PromiseKeyword_Reserved,
     }
 }
 
 pub type PromiseKeyword_Unreserved = TerminalType;
 
-pub fn new_promise_keyword_unreserved<'source>(
+pub fn new_promise_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> PromiseKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PromiseKeyword_Unreserved,
     }
 }
 
 pub type PublicKeyword_Reserved = TerminalType;
 
-pub fn new_public_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> PublicKeyword_Reserved {
+pub fn new_public_keyword_reserved(l: usize, r: usize, source: &str) -> PublicKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PublicKeyword_Reserved,
     }
 }
 
 pub type PureKeyword_Reserved = TerminalType;
 
-pub fn new_pure_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> PureKeyword_Reserved {
+pub fn new_pure_keyword_reserved(l: usize, r: usize, source: &str) -> PureKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PureKeyword_Reserved,
     }
 }
 
 pub type ReceiveKeyword_Reserved = TerminalType;
 
-pub fn new_receive_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ReceiveKeyword_Reserved {
+pub fn new_receive_keyword_reserved(l: usize, r: usize, source: &str) -> ReceiveKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ReceiveKeyword_Reserved,
     }
 }
 
 pub type ReceiveKeyword_Unreserved = TerminalType;
 
-pub fn new_receive_keyword_unreserved<'source>(
+pub fn new_receive_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ReceiveKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ReceiveKeyword_Unreserved,
     }
 }
 
 pub type ReferenceKeyword_Reserved = TerminalType;
 
-pub fn new_reference_keyword_reserved<'source>(
+pub fn new_reference_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ReferenceKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ReferenceKeyword_Reserved,
     }
 }
 
 pub type ReferenceKeyword_Unreserved = TerminalType;
 
-pub fn new_reference_keyword_unreserved<'source>(
+pub fn new_reference_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> ReferenceKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ReferenceKeyword_Unreserved,
     }
 }
 
 pub type RelocatableKeyword_Reserved = TerminalType;
 
-pub fn new_relocatable_keyword_reserved<'source>(
+pub fn new_relocatable_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> RelocatableKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::RelocatableKeyword_Reserved,
     }
 }
 
 pub type ReturnKeyword_Reserved = TerminalType;
 
-pub fn new_return_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ReturnKeyword_Reserved {
+pub fn new_return_keyword_reserved(l: usize, r: usize, source: &str) -> ReturnKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ReturnKeyword_Reserved,
     }
 }
 
 pub type ReturnsKeyword_Reserved = TerminalType;
 
-pub fn new_returns_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ReturnsKeyword_Reserved {
+pub fn new_returns_keyword_reserved(l: usize, r: usize, source: &str) -> ReturnsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ReturnsKeyword_Reserved,
     }
 }
 
 pub type RevertKeyword_Reserved = TerminalType;
 
-pub fn new_revert_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> RevertKeyword_Reserved {
+pub fn new_revert_keyword_reserved(l: usize, r: usize, source: &str) -> RevertKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::RevertKeyword_Reserved,
     }
 }
 
 pub type SealedKeyword_Reserved = TerminalType;
 
-pub fn new_sealed_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SealedKeyword_Reserved {
+pub fn new_sealed_keyword_reserved(l: usize, r: usize, source: &str) -> SealedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SealedKeyword_Reserved,
     }
 }
 
 pub type SealedKeyword_Unreserved = TerminalType;
 
-pub fn new_sealed_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SealedKeyword_Unreserved {
+pub fn new_sealed_keyword_unreserved(l: usize, r: usize, source: &str) -> SealedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SealedKeyword_Unreserved,
     }
 }
 
 pub type SecondsKeyword_Reserved = TerminalType;
 
-pub fn new_seconds_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SecondsKeyword_Reserved {
+pub fn new_seconds_keyword_reserved(l: usize, r: usize, source: &str) -> SecondsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SecondsKeyword_Reserved,
     }
 }
 
 pub type SizeOfKeyword_Reserved = TerminalType;
 
-pub fn new_size_of_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SizeOfKeyword_Reserved {
+pub fn new_size_of_keyword_reserved(l: usize, r: usize, source: &str) -> SizeOfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SizeOfKeyword_Reserved,
     }
 }
 
 pub type SizeOfKeyword_Unreserved = TerminalType;
 
-pub fn new_size_of_keyword_unreserved<'source>(
+pub fn new_size_of_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SizeOfKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SizeOfKeyword_Unreserved,
     }
 }
 
 pub type SMTCheckerKeyword_Unreserved = TerminalType;
 
-pub fn new_smt_checker_keyword_unreserved<'source>(
+pub fn new_smt_checker_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SMTCheckerKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SMTCheckerKeyword_Unreserved,
     }
 }
 
 pub type SolidityKeyword_Unreserved = TerminalType;
 
-pub fn new_solidity_keyword_unreserved<'source>(
+pub fn new_solidity_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SolidityKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SolidityKeyword_Unreserved,
     }
 }
 
 pub type StaticKeyword_Reserved = TerminalType;
 
-pub fn new_static_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> StaticKeyword_Reserved {
+pub fn new_static_keyword_reserved(l: usize, r: usize, source: &str) -> StaticKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::StaticKeyword_Reserved,
     }
 }
 
 pub type StorageKeyword_Reserved = TerminalType;
 
-pub fn new_storage_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> StorageKeyword_Reserved {
+pub fn new_storage_keyword_reserved(l: usize, r: usize, source: &str) -> StorageKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::StorageKeyword_Reserved,
     }
 }
 
 pub type StringKeyword_Reserved = TerminalType;
 
-pub fn new_string_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> StringKeyword_Reserved {
+pub fn new_string_keyword_reserved(l: usize, r: usize, source: &str) -> StringKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::StringKeyword_Reserved,
     }
 }
 
 pub type StructKeyword_Reserved = TerminalType;
 
-pub fn new_struct_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> StructKeyword_Reserved {
+pub fn new_struct_keyword_reserved(l: usize, r: usize, source: &str) -> StructKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::StructKeyword_Reserved,
     }
 }
 
 pub type SuperKeyword_Reserved = TerminalType;
 
-pub fn new_super_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SuperKeyword_Reserved {
+pub fn new_super_keyword_reserved(l: usize, r: usize, source: &str) -> SuperKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SuperKeyword_Reserved,
     }
 }
 
 pub type SuperKeyword_Unreserved = TerminalType;
 
-pub fn new_super_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SuperKeyword_Unreserved {
+pub fn new_super_keyword_unreserved(l: usize, r: usize, source: &str) -> SuperKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SuperKeyword_Unreserved,
     }
 }
 
 pub type SupportsKeyword_Reserved = TerminalType;
 
-pub fn new_supports_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SupportsKeyword_Reserved {
+pub fn new_supports_keyword_reserved(l: usize, r: usize, source: &str) -> SupportsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SupportsKeyword_Reserved,
     }
 }
 
 pub type SupportsKeyword_Unreserved = TerminalType;
 
-pub fn new_supports_keyword_unreserved<'source>(
+pub fn new_supports_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SupportsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SupportsKeyword_Unreserved,
     }
 }
 
 pub type SwitchKeyword_Reserved = TerminalType;
 
-pub fn new_switch_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SwitchKeyword_Reserved {
+pub fn new_switch_keyword_reserved(l: usize, r: usize, source: &str) -> SwitchKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SwitchKeyword_Reserved,
     }
 }
 
 pub type SzaboKeyword_Reserved = TerminalType;
 
-pub fn new_szabo_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SzaboKeyword_Reserved {
+pub fn new_szabo_keyword_reserved(l: usize, r: usize, source: &str) -> SzaboKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SzaboKeyword_Reserved,
     }
 }
 
 pub type SzaboKeyword_Unreserved = TerminalType;
 
-pub fn new_szabo_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> SzaboKeyword_Unreserved {
+pub fn new_szabo_keyword_unreserved(l: usize, r: usize, source: &str) -> SzaboKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SzaboKeyword_Unreserved,
     }
 }
 
 pub type ThisKeyword_Reserved = TerminalType;
 
-pub fn new_this_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ThisKeyword_Reserved {
+pub fn new_this_keyword_reserved(l: usize, r: usize, source: &str) -> ThisKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ThisKeyword_Reserved,
     }
 }
 
 pub type ThisKeyword_Unreserved = TerminalType;
 
-pub fn new_this_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ThisKeyword_Unreserved {
+pub fn new_this_keyword_unreserved(l: usize, r: usize, source: &str) -> ThisKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ThisKeyword_Unreserved,
     }
 }
 
 pub type ThrowKeyword_Reserved = TerminalType;
 
-pub fn new_throw_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ThrowKeyword_Reserved {
+pub fn new_throw_keyword_reserved(l: usize, r: usize, source: &str) -> ThrowKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ThrowKeyword_Reserved,
     }
 }
 
 pub type TransientKeyword_Reserved = TerminalType;
 
-pub fn new_transient_keyword_reserved<'source>(
+pub fn new_transient_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> TransientKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::TransientKeyword_Reserved,
     }
 }
 
 pub type TrueKeyword_Reserved = TerminalType;
 
-pub fn new_true_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> TrueKeyword_Reserved {
+pub fn new_true_keyword_reserved(l: usize, r: usize, source: &str) -> TrueKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::TrueKeyword_Reserved,
     }
 }
 
 pub type TryKeyword_Reserved = TerminalType;
 
-pub fn new_try_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> TryKeyword_Reserved {
+pub fn new_try_keyword_reserved(l: usize, r: usize, source: &str) -> TryKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::TryKeyword_Reserved,
     }
 }
 
 pub type TypeDefKeyword_Reserved = TerminalType;
 
-pub fn new_type_def_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> TypeDefKeyword_Reserved {
+pub fn new_type_def_keyword_reserved(l: usize, r: usize, source: &str) -> TypeDefKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::TypeDefKeyword_Reserved,
     }
 }
 
 pub type TypeDefKeyword_Unreserved = TerminalType;
 
-pub fn new_type_def_keyword_unreserved<'source>(
+pub fn new_type_def_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> TypeDefKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::TypeDefKeyword_Unreserved,
     }
 }
 
 pub type TypeKeyword_Reserved = TerminalType;
 
-pub fn new_type_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> TypeKeyword_Reserved {
+pub fn new_type_keyword_reserved(l: usize, r: usize, source: &str) -> TypeKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::TypeKeyword_Reserved,
     }
 }
 
 pub type TypeOfKeyword_Reserved = TerminalType;
 
-pub fn new_type_of_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> TypeOfKeyword_Reserved {
+pub fn new_type_of_keyword_reserved(l: usize, r: usize, source: &str) -> TypeOfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::TypeOfKeyword_Reserved,
     }
 }
 
 pub type UfixedKeyword_Reserved = TerminalType;
 
-pub fn new_ufixed_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> UfixedKeyword_Reserved {
+pub fn new_ufixed_keyword_reserved(l: usize, r: usize, source: &str) -> UfixedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::UfixedKeyword_Reserved,
     }
 }
 
 pub type UfixedKeyword_Unreserved = TerminalType;
 
-pub fn new_ufixed_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> UfixedKeyword_Unreserved {
+pub fn new_ufixed_keyword_unreserved(l: usize, r: usize, source: &str) -> UfixedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::UfixedKeyword_Unreserved,
     }
 }
 
 pub type UintKeyword_Reserved = TerminalType;
 
-pub fn new_uint_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> UintKeyword_Reserved {
+pub fn new_uint_keyword_reserved(l: usize, r: usize, source: &str) -> UintKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::UintKeyword_Reserved,
     }
 }
 
 pub type UncheckedKeyword_Reserved = TerminalType;
 
-pub fn new_unchecked_keyword_reserved<'source>(
+pub fn new_unchecked_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> UncheckedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::UncheckedKeyword_Reserved,
     }
 }
 
 pub type UncheckedKeyword_Unreserved = TerminalType;
 
-pub fn new_unchecked_keyword_unreserved<'source>(
+pub fn new_unchecked_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> UncheckedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::UncheckedKeyword_Unreserved,
     }
 }
 
 pub type UsingKeyword_Reserved = TerminalType;
 
-pub fn new_using_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> UsingKeyword_Reserved {
+pub fn new_using_keyword_reserved(l: usize, r: usize, source: &str) -> UsingKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::UsingKeyword_Reserved,
     }
 }
 
 pub type VarKeyword_Reserved = TerminalType;
 
-pub fn new_var_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> VarKeyword_Reserved {
+pub fn new_var_keyword_reserved(l: usize, r: usize, source: &str) -> VarKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::VarKeyword_Reserved,
     }
 }
 
 pub type ViewKeyword_Reserved = TerminalType;
 
-pub fn new_view_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> ViewKeyword_Reserved {
+pub fn new_view_keyword_reserved(l: usize, r: usize, source: &str) -> ViewKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ViewKeyword_Reserved,
     }
 }
 
 pub type VirtualKeyword_Reserved = TerminalType;
 
-pub fn new_virtual_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> VirtualKeyword_Reserved {
+pub fn new_virtual_keyword_reserved(l: usize, r: usize, source: &str) -> VirtualKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::VirtualKeyword_Reserved,
     }
 }
 
 pub type VirtualKeyword_Unreserved = TerminalType;
 
-pub fn new_virtual_keyword_unreserved<'source>(
+pub fn new_virtual_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> VirtualKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::VirtualKeyword_Unreserved,
     }
 }
 
 pub type WeeksKeyword_Reserved = TerminalType;
 
-pub fn new_weeks_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> WeeksKeyword_Reserved {
+pub fn new_weeks_keyword_reserved(l: usize, r: usize, source: &str) -> WeeksKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::WeeksKeyword_Reserved,
     }
 }
 
 pub type WeiKeyword_Reserved = TerminalType;
 
-pub fn new_wei_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> WeiKeyword_Reserved {
+pub fn new_wei_keyword_reserved(l: usize, r: usize, source: &str) -> WeiKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::WeiKeyword_Reserved,
     }
 }
 
 pub type WhileKeyword_Reserved = TerminalType;
 
-pub fn new_while_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> WhileKeyword_Reserved {
+pub fn new_while_keyword_reserved(l: usize, r: usize, source: &str) -> WhileKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::WhileKeyword_Reserved,
     }
 }
 
 pub type YearsKeyword_Reserved = TerminalType;
 
-pub fn new_years_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YearsKeyword_Reserved {
+pub fn new_years_keyword_reserved(l: usize, r: usize, source: &str) -> YearsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YearsKeyword_Reserved,
     }
 }
 
 pub type OpenParen = TerminalType;
 
-pub fn new_open_paren<'source>(l: usize, r: usize, source: &'source str) -> OpenParen {
+pub fn new_open_paren(l: usize, r: usize, source: &str) -> OpenParen {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::OpenParen,
     }
 }
 
 pub type CloseParen = TerminalType;
 
-pub fn new_close_paren<'source>(l: usize, r: usize, source: &'source str) -> CloseParen {
+pub fn new_close_paren(l: usize, r: usize, source: &str) -> CloseParen {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CloseParen,
     }
 }
 
 pub type OpenBracket = TerminalType;
 
-pub fn new_open_bracket<'source>(l: usize, r: usize, source: &'source str) -> OpenBracket {
+pub fn new_open_bracket(l: usize, r: usize, source: &str) -> OpenBracket {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::OpenBracket,
     }
 }
 
 pub type CloseBracket = TerminalType;
 
-pub fn new_close_bracket<'source>(l: usize, r: usize, source: &'source str) -> CloseBracket {
+pub fn new_close_bracket(l: usize, r: usize, source: &str) -> CloseBracket {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CloseBracket,
     }
 }
 
 pub type OpenBrace = TerminalType;
 
-pub fn new_open_brace<'source>(l: usize, r: usize, source: &'source str) -> OpenBrace {
+pub fn new_open_brace(l: usize, r: usize, source: &str) -> OpenBrace {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::OpenBrace,
     }
 }
 
 pub type CloseBrace = TerminalType;
 
-pub fn new_close_brace<'source>(l: usize, r: usize, source: &'source str) -> CloseBrace {
+pub fn new_close_brace(l: usize, r: usize, source: &str) -> CloseBrace {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CloseBrace,
     }
 }
 
 pub type Comma = TerminalType;
 
-pub fn new_comma<'source>(l: usize, r: usize, source: &'source str) -> Comma {
+pub fn new_comma(l: usize, r: usize, source: &str) -> Comma {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Comma,
     }
 }
 
 pub type Period = TerminalType;
 
-pub fn new_period<'source>(l: usize, r: usize, source: &'source str) -> Period {
+pub fn new_period(l: usize, r: usize, source: &str) -> Period {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Period,
     }
 }
 
 pub type QuestionMark = TerminalType;
 
-pub fn new_question_mark<'source>(l: usize, r: usize, source: &'source str) -> QuestionMark {
+pub fn new_question_mark(l: usize, r: usize, source: &str) -> QuestionMark {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::QuestionMark,
     }
 }
 
 pub type Semicolon = TerminalType;
 
-pub fn new_semicolon<'source>(l: usize, r: usize, source: &'source str) -> Semicolon {
+pub fn new_semicolon(l: usize, r: usize, source: &str) -> Semicolon {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Semicolon,
     }
 }
 
 pub type Colon = TerminalType;
 
-pub fn new_colon<'source>(l: usize, r: usize, source: &'source str) -> Colon {
+pub fn new_colon(l: usize, r: usize, source: &str) -> Colon {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Colon,
     }
 }
 
 pub type ColonEqual = TerminalType;
 
-pub fn new_colon_equal<'source>(l: usize, r: usize, source: &'source str) -> ColonEqual {
+pub fn new_colon_equal(l: usize, r: usize, source: &str) -> ColonEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::ColonEqual,
     }
 }
 
 pub type Equal = TerminalType;
 
-pub fn new_equal<'source>(l: usize, r: usize, source: &'source str) -> Equal {
+pub fn new_equal(l: usize, r: usize, source: &str) -> Equal {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Equal,
     }
 }
 
 pub type EqualColon = TerminalType;
 
-pub fn new_equal_colon<'source>(l: usize, r: usize, source: &'source str) -> EqualColon {
+pub fn new_equal_colon(l: usize, r: usize, source: &str) -> EqualColon {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EqualColon,
     }
 }
 
 pub type EqualEqual = TerminalType;
 
-pub fn new_equal_equal<'source>(l: usize, r: usize, source: &'source str) -> EqualEqual {
+pub fn new_equal_equal(l: usize, r: usize, source: &str) -> EqualEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EqualEqual,
     }
 }
 
 pub type EqualGreaterThan = TerminalType;
 
-pub fn new_equal_greater_than<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> EqualGreaterThan {
+pub fn new_equal_greater_than(l: usize, r: usize, source: &str) -> EqualGreaterThan {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::EqualGreaterThan,
     }
 }
 
 pub type Asterisk = TerminalType;
 
-pub fn new_asterisk<'source>(l: usize, r: usize, source: &'source str) -> Asterisk {
+pub fn new_asterisk(l: usize, r: usize, source: &str) -> Asterisk {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Asterisk,
     }
 }
 
 pub type AsteriskEqual = TerminalType;
 
-pub fn new_asterisk_equal<'source>(l: usize, r: usize, source: &'source str) -> AsteriskEqual {
+pub fn new_asterisk_equal(l: usize, r: usize, source: &str) -> AsteriskEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AsteriskEqual,
     }
 }
 
 pub type AsteriskAsterisk = TerminalType;
 
-pub fn new_asterisk_asterisk<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AsteriskAsterisk {
+pub fn new_asterisk_asterisk(l: usize, r: usize, source: &str) -> AsteriskAsterisk {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AsteriskAsterisk,
     }
 }
 
 pub type Bar = TerminalType;
 
-pub fn new_bar<'source>(l: usize, r: usize, source: &'source str) -> Bar {
+pub fn new_bar(l: usize, r: usize, source: &str) -> Bar {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Bar,
     }
 }
 
 pub type BarEqual = TerminalType;
 
-pub fn new_bar_equal<'source>(l: usize, r: usize, source: &'source str) -> BarEqual {
+pub fn new_bar_equal(l: usize, r: usize, source: &str) -> BarEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::BarEqual,
     }
 }
 
 pub type BarBar = TerminalType;
 
-pub fn new_bar_bar<'source>(l: usize, r: usize, source: &'source str) -> BarBar {
+pub fn new_bar_bar(l: usize, r: usize, source: &str) -> BarBar {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::BarBar,
     }
 }
 
 pub type Ampersand = TerminalType;
 
-pub fn new_ampersand<'source>(l: usize, r: usize, source: &'source str) -> Ampersand {
+pub fn new_ampersand(l: usize, r: usize, source: &str) -> Ampersand {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Ampersand,
     }
 }
 
 pub type AmpersandEqual = TerminalType;
 
-pub fn new_ampersand_equal<'source>(l: usize, r: usize, source: &'source str) -> AmpersandEqual {
+pub fn new_ampersand_equal(l: usize, r: usize, source: &str) -> AmpersandEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AmpersandEqual,
     }
 }
 
 pub type AmpersandAmpersand = TerminalType;
 
-pub fn new_ampersand_ampersand<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> AmpersandAmpersand {
+pub fn new_ampersand_ampersand(l: usize, r: usize, source: &str) -> AmpersandAmpersand {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::AmpersandAmpersand,
     }
 }
 
 pub type LessThan = TerminalType;
 
-pub fn new_less_than<'source>(l: usize, r: usize, source: &'source str) -> LessThan {
+pub fn new_less_than(l: usize, r: usize, source: &str) -> LessThan {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::LessThan,
     }
 }
 
 pub type LessThanEqual = TerminalType;
 
-pub fn new_less_than_equal<'source>(l: usize, r: usize, source: &'source str) -> LessThanEqual {
+pub fn new_less_than_equal(l: usize, r: usize, source: &str) -> LessThanEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::LessThanEqual,
     }
 }
 
 pub type LessThanLessThan = TerminalType;
 
-pub fn new_less_than_less_than<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> LessThanLessThan {
+pub fn new_less_than_less_than(l: usize, r: usize, source: &str) -> LessThanLessThan {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::LessThanLessThan,
     }
 }
 
 pub type LessThanLessThanEqual = TerminalType;
 
-pub fn new_less_than_less_than_equal<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> LessThanLessThanEqual {
+pub fn new_less_than_less_than_equal(l: usize, r: usize, source: &str) -> LessThanLessThanEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::LessThanLessThanEqual,
     }
 }
 
 pub type GreaterThan = TerminalType;
 
-pub fn new_greater_than<'source>(l: usize, r: usize, source: &'source str) -> GreaterThan {
+pub fn new_greater_than(l: usize, r: usize, source: &str) -> GreaterThan {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GreaterThan,
     }
 }
 
 pub type GreaterThanEqual = TerminalType;
 
-pub fn new_greater_than_equal<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> GreaterThanEqual {
+pub fn new_greater_than_equal(l: usize, r: usize, source: &str) -> GreaterThanEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GreaterThanEqual,
     }
 }
 
 pub type GreaterThanGreaterThan = TerminalType;
 
-pub fn new_greater_than_greater_than<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> GreaterThanGreaterThan {
+pub fn new_greater_than_greater_than(l: usize, r: usize, source: &str) -> GreaterThanGreaterThan {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GreaterThanGreaterThan,
     }
 }
 
 pub type GreaterThanGreaterThanEqual = TerminalType;
 
-pub fn new_greater_than_greater_than_equal<'source>(
+pub fn new_greater_than_greater_than_equal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> GreaterThanGreaterThanEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GreaterThanGreaterThanEqual,
     }
 }
 
 pub type GreaterThanGreaterThanGreaterThan = TerminalType;
 
-pub fn new_greater_than_greater_than_greater_than<'source>(
+pub fn new_greater_than_greater_than_greater_than(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> GreaterThanGreaterThanGreaterThan {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GreaterThanGreaterThanGreaterThan,
     }
 }
 
 pub type GreaterThanGreaterThanGreaterThanEqual = TerminalType;
 
-pub fn new_greater_than_greater_than_greater_than_equal<'source>(
+pub fn new_greater_than_greater_than_greater_than_equal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> GreaterThanGreaterThanGreaterThanEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::GreaterThanGreaterThanGreaterThanEqual,
     }
 }
 
 pub type Plus = TerminalType;
 
-pub fn new_plus<'source>(l: usize, r: usize, source: &'source str) -> Plus {
+pub fn new_plus(l: usize, r: usize, source: &str) -> Plus {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Plus,
     }
 }
 
 pub type PlusEqual = TerminalType;
 
-pub fn new_plus_equal<'source>(l: usize, r: usize, source: &'source str) -> PlusEqual {
+pub fn new_plus_equal(l: usize, r: usize, source: &str) -> PlusEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PlusEqual,
     }
 }
 
 pub type PlusPlus = TerminalType;
 
-pub fn new_plus_plus<'source>(l: usize, r: usize, source: &'source str) -> PlusPlus {
+pub fn new_plus_plus(l: usize, r: usize, source: &str) -> PlusPlus {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PlusPlus,
     }
 }
 
 pub type Minus = TerminalType;
 
-pub fn new_minus<'source>(l: usize, r: usize, source: &'source str) -> Minus {
+pub fn new_minus(l: usize, r: usize, source: &str) -> Minus {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Minus,
     }
 }
 
 pub type MinusEqual = TerminalType;
 
-pub fn new_minus_equal<'source>(l: usize, r: usize, source: &'source str) -> MinusEqual {
+pub fn new_minus_equal(l: usize, r: usize, source: &str) -> MinusEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MinusEqual,
     }
 }
 
 pub type MinusMinus = TerminalType;
 
-pub fn new_minus_minus<'source>(l: usize, r: usize, source: &'source str) -> MinusMinus {
+pub fn new_minus_minus(l: usize, r: usize, source: &str) -> MinusMinus {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MinusMinus,
     }
 }
 
 pub type MinusGreaterThan = TerminalType;
 
-pub fn new_minus_greater_than<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> MinusGreaterThan {
+pub fn new_minus_greater_than(l: usize, r: usize, source: &str) -> MinusGreaterThan {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::MinusGreaterThan,
     }
 }
 
 pub type Slash = TerminalType;
 
-pub fn new_slash<'source>(l: usize, r: usize, source: &'source str) -> Slash {
+pub fn new_slash(l: usize, r: usize, source: &str) -> Slash {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Slash,
     }
 }
 
 pub type SlashEqual = TerminalType;
 
-pub fn new_slash_equal<'source>(l: usize, r: usize, source: &'source str) -> SlashEqual {
+pub fn new_slash_equal(l: usize, r: usize, source: &str) -> SlashEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SlashEqual,
     }
 }
 
 pub type Percent = TerminalType;
 
-pub fn new_percent<'source>(l: usize, r: usize, source: &'source str) -> Percent {
+pub fn new_percent(l: usize, r: usize, source: &str) -> Percent {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Percent,
     }
 }
 
 pub type PercentEqual = TerminalType;
 
-pub fn new_percent_equal<'source>(l: usize, r: usize, source: &'source str) -> PercentEqual {
+pub fn new_percent_equal(l: usize, r: usize, source: &str) -> PercentEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::PercentEqual,
     }
 }
 
 pub type Bang = TerminalType;
 
-pub fn new_bang<'source>(l: usize, r: usize, source: &'source str) -> Bang {
+pub fn new_bang(l: usize, r: usize, source: &str) -> Bang {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Bang,
     }
 }
 
 pub type BangEqual = TerminalType;
 
-pub fn new_bang_equal<'source>(l: usize, r: usize, source: &'source str) -> BangEqual {
+pub fn new_bang_equal(l: usize, r: usize, source: &str) -> BangEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::BangEqual,
     }
 }
 
 pub type Caret = TerminalType;
 
-pub fn new_caret<'source>(l: usize, r: usize, source: &'source str) -> Caret {
+pub fn new_caret(l: usize, r: usize, source: &str) -> Caret {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Caret,
     }
 }
 
 pub type CaretEqual = TerminalType;
 
-pub fn new_caret_equal<'source>(l: usize, r: usize, source: &'source str) -> CaretEqual {
+pub fn new_caret_equal(l: usize, r: usize, source: &str) -> CaretEqual {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::CaretEqual,
     }
 }
 
 pub type Tilde = TerminalType;
 
-pub fn new_tilde<'source>(l: usize, r: usize, source: &'source str) -> Tilde {
+pub fn new_tilde(l: usize, r: usize, source: &str) -> Tilde {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Tilde,
     }
 }
 
 pub type HexLiteral = TerminalType;
 
-pub fn new_hex_literal<'source>(l: usize, r: usize, source: &'source str) -> HexLiteral {
+pub fn new_hex_literal(l: usize, r: usize, source: &str) -> HexLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::HexLiteral,
     }
 }
 
 pub type DecimalLiteral = TerminalType;
 
-pub fn new_decimal_literal<'source>(l: usize, r: usize, source: &'source str) -> DecimalLiteral {
+pub fn new_decimal_literal(l: usize, r: usize, source: &str) -> DecimalLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DecimalLiteral,
     }
 }
 
 pub type SingleQuotedStringLiteral = TerminalType;
 
-pub fn new_single_quoted_string_literal<'source>(
+pub fn new_single_quoted_string_literal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SingleQuotedStringLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SingleQuotedStringLiteral,
     }
 }
 
 pub type DoubleQuotedStringLiteral = TerminalType;
 
-pub fn new_double_quoted_string_literal<'source>(
+pub fn new_double_quoted_string_literal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> DoubleQuotedStringLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DoubleQuotedStringLiteral,
     }
 }
 
 pub type SingleQuotedHexStringLiteral = TerminalType;
 
-pub fn new_single_quoted_hex_string_literal<'source>(
+pub fn new_single_quoted_hex_string_literal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SingleQuotedHexStringLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SingleQuotedHexStringLiteral,
     }
 }
 
 pub type DoubleQuotedHexStringLiteral = TerminalType;
 
-pub fn new_double_quoted_hex_string_literal<'source>(
+pub fn new_double_quoted_hex_string_literal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> DoubleQuotedHexStringLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DoubleQuotedHexStringLiteral,
     }
 }
 
 pub type SingleQuotedUnicodeStringLiteral = TerminalType;
 
-pub fn new_single_quoted_unicode_string_literal<'source>(
+pub fn new_single_quoted_unicode_string_literal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> SingleQuotedUnicodeStringLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::SingleQuotedUnicodeStringLiteral,
     }
 }
 
 pub type DoubleQuotedUnicodeStringLiteral = TerminalType;
 
-pub fn new_double_quoted_unicode_string_literal<'source>(
+pub fn new_double_quoted_unicode_string_literal(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> DoubleQuotedUnicodeStringLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::DoubleQuotedUnicodeStringLiteral,
     }
 }
 
 pub type Identifier = TerminalType;
 
-pub fn new_identifier<'source>(l: usize, r: usize, source: &'source str) -> Identifier {
+pub fn new_identifier(l: usize, r: usize, source: &str) -> Identifier {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::Identifier,
     }
 }
 
 pub type YulIdentifier = TerminalType;
 
-pub fn new_yul_identifier<'source>(l: usize, r: usize, source: &'source str) -> YulIdentifier {
+pub fn new_yul_identifier(l: usize, r: usize, source: &str) -> YulIdentifier {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulIdentifier,
     }
 }
 
 pub type YulDecimalLiteral = TerminalType;
 
-pub fn new_yul_decimal_literal<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulDecimalLiteral {
+pub fn new_yul_decimal_literal(l: usize, r: usize, source: &str) -> YulDecimalLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDecimalLiteral,
     }
 }
 
 pub type YulHexLiteral = TerminalType;
 
-pub fn new_yul_hex_literal<'source>(l: usize, r: usize, source: &'source str) -> YulHexLiteral {
+pub fn new_yul_hex_literal(l: usize, r: usize, source: &str) -> YulHexLiteral {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulHexLiteral,
     }
 }
 
 pub type YulAbstractKeyword_Reserved = TerminalType;
 
-pub fn new_yul_abstract_keyword_reserved<'source>(
+pub fn new_yul_abstract_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAbstractKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAbstractKeyword_Reserved,
     }
 }
 
 pub type YulAbstractKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_abstract_keyword_unreserved<'source>(
+pub fn new_yul_abstract_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAbstractKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAbstractKeyword_Unreserved,
     }
 }
 
 pub type YulAfterKeyword_Reserved = TerminalType;
 
-pub fn new_yul_after_keyword_reserved<'source>(
+pub fn new_yul_after_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAfterKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAfterKeyword_Reserved,
     }
 }
 
 pub type YulAfterKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_after_keyword_unreserved<'source>(
+pub fn new_yul_after_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAfterKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAfterKeyword_Unreserved,
     }
 }
 
 pub type YulAliasKeyword_Reserved = TerminalType;
 
-pub fn new_yul_alias_keyword_reserved<'source>(
+pub fn new_yul_alias_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAliasKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAliasKeyword_Reserved,
     }
 }
 
 pub type YulAliasKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_alias_keyword_unreserved<'source>(
+pub fn new_yul_alias_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAliasKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAliasKeyword_Unreserved,
     }
 }
 
 pub type YulAnonymousKeyword_Reserved = TerminalType;
 
-pub fn new_yul_anonymous_keyword_reserved<'source>(
+pub fn new_yul_anonymous_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAnonymousKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAnonymousKeyword_Reserved,
     }
 }
 
 pub type YulAnonymousKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_anonymous_keyword_unreserved<'source>(
+pub fn new_yul_anonymous_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAnonymousKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAnonymousKeyword_Unreserved,
     }
 }
 
 pub type YulApplyKeyword_Reserved = TerminalType;
 
-pub fn new_yul_apply_keyword_reserved<'source>(
+pub fn new_yul_apply_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulApplyKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulApplyKeyword_Reserved,
     }
 }
 
 pub type YulApplyKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_apply_keyword_unreserved<'source>(
+pub fn new_yul_apply_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulApplyKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulApplyKeyword_Unreserved,
     }
 }
 
 pub type YulAsKeyword_Reserved = TerminalType;
 
-pub fn new_yul_as_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulAsKeyword_Reserved {
+pub fn new_yul_as_keyword_reserved(l: usize, r: usize, source: &str) -> YulAsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAsKeyword_Reserved,
     }
 }
 
 pub type YulAsKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_as_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulAsKeyword_Unreserved {
+pub fn new_yul_as_keyword_unreserved(l: usize, r: usize, source: &str) -> YulAsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAsKeyword_Unreserved,
     }
 }
 
 pub type YulAssemblyKeyword_Reserved = TerminalType;
 
-pub fn new_yul_assembly_keyword_reserved<'source>(
+pub fn new_yul_assembly_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAssemblyKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAssemblyKeyword_Reserved,
     }
 }
 
 pub type YulAssemblyKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_assembly_keyword_unreserved<'source>(
+pub fn new_yul_assembly_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAssemblyKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAssemblyKeyword_Unreserved,
     }
 }
 
 pub type YulAutoKeyword_Reserved = TerminalType;
 
-pub fn new_yul_auto_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulAutoKeyword_Reserved {
+pub fn new_yul_auto_keyword_reserved(l: usize, r: usize, source: &str) -> YulAutoKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAutoKeyword_Reserved,
     }
 }
 
 pub type YulAutoKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_auto_keyword_unreserved<'source>(
+pub fn new_yul_auto_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulAutoKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulAutoKeyword_Unreserved,
     }
 }
 
 pub type YulBoolKeyword_Reserved = TerminalType;
 
-pub fn new_yul_bool_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulBoolKeyword_Reserved {
+pub fn new_yul_bool_keyword_reserved(l: usize, r: usize, source: &str) -> YulBoolKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulBoolKeyword_Reserved,
     }
 }
 
 pub type YulBoolKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_bool_keyword_unreserved<'source>(
+pub fn new_yul_bool_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulBoolKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulBoolKeyword_Unreserved,
     }
 }
 
 pub type YulBreakKeyword_Reserved = TerminalType;
 
-pub fn new_yul_break_keyword_reserved<'source>(
+pub fn new_yul_break_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulBreakKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulBreakKeyword_Reserved,
     }
 }
 
 pub type YulBytesKeyword_Reserved = TerminalType;
 
-pub fn new_yul_bytes_keyword_reserved<'source>(
+pub fn new_yul_bytes_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulBytesKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulBytesKeyword_Reserved,
     }
 }
 
 pub type YulBytesKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_bytes_keyword_unreserved<'source>(
+pub fn new_yul_bytes_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulBytesKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulBytesKeyword_Unreserved,
     }
 }
 
 pub type YulCallDataKeyword_Reserved = TerminalType;
 
-pub fn new_yul_call_data_keyword_reserved<'source>(
+pub fn new_yul_call_data_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulCallDataKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulCallDataKeyword_Reserved,
     }
 }
 
 pub type YulCallDataKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_call_data_keyword_unreserved<'source>(
+pub fn new_yul_call_data_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulCallDataKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulCallDataKeyword_Unreserved,
     }
 }
 
 pub type YulCaseKeyword_Reserved = TerminalType;
 
-pub fn new_yul_case_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulCaseKeyword_Reserved {
+pub fn new_yul_case_keyword_reserved(l: usize, r: usize, source: &str) -> YulCaseKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulCaseKeyword_Reserved,
     }
 }
 
 pub type YulCatchKeyword_Reserved = TerminalType;
 
-pub fn new_yul_catch_keyword_reserved<'source>(
+pub fn new_yul_catch_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulCatchKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulCatchKeyword_Reserved,
     }
 }
 
 pub type YulCatchKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_catch_keyword_unreserved<'source>(
+pub fn new_yul_catch_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulCatchKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulCatchKeyword_Unreserved,
     }
 }
 
 pub type YulConstantKeyword_Reserved = TerminalType;
 
-pub fn new_yul_constant_keyword_reserved<'source>(
+pub fn new_yul_constant_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulConstantKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulConstantKeyword_Reserved,
     }
 }
 
 pub type YulConstantKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_constant_keyword_unreserved<'source>(
+pub fn new_yul_constant_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulConstantKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulConstantKeyword_Unreserved,
     }
 }
 
 pub type YulConstructorKeyword_Reserved = TerminalType;
 
-pub fn new_yul_constructor_keyword_reserved<'source>(
+pub fn new_yul_constructor_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulConstructorKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulConstructorKeyword_Reserved,
     }
 }
 
 pub type YulConstructorKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_constructor_keyword_unreserved<'source>(
+pub fn new_yul_constructor_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulConstructorKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulConstructorKeyword_Unreserved,
     }
 }
 
 pub type YulContinueKeyword_Reserved = TerminalType;
 
-pub fn new_yul_continue_keyword_reserved<'source>(
+pub fn new_yul_continue_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulContinueKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulContinueKeyword_Reserved,
     }
 }
 
 pub type YulContractKeyword_Reserved = TerminalType;
 
-pub fn new_yul_contract_keyword_reserved<'source>(
+pub fn new_yul_contract_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulContractKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulContractKeyword_Reserved,
     }
 }
 
 pub type YulContractKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_contract_keyword_unreserved<'source>(
+pub fn new_yul_contract_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulContractKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulContractKeyword_Unreserved,
     }
 }
 
 pub type YulCopyOfKeyword_Reserved = TerminalType;
 
-pub fn new_yul_copy_of_keyword_reserved<'source>(
+pub fn new_yul_copy_of_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulCopyOfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulCopyOfKeyword_Reserved,
     }
 }
 
 pub type YulCopyOfKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_copy_of_keyword_unreserved<'source>(
+pub fn new_yul_copy_of_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulCopyOfKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulCopyOfKeyword_Unreserved,
     }
 }
 
 pub type YulDaysKeyword_Reserved = TerminalType;
 
-pub fn new_yul_days_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulDaysKeyword_Reserved {
+pub fn new_yul_days_keyword_reserved(l: usize, r: usize, source: &str) -> YulDaysKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDaysKeyword_Reserved,
     }
 }
 
 pub type YulDaysKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_days_keyword_unreserved<'source>(
+pub fn new_yul_days_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulDaysKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDaysKeyword_Unreserved,
     }
 }
 
 pub type YulDefaultKeyword_Reserved = TerminalType;
 
-pub fn new_yul_default_keyword_reserved<'source>(
+pub fn new_yul_default_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulDefaultKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDefaultKeyword_Reserved,
     }
 }
 
 pub type YulDefineKeyword_Reserved = TerminalType;
 
-pub fn new_yul_define_keyword_reserved<'source>(
+pub fn new_yul_define_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulDefineKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDefineKeyword_Reserved,
     }
 }
 
 pub type YulDefineKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_define_keyword_unreserved<'source>(
+pub fn new_yul_define_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulDefineKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDefineKeyword_Unreserved,
     }
 }
 
 pub type YulDeleteKeyword_Reserved = TerminalType;
 
-pub fn new_yul_delete_keyword_reserved<'source>(
+pub fn new_yul_delete_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulDeleteKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDeleteKeyword_Reserved,
     }
 }
 
 pub type YulDeleteKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_delete_keyword_unreserved<'source>(
+pub fn new_yul_delete_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulDeleteKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDeleteKeyword_Unreserved,
     }
 }
 
 pub type YulDoKeyword_Reserved = TerminalType;
 
-pub fn new_yul_do_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulDoKeyword_Reserved {
+pub fn new_yul_do_keyword_reserved(l: usize, r: usize, source: &str) -> YulDoKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDoKeyword_Reserved,
     }
 }
 
 pub type YulDoKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_do_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulDoKeyword_Unreserved {
+pub fn new_yul_do_keyword_unreserved(l: usize, r: usize, source: &str) -> YulDoKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulDoKeyword_Unreserved,
     }
 }
 
 pub type YulElseKeyword_Reserved = TerminalType;
 
-pub fn new_yul_else_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulElseKeyword_Reserved {
+pub fn new_yul_else_keyword_reserved(l: usize, r: usize, source: &str) -> YulElseKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulElseKeyword_Reserved,
     }
 }
 
 pub type YulElseKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_else_keyword_unreserved<'source>(
+pub fn new_yul_else_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulElseKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulElseKeyword_Unreserved,
     }
 }
 
 pub type YulEmitKeyword_Reserved = TerminalType;
 
-pub fn new_yul_emit_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulEmitKeyword_Reserved {
+pub fn new_yul_emit_keyword_reserved(l: usize, r: usize, source: &str) -> YulEmitKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulEmitKeyword_Reserved,
     }
 }
 
 pub type YulEmitKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_emit_keyword_unreserved<'source>(
+pub fn new_yul_emit_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulEmitKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulEmitKeyword_Unreserved,
     }
 }
 
 pub type YulEnumKeyword_Reserved = TerminalType;
 
-pub fn new_yul_enum_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulEnumKeyword_Reserved {
+pub fn new_yul_enum_keyword_reserved(l: usize, r: usize, source: &str) -> YulEnumKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulEnumKeyword_Reserved,
     }
 }
 
 pub type YulEnumKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_enum_keyword_unreserved<'source>(
+pub fn new_yul_enum_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulEnumKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulEnumKeyword_Unreserved,
     }
 }
 
 pub type YulEtherKeyword_Reserved = TerminalType;
 
-pub fn new_yul_ether_keyword_reserved<'source>(
+pub fn new_yul_ether_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulEtherKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulEtherKeyword_Reserved,
     }
 }
 
 pub type YulEtherKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_ether_keyword_unreserved<'source>(
+pub fn new_yul_ether_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulEtherKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulEtherKeyword_Unreserved,
     }
 }
 
 pub type YulEventKeyword_Reserved = TerminalType;
 
-pub fn new_yul_event_keyword_reserved<'source>(
+pub fn new_yul_event_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulEventKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulEventKeyword_Reserved,
     }
 }
 
 pub type YulEventKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_event_keyword_unreserved<'source>(
+pub fn new_yul_event_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulEventKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulEventKeyword_Unreserved,
     }
 }
 
 pub type YulExternalKeyword_Reserved = TerminalType;
 
-pub fn new_yul_external_keyword_reserved<'source>(
+pub fn new_yul_external_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulExternalKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulExternalKeyword_Reserved,
     }
 }
 
 pub type YulExternalKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_external_keyword_unreserved<'source>(
+pub fn new_yul_external_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulExternalKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulExternalKeyword_Unreserved,
     }
 }
 
 pub type YulFallbackKeyword_Reserved = TerminalType;
 
-pub fn new_yul_fallback_keyword_reserved<'source>(
+pub fn new_yul_fallback_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFallbackKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFallbackKeyword_Reserved,
     }
 }
 
 pub type YulFallbackKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_fallback_keyword_unreserved<'source>(
+pub fn new_yul_fallback_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFallbackKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFallbackKeyword_Unreserved,
     }
 }
 
 pub type YulFalseKeyword_Reserved = TerminalType;
 
-pub fn new_yul_false_keyword_reserved<'source>(
+pub fn new_yul_false_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFalseKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFalseKeyword_Reserved,
     }
 }
 
 pub type YulFinalKeyword_Reserved = TerminalType;
 
-pub fn new_yul_final_keyword_reserved<'source>(
+pub fn new_yul_final_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFinalKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFinalKeyword_Reserved,
     }
 }
 
 pub type YulFinalKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_final_keyword_unreserved<'source>(
+pub fn new_yul_final_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFinalKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFinalKeyword_Unreserved,
     }
 }
 
 pub type YulFinneyKeyword_Reserved = TerminalType;
 
-pub fn new_yul_finney_keyword_reserved<'source>(
+pub fn new_yul_finney_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFinneyKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFinneyKeyword_Reserved,
     }
 }
 
 pub type YulFinneyKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_finney_keyword_unreserved<'source>(
+pub fn new_yul_finney_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFinneyKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFinneyKeyword_Unreserved,
     }
 }
 
 pub type YulFixedKeyword_Reserved = TerminalType;
 
-pub fn new_yul_fixed_keyword_reserved<'source>(
+pub fn new_yul_fixed_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFixedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFixedKeyword_Reserved,
     }
 }
 
 pub type YulFixedKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_fixed_keyword_unreserved<'source>(
+pub fn new_yul_fixed_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFixedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFixedKeyword_Unreserved,
     }
 }
 
 pub type YulForKeyword_Reserved = TerminalType;
 
-pub fn new_yul_for_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulForKeyword_Reserved {
+pub fn new_yul_for_keyword_reserved(l: usize, r: usize, source: &str) -> YulForKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulForKeyword_Reserved,
     }
 }
 
 pub type YulFunctionKeyword_Reserved = TerminalType;
 
-pub fn new_yul_function_keyword_reserved<'source>(
+pub fn new_yul_function_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulFunctionKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulFunctionKeyword_Reserved,
     }
 }
 
 pub type YulGweiKeyword_Reserved = TerminalType;
 
-pub fn new_yul_gwei_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulGweiKeyword_Reserved {
+pub fn new_yul_gwei_keyword_reserved(l: usize, r: usize, source: &str) -> YulGweiKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulGweiKeyword_Reserved,
     }
 }
 
 pub type YulGweiKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_gwei_keyword_unreserved<'source>(
+pub fn new_yul_gwei_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulGweiKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulGweiKeyword_Unreserved,
     }
 }
 
 pub type YulHexKeyword_Reserved = TerminalType;
 
-pub fn new_yul_hex_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulHexKeyword_Reserved {
+pub fn new_yul_hex_keyword_reserved(l: usize, r: usize, source: &str) -> YulHexKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulHexKeyword_Reserved,
     }
 }
 
 pub type YulHoursKeyword_Reserved = TerminalType;
 
-pub fn new_yul_hours_keyword_reserved<'source>(
+pub fn new_yul_hours_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulHoursKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulHoursKeyword_Reserved,
     }
 }
 
 pub type YulHoursKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_hours_keyword_unreserved<'source>(
+pub fn new_yul_hours_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulHoursKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulHoursKeyword_Unreserved,
     }
 }
 
 pub type YulIfKeyword_Reserved = TerminalType;
 
-pub fn new_yul_if_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulIfKeyword_Reserved {
+pub fn new_yul_if_keyword_reserved(l: usize, r: usize, source: &str) -> YulIfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulIfKeyword_Reserved,
     }
 }
 
 pub type YulImmutableKeyword_Reserved = TerminalType;
 
-pub fn new_yul_immutable_keyword_reserved<'source>(
+pub fn new_yul_immutable_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulImmutableKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulImmutableKeyword_Reserved,
     }
 }
 
 pub type YulImmutableKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_immutable_keyword_unreserved<'source>(
+pub fn new_yul_immutable_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulImmutableKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulImmutableKeyword_Unreserved,
     }
 }
 
 pub type YulImplementsKeyword_Reserved = TerminalType;
 
-pub fn new_yul_implements_keyword_reserved<'source>(
+pub fn new_yul_implements_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulImplementsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulImplementsKeyword_Reserved,
     }
 }
 
 pub type YulImplementsKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_implements_keyword_unreserved<'source>(
+pub fn new_yul_implements_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulImplementsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulImplementsKeyword_Unreserved,
     }
 }
 
 pub type YulImportKeyword_Reserved = TerminalType;
 
-pub fn new_yul_import_keyword_reserved<'source>(
+pub fn new_yul_import_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulImportKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulImportKeyword_Reserved,
     }
 }
 
 pub type YulImportKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_import_keyword_unreserved<'source>(
+pub fn new_yul_import_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulImportKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulImportKeyword_Unreserved,
     }
 }
 
 pub type YulIndexedKeyword_Reserved = TerminalType;
 
-pub fn new_yul_indexed_keyword_reserved<'source>(
+pub fn new_yul_indexed_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulIndexedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulIndexedKeyword_Reserved,
     }
 }
 
 pub type YulIndexedKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_indexed_keyword_unreserved<'source>(
+pub fn new_yul_indexed_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulIndexedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulIndexedKeyword_Unreserved,
     }
 }
 
 pub type YulInKeyword_Reserved = TerminalType;
 
-pub fn new_yul_in_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulInKeyword_Reserved {
+pub fn new_yul_in_keyword_reserved(l: usize, r: usize, source: &str) -> YulInKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulInKeyword_Reserved,
     }
 }
 
 pub type YulInKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_in_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulInKeyword_Unreserved {
+pub fn new_yul_in_keyword_unreserved(l: usize, r: usize, source: &str) -> YulInKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulInKeyword_Unreserved,
     }
 }
 
 pub type YulInlineKeyword_Reserved = TerminalType;
 
-pub fn new_yul_inline_keyword_reserved<'source>(
+pub fn new_yul_inline_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulInlineKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulInlineKeyword_Reserved,
     }
 }
 
 pub type YulInlineKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_inline_keyword_unreserved<'source>(
+pub fn new_yul_inline_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulInlineKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulInlineKeyword_Unreserved,
     }
 }
 
 pub type YulInterfaceKeyword_Reserved = TerminalType;
 
-pub fn new_yul_interface_keyword_reserved<'source>(
+pub fn new_yul_interface_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulInterfaceKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulInterfaceKeyword_Reserved,
     }
 }
 
 pub type YulInterfaceKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_interface_keyword_unreserved<'source>(
+pub fn new_yul_interface_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulInterfaceKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulInterfaceKeyword_Unreserved,
     }
 }
 
 pub type YulInternalKeyword_Reserved = TerminalType;
 
-pub fn new_yul_internal_keyword_reserved<'source>(
+pub fn new_yul_internal_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulInternalKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulInternalKeyword_Reserved,
     }
 }
 
 pub type YulInternalKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_internal_keyword_unreserved<'source>(
+pub fn new_yul_internal_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulInternalKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulInternalKeyword_Unreserved,
     }
 }
 
 pub type YulIntKeyword_Reserved = TerminalType;
 
-pub fn new_yul_int_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulIntKeyword_Reserved {
+pub fn new_yul_int_keyword_reserved(l: usize, r: usize, source: &str) -> YulIntKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulIntKeyword_Reserved,
     }
 }
 
 pub type YulIntKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_int_keyword_unreserved<'source>(
+pub fn new_yul_int_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulIntKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulIntKeyword_Unreserved,
     }
 }
 
 pub type YulIsKeyword_Reserved = TerminalType;
 
-pub fn new_yul_is_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulIsKeyword_Reserved {
+pub fn new_yul_is_keyword_reserved(l: usize, r: usize, source: &str) -> YulIsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulIsKeyword_Reserved,
     }
 }
 
 pub type YulIsKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_is_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulIsKeyword_Unreserved {
+pub fn new_yul_is_keyword_unreserved(l: usize, r: usize, source: &str) -> YulIsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulIsKeyword_Unreserved,
     }
 }
 
 pub type YulLeaveKeyword_Reserved = TerminalType;
 
-pub fn new_yul_leave_keyword_reserved<'source>(
+pub fn new_yul_leave_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulLeaveKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulLeaveKeyword_Reserved,
     }
 }
 
 pub type YulLeaveKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_leave_keyword_unreserved<'source>(
+pub fn new_yul_leave_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulLeaveKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulLeaveKeyword_Unreserved,
     }
 }
 
 pub type YulLetKeyword_Reserved = TerminalType;
 
-pub fn new_yul_let_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulLetKeyword_Reserved {
+pub fn new_yul_let_keyword_reserved(l: usize, r: usize, source: &str) -> YulLetKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulLetKeyword_Reserved,
     }
 }
 
 pub type YulLibraryKeyword_Reserved = TerminalType;
 
-pub fn new_yul_library_keyword_reserved<'source>(
+pub fn new_yul_library_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulLibraryKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulLibraryKeyword_Reserved,
     }
 }
 
 pub type YulLibraryKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_library_keyword_unreserved<'source>(
+pub fn new_yul_library_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulLibraryKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulLibraryKeyword_Unreserved,
     }
 }
 
 pub type YulMacroKeyword_Reserved = TerminalType;
 
-pub fn new_yul_macro_keyword_reserved<'source>(
+pub fn new_yul_macro_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMacroKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMacroKeyword_Reserved,
     }
 }
 
 pub type YulMacroKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_macro_keyword_unreserved<'source>(
+pub fn new_yul_macro_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMacroKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMacroKeyword_Unreserved,
     }
 }
 
 pub type YulMappingKeyword_Reserved = TerminalType;
 
-pub fn new_yul_mapping_keyword_reserved<'source>(
+pub fn new_yul_mapping_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMappingKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMappingKeyword_Reserved,
     }
 }
 
 pub type YulMappingKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_mapping_keyword_unreserved<'source>(
+pub fn new_yul_mapping_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMappingKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMappingKeyword_Unreserved,
     }
 }
 
 pub type YulMatchKeyword_Reserved = TerminalType;
 
-pub fn new_yul_match_keyword_reserved<'source>(
+pub fn new_yul_match_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMatchKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMatchKeyword_Reserved,
     }
 }
 
 pub type YulMatchKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_match_keyword_unreserved<'source>(
+pub fn new_yul_match_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMatchKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMatchKeyword_Unreserved,
     }
 }
 
 pub type YulMemoryKeyword_Reserved = TerminalType;
 
-pub fn new_yul_memory_keyword_reserved<'source>(
+pub fn new_yul_memory_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMemoryKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMemoryKeyword_Reserved,
     }
 }
 
 pub type YulMemoryKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_memory_keyword_unreserved<'source>(
+pub fn new_yul_memory_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMemoryKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMemoryKeyword_Unreserved,
     }
 }
 
 pub type YulMinutesKeyword_Reserved = TerminalType;
 
-pub fn new_yul_minutes_keyword_reserved<'source>(
+pub fn new_yul_minutes_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMinutesKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMinutesKeyword_Reserved,
     }
 }
 
 pub type YulMinutesKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_minutes_keyword_unreserved<'source>(
+pub fn new_yul_minutes_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMinutesKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMinutesKeyword_Unreserved,
     }
 }
 
 pub type YulModifierKeyword_Reserved = TerminalType;
 
-pub fn new_yul_modifier_keyword_reserved<'source>(
+pub fn new_yul_modifier_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulModifierKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulModifierKeyword_Reserved,
     }
 }
 
 pub type YulModifierKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_modifier_keyword_unreserved<'source>(
+pub fn new_yul_modifier_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulModifierKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulModifierKeyword_Unreserved,
     }
 }
 
 pub type YulMutableKeyword_Reserved = TerminalType;
 
-pub fn new_yul_mutable_keyword_reserved<'source>(
+pub fn new_yul_mutable_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMutableKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMutableKeyword_Reserved,
     }
 }
 
 pub type YulMutableKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_mutable_keyword_unreserved<'source>(
+pub fn new_yul_mutable_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulMutableKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulMutableKeyword_Unreserved,
     }
 }
 
 pub type YulNewKeyword_Reserved = TerminalType;
 
-pub fn new_yul_new_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulNewKeyword_Reserved {
+pub fn new_yul_new_keyword_reserved(l: usize, r: usize, source: &str) -> YulNewKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulNewKeyword_Reserved,
     }
 }
 
 pub type YulNewKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_new_keyword_unreserved<'source>(
+pub fn new_yul_new_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulNewKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulNewKeyword_Unreserved,
     }
 }
 
 pub type YulNullKeyword_Reserved = TerminalType;
 
-pub fn new_yul_null_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulNullKeyword_Reserved {
+pub fn new_yul_null_keyword_reserved(l: usize, r: usize, source: &str) -> YulNullKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulNullKeyword_Reserved,
     }
 }
 
 pub type YulNullKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_null_keyword_unreserved<'source>(
+pub fn new_yul_null_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulNullKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulNullKeyword_Unreserved,
     }
 }
 
 pub type YulOfKeyword_Reserved = TerminalType;
 
-pub fn new_yul_of_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulOfKeyword_Reserved {
+pub fn new_yul_of_keyword_reserved(l: usize, r: usize, source: &str) -> YulOfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulOfKeyword_Reserved,
     }
 }
 
 pub type YulOfKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_of_keyword_unreserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulOfKeyword_Unreserved {
+pub fn new_yul_of_keyword_unreserved(l: usize, r: usize, source: &str) -> YulOfKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulOfKeyword_Unreserved,
     }
 }
 
 pub type YulOverrideKeyword_Reserved = TerminalType;
 
-pub fn new_yul_override_keyword_reserved<'source>(
+pub fn new_yul_override_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulOverrideKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulOverrideKeyword_Reserved,
     }
 }
 
 pub type YulOverrideKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_override_keyword_unreserved<'source>(
+pub fn new_yul_override_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulOverrideKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulOverrideKeyword_Unreserved,
     }
 }
 
 pub type YulPartialKeyword_Reserved = TerminalType;
 
-pub fn new_yul_partial_keyword_reserved<'source>(
+pub fn new_yul_partial_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPartialKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPartialKeyword_Reserved,
     }
 }
 
 pub type YulPartialKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_partial_keyword_unreserved<'source>(
+pub fn new_yul_partial_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPartialKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPartialKeyword_Unreserved,
     }
 }
 
 pub type YulPayableKeyword_Reserved = TerminalType;
 
-pub fn new_yul_payable_keyword_reserved<'source>(
+pub fn new_yul_payable_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPayableKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPayableKeyword_Reserved,
     }
 }
 
 pub type YulPayableKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_payable_keyword_unreserved<'source>(
+pub fn new_yul_payable_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPayableKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPayableKeyword_Unreserved,
     }
 }
 
 pub type YulPragmaKeyword_Reserved = TerminalType;
 
-pub fn new_yul_pragma_keyword_reserved<'source>(
+pub fn new_yul_pragma_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPragmaKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPragmaKeyword_Reserved,
     }
 }
 
 pub type YulPragmaKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_pragma_keyword_unreserved<'source>(
+pub fn new_yul_pragma_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPragmaKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPragmaKeyword_Unreserved,
     }
 }
 
 pub type YulPrivateKeyword_Reserved = TerminalType;
 
-pub fn new_yul_private_keyword_reserved<'source>(
+pub fn new_yul_private_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPrivateKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPrivateKeyword_Reserved,
     }
 }
 
 pub type YulPrivateKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_private_keyword_unreserved<'source>(
+pub fn new_yul_private_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPrivateKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPrivateKeyword_Unreserved,
     }
 }
 
 pub type YulPromiseKeyword_Reserved = TerminalType;
 
-pub fn new_yul_promise_keyword_reserved<'source>(
+pub fn new_yul_promise_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPromiseKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPromiseKeyword_Reserved,
     }
 }
 
 pub type YulPromiseKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_promise_keyword_unreserved<'source>(
+pub fn new_yul_promise_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPromiseKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPromiseKeyword_Unreserved,
     }
 }
 
 pub type YulPublicKeyword_Reserved = TerminalType;
 
-pub fn new_yul_public_keyword_reserved<'source>(
+pub fn new_yul_public_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPublicKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPublicKeyword_Reserved,
     }
 }
 
 pub type YulPublicKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_public_keyword_unreserved<'source>(
+pub fn new_yul_public_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPublicKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPublicKeyword_Unreserved,
     }
 }
 
 pub type YulPureKeyword_Reserved = TerminalType;
 
-pub fn new_yul_pure_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulPureKeyword_Reserved {
+pub fn new_yul_pure_keyword_reserved(l: usize, r: usize, source: &str) -> YulPureKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPureKeyword_Reserved,
     }
 }
 
 pub type YulPureKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_pure_keyword_unreserved<'source>(
+pub fn new_yul_pure_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulPureKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulPureKeyword_Unreserved,
     }
 }
 
 pub type YulReceiveKeyword_Reserved = TerminalType;
 
-pub fn new_yul_receive_keyword_reserved<'source>(
+pub fn new_yul_receive_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulReceiveKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulReceiveKeyword_Reserved,
     }
 }
 
 pub type YulReceiveKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_receive_keyword_unreserved<'source>(
+pub fn new_yul_receive_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulReceiveKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulReceiveKeyword_Unreserved,
     }
 }
 
 pub type YulReferenceKeyword_Reserved = TerminalType;
 
-pub fn new_yul_reference_keyword_reserved<'source>(
+pub fn new_yul_reference_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulReferenceKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulReferenceKeyword_Reserved,
     }
 }
 
 pub type YulReferenceKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_reference_keyword_unreserved<'source>(
+pub fn new_yul_reference_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulReferenceKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulReferenceKeyword_Unreserved,
     }
 }
 
 pub type YulRelocatableKeyword_Reserved = TerminalType;
 
-pub fn new_yul_relocatable_keyword_reserved<'source>(
+pub fn new_yul_relocatable_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulRelocatableKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulRelocatableKeyword_Reserved,
     }
 }
 
 pub type YulRelocatableKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_relocatable_keyword_unreserved<'source>(
+pub fn new_yul_relocatable_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulRelocatableKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulRelocatableKeyword_Unreserved,
     }
 }
 
 pub type YulReturnsKeyword_Reserved = TerminalType;
 
-pub fn new_yul_returns_keyword_reserved<'source>(
+pub fn new_yul_returns_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulReturnsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulReturnsKeyword_Reserved,
     }
 }
 
 pub type YulReturnsKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_returns_keyword_unreserved<'source>(
+pub fn new_yul_returns_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulReturnsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulReturnsKeyword_Unreserved,
     }
 }
 
 pub type YulSealedKeyword_Reserved = TerminalType;
 
-pub fn new_yul_sealed_keyword_reserved<'source>(
+pub fn new_yul_sealed_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSealedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSealedKeyword_Reserved,
     }
 }
 
 pub type YulSealedKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_sealed_keyword_unreserved<'source>(
+pub fn new_yul_sealed_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSealedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSealedKeyword_Unreserved,
     }
 }
 
 pub type YulSecondsKeyword_Reserved = TerminalType;
 
-pub fn new_yul_seconds_keyword_reserved<'source>(
+pub fn new_yul_seconds_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSecondsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSecondsKeyword_Reserved,
     }
 }
 
 pub type YulSecondsKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_seconds_keyword_unreserved<'source>(
+pub fn new_yul_seconds_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSecondsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSecondsKeyword_Unreserved,
     }
 }
 
 pub type YulSizeOfKeyword_Reserved = TerminalType;
 
-pub fn new_yul_size_of_keyword_reserved<'source>(
+pub fn new_yul_size_of_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSizeOfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSizeOfKeyword_Reserved,
     }
 }
 
 pub type YulSizeOfKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_size_of_keyword_unreserved<'source>(
+pub fn new_yul_size_of_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSizeOfKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSizeOfKeyword_Unreserved,
     }
 }
 
 pub type YulStaticKeyword_Reserved = TerminalType;
 
-pub fn new_yul_static_keyword_reserved<'source>(
+pub fn new_yul_static_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulStaticKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulStaticKeyword_Reserved,
     }
 }
 
 pub type YulStaticKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_static_keyword_unreserved<'source>(
+pub fn new_yul_static_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulStaticKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulStaticKeyword_Unreserved,
     }
 }
 
 pub type YulStorageKeyword_Reserved = TerminalType;
 
-pub fn new_yul_storage_keyword_reserved<'source>(
+pub fn new_yul_storage_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulStorageKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulStorageKeyword_Reserved,
     }
 }
 
 pub type YulStorageKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_storage_keyword_unreserved<'source>(
+pub fn new_yul_storage_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulStorageKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulStorageKeyword_Unreserved,
     }
 }
 
 pub type YulStringKeyword_Reserved = TerminalType;
 
-pub fn new_yul_string_keyword_reserved<'source>(
+pub fn new_yul_string_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulStringKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulStringKeyword_Reserved,
     }
 }
 
 pub type YulStringKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_string_keyword_unreserved<'source>(
+pub fn new_yul_string_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulStringKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulStringKeyword_Unreserved,
     }
 }
 
 pub type YulStructKeyword_Reserved = TerminalType;
 
-pub fn new_yul_struct_keyword_reserved<'source>(
+pub fn new_yul_struct_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulStructKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulStructKeyword_Reserved,
     }
 }
 
 pub type YulStructKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_struct_keyword_unreserved<'source>(
+pub fn new_yul_struct_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulStructKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulStructKeyword_Unreserved,
     }
 }
 
 pub type YulSuperKeyword_Reserved = TerminalType;
 
-pub fn new_yul_super_keyword_reserved<'source>(
+pub fn new_yul_super_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSuperKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSuperKeyword_Reserved,
     }
 }
 
 pub type YulSuperKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_super_keyword_unreserved<'source>(
+pub fn new_yul_super_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSuperKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSuperKeyword_Unreserved,
     }
 }
 
 pub type YulSupportsKeyword_Reserved = TerminalType;
 
-pub fn new_yul_supports_keyword_reserved<'source>(
+pub fn new_yul_supports_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSupportsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSupportsKeyword_Reserved,
     }
 }
 
 pub type YulSupportsKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_supports_keyword_unreserved<'source>(
+pub fn new_yul_supports_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSupportsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSupportsKeyword_Unreserved,
     }
 }
 
 pub type YulSwitchKeyword_Reserved = TerminalType;
 
-pub fn new_yul_switch_keyword_reserved<'source>(
+pub fn new_yul_switch_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSwitchKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSwitchKeyword_Reserved,
     }
 }
 
 pub type YulSzaboKeyword_Reserved = TerminalType;
 
-pub fn new_yul_szabo_keyword_reserved<'source>(
+pub fn new_yul_szabo_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSzaboKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSzaboKeyword_Reserved,
     }
 }
 
 pub type YulSzaboKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_szabo_keyword_unreserved<'source>(
+pub fn new_yul_szabo_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulSzaboKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulSzaboKeyword_Unreserved,
     }
 }
 
 pub type YulThisKeyword_Reserved = TerminalType;
 
-pub fn new_yul_this_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulThisKeyword_Reserved {
+pub fn new_yul_this_keyword_reserved(l: usize, r: usize, source: &str) -> YulThisKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulThisKeyword_Reserved,
     }
 }
 
 pub type YulThisKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_this_keyword_unreserved<'source>(
+pub fn new_yul_this_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulThisKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulThisKeyword_Unreserved,
     }
 }
 
 pub type YulThrowKeyword_Reserved = TerminalType;
 
-pub fn new_yul_throw_keyword_reserved<'source>(
+pub fn new_yul_throw_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulThrowKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulThrowKeyword_Reserved,
     }
 }
 
 pub type YulThrowKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_throw_keyword_unreserved<'source>(
+pub fn new_yul_throw_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulThrowKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulThrowKeyword_Unreserved,
     }
 }
 
 pub type YulTrueKeyword_Reserved = TerminalType;
 
-pub fn new_yul_true_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulTrueKeyword_Reserved {
+pub fn new_yul_true_keyword_reserved(l: usize, r: usize, source: &str) -> YulTrueKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTrueKeyword_Reserved,
     }
 }
 
 pub type YulTryKeyword_Reserved = TerminalType;
 
-pub fn new_yul_try_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulTryKeyword_Reserved {
+pub fn new_yul_try_keyword_reserved(l: usize, r: usize, source: &str) -> YulTryKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTryKeyword_Reserved,
     }
 }
 
 pub type YulTryKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_try_keyword_unreserved<'source>(
+pub fn new_yul_try_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulTryKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTryKeyword_Unreserved,
     }
 }
 
 pub type YulTypeDefKeyword_Reserved = TerminalType;
 
-pub fn new_yul_type_def_keyword_reserved<'source>(
+pub fn new_yul_type_def_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulTypeDefKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTypeDefKeyword_Reserved,
     }
 }
 
 pub type YulTypeDefKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_type_def_keyword_unreserved<'source>(
+pub fn new_yul_type_def_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulTypeDefKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTypeDefKeyword_Unreserved,
     }
 }
 
 pub type YulTypeKeyword_Reserved = TerminalType;
 
-pub fn new_yul_type_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulTypeKeyword_Reserved {
+pub fn new_yul_type_keyword_reserved(l: usize, r: usize, source: &str) -> YulTypeKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTypeKeyword_Reserved,
     }
 }
 
 pub type YulTypeKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_type_keyword_unreserved<'source>(
+pub fn new_yul_type_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulTypeKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTypeKeyword_Unreserved,
     }
 }
 
 pub type YulTypeOfKeyword_Reserved = TerminalType;
 
-pub fn new_yul_type_of_keyword_reserved<'source>(
+pub fn new_yul_type_of_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulTypeOfKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTypeOfKeyword_Reserved,
     }
 }
 
 pub type YulTypeOfKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_type_of_keyword_unreserved<'source>(
+pub fn new_yul_type_of_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulTypeOfKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulTypeOfKeyword_Unreserved,
     }
 }
 
 pub type YulUfixedKeyword_Reserved = TerminalType;
 
-pub fn new_yul_ufixed_keyword_reserved<'source>(
+pub fn new_yul_ufixed_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulUfixedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulUfixedKeyword_Reserved,
     }
 }
 
 pub type YulUfixedKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_ufixed_keyword_unreserved<'source>(
+pub fn new_yul_ufixed_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulUfixedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulUfixedKeyword_Unreserved,
     }
 }
 
 pub type YulUintKeyword_Reserved = TerminalType;
 
-pub fn new_yul_uint_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulUintKeyword_Reserved {
+pub fn new_yul_uint_keyword_reserved(l: usize, r: usize, source: &str) -> YulUintKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulUintKeyword_Reserved,
     }
 }
 
 pub type YulUintKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_uint_keyword_unreserved<'source>(
+pub fn new_yul_uint_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulUintKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulUintKeyword_Unreserved,
     }
 }
 
 pub type YulUncheckedKeyword_Reserved = TerminalType;
 
-pub fn new_yul_unchecked_keyword_reserved<'source>(
+pub fn new_yul_unchecked_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulUncheckedKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulUncheckedKeyword_Reserved,
     }
 }
 
 pub type YulUncheckedKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_unchecked_keyword_unreserved<'source>(
+pub fn new_yul_unchecked_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulUncheckedKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulUncheckedKeyword_Unreserved,
     }
 }
 
 pub type YulUsingKeyword_Reserved = TerminalType;
 
-pub fn new_yul_using_keyword_reserved<'source>(
+pub fn new_yul_using_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulUsingKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulUsingKeyword_Reserved,
     }
 }
 
 pub type YulUsingKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_using_keyword_unreserved<'source>(
+pub fn new_yul_using_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulUsingKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulUsingKeyword_Unreserved,
     }
 }
 
 pub type YulVarKeyword_Reserved = TerminalType;
 
-pub fn new_yul_var_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulVarKeyword_Reserved {
+pub fn new_yul_var_keyword_reserved(l: usize, r: usize, source: &str) -> YulVarKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulVarKeyword_Reserved,
     }
 }
 
 pub type YulVarKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_var_keyword_unreserved<'source>(
+pub fn new_yul_var_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulVarKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulVarKeyword_Unreserved,
     }
 }
 
 pub type YulViewKeyword_Reserved = TerminalType;
 
-pub fn new_yul_view_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulViewKeyword_Reserved {
+pub fn new_yul_view_keyword_reserved(l: usize, r: usize, source: &str) -> YulViewKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulViewKeyword_Reserved,
     }
 }
 
 pub type YulViewKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_view_keyword_unreserved<'source>(
+pub fn new_yul_view_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulViewKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulViewKeyword_Unreserved,
     }
 }
 
 pub type YulVirtualKeyword_Reserved = TerminalType;
 
-pub fn new_yul_virtual_keyword_reserved<'source>(
+pub fn new_yul_virtual_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulVirtualKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulVirtualKeyword_Reserved,
     }
 }
 
 pub type YulVirtualKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_virtual_keyword_unreserved<'source>(
+pub fn new_yul_virtual_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulVirtualKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulVirtualKeyword_Unreserved,
     }
 }
 
 pub type YulWeeksKeyword_Reserved = TerminalType;
 
-pub fn new_yul_weeks_keyword_reserved<'source>(
+pub fn new_yul_weeks_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulWeeksKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulWeeksKeyword_Reserved,
     }
 }
 
 pub type YulWeeksKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_weeks_keyword_unreserved<'source>(
+pub fn new_yul_weeks_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulWeeksKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulWeeksKeyword_Unreserved,
     }
 }
 
 pub type YulWeiKeyword_Reserved = TerminalType;
 
-pub fn new_yul_wei_keyword_reserved<'source>(
-    l: usize,
-    r: usize,
-    source: &'source str,
-) -> YulWeiKeyword_Reserved {
+pub fn new_yul_wei_keyword_reserved(l: usize, r: usize, source: &str) -> YulWeiKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulWeiKeyword_Reserved,
     }
 }
 
 pub type YulWeiKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_wei_keyword_unreserved<'source>(
+pub fn new_yul_wei_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulWeiKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulWeiKeyword_Unreserved,
     }
 }
 
 pub type YulWhileKeyword_Reserved = TerminalType;
 
-pub fn new_yul_while_keyword_reserved<'source>(
+pub fn new_yul_while_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulWhileKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulWhileKeyword_Reserved,
     }
 }
 
 pub type YulWhileKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_while_keyword_unreserved<'source>(
+pub fn new_yul_while_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulWhileKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulWhileKeyword_Unreserved,
     }
 }
 
 pub type YulYearsKeyword_Reserved = TerminalType;
 
-pub fn new_yul_years_keyword_reserved<'source>(
+pub fn new_yul_years_keyword_reserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulYearsKeyword_Reserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulYearsKeyword_Reserved,
     }
 }
 
 pub type YulYearsKeyword_Unreserved = TerminalType;
 
-pub fn new_yul_years_keyword_unreserved<'source>(
+pub fn new_yul_years_keyword_unreserved(
     l: usize,
     r: usize,
-    source: &'source str,
+    source: &str,
 ) -> YulYearsKeyword_Unreserved {
     TerminalType {
         value: source[l..r].to_owned(),
-        _l: l,
-        _r: r,
+        l: l,
+        r: r,
         kind: LexemeKind::YulYearsKeyword_Unreserved,
     }
 }

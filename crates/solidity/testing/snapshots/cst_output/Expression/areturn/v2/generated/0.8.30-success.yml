@@ -3,8 +3,8 @@
 Identifier(
     TerminalType {
         value: "areturn",
-        _l: 0,
-        _r: 7,
+        l: 0,
+        r: 7,
         kind: Identifier,
     },
 )

@@ -1,0 +1,312 @@
+use std::rc::Rc;
+
+use slang_solidity_v2_ast::ast::lexemes::LexemeKind;
+///! This module contains certain nodes and functions used internally by the parser.
+use slang_solidity_v2_ast::ast::nodes::*;
+// Special cases
+
+// An IndexAccessPath represents a path or elementary type followed by
+// zero or more index accesses, e.g. foo.bar[0][1:3] or uint256[5][]
+//
+// It's heavily inspired by solc
+// https://github.com/argotorg/solidity/blob/194b114664c7daebc2ff68af3c573272f5d28913/libsolidity/parsing/Parser.h#L198-L209
+#[derive(Debug)]
+pub struct IndexAccessPath {
+    pub path: Path,
+    pub indices: Vec<Index>,
+}
+
+#[derive(Debug)]
+pub enum Path {
+    IdentifierPath(IdentifierPath),
+    ElementaryType(ElementaryType),
+}
+
+#[derive(Debug)]
+pub struct Index {
+    pub open_bracket: OpenBracket,
+    pub start: Option<Expression>,
+    pub end: Option<IndexAccessEnd>,
+    pub close_bracket: CloseBracket,
+}
+
+pub fn index_access_path_add_index(
+    mut iap: IndexAccessPath,
+    open_bracket: OpenBracket,
+    start: Option<Expression>,
+    end: Option<IndexAccessEnd>,
+    close_bracket: CloseBracket,
+) -> IndexAccessPath {
+    iap.indices.push(Index {
+        open_bracket,
+        start,
+        end,
+        close_bracket,
+    });
+    iap
+}
+
+pub fn new_index_access_path_from_identifier_path(
+    identifier_path: IdentifierPath,
+) -> IndexAccessPath {
+    IndexAccessPath {
+        path: Path::IdentifierPath(identifier_path),
+        indices: Vec::new(),
+    }
+}
+
+pub fn new_index_access_path_from_elementary_type(
+    elementary_type: ElementaryType,
+) -> IndexAccessPath {
+    IndexAccessPath {
+        path: Path::ElementaryType(elementary_type),
+        indices: Vec::new(),
+    }
+}
+
+pub fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> TypeName {
+    let IndexAccessPath { path, indices } = index_access_path;
+
+    let mut type_name = Some(match path {
+        Path::IdentifierPath(path) => new_type_name_identifier_path(path),
+        Path::ElementaryType(elem_type) => new_type_name_elementary_type(elem_type),
+    });
+
+    for index in indices.into_iter() {
+        assert!(
+            index.end.is_none(),
+            "Slicing is not supported in type names yet"
+        );
+        let array_type = new_array_type_name(
+            type_name
+                .take()
+                .expect("There surely is something in there"),
+            index.open_bracket,
+            index.start,
+            index.close_bracket,
+        );
+        type_name = Some(new_type_name_array_type_name(array_type));
+    }
+
+    type_name.expect("There surely is something in there")
+}
+
+pub fn new_expression_index_access_path(index_access_path: IndexAccessPath) -> Expression {
+    let IndexAccessPath { path, indices } = index_access_path;
+
+    let mut expression = Some(match path {
+        Path::IdentifierPath(path) => new_expression_identifier_path(path),
+        Path::ElementaryType(elem_type) => new_expression_elementary_type(elem_type),
+    });
+
+    for index in indices.into_iter() {
+        let array_expression = new_index_access_expression(
+            expression
+                .take()
+                .expect("There surely is something in there"),
+            index.open_bracket,
+            index.start,
+            index.end,
+            index.close_bracket,
+        );
+        expression = Some(new_expression_index_access_expression(array_expression));
+    }
+
+    expression.expect("There surely is something in there")
+}
+
+#[derive(Debug)]
+pub struct ProtoTuple {
+    // Do we care about range in source code?
+    pub _open_paren: OpenParen,
+    pub _elements: Vec<ProtoTupleElement>,
+    pub _close_paren: CloseParen,
+}
+
+pub fn new_proto_tuple(
+    _open_paren: OpenParen,
+    _elements: Vec<ProtoTupleElement>,
+    _close_paren: CloseParen,
+) -> ProtoTuple {
+    ProtoTuple {
+        _open_paren,
+        _elements,
+        _close_paren,
+    }
+}
+
+pub fn new_tuple_expression_from_proto_tuple(proto_tuple: ProtoTuple) -> TupleExpression {
+    let elements: Vec<TupleValue> = proto_tuple
+        ._elements
+        .into_iter()
+        .map(|element| match element {
+            ProtoTupleElement::Expression(name) => new_tuple_value(Some(name)),
+            ProtoTupleElement::Declaration(_) => panic!("Tuples can't have declarations"),
+            ProtoTupleElement::StorageLocation(_, _) => {
+                panic!("Tuples can't have storage locations")
+            }
+            ProtoTupleElement::Empty => new_tuple_value(None),
+        })
+        .collect();
+    new_tuple_expression(
+        proto_tuple._open_paren,
+        new_tuple_values(elements),
+        proto_tuple._close_paren,
+    )
+}
+
+pub fn new_tuple_deconstruction_statement_from_proto_tuple(
+    proto_tuple: ProtoTuple,
+    equal: Equal,
+    expression: Expression,
+    semicolon: Semicolon,
+) -> TupleDeconstructionStatement {
+    let elements: Vec<TupleDeconstructionElement> = proto_tuple
+        ._elements
+        .into_iter()
+        .map(|element| match element {
+            ProtoTupleElement::Expression(name) => match name {
+                Expression::Identifier(name) => new_tuple_deconstruction_element(Some(
+                    new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(None, name)),
+                )),
+                _ => panic!("Tuples deconstruction can only be used with identifiers"),
+            },
+            ProtoTupleElement::Declaration(decl) => {
+                let tuple_member = match &decl.variable_type {
+                    VariableDeclarationType::TypeName(type_name) => {
+                        new_tuple_member_typed_tuple_member(new_typed_tuple_member(
+                            type_name.clone(),
+                            decl.storage_location.clone(),
+                            decl.name.clone(),
+                        ))
+                    }
+                    VariableDeclarationType::VarKeyword(_) => {
+                        new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(
+                            decl.storage_location.clone(),
+                            decl.name.clone(),
+                        ))
+                    }
+                };
+                new_tuple_deconstruction_element(Some(tuple_member))
+            }
+            ProtoTupleElement::StorageLocation(storage_location, name) => {
+                new_tuple_deconstruction_element(Some(new_tuple_member_untyped_tuple_member(
+                    new_untyped_tuple_member(Some(storage_location), name),
+                )))
+            }
+            ProtoTupleElement::Empty => new_tuple_deconstruction_element(None),
+        })
+        .collect();
+    new_tuple_deconstruction_statement(
+        None,
+        proto_tuple._open_paren,
+        new_tuple_deconstruction_elements(elements),
+        proto_tuple._close_paren,
+        equal,
+        expression,
+        semicolon,
+    )
+}
+
+#[derive(Debug)]
+pub enum ProtoTupleElement {
+    Expression(Expression),
+    Declaration(VariableDeclaration),
+    StorageLocation(StorageLocation, Identifier),
+    Empty,
+}
+
+pub fn new_proto_tuple_element_expression(name: Expression) -> ProtoTupleElement {
+    ProtoTupleElement::Expression(name)
+}
+
+pub fn new_proto_tuple_element_declaration(decl: VariableDeclaration) -> ProtoTupleElement {
+    ProtoTupleElement::Declaration(decl)
+}
+
+pub fn new_proto_tuple_element_storage_location(
+    storage_location: StorageLocation,
+    name: Identifier,
+) -> ProtoTupleElement {
+    ProtoTupleElement::StorageLocation(storage_location, name)
+}
+
+pub fn new_proto_tuple_element_empty() -> ProtoTupleElement {
+    ProtoTupleElement::Empty
+}
+
+pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
+    let base: Expression = new_expression_identifier(identifier_path.elements[0].clone());
+    identifier_path.elements[1..].iter().fold(base, |acc, id| {
+        new_expression_member_access_expression(new_member_access_expression(
+            acc,
+            new_empty_terminal(LexemeKind::Period),
+            id.clone(),
+        ))
+    })
+}
+
+/// We use this function to share attributes between a state variable that has a function type.
+/// We find and split the attributes from the function type as needed
+/// TODO(v2) fail gracefully if a wrong attribute is found
+pub fn extract_extra_attributes(
+    mut fun_type: FunctionType,
+) -> (FunctionType, Vec<StateVariableAttribute>) {
+    // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
+    let mut seen_constant = false;
+    let mut seen_internal = false;
+    let mut seen_private = false;
+    let mut seen_public = false;
+    let mut duplicate_found = false;
+
+    let mut extra_attributes: Vec<StateVariableAttribute> = Vec::new();
+    fn add_to_extra(
+        attr: &FunctionTypeAttribute,
+        extra_attributes: &mut Vec<StateVariableAttribute>,
+    ) {
+        match attr {
+      FunctionTypeAttribute::ConstantKeyword(terminal) => {
+        extra_attributes.push(StateVariableAttribute::ConstantKeyword(terminal.clone()));
+      }
+      FunctionTypeAttribute::InternalKeyword(terminal) => {
+        extra_attributes.push(StateVariableAttribute::InternalKeyword(terminal.clone()));
+      }
+      FunctionTypeAttribute::PrivateKeyword(terminal) => {
+        extra_attributes.push(StateVariableAttribute::PrivateKeyword(terminal.clone()));
+      }
+      FunctionTypeAttribute::PublicKeyword(terminal) => {
+        extra_attributes.push(StateVariableAttribute::PublicKeyword(terminal.clone()));
+      }
+      _ => panic!("This is wrong, I don't really know what to do for now, but it should fail gracefully (like a parser error)")
+    }
+    }
+
+    Rc::get_mut(&mut fun_type)
+        .unwrap()
+        .attributes
+        .elements
+        .retain(|attr| {
+            if duplicate_found {
+                add_to_extra(attr, &mut extra_attributes);
+                return false;
+            }
+            let &mut seen = match attr {
+                FunctionTypeAttribute::ConstantKeyword(_) => &mut seen_constant,
+                FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
+                FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
+                FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
+                _ => return true,
+            };
+
+            if seen {
+                duplicate_found = true;
+                add_to_extra(attr, &mut extra_attributes);
+                false
+            } else {
+                seen_constant = true;
+                true
+            }
+        });
+
+    (fun_type, extra_attributes)
+}

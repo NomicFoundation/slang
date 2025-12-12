@@ -4,8 +4,8 @@ PrefixExpression(
     PrefixExpressionStruct {
         operator: TerminalType {
             value: "delete",
-            _l: 0,
-            _r: 6,
+            l: 0,
+            r: 6,
             kind: DeleteKeyword_Reserved,
         },
         operand: IndexAccessExpression(
@@ -13,23 +13,23 @@ PrefixExpression(
                 operand: Identifier(
                     TerminalType {
                         value: "obj",
-                        _l: 7,
-                        _r: 10,
+                        l: 7,
+                        r: 10,
                         kind: Identifier,
                     },
                 ),
                 open_bracket: TerminalType {
                     value: "[",
-                    _l: 10,
-                    _r: 11,
+                    l: 10,
+                    r: 11,
                     kind: OpenBracket,
                 },
                 start: Some(
                     Identifier(
                         TerminalType {
                             value: "slot",
-                            _l: 11,
-                            _r: 15,
+                            l: 11,
+                            r: 15,
                             kind: Identifier,
                         },
                     ),
@@ -37,8 +37,8 @@ PrefixExpression(
                 end: None,
                 close_bracket: TerminalType {
                     value: "]",
-                    _l: 15,
-                    _r: 16,
+                    l: 15,
+                    r: 16,
                     kind: CloseBracket,
                 },
             },

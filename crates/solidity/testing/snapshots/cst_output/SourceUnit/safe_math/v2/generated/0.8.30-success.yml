@@ -7,20 +7,20 @@ SourceUnitStruct {
                 LibraryDefinitionStruct {
                     library_keyword: TerminalType {
                         value: "library",
-                        _l: 0,
-                        _r: 7,
+                        l: 0,
+                        r: 7,
                         kind: LibraryKeyword_Reserved,
                     },
                     name: TerminalType {
                         value: "SafeMath",
-                        _l: 8,
-                        _r: 16,
+                        l: 8,
+                        r: 16,
                         kind: Identifier,
                     },
                     open_brace: TerminalType {
                         value: "{",
-                        _l: 17,
-                        _r: 18,
+                        l: 17,
+                        r: 18,
                         kind: OpenBrace,
                     },
                     members: LibraryMembers {
@@ -29,23 +29,23 @@ SourceUnitStruct {
                                 FunctionDefinitionStruct {
                                     function_keyword: TerminalType {
                                         value: "function",
-                                        _l: 21,
-                                        _r: 29,
+                                        l: 21,
+                                        r: 29,
                                         kind: FunctionKeyword_Reserved,
                                     },
                                     name: Identifier(
                                         TerminalType {
                                             value: "tryAdd",
-                                            _l: 30,
-                                            _r: 36,
+                                            l: 30,
+                                            r: 36,
                                             kind: Identifier,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: TerminalType {
                                             value: "(",
-                                            _l: 36,
-                                            _r: 37,
+                                            l: 36,
+                                            r: 37,
                                             kind: OpenParen,
                                         },
                                         parameters: Parameters {
@@ -55,8 +55,8 @@ SourceUnitStruct {
                                                         UintKeyword(
                                                             TerminalType {
                                                                 value: "uint256",
-                                                                _l: 37,
-                                                                _r: 44,
+                                                                l: 37,
+                                                                r: 44,
                                                                 kind: UintKeyword_Reserved,
                                                             },
                                                         ),
@@ -65,8 +65,8 @@ SourceUnitStruct {
                                                     name: Some(
                                                         TerminalType {
                                                             value: "a",
-                                                            _l: 45,
-                                                            _r: 46,
+                                                            l: 45,
+                                                            r: 46,
                                                             kind: Identifier,
                                                         },
                                                     ),
@@ -76,8 +76,8 @@ SourceUnitStruct {
                                                         UintKeyword(
                                                             TerminalType {
                                                                 value: "uint256",
-                                                                _l: 48,
-                                                                _r: 55,
+                                                                l: 48,
+                                                                r: 55,
                                                                 kind: UintKeyword_Reserved,
                                                             },
                                                         ),
@@ -86,8 +86,8 @@ SourceUnitStruct {
                                                     name: Some(
                                                         TerminalType {
                                                             value: "b",
-                                                            _l: 56,
-                                                            _r: 57,
+                                                            l: 56,
+                                                            r: 57,
                                                             kind: Identifier,
                                                         },
                                                     ),
@@ -96,8 +96,8 @@ SourceUnitStruct {
                                         },
                                         close_paren: TerminalType {
                                             value: ")",
-                                            _l: 57,
-                                            _r: 58,
+                                            l: 57,
+                                            r: 58,
                                             kind: CloseParen,
                                         },
                                     },
@@ -106,16 +106,16 @@ SourceUnitStruct {
                                             InternalKeyword(
                                                 TerminalType {
                                                     value: "internal",
-                                                    _l: 59,
-                                                    _r: 67,
+                                                    l: 59,
+                                                    r: 67,
                                                     kind: InternalKeyword_Reserved,
                                                 },
                                             ),
                                             PureKeyword(
                                                 TerminalType {
                                                     value: "pure",
-                                                    _l: 68,
-                                                    _r: 72,
+                                                    l: 68,
+                                                    r: 72,
                                                     kind: PureKeyword_Reserved,
                                                 },
                                             ),
@@ -125,15 +125,15 @@ SourceUnitStruct {
                                         ReturnsDeclarationStruct {
                                             returns_keyword: TerminalType {
                                                 value: "returns",
-                                                _l: 73,
-                                                _r: 80,
+                                                l: 73,
+                                                r: 80,
                                                 kind: ReturnsKeyword_Reserved,
                                             },
                                             variables: ParametersDeclarationStruct {
                                                 open_paren: TerminalType {
                                                     value: "(",
-                                                    _l: 81,
-                                                    _r: 82,
+                                                    l: 81,
+                                                    r: 82,
                                                     kind: OpenParen,
                                                 },
                                                 parameters: Parameters {
@@ -143,8 +143,8 @@ SourceUnitStruct {
                                                                 BoolKeyword(
                                                                     TerminalType {
                                                                         value: "bool",
-                                                                        _l: 82,
-                                                                        _r: 86,
+                                                                        l: 82,
+                                                                        r: 86,
                                                                         kind: BoolKeyword_Reserved,
                                                                     },
                                                                 ),
@@ -157,8 +157,8 @@ SourceUnitStruct {
                                                                 UintKeyword(
                                                                     TerminalType {
                                                                         value: "uint256",
-                                                                        _l: 88,
-                                                                        _r: 95,
+                                                                        l: 88,
+                                                                        r: 95,
                                                                         kind: UintKeyword_Reserved,
                                                                     },
                                                                 ),
@@ -170,8 +170,8 @@ SourceUnitStruct {
                                                 },
                                                 close_paren: TerminalType {
                                                     value: ")",
-                                                    _l: 95,
-                                                    _r: 96,
+                                                    l: 95,
+                                                    r: 96,
                                                     kind: CloseParen,
                                                 },
                                             },
@@ -181,8 +181,8 @@ SourceUnitStruct {
                                         BlockStruct {
                                             open_brace: TerminalType {
                                                 value: "{",
-                                                _l: 97,
-                                                _r: 98,
+                                                l: 97,
+                                                r: 98,
                                                 kind: OpenBrace,
                                             },
                                             statements: Statements {
@@ -191,15 +191,15 @@ SourceUnitStruct {
                                                         UncheckedBlockStruct {
                                                             unchecked_keyword: TerminalType {
                                                                 value: "unchecked",
-                                                                _l: 103,
-                                                                _r: 112,
+                                                                l: 103,
+                                                                r: 112,
                                                                 kind: UncheckedKeyword_Reserved,
                                                             },
                                                             block: BlockStruct {
                                                                 open_brace: TerminalType {
                                                                     value: "{",
-                                                                    _l: 113,
-                                                                    _r: 114,
+                                                                    l: 113,
+                                                                    r: 114,
                                                                     kind: OpenBrace,
                                                                 },
                                                                 statements: Statements {
@@ -212,8 +212,8 @@ SourceUnitStruct {
                                                                                             UintKeyword(
                                                                                                 TerminalType {
                                                                                                     value: "uint256",
-                                                                                                    _l: 121,
-                                                                                                    _r: 128,
+                                                                                                    l: 121,
+                                                                                                    r: 128,
                                                                                                     kind: UintKeyword_Reserved,
                                                                                                 },
                                                                                             ),
@@ -222,8 +222,8 @@ SourceUnitStruct {
                                                                                     storage_location: None,
                                                                                     name: TerminalType {
                                                                                         value: "c",
-                                                                                        _l: 129,
-                                                                                        _r: 130,
+                                                                                        l: 129,
+                                                                                        r: 130,
                                                                                         kind: Identifier,
                                                                                     },
                                                                                 },
@@ -231,8 +231,8 @@ SourceUnitStruct {
                                                                                     VariableDeclarationValueStruct {
                                                                                         equal: TerminalType {
                                                                                             value: "=",
-                                                                                            _l: 131,
-                                                                                            _r: 132,
+                                                                                            l: 131,
+                                                                                            r: 132,
                                                                                             kind: Equal,
                                                                                         },
                                                                                         expression: AdditiveExpression(
@@ -240,22 +240,22 @@ SourceUnitStruct {
                                                                                                 left_operand: Identifier(
                                                                                                     TerminalType {
                                                                                                         value: "a",
-                                                                                                        _l: 133,
-                                                                                                        _r: 134,
+                                                                                                        l: 133,
+                                                                                                        r: 134,
                                                                                                         kind: Identifier,
                                                                                                     },
                                                                                                 ),
                                                                                                 operator: TerminalType {
                                                                                                     value: "+",
-                                                                                                    _l: 135,
-                                                                                                    _r: 136,
+                                                                                                    l: 135,
+                                                                                                    r: 136,
                                                                                                     kind: Plus,
                                                                                                 },
                                                                                                 right_operand: Identifier(
                                                                                                     TerminalType {
                                                                                                         value: "b",
-                                                                                                        _l: 137,
-                                                                                                        _r: 138,
+                                                                                                        l: 137,
+                                                                                                        r: 138,
                                                                                                         kind: Identifier,
                                                                                                     },
                                                                                                 ),
@@ -265,8 +265,8 @@ SourceUnitStruct {
                                                                                 ),
                                                                                 semicolon: TerminalType {
                                                                                     value: ";",
-                                                                                    _l: 138,
-                                                                                    _r: 139,
+                                                                                    l: 138,
+                                                                                    r: 139,
                                                                                     kind: Semicolon,
                                                                                 },
                                                                             },
@@ -275,14 +275,14 @@ SourceUnitStruct {
                                                                             IfStatementStruct {
                                                                                 if_keyword: TerminalType {
                                                                                     value: "if",
-                                                                                    _l: 146,
-                                                                                    _r: 148,
+                                                                                    l: 146,
+                                                                                    r: 148,
                                                                                     kind: IfKeyword_Reserved,
                                                                                 },
                                                                                 open_paren: TerminalType {
                                                                                     value: "(",
-                                                                                    _l: 149,
-                                                                                    _r: 150,
+                                                                                    l: 149,
+                                                                                    r: 150,
                                                                                     kind: OpenParen,
                                                                                 },
                                                                                 condition: InequalityExpression(
@@ -290,22 +290,22 @@ SourceUnitStruct {
                                                                                         left_operand: Identifier(
                                                                                             TerminalType {
                                                                                                 value: "c",
-                                                                                                _l: 150,
-                                                                                                _r: 151,
+                                                                                                l: 150,
+                                                                                                r: 151,
                                                                                                 kind: Identifier,
                                                                                             },
                                                                                         ),
                                                                                         operator: TerminalType {
                                                                                             value: "<",
-                                                                                            _l: 152,
-                                                                                            _r: 153,
+                                                                                            l: 152,
+                                                                                            r: 153,
                                                                                             kind: LessThan,
                                                                                         },
                                                                                         right_operand: Identifier(
                                                                                             TerminalType {
                                                                                                 value: "a",
-                                                                                                _l: 154,
-                                                                                                _r: 155,
+                                                                                                l: 154,
+                                                                                                r: 155,
                                                                                                 kind: Identifier,
                                                                                             },
                                                                                         ),
@@ -313,16 +313,16 @@ SourceUnitStruct {
                                                                                 ),
                                                                                 close_paren: TerminalType {
                                                                                     value: ")",
-                                                                                    _l: 155,
-                                                                                    _r: 156,
+                                                                                    l: 155,
+                                                                                    r: 156,
                                                                                     kind: CloseParen,
                                                                                 },
                                                                                 body: ReturnStatement(
                                                                                     ReturnStatementStruct {
                                                                                         return_keyword: TerminalType {
                                                                                             value: "return",
-                                                                                            _l: 157,
-                                                                                            _r: 163,
+                                                                                            l: 157,
+                                                                                            r: 163,
                                                                                             kind: ReturnKeyword_Reserved,
                                                                                         },
                                                                                         expression: Some(
@@ -330,8 +330,8 @@ SourceUnitStruct {
                                                                                                 TupleExpressionStruct {
                                                                                                     open_paren: TerminalType {
                                                                                                         value: "(",
-                                                                                                        _l: 164,
-                                                                                                        _r: 165,
+                                                                                                        l: 164,
+                                                                                                        r: 165,
                                                                                                         kind: OpenParen,
                                                                                                     },
                                                                                                     items: TupleValues {
@@ -341,8 +341,8 @@ SourceUnitStruct {
                                                                                                                     FalseKeyword(
                                                                                                                         TerminalType {
                                                                                                                             value: "false",
-                                                                                                                            _l: 165,
-                                                                                                                            _r: 170,
+                                                                                                                            l: 165,
+                                                                                                                            r: 170,
                                                                                                                             kind: FalseKeyword_Reserved,
                                                                                                                         },
                                                                                                                     ),
@@ -354,8 +354,8 @@ SourceUnitStruct {
                                                                                                                         DecimalNumberExpressionStruct {
                                                                                                                             literal: TerminalType {
                                                                                                                                 value: "0",
-                                                                                                                                _l: 172,
-                                                                                                                                _r: 173,
+                                                                                                                                l: 172,
+                                                                                                                                r: 173,
                                                                                                                                 kind: DecimalLiteral,
                                                                                                                             },
                                                                                                                             unit: None,
@@ -367,8 +367,8 @@ SourceUnitStruct {
                                                                                                     },
                                                                                                     close_paren: TerminalType {
                                                                                                         value: ")",
-                                                                                                        _l: 173,
-                                                                                                        _r: 174,
+                                                                                                        l: 173,
+                                                                                                        r: 174,
                                                                                                         kind: CloseParen,
                                                                                                     },
                                                                                                 },
@@ -376,8 +376,8 @@ SourceUnitStruct {
                                                                                         ),
                                                                                         semicolon: TerminalType {
                                                                                             value: ";",
-                                                                                            _l: 174,
-                                                                                            _r: 175,
+                                                                                            l: 174,
+                                                                                            r: 175,
                                                                                             kind: Semicolon,
                                                                                         },
                                                                                     },
@@ -389,8 +389,8 @@ SourceUnitStruct {
                                                                             ReturnStatementStruct {
                                                                                 return_keyword: TerminalType {
                                                                                     value: "return",
-                                                                                    _l: 182,
-                                                                                    _r: 188,
+                                                                                    l: 182,
+                                                                                    r: 188,
                                                                                     kind: ReturnKeyword_Reserved,
                                                                                 },
                                                                                 expression: Some(
@@ -398,8 +398,8 @@ SourceUnitStruct {
                                                                                         TupleExpressionStruct {
                                                                                             open_paren: TerminalType {
                                                                                                 value: "(",
-                                                                                                _l: 189,
-                                                                                                _r: 190,
+                                                                                                l: 189,
+                                                                                                r: 190,
                                                                                                 kind: OpenParen,
                                                                                             },
                                                                                             items: TupleValues {
@@ -409,8 +409,8 @@ SourceUnitStruct {
                                                                                                             TrueKeyword(
                                                                                                                 TerminalType {
                                                                                                                     value: "true",
-                                                                                                                    _l: 190,
-                                                                                                                    _r: 194,
+                                                                                                                    l: 190,
+                                                                                                                    r: 194,
                                                                                                                     kind: TrueKeyword_Reserved,
                                                                                                                 },
                                                                                                             ),
@@ -421,8 +421,8 @@ SourceUnitStruct {
                                                                                                             Identifier(
                                                                                                                 TerminalType {
                                                                                                                     value: "c",
-                                                                                                                    _l: 196,
-                                                                                                                    _r: 197,
+                                                                                                                    l: 196,
+                                                                                                                    r: 197,
                                                                                                                     kind: Identifier,
                                                                                                                 },
                                                                                                             ),
@@ -432,8 +432,8 @@ SourceUnitStruct {
                                                                                             },
                                                                                             close_paren: TerminalType {
                                                                                                 value: ")",
-                                                                                                _l: 197,
-                                                                                                _r: 198,
+                                                                                                l: 197,
+                                                                                                r: 198,
                                                                                                 kind: CloseParen,
                                                                                             },
                                                                                         },
@@ -441,8 +441,8 @@ SourceUnitStruct {
                                                                                 ),
                                                                                 semicolon: TerminalType {
                                                                                     value: ";",
-                                                                                    _l: 198,
-                                                                                    _r: 199,
+                                                                                    l: 198,
+                                                                                    r: 199,
                                                                                     kind: Semicolon,
                                                                                 },
                                                                             },
@@ -451,8 +451,8 @@ SourceUnitStruct {
                                                                 },
                                                                 close_brace: TerminalType {
                                                                     value: "}",
-                                                                    _l: 204,
-                                                                    _r: 205,
+                                                                    l: 204,
+                                                                    r: 205,
                                                                     kind: CloseBrace,
                                                                 },
                                                             },
@@ -462,8 +462,8 @@ SourceUnitStruct {
                                             },
                                             close_brace: TerminalType {
                                                 value: "}",
-                                                _l: 208,
-                                                _r: 209,
+                                                l: 208,
+                                                r: 209,
                                                 kind: CloseBrace,
                                             },
                                         },
@@ -474,8 +474,8 @@ SourceUnitStruct {
                     },
                     close_brace: TerminalType {
                         value: "}",
-                        _l: 210,
-                        _r: 211,
+                        l: 210,
+                        r: 211,
                         kind: CloseBrace,
                     },
                 },

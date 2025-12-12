@@ -3,8 +3,8 @@
 Identifier(
     TerminalType {
         value: "szabo",
-        _l: 0,
-        _r: 5,
+        l: 0,
+        r: 5,
         kind: Identifier,
     },
 )

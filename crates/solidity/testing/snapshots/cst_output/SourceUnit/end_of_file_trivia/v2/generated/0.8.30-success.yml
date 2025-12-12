@@ -8,14 +8,14 @@ SourceUnitStruct {
                     abstract_keyword: None,
                     contract_keyword: TerminalType {
                         value: "contract",
-                        _l: 0,
-                        _r: 8,
+                        l: 0,
+                        r: 8,
                         kind: ContractKeyword_Reserved,
                     },
                     name: TerminalType {
                         value: "X",
-                        _l: 9,
-                        _r: 10,
+                        l: 9,
+                        r: 10,
                         kind: Identifier,
                     },
                     specifiers: ContractSpecifiers {
@@ -23,8 +23,8 @@ SourceUnitStruct {
                     },
                     open_brace: TerminalType {
                         value: "{",
-                        _l: 11,
-                        _r: 12,
+                        l: 11,
+                        r: 12,
                         kind: OpenBrace,
                     },
                     members: ContractMembers {
@@ -32,8 +32,8 @@ SourceUnitStruct {
                     },
                     close_brace: TerminalType {
                         value: "}",
-                        _l: 13,
-                        _r: 14,
+                        l: 13,
+                        r: 14,
                         kind: CloseBrace,
                     },
                 },

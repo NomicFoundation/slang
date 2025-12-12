@@ -348,7 +348,7 @@ impl IrModelBuilder {
                 model::Field::Required { reference } => (reference, false),
                 model::Field::Optional { reference, .. } => (reference, true),
             };
-            let r#type = self.find_node_type(&reference);
+            let r#type = self.find_node_type(reference);
 
             Field {
                 label: label.clone(),
