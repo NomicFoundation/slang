@@ -243,7 +243,6 @@ pub fn new_proto_tuple_element_empty() -> ProtoTupleElement {
 }
 
 pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
-    // TODO: This is just a placeholder, we need to fix this
     let base: Expression = new_expression_identifier(identifier_path.elements[0].clone());
     identifier_path.elements[1..].iter().fold(base, |acc, id| {
         new_expression_member_access_expression(new_member_access_expression(
