@@ -13,7 +13,7 @@ pub struct Lexeme {
 pub enum LexemeKind {
     UNRECOGNIZED,
 
-    {% for kind in model.parser.lexer.lexeme_kinds -%}
-        {{ kind }},
+    {% for parent_type, unique in model.ir_model.terminals -%}
+        {{ parent_type }},
     {% endfor %}
 }

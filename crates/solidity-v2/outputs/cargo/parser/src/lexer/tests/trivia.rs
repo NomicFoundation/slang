@@ -1,9 +1,9 @@
 use std::ops::Range;
 
+use slang_solidity_v2_ast::ast::lexemes::LexemeKind as L;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
-use crate::lexer::lexemes::LexemeKind as L;
 use crate::lexer::tests::test_lexer_output;
 
 #[test]

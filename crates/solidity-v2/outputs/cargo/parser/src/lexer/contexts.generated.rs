@@ -1,9 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use logos::{Lexer, Logos};
+use slang_solidity_v2_ast::ast::lexemes::{Lexeme, LexemeKind};
 use slang_solidity_v2_common::versions::LanguageVersion;
-
-use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
 #[derive(Clone, Copy, Debug)]
 pub enum ContextKind {

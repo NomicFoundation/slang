@@ -1,7 +1,7 @@
 use logos::{Lexer, Logos};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::lexer::lexemes::{Lexeme, LexemeKind};
+use slang_solidity_v2_ast::ast::lexemes::{Lexeme, LexemeKind};
 
 #[derive(Clone, Copy, Debug)]
 pub enum ContextKind {
