@@ -24,15 +24,19 @@ fn test_semantic_analysis_and_ast_tree() -> Result<()> {
     assert_eq!(ownable_ir.file_id(), "ownable.sol");
     assert_eq!(activatable_ir.file_id(), "activatable.sol");
 
-    assert_eq!(main_ir.contracts().count(), 1);
-    assert_eq!(ownable_ir.contracts().count(), 1);
-    assert_eq!(activatable_ir.contracts().count(), 1);
+    assert_eq!(main_ir.contracts().len(), 1);
+    assert_eq!(ownable_ir.contracts().len(), 1);
+    assert_eq!(activatable_ir.contracts().len(), 1);
 
-    let counter_contract = main_ir.contracts().next().unwrap();
+    let main_contracts = main_ir.contracts();
+    let counter_contract = main_contracts.first().unwrap();
     assert_eq!(counter_contract.name().unparse(), "Counter");
-    assert_eq!(counter_contract.inheritance_types().count(), 2);
+    assert_eq!(counter_contract.inheritance_types().iter().count(), 2);
 
-    let counter_bases = counter_contract.inheritance_types().collect::<Vec<_>>();
+    let counter_bases = counter_contract
+        .inheritance_types()
+        .iter()
+        .collect::<Vec<_>>();
 
     let activatable_contract = counter_bases[0]
         .type_name()
@@ -40,7 +44,7 @@ fn test_semantic_analysis_and_ast_tree() -> Result<()> {
         .expect("Counter base is resolved")
         .as_contract()
         .expect("Counter base is a contract");
-    assert_eq!(activatable_contract.name().unparse(), "Activatable");
+    assert_eq!(activatable_contract.name().unparse(), "Ownable");
 
     let ownable_contract = counter_bases[1]
         .type_name()
@@ -48,7 +52,7 @@ fn test_semantic_analysis_and_ast_tree() -> Result<()> {
         .expect("Counter base is resolved")
         .as_contract()
         .expect("Counter base is a contract");
-    assert_eq!(ownable_contract.name().unparse(), "Ownable");
+    assert_eq!(ownable_contract.name().unparse(), "Activatable");
 
     Ok(())
 }
@@ -58,7 +62,7 @@ fn test_get_all_definitions() -> Result<()> {
     let unit = build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
-    assert_eq!(semantic.all_definitions().count(), 18);
+    assert_eq!(semantic.all_definitions().count(), 22);
 
     Ok(())
 }
@@ -95,17 +99,17 @@ fn test_get_direct_contract_bases() -> Result<()> {
     let counter = semantic
         .find_contract_by_name("Counter")
         .expect("can find Counter contract");
-    let bases = counter.direct_bases().collect::<Vec<_>>();
+    let bases = counter.direct_bases();
     assert_eq!(bases.len(), 2);
 
-    let ContractBase::Contract(activatable) = &bases[0] else {
-        panic!("Base is not a contract");
-    };
-    assert_eq!(activatable.name().unparse(), "Activatable");
-    let ContractBase::Contract(ownable) = &bases[1] else {
+    let ContractBase::Contract(ownable) = &bases[0] else {
         panic!("Base is not a contract");
     };
     assert_eq!(ownable.name().unparse(), "Ownable");
+    let ContractBase::Contract(activatable) = &bases[1] else {
+        panic!("Base is not a contract");
+    };
+    assert_eq!(activatable.name().unparse(), "Activatable");
 
     Ok(())
 }
@@ -118,7 +122,7 @@ fn test_get_linearised_contract_bases() -> Result<()> {
     let counter = semantic
         .find_contract_by_name("Counter")
         .expect("can find Counter contract");
-    let bases = counter.linearised_bases().collect::<Vec<_>>();
+    let bases = counter.linearised_bases();
     assert_eq!(bases.len(), 3);
 
     let ContractBase::Contract(counter) = &bases[0] else {

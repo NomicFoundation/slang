@@ -7,7 +7,7 @@
 pub type SourceUnit = Rc<SourceUnitStruct>;
 
 pub struct SourceUnitStruct {
-    ir_node: input_ir::SourceUnit,
+    pub(crate) ir_node: input_ir::SourceUnit,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -19,18 +19,18 @@ impl SourceUnitStruct {
         }
     }
 
-    pub fn members(&self) -> impl Iterator<Item = SourceUnitMember> + use<'_> {
-        self.ir_node
-            .members
-            .iter()
-            .map(|child| Rc::new(SourceUnitMemberStruct::create(child, &self.semantic)))
+    pub fn members(&self) -> SourceUnitMembers {
+        Rc::new(SourceUnitMembersStruct::create(
+            &self.ir_node.members,
+            &self.semantic,
+        ))
     }
 }
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
 pub struct PragmaDirectiveStruct {
-    ir_node: input_ir::PragmaDirective,
+    pub(crate) ir_node: input_ir::PragmaDirective,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -53,7 +53,7 @@ impl PragmaDirectiveStruct {
 pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
 pub struct AbicoderPragmaStruct {
-    ir_node: input_ir::AbicoderPragma,
+    pub(crate) ir_node: input_ir::AbicoderPragma,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -79,7 +79,7 @@ impl AbicoderPragmaStruct {
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
 pub struct ExperimentalPragmaStruct {
-    ir_node: input_ir::ExperimentalPragma,
+    pub(crate) ir_node: input_ir::ExperimentalPragma,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -105,7 +105,7 @@ impl ExperimentalPragmaStruct {
 pub type VersionPragma = Rc<VersionPragmaStruct>;
 
 pub struct VersionPragmaStruct {
-    ir_node: input_ir::VersionPragma,
+    pub(crate) ir_node: input_ir::VersionPragma,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -119,12 +119,19 @@ impl VersionPragmaStruct {
             semantic: Rc::clone(semantic),
         }
     }
+
+    pub fn sets(&self) -> VersionExpressionSets {
+        Rc::new(VersionExpressionSetsStruct::create(
+            &self.ir_node.sets,
+            &self.semantic,
+        ))
+    }
 }
 
 pub type VersionRange = Rc<VersionRangeStruct>;
 
 pub struct VersionRangeStruct {
-    ir_node: input_ir::VersionRange,
+    pub(crate) ir_node: input_ir::VersionRange,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -157,7 +164,7 @@ impl VersionRangeStruct {
 pub type VersionTerm = Rc<VersionTermStruct>;
 
 pub struct VersionTermStruct {
-    ir_node: input_ir::VersionTerm,
+    pub(crate) ir_node: input_ir::VersionTerm,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -187,7 +194,7 @@ impl VersionTermStruct {
 pub type PathImport = Rc<PathImportStruct>;
 
 pub struct PathImportStruct {
-    ir_node: input_ir::PathImport,
+    pub(crate) ir_node: input_ir::PathImport,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -214,7 +221,7 @@ impl PathImportStruct {
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
 pub struct ImportDeconstructionStruct {
-    ir_node: input_ir::ImportDeconstruction,
+    pub(crate) ir_node: input_ir::ImportDeconstruction,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -229,13 +236,11 @@ impl ImportDeconstructionStruct {
         }
     }
 
-    pub fn symbols(&self) -> impl Iterator<Item = ImportDeconstructionSymbol> + use<'_> {
-        self.ir_node.symbols.iter().map(|child| {
-            Rc::new(ImportDeconstructionSymbolStruct::create(
-                child,
-                &self.semantic,
-            ))
-        })
+    pub fn symbols(&self) -> ImportDeconstructionSymbols {
+        Rc::new(ImportDeconstructionSymbolsStruct::create(
+            &self.ir_node.symbols,
+            &self.semantic,
+        ))
     }
 
     pub fn path(&self) -> Rc<TerminalNode> {
@@ -246,7 +251,7 @@ impl ImportDeconstructionStruct {
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
 pub struct ImportDeconstructionSymbolStruct {
-    ir_node: input_ir::ImportDeconstructionSymbol,
+    pub(crate) ir_node: input_ir::ImportDeconstructionSymbol,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -276,7 +281,7 @@ impl ImportDeconstructionSymbolStruct {
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
 pub struct UsingDirectiveStruct {
-    ir_node: input_ir::UsingDirective,
+    pub(crate) ir_node: input_ir::UsingDirective,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -313,7 +318,7 @@ impl UsingDirectiveStruct {
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
 pub struct UsingDeconstructionStruct {
-    ir_node: input_ir::UsingDeconstruction,
+    pub(crate) ir_node: input_ir::UsingDeconstruction,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -328,20 +333,18 @@ impl UsingDeconstructionStruct {
         }
     }
 
-    pub fn symbols(&self) -> impl Iterator<Item = UsingDeconstructionSymbol> + use<'_> {
-        self.ir_node.symbols.iter().map(|child| {
-            Rc::new(UsingDeconstructionSymbolStruct::create(
-                child,
-                &self.semantic,
-            ))
-        })
+    pub fn symbols(&self) -> UsingDeconstructionSymbols {
+        Rc::new(UsingDeconstructionSymbolsStruct::create(
+            &self.ir_node.symbols,
+            &self.semantic,
+        ))
     }
 }
 
 pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
 pub struct UsingDeconstructionSymbolStruct {
-    ir_node: input_ir::UsingDeconstructionSymbol,
+    pub(crate) ir_node: input_ir::UsingDeconstructionSymbol,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -374,7 +377,7 @@ impl UsingDeconstructionSymbolStruct {
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
 pub struct ContractDefinitionStruct {
-    ir_node: input_ir::ContractDefinition,
+    pub(crate) ir_node: input_ir::ContractDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -397,18 +400,18 @@ impl ContractDefinitionStruct {
         Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
-    pub fn members(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
-        self.ir_node
-            .members
-            .iter()
-            .map(|child| Rc::new(ContractMemberStruct::create(child, &self.semantic)))
+    pub fn members(&self) -> ContractMembers {
+        Rc::new(ContractMembersStruct::create(
+            &self.ir_node.members,
+            &self.semantic,
+        ))
     }
 
-    pub fn inheritance_types(&self) -> impl Iterator<Item = InheritanceType> + use<'_> {
-        self.ir_node
-            .inheritance_types
-            .iter()
-            .map(|child| Rc::new(InheritanceTypeStruct::create(child, &self.semantic)))
+    pub fn inheritance_types(&self) -> InheritanceTypes {
+        Rc::new(InheritanceTypesStruct::create(
+            &self.ir_node.inheritance_types,
+            &self.semantic,
+        ))
     }
 
     pub fn storage_layout(&self) -> Option<Expression> {
@@ -422,7 +425,7 @@ impl ContractDefinitionStruct {
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
 pub struct InheritanceTypeStruct {
-    ir_node: input_ir::InheritanceType,
+    pub(crate) ir_node: input_ir::InheritanceType,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -455,7 +458,7 @@ impl InheritanceTypeStruct {
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
 pub struct InterfaceDefinitionStruct {
-    ir_node: input_ir::InterfaceDefinition,
+    pub(crate) ir_node: input_ir::InterfaceDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -474,18 +477,25 @@ impl InterfaceDefinitionStruct {
         Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
-    pub fn members(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
+    pub fn inheritance(&self) -> Option<InheritanceTypes> {
         self.ir_node
-            .members
-            .iter()
-            .map(|child| Rc::new(ContractMemberStruct::create(child, &self.semantic)))
+            .inheritance
+            .as_ref()
+            .map(|ir_node| Rc::new(InheritanceTypesStruct::create(ir_node, &self.semantic)))
+    }
+
+    pub fn members(&self) -> InterfaceMembers {
+        Rc::new(InterfaceMembersStruct::create(
+            &self.ir_node.members,
+            &self.semantic,
+        ))
     }
 }
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
 pub struct LibraryDefinitionStruct {
-    ir_node: input_ir::LibraryDefinition,
+    pub(crate) ir_node: input_ir::LibraryDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -504,18 +514,18 @@ impl LibraryDefinitionStruct {
         Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
-    pub fn members(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
-        self.ir_node
-            .members
-            .iter()
-            .map(|child| Rc::new(ContractMemberStruct::create(child, &self.semantic)))
+    pub fn members(&self) -> LibraryMembers {
+        Rc::new(LibraryMembersStruct::create(
+            &self.ir_node.members,
+            &self.semantic,
+        ))
     }
 }
 
 pub type StructDefinition = Rc<StructDefinitionStruct>;
 
 pub struct StructDefinitionStruct {
-    ir_node: input_ir::StructDefinition,
+    pub(crate) ir_node: input_ir::StructDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -534,18 +544,18 @@ impl StructDefinitionStruct {
         Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
-    pub fn members(&self) -> impl Iterator<Item = StructMember> + use<'_> {
-        self.ir_node
-            .members
-            .iter()
-            .map(|child| Rc::new(StructMemberStruct::create(child, &self.semantic)))
+    pub fn members(&self) -> StructMembers {
+        Rc::new(StructMembersStruct::create(
+            &self.ir_node.members,
+            &self.semantic,
+        ))
     }
 }
 
 pub type StructMember = Rc<StructMemberStruct>;
 
 pub struct StructMemberStruct {
-    ir_node: input_ir::StructMember,
+    pub(crate) ir_node: input_ir::StructMember,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -575,7 +585,7 @@ impl StructMemberStruct {
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
 pub struct EnumDefinitionStruct {
-    ir_node: input_ir::EnumDefinition,
+    pub(crate) ir_node: input_ir::EnumDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -594,15 +604,18 @@ impl EnumDefinitionStruct {
         Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
-    pub fn members(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-        self.ir_node.members.iter().map(Rc::clone)
+    pub fn members(&self) -> EnumMembers {
+        Rc::new(EnumMembersStruct::create(
+            &self.ir_node.members,
+            &self.semantic,
+        ))
     }
 }
 
 pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
 pub struct ConstantDefinitionStruct {
-    ir_node: input_ir::ConstantDefinition,
+    pub(crate) ir_node: input_ir::ConstantDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -648,7 +661,7 @@ impl ConstantDefinitionStruct {
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
 pub struct StateVariableDefinitionStruct {
-    ir_node: input_ir::StateVariableDefinition,
+    pub(crate) ir_node: input_ir::StateVariableDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -694,12 +707,19 @@ impl StateVariableDefinitionStruct {
             &self.semantic,
         ))
     }
+
+    pub fn override_specifier(&self) -> Option<OverridePaths> {
+        self.ir_node
+            .override_specifier
+            .as_ref()
+            .map(|ir_node| Rc::new(OverridePathsStruct::create(ir_node, &self.semantic)))
+    }
 }
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
 pub struct FunctionDefinitionStruct {
-    ir_node: input_ir::FunctionDefinition,
+    pub(crate) ir_node: input_ir::FunctionDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -714,11 +734,18 @@ impl FunctionDefinitionStruct {
         }
     }
 
-    pub fn parameters(&self) -> impl Iterator<Item = Parameter> + use<'_> {
+    pub fn parameters(&self) -> Parameters {
+        Rc::new(ParametersStruct::create(
+            &self.ir_node.parameters,
+            &self.semantic,
+        ))
+    }
+
+    pub fn returns(&self) -> Option<Parameters> {
         self.ir_node
-            .parameters
-            .iter()
-            .map(|child| Rc::new(ParameterStruct::create(child, &self.semantic)))
+            .returns
+            .as_ref()
+            .map(|ir_node| Rc::new(ParametersStruct::create(ir_node, &self.semantic)))
     }
 
     pub fn kind(&self) -> FunctionKind {
@@ -760,18 +787,25 @@ impl FunctionDefinitionStruct {
         self.ir_node.virtual_keyword
     }
 
-    pub fn modifier_invocations(&self) -> impl Iterator<Item = ModifierInvocation> + use<'_> {
+    pub fn override_specifier(&self) -> Option<OverridePaths> {
         self.ir_node
-            .modifier_invocations
-            .iter()
-            .map(|child| Rc::new(ModifierInvocationStruct::create(child, &self.semantic)))
+            .override_specifier
+            .as_ref()
+            .map(|ir_node| Rc::new(OverridePathsStruct::create(ir_node, &self.semantic)))
+    }
+
+    pub fn modifier_invocations(&self) -> ModifierInvocations {
+        Rc::new(ModifierInvocationsStruct::create(
+            &self.ir_node.modifier_invocations,
+            &self.semantic,
+        ))
     }
 }
 
 pub type Parameter = Rc<ParameterStruct>;
 
 pub struct ParameterStruct {
-    ir_node: input_ir::Parameter,
+    pub(crate) ir_node: input_ir::Parameter,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -812,7 +846,7 @@ impl ParameterStruct {
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
 pub struct OverrideSpecifierStruct {
-    ir_node: input_ir::OverrideSpecifier,
+    pub(crate) ir_node: input_ir::OverrideSpecifier,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -826,12 +860,19 @@ impl OverrideSpecifierStruct {
             semantic: Rc::clone(semantic),
         }
     }
+
+    pub fn overridden(&self) -> Option<OverridePaths> {
+        self.ir_node
+            .overridden
+            .as_ref()
+            .map(|ir_node| Rc::new(OverridePathsStruct::create(ir_node, &self.semantic)))
+    }
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
 pub struct ModifierInvocationStruct {
-    ir_node: input_ir::ModifierInvocation,
+    pub(crate) ir_node: input_ir::ModifierInvocation,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -864,7 +905,7 @@ impl ModifierInvocationStruct {
 pub type EventDefinition = Rc<EventDefinitionStruct>;
 
 pub struct EventDefinitionStruct {
-    ir_node: input_ir::EventDefinition,
+    pub(crate) ir_node: input_ir::EventDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -887,18 +928,18 @@ impl EventDefinitionStruct {
         self.ir_node.anonymous_keyword
     }
 
-    pub fn parameters(&self) -> impl Iterator<Item = Parameter> + use<'_> {
-        self.ir_node
-            .parameters
-            .iter()
-            .map(|child| Rc::new(ParameterStruct::create(child, &self.semantic)))
+    pub fn parameters(&self) -> Parameters {
+        Rc::new(ParametersStruct::create(
+            &self.ir_node.parameters,
+            &self.semantic,
+        ))
     }
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
 
 pub struct UserDefinedValueTypeDefinitionStruct {
-    ir_node: input_ir::UserDefinedValueTypeDefinition,
+    pub(crate) ir_node: input_ir::UserDefinedValueTypeDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -928,7 +969,7 @@ impl UserDefinedValueTypeDefinitionStruct {
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
 pub struct ErrorDefinitionStruct {
-    ir_node: input_ir::ErrorDefinition,
+    pub(crate) ir_node: input_ir::ErrorDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -947,18 +988,18 @@ impl ErrorDefinitionStruct {
         Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
     }
 
-    pub fn parameters(&self) -> impl Iterator<Item = Parameter> + use<'_> {
-        self.ir_node
-            .parameters
-            .iter()
-            .map(|child| Rc::new(ParameterStruct::create(child, &self.semantic)))
+    pub fn parameters(&self) -> Parameters {
+        Rc::new(ParametersStruct::create(
+            &self.ir_node.parameters,
+            &self.semantic,
+        ))
     }
 }
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
 pub struct ArrayTypeNameStruct {
-    ir_node: input_ir::ArrayTypeName,
+    pub(crate) ir_node: input_ir::ArrayTypeName,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -991,7 +1032,7 @@ impl ArrayTypeNameStruct {
 pub type FunctionType = Rc<FunctionTypeStruct>;
 
 pub struct FunctionTypeStruct {
-    ir_node: input_ir::FunctionType,
+    pub(crate) ir_node: input_ir::FunctionType,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1006,11 +1047,18 @@ impl FunctionTypeStruct {
         }
     }
 
-    pub fn parameters(&self) -> impl Iterator<Item = Parameter> + use<'_> {
+    pub fn parameters(&self) -> Parameters {
+        Rc::new(ParametersStruct::create(
+            &self.ir_node.parameters,
+            &self.semantic,
+        ))
+    }
+
+    pub fn returns(&self) -> Option<Parameters> {
         self.ir_node
-            .parameters
-            .iter()
-            .map(|child| Rc::new(ParameterStruct::create(child, &self.semantic)))
+            .returns
+            .as_ref()
+            .map(|ir_node| Rc::new(ParametersStruct::create(ir_node, &self.semantic)))
     }
 
     pub fn visibility(&self) -> FunctionVisibility {
@@ -1031,7 +1079,7 @@ impl FunctionTypeStruct {
 pub type MappingType = Rc<MappingTypeStruct>;
 
 pub struct MappingTypeStruct {
-    ir_node: input_ir::MappingType,
+    pub(crate) ir_node: input_ir::MappingType,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1061,7 +1109,7 @@ impl MappingTypeStruct {
 pub type AddressType = Rc<AddressTypeStruct>;
 
 pub struct AddressTypeStruct {
-    ir_node: input_ir::AddressType,
+    pub(crate) ir_node: input_ir::AddressType,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1081,7 +1129,7 @@ impl AddressTypeStruct {
 pub type Block = Rc<BlockStruct>;
 
 pub struct BlockStruct {
-    ir_node: input_ir::Block,
+    pub(crate) ir_node: input_ir::Block,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1093,18 +1141,18 @@ impl BlockStruct {
         }
     }
 
-    pub fn statements(&self) -> impl Iterator<Item = Statement> + use<'_> {
-        self.ir_node
-            .statements
-            .iter()
-            .map(|child| Rc::new(StatementStruct::create(child, &self.semantic)))
+    pub fn statements(&self) -> Statements {
+        Rc::new(StatementsStruct::create(
+            &self.ir_node.statements,
+            &self.semantic,
+        ))
     }
 }
 
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
 pub struct UncheckedBlockStruct {
-    ir_node: input_ir::UncheckedBlock,
+    pub(crate) ir_node: input_ir::UncheckedBlock,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1127,7 +1175,7 @@ impl UncheckedBlockStruct {
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
 pub struct ExpressionStatementStruct {
-    ir_node: input_ir::ExpressionStatement,
+    pub(crate) ir_node: input_ir::ExpressionStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1153,7 +1201,7 @@ impl ExpressionStatementStruct {
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
 pub struct AssemblyStatementStruct {
-    ir_node: input_ir::AssemblyStatement,
+    pub(crate) ir_node: input_ir::AssemblyStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1172,8 +1220,8 @@ impl AssemblyStatementStruct {
         Rc::new(YulBlockStruct::create(&self.ir_node.body, &self.semantic))
     }
 
-    pub fn flags(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-        self.ir_node.flags.iter().map(Rc::clone)
+    pub fn flags(&self) -> Vec<Rc<TerminalNode>> {
+        self.ir_node.flags.clone()
     }
 
     pub fn label(&self) -> Option<Rc<TerminalNode>> {
@@ -1184,7 +1232,7 @@ impl AssemblyStatementStruct {
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
 pub struct TupleDeconstructionStatementStruct {
-    ir_node: input_ir::TupleDeconstructionStatement,
+    pub(crate) ir_node: input_ir::TupleDeconstructionStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1206,20 +1254,18 @@ impl TupleDeconstructionStatementStruct {
         ))
     }
 
-    pub fn members(&self) -> impl Iterator<Item = TupleDeconstructionMember> + use<'_> {
-        self.ir_node.members.iter().map(|child| {
-            Rc::new(TupleDeconstructionMemberStruct::create(
-                child,
-                &self.semantic,
-            ))
-        })
+    pub fn members(&self) -> TupleDeconstructionMembers {
+        Rc::new(TupleDeconstructionMembersStruct::create(
+            &self.ir_node.members,
+            &self.semantic,
+        ))
     }
 }
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
 pub struct VariableDeclarationStatementStruct {
-    ir_node: input_ir::VariableDeclarationStatement,
+    pub(crate) ir_node: input_ir::VariableDeclarationStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1263,7 +1309,7 @@ impl VariableDeclarationStatementStruct {
 pub type IfStatement = Rc<IfStatementStruct>;
 
 pub struct IfStatementStruct {
-    ir_node: input_ir::IfStatement,
+    pub(crate) ir_node: input_ir::IfStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1297,7 +1343,7 @@ impl IfStatementStruct {
 pub type ForStatement = Rc<ForStatementStruct>;
 
 pub struct ForStatementStruct {
-    ir_node: input_ir::ForStatement,
+    pub(crate) ir_node: input_ir::ForStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1341,7 +1387,7 @@ impl ForStatementStruct {
 pub type WhileStatement = Rc<WhileStatementStruct>;
 
 pub struct WhileStatementStruct {
-    ir_node: input_ir::WhileStatement,
+    pub(crate) ir_node: input_ir::WhileStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1371,7 +1417,7 @@ impl WhileStatementStruct {
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
 pub struct DoWhileStatementStruct {
-    ir_node: input_ir::DoWhileStatement,
+    pub(crate) ir_node: input_ir::DoWhileStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1401,7 +1447,7 @@ impl DoWhileStatementStruct {
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
 pub struct ContinueStatementStruct {
-    ir_node: input_ir::ContinueStatement,
+    pub(crate) ir_node: input_ir::ContinueStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1420,7 +1466,7 @@ impl ContinueStatementStruct {
 pub type BreakStatement = Rc<BreakStatementStruct>;
 
 pub struct BreakStatementStruct {
-    ir_node: input_ir::BreakStatement,
+    pub(crate) ir_node: input_ir::BreakStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1439,7 +1485,7 @@ impl BreakStatementStruct {
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
 pub struct ReturnStatementStruct {
-    ir_node: input_ir::ReturnStatement,
+    pub(crate) ir_node: input_ir::ReturnStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1465,7 +1511,7 @@ impl ReturnStatementStruct {
 pub type EmitStatement = Rc<EmitStatementStruct>;
 
 pub struct EmitStatementStruct {
-    ir_node: input_ir::EmitStatement,
+    pub(crate) ir_node: input_ir::EmitStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1498,7 +1544,7 @@ impl EmitStatementStruct {
 pub type TryStatement = Rc<TryStatementStruct>;
 
 pub struct TryStatementStruct {
-    ir_node: input_ir::TryStatement,
+    pub(crate) ir_node: input_ir::TryStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1520,22 +1566,29 @@ impl TryStatementStruct {
         ))
     }
 
+    pub fn returns(&self) -> Option<Parameters> {
+        self.ir_node
+            .returns
+            .as_ref()
+            .map(|ir_node| Rc::new(ParametersStruct::create(ir_node, &self.semantic)))
+    }
+
     pub fn body(&self) -> Block {
         Rc::new(BlockStruct::create(&self.ir_node.body, &self.semantic))
     }
 
-    pub fn catch_clauses(&self) -> impl Iterator<Item = CatchClause> + use<'_> {
-        self.ir_node
-            .catch_clauses
-            .iter()
-            .map(|child| Rc::new(CatchClauseStruct::create(child, &self.semantic)))
+    pub fn catch_clauses(&self) -> CatchClauses {
+        Rc::new(CatchClausesStruct::create(
+            &self.ir_node.catch_clauses,
+            &self.semantic,
+        ))
     }
 }
 
 pub type CatchClause = Rc<CatchClauseStruct>;
 
 pub struct CatchClauseStruct {
-    ir_node: input_ir::CatchClause,
+    pub(crate) ir_node: input_ir::CatchClause,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1562,7 +1615,7 @@ impl CatchClauseStruct {
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
 pub struct CatchClauseErrorStruct {
-    ir_node: input_ir::CatchClauseError,
+    pub(crate) ir_node: input_ir::CatchClauseError,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1584,18 +1637,18 @@ impl CatchClauseErrorStruct {
             .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
     }
 
-    pub fn parameters(&self) -> impl Iterator<Item = Parameter> + use<'_> {
-        self.ir_node
-            .parameters
-            .iter()
-            .map(|child| Rc::new(ParameterStruct::create(child, &self.semantic)))
+    pub fn parameters(&self) -> Parameters {
+        Rc::new(ParametersStruct::create(
+            &self.ir_node.parameters,
+            &self.semantic,
+        ))
     }
 }
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
 
 pub struct RevertStatementStruct {
-    ir_node: input_ir::RevertStatement,
+    pub(crate) ir_node: input_ir::RevertStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1628,7 +1681,7 @@ impl RevertStatementStruct {
 pub type ThrowStatement = Rc<ThrowStatementStruct>;
 
 pub struct ThrowStatementStruct {
-    ir_node: input_ir::ThrowStatement,
+    pub(crate) ir_node: input_ir::ThrowStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1647,7 +1700,7 @@ impl ThrowStatementStruct {
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
 pub struct AssignmentExpressionStruct {
-    ir_node: input_ir::AssignmentExpression,
+    pub(crate) ir_node: input_ir::AssignmentExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1684,7 +1737,7 @@ impl AssignmentExpressionStruct {
 pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
 pub struct ConditionalExpressionStruct {
-    ir_node: input_ir::ConditionalExpression,
+    pub(crate) ir_node: input_ir::ConditionalExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1724,7 +1777,7 @@ impl ConditionalExpressionStruct {
 pub type OrExpression = Rc<OrExpressionStruct>;
 
 pub struct OrExpressionStruct {
-    ir_node: input_ir::OrExpression,
+    pub(crate) ir_node: input_ir::OrExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1757,7 +1810,7 @@ impl OrExpressionStruct {
 pub type AndExpression = Rc<AndExpressionStruct>;
 
 pub struct AndExpressionStruct {
-    ir_node: input_ir::AndExpression,
+    pub(crate) ir_node: input_ir::AndExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1790,7 +1843,7 @@ impl AndExpressionStruct {
 pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
 pub struct EqualityExpressionStruct {
-    ir_node: input_ir::EqualityExpression,
+    pub(crate) ir_node: input_ir::EqualityExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1827,7 +1880,7 @@ impl EqualityExpressionStruct {
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
 pub struct InequalityExpressionStruct {
-    ir_node: input_ir::InequalityExpression,
+    pub(crate) ir_node: input_ir::InequalityExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1864,7 +1917,7 @@ impl InequalityExpressionStruct {
 pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
 pub struct BitwiseOrExpressionStruct {
-    ir_node: input_ir::BitwiseOrExpression,
+    pub(crate) ir_node: input_ir::BitwiseOrExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1897,7 +1950,7 @@ impl BitwiseOrExpressionStruct {
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
 pub struct BitwiseXorExpressionStruct {
-    ir_node: input_ir::BitwiseXorExpression,
+    pub(crate) ir_node: input_ir::BitwiseXorExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1930,7 +1983,7 @@ impl BitwiseXorExpressionStruct {
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
 pub struct BitwiseAndExpressionStruct {
-    ir_node: input_ir::BitwiseAndExpression,
+    pub(crate) ir_node: input_ir::BitwiseAndExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -1963,7 +2016,7 @@ impl BitwiseAndExpressionStruct {
 pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
 pub struct ShiftExpressionStruct {
-    ir_node: input_ir::ShiftExpression,
+    pub(crate) ir_node: input_ir::ShiftExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2000,7 +2053,7 @@ impl ShiftExpressionStruct {
 pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
 pub struct AdditiveExpressionStruct {
-    ir_node: input_ir::AdditiveExpression,
+    pub(crate) ir_node: input_ir::AdditiveExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2037,7 +2090,7 @@ impl AdditiveExpressionStruct {
 pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
 pub struct MultiplicativeExpressionStruct {
-    ir_node: input_ir::MultiplicativeExpression,
+    pub(crate) ir_node: input_ir::MultiplicativeExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2074,7 +2127,7 @@ impl MultiplicativeExpressionStruct {
 pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
 pub struct ExponentiationExpressionStruct {
-    ir_node: input_ir::ExponentiationExpression,
+    pub(crate) ir_node: input_ir::ExponentiationExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2111,7 +2164,7 @@ impl ExponentiationExpressionStruct {
 pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
 pub struct PostfixExpressionStruct {
-    ir_node: input_ir::PostfixExpression,
+    pub(crate) ir_node: input_ir::PostfixExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2141,7 +2194,7 @@ impl PostfixExpressionStruct {
 pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
 pub struct PrefixExpressionStruct {
-    ir_node: input_ir::PrefixExpression,
+    pub(crate) ir_node: input_ir::PrefixExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2171,7 +2224,7 @@ impl PrefixExpressionStruct {
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
 pub struct FunctionCallExpressionStruct {
-    ir_node: input_ir::FunctionCallExpression,
+    pub(crate) ir_node: input_ir::FunctionCallExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2204,7 +2257,7 @@ impl FunctionCallExpressionStruct {
 pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
 pub struct CallOptionsExpressionStruct {
-    ir_node: input_ir::CallOptionsExpression,
+    pub(crate) ir_node: input_ir::CallOptionsExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2226,18 +2279,18 @@ impl CallOptionsExpressionStruct {
         ))
     }
 
-    pub fn options(&self) -> impl Iterator<Item = NamedArgument> + use<'_> {
-        self.ir_node
-            .options
-            .iter()
-            .map(|child| Rc::new(NamedArgumentStruct::create(child, &self.semantic)))
+    pub fn options(&self) -> CallOptions {
+        Rc::new(CallOptionsStruct::create(
+            &self.ir_node.options,
+            &self.semantic,
+        ))
     }
 }
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
 pub struct MemberAccessExpressionStruct {
-    ir_node: input_ir::MemberAccessExpression,
+    pub(crate) ir_node: input_ir::MemberAccessExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2270,7 +2323,7 @@ impl MemberAccessExpressionStruct {
 pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
 pub struct IndexAccessExpressionStruct {
-    ir_node: input_ir::IndexAccessExpression,
+    pub(crate) ir_node: input_ir::IndexAccessExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2310,7 +2363,7 @@ impl IndexAccessExpressionStruct {
 pub type NamedArgument = Rc<NamedArgumentStruct>;
 
 pub struct NamedArgumentStruct {
-    ir_node: input_ir::NamedArgument,
+    pub(crate) ir_node: input_ir::NamedArgument,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2340,7 +2393,7 @@ impl NamedArgumentStruct {
 pub type TypeExpression = Rc<TypeExpressionStruct>;
 
 pub struct TypeExpressionStruct {
-    ir_node: input_ir::TypeExpression,
+    pub(crate) ir_node: input_ir::TypeExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2366,7 +2419,7 @@ impl TypeExpressionStruct {
 pub type NewExpression = Rc<NewExpressionStruct>;
 
 pub struct NewExpressionStruct {
-    ir_node: input_ir::NewExpression,
+    pub(crate) ir_node: input_ir::NewExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2392,7 +2445,7 @@ impl NewExpressionStruct {
 pub type TupleExpression = Rc<TupleExpressionStruct>;
 
 pub struct TupleExpressionStruct {
-    ir_node: input_ir::TupleExpression,
+    pub(crate) ir_node: input_ir::TupleExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2407,18 +2460,18 @@ impl TupleExpressionStruct {
         }
     }
 
-    pub fn items(&self) -> impl Iterator<Item = TupleValue> + use<'_> {
-        self.ir_node
-            .items
-            .iter()
-            .map(|child| Rc::new(TupleValueStruct::create(child, &self.semantic)))
+    pub fn items(&self) -> TupleValues {
+        Rc::new(TupleValuesStruct::create(
+            &self.ir_node.items,
+            &self.semantic,
+        ))
     }
 }
 
 pub type TupleValue = Rc<TupleValueStruct>;
 
 pub struct TupleValueStruct {
-    ir_node: input_ir::TupleValue,
+    pub(crate) ir_node: input_ir::TupleValue,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2441,7 +2494,7 @@ impl TupleValueStruct {
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
 pub struct ArrayExpressionStruct {
-    ir_node: input_ir::ArrayExpression,
+    pub(crate) ir_node: input_ir::ArrayExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2456,18 +2509,18 @@ impl ArrayExpressionStruct {
         }
     }
 
-    pub fn items(&self) -> impl Iterator<Item = Expression> + use<'_> {
-        self.ir_node
-            .items
-            .iter()
-            .map(|child| Rc::new(ExpressionStruct::create(child, &self.semantic)))
+    pub fn items(&self) -> ArrayValues {
+        Rc::new(ArrayValuesStruct::create(
+            &self.ir_node.items,
+            &self.semantic,
+        ))
     }
 }
 
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
 pub struct HexNumberExpressionStruct {
-    ir_node: input_ir::HexNumberExpression,
+    pub(crate) ir_node: input_ir::HexNumberExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2497,7 +2550,7 @@ impl HexNumberExpressionStruct {
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
 pub struct DecimalNumberExpressionStruct {
-    ir_node: input_ir::DecimalNumberExpression,
+    pub(crate) ir_node: input_ir::DecimalNumberExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2527,7 +2580,7 @@ impl DecimalNumberExpressionStruct {
 pub type YulBlock = Rc<YulBlockStruct>;
 
 pub struct YulBlockStruct {
-    ir_node: input_ir::YulBlock,
+    pub(crate) ir_node: input_ir::YulBlock,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2539,18 +2592,18 @@ impl YulBlockStruct {
         }
     }
 
-    pub fn statements(&self) -> impl Iterator<Item = YulStatement> + use<'_> {
-        self.ir_node
-            .statements
-            .iter()
-            .map(|child| Rc::new(YulStatementStruct::create(child, &self.semantic)))
+    pub fn statements(&self) -> YulStatements {
+        Rc::new(YulStatementsStruct::create(
+            &self.ir_node.statements,
+            &self.semantic,
+        ))
     }
 }
 
 pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
 pub struct YulFunctionDefinitionStruct {
-    ir_node: input_ir::YulFunctionDefinition,
+    pub(crate) ir_node: input_ir::YulFunctionDefinition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2565,12 +2618,25 @@ impl YulFunctionDefinitionStruct {
         }
     }
 
-    pub fn name(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.name)
+    pub fn name(&self) -> YulIdentifier {
+        Rc::new(YulIdentifierStruct::create(
+            &self.ir_node.name,
+            &self.semantic,
+        ))
     }
 
-    pub fn parameters(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-        self.ir_node.parameters.iter().map(Rc::clone)
+    pub fn parameters(&self) -> YulParameters {
+        Rc::new(YulParametersStruct::create(
+            &self.ir_node.parameters,
+            &self.semantic,
+        ))
+    }
+
+    pub fn returns(&self) -> Option<YulVariableNames> {
+        self.ir_node
+            .returns
+            .as_ref()
+            .map(|ir_node| Rc::new(YulVariableNamesStruct::create(ir_node, &self.semantic)))
     }
 
     pub fn body(&self) -> YulBlock {
@@ -2581,7 +2647,7 @@ impl YulFunctionDefinitionStruct {
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
 
 pub struct YulVariableDeclarationStatementStruct {
-    ir_node: input_ir::YulVariableDeclarationStatement,
+    pub(crate) ir_node: input_ir::YulVariableDeclarationStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2596,8 +2662,11 @@ impl YulVariableDeclarationStatementStruct {
         }
     }
 
-    pub fn variables(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-        self.ir_node.variables.iter().map(Rc::clone)
+    pub fn variables(&self) -> YulVariableNames {
+        Rc::new(YulVariableNamesStruct::create(
+            &self.ir_node.variables,
+            &self.semantic,
+        ))
     }
 
     pub fn value(&self) -> Option<YulVariableDeclarationValue> {
@@ -2613,7 +2682,7 @@ impl YulVariableDeclarationStatementStruct {
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
 pub struct YulVariableDeclarationValueStruct {
-    ir_node: input_ir::YulVariableDeclarationValue,
+    pub(crate) ir_node: input_ir::YulVariableDeclarationValue,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2646,7 +2715,7 @@ impl YulVariableDeclarationValueStruct {
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
 
 pub struct YulVariableAssignmentStatementStruct {
-    ir_node: input_ir::YulVariableAssignmentStatement,
+    pub(crate) ir_node: input_ir::YulVariableAssignmentStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2659,6 +2728,13 @@ impl YulVariableAssignmentStatementStruct {
             ir_node: Rc::clone(ir_node),
             semantic: Rc::clone(semantic),
         }
+    }
+
+    pub fn variables(&self) -> YulPaths {
+        Rc::new(YulPathsStruct::create(
+            &self.ir_node.variables,
+            &self.semantic,
+        ))
     }
 
     pub fn assignment(&self) -> YulAssignmentOperator {
@@ -2679,7 +2755,7 @@ impl YulVariableAssignmentStatementStruct {
 pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
 
 pub struct YulColonAndEqualStruct {
-    ir_node: input_ir::YulColonAndEqual,
+    pub(crate) ir_node: input_ir::YulColonAndEqual,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2698,7 +2774,7 @@ impl YulColonAndEqualStruct {
 pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
 pub struct YulStackAssignmentStatementStruct {
-    ir_node: input_ir::YulStackAssignmentStatement,
+    pub(crate) ir_node: input_ir::YulStackAssignmentStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2720,15 +2796,18 @@ impl YulStackAssignmentStatementStruct {
         ))
     }
 
-    pub fn variable(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.variable)
+    pub fn variable(&self) -> YulIdentifier {
+        Rc::new(YulIdentifierStruct::create(
+            &self.ir_node.variable,
+            &self.semantic,
+        ))
     }
 }
 
 pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
 
 pub struct YulEqualAndColonStruct {
-    ir_node: input_ir::YulEqualAndColon,
+    pub(crate) ir_node: input_ir::YulEqualAndColon,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2747,7 +2826,7 @@ impl YulEqualAndColonStruct {
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
 pub struct YulIfStatementStruct {
-    ir_node: input_ir::YulIfStatement,
+    pub(crate) ir_node: input_ir::YulIfStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2777,7 +2856,7 @@ impl YulIfStatementStruct {
 pub type YulForStatement = Rc<YulForStatementStruct>;
 
 pub struct YulForStatementStruct {
-    ir_node: input_ir::YulForStatement,
+    pub(crate) ir_node: input_ir::YulForStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2821,7 +2900,7 @@ impl YulForStatementStruct {
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
 pub struct YulSwitchStatementStruct {
-    ir_node: input_ir::YulSwitchStatement,
+    pub(crate) ir_node: input_ir::YulSwitchStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2843,18 +2922,18 @@ impl YulSwitchStatementStruct {
         ))
     }
 
-    pub fn cases(&self) -> impl Iterator<Item = YulSwitchCase> + use<'_> {
-        self.ir_node
-            .cases
-            .iter()
-            .map(|child| Rc::new(YulSwitchCaseStruct::create(child, &self.semantic)))
+    pub fn cases(&self) -> YulSwitchCases {
+        Rc::new(YulSwitchCasesStruct::create(
+            &self.ir_node.cases,
+            &self.semantic,
+        ))
     }
 }
 
 pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
 pub struct YulDefaultCaseStruct {
-    ir_node: input_ir::YulDefaultCase,
+    pub(crate) ir_node: input_ir::YulDefaultCase,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2877,7 +2956,7 @@ impl YulDefaultCaseStruct {
 pub type YulValueCase = Rc<YulValueCaseStruct>;
 
 pub struct YulValueCaseStruct {
-    ir_node: input_ir::YulValueCase,
+    pub(crate) ir_node: input_ir::YulValueCase,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2907,7 +2986,7 @@ impl YulValueCaseStruct {
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
 pub struct YulLeaveStatementStruct {
-    ir_node: input_ir::YulLeaveStatement,
+    pub(crate) ir_node: input_ir::YulLeaveStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2926,7 +3005,7 @@ impl YulLeaveStatementStruct {
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
 pub struct YulBreakStatementStruct {
-    ir_node: input_ir::YulBreakStatement,
+    pub(crate) ir_node: input_ir::YulBreakStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2945,7 +3024,7 @@ impl YulBreakStatementStruct {
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
 pub struct YulContinueStatementStruct {
-    ir_node: input_ir::YulContinueStatement,
+    pub(crate) ir_node: input_ir::YulContinueStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2964,7 +3043,7 @@ impl YulContinueStatementStruct {
 pub type YulLabel = Rc<YulLabelStruct>;
 
 pub struct YulLabelStruct {
-    ir_node: input_ir::YulLabel,
+    pub(crate) ir_node: input_ir::YulLabel,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -2976,15 +3055,18 @@ impl YulLabelStruct {
         }
     }
 
-    pub fn label(&self) -> Rc<TerminalNode> {
-        Rc::clone(&self.ir_node.label)
+    pub fn label(&self) -> YulIdentifier {
+        Rc::new(YulIdentifierStruct::create(
+            &self.ir_node.label,
+            &self.semantic,
+        ))
     }
 }
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
 pub struct YulFunctionCallExpressionStruct {
-    ir_node: input_ir::YulFunctionCallExpression,
+    pub(crate) ir_node: input_ir::YulFunctionCallExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3006,11 +3088,11 @@ impl YulFunctionCallExpressionStruct {
         ))
     }
 
-    pub fn arguments(&self) -> impl Iterator<Item = YulExpression> + use<'_> {
-        self.ir_node
-            .arguments
-            .iter()
-            .map(|child| Rc::new(YulExpressionStruct::create(child, &self.semantic)))
+    pub fn arguments(&self) -> YulArguments {
+        Rc::new(YulArgumentsStruct::create(
+            &self.ir_node.arguments,
+            &self.semantic,
+        ))
     }
 }
 
@@ -3021,7 +3103,7 @@ impl YulFunctionCallExpressionStruct {
 pub type SourceUnitMember = Rc<SourceUnitMemberStruct>;
 
 pub struct SourceUnitMemberStruct {
-    ir_node: input_ir::SourceUnitMember,
+    pub(crate) ir_node: input_ir::SourceUnitMember,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3253,7 +3335,7 @@ impl SourceUnitMemberStruct {
 pub type Pragma = Rc<PragmaStruct>;
 
 pub struct PragmaStruct {
-    ir_node: input_ir::Pragma,
+    pub(crate) ir_node: input_ir::Pragma,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3314,7 +3396,7 @@ impl PragmaStruct {
 pub type AbicoderVersion = Rc<AbicoderVersionStruct>;
 
 pub struct AbicoderVersionStruct {
-    ir_node: input_ir::AbicoderVersion,
+    pub(crate) ir_node: input_ir::AbicoderVersion,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3341,7 +3423,7 @@ impl AbicoderVersionStruct {
 pub type ExperimentalFeature = Rc<ExperimentalFeatureStruct>;
 
 pub struct ExperimentalFeatureStruct {
-    ir_node: input_ir::ExperimentalFeature,
+    pub(crate) ir_node: input_ir::ExperimentalFeature,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3381,7 +3463,7 @@ impl ExperimentalFeatureStruct {
 pub type VersionExpression = Rc<VersionExpressionStruct>;
 
 pub struct VersionExpressionStruct {
-    ir_node: input_ir::VersionExpression,
+    pub(crate) ir_node: input_ir::VersionExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3424,7 +3506,7 @@ impl VersionExpressionStruct {
 pub type VersionOperator = Rc<VersionOperatorStruct>;
 
 pub struct VersionOperatorStruct {
-    ir_node: input_ir::VersionOperator,
+    pub(crate) ir_node: input_ir::VersionOperator,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3471,7 +3553,7 @@ impl VersionOperatorStruct {
 pub type VersionLiteral = Rc<VersionLiteralStruct>;
 
 pub struct VersionLiteralStruct {
-    ir_node: input_ir::VersionLiteral,
+    pub(crate) ir_node: input_ir::VersionLiteral,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3521,7 +3603,7 @@ impl VersionLiteralStruct {
 pub type ImportClause = Rc<ImportClauseStruct>;
 
 pub struct ImportClauseStruct {
-    ir_node: input_ir::ImportClause,
+    pub(crate) ir_node: input_ir::ImportClause,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3570,7 +3652,7 @@ impl ImportClauseStruct {
 pub type UsingClause = Rc<UsingClauseStruct>;
 
 pub struct UsingClauseStruct {
-    ir_node: input_ir::UsingClause,
+    pub(crate) ir_node: input_ir::UsingClause,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3616,7 +3698,7 @@ impl UsingClauseStruct {
 pub type UsingOperator = Rc<UsingOperatorStruct>;
 
 pub struct UsingOperatorStruct {
-    ir_node: input_ir::UsingOperator,
+    pub(crate) ir_node: input_ir::UsingOperator,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3695,7 +3777,7 @@ impl UsingOperatorStruct {
 pub type UsingTarget = Rc<UsingTargetStruct>;
 
 pub struct UsingTargetStruct {
-    ir_node: input_ir::UsingTarget,
+    pub(crate) ir_node: input_ir::UsingTarget,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3727,7 +3809,7 @@ impl UsingTargetStruct {
 pub type ContractMember = Rc<ContractMemberStruct>;
 
 pub struct ContractMemberStruct {
-    ir_node: input_ir::ContractMember,
+    pub(crate) ir_node: input_ir::ContractMember,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3893,7 +3975,7 @@ impl ContractMemberStruct {
 pub type TypeName = Rc<TypeNameStruct>;
 
 pub struct TypeNameStruct {
-    ir_node: input_ir::TypeName,
+    pub(crate) ir_node: input_ir::TypeName,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -3978,7 +4060,7 @@ impl TypeNameStruct {
 pub type ElementaryType = Rc<ElementaryTypeStruct>;
 
 pub struct ElementaryTypeStruct {
-    ir_node: input_ir::ElementaryType,
+    pub(crate) ir_node: input_ir::ElementaryType,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -4041,7 +4123,7 @@ impl ElementaryTypeStruct {
 pub type Statement = Rc<StatementStruct>;
 
 pub struct StatementStruct {
-    ir_node: input_ir::Statement,
+    pub(crate) ir_node: input_ir::Statement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -4306,7 +4388,7 @@ impl StatementStruct {
 pub type StorageLocation = Rc<StorageLocationStruct>;
 
 pub struct StorageLocationStruct {
-    ir_node: input_ir::StorageLocation,
+    pub(crate) ir_node: input_ir::StorageLocation,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -4337,7 +4419,7 @@ impl StorageLocationStruct {
 pub type ForStatementInitialization = Rc<ForStatementInitializationStruct>;
 
 pub struct ForStatementInitializationStruct {
-    ir_node: input_ir::ForStatementInitialization,
+    pub(crate) ir_node: input_ir::ForStatementInitialization,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -4421,7 +4503,7 @@ impl ForStatementInitializationStruct {
 pub type ForStatementCondition = Rc<ForStatementConditionStruct>;
 
 pub struct ForStatementConditionStruct {
-    ir_node: input_ir::ForStatementCondition,
+    pub(crate) ir_node: input_ir::ForStatementCondition,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -4462,7 +4544,7 @@ impl ForStatementConditionStruct {
 pub type Expression = Rc<ExpressionStruct>;
 
 pub struct ExpressionStruct {
-    ir_node: input_ir::Expression,
+    pub(crate) ir_node: input_ir::Expression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -4927,7 +5009,7 @@ impl ExpressionStruct {
 pub type ArgumentsDeclaration = Rc<ArgumentsDeclarationStruct>;
 
 pub struct ArgumentsDeclarationStruct {
-    ir_node: input_ir::ArgumentsDeclaration,
+    pub(crate) ir_node: input_ir::ArgumentsDeclaration,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -4984,7 +5066,7 @@ impl ArgumentsDeclarationStruct {
 pub type NumberUnit = Rc<NumberUnitStruct>;
 
 pub struct NumberUnitStruct {
-    ir_node: input_ir::NumberUnit,
+    pub(crate) ir_node: input_ir::NumberUnit,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5044,7 +5126,7 @@ impl NumberUnitStruct {
 pub type StringExpression = Rc<StringExpressionStruct>;
 
 pub struct StringExpressionStruct {
-    ir_node: input_ir::StringExpression,
+    pub(crate) ir_node: input_ir::StringExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5099,7 +5181,7 @@ impl StringExpressionStruct {
 pub type YulStatement = Rc<YulStatementStruct>;
 
 pub struct YulStatementStruct {
-    ir_node: input_ir::YulStatement,
+    pub(crate) ir_node: input_ir::YulStatement,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5322,7 +5404,7 @@ impl YulStatementStruct {
 pub type YulAssignmentOperator = Rc<YulAssignmentOperatorStruct>;
 
 pub struct YulAssignmentOperatorStruct {
-    ir_node: input_ir::YulAssignmentOperator,
+    pub(crate) ir_node: input_ir::YulAssignmentOperator,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5363,7 +5445,7 @@ impl YulAssignmentOperatorStruct {
 pub type YulStackAssignmentOperator = Rc<YulStackAssignmentOperatorStruct>;
 
 pub struct YulStackAssignmentOperatorStruct {
-    ir_node: input_ir::YulStackAssignmentOperator,
+    pub(crate) ir_node: input_ir::YulStackAssignmentOperator,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5407,7 +5489,7 @@ impl YulStackAssignmentOperatorStruct {
 pub type YulSwitchCase = Rc<YulSwitchCaseStruct>;
 
 pub struct YulSwitchCaseStruct {
-    ir_node: input_ir::YulSwitchCase,
+    pub(crate) ir_node: input_ir::YulSwitchCase,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5453,7 +5535,7 @@ impl YulSwitchCaseStruct {
 pub type YulExpression = Rc<YulExpressionStruct>;
 
 pub struct YulExpressionStruct {
-    ir_node: input_ir::YulExpression,
+    pub(crate) ir_node: input_ir::YulExpression,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5502,9 +5584,9 @@ impl YulExpressionStruct {
         matches!(self.ir_node, input_ir::YulExpression::YulPath(_))
     }
 
-    pub fn as_yul_path(&self) -> Option<impl Iterator<Item = Rc<TerminalNode>> + use<'_>> {
+    pub fn as_yul_path(&self) -> Option<YulPath> {
         if let input_ir::YulExpression::YulPath(variant) = &self.ir_node {
-            Some(variant.iter().map(Rc::clone))
+            Some(Rc::new(YulPathStruct::create(variant, &self.semantic)))
         } else {
             None
         }
@@ -5514,7 +5596,7 @@ impl YulExpressionStruct {
 pub type YulLiteral = Rc<YulLiteralStruct>;
 
 pub struct YulLiteralStruct {
-    ir_node: input_ir::YulLiteral,
+    pub(crate) ir_node: input_ir::YulLiteral,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5554,7 +5636,7 @@ impl YulLiteralStruct {
 pub type FunctionKind = Rc<FunctionKindStruct>;
 
 pub struct FunctionKindStruct {
-    ir_node: input_ir::FunctionKind,
+    pub(crate) ir_node: input_ir::FunctionKind,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5597,7 +5679,7 @@ impl FunctionKindStruct {
 pub type FunctionVisibility = Rc<FunctionVisibilityStruct>;
 
 pub struct FunctionVisibilityStruct {
-    ir_node: input_ir::FunctionVisibility,
+    pub(crate) ir_node: input_ir::FunctionVisibility,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5632,7 +5714,7 @@ impl FunctionVisibilityStruct {
 pub type FunctionMutability = Rc<FunctionMutabilityStruct>;
 
 pub struct FunctionMutabilityStruct {
-    ir_node: input_ir::FunctionMutability,
+    pub(crate) ir_node: input_ir::FunctionMutability,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5667,7 +5749,7 @@ impl FunctionMutabilityStruct {
 pub type StateVariableVisibility = Rc<StateVariableVisibilityStruct>;
 
 pub struct StateVariableVisibilityStruct {
-    ir_node: input_ir::StateVariableVisibility,
+    pub(crate) ir_node: input_ir::StateVariableVisibility,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5698,7 +5780,7 @@ impl StateVariableVisibilityStruct {
 pub type StateVariableMutability = Rc<StateVariableMutabilityStruct>;
 
 pub struct StateVariableMutabilityStruct {
-    ir_node: input_ir::StateVariableMutability,
+    pub(crate) ir_node: input_ir::StateVariableMutability,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5733,7 +5815,7 @@ impl StateVariableMutabilityStruct {
 pub type TupleDeconstructionMember = Rc<TupleDeconstructionMemberStruct>;
 
 pub struct TupleDeconstructionMemberStruct {
-    ir_node: input_ir::TupleDeconstructionMember,
+    pub(crate) ir_node: input_ir::TupleDeconstructionMember,
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -5785,5 +5867,576 @@ impl TupleDeconstructionMemberStruct {
         } else {
             None
         }
+    }
+}
+
+//
+// Repeated & Separated
+//
+pub type SourceUnitMembers = Rc<SourceUnitMembersStruct>;
+
+pub struct SourceUnitMembersStruct {
+    pub(crate) ir_nodes: Vec<input_ir::SourceUnitMember>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl SourceUnitMembersStruct {
+    fn create(nodes: &[input_ir::SourceUnitMember], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = SourceUnitMember> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(SourceUnitMemberStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type VersionExpressionSets = Rc<VersionExpressionSetsStruct>;
+
+pub struct VersionExpressionSetsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::VersionExpressionSet>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl VersionExpressionSetsStruct {
+    fn create(nodes: &[input_ir::VersionExpressionSet], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = VersionExpressionSet> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(VersionExpressionSetStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type VersionExpressionSet = Rc<VersionExpressionSetStruct>;
+
+pub struct VersionExpressionSetStruct {
+    pub(crate) ir_nodes: Vec<input_ir::VersionExpression>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl VersionExpressionSetStruct {
+    fn create(nodes: &[input_ir::VersionExpression], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = VersionExpression> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(VersionExpressionStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type ImportDeconstructionSymbols = Rc<ImportDeconstructionSymbolsStruct>;
+
+pub struct ImportDeconstructionSymbolsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::ImportDeconstructionSymbol>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl ImportDeconstructionSymbolsStruct {
+    fn create(
+        nodes: &[input_ir::ImportDeconstructionSymbol],
+        semantic: &Rc<SemanticAnalysis>,
+    ) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = ImportDeconstructionSymbol> + use<'_> {
+        self.ir_nodes.iter().map(|ir_node| {
+            Rc::new(ImportDeconstructionSymbolStruct::create(
+                ir_node,
+                &self.semantic,
+            ))
+        })
+    }
+}
+
+pub type UsingDeconstructionSymbols = Rc<UsingDeconstructionSymbolsStruct>;
+
+pub struct UsingDeconstructionSymbolsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::UsingDeconstructionSymbol>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl UsingDeconstructionSymbolsStruct {
+    fn create(
+        nodes: &[input_ir::UsingDeconstructionSymbol],
+        semantic: &Rc<SemanticAnalysis>,
+    ) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = UsingDeconstructionSymbol> + use<'_> {
+        self.ir_nodes.iter().map(|ir_node| {
+            Rc::new(UsingDeconstructionSymbolStruct::create(
+                ir_node,
+                &self.semantic,
+            ))
+        })
+    }
+}
+
+pub type InheritanceTypes = Rc<InheritanceTypesStruct>;
+
+pub struct InheritanceTypesStruct {
+    pub(crate) ir_nodes: Vec<input_ir::InheritanceType>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl InheritanceTypesStruct {
+    fn create(nodes: &[input_ir::InheritanceType], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = InheritanceType> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(InheritanceTypeStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type ContractMembers = Rc<ContractMembersStruct>;
+
+pub struct ContractMembersStruct {
+    pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl ContractMembersStruct {
+    fn create(nodes: &[input_ir::ContractMember], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(ContractMemberStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type InterfaceMembers = Rc<InterfaceMembersStruct>;
+
+pub struct InterfaceMembersStruct {
+    pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl InterfaceMembersStruct {
+    fn create(nodes: &[input_ir::ContractMember], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(ContractMemberStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type LibraryMembers = Rc<LibraryMembersStruct>;
+
+pub struct LibraryMembersStruct {
+    pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl LibraryMembersStruct {
+    fn create(nodes: &[input_ir::ContractMember], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(ContractMemberStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type StructMembers = Rc<StructMembersStruct>;
+
+pub struct StructMembersStruct {
+    pub(crate) ir_nodes: Vec<input_ir::StructMember>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl StructMembersStruct {
+    fn create(nodes: &[input_ir::StructMember], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = StructMember> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(StructMemberStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type Parameters = Rc<ParametersStruct>;
+
+pub struct ParametersStruct {
+    pub(crate) ir_nodes: Vec<input_ir::Parameter>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl ParametersStruct {
+    fn create(nodes: &[input_ir::Parameter], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = Parameter> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(ParameterStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type OverridePaths = Rc<OverridePathsStruct>;
+
+pub struct OverridePathsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::IdentifierPath>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl OverridePathsStruct {
+    fn create(nodes: &[input_ir::IdentifierPath], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = IdentifierPath> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(IdentifierPathStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type Statements = Rc<StatementsStruct>;
+
+pub struct StatementsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::Statement>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl StatementsStruct {
+    fn create(nodes: &[input_ir::Statement], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = Statement> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(StatementStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type CatchClauses = Rc<CatchClausesStruct>;
+
+pub struct CatchClausesStruct {
+    pub(crate) ir_nodes: Vec<input_ir::CatchClause>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl CatchClausesStruct {
+    fn create(nodes: &[input_ir::CatchClause], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = CatchClause> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(CatchClauseStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type PositionalArguments = Rc<PositionalArgumentsStruct>;
+
+pub struct PositionalArgumentsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::Expression>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl PositionalArgumentsStruct {
+    fn create(nodes: &[input_ir::Expression], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = Expression> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type NamedArguments = Rc<NamedArgumentsStruct>;
+
+pub struct NamedArgumentsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::NamedArgument>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl NamedArgumentsStruct {
+    fn create(nodes: &[input_ir::NamedArgument], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = NamedArgument> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(NamedArgumentStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type CallOptions = Rc<CallOptionsStruct>;
+
+pub struct CallOptionsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::NamedArgument>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl CallOptionsStruct {
+    fn create(nodes: &[input_ir::NamedArgument], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = NamedArgument> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(NamedArgumentStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type TupleValues = Rc<TupleValuesStruct>;
+
+pub struct TupleValuesStruct {
+    pub(crate) ir_nodes: Vec<input_ir::TupleValue>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl TupleValuesStruct {
+    fn create(nodes: &[input_ir::TupleValue], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = TupleValue> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(TupleValueStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type ArrayValues = Rc<ArrayValuesStruct>;
+
+pub struct ArrayValuesStruct {
+    pub(crate) ir_nodes: Vec<input_ir::Expression>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl ArrayValuesStruct {
+    fn create(nodes: &[input_ir::Expression], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = Expression> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type YulStatements = Rc<YulStatementsStruct>;
+
+pub struct YulStatementsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::YulStatement>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl YulStatementsStruct {
+    fn create(nodes: &[input_ir::YulStatement], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = YulStatement> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(YulStatementStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type YulSwitchCases = Rc<YulSwitchCasesStruct>;
+
+pub struct YulSwitchCasesStruct {
+    pub(crate) ir_nodes: Vec<input_ir::YulSwitchCase>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl YulSwitchCasesStruct {
+    fn create(nodes: &[input_ir::YulSwitchCase], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = YulSwitchCase> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(YulSwitchCaseStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type YulArguments = Rc<YulArgumentsStruct>;
+
+pub struct YulArgumentsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::YulExpression>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl YulArgumentsStruct {
+    fn create(nodes: &[input_ir::YulExpression], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = YulExpression> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(YulExpressionStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type YulPaths = Rc<YulPathsStruct>;
+
+pub struct YulPathsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::YulPath>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl YulPathsStruct {
+    fn create(nodes: &[input_ir::YulPath], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = YulPath> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(YulPathStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type ModifierInvocations = Rc<ModifierInvocationsStruct>;
+
+pub struct ModifierInvocationsStruct {
+    pub(crate) ir_nodes: Vec<input_ir::ModifierInvocation>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl ModifierInvocationsStruct {
+    fn create(nodes: &[input_ir::ModifierInvocation], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = ModifierInvocation> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(ModifierInvocationStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type TupleDeconstructionMembers = Rc<TupleDeconstructionMembersStruct>;
+
+pub struct TupleDeconstructionMembersStruct {
+    pub(crate) ir_nodes: Vec<input_ir::TupleDeconstructionMember>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl TupleDeconstructionMembersStruct {
+    fn create(
+        nodes: &[input_ir::TupleDeconstructionMember],
+        semantic: &Rc<SemanticAnalysis>,
+    ) -> Self {
+        Self {
+            ir_nodes: nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = TupleDeconstructionMember> + use<'_> {
+        self.ir_nodes.iter().map(|ir_node| {
+            Rc::new(TupleDeconstructionMemberStruct::create(
+                ir_node,
+                &self.semantic,
+            ))
+        })
     }
 }

@@ -1,0 +1,150 @@
+{%- set target = model.ir_languages["ir2_flat_contracts"].target -%}
+{%- set custom_types = ["EnumMembers", "Identifier", "IdentifierPath", "YulIdentifier", "YulParameters", "YulPath", "YulVariableNames"] -%}
+
+#[allow(clippy::wildcard_imports)]
+use super::nodes::*;
+use std::rc::Rc;
+use crate::cst::TerminalNode;
+
+use super::input as input_ir;
+
+pub trait Visitor {
+  {%- for parent_type, sequence in target.sequences %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
+    fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
+  {% endfor -%}
+  {%- for parent_type, choice in target.choices %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
+    fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
+  {% endfor -%}
+  {%- for parent_type, collection in target.collections %}
+    {%- if custom_types is containing(parent_type) %}
+    {%- elif not collection.item_type.is_terminal %}
+      fn enter_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) -> bool { true }
+      fn leave_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) {}
+    {% else %}
+      fn enter_{{ parent_type | snake_case }}(&mut self, _items: &[Rc<TerminalNode>]) -> bool { true }
+      fn leave_{{ parent_type | snake_case }}(&mut self, _items: &[Rc<TerminalNode>]) {}
+    {% endif -%}
+  {% endfor -%}
+
+  fn visit_identifier(&mut self, _node: &Identifier) {}
+  fn enter_identifier_path(&mut self, _node: &IdentifierPath) -> bool { true }
+  fn leave_identifier_path(&mut self, _node: &IdentifierPath) {}
+
+  fn visit_yul_identifier(&mut self, _node: &YulIdentifier) {}
+  fn enter_yul_path(&mut self, _node: &YulPath) -> bool { true }
+  fn leave_yul_path(&mut self, _node: &YulPath) {}
+
+  fn enter_yul_variable_names(&mut self, _node: &YulVariableNames) -> bool { true }
+  fn leave_yul_variable_names(&mut self, _node: &YulVariableNames) {}
+
+  fn enter_enum_members(&mut self, _node: &EnumMembers) -> bool { true }
+  fn leave_enum_members(&mut self, _node: &EnumMembers) {}
+
+  fn enter_yul_parameters(&mut self, _node: &YulParameters) -> bool { true }
+  fn leave_yul_parameters(&mut self, _node: &YulParameters) {}
+}
+
+pub fn accept_identifier(node: &Identifier, visitor: &mut impl Visitor) {
+  visitor.visit_identifier(node);
+}
+
+pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
+  visitor.visit_yul_identifier(node);
+}
+
+//
+// Sequences:
+//
+
+{% for parent_type, sequence in target.sequences %}
+  pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+    if !visitor.enter_{{ parent_type | snake_case }}(node) {
+      return;
+    }
+    {% for field in sequence.fields -%}
+      {%- if field.is_optional -%}
+        {%- if custom_types is containing(field.type.name) -%}
+          if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
+            accept_{{ field.type.name | snake_case }}({{ field.label | snake_case }}, visitor);
+          }
+        {%- elif not field.type.is_terminal -%}
+          if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
+            accept_{{ field.type.name | snake_case }}({{ field.label | snake_case }}, visitor);
+          }
+        {%- endif -%}
+      {%- else -%}
+        {%- if custom_types is containing(field.type.name) -%}
+          accept_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }}(), visitor);
+        {%- elif not field.type.is_terminal -%}
+          {% if target.collections is not containing(field.type.name)
+             or not target.collections[field.type.name].item_type.is_terminal %}
+            accept_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }}(), visitor);
+          {% else %}
+          {% endif %}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    visitor.leave_{{ parent_type | snake_case }}(node);
+  }
+
+{% endfor %}
+
+//
+// Choices:
+//
+
+{% for parent_type, choice in target.choices %}
+  {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+  {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+  {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
+  {% if nonterminals | length == 0 %}
+    pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
+  {% else %}
+    pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+      if !visitor.enter_{{ parent_type | snake_case }}(node) {
+        return;
+      }
+      #[allow(clippy::single_match)]
+      #[allow(clippy::match_wildcard_for_single_variants)]
+      match &node.ir_node {
+        {% for nonterminal in nonterminals -%}
+          input_ir::{{ parent_type }}::{{ nonterminal.name }}(_) => {
+            {%- if target.sequences is containing(nonterminal.name) or
+                   target.choices is containing(nonterminal.name) -%}
+              accept_{{ nonterminal.name | snake_case }}(
+                &node.as_{{ nonterminal.name | snake_case }}().unwrap(),
+                visitor,
+              );
+            {%- endif -%}
+          }
+        {%- endfor %}
+        {%- if (non_unique_terminals | length > 0) or (unique_terminals | length > 0) %}
+          _ => {}
+        {% endif -%}
+      }
+      visitor.leave_{{ parent_type | snake_case }}(node);
+    }
+  {% endif %}
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections -%}
+  {%- if not collection.item_type.is_terminal or
+         custom_types is containing(collection.item_type.name) %}
+    #[inline]
+    pub fn accept_{{ parent_type | snake_case }}(items: &{{ parent_type }}, visitor: &mut impl Visitor) {
+      if !visitor.enter_{{ parent_type | snake_case }}(items) {
+        return;
+      }
+      for item in items.iter() {
+        accept_{{ collection.item_type.name | snake_case }}(&item, visitor);
+      }
+      visitor.leave_{{ parent_type | snake_case }}(items);
+    }
+  {% endif -%}
+{% endfor %}

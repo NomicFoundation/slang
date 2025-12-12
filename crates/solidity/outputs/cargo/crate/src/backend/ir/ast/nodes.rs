@@ -76,12 +76,46 @@ impl IdentifierPathStruct {
         )))
     }
 
-    pub fn parts(&self) -> impl Iterator<Item = Identifier> + use<'_> {
+    pub fn iter(&self) -> impl Iterator<Item = Identifier> + use<'_> {
         self.ir_nodes
             .iter()
             .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
     }
 }
+
+pub type YulIdentifierStruct = IdentifierStruct;
+pub type YulIdentifier = Rc<YulIdentifierStruct>;
+pub type YulPathStruct = IdentifierPathStruct;
+pub type YulPath = Rc<YulPathStruct>;
+
+pub type IdentifierCollection = Rc<IdentifierCollectionStruct>;
+
+pub struct IdentifierCollectionStruct {
+    ir_nodes: Vec<Rc<TerminalNode>>,
+    semantic: Rc<SemanticAnalysis>,
+}
+
+impl IdentifierCollectionStruct {
+    fn create(ir_nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+            ir_nodes: ir_nodes.to_vec(),
+            semantic: Rc::clone(semantic),
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = Identifier> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
+    }
+}
+
+pub type EnumMembers = IdentifierCollection;
+pub type EnumMembersStruct = IdentifierCollectionStruct;
+pub type YulVariableNames = IdentifierCollection;
+pub type YulVariableNamesStruct = IdentifierCollectionStruct;
+pub type YulParameters = IdentifierCollection;
+pub type YulParametersStruct = IdentifierCollectionStruct;
 
 pub type Definition = Rc<DefinitionStruct>;
 
@@ -176,9 +210,11 @@ impl SourceUnitStruct {
             .unwrap()
     }
 
-    pub fn contracts(&self) -> impl Iterator<Item = ContractDefinition> + use<'_> {
+    pub fn contracts(&self) -> Vec<ContractDefinition> {
         self.members()
+            .iter()
             .filter_map(|member| member.as_contract_definition())
+            .collect()
     }
 }
 
@@ -197,23 +233,29 @@ impl ContractBase {
 }
 
 impl ContractDefinitionStruct {
-    pub fn direct_bases(&self) -> impl Iterator<Item = ContractBase> + use<'_> {
-        self.inheritance_types().filter_map(|inheritance_type| {
-            let base = inheritance_type.type_name().resolve_to_definition()?;
-            ContractBase::from_definition(&base)
-        })
+    pub fn direct_bases(&self) -> Vec<ContractBase> {
+        self.inheritance_types()
+            .iter()
+            .filter_map(|inheritance_type| {
+                let base = inheritance_type.type_name().resolve_to_definition()?;
+                ContractBase::from_definition(&base)
+            })
+            .collect()
     }
 
-    pub fn linearised_bases(&self) -> impl Iterator<Item = ContractBase> + use<'_> {
+    pub fn linearised_bases(&self) -> Vec<ContractBase> {
         let base_node_ids = self
             .semantic
             .binder()
             .get_linearised_bases(self.ir_node.node_id)
             .expect("Contract should be linearised");
-        base_node_ids.iter().map(|node_id| {
-            let base_definition = Rc::new(DefinitionStruct::create(*node_id, &self.semantic));
-            ContractBase::from_definition(&base_definition)
-                .expect("Linearised base is either a contract or interface")
-        })
+        base_node_ids
+            .iter()
+            .map(|node_id| {
+                let base_definition = Rc::new(DefinitionStruct::create(*node_id, &self.semantic));
+                ContractBase::from_definition(&base_definition)
+                    .expect("Linearised base is either a contract or interface")
+            })
+            .collect()
     }
 }

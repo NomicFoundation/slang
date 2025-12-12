@@ -1,5 +1,5 @@
 {%- set target = model.ir_languages['ir2_flat_contracts'].target -%}
-{%- set custom_types = ["Identifier", "IdentifierPath"] -%}
+{%- set custom_types = ["EnumMembers", "Identifier", "IdentifierPath", "YulIdentifier", "YulParameters", "YulPath", "YulVariableNames"] -%}
 
 //
 // Sequences:
@@ -9,7 +9,7 @@
   pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
   pub struct {{ parent_type }}Struct {
-    ir_node: input_ir::{{ parent_type }},
+    pub(crate) ir_node: input_ir::{{ parent_type }},
     semantic: Rc<SemanticAnalysis>,
   }
 
@@ -40,13 +40,26 @@
           pub fn {{ field.label }}(&self) -> Option<Rc<TerminalNode>> {
             self.ir_node.{{ field.label }}.as_ref().map(Rc::clone)
           }
-        {% elif target.sequences is containing(field.type.name)
-             or target.choices is containing(field.type.name) %}
+        {% elif target.sequences is containing(field.type.name) or
+                target.choices is containing(field.type.name) %}
           pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
             self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
               Rc::new({{ field.type.name }}Struct::create(ir_node, &self.semantic))
             })
           }
+        {% elif target.collections is containing(field.type.name) %}
+          {% set item_type = target.collections[field.type.name].item_type %}
+          {%- if item_type.is_terminal and custom_types is not containing(item_type.name) %}
+            pub fn {{ field.label }}(&self) -> Option<Vec<Rc<TerminalNode>>> {
+              self.ir_node.{{ field.label }}.as_ref().map(|items| items.clone())
+            }
+          {% else %}
+            pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
+              self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
+                Rc::new({{ field.type.name }}Struct::create(ir_node, &self.semantic))
+              })
+            }
+          {% endif -%}
         {% endif %}
       {% else %}
         {% if custom_types is containing(field.type.name) %}
@@ -64,16 +77,14 @@
           }
         {% elif target.collections is containing(field.type.name) %}
           {% set item_type = target.collections[field.type.name].item_type %}
-          {% if item_type.is_terminal %}
-            pub fn {{ field.label }}(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
-              self.ir_node.{{ field.label }}.iter().map(Rc::clone)
+          {% if custom_types is containing(item_type.name)
+               or not item_type.is_terminal %}
+            pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
+              Rc::new({{ field.type.name }}Struct::create(&self.ir_node.{{ field.label }}, &self.semantic))
             }
-          {% elif target.sequences is containing(item_type.name)
-               or target.choices is containing(item_type.name) %}
-            pub fn {{ field.label }}(&self) -> impl Iterator<Item = {{ item_type.name }}> + use<'_> {
-              self.ir_node.{{ field.label }}.iter().map(|child| {
-                Rc::new({{ item_type.name }}Struct::create(child, &self.semantic))
-              })
+          {% elif item_type.is_terminal %}
+            pub fn {{ field.label }}(&self) -> Vec<Rc<TerminalNode>> {
+              self.ir_node.{{ field.label }}.clone()
             }
           {% endif %}
         {% endif %}
@@ -91,7 +102,7 @@
   pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
   pub struct {{ parent_type }}Struct {
-    ir_node: input_ir::{{ parent_type }},
+    pub(crate) ir_node: input_ir::{{ parent_type }},
     semantic: Rc<SemanticAnalysis>,
   }
 
@@ -157,3 +168,33 @@
   }
 
 {% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{%- for parent_type, collection in target.collections %}
+  {%- if custom_types is not containing(parent_type) and not collection.item_type.is_terminal %}
+    pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+    pub struct {{ parent_type }}Struct {
+      pub(crate) ir_nodes: Vec<input_ir::{{ collection.item_type.name }}>,
+      semantic: Rc<SemanticAnalysis>,
+    }
+
+    impl {{ parent_type }}Struct {
+      fn create(nodes: &[input_ir::{{ collection.item_type.name }}], semantic: &Rc<SemanticAnalysis>) -> Self {
+        Self {
+          ir_nodes: nodes.to_vec(),
+          semantic: Rc::clone(semantic),
+        }
+      }
+
+      pub fn iter(&self) -> impl Iterator<Item = {{ collection.item_type.name }}> + use<'_> {
+          self.ir_nodes
+              .iter()
+              .map(|ir_node| Rc::new({{ collection.item_type.name }}Struct::create(ir_node, &self.semantic)))
+      }
+    }
+  {% endif %}
+{% endfor -%}
