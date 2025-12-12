@@ -21,6 +21,7 @@ categories = ["compilers", "AST"]
 
 [dependencies]
 strum_macros = { workspace = true }
+bumpalo = { workspace = true }
 
 [lints]
 workspace = true

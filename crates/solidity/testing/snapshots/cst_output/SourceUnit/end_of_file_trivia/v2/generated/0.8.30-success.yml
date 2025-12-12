@@ -11,12 +11,14 @@ SourceUnitStruct {
                         l: 0,
                         r: 8,
                         kind: ContractKeyword_Reserved,
+                        phantom: PhantomData<&()>,
                     },
                     name: TerminalType {
                         value: "X",
                         l: 9,
                         r: 10,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
@@ -26,6 +28,7 @@ SourceUnitStruct {
                         l: 11,
                         r: 12,
                         kind: OpenBrace,
+                        phantom: PhantomData<&()>,
                     },
                     members: ContractMembers {
                         elements: [],
@@ -35,6 +38,7 @@ SourceUnitStruct {
                         l: 13,
                         r: 14,
                         kind: CloseBrace,
+                        phantom: PhantomData<&()>,
                     },
                 },
             ),

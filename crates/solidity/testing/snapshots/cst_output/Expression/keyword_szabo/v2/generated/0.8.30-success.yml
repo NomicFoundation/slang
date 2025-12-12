@@ -6,5 +6,6 @@ Identifier(
         l: 0,
         r: 5,
         kind: Identifier,
+        phantom: PhantomData<&()>,
     },
 )

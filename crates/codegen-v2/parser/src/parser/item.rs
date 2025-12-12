@@ -43,9 +43,9 @@ fn optional(rule: RustCode) -> RustCode {
 
 fn repeated(rule: RustCode, allow_empty: bool) -> RustCode {
     if allow_empty {
-        RustCode(format!("({})*", rule.0))
+        RustCode(format!("Rep<{}>", rule.0))
     } else {
-        RustCode(format!("({})+", rule.0))
+        RustCode(format!("RepOne<{}>", rule.0))
     }
 }
 

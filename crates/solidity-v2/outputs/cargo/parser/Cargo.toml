@@ -22,6 +22,7 @@ categories = ["compilers", "parsing", "parser-implementations"]
 lalrpop = { workspace = true }
 
 [dependencies]
+bumpalo = { workspace = true }
 lalrpop-util = { workspace = true }
 logos = { workspace = true }
 semver = { workspace = true }

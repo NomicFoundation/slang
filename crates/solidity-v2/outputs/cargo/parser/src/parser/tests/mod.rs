@@ -2,6 +2,7 @@ mod big;
 mod contract;
 mod tuple;
 
+use bumpalo::Bump;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
@@ -22,7 +23,9 @@ fn test(source: &str, _expected: &str) {
 
     let lexer = Lexer::new(kind, source, version);
 
-    let result = grammar::SourceUnitParser::new().parse(&source, lexer);
+    let parser = grammar::SourceUnitParser::new();
+    let arena = Bump::new();
+    let result = parser.parse(&arena, &source, lexer);
     if result.is_err() {
         println!("{result:?}");
     }

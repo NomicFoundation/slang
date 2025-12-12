@@ -1,5 +1,6 @@
-use std::rc::Rc;
-
+use bumpalo::boxed::Box;
+use bumpalo::collections::{CollectIn, Vec};
+use bumpalo::Bump;
 use slang_solidity_v2_ast::ast::lexemes::LexemeKind;
 ///! This module contains certain nodes and functions used internally by the parser.
 use slang_solidity_v2_ast::ast::nodes::*;
@@ -11,32 +12,33 @@ use slang_solidity_v2_ast::ast::nodes::*;
 // It's heavily inspired by solc
 // https://github.com/argotorg/solidity/blob/194b114664c7daebc2ff68af3c573272f5d28913/libsolidity/parsing/Parser.h#L198-L209
 #[derive(Debug)]
-pub struct IndexAccessPath {
-    pub path: Path,
-    pub indices: Vec<Index>,
+pub struct IndexAccessPath<'arena> {
+    pub path: Path<'arena>,
+    pub indices: Vec<'arena, Index<'arena>>,
 }
 
 #[derive(Debug)]
-pub enum Path {
-    IdentifierPath(IdentifierPath),
-    ElementaryType(ElementaryType),
+pub enum Path<'arena> {
+    IdentifierPath(IdentifierPath<'arena>),
+    ElementaryType(ElementaryType<'arena>),
 }
 
 #[derive(Debug)]
-pub struct Index {
-    pub open_bracket: OpenBracket,
-    pub start: Option<Expression>,
-    pub end: Option<IndexAccessEnd>,
-    pub close_bracket: CloseBracket,
+pub struct Index<'arena> {
+    pub open_bracket: OpenBracket<'arena>,
+    pub start: Option<Expression<'arena>>,
+    pub end: Option<IndexAccessEnd<'arena>>,
+    pub close_bracket: CloseBracket<'arena>,
 }
 
-pub fn index_access_path_add_index(
-    mut iap: IndexAccessPath,
-    open_bracket: OpenBracket,
-    start: Option<Expression>,
-    end: Option<IndexAccessEnd>,
-    close_bracket: CloseBracket,
-) -> IndexAccessPath {
+pub fn index_access_path_add_index<'arena>(
+    _arena: &'arena Bump,
+    mut iap: IndexAccessPath<'arena>,
+    open_bracket: OpenBracket<'arena>,
+    start: Option<Expression<'arena>>,
+    end: Option<IndexAccessEnd<'arena>>,
+    close_bracket: CloseBracket<'arena>,
+) -> IndexAccessPath<'arena> {
     iap.indices.push(Index {
         open_bracket,
         start,
@@ -46,30 +48,35 @@ pub fn index_access_path_add_index(
     iap
 }
 
-pub fn new_index_access_path_from_identifier_path(
-    identifier_path: IdentifierPath,
-) -> IndexAccessPath {
+pub fn new_index_access_path_from_identifier_path<'arena>(
+    arena: &'arena Bump,
+    identifier_path: IdentifierPath<'arena>,
+) -> IndexAccessPath<'arena> {
     IndexAccessPath {
         path: Path::IdentifierPath(identifier_path),
-        indices: Vec::new(),
+        indices: Vec::new_in(arena),
     }
 }
 
-pub fn new_index_access_path_from_elementary_type(
-    elementary_type: ElementaryType,
-) -> IndexAccessPath {
+pub fn new_index_access_path_from_elementary_type<'arena>(
+    arena: &'arena Bump,
+    elementary_type: ElementaryType<'arena>,
+) -> IndexAccessPath<'arena> {
     IndexAccessPath {
         path: Path::ElementaryType(elementary_type),
-        indices: Vec::new(),
+        indices: Vec::new_in(arena),
     }
 }
 
-pub fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> TypeName {
+pub fn new_type_name_index_access_path<'arena>(
+    arena: &'arena Bump,
+    index_access_path: IndexAccessPath<'arena>,
+) -> TypeName<'arena> {
     let IndexAccessPath { path, indices } = index_access_path;
 
     let mut type_name = Some(match path {
-        Path::IdentifierPath(path) => new_type_name_identifier_path(path),
-        Path::ElementaryType(elem_type) => new_type_name_elementary_type(elem_type),
+        Path::IdentifierPath(path) => new_type_name_identifier_path(arena, path),
+        Path::ElementaryType(elem_type) => new_type_name_elementary_type(arena, elem_type),
     });
 
     for index in indices.into_iter() {
@@ -78,6 +85,7 @@ pub fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> Ty
             "Slicing is not supported in type names yet"
         );
         let array_type = new_array_type_name(
+            arena,
             type_name
                 .take()
                 .expect("There surely is something in there"),
@@ -85,22 +93,26 @@ pub fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> Ty
             index.start,
             index.close_bracket,
         );
-        type_name = Some(new_type_name_array_type_name(array_type));
+        type_name = Some(new_type_name_array_type_name(arena, array_type));
     }
 
     type_name.expect("There surely is something in there")
 }
 
-pub fn new_expression_index_access_path(index_access_path: IndexAccessPath) -> Expression {
+pub fn new_expression_index_access_path<'arena>(
+    arena: &'arena Bump,
+    index_access_path: IndexAccessPath<'arena>,
+) -> Expression<'arena> {
     let IndexAccessPath { path, indices } = index_access_path;
 
     let mut expression = Some(match path {
-        Path::IdentifierPath(path) => new_expression_identifier_path(path),
-        Path::ElementaryType(elem_type) => new_expression_elementary_type(elem_type),
+        Path::IdentifierPath(path) => new_expression_identifier_path(arena, path),
+        Path::ElementaryType(elem_type) => new_expression_elementary_type(arena, elem_type),
     });
 
     for index in indices.into_iter() {
         let array_expression = new_index_access_expression(
+            arena,
             expression
                 .take()
                 .expect("There surely is something in there"),
@@ -109,25 +121,29 @@ pub fn new_expression_index_access_path(index_access_path: IndexAccessPath) -> E
             index.end,
             index.close_bracket,
         );
-        expression = Some(new_expression_index_access_expression(array_expression));
+        expression = Some(new_expression_index_access_expression(
+            arena,
+            array_expression,
+        ));
     }
 
     expression.expect("There surely is something in there")
 }
 
 #[derive(Debug)]
-pub struct ProtoTuple {
+pub struct ProtoTuple<'arena> {
     // Do we care about range in source code?
-    pub _open_paren: OpenParen,
-    pub _elements: Vec<ProtoTupleElement>,
-    pub _close_paren: CloseParen,
+    pub _open_paren: OpenParen<'arena>,
+    pub _elements: Vec<'arena, ProtoTupleElement<'arena>>,
+    pub _close_paren: CloseParen<'arena>,
 }
 
-pub fn new_proto_tuple(
-    _open_paren: OpenParen,
-    _elements: Vec<ProtoTupleElement>,
-    _close_paren: CloseParen,
-) -> ProtoTuple {
+pub fn new_proto_tuple<'arena>(
+    _arena: &'arena Bump,
+    _open_paren: OpenParen<'arena>,
+    _elements: Vec<'arena, ProtoTupleElement<'arena>>,
+    _close_paren: CloseParen<'arena>,
+) -> ProtoTuple<'arena> {
     ProtoTuple {
         _open_paren,
         _elements,
@@ -135,72 +151,90 @@ pub fn new_proto_tuple(
     }
 }
 
-pub fn new_tuple_expression_from_proto_tuple(proto_tuple: ProtoTuple) -> TupleExpression {
-    let elements: Vec<TupleValue> = proto_tuple
+pub fn new_tuple_expression_from_proto_tuple<'arena>(
+    arena: &'arena Bump,
+    proto_tuple: ProtoTuple<'arena>,
+) -> TupleExpression<'arena> {
+    let elements: Vec<'arena, TupleValue<'arena>> = proto_tuple
         ._elements
         .into_iter()
         .map(|element| match element {
-            ProtoTupleElement::Expression(name) => new_tuple_value(Some(name)),
+            ProtoTupleElement::Expression(name) => new_tuple_value(arena, Some(name)),
             ProtoTupleElement::Declaration(_) => panic!("Tuples can't have declarations"),
             ProtoTupleElement::StorageLocation(_, _) => {
                 panic!("Tuples can't have storage locations")
             }
-            ProtoTupleElement::Empty => new_tuple_value(None),
+            ProtoTupleElement::Empty => new_tuple_value(arena, None),
         })
-        .collect();
+        .collect_in(arena);
     new_tuple_expression(
+        arena,
         proto_tuple._open_paren,
-        new_tuple_values(elements),
+        new_tuple_values(arena, elements),
         proto_tuple._close_paren,
     )
 }
 
-pub fn new_tuple_deconstruction_statement_from_proto_tuple(
-    proto_tuple: ProtoTuple,
-    equal: Equal,
-    expression: Expression,
-    semicolon: Semicolon,
-) -> TupleDeconstructionStatement {
-    let elements: Vec<TupleDeconstructionElement> = proto_tuple
+pub fn new_tuple_deconstruction_statement_from_proto_tuple<'arena>(
+    arena: &'arena Bump,
+    proto_tuple: ProtoTuple<'arena>,
+    equal: Equal<'arena>,
+    expression: Expression<'arena>,
+    semicolon: Semicolon<'arena>,
+) -> TupleDeconstructionStatement<'arena> {
+    let elements: Vec<'arena, TupleDeconstructionElement<'arena>> = proto_tuple
         ._elements
         .into_iter()
         .map(|element| match element {
             ProtoTupleElement::Expression(name) => match name {
-                Expression::Identifier(name) => new_tuple_deconstruction_element(Some(
-                    new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(None, name)),
-                )),
+                Expression::Identifier(name) => new_tuple_deconstruction_element(
+                    arena,
+                    Some(new_tuple_member_untyped_tuple_member(
+                        arena,
+                        new_untyped_tuple_member(arena, None, name),
+                    )),
+                ),
                 _ => panic!("Tuples deconstruction can only be used with identifiers"),
             },
             ProtoTupleElement::Declaration(decl) => {
-                let tuple_member = match &decl.variable_type {
+                let VariableDeclarationStruct {
+                    storage_location,
+                    name,
+                    variable_type,
+                } = Box::into_inner(decl);
+                let tuple_member = match variable_type {
                     VariableDeclarationType::TypeName(type_name) => {
-                        new_tuple_member_typed_tuple_member(new_typed_tuple_member(
-                            type_name.clone(),
-                            decl.storage_location.clone(),
-                            decl.name.clone(),
-                        ))
+                        new_tuple_member_typed_tuple_member(
+                            arena,
+                            new_typed_tuple_member(arena, type_name, storage_location, name),
+                        )
                     }
                     VariableDeclarationType::VarKeyword(_) => {
-                        new_tuple_member_untyped_tuple_member(new_untyped_tuple_member(
-                            decl.storage_location.clone(),
-                            decl.name.clone(),
-                        ))
+                        new_tuple_member_untyped_tuple_member(
+                            arena,
+                            new_untyped_tuple_member(arena, storage_location, name),
+                        )
                     }
                 };
-                new_tuple_deconstruction_element(Some(tuple_member))
+                new_tuple_deconstruction_element(arena, Some(tuple_member))
             }
             ProtoTupleElement::StorageLocation(storage_location, name) => {
-                new_tuple_deconstruction_element(Some(new_tuple_member_untyped_tuple_member(
-                    new_untyped_tuple_member(Some(storage_location), name),
-                )))
+                new_tuple_deconstruction_element(
+                    arena,
+                    Some(new_tuple_member_untyped_tuple_member(
+                        arena,
+                        new_untyped_tuple_member(arena, Some(storage_location), name),
+                    )),
+                )
             }
-            ProtoTupleElement::Empty => new_tuple_deconstruction_element(None),
+            ProtoTupleElement::Empty => new_tuple_deconstruction_element(arena, None),
         })
-        .collect();
+        .collect_in(arena);
     new_tuple_deconstruction_statement(
+        arena,
         None,
         proto_tuple._open_paren,
-        new_tuple_deconstruction_elements(elements),
+        new_tuple_deconstruction_elements(arena, elements),
         proto_tuple._close_paren,
         equal,
         expression,
@@ -209,49 +243,73 @@ pub fn new_tuple_deconstruction_statement_from_proto_tuple(
 }
 
 #[derive(Debug)]
-pub enum ProtoTupleElement {
-    Expression(Expression),
-    Declaration(VariableDeclaration),
-    StorageLocation(StorageLocation, Identifier),
+pub enum ProtoTupleElement<'arena> {
+    Expression(Expression<'arena>),
+    Declaration(VariableDeclaration<'arena>),
+    StorageLocation(StorageLocation<'arena>, Identifier<'arena>),
     Empty,
 }
 
-pub fn new_proto_tuple_element_expression(name: Expression) -> ProtoTupleElement {
+pub fn new_proto_tuple_element_expression<'arena>(
+    _arena: &'arena Bump,
+    name: Expression<'arena>,
+) -> ProtoTupleElement<'arena> {
     ProtoTupleElement::Expression(name)
 }
 
-pub fn new_proto_tuple_element_declaration(decl: VariableDeclaration) -> ProtoTupleElement {
+pub fn new_proto_tuple_element_declaration<'arena>(
+    _arena: &'arena Bump,
+    decl: VariableDeclaration<'arena>,
+) -> ProtoTupleElement<'arena> {
     ProtoTupleElement::Declaration(decl)
 }
 
-pub fn new_proto_tuple_element_storage_location(
-    storage_location: StorageLocation,
-    name: Identifier,
-) -> ProtoTupleElement {
+pub fn new_proto_tuple_element_storage_location<'arena>(
+    _arena: &'arena Bump,
+    storage_location: StorageLocation<'arena>,
+    name: Identifier<'arena>,
+) -> ProtoTupleElement<'arena> {
     ProtoTupleElement::StorageLocation(storage_location, name)
 }
 
-pub fn new_proto_tuple_element_empty() -> ProtoTupleElement {
+pub fn new_proto_tuple_element_empty<'arena>(_arena: &'arena Bump) -> ProtoTupleElement<'arena> {
     ProtoTupleElement::Empty
 }
 
-pub fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
-    let base: Expression = new_expression_identifier(identifier_path.elements[0].clone());
-    identifier_path.elements[1..].iter().fold(base, |acc, id| {
-        new_expression_member_access_expression(new_member_access_expression(
-            acc,
-            new_empty_terminal(LexemeKind::Period),
-            id.clone(),
-        ))
-    })
+pub fn new_expression_identifier_path<'arena>(
+    arena: &'arena Bump,
+    identifier_path: IdentifierPath<'arena>,
+) -> Expression<'arena> {
+    identifier_path
+        .elements
+        .into_iter()
+        .fold(None, |acc, id| {
+            Some(match acc {
+                None => new_expression_identifier(arena, id),
+                Some(acc) => new_expression_member_access_expression(
+                    arena,
+                    new_member_access_expression(
+                        arena,
+                        acc,
+                        new_empty_terminal(LexemeKind::Period),
+                        id,
+                    ),
+                ),
+            })
+        })
+        .expect("There is at least one element in the identifier path")
 }
 
 /// We use this function to share attributes between a state variable that has a function type.
 /// We find and split the attributes from the function type as needed
 /// TODO(v2) fail gracefully if a wrong attribute is found
-pub fn extract_extra_attributes(
-    mut fun_type: FunctionType,
-) -> (FunctionType, Vec<StateVariableAttribute>) {
+pub fn extract_extra_attributes<'arena>(
+    arena: &'arena Bump,
+    mut fun_type: FunctionType<'arena>,
+) -> (
+    FunctionType<'arena>,
+    Vec<'arena, StateVariableAttribute<'arena>>,
+) {
     // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
     let mut seen_constant = false;
     let mut seen_internal = false;
@@ -259,54 +317,58 @@ pub fn extract_extra_attributes(
     let mut seen_public = false;
     let mut duplicate_found = false;
 
-    let mut extra_attributes: Vec<StateVariableAttribute> = Vec::new();
-    fn add_to_extra(
-        attr: &FunctionTypeAttribute,
-        extra_attributes: &mut Vec<StateVariableAttribute>,
+    let mut extra_attributes: Vec<'arena, StateVariableAttribute<'arena>> = Vec::new_in(arena);
+    fn add_to_extra<'arena>(
+        attr: FunctionTypeAttribute<'arena>,
+        extra_attributes: &mut Vec<'arena, StateVariableAttribute<'arena>>,
     ) {
         match attr {
       FunctionTypeAttribute::ConstantKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::ConstantKeyword(terminal.clone()));
+        extra_attributes.push(StateVariableAttribute::ConstantKeyword(terminal));
       }
       FunctionTypeAttribute::InternalKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::InternalKeyword(terminal.clone()));
+        extra_attributes.push(StateVariableAttribute::InternalKeyword(terminal));
       }
       FunctionTypeAttribute::PrivateKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::PrivateKeyword(terminal.clone()));
+        extra_attributes.push(StateVariableAttribute::PrivateKeyword(terminal));
       }
       FunctionTypeAttribute::PublicKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::PublicKeyword(terminal.clone()));
+        extra_attributes.push(StateVariableAttribute::PublicKeyword(terminal));
       }
       _ => panic!("This is wrong, I don't really know what to do for now, but it should fail gracefully (like a parser error)")
     }
     }
 
-    Rc::get_mut(&mut fun_type)
-        .unwrap()
-        .attributes
-        .elements
-        .retain(|attr| {
-            if duplicate_found {
-                add_to_extra(attr, &mut extra_attributes);
-                return false;
-            }
-            let &mut seen = match attr {
+    // This works like extract_if, but we don't have that in this vector
+    let mut i = 0;
+    let vec = &mut fun_type.attributes.elements;
+
+    while i < vec.len() {
+        if duplicate_found {
+            let val = vec.remove(i);
+            add_to_extra(val, &mut extra_attributes);
+        } else {
+            let seen = match vec[i] {
                 FunctionTypeAttribute::ConstantKeyword(_) => &mut seen_constant,
                 FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
                 FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
                 FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
-                _ => return true,
+                _ => {
+                    i += 1;
+                    continue;
+                }
             };
 
-            if seen {
+            if *seen {
                 duplicate_found = true;
-                add_to_extra(attr, &mut extra_attributes);
-                false
+                let val = vec.remove(i);
+                add_to_extra(val, &mut extra_attributes);
             } else {
-                seen_constant = true;
-                true
+                *seen = true;
+                i += 1;
             }
-        });
+        }
+    }
 
     (fun_type, extra_attributes)
 }

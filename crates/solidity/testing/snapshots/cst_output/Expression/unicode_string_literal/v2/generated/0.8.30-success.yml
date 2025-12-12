@@ -10,6 +10,7 @@ StringExpression(
                         l: 0,
                         r: 25,
                         kind: DoubleQuotedUnicodeStringLiteral,
+                        phantom: PhantomData<&()>,
                     },
                 ),
             ],

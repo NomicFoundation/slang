@@ -1,9 +1,13 @@
   {%- set target = model.ir_model -%}
   #![allow(non_camel_case_types)]
   #![allow(dead_code)]
+  #![allow(unused_variables)]
+
 
   use crate::ast::lexemes::LexemeKind;
-  use std::rc::Rc;
+  use bumpalo::{Bump, collections::Vec, boxed::Box};
+  use std::marker::PhantomData;
+
 
 // TODO:
 // - (perf) don't use terminals that are not needed
@@ -14,28 +18,28 @@
 //
 
 {% for parent_type, sequence in target.sequences %}
-  pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+  pub type {{ parent_type }}<'arena> = Box<'arena, {{ parent_type }}Struct<'arena>>;
 
   #[derive(Debug)]
-  pub struct {{ parent_type }}Struct {
+  pub struct {{ parent_type }}Struct<'arena> {
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
         {%- if field.is_optional -%}
-          Option<{{ field.type.name }}>,
+          Option<{{ field.type.name }}<'arena>>,
         {%- else -%}
-          {{ field.type.name }},
+          {{ field.type.name }}<'arena>,
         {%- endif -%}
     {% endfor -%}
   }
 
-  pub fn new_{{ parent_type | snake_case }}({% for field in sequence.fields -%}
-      {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.type.name }}{% if field.is_optional %}>{% endif %},
-    {%- endfor %}) -> {{ parent_type }} {
-      Rc::new({{ parent_type }}Struct {
+  pub fn new_{{ parent_type | snake_case }}<'arena>(arena: &'arena Bump, {% for field in sequence.fields -%}
+      {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.type.name }}<'arena>{% if field.is_optional %}>{% endif %},
+    {%- endfor %}) -> {{ parent_type }}<'arena> {
+      Box::new_in({{ parent_type }}Struct {
         {%- for field in sequence.fields %}
           {{ field.label | snake_case }},
         {%- endfor -%}
-      })
+      }, arena)
   }
 
 {% endfor %}
@@ -46,15 +50,15 @@
 
 
 {% for parent_type, choice in target.choices %}
-  #[derive(Debug, Clone)]
-  pub enum {{ parent_type }} {
+  #[derive(Debug)]
+  pub enum {{ parent_type }}<'arena> {
     {% for variant in choice.variants -%}
-      {{ variant.name }}({{ variant.name }}),
+      {{ variant.name }}({{ variant.name }}<'arena>),
     {%- endfor -%}
   }
 
   {% for variant in choice.variants %}
-    pub fn new_{{ parent_type | snake_case }}_{{ variant.name | snake_case }}( element: {{ variant.name }}) -> {{ parent_type }} {
+    pub fn new_{{ parent_type | snake_case }}_{{ variant.name | snake_case }}<'arena>(arena: &'arena Bump, element: {{ variant.name }}<'arena>) -> {{ parent_type }}<'arena> {
       {{ parent_type }}::{{ variant.name }}(element)
     }
   {% endfor %}
@@ -67,12 +71,12 @@
 //
 
 {% for parent_type, collection in target.collections %}
-  #[derive(Debug, Clone)]
-  pub struct {{ parent_type }} {
-      pub elements: Vec<{{ collection.item_type.name }}>,
+  #[derive(Debug)]
+  pub struct {{ parent_type }}<'arena> {
+      pub elements: Vec<'arena, {{ collection.item_type.name }}<'arena>>,
   }
 
-  pub fn new_{{ parent_type | snake_case }}(elements: Vec<{{ collection.item_type.name }}>) -> {{ parent_type }} {
+  pub fn new_{{ parent_type | snake_case }}<'arena>(arena: &'arena Bump, elements: Vec<'arena, {{ collection.item_type.name }}<'arena>>) -> {{ parent_type }}<'arena> {
     {{ parent_type }} { elements }
   }
 
@@ -81,37 +85,40 @@
 //
 // Terminals
 //
-#[derive(Debug, Clone)]
-pub struct TerminalType {
+#[derive(Debug)]
+pub struct TerminalType<'arena> {
     pub value: String,
     pub l: usize,
     pub r: usize,
     pub kind: LexemeKind,
+    phantom: PhantomData<&'arena ()>,
+
 }
 
-pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType {
+pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType<'static> {
   TerminalType {
     value: String::new(),
     l: 0,
     r: 0,
     kind,
+    phantom: PhantomData,
   }
 }
 
 {% for parent_type in target.terminal_wrappers %}
-pub type {{ parent_type }} = TerminalType;
+pub type {{ parent_type }}<'arena> = TerminalType<'arena>;
 {% endfor %}
 
   {% for parent_type, unique in target.terminals %}
-    pub type {{ parent_type }} = TerminalType;
-
-    pub fn new_{{ parent_type | snake_case }}(l: usize, r: usize, source: &str) -> {{ parent_type }} {
+    pub type {{ parent_type }}<'arena> = TerminalType<'arena>;
+    pub fn new_{{ parent_type | snake_case }}<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> {{ parent_type }}<'arena> {
       TerminalType {
         // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
         l,
         r,
         kind: LexemeKind::{{ parent_type }},
+        phantom: PhantomData,
       }
     }
     

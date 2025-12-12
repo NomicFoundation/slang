@@ -10,6 +10,7 @@ FunctionCallExpression(
                         l: 0,
                         r: 1,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
                 period: TerminalType {
@@ -17,12 +18,14 @@ FunctionCallExpression(
                     l: 0,
                     r: 0,
                     kind: Period,
+                    phantom: PhantomData<&()>,
                 },
                 member: TerminalType {
                     value: "y",
                     l: 2,
                     r: 3,
                     kind: Identifier,
+                    phantom: PhantomData<&()>,
                 },
             },
         ),
@@ -33,6 +36,7 @@ FunctionCallExpression(
                     l: 3,
                     r: 4,
                     kind: OpenParen,
+                    phantom: PhantomData<&()>,
                 },
                 arguments: PositionalArguments {
                     elements: [],
@@ -42,6 +46,7 @@ FunctionCallExpression(
                     l: 4,
                     r: 5,
                     kind: CloseParen,
+                    phantom: PhantomData<&()>,
                 },
             },
         ),

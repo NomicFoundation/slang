@@ -10,6 +10,7 @@ FunctionCallExpression(
                         l: 0,
                         r: 7,
                         kind: AddressKeyword_Reserved,
+                        phantom: PhantomData<&()>,
                     },
                     payable_keyword: None,
                 },
@@ -22,6 +23,7 @@ FunctionCallExpression(
                     l: 7,
                     r: 8,
                     kind: OpenParen,
+                    phantom: PhantomData<&()>,
                 },
                 arguments: PositionalArguments {
                     elements: [
@@ -31,6 +33,7 @@ FunctionCallExpression(
                                 l: 8,
                                 r: 13,
                                 kind: Identifier,
+                                phantom: PhantomData<&()>,
                             },
                         ),
                     ],
@@ -40,6 +43,7 @@ FunctionCallExpression(
                     l: 13,
                     r: 14,
                     kind: CloseParen,
+                    phantom: PhantomData<&()>,
                 },
             },
         ),

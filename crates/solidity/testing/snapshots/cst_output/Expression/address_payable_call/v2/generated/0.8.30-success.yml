@@ -10,6 +10,7 @@ FunctionCallExpression(
                         l: 0,
                         r: 7,
                         kind: AddressKeyword_Reserved,
+                        phantom: PhantomData<&()>,
                     },
                     payable_keyword: Some(
                         TerminalType {
@@ -17,6 +18,7 @@ FunctionCallExpression(
                             l: 8,
                             r: 15,
                             kind: PayableKeyword_Reserved,
+                            phantom: PhantomData<&()>,
                         },
                     ),
                 },
@@ -29,6 +31,7 @@ FunctionCallExpression(
                     l: 15,
                     r: 16,
                     kind: OpenParen,
+                    phantom: PhantomData<&()>,
                 },
                 arguments: PositionalArguments {
                     elements: [
@@ -38,6 +41,7 @@ FunctionCallExpression(
                                 l: 16,
                                 r: 21,
                                 kind: Identifier,
+                                phantom: PhantomData<&()>,
                             },
                         ),
                     ],
@@ -47,6 +51,7 @@ FunctionCallExpression(
                     l: 21,
                     r: 22,
                     kind: CloseParen,
+                    phantom: PhantomData<&()>,
                 },
             },
         ),

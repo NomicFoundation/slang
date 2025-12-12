@@ -10,6 +10,7 @@ AdditiveExpression(
                         l: 0,
                         r: 1,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
                 operator: TerminalType {
@@ -17,6 +18,7 @@ AdditiveExpression(
                     l: 2,
                     r: 3,
                     kind: Asterisk,
+                    phantom: PhantomData<&()>,
                 },
                 right_operand: Identifier(
                     TerminalType {
@@ -24,6 +26,7 @@ AdditiveExpression(
                         l: 4,
                         r: 5,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
             },
@@ -33,6 +36,7 @@ AdditiveExpression(
             l: 6,
             r: 7,
             kind: Plus,
+            phantom: PhantomData<&()>,
         },
         right_operand: MultiplicativeExpression(
             MultiplicativeExpressionStruct {
@@ -42,6 +46,7 @@ AdditiveExpression(
                         l: 8,
                         r: 9,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
                 operator: TerminalType {
@@ -49,6 +54,7 @@ AdditiveExpression(
                     l: 10,
                     r: 11,
                     kind: Asterisk,
+                    phantom: PhantomData<&()>,
                 },
                 right_operand: Identifier(
                     TerminalType {
@@ -56,6 +62,7 @@ AdditiveExpression(
                         l: 12,
                         r: 13,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
             },

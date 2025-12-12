@@ -10,6 +10,7 @@ SourceUnitStruct {
                         l: 0,
                         r: 8,
                         kind: FunctionKeyword_Reserved,
+                        phantom: PhantomData<&()>,
                     },
                     name: Identifier(
                         TerminalType {
@@ -17,6 +18,7 @@ SourceUnitStruct {
                             l: 9,
                             r: 12,
                             kind: Identifier,
+                            phantom: PhantomData<&()>,
                         },
                     ),
                     parameters: ParametersDeclarationStruct {
@@ -25,6 +27,7 @@ SourceUnitStruct {
                             l: 12,
                             r: 13,
                             kind: OpenParen,
+                            phantom: PhantomData<&()>,
                         },
                         parameters: Parameters {
                             elements: [],
@@ -34,6 +37,7 @@ SourceUnitStruct {
                             l: 13,
                             r: 14,
                             kind: CloseParen,
+                            phantom: PhantomData<&()>,
                         },
                     },
                     attributes: FunctionAttributes {
@@ -47,6 +51,7 @@ SourceUnitStruct {
                                 l: 15,
                                 r: 16,
                                 kind: OpenBrace,
+                                phantom: PhantomData<&()>,
                             },
                             statements: Statements {
                                 elements: [],
@@ -56,6 +61,7 @@ SourceUnitStruct {
                                 l: 17,
                                 r: 18,
                                 kind: CloseBrace,
+                                phantom: PhantomData<&()>,
                             },
                         },
                     ),

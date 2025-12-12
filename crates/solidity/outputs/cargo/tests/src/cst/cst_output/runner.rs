@@ -102,11 +102,14 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
         let output = Parser::create(version)?.parse_nonterminal(tested_kind, &source);
 
+        let parser = ParserV2::new();
         let parsed: Result<Box<dyn NodeCheckerDebug>, _> = match parser_name {
             // For now we only have a SourceUnit parser, having all parsers with LALRPOP is expensive
-            "SourceUnit" => ParserV2::parse(&source, LanguageVersion::V0_8_30)
+            "SourceUnit" => parser
+                .parse(&source, LanguageVersion::V0_8_30)
                 .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
-            "Expression" => ParserV2::parse_expression(&source, LanguageVersion::V0_8_30)
+            "Expression" => parser
+                .parse_expression(&source, LanguageVersion::V0_8_30)
                 .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
             _ => {
                 // Ignore everything else

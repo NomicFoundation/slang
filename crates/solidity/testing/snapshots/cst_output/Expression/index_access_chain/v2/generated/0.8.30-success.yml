@@ -10,6 +10,7 @@ IndexAccessExpression(
                         l: 0,
                         r: 3,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
                 open_bracket: TerminalType {
@@ -17,6 +18,7 @@ IndexAccessExpression(
                     l: 3,
                     r: 4,
                     kind: OpenBracket,
+                    phantom: PhantomData<&()>,
                 },
                 start: Some(
                     Identifier(
@@ -25,6 +27,7 @@ IndexAccessExpression(
                             l: 4,
                             r: 10,
                             kind: Identifier,
+                            phantom: PhantomData<&()>,
                         },
                     ),
                 ),
@@ -34,6 +37,7 @@ IndexAccessExpression(
                     l: 10,
                     r: 11,
                     kind: CloseBracket,
+                    phantom: PhantomData<&()>,
                 },
             },
         ),
@@ -42,6 +46,7 @@ IndexAccessExpression(
             l: 11,
             r: 12,
             kind: OpenBracket,
+            phantom: PhantomData<&()>,
         },
         start: Some(
             Identifier(
@@ -50,6 +55,7 @@ IndexAccessExpression(
                     l: 12,
                     r: 18,
                     kind: Identifier,
+                    phantom: PhantomData<&()>,
                 },
             ),
         ),
@@ -59,6 +65,7 @@ IndexAccessExpression(
             l: 18,
             r: 19,
             kind: CloseBracket,
+            phantom: PhantomData<&()>,
         },
     },
 )

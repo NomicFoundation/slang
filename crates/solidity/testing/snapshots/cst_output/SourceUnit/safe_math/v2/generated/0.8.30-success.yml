@@ -10,18 +10,21 @@ SourceUnitStruct {
                         l: 0,
                         r: 7,
                         kind: LibraryKeyword_Reserved,
+                        phantom: PhantomData<&()>,
                     },
                     name: TerminalType {
                         value: "SafeMath",
                         l: 8,
                         r: 16,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                     open_brace: TerminalType {
                         value: "{",
                         l: 17,
                         r: 18,
                         kind: OpenBrace,
+                        phantom: PhantomData<&()>,
                     },
                     members: LibraryMembers {
                         elements: [
@@ -32,6 +35,7 @@ SourceUnitStruct {
                                         l: 21,
                                         r: 29,
                                         kind: FunctionKeyword_Reserved,
+                                        phantom: PhantomData<&()>,
                                     },
                                     name: Identifier(
                                         TerminalType {
@@ -39,6 +43,7 @@ SourceUnitStruct {
                                             l: 30,
                                             r: 36,
                                             kind: Identifier,
+                                            phantom: PhantomData<&()>,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
@@ -47,6 +52,7 @@ SourceUnitStruct {
                                             l: 36,
                                             r: 37,
                                             kind: OpenParen,
+                                            phantom: PhantomData<&()>,
                                         },
                                         parameters: Parameters {
                                             elements: [
@@ -58,6 +64,7 @@ SourceUnitStruct {
                                                                 l: 37,
                                                                 r: 44,
                                                                 kind: UintKeyword_Reserved,
+                                                                phantom: PhantomData<&()>,
                                                             },
                                                         ),
                                                     ),
@@ -68,6 +75,7 @@ SourceUnitStruct {
                                                             l: 45,
                                                             r: 46,
                                                             kind: Identifier,
+                                                            phantom: PhantomData<&()>,
                                                         },
                                                     ),
                                                 },
@@ -79,6 +87,7 @@ SourceUnitStruct {
                                                                 l: 48,
                                                                 r: 55,
                                                                 kind: UintKeyword_Reserved,
+                                                                phantom: PhantomData<&()>,
                                                             },
                                                         ),
                                                     ),
@@ -89,6 +98,7 @@ SourceUnitStruct {
                                                             l: 56,
                                                             r: 57,
                                                             kind: Identifier,
+                                                            phantom: PhantomData<&()>,
                                                         },
                                                     ),
                                                 },
@@ -99,6 +109,7 @@ SourceUnitStruct {
                                             l: 57,
                                             r: 58,
                                             kind: CloseParen,
+                                            phantom: PhantomData<&()>,
                                         },
                                     },
                                     attributes: FunctionAttributes {
@@ -109,6 +120,7 @@ SourceUnitStruct {
                                                     l: 59,
                                                     r: 67,
                                                     kind: InternalKeyword_Reserved,
+                                                    phantom: PhantomData<&()>,
                                                 },
                                             ),
                                             PureKeyword(
@@ -117,6 +129,7 @@ SourceUnitStruct {
                                                     l: 68,
                                                     r: 72,
                                                     kind: PureKeyword_Reserved,
+                                                    phantom: PhantomData<&()>,
                                                 },
                                             ),
                                         ],
@@ -128,6 +141,7 @@ SourceUnitStruct {
                                                 l: 73,
                                                 r: 80,
                                                 kind: ReturnsKeyword_Reserved,
+                                                phantom: PhantomData<&()>,
                                             },
                                             variables: ParametersDeclarationStruct {
                                                 open_paren: TerminalType {
@@ -135,6 +149,7 @@ SourceUnitStruct {
                                                     l: 81,
                                                     r: 82,
                                                     kind: OpenParen,
+                                                    phantom: PhantomData<&()>,
                                                 },
                                                 parameters: Parameters {
                                                     elements: [
@@ -146,6 +161,7 @@ SourceUnitStruct {
                                                                         l: 82,
                                                                         r: 86,
                                                                         kind: BoolKeyword_Reserved,
+                                                                        phantom: PhantomData<&()>,
                                                                     },
                                                                 ),
                                                             ),
@@ -160,6 +176,7 @@ SourceUnitStruct {
                                                                         l: 88,
                                                                         r: 95,
                                                                         kind: UintKeyword_Reserved,
+                                                                        phantom: PhantomData<&()>,
                                                                     },
                                                                 ),
                                                             ),
@@ -173,6 +190,7 @@ SourceUnitStruct {
                                                     l: 95,
                                                     r: 96,
                                                     kind: CloseParen,
+                                                    phantom: PhantomData<&()>,
                                                 },
                                             },
                                         },
@@ -184,6 +202,7 @@ SourceUnitStruct {
                                                 l: 97,
                                                 r: 98,
                                                 kind: OpenBrace,
+                                                phantom: PhantomData<&()>,
                                             },
                                             statements: Statements {
                                                 elements: [
@@ -194,6 +213,7 @@ SourceUnitStruct {
                                                                 l: 103,
                                                                 r: 112,
                                                                 kind: UncheckedKeyword_Reserved,
+                                                                phantom: PhantomData<&()>,
                                                             },
                                                             block: BlockStruct {
                                                                 open_brace: TerminalType {
@@ -201,6 +221,7 @@ SourceUnitStruct {
                                                                     l: 113,
                                                                     r: 114,
                                                                     kind: OpenBrace,
+                                                                    phantom: PhantomData<&()>,
                                                                 },
                                                                 statements: Statements {
                                                                     elements: [
@@ -215,6 +236,7 @@ SourceUnitStruct {
                                                                                                     l: 121,
                                                                                                     r: 128,
                                                                                                     kind: UintKeyword_Reserved,
+                                                                                                    phantom: PhantomData<&()>,
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -225,6 +247,7 @@ SourceUnitStruct {
                                                                                         l: 129,
                                                                                         r: 130,
                                                                                         kind: Identifier,
+                                                                                        phantom: PhantomData<&()>,
                                                                                     },
                                                                                 },
                                                                                 value: Some(
@@ -234,6 +257,7 @@ SourceUnitStruct {
                                                                                             l: 131,
                                                                                             r: 132,
                                                                                             kind: Equal,
+                                                                                            phantom: PhantomData<&()>,
                                                                                         },
                                                                                         expression: AdditiveExpression(
                                                                                             AdditiveExpressionStruct {
@@ -243,6 +267,7 @@ SourceUnitStruct {
                                                                                                         l: 133,
                                                                                                         r: 134,
                                                                                                         kind: Identifier,
+                                                                                                        phantom: PhantomData<&()>,
                                                                                                     },
                                                                                                 ),
                                                                                                 operator: TerminalType {
@@ -250,6 +275,7 @@ SourceUnitStruct {
                                                                                                     l: 135,
                                                                                                     r: 136,
                                                                                                     kind: Plus,
+                                                                                                    phantom: PhantomData<&()>,
                                                                                                 },
                                                                                                 right_operand: Identifier(
                                                                                                     TerminalType {
@@ -257,6 +283,7 @@ SourceUnitStruct {
                                                                                                         l: 137,
                                                                                                         r: 138,
                                                                                                         kind: Identifier,
+                                                                                                        phantom: PhantomData<&()>,
                                                                                                     },
                                                                                                 ),
                                                                                             },
@@ -268,6 +295,7 @@ SourceUnitStruct {
                                                                                     l: 138,
                                                                                     r: 139,
                                                                                     kind: Semicolon,
+                                                                                    phantom: PhantomData<&()>,
                                                                                 },
                                                                             },
                                                                         ),
@@ -278,12 +306,14 @@ SourceUnitStruct {
                                                                                     l: 146,
                                                                                     r: 148,
                                                                                     kind: IfKeyword_Reserved,
+                                                                                    phantom: PhantomData<&()>,
                                                                                 },
                                                                                 open_paren: TerminalType {
                                                                                     value: "(",
                                                                                     l: 149,
                                                                                     r: 150,
                                                                                     kind: OpenParen,
+                                                                                    phantom: PhantomData<&()>,
                                                                                 },
                                                                                 condition: InequalityExpression(
                                                                                     InequalityExpressionStruct {
@@ -293,6 +323,7 @@ SourceUnitStruct {
                                                                                                 l: 150,
                                                                                                 r: 151,
                                                                                                 kind: Identifier,
+                                                                                                phantom: PhantomData<&()>,
                                                                                             },
                                                                                         ),
                                                                                         operator: TerminalType {
@@ -300,6 +331,7 @@ SourceUnitStruct {
                                                                                             l: 152,
                                                                                             r: 153,
                                                                                             kind: LessThan,
+                                                                                            phantom: PhantomData<&()>,
                                                                                         },
                                                                                         right_operand: Identifier(
                                                                                             TerminalType {
@@ -307,6 +339,7 @@ SourceUnitStruct {
                                                                                                 l: 154,
                                                                                                 r: 155,
                                                                                                 kind: Identifier,
+                                                                                                phantom: PhantomData<&()>,
                                                                                             },
                                                                                         ),
                                                                                     },
@@ -316,6 +349,7 @@ SourceUnitStruct {
                                                                                     l: 155,
                                                                                     r: 156,
                                                                                     kind: CloseParen,
+                                                                                    phantom: PhantomData<&()>,
                                                                                 },
                                                                                 body: ReturnStatement(
                                                                                     ReturnStatementStruct {
@@ -324,6 +358,7 @@ SourceUnitStruct {
                                                                                             l: 157,
                                                                                             r: 163,
                                                                                             kind: ReturnKeyword_Reserved,
+                                                                                            phantom: PhantomData<&()>,
                                                                                         },
                                                                                         expression: Some(
                                                                                             TupleExpression(
@@ -333,6 +368,7 @@ SourceUnitStruct {
                                                                                                         l: 164,
                                                                                                         r: 165,
                                                                                                         kind: OpenParen,
+                                                                                                        phantom: PhantomData<&()>,
                                                                                                     },
                                                                                                     items: TupleValues {
                                                                                                         elements: [
@@ -344,6 +380,7 @@ SourceUnitStruct {
                                                                                                                             l: 165,
                                                                                                                             r: 170,
                                                                                                                             kind: FalseKeyword_Reserved,
+                                                                                                                            phantom: PhantomData<&()>,
                                                                                                                         },
                                                                                                                     ),
                                                                                                                 ),
@@ -357,6 +394,7 @@ SourceUnitStruct {
                                                                                                                                 l: 172,
                                                                                                                                 r: 173,
                                                                                                                                 kind: DecimalLiteral,
+                                                                                                                                phantom: PhantomData<&()>,
                                                                                                                             },
                                                                                                                             unit: None,
                                                                                                                         },
@@ -370,6 +408,7 @@ SourceUnitStruct {
                                                                                                         l: 173,
                                                                                                         r: 174,
                                                                                                         kind: CloseParen,
+                                                                                                        phantom: PhantomData<&()>,
                                                                                                     },
                                                                                                 },
                                                                                             ),
@@ -379,6 +418,7 @@ SourceUnitStruct {
                                                                                             l: 174,
                                                                                             r: 175,
                                                                                             kind: Semicolon,
+                                                                                            phantom: PhantomData<&()>,
                                                                                         },
                                                                                     },
                                                                                 ),
@@ -392,6 +432,7 @@ SourceUnitStruct {
                                                                                     l: 182,
                                                                                     r: 188,
                                                                                     kind: ReturnKeyword_Reserved,
+                                                                                    phantom: PhantomData<&()>,
                                                                                 },
                                                                                 expression: Some(
                                                                                     TupleExpression(
@@ -401,6 +442,7 @@ SourceUnitStruct {
                                                                                                 l: 189,
                                                                                                 r: 190,
                                                                                                 kind: OpenParen,
+                                                                                                phantom: PhantomData<&()>,
                                                                                             },
                                                                                             items: TupleValues {
                                                                                                 elements: [
@@ -412,6 +454,7 @@ SourceUnitStruct {
                                                                                                                     l: 190,
                                                                                                                     r: 194,
                                                                                                                     kind: TrueKeyword_Reserved,
+                                                                                                                    phantom: PhantomData<&()>,
                                                                                                                 },
                                                                                                             ),
                                                                                                         ),
@@ -424,6 +467,7 @@ SourceUnitStruct {
                                                                                                                     l: 196,
                                                                                                                     r: 197,
                                                                                                                     kind: Identifier,
+                                                                                                                    phantom: PhantomData<&()>,
                                                                                                                 },
                                                                                                             ),
                                                                                                         ),
@@ -435,6 +479,7 @@ SourceUnitStruct {
                                                                                                 l: 197,
                                                                                                 r: 198,
                                                                                                 kind: CloseParen,
+                                                                                                phantom: PhantomData<&()>,
                                                                                             },
                                                                                         },
                                                                                     ),
@@ -444,6 +489,7 @@ SourceUnitStruct {
                                                                                     l: 198,
                                                                                     r: 199,
                                                                                     kind: Semicolon,
+                                                                                    phantom: PhantomData<&()>,
                                                                                 },
                                                                             },
                                                                         ),
@@ -454,6 +500,7 @@ SourceUnitStruct {
                                                                     l: 204,
                                                                     r: 205,
                                                                     kind: CloseBrace,
+                                                                    phantom: PhantomData<&()>,
                                                                 },
                                                             },
                                                         },
@@ -465,6 +512,7 @@ SourceUnitStruct {
                                                 l: 208,
                                                 r: 209,
                                                 kind: CloseBrace,
+                                                phantom: PhantomData<&()>,
                                             },
                                         },
                                     ),
@@ -477,6 +525,7 @@ SourceUnitStruct {
                         l: 210,
                         r: 211,
                         kind: CloseBrace,
+                        phantom: PhantomData<&()>,
                     },
                 },
             ),

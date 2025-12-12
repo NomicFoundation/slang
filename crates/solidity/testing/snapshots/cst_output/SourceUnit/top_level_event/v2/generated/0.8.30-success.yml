@@ -10,12 +10,14 @@ SourceUnitStruct {
                         l: 0,
                         r: 5,
                         kind: EventKeyword_Reserved,
+                        phantom: PhantomData<&()>,
                     },
                     name: TerminalType {
                         value: "E1",
                         l: 6,
                         r: 8,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                     parameters: EventParametersDeclarationStruct {
                         open_paren: TerminalType {
@@ -23,6 +25,7 @@ SourceUnitStruct {
                             l: 8,
                             r: 9,
                             kind: OpenParen,
+                            phantom: PhantomData<&()>,
                         },
                         parameters: EventParameters {
                             elements: [
@@ -34,6 +37,7 @@ SourceUnitStruct {
                                                 l: 9,
                                                 r: 16,
                                                 kind: UintKeyword_Reserved,
+                                                phantom: PhantomData<&()>,
                                             },
                                         ),
                                     ),
@@ -44,6 +48,7 @@ SourceUnitStruct {
                                             l: 17,
                                             r: 22,
                                             kind: Identifier,
+                                            phantom: PhantomData<&()>,
                                         },
                                     ),
                                 },
@@ -54,6 +59,7 @@ SourceUnitStruct {
                             l: 22,
                             r: 23,
                             kind: CloseParen,
+                            phantom: PhantomData<&()>,
                         },
                     },
                     anonymous_keyword: None,
@@ -62,6 +68,7 @@ SourceUnitStruct {
                         l: 23,
                         r: 24,
                         kind: Semicolon,
+                        phantom: PhantomData<&()>,
                     },
                 },
             ),

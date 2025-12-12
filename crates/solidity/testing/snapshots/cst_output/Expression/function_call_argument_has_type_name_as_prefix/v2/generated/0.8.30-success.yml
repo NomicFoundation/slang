@@ -8,6 +8,7 @@ FunctionCallExpression(
                 l: 0,
                 r: 1,
                 kind: Identifier,
+                phantom: PhantomData<&()>,
             },
         ),
         arguments: PositionalArgumentsDeclaration(
@@ -17,6 +18,7 @@ FunctionCallExpression(
                     l: 1,
                     r: 2,
                     kind: OpenParen,
+                    phantom: PhantomData<&()>,
                 },
                 arguments: PositionalArguments {
                     elements: [
@@ -26,6 +28,7 @@ FunctionCallExpression(
                                 l: 2,
                                 r: 12,
                                 kind: Identifier,
+                                phantom: PhantomData<&()>,
                             },
                         ),
                     ],
@@ -35,6 +38,7 @@ FunctionCallExpression(
                     l: 12,
                     r: 13,
                     kind: CloseParen,
+                    phantom: PhantomData<&()>,
                 },
             },
         ),

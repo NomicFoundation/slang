@@ -7,6 +7,7 @@ PrefixExpression(
             l: 0,
             r: 6,
             kind: DeleteKeyword_Reserved,
+            phantom: PhantomData<&()>,
         },
         operand: IndexAccessExpression(
             IndexAccessExpressionStruct {
@@ -16,6 +17,7 @@ PrefixExpression(
                         l: 7,
                         r: 10,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
                 open_bracket: TerminalType {
@@ -23,6 +25,7 @@ PrefixExpression(
                     l: 10,
                     r: 11,
                     kind: OpenBracket,
+                    phantom: PhantomData<&()>,
                 },
                 start: Some(
                     Identifier(
@@ -31,6 +34,7 @@ PrefixExpression(
                             l: 11,
                             r: 15,
                             kind: Identifier,
+                            phantom: PhantomData<&()>,
                         },
                     ),
                 ),
@@ -40,6 +44,7 @@ PrefixExpression(
                     l: 15,
                     r: 16,
                     kind: CloseBracket,
+                    phantom: PhantomData<&()>,
                 },
             },
         ),

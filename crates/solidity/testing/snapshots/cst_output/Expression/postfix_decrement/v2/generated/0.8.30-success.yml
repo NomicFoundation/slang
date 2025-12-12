@@ -8,6 +8,7 @@ PostfixExpression(
                 l: 0,
                 r: 3,
                 kind: Identifier,
+                phantom: PhantomData<&()>,
             },
         ),
         operator: TerminalType {
@@ -15,6 +16,7 @@ PostfixExpression(
             l: 3,
             r: 5,
             kind: MinusMinus,
+            phantom: PhantomData<&()>,
         },
     },
 )

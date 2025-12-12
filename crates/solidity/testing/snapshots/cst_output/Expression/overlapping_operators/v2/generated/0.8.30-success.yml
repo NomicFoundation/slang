@@ -10,6 +10,7 @@ AndExpression(
                         l: 0,
                         r: 1,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
                 operator: TerminalType {
@@ -17,6 +18,7 @@ AndExpression(
                     l: 2,
                     r: 3,
                     kind: Ampersand,
+                    phantom: PhantomData<&()>,
                 },
                 right_operand: Identifier(
                     TerminalType {
@@ -24,6 +26,7 @@ AndExpression(
                         l: 4,
                         r: 5,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
             },
@@ -33,6 +36,7 @@ AndExpression(
             l: 6,
             r: 8,
             kind: AmpersandAmpersand,
+            phantom: PhantomData<&()>,
         },
         right_operand: Identifier(
             TerminalType {
@@ -40,6 +44,7 @@ AndExpression(
                 l: 9,
                 r: 10,
                 kind: Identifier,
+                phantom: PhantomData<&()>,
             },
         ),
     },

@@ -8,6 +8,7 @@ MemberAccessExpression(
                 l: 0,
                 r: 5,
                 kind: SuperKeyword_Reserved,
+                phantom: PhantomData<&()>,
             },
         ),
         period: TerminalType {
@@ -15,12 +16,14 @@ MemberAccessExpression(
             l: 5,
             r: 6,
             kind: Period,
+            phantom: PhantomData<&()>,
         },
         member: TerminalType {
             value: "x",
             l: 6,
             r: 7,
             kind: Identifier,
+            phantom: PhantomData<&()>,
         },
     },
 )

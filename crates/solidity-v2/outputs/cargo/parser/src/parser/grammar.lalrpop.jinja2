@@ -1,19 +1,36 @@
 use slang_solidity_v2_ast::ast::lexemes;
 use slang_solidity_v2_ast::ast::nodes::*;
 use crate::parser::nodes::*;
+use bumpalo::Bump;
+use bumpalo::collections::Vec;
+use bumpalo::collections::CollectIn;
 
-grammar<'source>(source: &'source str);
+grammar<'arena, 'source>(arena: &'arena Bump, source: &'source str);
 
-Sep<S, T>: Vec<T> = {
-    => Vec::new(),
+Sep<S, T>: Vec<'arena, T> = {
+    => Vec::new_in(arena),
     SepOne<S, T> => <>,
 };
 
-SepOne<S, T>: Vec<T> = {
+SepOne<S, T>: Vec<'arena, T> = {
     <mut v:(<T> S)*> <e:T>  => {
         v.push(e);
-        v
+        Vec::from_iter_in(v.into_iter(), arena)
     }
+};
+
+#[inline]
+Rep<T>: Vec<'arena, T> = {
+    <v: (<T>)*> => {
+        Vec::from_iter_in(v.into_iter(), arena)
+    },
+};
+
+#[inline]
+RepOne<T>: Vec<'arena, T> = {
+    <v: (<T>)+> => {
+        Vec::from_iter_in(v.into_iter(), arena)
+    },
 };
 
 {% for section in model.parser.sections -%}
@@ -25,14 +42,14 @@ SepOne<S, T>: Vec<T> = {
     {% for item in topic.items -%}
 
     {% if item.inline %}#[inline]
-    {% endif %}{% if item.name == model.parser.root_item -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
+    {% endif %}{% if item.name == model.parser.root_item -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }}<'arena> = {
         {% for option in item.options -%}
             {{ option.attributes }} 
             {% for field in option.fields -%}   
                 <{{ field.capturing_name }}: {{ field.rule }}> {{ " " }}
             {%- endfor %}=> {% if option.forward %}<>{% else -%}
-            new_{{ item.producing_type | snake_case }}{% if option.name %}_{{ option.name | snake_case }}{% endif %}({% if option.prebuild -%}
-            new_{{option.name | snake_case}}(<>)
+            new_{{ item.producing_type | snake_case }}{% if option.name %}_{{ option.name | snake_case }}{% endif %}(arena, {% if option.prebuild -%}
+            new_{{option.name | snake_case}}(arena, <>)
             {%- else -%}
             <>
             {%- endif %})
@@ -49,12 +66,12 @@ SepOne<S, T>: Vec<T> = {
 // Lexemes formatting
 {% for kind in model.parser.lexer.lexeme_kinds -%}
 {% if kind != "Identifier" %}#[inline]{% endif %}
-{{ kind }}: {{ kind }} = {
-    <l:@L> L_{{ kind }} <r:@L> => new_{{kind | snake_case}}(<>, source),
+{{ kind }}: {{ kind }}<'arena> = {
+    <l:@L> L_{{ kind }} <r:@L> => new_{{kind | snake_case}}(arena, <>, source),
     {%- if kind == "Identifier" %}
 // TODO: The identifier should also consider unreserved keywords
      {% for kw in model.parser.lexer.unreserved_keywords %} 
-        <l:@L> L_{{ kw }} <r:@L> => new_{{kind | snake_case}}(<>, source),
+        <l:@L> L_{{ kw }} <r:@L> => new_{{kind | snake_case}}(arena, <>, source),
     {% endfor %}
 // ODOT
     {% endif %}
@@ -77,7 +94,7 @@ extern {
 {% raw %}
 // Added rules
 
-    StateVariableDefinition: StateVariableDefinition = {
+    StateVariableDefinition: StateVariableDefinition<'arena> = {
 // TODO[1] This is an annoying hack, the problem is when we have a function type
 // in a variable declaration type, then some attributes (visibility ones) can be both
 // at the end of the type, or just after the type.
@@ -89,24 +106,26 @@ extern {
 
 
          // If we're not using functions, then we can have all attributes
-            <_type_name: TypeName1<"False", "True">>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+            <_type_name: TypeName1<"False", "True">>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
             // Otherwise, the fun begins
 
             // If the there is a return, the visibility doesnt really matter, it's ignored. 
             // So we can either have or not have a vis
-            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(new_type_name_function_type(_type_name), _attributes, _name, _value, _semicolon),
+            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, new_type_name_function_type(arena, _type_name), _attributes, _name, _value, _semicolon),
 
             // If there is no return, then we need to post process the attributes
             <_type_name: FunctionTypeInternalNoReturn> <special_attributes: SpecialStateVariableAttributes> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
-                let (function_type, mut extra_attributes) = extract_extra_attributes(_type_name);
+                let (function_type, mut extra_attributes) = extract_extra_attributes(arena, _type_name);
                 extra_attributes.extend(special_attributes);
-                new_state_variable_definition(new_type_name_function_type(function_type), new_state_variable_attributes(extra_attributes), _name, _value, _semicolon)
+                new_state_variable_definition(arena, new_type_name_function_type(arena, function_type), new_state_variable_attributes(arena, extra_attributes), _name, _value, _semicolon)
             },
         
     };
 
-    SpecialStateVariableAttributes: Vec<StateVariableAttribute> = {
-                <_StateVariableAttribute: (<SpecialStateVariableAttribute>)*>  => <>,
+    SpecialStateVariableAttributes: Vec<'arena, StateVariableAttribute<'arena>> = {
+                <_StateVariableAttribute: (<SpecialStateVariableAttribute>)*>  => {
+                    _StateVariableAttribute.into_iter().collect_in(arena)
+                },
         
     };
     // Only these ones, since they're not shared with functions:
@@ -114,14 +133,13 @@ extern {
     //.   ImmutableKeyword(ImmutableKeyword),
     //.   TransientKeyword(TransientKeyword),
 
-    SpecialStateVariableAttribute: StateVariableAttribute = {
+    SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
          
-            <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
+            <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
          
-            <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
+            <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(arena, <>),
          
-            <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
-        
+            <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(arena, <>),
     };
 
 
@@ -132,28 +150,28 @@ extern {
 // 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
 // avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
 
-    TypeName0<Func, IAP>: TypeName = {
+    TypeName0<Func, IAP>: TypeName<'arena> = {
          
-            <_FunctionType: FunctionType> if Func == "True" => new_type_name_function_type(<>),
+            <_FunctionType: FunctionType> if Func == "True" => new_type_name_function_type(arena, <>),
          
-            <_MappingType: MappingType>  => new_type_name_mapping_type(<>),
+            <_MappingType: MappingType>  => new_type_name_mapping_type(arena, <>),
          
             // We disable ElementaryType and IdentifierPath for IndexAccessPath
-            //<_ElementaryType: ElementaryType>  => new_type_name_elementary_type(<>),
+            //<_ElementaryType: ElementaryType>  => new_type_name_elementary_type(arena, <>),
          
-            //<_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(<>),
+            //<_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(arena, <>),
             
-            <_IndexAccessPath: IndexAccessPath<"True">> if IAP == "True" => new_type_name_index_access_path(<>),
+            <_IndexAccessPath: IndexAccessPath<"True">> if IAP == "True" => new_type_name_index_access_path(arena, <>),
         
     };
     
-    TypeName1<Func, IAP>: TypeName = {
+    TypeName1<Func, IAP>: TypeName<'arena> = {
             // The base expression shouldn't end in a trailing IAP
-            <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(new_array_type_name(<>)),
+            <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(arena, new_array_type_name(arena, <>)),
             <TypeName: TypeName0<Func, IAP>>  => <>,
         
     };
-    TypeName: TypeName = {
+    TypeName: TypeName<'arena> = {
          
             <TypeName: TypeName1<"True", "True">>  => <>,
         
@@ -163,18 +181,18 @@ extern {
 // TODO[1]: Again with the attributes, we need to differentiate between a `FunctionType` that ends
 // with a `returns` and one that ends with attributes, because the one that ends with attributes
 // has problems in VariableDeclarationStatement
-    FunctionType: FunctionType = {
+    FunctionType: FunctionType<'arena> = {
         FunctionTypeInternalNoReturn => <>,
         FunctionTypeInternalReturn => <>,
     };
 
     // We dont inline this to break a cycle between type names
-    FunctionTypeInternalNoReturn: FunctionType = {
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(_function_keyword, _parameters, _attributes, None),
+    FunctionTypeInternalNoReturn: FunctionType<'arena> = {
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(arena, _function_keyword, _parameters, _attributes, None),
     };
-    FunctionTypeInternalReturn: FunctionType = {
+    FunctionTypeInternalReturn: FunctionType<'arena> = {
          
-            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(_function_keyword, _parameters, _attributes, Some(_returns)),
+            <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(arena, _function_keyword, _parameters, _attributes, Some(_returns)),
         
     };
 // ODOT
@@ -186,48 +204,48 @@ extern {
          
         // A Statement that either allows (DI == "True") or disallows (DI == "False")
         // dangling `if`s
-    _Statement<DI>: Statement = {
+    _Statement<DI>: Statement<'arena> = {
          
-            <_IfStatement: IfStatement<DI>>  => new_statement_if_statement(<>),
+            <_IfStatement: IfStatement<DI>>  => new_statement_if_statement(arena, <>),
          
-            <_ForStatement: ForStatement<DI>>  => new_statement_for_statement(<>),
+            <_ForStatement: ForStatement<DI>>  => new_statement_for_statement(arena, <>),
          
-            <_WhileStatement: WhileStatement<DI>>  => new_statement_while_statement(<>),
+            <_WhileStatement: WhileStatement<DI>>  => new_statement_while_statement(arena, <>),
          
-            <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(<>),
+            <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(arena, <>),
          
-            <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(<>),
+            <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(arena, <>),
          
-            <_BreakStatement: BreakStatement>  => new_statement_break_statement(<>),
+            <_BreakStatement: BreakStatement>  => new_statement_break_statement(arena, <>),
          
-            <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(<>),
+            <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(arena, <>),
          
-            <_EmitStatement: EmitStatement>  => new_statement_emit_statement(<>),
+            <_EmitStatement: EmitStatement>  => new_statement_emit_statement(arena, <>),
          
-            <_TryStatement: TryStatement>  => new_statement_try_statement(<>),
+            <_TryStatement: TryStatement>  => new_statement_try_statement(arena, <>),
          
-            <_RevertStatement: RevertStatement>  => new_statement_revert_statement(<>),
+            <_RevertStatement: RevertStatement>  => new_statement_revert_statement(arena, <>),
          
-            <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
+            <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(arena, <>),
          
-            <_Block: Block>  => new_statement_block(<>),
+            <_Block: Block>  => new_statement_block(arena, <>),
          
-            <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
+            <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(arena, <>),
          
-            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(<>),
+            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(arena, <>),
          
-            <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_statement_variable_declaration_statement(<>),
+            <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_statement_variable_declaration_statement(arena, <>),
          
-            <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
+            <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(arena, <>),
         
     };
 //ODOT
 
 // TODO[4] We remove the TupleDeconstructionStatement sub NonTerminals from here, it's now a ProtoTuple
 // shared with the tuples
-    TupleDeconstructionStatement: TupleDeconstructionStatement = {
+    TupleDeconstructionStatement: TupleDeconstructionStatement<'arena> = {
             // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
-            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => new_tuple_deconstruction_statement_from_proto_tuple(<>),
+            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => new_tuple_deconstruction_statement_from_proto_tuple(arena, <>),
         
     };
 
@@ -237,86 +255,86 @@ extern {
 
 // TODO[3] IfStatement now tracks whether it has a dangling If, and only allows
 // else branches if there's no dalgnling if
-    IfStatement<DI>: IfStatement = {
+    IfStatement<DI>: IfStatement<'arena> = {
          
             // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True"  => new_if_statement(<>, None),
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True"  => new_if_statement(arena, <>, None),
 
             // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<DI>>  => new_if_statement(_if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(_else_keyword, _else_branch))),
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<DI>>  => new_if_statement(arena, _if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(arena, _else_keyword, _else_branch))),
         
     };
 // ODOT
 
 // TODO[3] ForStatement now tracks whether it has a dangling If, and only allows
     // TODO Maybe inline
-    ForStatement<DI>: ForStatement = {
+    ForStatement<DI>: ForStatement<'arena> = {
          
-            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_for_statement(<>),
+            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_for_statement(arena, <>),
         
     };
 // ODOT
 
 // TODO[3] WhileStatement now tracks whether it has a dangling If, and only allows
-    WhileStatement<DI>: WhileStatement = {
+    WhileStatement<DI>: WhileStatement<'arena> = {
          
-            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_while_statement(<>),
+            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_while_statement(arena, <>),
         
     };
 // ODOT
 
 
 // An IAP that tracks whether it has a trailing identifier path
-IndexAccessPath<TrailingIdent>: IndexAccessPath = {
-    <mut iap: IndexAccessPath<"True">> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(<>),
+IndexAccessPath<TrailingIdent>: IndexAccessPath<'arena> = {
+    <iap: IndexAccessPath<"True">> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(arena, <>),
     <IndexAccessPath1<TrailingIdent>>  => <>,
 };
-IndexAccessPath1<TrailingIdent>: IndexAccessPath = {
-    <_Identifier: IdentifierPath> if TrailingIdent == "True" => new_index_access_path_from_identifier_path(<>),
-    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
+IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
+    <_Identifier: IdentifierPath> if TrailingIdent == "True" => new_index_access_path_from_identifier_path(arena, <>),
+    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(arena, <>),
 };
 
 // TODO[5] Expressions are expanded, this gives us more control
 // Ident is a variable to check whether this expression allows identifier paths or not
 // The problem comes from a.b.c, this can be either an identifier path or a member access, we should
 // always prefer identifier paths
-    Expression0<TrailingIdent, TrailingIAP>: Expression = {
-            <_IndexAccessPath: IndexAccessPath<TrailingIdent>> if TrailingIAP == "True" => new_expression_index_access_path(<>),
+    Expression0<TrailingIdent, TrailingIAP>: Expression<'arena> = {
+            <_IndexAccessPath: IndexAccessPath<TrailingIdent>> if TrailingIAP == "True" => new_expression_index_access_path(arena, <>),
          
-            <_NewExpression: NewExpression>  => new_expression_new_expression(<>),
+            <_NewExpression: NewExpression>  => new_expression_new_expression(arena, <>),
          
-            <_TupleExpression: ProtoTuple<"True">>  => new_expression_tuple_expression(new_tuple_expression_from_proto_tuple(<>)),
+            <_TupleExpression: ProtoTuple<"True">>  => new_expression_tuple_expression(arena, new_tuple_expression_from_proto_tuple(arena, <>)),
          
-            <_TypeExpression: TypeExpression>  => new_expression_type_expression(<>),
+            <_TypeExpression: TypeExpression>  => new_expression_type_expression(arena, <>),
          
-            <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(<>),
+            <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(arena, <>),
          
-            <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
+            <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(arena, <>),
          
-            <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
+            <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(arena, <>),
          
-            <_StringExpression: StringExpression>  => new_expression_string_expression(<>),
+            <_StringExpression: StringExpression>  => new_expression_string_expression(arena, <>),
          
-            // <_ElementaryType: ElementaryType>  => new_expression_elementary_type(<>),
+            // <_ElementaryType: ElementaryType>  => new_expression_elementary_type(arena, <>),
          
-            <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(<>),
+            <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(arena, <>),
          
-            <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(<>),
+            <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(arena, <>),
          
-            <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(<>),
+            <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(arena, <>),
          
-            <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(<>),
+            <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(arena, <>),
          
-            <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
+            <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(arena, <>),
         
     };
     // We simplifiy all these levels of expressions into a single one, there's no need
     // for precedence here
-    Expression1<TrailingIdent, TrailingIAP>: Expression = {
+    Expression1<TrailingIdent, TrailingIAP>: Expression<'arena> = {
          
-            <_Expression: Expression1<"False", "False">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+            <_Expression: Expression1<"False", "False">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(arena, new_index_access_expression(arena, <>)),
          
-            <_Expression: Expression1<"False", "True">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+            <_Expression: Expression1<"False", "True">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(arena, new_member_access_expression(arena, <>)),
          
          // TODO[6]: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()
@@ -324,174 +342,174 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath = {
         // https://github.com/argotorg/solidity/blob/0f6d9db4987d91c9ccaf991b6a1a6515655ed745/libsolidity/parsing/Parser.cpp#L2332-L2349
         // I'm still unsure how to solve this, so not worrying for now
 
-            //<_Expression: Expression1<"True", "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+            //<_Expression: Expression1<"True", "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(arena, new_call_options_expression(arena, <>)),
          
-            <_Expression: Expression1<"True", "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+            <_Expression: Expression1<"True", "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(arena, new_function_call_expression(arena, <>)),
          
             <Expression: Expression0<TrailingIdent, TrailingIAP>>  => <>,
         
     };
-    Expression5<Ident>: Expression = {
+    Expression5<Ident>: Expression<'arena> = {
          
-            <_operator: PlusPlus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+            <_operator: PlusPlus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
          
-            <_operator: MinusMinus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+            <_operator: MinusMinus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
          
-            <_operator: Tilde>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+            <_operator: Tilde>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
          
-            <_operator: Bang>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+            <_operator: Bang>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
          
-            <_operator: Minus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+            <_operator: Minus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
          
-            <_operator: DeleteKeyword>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
+            <_operator: DeleteKeyword>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
          
             <Expression: Expression1<"True", Ident>>  => <>,
         
     };
-    Expression6<Ident>: Expression = {
+    Expression6<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression6<"True">>  <_operator: PlusPlus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
+            <_Expression: Expression6<"True">>  <_operator: PlusPlus>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
          
-            <_Expression: Expression6<"True">>  <_operator: MinusMinus>  => new_expression_postfix_expression(new_postfix_expression(<>)),
+            <_Expression: Expression6<"True">>  <_operator: MinusMinus>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
          
             <Expression: Expression5<Ident>>  => <>,
         
     };
-    Expression7<Ident>: Expression = {
+    Expression7<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression6<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_exponentiation_expression(new_exponentiation_expression(<>)),
+            <_Expression: Expression6<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, <>)),
          
             <Expression: Expression6<Ident>>  => <>,
         
     };
-    Expression8<Ident>: Expression = {
+    Expression8<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression8<"True">>  <_operator: Asterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+            <_Expression: Expression8<"True">>  <_operator: Asterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
          
-            <_Expression: Expression8<"True">>  <_operator: Slash>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+            <_Expression: Expression8<"True">>  <_operator: Slash>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
          
-            <_Expression: Expression8<"True">>  <_operator: Percent>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(new_multiplicative_expression(<>)),
+            <_Expression: Expression8<"True">>  <_operator: Percent>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
          
             <Expression: Expression7<Ident>>  => <>,
         
     };
-    Expression9<Ident>: Expression = {
+    Expression9<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression9<"True">>  <_operator: Plus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(new_additive_expression(<>)),
+            <_Expression: Expression9<"True">>  <_operator: Plus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
          
-            <_Expression: Expression9<"True">>  <_operator: Minus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(new_additive_expression(<>)),
+            <_Expression: Expression9<"True">>  <_operator: Minus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
          
             <Expression: Expression8<Ident>>  => <>,
         
     };
-    Expression10<Ident>: Expression = {
+    Expression10<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+            <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
          
-            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
          
-            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(new_shift_expression(<>)),
+            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
          
             <Expression: Expression9<Ident>>  => <>,
         
     };
-    Expression11<Ident>: Expression = {
+    Expression11<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression11<"True">>  <_operator: Ampersand>  <_Expression_2: Expression10<Ident>>  => new_expression_bitwise_and_expression(new_bitwise_and_expression(<>)),
+            <_Expression: Expression11<"True">>  <_operator: Ampersand>  <_Expression_2: Expression10<Ident>>  => new_expression_bitwise_and_expression(arena, new_bitwise_and_expression(arena, <>)),
          
             <Expression: Expression10<Ident>>  => <>,
         
     };
-    Expression12<Ident>: Expression = {
+    Expression12<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression12<"True">>  <_operator: Caret>  <_Expression_2: Expression11<Ident>>  => new_expression_bitwise_xor_expression(new_bitwise_xor_expression(<>)),
+            <_Expression: Expression12<"True">>  <_operator: Caret>  <_Expression_2: Expression11<Ident>>  => new_expression_bitwise_xor_expression(arena, new_bitwise_xor_expression(arena, <>)),
          
             <Expression: Expression11<Ident>>  => <>,
         
     };
-    Expression13<Ident>: Expression = {
+    Expression13<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression13<"True">>  <_operator: Bar>  <_Expression_2: Expression12<Ident>>  => new_expression_bitwise_or_expression(new_bitwise_or_expression(<>)),
+            <_Expression: Expression13<"True">>  <_operator: Bar>  <_Expression_2: Expression12<Ident>>  => new_expression_bitwise_or_expression(arena, new_bitwise_or_expression(arena, <>)),
          
             <Expression: Expression12<Ident>>  => <>,
         
     };
-    Expression14<Ident>: Expression = {
+    Expression14<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression14<"True">>  <_operator: LessThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+            <_Expression: Expression14<"True">>  <_operator: LessThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
          
-            <_Expression: Expression14<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+            <_Expression: Expression14<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
          
-            <_Expression: Expression14<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+            <_Expression: Expression14<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
          
-            <_Expression: Expression14<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(new_inequality_expression(<>)),
+            <_Expression: Expression14<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
          
             <Expression: Expression13<Ident>>  => <>,
         
     };
-    Expression15<Ident>: Expression = {
+    Expression15<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression15<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(new_equality_expression(<>)),
+            <_Expression: Expression15<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
          
-            <_Expression: Expression15<"True">>  <_operator: BangEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(new_equality_expression(<>)),
+            <_Expression: Expression15<"True">>  <_operator: BangEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
          
             <Expression: Expression14<Ident>>  => <>,
         
     };
-    Expression16<Ident>: Expression = {
+    Expression16<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression16<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Ident>>  => new_expression_and_expression(new_and_expression(<>)),
+            <_Expression: Expression16<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Ident>>  => new_expression_and_expression(arena, new_and_expression(arena, <>)),
          
             <Expression: Expression15<Ident>>  => <>,
         
     };
-    Expression17<Ident>: Expression = {
+    Expression17<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression17<"True">>  <_operator: BarBar>  <_Expression_2: Expression16<Ident>>  => new_expression_or_expression(new_or_expression(<>)),
+            <_Expression: Expression17<"True">>  <_operator: BarBar>  <_Expression_2: Expression16<Ident>>  => new_expression_or_expression(arena, new_or_expression(arena, <>)),
          
             <Expression: Expression16<Ident>>  => <>,
         
     };
-    Expression18<Ident>: Expression = {
+    Expression18<Ident>: Expression<'arena> = {
         // TODO: Not really sure the associativity is correct, we need to check
 
-            <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18<Ident>>  => new_expression_conditional_expression(new_conditional_expression(<>)),
+            <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18<Ident>>  => new_expression_conditional_expression(arena, new_conditional_expression(arena, <>)),
          
             <Expression: Expression17<Ident>>  => <>,
         
     };
-    Expression19<Ident>: Expression = {
+    Expression19<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression19<"True">>  <_operator: Equal>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: Equal>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: BarEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: BarEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
-            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
+            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
             <Expression: Expression18<Ident>>  => <>,
         
     };
 
     // TODO(v2): We're making this pub to allow testing Expressions
-    pub Expression: Expression = {
+    pub Expression: Expression<'arena> = {
          
             <Expression: Expression19<"True">>  => <>,
         
@@ -507,18 +525,18 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath = {
     // as well as a TuplePattern, which is a tuple with optional patterns or declarations inside, separated by commas.
     // Every Tuple is a TuplePattern, not the other way around, so we also make that distinction with the generics.
 
-    ProtoTuple<Tuple>: ProtoTuple = {
-        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(_open_paren, _elements, _close_paren),
+    ProtoTuple<Tuple>: ProtoTuple<'arena> = {
+        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(arena, _open_paren, _elements, _close_paren),
     }
 
     
-    ProtoTupleElements<Tuple>: Vec<ProtoTupleElement> = {
+    ProtoTupleElements<Tuple>: Vec<'arena, ProtoTupleElement<'arena>> = {
         // TODO: empty tuple
 
         // A single element can be True or False
         // Note that ProtoTupleElement<"False"> allows empty elements, we have to change that
-        <_elem: ProtoTupleElement<"True">> if Tuple == "True" => vec![<>],
-        <_elem: ProtoTupleElement<"False">> if Tuple == "False" => vec![<>],
+        <_elem: ProtoTupleElement<"True">> if Tuple == "True" => bumpalo::vec![in arena; <>],
+        <_elem: ProtoTupleElement<"False">> if Tuple == "False" => bumpalo::vec![in arena; <>],
         
         // A ProtoTuple only ProtoTupleElements<True> is a Tuple
         <mut _elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "True" => {
@@ -544,13 +562,13 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath = {
 
     };
 
-    ProtoTupleElement<Tuple>: ProtoTupleElement = {
+    ProtoTupleElement<Tuple>: ProtoTupleElement<'arena> = {
         // A Tuple expression must be present and only be an identifier
-        <_name: Expression> if Tuple == "True" => new_proto_tuple_element_expression(_name),
+        <_name: Expression> if Tuple == "True" => new_proto_tuple_element_expression(arena, _name),
 
-        <_decl: VariableDeclaration> if Tuple == "False" => new_proto_tuple_element_declaration(_decl),
-        <_storage_location: StorageLocation> <_name: Identifier> if Tuple == "False" => new_proto_tuple_element_storage_location(_storage_location, _name),
-        () if Tuple == "False" => new_proto_tuple_element_empty(),
+        <_decl: VariableDeclaration> if Tuple == "False" => new_proto_tuple_element_declaration(arena, _decl),
+        <_storage_location: StorageLocation> <_name: Identifier> if Tuple == "False" => new_proto_tuple_element_storage_location(arena, _storage_location, _name),
+        () if Tuple == "False" => new_proto_tuple_element_empty(arena),
     };
         
 // ODOT
@@ -558,8 +576,8 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath = {
 // TODO This is just because the function is not prepared for 0.8.30
 // The grammar rule is correct, but the builder function expects an optional unit
 // Yes, this is a silly hack for now
-    HexNumberExpression: HexNumberExpression = {
-            <_literal: HexLiteral>  => new_hex_number_expression(<>, None),
+    HexNumberExpression: HexNumberExpression<'arena> = {
+            <_literal: HexLiteral>  => new_hex_number_expression(arena, <>, None),
         
     };
 // ODOT

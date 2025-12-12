@@ -39,7 +39,7 @@ fn remove_trivia(v: &mut Vec<Edge>) {
 // Sequences:
 //
 
-impl NodeChecker for AbicoderPragma {
+impl<'arena> NodeChecker for AbicoderPragma<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AbicoderPragma) {
             // Don't even check the rest
@@ -98,7 +98,7 @@ impl NodeChecker for AbicoderPragma {
     }
 }
 
-impl NodeChecker for AdditiveExpression {
+impl<'arena> NodeChecker for AdditiveExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AdditiveExpression) {
             // Don't even check the rest
@@ -173,7 +173,7 @@ impl NodeChecker for AdditiveExpression {
     }
 }
 
-impl NodeChecker for AddressType {
+impl<'arena> NodeChecker for AddressType<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AddressType) {
             // Don't even check the rest
@@ -237,7 +237,7 @@ impl NodeChecker for AddressType {
     }
 }
 
-impl NodeChecker for AndExpression {
+impl<'arena> NodeChecker for AndExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AndExpression) {
             // Don't even check the rest
@@ -312,7 +312,7 @@ impl NodeChecker for AndExpression {
     }
 }
 
-impl NodeChecker for ArrayExpression {
+impl<'arena> NodeChecker for ArrayExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ArrayExpression) {
             // Don't even check the rest
@@ -387,7 +387,7 @@ impl NodeChecker for ArrayExpression {
     }
 }
 
-impl NodeChecker for ArrayTypeName {
+impl<'arena> NodeChecker for ArrayTypeName<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ArrayTypeName) {
             // Don't even check the rest
@@ -486,7 +486,7 @@ impl NodeChecker for ArrayTypeName {
     }
 }
 
-impl NodeChecker for AssemblyFlagsDeclaration {
+impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AssemblyFlagsDeclaration) {
             // Don't even check the rest
@@ -561,7 +561,7 @@ impl NodeChecker for AssemblyFlagsDeclaration {
     }
 }
 
-impl NodeChecker for AssemblyStatement {
+impl<'arena> NodeChecker for AssemblyStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AssemblyStatement) {
             // Don't even check the rest
@@ -668,7 +668,7 @@ impl NodeChecker for AssemblyStatement {
     }
 }
 
-impl NodeChecker for AssignmentExpression {
+impl<'arena> NodeChecker for AssignmentExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AssignmentExpression) {
             // Don't even check the rest
@@ -743,7 +743,7 @@ impl NodeChecker for AssignmentExpression {
     }
 }
 
-impl NodeChecker for BitwiseAndExpression {
+impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::BitwiseAndExpression) {
             // Don't even check the rest
@@ -818,7 +818,7 @@ impl NodeChecker for BitwiseAndExpression {
     }
 }
 
-impl NodeChecker for BitwiseOrExpression {
+impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::BitwiseOrExpression) {
             // Don't even check the rest
@@ -893,7 +893,7 @@ impl NodeChecker for BitwiseOrExpression {
     }
 }
 
-impl NodeChecker for BitwiseXorExpression {
+impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::BitwiseXorExpression) {
             // Don't even check the rest
@@ -968,7 +968,7 @@ impl NodeChecker for BitwiseXorExpression {
     }
 }
 
-impl NodeChecker for Block {
+impl<'arena> NodeChecker for Block<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::Block) {
             // Don't even check the rest
@@ -1043,7 +1043,7 @@ impl NodeChecker for Block {
     }
 }
 
-impl NodeChecker for BreakStatement {
+impl<'arena> NodeChecker for BreakStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::BreakStatement) {
             // Don't even check the rest
@@ -1102,7 +1102,7 @@ impl NodeChecker for BreakStatement {
     }
 }
 
-impl NodeChecker for CallOptionsExpression {
+impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::CallOptionsExpression) {
             // Don't even check the rest
@@ -1195,7 +1195,7 @@ impl NodeChecker for CallOptionsExpression {
 
 // We skip NodeChecker for CallOptionsNew
 
-impl NodeChecker for CatchClause {
+impl<'arena> NodeChecker for CatchClause<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::CatchClause) {
             // Don't even check the rest
@@ -1278,7 +1278,7 @@ impl NodeChecker for CatchClause {
     }
 }
 
-impl NodeChecker for CatchClauseError {
+impl<'arena> NodeChecker for CatchClauseError<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::CatchClauseError) {
             // Don't even check the rest
@@ -1345,7 +1345,7 @@ impl NodeChecker for CatchClauseError {
     }
 }
 
-impl NodeChecker for ConditionalExpression {
+impl<'arena> NodeChecker for ConditionalExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ConditionalExpression) {
             // Don't even check the rest
@@ -1452,7 +1452,7 @@ impl NodeChecker for ConditionalExpression {
     }
 }
 
-impl NodeChecker for ConstantDefinition {
+impl<'arena> NodeChecker for ConstantDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ConstantDefinition) {
             // Don't even check the rest
@@ -1575,7 +1575,7 @@ impl NodeChecker for ConstantDefinition {
     }
 }
 
-impl NodeChecker for ConstructorDefinition {
+impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ConstructorDefinition) {
             // Don't even check the rest
@@ -1666,7 +1666,7 @@ impl NodeChecker for ConstructorDefinition {
     }
 }
 
-impl NodeChecker for ContinueStatement {
+impl<'arena> NodeChecker for ContinueStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ContinueStatement) {
             // Don't even check the rest
@@ -1725,7 +1725,7 @@ impl NodeChecker for ContinueStatement {
     }
 }
 
-impl NodeChecker for ContractDefinition {
+impl<'arena> NodeChecker for ContractDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ContractDefinition) {
             // Don't even check the rest
@@ -1869,7 +1869,7 @@ impl NodeChecker for ContractDefinition {
     }
 }
 
-impl NodeChecker for DecimalNumberExpression {
+impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::DecimalNumberExpression) {
             // Don't even check the rest
@@ -1936,7 +1936,7 @@ impl NodeChecker for DecimalNumberExpression {
     }
 }
 
-impl NodeChecker for DoWhileStatement {
+impl<'arena> NodeChecker for DoWhileStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::DoWhileStatement) {
             // Don't even check the rest
@@ -2075,7 +2075,7 @@ impl NodeChecker for DoWhileStatement {
     }
 }
 
-impl NodeChecker for ElseBranch {
+impl<'arena> NodeChecker for ElseBranch<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ElseBranch) {
             // Don't even check the rest
@@ -2134,7 +2134,7 @@ impl NodeChecker for ElseBranch {
     }
 }
 
-impl NodeChecker for EmitStatement {
+impl<'arena> NodeChecker for EmitStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::EmitStatement) {
             // Don't even check the rest
@@ -2225,7 +2225,7 @@ impl NodeChecker for EmitStatement {
     }
 }
 
-impl NodeChecker for EnumDefinition {
+impl<'arena> NodeChecker for EnumDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::EnumDefinition) {
             // Don't even check the rest
@@ -2332,7 +2332,7 @@ impl NodeChecker for EnumDefinition {
     }
 }
 
-impl NodeChecker for EqualityExpression {
+impl<'arena> NodeChecker for EqualityExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::EqualityExpression) {
             // Don't even check the rest
@@ -2407,7 +2407,7 @@ impl NodeChecker for EqualityExpression {
     }
 }
 
-impl NodeChecker for ErrorDefinition {
+impl<'arena> NodeChecker for ErrorDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ErrorDefinition) {
             // Don't even check the rest
@@ -2498,7 +2498,7 @@ impl NodeChecker for ErrorDefinition {
     }
 }
 
-impl NodeChecker for ErrorParameter {
+impl<'arena> NodeChecker for ErrorParameter<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ErrorParameter) {
             // Don't even check the rest
@@ -2565,7 +2565,7 @@ impl NodeChecker for ErrorParameter {
     }
 }
 
-impl NodeChecker for ErrorParametersDeclaration {
+impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ErrorParametersDeclaration) {
             // Don't even check the rest
@@ -2640,7 +2640,7 @@ impl NodeChecker for ErrorParametersDeclaration {
     }
 }
 
-impl NodeChecker for EventDefinition {
+impl<'arena> NodeChecker for EventDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::EventDefinition) {
             // Don't even check the rest
@@ -2752,7 +2752,7 @@ impl NodeChecker for EventDefinition {
     }
 }
 
-impl NodeChecker for EventParameter {
+impl<'arena> NodeChecker for EventParameter<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::EventParameter) {
             // Don't even check the rest
@@ -2840,7 +2840,7 @@ impl NodeChecker for EventParameter {
     }
 }
 
-impl NodeChecker for EventParametersDeclaration {
+impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::EventParametersDeclaration) {
             // Don't even check the rest
@@ -2915,7 +2915,7 @@ impl NodeChecker for EventParametersDeclaration {
     }
 }
 
-impl NodeChecker for ExperimentalPragma {
+impl<'arena> NodeChecker for ExperimentalPragma<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ExperimentalPragma) {
             // Don't even check the rest
@@ -2974,7 +2974,7 @@ impl NodeChecker for ExperimentalPragma {
     }
 }
 
-impl NodeChecker for ExponentiationExpression {
+impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ExponentiationExpression) {
             // Don't even check the rest
@@ -3049,7 +3049,7 @@ impl NodeChecker for ExponentiationExpression {
     }
 }
 
-impl NodeChecker for ExpressionStatement {
+impl<'arena> NodeChecker for ExpressionStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ExpressionStatement) {
             // Don't even check the rest
@@ -3108,7 +3108,7 @@ impl NodeChecker for ExpressionStatement {
     }
 }
 
-impl NodeChecker for FallbackFunctionDefinition {
+impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FallbackFunctionDefinition) {
             // Don't even check the rest
@@ -3223,7 +3223,7 @@ impl NodeChecker for FallbackFunctionDefinition {
     }
 }
 
-impl NodeChecker for ForStatement {
+impl<'arena> NodeChecker for ForStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ForStatement) {
             // Don't even check the rest
@@ -3370,7 +3370,7 @@ impl NodeChecker for ForStatement {
     }
 }
 
-impl NodeChecker for FunctionCallExpression {
+impl<'arena> NodeChecker for FunctionCallExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionCallExpression) {
             // Don't even check the rest
@@ -3429,7 +3429,7 @@ impl NodeChecker for FunctionCallExpression {
     }
 }
 
-impl NodeChecker for FunctionDefinition {
+impl<'arena> NodeChecker for FunctionDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionDefinition) {
             // Don't even check the rest
@@ -3560,7 +3560,7 @@ impl NodeChecker for FunctionDefinition {
     }
 }
 
-impl NodeChecker for FunctionType {
+impl<'arena> NodeChecker for FunctionType<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionType) {
             // Don't even check the rest
@@ -3659,7 +3659,7 @@ impl NodeChecker for FunctionType {
     }
 }
 
-impl NodeChecker for HexNumberExpression {
+impl<'arena> NodeChecker for HexNumberExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::HexNumberExpression) {
             // Don't even check the rest
@@ -3726,7 +3726,7 @@ impl NodeChecker for HexNumberExpression {
     }
 }
 
-impl NodeChecker for IfStatement {
+impl<'arena> NodeChecker for IfStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::IfStatement) {
             // Don't even check the rest
@@ -3857,7 +3857,7 @@ impl NodeChecker for IfStatement {
     }
 }
 
-impl NodeChecker for ImportAlias {
+impl<'arena> NodeChecker for ImportAlias<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ImportAlias) {
             // Don't even check the rest
@@ -3916,7 +3916,7 @@ impl NodeChecker for ImportAlias {
     }
 }
 
-impl NodeChecker for ImportDeconstruction {
+impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ImportDeconstruction) {
             // Don't even check the rest
@@ -4023,7 +4023,7 @@ impl NodeChecker for ImportDeconstruction {
     }
 }
 
-impl NodeChecker for ImportDeconstructionSymbol {
+impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ImportDeconstructionSymbol) {
             // Don't even check the rest
@@ -4090,7 +4090,7 @@ impl NodeChecker for ImportDeconstructionSymbol {
     }
 }
 
-impl NodeChecker for ImportDirective {
+impl<'arena> NodeChecker for ImportDirective<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ImportDirective) {
             // Don't even check the rest
@@ -4165,7 +4165,7 @@ impl NodeChecker for ImportDirective {
     }
 }
 
-impl NodeChecker for IndexAccessEnd {
+impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::IndexAccessEnd) {
             // Don't even check the rest
@@ -4232,7 +4232,7 @@ impl NodeChecker for IndexAccessEnd {
     }
 }
 
-impl NodeChecker for IndexAccessExpression {
+impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::IndexAccessExpression) {
             // Don't even check the rest
@@ -4355,7 +4355,7 @@ impl NodeChecker for IndexAccessExpression {
     }
 }
 
-impl NodeChecker for InequalityExpression {
+impl<'arena> NodeChecker for InequalityExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::InequalityExpression) {
             // Don't even check the rest
@@ -4430,7 +4430,7 @@ impl NodeChecker for InequalityExpression {
     }
 }
 
-impl NodeChecker for InheritanceSpecifier {
+impl<'arena> NodeChecker for InheritanceSpecifier<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::InheritanceSpecifier) {
             // Don't even check the rest
@@ -4489,7 +4489,7 @@ impl NodeChecker for InheritanceSpecifier {
     }
 }
 
-impl NodeChecker for InheritanceType {
+impl<'arena> NodeChecker for InheritanceType<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::InheritanceType) {
             // Don't even check the rest
@@ -4556,7 +4556,7 @@ impl NodeChecker for InheritanceType {
     }
 }
 
-impl NodeChecker for InterfaceDefinition {
+impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::InterfaceDefinition) {
             // Don't even check the rest
@@ -4687,7 +4687,7 @@ impl NodeChecker for InterfaceDefinition {
     }
 }
 
-impl NodeChecker for LibraryDefinition {
+impl<'arena> NodeChecker for LibraryDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::LibraryDefinition) {
             // Don't even check the rest
@@ -4794,7 +4794,7 @@ impl NodeChecker for LibraryDefinition {
     }
 }
 
-impl NodeChecker for MappingKey {
+impl<'arena> NodeChecker for MappingKey<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::MappingKey) {
             // Don't even check the rest
@@ -4861,7 +4861,7 @@ impl NodeChecker for MappingKey {
     }
 }
 
-impl NodeChecker for MappingType {
+impl<'arena> NodeChecker for MappingType<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::MappingType) {
             // Don't even check the rest
@@ -4984,7 +4984,7 @@ impl NodeChecker for MappingType {
     }
 }
 
-impl NodeChecker for MappingValue {
+impl<'arena> NodeChecker for MappingValue<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::MappingValue) {
             // Don't even check the rest
@@ -5051,7 +5051,7 @@ impl NodeChecker for MappingValue {
     }
 }
 
-impl NodeChecker for MemberAccessExpression {
+impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::MemberAccessExpression) {
             // Don't even check the rest
@@ -5126,7 +5126,7 @@ impl NodeChecker for MemberAccessExpression {
     }
 }
 
-impl NodeChecker for ModifierDefinition {
+impl<'arena> NodeChecker for ModifierDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ModifierDefinition) {
             // Don't even check the rest
@@ -5241,7 +5241,7 @@ impl NodeChecker for ModifierDefinition {
     }
 }
 
-impl NodeChecker for ModifierInvocation {
+impl<'arena> NodeChecker for ModifierInvocation<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ModifierInvocation) {
             // Don't even check the rest
@@ -5308,7 +5308,7 @@ impl NodeChecker for ModifierInvocation {
     }
 }
 
-impl NodeChecker for MultiplicativeExpression {
+impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::MultiplicativeExpression) {
             // Don't even check the rest
@@ -5383,7 +5383,7 @@ impl NodeChecker for MultiplicativeExpression {
     }
 }
 
-impl NodeChecker for NamedArgument {
+impl<'arena> NodeChecker for NamedArgument<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::NamedArgument) {
             // Don't even check the rest
@@ -5458,7 +5458,7 @@ impl NodeChecker for NamedArgument {
     }
 }
 
-impl NodeChecker for NamedArgumentGroup {
+impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::NamedArgumentGroup) {
             // Don't even check the rest
@@ -5533,7 +5533,7 @@ impl NodeChecker for NamedArgumentGroup {
     }
 }
 
-impl NodeChecker for NamedArgumentsDeclaration {
+impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::NamedArgumentsDeclaration) {
             // Don't even check the rest
@@ -5608,7 +5608,7 @@ impl NodeChecker for NamedArgumentsDeclaration {
     }
 }
 
-impl NodeChecker for NamedImport {
+impl<'arena> NodeChecker for NamedImport<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::NamedImport) {
             // Don't even check the rest
@@ -5701,7 +5701,7 @@ impl NodeChecker for NamedImport {
 
 // NodeChecker for NewExpression is done by hand, since in V2 is represented a bit differently
 
-impl NodeChecker for NewExpression {
+impl<'arena> NodeChecker for NewExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         // what we parse as a new expression on V2 is parsed as a CallExpression, of an optional
         // call options, and a new expression
@@ -5865,7 +5865,7 @@ impl NodeChecker for NewExpression {
     }
 }
 
-impl NodeChecker for OrExpression {
+impl<'arena> NodeChecker for OrExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::OrExpression) {
             // Don't even check the rest
@@ -5940,7 +5940,7 @@ impl NodeChecker for OrExpression {
     }
 }
 
-impl NodeChecker for OverridePathsDeclaration {
+impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::OverridePathsDeclaration) {
             // Don't even check the rest
@@ -6015,7 +6015,7 @@ impl NodeChecker for OverridePathsDeclaration {
     }
 }
 
-impl NodeChecker for OverrideSpecifier {
+impl<'arena> NodeChecker for OverrideSpecifier<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) {
             // Don't even check the rest
@@ -6082,7 +6082,7 @@ impl NodeChecker for OverrideSpecifier {
     }
 }
 
-impl NodeChecker for Parameter {
+impl<'arena> NodeChecker for Parameter<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::Parameter) {
             // Don't even check the rest
@@ -6170,7 +6170,7 @@ impl NodeChecker for Parameter {
     }
 }
 
-impl NodeChecker for ParametersDeclaration {
+impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ParametersDeclaration) {
             // Don't even check the rest
@@ -6245,7 +6245,7 @@ impl NodeChecker for ParametersDeclaration {
     }
 }
 
-impl NodeChecker for PathImport {
+impl<'arena> NodeChecker for PathImport<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::PathImport) {
             // Don't even check the rest
@@ -6312,7 +6312,7 @@ impl NodeChecker for PathImport {
     }
 }
 
-impl NodeChecker for PositionalArgumentsDeclaration {
+impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::PositionalArgumentsDeclaration) {
             // Don't even check the rest
@@ -6387,7 +6387,7 @@ impl NodeChecker for PositionalArgumentsDeclaration {
     }
 }
 
-impl NodeChecker for PostfixExpression {
+impl<'arena> NodeChecker for PostfixExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::PostfixExpression) {
             // Don't even check the rest
@@ -6446,7 +6446,7 @@ impl NodeChecker for PostfixExpression {
     }
 }
 
-impl NodeChecker for PragmaDirective {
+impl<'arena> NodeChecker for PragmaDirective<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::PragmaDirective) {
             // Don't even check the rest
@@ -6521,7 +6521,7 @@ impl NodeChecker for PragmaDirective {
     }
 }
 
-impl NodeChecker for PrefixExpression {
+impl<'arena> NodeChecker for PrefixExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::PrefixExpression) {
             // Don't even check the rest
@@ -6580,7 +6580,7 @@ impl NodeChecker for PrefixExpression {
     }
 }
 
-impl NodeChecker for ReceiveFunctionDefinition {
+impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ReceiveFunctionDefinition) {
             // Don't even check the rest
@@ -6671,7 +6671,7 @@ impl NodeChecker for ReceiveFunctionDefinition {
     }
 }
 
-impl NodeChecker for ReturnStatement {
+impl<'arena> NodeChecker for ReturnStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ReturnStatement) {
             // Don't even check the rest
@@ -6754,7 +6754,7 @@ impl NodeChecker for ReturnStatement {
     }
 }
 
-impl NodeChecker for ReturnsDeclaration {
+impl<'arena> NodeChecker for ReturnsDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ReturnsDeclaration) {
             // Don't even check the rest
@@ -6813,7 +6813,7 @@ impl NodeChecker for ReturnsDeclaration {
     }
 }
 
-impl NodeChecker for RevertStatement {
+impl<'arena> NodeChecker for RevertStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::RevertStatement) {
             // Don't even check the rest
@@ -6912,7 +6912,7 @@ impl NodeChecker for RevertStatement {
     }
 }
 
-impl NodeChecker for ShiftExpression {
+impl<'arena> NodeChecker for ShiftExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ShiftExpression) {
             // Don't even check the rest
@@ -6987,7 +6987,7 @@ impl NodeChecker for ShiftExpression {
     }
 }
 
-impl NodeChecker for SourceUnit {
+impl<'arena> NodeChecker for SourceUnit<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::SourceUnit) {
             // Don't even check the rest
@@ -7030,7 +7030,7 @@ impl NodeChecker for SourceUnit {
     }
 }
 
-impl NodeChecker for StateVariableDefinition {
+impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StateVariableDefinition) {
             // Don't even check the rest
@@ -7145,7 +7145,7 @@ impl NodeChecker for StateVariableDefinition {
     }
 }
 
-impl NodeChecker for StateVariableDefinitionValue {
+impl<'arena> NodeChecker for StateVariableDefinitionValue<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StateVariableDefinitionValue) {
             // Don't even check the rest
@@ -7204,7 +7204,7 @@ impl NodeChecker for StateVariableDefinitionValue {
     }
 }
 
-impl NodeChecker for StorageLayoutSpecifier {
+impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StorageLayoutSpecifier) {
             // Don't even check the rest
@@ -7279,7 +7279,7 @@ impl NodeChecker for StorageLayoutSpecifier {
     }
 }
 
-impl NodeChecker for StructDefinition {
+impl<'arena> NodeChecker for StructDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StructDefinition) {
             // Don't even check the rest
@@ -7386,7 +7386,7 @@ impl NodeChecker for StructDefinition {
     }
 }
 
-impl NodeChecker for StructMember {
+impl<'arena> NodeChecker for StructMember<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StructMember) {
             // Don't even check the rest
@@ -7461,7 +7461,7 @@ impl NodeChecker for StructMember {
     }
 }
 
-impl NodeChecker for ThrowStatement {
+impl<'arena> NodeChecker for ThrowStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ThrowStatement) {
             // Don't even check the rest
@@ -7520,7 +7520,7 @@ impl NodeChecker for ThrowStatement {
     }
 }
 
-impl NodeChecker for TryStatement {
+impl<'arena> NodeChecker for TryStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TryStatement) {
             // Don't even check the rest
@@ -7635,7 +7635,7 @@ impl NodeChecker for TryStatement {
     }
 }
 
-impl NodeChecker for TupleDeconstructionElement {
+impl<'arena> NodeChecker for TupleDeconstructionElement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionElement) {
             // Don't even check the rest
@@ -7686,7 +7686,7 @@ impl NodeChecker for TupleDeconstructionElement {
     }
 }
 
-impl NodeChecker for TupleDeconstructionStatement {
+impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionStatement) {
             // Don't even check the rest
@@ -7833,7 +7833,7 @@ impl NodeChecker for TupleDeconstructionStatement {
     }
 }
 
-impl NodeChecker for TupleExpression {
+impl<'arena> NodeChecker for TupleExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleExpression) {
             // Don't even check the rest
@@ -7908,7 +7908,7 @@ impl NodeChecker for TupleExpression {
     }
 }
 
-impl NodeChecker for TupleValue {
+impl<'arena> NodeChecker for TupleValue<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleValue) {
             // Don't even check the rest
@@ -7959,7 +7959,7 @@ impl NodeChecker for TupleValue {
     }
 }
 
-impl NodeChecker for TypeExpression {
+impl<'arena> NodeChecker for TypeExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TypeExpression) {
             // Don't even check the rest
@@ -8050,7 +8050,7 @@ impl NodeChecker for TypeExpression {
     }
 }
 
-impl NodeChecker for TypedTupleMember {
+impl<'arena> NodeChecker for TypedTupleMember<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TypedTupleMember) {
             // Don't even check the rest
@@ -8130,7 +8130,7 @@ impl NodeChecker for TypedTupleMember {
     }
 }
 
-impl NodeChecker for UncheckedBlock {
+impl<'arena> NodeChecker for UncheckedBlock<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UncheckedBlock) {
             // Don't even check the rest
@@ -8189,7 +8189,7 @@ impl NodeChecker for UncheckedBlock {
     }
 }
 
-impl NodeChecker for UnnamedFunctionDefinition {
+impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnnamedFunctionDefinition) {
             // Don't even check the rest
@@ -8280,7 +8280,7 @@ impl NodeChecker for UnnamedFunctionDefinition {
     }
 }
 
-impl NodeChecker for UntypedTupleMember {
+impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UntypedTupleMember) {
             // Don't even check the rest
@@ -8344,7 +8344,7 @@ impl NodeChecker for UntypedTupleMember {
     }
 }
 
-impl NodeChecker for UserDefinedValueTypeDefinition {
+impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UserDefinedValueTypeDefinition) {
             // Don't even check the rest
@@ -8451,7 +8451,7 @@ impl NodeChecker for UserDefinedValueTypeDefinition {
     }
 }
 
-impl NodeChecker for UsingAlias {
+impl<'arena> NodeChecker for UsingAlias<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UsingAlias) {
             // Don't even check the rest
@@ -8510,7 +8510,7 @@ impl NodeChecker for UsingAlias {
     }
 }
 
-impl NodeChecker for UsingDeconstruction {
+impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UsingDeconstruction) {
             // Don't even check the rest
@@ -8585,7 +8585,7 @@ impl NodeChecker for UsingDeconstruction {
     }
 }
 
-impl NodeChecker for UsingDeconstructionSymbol {
+impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UsingDeconstructionSymbol) {
             // Don't even check the rest
@@ -8652,7 +8652,7 @@ impl NodeChecker for UsingDeconstructionSymbol {
     }
 }
 
-impl NodeChecker for UsingDirective {
+impl<'arena> NodeChecker for UsingDirective<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UsingDirective) {
             // Don't even check the rest
@@ -8786,7 +8786,7 @@ impl NodeChecker for UsingDirective {
 // We skip NodeChecker for VariableDeclaration
 
 // NodeChecker for VariableDeclarationStatement is done by hand, since in V2 is represented a bit differently
-impl NodeChecker for VariableDeclarationStatement {
+impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VariableDeclarationStatement) {
             // Don't even check the rest
@@ -8900,7 +8900,7 @@ impl NodeChecker for VariableDeclarationStatement {
     }
 }
 
-impl NodeChecker for VariableDeclarationValue {
+impl<'arena> NodeChecker for VariableDeclarationValue<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VariableDeclarationValue) {
             // Don't even check the rest
@@ -8959,7 +8959,7 @@ impl NodeChecker for VariableDeclarationValue {
     }
 }
 
-impl NodeChecker for VersionPragma {
+impl<'arena> NodeChecker for VersionPragma<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionPragma) {
             // Don't even check the rest
@@ -9018,7 +9018,7 @@ impl NodeChecker for VersionPragma {
     }
 }
 
-impl NodeChecker for VersionRange {
+impl<'arena> NodeChecker for VersionRange<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionRange) {
             // Don't even check the rest
@@ -9093,7 +9093,7 @@ impl NodeChecker for VersionRange {
     }
 }
 
-impl NodeChecker for VersionTerm {
+impl<'arena> NodeChecker for VersionTerm<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionTerm) {
             // Don't even check the rest
@@ -9160,7 +9160,7 @@ impl NodeChecker for VersionTerm {
     }
 }
 
-impl NodeChecker for WhileStatement {
+impl<'arena> NodeChecker for WhileStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::WhileStatement) {
             // Don't even check the rest
@@ -9267,7 +9267,7 @@ impl NodeChecker for WhileStatement {
     }
 }
 
-impl NodeChecker for YulBlock {
+impl<'arena> NodeChecker for YulBlock<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulBlock) {
             // Don't even check the rest
@@ -9342,7 +9342,7 @@ impl NodeChecker for YulBlock {
     }
 }
 
-impl NodeChecker for YulBreakStatement {
+impl<'arena> NodeChecker for YulBreakStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulBreakStatement) {
             // Don't even check the rest
@@ -9385,7 +9385,7 @@ impl NodeChecker for YulBreakStatement {
     }
 }
 
-impl NodeChecker for YulColonAndEqual {
+impl<'arena> NodeChecker for YulColonAndEqual<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulColonAndEqual) {
             // Don't even check the rest
@@ -9444,7 +9444,7 @@ impl NodeChecker for YulColonAndEqual {
     }
 }
 
-impl NodeChecker for YulContinueStatement {
+impl<'arena> NodeChecker for YulContinueStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulContinueStatement) {
             // Don't even check the rest
@@ -9487,7 +9487,7 @@ impl NodeChecker for YulContinueStatement {
     }
 }
 
-impl NodeChecker for YulDefaultCase {
+impl<'arena> NodeChecker for YulDefaultCase<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulDefaultCase) {
             // Don't even check the rest
@@ -9546,7 +9546,7 @@ impl NodeChecker for YulDefaultCase {
     }
 }
 
-impl NodeChecker for YulEqualAndColon {
+impl<'arena> NodeChecker for YulEqualAndColon<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulEqualAndColon) {
             // Don't even check the rest
@@ -9605,7 +9605,7 @@ impl NodeChecker for YulEqualAndColon {
     }
 }
 
-impl NodeChecker for YulForStatement {
+impl<'arena> NodeChecker for YulForStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulForStatement) {
             // Don't even check the rest
@@ -9712,7 +9712,7 @@ impl NodeChecker for YulForStatement {
     }
 }
 
-impl NodeChecker for YulFunctionCallExpression {
+impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulFunctionCallExpression) {
             // Don't even check the rest
@@ -9803,7 +9803,7 @@ impl NodeChecker for YulFunctionCallExpression {
     }
 }
 
-impl NodeChecker for YulFunctionDefinition {
+impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulFunctionDefinition) {
             // Don't even check the rest
@@ -9918,7 +9918,7 @@ impl NodeChecker for YulFunctionDefinition {
     }
 }
 
-impl NodeChecker for YulIfStatement {
+impl<'arena> NodeChecker for YulIfStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulIfStatement) {
             // Don't even check the rest
@@ -9993,7 +9993,7 @@ impl NodeChecker for YulIfStatement {
     }
 }
 
-impl NodeChecker for YulLabel {
+impl<'arena> NodeChecker for YulLabel<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulLabel) {
             // Don't even check the rest
@@ -10052,7 +10052,7 @@ impl NodeChecker for YulLabel {
     }
 }
 
-impl NodeChecker for YulLeaveStatement {
+impl<'arena> NodeChecker for YulLeaveStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulLeaveStatement) {
             // Don't even check the rest
@@ -10095,7 +10095,7 @@ impl NodeChecker for YulLeaveStatement {
     }
 }
 
-impl NodeChecker for YulParametersDeclaration {
+impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulParametersDeclaration) {
             // Don't even check the rest
@@ -10170,7 +10170,7 @@ impl NodeChecker for YulParametersDeclaration {
     }
 }
 
-impl NodeChecker for YulReturnsDeclaration {
+impl<'arena> NodeChecker for YulReturnsDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulReturnsDeclaration) {
             // Don't even check the rest
@@ -10229,7 +10229,7 @@ impl NodeChecker for YulReturnsDeclaration {
     }
 }
 
-impl NodeChecker for YulStackAssignmentStatement {
+impl<'arena> NodeChecker for YulStackAssignmentStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulStackAssignmentStatement) {
             // Don't even check the rest
@@ -10288,7 +10288,7 @@ impl NodeChecker for YulStackAssignmentStatement {
     }
 }
 
-impl NodeChecker for YulSwitchStatement {
+impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulSwitchStatement) {
             // Don't even check the rest
@@ -10363,7 +10363,7 @@ impl NodeChecker for YulSwitchStatement {
     }
 }
 
-impl NodeChecker for YulValueCase {
+impl<'arena> NodeChecker for YulValueCase<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulValueCase) {
             // Don't even check the rest
@@ -10438,7 +10438,7 @@ impl NodeChecker for YulValueCase {
     }
 }
 
-impl NodeChecker for YulVariableAssignmentStatement {
+impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulVariableAssignmentStatement) {
             // Don't even check the rest
@@ -10513,7 +10513,7 @@ impl NodeChecker for YulVariableAssignmentStatement {
     }
 }
 
-impl NodeChecker for YulVariableDeclarationStatement {
+impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulVariableDeclarationStatement) {
             // Don't even check the rest
@@ -10596,7 +10596,7 @@ impl NodeChecker for YulVariableDeclarationStatement {
     }
 }
 
-impl NodeChecker for YulVariableDeclarationValue {
+impl<'arena> NodeChecker for YulVariableDeclarationValue<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulVariableDeclarationValue) {
             // Don't even check the rest
@@ -10659,7 +10659,7 @@ impl NodeChecker for YulVariableDeclarationValue {
 // Choices:
 //
 
-impl NodeChecker for AbicoderVersion {
+impl<'arena> NodeChecker for AbicoderVersion<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AbicoderVersion) {
             // Don't even check the rest
@@ -10706,7 +10706,7 @@ impl NodeChecker for AbicoderVersion {
     }
 }
 
-impl NodeChecker for ArgumentsDeclaration {
+impl<'arena> NodeChecker for ArgumentsDeclaration<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ArgumentsDeclaration) {
             // Don't even check the rest
@@ -10753,7 +10753,7 @@ impl NodeChecker for ArgumentsDeclaration {
     }
 }
 
-impl NodeChecker for ConstructorAttribute {
+impl<'arena> NodeChecker for ConstructorAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ConstructorAttribute) {
             // Don't even check the rest
@@ -10816,7 +10816,7 @@ impl NodeChecker for ConstructorAttribute {
     }
 }
 
-impl NodeChecker for ContractMember {
+impl<'arena> NodeChecker for ContractMember<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ContractMember) {
             // Don't even check the rest
@@ -10907,7 +10907,7 @@ impl NodeChecker for ContractMember {
     }
 }
 
-impl NodeChecker for ContractSpecifier {
+impl<'arena> NodeChecker for ContractSpecifier<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ContractSpecifier) {
             // Don't even check the rest
@@ -10954,7 +10954,7 @@ impl NodeChecker for ContractSpecifier {
     }
 }
 
-impl NodeChecker for ElementaryType {
+impl<'arena> NodeChecker for ElementaryType<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ElementaryType) {
             // Don't even check the rest
@@ -11029,7 +11029,7 @@ impl NodeChecker for ElementaryType {
     }
 }
 
-impl NodeChecker for ExperimentalFeature {
+impl<'arena> NodeChecker for ExperimentalFeature<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ExperimentalFeature) {
             // Don't even check the rest
@@ -11080,7 +11080,7 @@ impl NodeChecker for ExperimentalFeature {
     }
 }
 
-impl NodeChecker for Expression {
+impl<'arena> NodeChecker for Expression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::Expression) {
             // Don't even check the rest
@@ -11251,7 +11251,7 @@ impl NodeChecker for Expression {
     }
 }
 
-impl NodeChecker for FallbackFunctionAttribute {
+impl<'arena> NodeChecker for FallbackFunctionAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FallbackFunctionAttribute) {
             // Don't even check the rest
@@ -11318,7 +11318,7 @@ impl NodeChecker for FallbackFunctionAttribute {
     }
 }
 
-impl NodeChecker for ForStatementCondition {
+impl<'arena> NodeChecker for ForStatementCondition<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ForStatementCondition) {
             // Don't even check the rest
@@ -11365,7 +11365,7 @@ impl NodeChecker for ForStatementCondition {
     }
 }
 
-impl NodeChecker for ForStatementInitialization {
+impl<'arena> NodeChecker for ForStatementInitialization<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ForStatementInitialization) {
             // Don't even check the rest
@@ -11420,7 +11420,7 @@ impl NodeChecker for ForStatementInitialization {
     }
 }
 
-impl NodeChecker for FunctionAttribute {
+impl<'arena> NodeChecker for FunctionAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionAttribute) {
             // Don't even check the rest
@@ -11503,7 +11503,7 @@ impl NodeChecker for FunctionAttribute {
     }
 }
 
-impl NodeChecker for FunctionBody {
+impl<'arena> NodeChecker for FunctionBody<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionBody) {
             // Don't even check the rest
@@ -11550,7 +11550,7 @@ impl NodeChecker for FunctionBody {
     }
 }
 
-impl NodeChecker for FunctionName {
+impl<'arena> NodeChecker for FunctionName<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionName) {
             // Don't even check the rest
@@ -11601,7 +11601,7 @@ impl NodeChecker for FunctionName {
     }
 }
 
-impl NodeChecker for FunctionTypeAttribute {
+impl<'arena> NodeChecker for FunctionTypeAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionTypeAttribute) {
             // Don't even check the rest
@@ -11672,7 +11672,7 @@ impl NodeChecker for FunctionTypeAttribute {
     }
 }
 
-impl NodeChecker for HexStringLiteral {
+impl<'arena> NodeChecker for HexStringLiteral<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::HexStringLiteral) {
             // Don't even check the rest
@@ -11719,7 +11719,7 @@ impl NodeChecker for HexStringLiteral {
     }
 }
 
-impl NodeChecker for ImportClause {
+impl<'arena> NodeChecker for ImportClause<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ImportClause) {
             // Don't even check the rest
@@ -11770,7 +11770,7 @@ impl NodeChecker for ImportClause {
     }
 }
 
-impl NodeChecker for MappingKeyType {
+impl<'arena> NodeChecker for MappingKeyType<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::MappingKeyType) {
             // Don't even check the rest
@@ -11817,7 +11817,7 @@ impl NodeChecker for MappingKeyType {
     }
 }
 
-impl NodeChecker for ModifierAttribute {
+impl<'arena> NodeChecker for ModifierAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ModifierAttribute) {
             // Don't even check the rest
@@ -11864,7 +11864,7 @@ impl NodeChecker for ModifierAttribute {
     }
 }
 
-impl NodeChecker for NumberUnit {
+impl<'arena> NodeChecker for NumberUnit<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::NumberUnit) {
             // Don't even check the rest
@@ -11947,7 +11947,7 @@ impl NodeChecker for NumberUnit {
     }
 }
 
-impl NodeChecker for Pragma {
+impl<'arena> NodeChecker for Pragma<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::Pragma) {
             // Don't even check the rest
@@ -11998,7 +11998,7 @@ impl NodeChecker for Pragma {
     }
 }
 
-impl NodeChecker for ReceiveFunctionAttribute {
+impl<'arena> NodeChecker for ReceiveFunctionAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ReceiveFunctionAttribute) {
             // Don't even check the rest
@@ -12057,7 +12057,7 @@ impl NodeChecker for ReceiveFunctionAttribute {
     }
 }
 
-impl NodeChecker for SourceUnitMember {
+impl<'arena> NodeChecker for SourceUnitMember<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::SourceUnitMember) {
             // Don't even check the rest
@@ -12148,7 +12148,7 @@ impl NodeChecker for SourceUnitMember {
     }
 }
 
-impl NodeChecker for StateVariableAttribute {
+impl<'arena> NodeChecker for StateVariableAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StateVariableAttribute) {
             // Don't even check the rest
@@ -12215,7 +12215,7 @@ impl NodeChecker for StateVariableAttribute {
     }
 }
 
-impl NodeChecker for Statement {
+impl<'arena> NodeChecker for Statement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::Statement) {
             // Don't even check the rest
@@ -12322,7 +12322,7 @@ impl NodeChecker for Statement {
     }
 }
 
-impl NodeChecker for StorageLocation {
+impl<'arena> NodeChecker for StorageLocation<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StorageLocation) {
             // Don't even check the rest
@@ -12373,7 +12373,7 @@ impl NodeChecker for StorageLocation {
     }
 }
 
-impl NodeChecker for StringExpression {
+impl<'arena> NodeChecker for StringExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringExpression) {
             // Don't even check the rest
@@ -12432,7 +12432,7 @@ impl NodeChecker for StringExpression {
     }
 }
 
-impl NodeChecker for StringLiteral {
+impl<'arena> NodeChecker for StringLiteral<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
             // Don't even check the rest
@@ -12479,7 +12479,7 @@ impl NodeChecker for StringLiteral {
     }
 }
 
-impl NodeChecker for TupleMember {
+impl<'arena> NodeChecker for TupleMember<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleMember) {
             // Don't even check the rest
@@ -12526,7 +12526,7 @@ impl NodeChecker for TupleMember {
     }
 }
 
-impl NodeChecker for TypeName {
+impl<'arena> NodeChecker for TypeName<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TypeName) {
             // Don't even check the rest
@@ -12585,7 +12585,7 @@ impl NodeChecker for TypeName {
     }
 }
 
-impl NodeChecker for UnicodeStringLiteral {
+impl<'arena> NodeChecker for UnicodeStringLiteral<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnicodeStringLiteral) {
             // Don't even check the rest
@@ -12632,7 +12632,7 @@ impl NodeChecker for UnicodeStringLiteral {
     }
 }
 
-impl NodeChecker for UnnamedFunctionAttribute {
+impl<'arena> NodeChecker for UnnamedFunctionAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnnamedFunctionAttribute) {
             // Don't even check the rest
@@ -12707,7 +12707,7 @@ impl NodeChecker for UnnamedFunctionAttribute {
     }
 }
 
-impl NodeChecker for UsingClause {
+impl<'arena> NodeChecker for UsingClause<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UsingClause) {
             // Don't even check the rest
@@ -12754,7 +12754,7 @@ impl NodeChecker for UsingClause {
     }
 }
 
-impl NodeChecker for UsingOperator {
+impl<'arena> NodeChecker for UsingOperator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UsingOperator) {
             // Don't even check the rest
@@ -12853,7 +12853,7 @@ impl NodeChecker for UsingOperator {
     }
 }
 
-impl NodeChecker for UsingTarget {
+impl<'arena> NodeChecker for UsingTarget<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UsingTarget) {
             // Don't even check the rest
@@ -12900,7 +12900,7 @@ impl NodeChecker for UsingTarget {
     }
 }
 
-impl NodeChecker for VariableDeclarationType {
+impl<'arena> NodeChecker for VariableDeclarationType<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VariableDeclarationType) {
             // Don't even check the rest
@@ -12947,7 +12947,7 @@ impl NodeChecker for VariableDeclarationType {
     }
 }
 
-impl NodeChecker for VersionExpression {
+impl<'arena> NodeChecker for VersionExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionExpression) {
             // Don't even check the rest
@@ -12994,7 +12994,7 @@ impl NodeChecker for VersionExpression {
     }
 }
 
-impl NodeChecker for VersionLiteral {
+impl<'arena> NodeChecker for VersionLiteral<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionLiteral) {
             // Don't even check the rest
@@ -13045,7 +13045,7 @@ impl NodeChecker for VersionLiteral {
     }
 }
 
-impl NodeChecker for VersionOperator {
+impl<'arena> NodeChecker for VersionOperator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionOperator) {
             // Don't even check the rest
@@ -13112,7 +13112,7 @@ impl NodeChecker for VersionOperator {
     }
 }
 
-impl NodeChecker for YulAssignmentOperator {
+impl<'arena> NodeChecker for YulAssignmentOperator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulAssignmentOperator) {
             // Don't even check the rest
@@ -13159,7 +13159,7 @@ impl NodeChecker for YulAssignmentOperator {
     }
 }
 
-impl NodeChecker for YulExpression {
+impl<'arena> NodeChecker for YulExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulExpression) {
             // Don't even check the rest
@@ -13210,7 +13210,7 @@ impl NodeChecker for YulExpression {
     }
 }
 
-impl NodeChecker for YulLiteral {
+impl<'arena> NodeChecker for YulLiteral<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulLiteral) {
             // Don't even check the rest
@@ -13273,7 +13273,7 @@ impl NodeChecker for YulLiteral {
     }
 }
 
-impl NodeChecker for YulStackAssignmentOperator {
+impl<'arena> NodeChecker for YulStackAssignmentOperator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulStackAssignmentOperator) {
             // Don't even check the rest
@@ -13320,7 +13320,7 @@ impl NodeChecker for YulStackAssignmentOperator {
     }
 }
 
-impl NodeChecker for YulStatement {
+impl<'arena> NodeChecker for YulStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulStatement) {
             // Don't even check the rest
@@ -13411,7 +13411,7 @@ impl NodeChecker for YulStatement {
     }
 }
 
-impl NodeChecker for YulSwitchCase {
+impl<'arena> NodeChecker for YulSwitchCase<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulSwitchCase) {
             // Don't even check the rest
@@ -13462,7 +13462,7 @@ impl NodeChecker for YulSwitchCase {
 // Repeated & Separated
 //
 
-impl NodeChecker for ArrayValues {
+impl<'arena> NodeChecker for ArrayValues<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ArrayValues) {
             // Don't even check the rest
@@ -13494,7 +13494,7 @@ impl NodeChecker for ArrayValues {
     }
 }
 
-impl NodeChecker for AssemblyFlags {
+impl<'arena> NodeChecker for AssemblyFlags<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AssemblyFlags) {
             // Don't even check the rest
@@ -13526,7 +13526,7 @@ impl NodeChecker for AssemblyFlags {
     }
 }
 
-impl NodeChecker for CallOptions {
+impl<'arena> NodeChecker for CallOptions<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::CallOptions) {
             // Don't even check the rest
@@ -13558,7 +13558,7 @@ impl NodeChecker for CallOptions {
     }
 }
 
-impl NodeChecker for CatchClauses {
+impl<'arena> NodeChecker for CatchClauses<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::CatchClauses) {
             // Don't even check the rest
@@ -13590,7 +13590,7 @@ impl NodeChecker for CatchClauses {
     }
 }
 
-impl NodeChecker for ConstructorAttributes {
+impl<'arena> NodeChecker for ConstructorAttributes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ConstructorAttributes) {
             // Don't even check the rest
@@ -13622,7 +13622,7 @@ impl NodeChecker for ConstructorAttributes {
     }
 }
 
-impl NodeChecker for ContractMembers {
+impl<'arena> NodeChecker for ContractMembers<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ContractMembers) {
             // Don't even check the rest
@@ -13654,7 +13654,7 @@ impl NodeChecker for ContractMembers {
     }
 }
 
-impl NodeChecker for ContractSpecifiers {
+impl<'arena> NodeChecker for ContractSpecifiers<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ContractSpecifiers) {
             // Don't even check the rest
@@ -13686,7 +13686,7 @@ impl NodeChecker for ContractSpecifiers {
     }
 }
 
-impl NodeChecker for EnumMembers {
+impl<'arena> NodeChecker for EnumMembers<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::EnumMembers) {
             // Don't even check the rest
@@ -13718,7 +13718,7 @@ impl NodeChecker for EnumMembers {
     }
 }
 
-impl NodeChecker for ErrorParameters {
+impl<'arena> NodeChecker for ErrorParameters<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ErrorParameters) {
             // Don't even check the rest
@@ -13750,7 +13750,7 @@ impl NodeChecker for ErrorParameters {
     }
 }
 
-impl NodeChecker for EventParameters {
+impl<'arena> NodeChecker for EventParameters<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::EventParameters) {
             // Don't even check the rest
@@ -13782,7 +13782,7 @@ impl NodeChecker for EventParameters {
     }
 }
 
-impl NodeChecker for FallbackFunctionAttributes {
+impl<'arena> NodeChecker for FallbackFunctionAttributes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FallbackFunctionAttributes) {
             // Don't even check the rest
@@ -13814,7 +13814,7 @@ impl NodeChecker for FallbackFunctionAttributes {
     }
 }
 
-impl NodeChecker for FunctionAttributes {
+impl<'arena> NodeChecker for FunctionAttributes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionAttributes) {
             // Don't even check the rest
@@ -13846,7 +13846,7 @@ impl NodeChecker for FunctionAttributes {
     }
 }
 
-impl NodeChecker for FunctionTypeAttributes {
+impl<'arena> NodeChecker for FunctionTypeAttributes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionTypeAttributes) {
             // Don't even check the rest
@@ -13878,7 +13878,7 @@ impl NodeChecker for FunctionTypeAttributes {
     }
 }
 
-impl NodeChecker for HexStringLiterals {
+impl<'arena> NodeChecker for HexStringLiterals<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::HexStringLiterals) {
             // Don't even check the rest
@@ -13910,7 +13910,7 @@ impl NodeChecker for HexStringLiterals {
     }
 }
 
-impl NodeChecker for IdentifierPath {
+impl<'arena> NodeChecker for IdentifierPath<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::IdentifierPath) {
             // Don't even check the rest
@@ -13942,7 +13942,7 @@ impl NodeChecker for IdentifierPath {
     }
 }
 
-impl NodeChecker for ImportDeconstructionSymbols {
+impl<'arena> NodeChecker for ImportDeconstructionSymbols<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ImportDeconstructionSymbols) {
             // Don't even check the rest
@@ -13974,7 +13974,7 @@ impl NodeChecker for ImportDeconstructionSymbols {
     }
 }
 
-impl NodeChecker for InheritanceTypes {
+impl<'arena> NodeChecker for InheritanceTypes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::InheritanceTypes) {
             // Don't even check the rest
@@ -14006,7 +14006,7 @@ impl NodeChecker for InheritanceTypes {
     }
 }
 
-impl NodeChecker for InterfaceMembers {
+impl<'arena> NodeChecker for InterfaceMembers<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::InterfaceMembers) {
             // Don't even check the rest
@@ -14038,7 +14038,7 @@ impl NodeChecker for InterfaceMembers {
     }
 }
 
-impl NodeChecker for LibraryMembers {
+impl<'arena> NodeChecker for LibraryMembers<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::LibraryMembers) {
             // Don't even check the rest
@@ -14070,7 +14070,7 @@ impl NodeChecker for LibraryMembers {
     }
 }
 
-impl NodeChecker for ModifierAttributes {
+impl<'arena> NodeChecker for ModifierAttributes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ModifierAttributes) {
             // Don't even check the rest
@@ -14102,7 +14102,7 @@ impl NodeChecker for ModifierAttributes {
     }
 }
 
-impl NodeChecker for NamedArguments {
+impl<'arena> NodeChecker for NamedArguments<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::NamedArguments) {
             // Don't even check the rest
@@ -14134,7 +14134,7 @@ impl NodeChecker for NamedArguments {
     }
 }
 
-impl NodeChecker for OverridePaths {
+impl<'arena> NodeChecker for OverridePaths<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::OverridePaths) {
             // Don't even check the rest
@@ -14166,7 +14166,7 @@ impl NodeChecker for OverridePaths {
     }
 }
 
-impl NodeChecker for Parameters {
+impl<'arena> NodeChecker for Parameters<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::Parameters) {
             // Don't even check the rest
@@ -14198,7 +14198,7 @@ impl NodeChecker for Parameters {
     }
 }
 
-impl NodeChecker for PositionalArguments {
+impl<'arena> NodeChecker for PositionalArguments<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::PositionalArguments) {
             // Don't even check the rest
@@ -14230,7 +14230,7 @@ impl NodeChecker for PositionalArguments {
     }
 }
 
-impl NodeChecker for ReceiveFunctionAttributes {
+impl<'arena> NodeChecker for ReceiveFunctionAttributes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::ReceiveFunctionAttributes) {
             // Don't even check the rest
@@ -14262,7 +14262,7 @@ impl NodeChecker for ReceiveFunctionAttributes {
     }
 }
 
-impl NodeChecker for SimpleVersionLiteral {
+impl<'arena> NodeChecker for SimpleVersionLiteral<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::SimpleVersionLiteral) {
             // Don't even check the rest
@@ -14294,7 +14294,7 @@ impl NodeChecker for SimpleVersionLiteral {
     }
 }
 
-impl NodeChecker for SourceUnitMembers {
+impl<'arena> NodeChecker for SourceUnitMembers<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::SourceUnitMembers) {
             // Don't even check the rest
@@ -14326,7 +14326,7 @@ impl NodeChecker for SourceUnitMembers {
     }
 }
 
-impl NodeChecker for StateVariableAttributes {
+impl<'arena> NodeChecker for StateVariableAttributes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StateVariableAttributes) {
             // Don't even check the rest
@@ -14358,7 +14358,7 @@ impl NodeChecker for StateVariableAttributes {
     }
 }
 
-impl NodeChecker for Statements {
+impl<'arena> NodeChecker for Statements<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::Statements) {
             // Don't even check the rest
@@ -14390,7 +14390,7 @@ impl NodeChecker for Statements {
     }
 }
 
-impl NodeChecker for StringLiterals {
+impl<'arena> NodeChecker for StringLiterals<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiterals) {
             // Don't even check the rest
@@ -14422,7 +14422,7 @@ impl NodeChecker for StringLiterals {
     }
 }
 
-impl NodeChecker for StructMembers {
+impl<'arena> NodeChecker for StructMembers<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StructMembers) {
             // Don't even check the rest
@@ -14454,7 +14454,7 @@ impl NodeChecker for StructMembers {
     }
 }
 
-impl NodeChecker for TupleDeconstructionElements {
+impl<'arena> NodeChecker for TupleDeconstructionElements<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionElements) {
             // Don't even check the rest
@@ -14486,7 +14486,7 @@ impl NodeChecker for TupleDeconstructionElements {
     }
 }
 
-impl NodeChecker for TupleValues {
+impl<'arena> NodeChecker for TupleValues<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleValues) {
             // Don't even check the rest
@@ -14518,7 +14518,7 @@ impl NodeChecker for TupleValues {
     }
 }
 
-impl NodeChecker for UnicodeStringLiterals {
+impl<'arena> NodeChecker for UnicodeStringLiterals<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnicodeStringLiterals) {
             // Don't even check the rest
@@ -14550,7 +14550,7 @@ impl NodeChecker for UnicodeStringLiterals {
     }
 }
 
-impl NodeChecker for UnnamedFunctionAttributes {
+impl<'arena> NodeChecker for UnnamedFunctionAttributes<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnnamedFunctionAttributes) {
             // Don't even check the rest
@@ -14582,7 +14582,7 @@ impl NodeChecker for UnnamedFunctionAttributes {
     }
 }
 
-impl NodeChecker for UsingDeconstructionSymbols {
+impl<'arena> NodeChecker for UsingDeconstructionSymbols<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::UsingDeconstructionSymbols) {
             // Don't even check the rest
@@ -14614,7 +14614,7 @@ impl NodeChecker for UsingDeconstructionSymbols {
     }
 }
 
-impl NodeChecker for VersionExpressionSet {
+impl<'arena> NodeChecker for VersionExpressionSet<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionExpressionSet) {
             // Don't even check the rest
@@ -14646,7 +14646,7 @@ impl NodeChecker for VersionExpressionSet {
     }
 }
 
-impl NodeChecker for VersionExpressionSets {
+impl<'arena> NodeChecker for VersionExpressionSets<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionExpressionSets) {
             // Don't even check the rest
@@ -14678,7 +14678,7 @@ impl NodeChecker for VersionExpressionSets {
     }
 }
 
-impl NodeChecker for YulArguments {
+impl<'arena> NodeChecker for YulArguments<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulArguments) {
             // Don't even check the rest
@@ -14710,7 +14710,7 @@ impl NodeChecker for YulArguments {
     }
 }
 
-impl NodeChecker for YulParameters {
+impl<'arena> NodeChecker for YulParameters<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulParameters) {
             // Don't even check the rest
@@ -14742,7 +14742,7 @@ impl NodeChecker for YulParameters {
     }
 }
 
-impl NodeChecker for YulPath {
+impl<'arena> NodeChecker for YulPath<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulPath) {
             // Don't even check the rest
@@ -14774,7 +14774,7 @@ impl NodeChecker for YulPath {
     }
 }
 
-impl NodeChecker for YulPaths {
+impl<'arena> NodeChecker for YulPaths<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulPaths) {
             // Don't even check the rest
@@ -14806,7 +14806,7 @@ impl NodeChecker for YulPaths {
     }
 }
 
-impl NodeChecker for YulStatements {
+impl<'arena> NodeChecker for YulStatements<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulStatements) {
             // Don't even check the rest
@@ -14838,7 +14838,7 @@ impl NodeChecker for YulStatements {
     }
 }
 
-impl NodeChecker for YulSwitchCases {
+impl<'arena> NodeChecker for YulSwitchCases<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulSwitchCases) {
             // Don't even check the rest
@@ -14870,7 +14870,7 @@ impl NodeChecker for YulSwitchCases {
     }
 }
 
-impl NodeChecker for YulVariableNames {
+impl<'arena> NodeChecker for YulVariableNames<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulVariableNames) {
             // Don't even check the rest
@@ -14904,7 +14904,7 @@ impl NodeChecker for YulVariableNames {
 
 // Terminals
 
-impl NodeChecker for TerminalType {
+impl<'arena> NodeChecker for TerminalType<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {

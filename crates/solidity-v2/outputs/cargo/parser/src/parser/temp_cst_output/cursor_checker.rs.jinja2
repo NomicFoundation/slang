@@ -47,7 +47,7 @@ fn remove_trivia(v: &mut Vec<Edge>) {
 
 // NodeChecker for NewExpression is done by hand, since in V2 is represented a bit differently
 
-impl NodeChecker for NewExpression {
+impl<'arena> NodeChecker for NewExpression<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         // what we parse as a new expression on V2 is parsed as a CallExpression, of an optional
         // call options, and a new expression
@@ -218,7 +218,7 @@ impl NodeChecker for NewExpression {
 {% elif parent_type == "VariableDeclarationStatement" %}
 
 // NodeChecker for VariableDeclarationStatement is done by hand, since in V2 is represented a bit differently
-impl NodeChecker for VariableDeclarationStatement {
+impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VariableDeclarationStatement) {
             // Don't even check the rest
@@ -335,7 +335,7 @@ impl NodeChecker for VariableDeclarationStatement {
 
 
 {% else %}
-impl NodeChecker for {{ parent_type }} {
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
 fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
         // Don't even check the rest
@@ -389,7 +389,7 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
 
 
 {% for parent_type, choice in target.choices %}
-impl NodeChecker for {{ parent_type }} {
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
 fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
         // Don't even check the rest
@@ -429,7 +429,7 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
   //
 
   {% for parent_type, collection in target.collections %}
-    impl NodeChecker for {{ parent_type }} {
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
 fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
         // Don't even check the rest
@@ -458,7 +458,7 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
 
 // Terminals
 
-impl NodeChecker for TerminalType {
+impl<'arena> NodeChecker for TerminalType<'arena> {
 fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     let mut errors = vec![];
     if let NodeKind::Terminal(terminal_kind) = node.kind() {

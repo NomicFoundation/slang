@@ -11,12 +11,14 @@ SourceUnitStruct {
                         l: 0,
                         r: 8,
                         kind: ContractKeyword_Reserved,
+                        phantom: PhantomData<&()>,
                     },
                     name: TerminalType {
                         value: "A",
                         l: 9,
                         r: 10,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
@@ -26,6 +28,7 @@ SourceUnitStruct {
                         l: 11,
                         r: 12,
                         kind: OpenBrace,
+                        phantom: PhantomData<&()>,
                     },
                     members: ContractMembers {
                         elements: [],
@@ -35,6 +38,7 @@ SourceUnitStruct {
                         l: 12,
                         r: 13,
                         kind: CloseBrace,
+                        phantom: PhantomData<&()>,
                     },
                 },
             ),
@@ -46,12 +50,14 @@ SourceUnitStruct {
                         l: 33,
                         r: 41,
                         kind: ContractKeyword_Reserved,
+                        phantom: PhantomData<&()>,
                     },
                     name: TerminalType {
                         value: "B",
                         l: 42,
                         r: 43,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
@@ -61,6 +67,7 @@ SourceUnitStruct {
                         l: 44,
                         r: 45,
                         kind: OpenBrace,
+                        phantom: PhantomData<&()>,
                     },
                     members: ContractMembers {
                         elements: [],
@@ -70,6 +77,7 @@ SourceUnitStruct {
                         l: 45,
                         r: 46,
                         kind: CloseBrace,
+                        phantom: PhantomData<&()>,
                     },
                 },
             ),

@@ -10,6 +10,7 @@ IndexAccessExpression(
                         l: 0,
                         r: 1,
                         kind: Identifier,
+                        phantom: PhantomData<&()>,
                     },
                 ),
                 period: TerminalType {
@@ -17,12 +18,14 @@ IndexAccessExpression(
                     l: 0,
                     r: 0,
                     kind: Period,
+                    phantom: PhantomData<&()>,
                 },
                 member: TerminalType {
                     value: "y",
                     l: 2,
                     r: 3,
                     kind: Identifier,
+                    phantom: PhantomData<&()>,
                 },
             },
         ),
@@ -31,6 +34,7 @@ IndexAccessExpression(
             l: 3,
             r: 4,
             kind: OpenBracket,
+            phantom: PhantomData<&()>,
         },
         start: Some(
             Identifier(
@@ -39,6 +43,7 @@ IndexAccessExpression(
                     l: 4,
                     r: 9,
                     kind: Identifier,
+                    phantom: PhantomData<&()>,
                 },
             ),
         ),
@@ -48,6 +53,7 @@ IndexAccessExpression(
             l: 9,
             r: 10,
             kind: CloseBracket,
+            phantom: PhantomData<&()>,
         },
     },
 )
