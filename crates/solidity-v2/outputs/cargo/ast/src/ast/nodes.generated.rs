@@ -18,7 +18,6 @@ pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
 #[derive(Debug)]
 pub struct AbicoderPragmaStruct {
-    // Do we care about range in source code?
     pub abicoder_keyword: AbicoderKeyword,
     pub version: AbicoderVersion,
 }
@@ -37,7 +36,6 @@ pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AdditiveExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: Plus,
     pub right_operand: Expression,
@@ -59,7 +57,6 @@ pub type AddressType = Rc<AddressTypeStruct>;
 
 #[derive(Debug)]
 pub struct AddressTypeStruct {
-    // Do we care about range in source code?
     pub address_keyword: AddressKeyword,
     pub payable_keyword: Option<PayableKeyword>,
 }
@@ -78,7 +75,6 @@ pub type AndExpression = Rc<AndExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AndExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: AmpersandAmpersand,
     pub right_operand: Expression,
@@ -100,7 +96,6 @@ pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ArrayExpressionStruct {
-    // Do we care about range in source code?
     pub open_bracket: OpenBracket,
     pub items: ArrayValues,
     pub close_bracket: CloseBracket,
@@ -122,7 +117,6 @@ pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
 #[derive(Debug)]
 pub struct ArrayTypeNameStruct {
-    // Do we care about range in source code?
     pub operand: TypeName,
     pub open_bracket: OpenBracket,
     pub index: Option<Expression>,
@@ -147,7 +141,6 @@ pub type AssemblyFlagsDeclaration = Rc<AssemblyFlagsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct AssemblyFlagsDeclarationStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub flags: AssemblyFlags,
     pub close_paren: CloseParen,
@@ -169,7 +162,6 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
-    // Do we care about range in source code?
     pub assembly_keyword: AssemblyKeyword,
     pub label: Option<StringLiteral>,
     pub flags: Option<AssemblyFlagsDeclaration>,
@@ -194,7 +186,6 @@ pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AssignmentExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: Equal,
     pub right_operand: Expression,
@@ -216,7 +207,6 @@ pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseAndExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: Ampersand,
     pub right_operand: Expression,
@@ -238,7 +228,6 @@ pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseOrExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: Bar,
     pub right_operand: Expression,
@@ -260,7 +249,6 @@ pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseXorExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: Caret,
     pub right_operand: Expression,
@@ -282,7 +270,6 @@ pub type Block = Rc<BlockStruct>;
 
 #[derive(Debug)]
 pub struct BlockStruct {
-    // Do we care about range in source code?
     pub open_brace: OpenBrace,
     pub statements: Statements,
     pub close_brace: CloseBrace,
@@ -300,7 +287,6 @@ pub type BreakStatement = Rc<BreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct BreakStatementStruct {
-    // Do we care about range in source code?
     pub break_keyword: BreakKeyword,
     pub semicolon: Semicolon,
 }
@@ -316,7 +302,6 @@ pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
 #[derive(Debug)]
 pub struct CallOptionsExpressionStruct {
-    // Do we care about range in source code?
     pub operand: Expression,
     pub open_brace: OpenBrace,
     pub options: CallOptions,
@@ -341,7 +326,6 @@ pub type CallOptionsNew = Rc<CallOptionsNewStruct>;
 
 #[derive(Debug)]
 pub struct CallOptionsNewStruct {
-    // Do we care about range in source code?
     pub open_brace: OpenBrace,
     pub options: CallOptions,
     pub close_brace: CloseBrace,
@@ -363,7 +347,6 @@ pub type CatchClause = Rc<CatchClauseStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseStruct {
-    // Do we care about range in source code?
     pub catch_keyword: CatchKeyword,
     pub error: Option<CatchClauseError>,
     pub body: Block,
@@ -385,7 +368,6 @@ pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseErrorStruct {
-    // Do we care about range in source code?
     pub name: Option<Identifier>,
     pub parameters: ParametersDeclaration,
 }
@@ -401,7 +383,6 @@ pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ConditionalExpressionStruct {
-    // Do we care about range in source code?
     pub operand: Expression,
     pub question_mark: QuestionMark,
     pub true_expression: Expression,
@@ -429,7 +410,6 @@ pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ConstantDefinitionStruct {
-    // Do we care about range in source code?
     pub type_name: TypeName,
     pub constant_keyword: ConstantKeyword,
     pub name: Identifier,
@@ -460,7 +440,6 @@ pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ConstructorDefinitionStruct {
-    // Do we care about range in source code?
     pub constructor_keyword: ConstructorKeyword,
     pub parameters: ParametersDeclaration,
     pub attributes: ConstructorAttributes,
@@ -485,7 +464,6 @@ pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct ContinueStatementStruct {
-    // Do we care about range in source code?
     pub continue_keyword: ContinueKeyword,
     pub semicolon: Semicolon,
 }
@@ -504,7 +482,6 @@ pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ContractDefinitionStruct {
-    // Do we care about range in source code?
     pub abstract_keyword: Option<AbstractKeyword>,
     pub contract_keyword: ContractKeyword,
     pub name: Identifier,
@@ -538,7 +515,6 @@ pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct DecimalNumberExpressionStruct {
-    // Do we care about range in source code?
     pub literal: DecimalLiteral,
     pub unit: Option<NumberUnit>,
 }
@@ -554,7 +530,6 @@ pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
 #[derive(Debug)]
 pub struct DoWhileStatementStruct {
-    // Do we care about range in source code?
     pub do_keyword: DoKeyword,
     pub body: Statement,
     pub while_keyword: WhileKeyword,
@@ -588,7 +563,6 @@ pub type ElseBranch = Rc<ElseBranchStruct>;
 
 #[derive(Debug)]
 pub struct ElseBranchStruct {
-    // Do we care about range in source code?
     pub else_keyword: ElseKeyword,
     pub body: Statement,
 }
@@ -601,7 +575,6 @@ pub type EmitStatement = Rc<EmitStatementStruct>;
 
 #[derive(Debug)]
 pub struct EmitStatementStruct {
-    // Do we care about range in source code?
     pub emit_keyword: EmitKeyword,
     pub event: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
@@ -626,7 +599,6 @@ pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EnumDefinitionStruct {
-    // Do we care about range in source code?
     pub enum_keyword: EnumKeyword,
     pub name: Identifier,
     pub open_brace: OpenBrace,
@@ -654,7 +626,6 @@ pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
 #[derive(Debug)]
 pub struct EqualityExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: EqualEqual,
     pub right_operand: Expression,
@@ -676,7 +647,6 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ErrorDefinitionStruct {
-    // Do we care about range in source code?
     pub error_keyword: ErrorKeyword,
     pub name: Identifier,
     pub members: ErrorParametersDeclaration,
@@ -701,7 +671,6 @@ pub type ErrorParameter = Rc<ErrorParameterStruct>;
 
 #[derive(Debug)]
 pub struct ErrorParameterStruct {
-    // Do we care about range in source code?
     pub type_name: TypeName,
     pub name: Option<Identifier>,
 }
@@ -714,7 +683,6 @@ pub type ErrorParametersDeclaration = Rc<ErrorParametersDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct ErrorParametersDeclarationStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub parameters: ErrorParameters,
     pub close_paren: CloseParen,
@@ -736,7 +704,6 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EventDefinitionStruct {
-    // Do we care about range in source code?
     pub event_keyword: EventKeyword,
     pub name: Identifier,
     pub parameters: EventParametersDeclaration,
@@ -764,7 +731,6 @@ pub type EventParameter = Rc<EventParameterStruct>;
 
 #[derive(Debug)]
 pub struct EventParameterStruct {
-    // Do we care about range in source code?
     pub type_name: TypeName,
     pub indexed_keyword: Option<IndexedKeyword>,
     pub name: Option<Identifier>,
@@ -786,7 +752,6 @@ pub type EventParametersDeclaration = Rc<EventParametersDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct EventParametersDeclarationStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub parameters: EventParameters,
     pub close_paren: CloseParen,
@@ -808,7 +773,6 @@ pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
 #[derive(Debug)]
 pub struct ExperimentalPragmaStruct {
-    // Do we care about range in source code?
     pub experimental_keyword: ExperimentalKeyword,
     pub feature: ExperimentalFeature,
 }
@@ -827,7 +791,6 @@ pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ExponentiationExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: AsteriskAsterisk,
     pub right_operand: Expression,
@@ -849,7 +812,6 @@ pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
 #[derive(Debug)]
 pub struct ExpressionStatementStruct {
-    // Do we care about range in source code?
     pub expression: Expression,
     pub semicolon: Semicolon,
 }
@@ -868,7 +830,6 @@ pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct FallbackFunctionDefinitionStruct {
-    // Do we care about range in source code?
     pub fallback_keyword: FallbackKeyword,
     pub parameters: ParametersDeclaration,
     pub attributes: FallbackFunctionAttributes,
@@ -896,7 +857,6 @@ pub type ForStatement = Rc<ForStatementStruct>;
 
 #[derive(Debug)]
 pub struct ForStatementStruct {
-    // Do we care about range in source code?
     pub for_keyword: ForKeyword,
     pub open_paren: OpenParen,
     pub initialization: ForStatementInitialization,
@@ -930,7 +890,6 @@ pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionCallExpressionStruct {
-    // Do we care about range in source code?
     pub operand: Expression,
     pub arguments: ArgumentsDeclaration,
 }
@@ -946,7 +905,6 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
-    // Do we care about range in source code?
     pub function_keyword: FunctionKeyword,
     pub name: FunctionName,
     pub parameters: ParametersDeclaration,
@@ -977,7 +935,6 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
-    // Do we care about range in source code?
     pub function_keyword: FunctionKeyword,
     pub parameters: ParametersDeclaration,
     pub attributes: FunctionTypeAttributes,
@@ -1002,7 +959,6 @@ pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct HexNumberExpressionStruct {
-    // Do we care about range in source code?
     pub literal: HexLiteral,
     pub unit: Option<NumberUnit>,
 }
@@ -1018,7 +974,6 @@ pub type IfStatement = Rc<IfStatementStruct>;
 
 #[derive(Debug)]
 pub struct IfStatementStruct {
-    // Do we care about range in source code?
     pub if_keyword: IfKeyword,
     pub open_paren: OpenParen,
     pub condition: Expression,
@@ -1049,7 +1004,6 @@ pub type ImportAlias = Rc<ImportAliasStruct>;
 
 #[derive(Debug)]
 pub struct ImportAliasStruct {
-    // Do we care about range in source code?
     pub as_keyword: AsKeyword,
     pub identifier: Identifier,
 }
@@ -1065,7 +1019,6 @@ pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionStruct {
-    // Do we care about range in source code?
     pub open_brace: OpenBrace,
     pub symbols: ImportDeconstructionSymbols,
     pub close_brace: CloseBrace,
@@ -1093,7 +1046,6 @@ pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionSymbolStruct {
-    // Do we care about range in source code?
     pub name: Identifier,
     pub alias: Option<ImportAlias>,
 }
@@ -1109,7 +1061,6 @@ pub type ImportDirective = Rc<ImportDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct ImportDirectiveStruct {
-    // Do we care about range in source code?
     pub import_keyword: ImportKeyword,
     pub clause: ImportClause,
     pub semicolon: Semicolon,
@@ -1131,7 +1082,6 @@ pub type IndexAccessEnd = Rc<IndexAccessEndStruct>;
 
 #[derive(Debug)]
 pub struct IndexAccessEndStruct {
-    // Do we care about range in source code?
     pub colon: Colon,
     pub end: Option<Expression>,
 }
@@ -1144,7 +1094,6 @@ pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct IndexAccessExpressionStruct {
-    // Do we care about range in source code?
     pub operand: Expression,
     pub open_bracket: OpenBracket,
     pub start: Option<Expression>,
@@ -1172,7 +1121,6 @@ pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
 #[derive(Debug)]
 pub struct InequalityExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: LessThan,
     pub right_operand: Expression,
@@ -1194,7 +1142,6 @@ pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
 
 #[derive(Debug)]
 pub struct InheritanceSpecifierStruct {
-    // Do we care about range in source code?
     pub is_keyword: IsKeyword,
     pub types: InheritanceTypes,
 }
@@ -1210,7 +1157,6 @@ pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
 #[derive(Debug)]
 pub struct InheritanceTypeStruct {
-    // Do we care about range in source code?
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
 }
@@ -1229,7 +1175,6 @@ pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct InterfaceDefinitionStruct {
-    // Do we care about range in source code?
     pub interface_keyword: InterfaceKeyword,
     pub name: Identifier,
     pub inheritance: Option<InheritanceSpecifier>,
@@ -1260,7 +1205,6 @@ pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct LibraryDefinitionStruct {
-    // Do we care about range in source code?
     pub library_keyword: LibraryKeyword,
     pub name: Identifier,
     pub open_brace: OpenBrace,
@@ -1288,7 +1232,6 @@ pub type MappingKey = Rc<MappingKeyStruct>;
 
 #[derive(Debug)]
 pub struct MappingKeyStruct {
-    // Do we care about range in source code?
     pub key_type: MappingKeyType,
     pub name: Option<Identifier>,
 }
@@ -1301,7 +1244,6 @@ pub type MappingType = Rc<MappingTypeStruct>;
 
 #[derive(Debug)]
 pub struct MappingTypeStruct {
-    // Do we care about range in source code?
     pub mapping_keyword: MappingKeyword,
     pub open_paren: OpenParen,
     pub key_type: MappingKey,
@@ -1332,7 +1274,6 @@ pub type MappingValue = Rc<MappingValueStruct>;
 
 #[derive(Debug)]
 pub struct MappingValueStruct {
-    // Do we care about range in source code?
     pub type_name: TypeName,
     pub name: Option<Identifier>,
 }
@@ -1345,7 +1286,6 @@ pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MemberAccessExpressionStruct {
-    // Do we care about range in source code?
     pub operand: Expression,
     pub period: Period,
     pub member: Identifier,
@@ -1367,7 +1307,6 @@ pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ModifierDefinitionStruct {
-    // Do we care about range in source code?
     pub modifier_keyword: ModifierKeyword,
     pub name: Identifier,
     pub parameters: Option<ParametersDeclaration>,
@@ -1395,7 +1334,6 @@ pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
 #[derive(Debug)]
 pub struct ModifierInvocationStruct {
-    // Do we care about range in source code?
     pub name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
 }
@@ -1411,7 +1349,6 @@ pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MultiplicativeExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: Asterisk,
     pub right_operand: Expression,
@@ -1433,7 +1370,6 @@ pub type NamedArgument = Rc<NamedArgumentStruct>;
 
 #[derive(Debug)]
 pub struct NamedArgumentStruct {
-    // Do we care about range in source code?
     pub name: Identifier,
     pub colon: Colon,
     pub value: Expression,
@@ -1447,7 +1383,6 @@ pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;
 
 #[derive(Debug)]
 pub struct NamedArgumentGroupStruct {
-    // Do we care about range in source code?
     pub open_brace: OpenBrace,
     pub arguments: NamedArguments,
     pub close_brace: CloseBrace,
@@ -1469,7 +1404,6 @@ pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct NamedArgumentsDeclarationStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub arguments: NamedArgumentGroup,
     pub close_paren: CloseParen,
@@ -1491,7 +1425,6 @@ pub type NamedImport = Rc<NamedImportStruct>;
 
 #[derive(Debug)]
 pub struct NamedImportStruct {
-    // Do we care about range in source code?
     pub asterisk: Asterisk,
     pub alias: ImportAlias,
     pub from_keyword: FromKeyword,
@@ -1516,7 +1449,6 @@ pub type NewExpression = Rc<NewExpressionStruct>;
 
 #[derive(Debug)]
 pub struct NewExpressionStruct {
-    // Do we care about range in source code?
     pub new_keyword: NewKeyword,
     pub type_name: TypeName,
     pub options: Option<CallOptionsNew>,
@@ -1541,7 +1473,6 @@ pub type OrExpression = Rc<OrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct OrExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: BarBar,
     pub right_operand: Expression,
@@ -1563,7 +1494,6 @@ pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct OverridePathsDeclarationStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub paths: OverridePaths,
     pub close_paren: CloseParen,
@@ -1585,7 +1515,6 @@ pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
 #[derive(Debug)]
 pub struct OverrideSpecifierStruct {
-    // Do we care about range in source code?
     pub override_keyword: OverrideKeyword,
     pub overridden: Option<OverridePathsDeclaration>,
 }
@@ -1604,7 +1533,6 @@ pub type Parameter = Rc<ParameterStruct>;
 
 #[derive(Debug)]
 pub struct ParameterStruct {
-    // Do we care about range in source code?
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Option<Identifier>,
@@ -1626,7 +1554,6 @@ pub type ParametersDeclaration = Rc<ParametersDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct ParametersDeclarationStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub parameters: Parameters,
     pub close_paren: CloseParen,
@@ -1648,7 +1575,6 @@ pub type PathImport = Rc<PathImportStruct>;
 
 #[derive(Debug)]
 pub struct PathImportStruct {
-    // Do we care about range in source code?
     pub path: StringLiteral,
     pub alias: Option<ImportAlias>,
 }
@@ -1661,7 +1587,6 @@ pub type PositionalArgumentsDeclaration = Rc<PositionalArgumentsDeclarationStruc
 
 #[derive(Debug)]
 pub struct PositionalArgumentsDeclarationStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub arguments: PositionalArguments,
     pub close_paren: CloseParen,
@@ -1683,7 +1608,6 @@ pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
 #[derive(Debug)]
 pub struct PostfixExpressionStruct {
-    // Do we care about range in source code?
     pub operand: Expression,
     pub operator: PlusPlus,
 }
@@ -1696,7 +1620,6 @@ pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct PragmaDirectiveStruct {
-    // Do we care about range in source code?
     pub pragma_keyword: PragmaKeyword,
     pub pragma: Pragma,
     pub semicolon: Semicolon,
@@ -1718,7 +1641,6 @@ pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
 #[derive(Debug)]
 pub struct PrefixExpressionStruct {
-    // Do we care about range in source code?
     pub operator: PlusPlus,
     pub operand: Expression,
 }
@@ -1731,7 +1653,6 @@ pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ReceiveFunctionDefinitionStruct {
-    // Do we care about range in source code?
     pub receive_keyword: ReceiveKeyword,
     pub parameters: ParametersDeclaration,
     pub attributes: ReceiveFunctionAttributes,
@@ -1756,7 +1677,6 @@ pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
 #[derive(Debug)]
 pub struct ReturnStatementStruct {
-    // Do we care about range in source code?
     pub return_keyword: ReturnKeyword,
     pub expression: Option<Expression>,
     pub semicolon: Semicolon,
@@ -1778,7 +1698,6 @@ pub type ReturnsDeclaration = Rc<ReturnsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct ReturnsDeclarationStruct {
-    // Do we care about range in source code?
     pub returns_keyword: ReturnsKeyword,
     pub variables: ParametersDeclaration,
 }
@@ -1797,7 +1716,6 @@ pub type RevertStatement = Rc<RevertStatementStruct>;
 
 #[derive(Debug)]
 pub struct RevertStatementStruct {
-    // Do we care about range in source code?
     pub revert_keyword: RevertKeyword,
     pub error: Option<IdentifierPath>,
     pub arguments: ArgumentsDeclaration,
@@ -1822,7 +1740,6 @@ pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ShiftExpressionStruct {
-    // Do we care about range in source code?
     pub left_operand: Expression,
     pub operator: LessThanLessThan,
     pub right_operand: Expression,
@@ -1844,7 +1761,6 @@ pub type SourceUnit = Rc<SourceUnitStruct>;
 
 #[derive(Debug)]
 pub struct SourceUnitStruct {
-    // Do we care about range in source code?
     pub members: SourceUnitMembers,
 }
 
@@ -1856,7 +1772,6 @@ pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct StateVariableDefinitionStruct {
-    // Do we care about range in source code?
     pub type_name: TypeName,
     pub attributes: StateVariableAttributes,
     pub name: Identifier,
@@ -1884,7 +1799,6 @@ pub type StateVariableDefinitionValue = Rc<StateVariableDefinitionValueStruct>;
 
 #[derive(Debug)]
 pub struct StateVariableDefinitionValueStruct {
-    // Do we care about range in source code?
     pub equal: Equal,
     pub value: Expression,
 }
@@ -1900,7 +1814,6 @@ pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
 
 #[derive(Debug)]
 pub struct StorageLayoutSpecifierStruct {
-    // Do we care about range in source code?
     pub layout_keyword: LayoutKeyword,
     pub at_keyword: AtKeyword,
     pub expression: Expression,
@@ -1922,7 +1835,6 @@ pub type StructDefinition = Rc<StructDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct StructDefinitionStruct {
-    // Do we care about range in source code?
     pub struct_keyword: StructKeyword,
     pub name: Identifier,
     pub open_brace: OpenBrace,
@@ -1950,7 +1862,6 @@ pub type StructMember = Rc<StructMemberStruct>;
 
 #[derive(Debug)]
 pub struct StructMemberStruct {
-    // Do we care about range in source code?
     pub type_name: TypeName,
     pub name: Identifier,
     pub semicolon: Semicolon,
@@ -1972,7 +1883,6 @@ pub type ThrowStatement = Rc<ThrowStatementStruct>;
 
 #[derive(Debug)]
 pub struct ThrowStatementStruct {
-    // Do we care about range in source code?
     pub throw_keyword: ThrowKeyword,
     pub semicolon: Semicolon,
 }
@@ -1988,7 +1898,6 @@ pub type TryStatement = Rc<TryStatementStruct>;
 
 #[derive(Debug)]
 pub struct TryStatementStruct {
-    // Do we care about range in source code?
     pub try_keyword: TryKeyword,
     pub expression: Expression,
     pub returns: Option<ReturnsDeclaration>,
@@ -2016,7 +1925,6 @@ pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
 
 #[derive(Debug)]
 pub struct TupleDeconstructionElementStruct {
-    // Do we care about range in source code?
     pub member: Option<TupleMember>,
 }
 
@@ -2028,7 +1936,6 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
-    // Do we care about range in source code?
     pub var_keyword: Option<VarKeyword>,
     pub open_paren: OpenParen,
     pub elements: TupleDeconstructionElements,
@@ -2062,7 +1969,6 @@ pub type TupleExpression = Rc<TupleExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TupleExpressionStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub items: TupleValues,
     pub close_paren: CloseParen,
@@ -2084,7 +1990,6 @@ pub type TupleValue = Rc<TupleValueStruct>;
 
 #[derive(Debug)]
 pub struct TupleValueStruct {
-    // Do we care about range in source code?
     pub expression: Option<Expression>,
 }
 
@@ -2096,7 +2001,6 @@ pub type TypeExpression = Rc<TypeExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TypeExpressionStruct {
-    // Do we care about range in source code?
     pub type_keyword: TypeKeyword,
     pub open_paren: OpenParen,
     pub type_name: TypeName,
@@ -2121,7 +2025,6 @@ pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
 
 #[derive(Debug)]
 pub struct TypedTupleMemberStruct {
-    // Do we care about range in source code?
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Identifier,
@@ -2143,7 +2046,6 @@ pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
 #[derive(Debug)]
 pub struct UncheckedBlockStruct {
-    // Do we care about range in source code?
     pub unchecked_keyword: UncheckedKeyword,
     pub block: Block,
 }
@@ -2159,7 +2061,6 @@ pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct UnnamedFunctionDefinitionStruct {
-    // Do we care about range in source code?
     pub function_keyword: FunctionKeyword,
     pub parameters: ParametersDeclaration,
     pub attributes: UnnamedFunctionAttributes,
@@ -2184,7 +2085,6 @@ pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
 
 #[derive(Debug)]
 pub struct UntypedTupleMemberStruct {
-    // Do we care about range in source code?
     pub storage_location: Option<StorageLocation>,
     pub name: Identifier,
 }
@@ -2203,7 +2103,6 @@ pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruc
 
 #[derive(Debug)]
 pub struct UserDefinedValueTypeDefinitionStruct {
-    // Do we care about range in source code?
     pub type_keyword: TypeKeyword,
     pub name: Identifier,
     pub is_keyword: IsKeyword,
@@ -2231,7 +2130,6 @@ pub type UsingAlias = Rc<UsingAliasStruct>;
 
 #[derive(Debug)]
 pub struct UsingAliasStruct {
-    // Do we care about range in source code?
     pub as_keyword: AsKeyword,
     pub operator: UsingOperator,
 }
@@ -2247,7 +2145,6 @@ pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionStruct {
-    // Do we care about range in source code?
     pub open_brace: OpenBrace,
     pub symbols: UsingDeconstructionSymbols,
     pub close_brace: CloseBrace,
@@ -2269,7 +2166,6 @@ pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionSymbolStruct {
-    // Do we care about range in source code?
     pub name: IdentifierPath,
     pub alias: Option<UsingAlias>,
 }
@@ -2285,7 +2181,6 @@ pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct UsingDirectiveStruct {
-    // Do we care about range in source code?
     pub using_keyword: UsingKeyword,
     pub clause: UsingClause,
     pub for_keyword: ForKeyword,
@@ -2316,7 +2211,6 @@ pub type VariableDeclaration = Rc<VariableDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationStruct {
-    // Do we care about range in source code?
     pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Identifier,
@@ -2338,7 +2232,6 @@ pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationStatementStruct {
-    // Do we care about range in source code?
     pub variable_declaration: VariableDeclaration,
     pub value: Option<VariableDeclarationValue>,
     pub semicolon: Semicolon,
@@ -2360,7 +2253,6 @@ pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationValueStruct {
-    // Do we care about range in source code?
     pub equal: Equal,
     pub expression: Expression,
 }
@@ -2376,7 +2268,6 @@ pub type VersionPragma = Rc<VersionPragmaStruct>;
 
 #[derive(Debug)]
 pub struct VersionPragmaStruct {
-    // Do we care about range in source code?
     pub solidity_keyword: SolidityKeyword,
     pub sets: VersionExpressionSets,
 }
@@ -2395,7 +2286,6 @@ pub type VersionRange = Rc<VersionRangeStruct>;
 
 #[derive(Debug)]
 pub struct VersionRangeStruct {
-    // Do we care about range in source code?
     pub start: VersionLiteral,
     pub minus: Minus,
     pub end: VersionLiteral,
@@ -2409,7 +2299,6 @@ pub type VersionTerm = Rc<VersionTermStruct>;
 
 #[derive(Debug)]
 pub struct VersionTermStruct {
-    // Do we care about range in source code?
     pub operator: Option<VersionOperator>,
     pub literal: VersionLiteral,
 }
@@ -2422,7 +2311,6 @@ pub type WhileStatement = Rc<WhileStatementStruct>;
 
 #[derive(Debug)]
 pub struct WhileStatementStruct {
-    // Do we care about range in source code?
     pub while_keyword: WhileKeyword,
     pub open_paren: OpenParen,
     pub condition: Expression,
@@ -2450,7 +2338,6 @@ pub type YulBlock = Rc<YulBlockStruct>;
 
 #[derive(Debug)]
 pub struct YulBlockStruct {
-    // Do we care about range in source code?
     pub open_brace: OpenBrace,
     pub statements: YulStatements,
     pub close_brace: CloseBrace,
@@ -2472,7 +2359,6 @@ pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulBreakStatementStruct {
-    // Do we care about range in source code?
     pub break_keyword: YulBreakKeyword,
 }
 
@@ -2484,7 +2370,6 @@ pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
 
 #[derive(Debug)]
 pub struct YulColonAndEqualStruct {
-    // Do we care about range in source code?
     pub colon: Colon,
     pub equal: Equal,
 }
@@ -2497,7 +2382,6 @@ pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulContinueStatementStruct {
-    // Do we care about range in source code?
     pub continue_keyword: YulContinueKeyword,
 }
 
@@ -2509,7 +2393,6 @@ pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulDefaultCaseStruct {
-    // Do we care about range in source code?
     pub default_keyword: YulDefaultKeyword,
     pub body: YulBlock,
 }
@@ -2525,7 +2408,6 @@ pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
 
 #[derive(Debug)]
 pub struct YulEqualAndColonStruct {
-    // Do we care about range in source code?
     pub equal: Equal,
     pub colon: Colon,
 }
@@ -2538,7 +2420,6 @@ pub type YulForStatement = Rc<YulForStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulForStatementStruct {
-    // Do we care about range in source code?
     pub for_keyword: YulForKeyword,
     pub initialization: YulBlock,
     pub condition: YulExpression,
@@ -2566,7 +2447,6 @@ pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionCallExpressionStruct {
-    // Do we care about range in source code?
     pub operand: YulExpression,
     pub open_paren: OpenParen,
     pub arguments: YulArguments,
@@ -2591,7 +2471,6 @@ pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionDefinitionStruct {
-    // Do we care about range in source code?
     pub function_keyword: YulFunctionKeyword,
     pub name: YulIdentifier,
     pub parameters: YulParametersDeclaration,
@@ -2619,7 +2498,6 @@ pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulIfStatementStruct {
-    // Do we care about range in source code?
     pub if_keyword: YulIfKeyword,
     pub condition: YulExpression,
     pub body: YulBlock,
@@ -2641,7 +2519,6 @@ pub type YulLabel = Rc<YulLabelStruct>;
 
 #[derive(Debug)]
 pub struct YulLabelStruct {
-    // Do we care about range in source code?
     pub label: YulIdentifier,
     pub colon: Colon,
 }
@@ -2654,7 +2531,6 @@ pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulLeaveStatementStruct {
-    // Do we care about range in source code?
     pub leave_keyword: YulLeaveKeyword,
 }
 
@@ -2666,7 +2542,6 @@ pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct YulParametersDeclarationStruct {
-    // Do we care about range in source code?
     pub open_paren: OpenParen,
     pub parameters: YulParameters,
     pub close_paren: CloseParen,
@@ -2688,7 +2563,6 @@ pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct YulReturnsDeclarationStruct {
-    // Do we care about range in source code?
     pub minus_greater_than: MinusGreaterThan,
     pub variables: YulVariableNames,
 }
@@ -2707,7 +2581,6 @@ pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulStackAssignmentStatementStruct {
-    // Do we care about range in source code?
     pub assignment: YulStackAssignmentOperator,
     pub variable: YulIdentifier,
 }
@@ -2726,7 +2599,6 @@ pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulSwitchStatementStruct {
-    // Do we care about range in source code?
     pub switch_keyword: YulSwitchKeyword,
     pub expression: YulExpression,
     pub cases: YulSwitchCases,
@@ -2748,7 +2620,6 @@ pub type YulValueCase = Rc<YulValueCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulValueCaseStruct {
-    // Do we care about range in source code?
     pub case_keyword: YulCaseKeyword,
     pub value: YulLiteral,
     pub body: YulBlock,
@@ -2770,7 +2641,6 @@ pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruc
 
 #[derive(Debug)]
 pub struct YulVariableAssignmentStatementStruct {
-    // Do we care about range in source code?
     pub variables: YulPaths,
     pub assignment: YulAssignmentOperator,
     pub expression: YulExpression,
@@ -2792,7 +2662,6 @@ pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStr
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationStatementStruct {
-    // Do we care about range in source code?
     pub let_keyword: YulLetKeyword,
     pub variables: YulVariableNames,
     pub value: Option<YulVariableDeclarationValue>,
@@ -2814,7 +2683,6 @@ pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationValueStruct {
-    // Do we care about range in source code?
     pub assignment: YulAssignmentOperator,
     pub expression: YulExpression,
 }
@@ -5371,9 +5239,10 @@ pub fn new_abi_encoder_v2_keyword_unreserved(
     source: &str,
 ) -> ABIEncoderV2Keyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ABIEncoderV2Keyword_Unreserved,
     }
 }
@@ -5386,9 +5255,10 @@ pub fn new_abicoder_keyword_unreserved(
     source: &str,
 ) -> AbicoderKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AbicoderKeyword_Unreserved,
     }
 }
@@ -5401,9 +5271,10 @@ pub fn new_abicoder_v1_keyword_unreserved(
     source: &str,
 ) -> AbicoderV1Keyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AbicoderV1Keyword_Unreserved,
     }
 }
@@ -5416,9 +5287,10 @@ pub fn new_abicoder_v2_keyword_unreserved(
     source: &str,
 ) -> AbicoderV2Keyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AbicoderV2Keyword_Unreserved,
     }
 }
@@ -5427,9 +5299,10 @@ pub type AbstractKeyword_Reserved = TerminalType;
 
 pub fn new_abstract_keyword_reserved(l: usize, r: usize, source: &str) -> AbstractKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AbstractKeyword_Reserved,
     }
 }
@@ -5438,9 +5311,10 @@ pub type AddressKeyword_Reserved = TerminalType;
 
 pub fn new_address_keyword_reserved(l: usize, r: usize, source: &str) -> AddressKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AddressKeyword_Reserved,
     }
 }
@@ -5449,9 +5323,10 @@ pub type AfterKeyword_Reserved = TerminalType;
 
 pub fn new_after_keyword_reserved(l: usize, r: usize, source: &str) -> AfterKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AfterKeyword_Reserved,
     }
 }
@@ -5460,9 +5335,10 @@ pub type AliasKeyword_Reserved = TerminalType;
 
 pub fn new_alias_keyword_reserved(l: usize, r: usize, source: &str) -> AliasKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AliasKeyword_Reserved,
     }
 }
@@ -5471,9 +5347,10 @@ pub type AliasKeyword_Unreserved = TerminalType;
 
 pub fn new_alias_keyword_unreserved(l: usize, r: usize, source: &str) -> AliasKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AliasKeyword_Unreserved,
     }
 }
@@ -5482,9 +5359,10 @@ pub type Ampersand = TerminalType;
 
 pub fn new_ampersand(l: usize, r: usize, source: &str) -> Ampersand {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Ampersand,
     }
 }
@@ -5493,9 +5371,10 @@ pub type AmpersandAmpersand = TerminalType;
 
 pub fn new_ampersand_ampersand(l: usize, r: usize, source: &str) -> AmpersandAmpersand {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AmpersandAmpersand,
     }
 }
@@ -5504,9 +5383,10 @@ pub type AmpersandEqual = TerminalType;
 
 pub fn new_ampersand_equal(l: usize, r: usize, source: &str) -> AmpersandEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AmpersandEqual,
     }
 }
@@ -5519,9 +5399,10 @@ pub fn new_anonymous_keyword_reserved(
     source: &str,
 ) -> AnonymousKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AnonymousKeyword_Reserved,
     }
 }
@@ -5530,9 +5411,10 @@ pub type ApplyKeyword_Reserved = TerminalType;
 
 pub fn new_apply_keyword_reserved(l: usize, r: usize, source: &str) -> ApplyKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ApplyKeyword_Reserved,
     }
 }
@@ -5541,9 +5423,10 @@ pub type ApplyKeyword_Unreserved = TerminalType;
 
 pub fn new_apply_keyword_unreserved(l: usize, r: usize, source: &str) -> ApplyKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ApplyKeyword_Unreserved,
     }
 }
@@ -5552,9 +5435,10 @@ pub type AsKeyword_Reserved = TerminalType;
 
 pub fn new_as_keyword_reserved(l: usize, r: usize, source: &str) -> AsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AsKeyword_Reserved,
     }
 }
@@ -5563,9 +5447,10 @@ pub type AssemblyKeyword_Reserved = TerminalType;
 
 pub fn new_assembly_keyword_reserved(l: usize, r: usize, source: &str) -> AssemblyKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AssemblyKeyword_Reserved,
     }
 }
@@ -5574,9 +5459,10 @@ pub type Asterisk = TerminalType;
 
 pub fn new_asterisk(l: usize, r: usize, source: &str) -> Asterisk {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Asterisk,
     }
 }
@@ -5585,9 +5471,10 @@ pub type AsteriskAsterisk = TerminalType;
 
 pub fn new_asterisk_asterisk(l: usize, r: usize, source: &str) -> AsteriskAsterisk {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AsteriskAsterisk,
     }
 }
@@ -5596,9 +5483,10 @@ pub type AsteriskEqual = TerminalType;
 
 pub fn new_asterisk_equal(l: usize, r: usize, source: &str) -> AsteriskEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AsteriskEqual,
     }
 }
@@ -5607,9 +5495,10 @@ pub type AtKeyword_Unreserved = TerminalType;
 
 pub fn new_at_keyword_unreserved(l: usize, r: usize, source: &str) -> AtKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AtKeyword_Unreserved,
     }
 }
@@ -5618,9 +5507,10 @@ pub type AutoKeyword_Reserved = TerminalType;
 
 pub fn new_auto_keyword_reserved(l: usize, r: usize, source: &str) -> AutoKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AutoKeyword_Reserved,
     }
 }
@@ -5629,9 +5519,10 @@ pub type AutoKeyword_Unreserved = TerminalType;
 
 pub fn new_auto_keyword_unreserved(l: usize, r: usize, source: &str) -> AutoKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::AutoKeyword_Unreserved,
     }
 }
@@ -5640,9 +5531,10 @@ pub type Bang = TerminalType;
 
 pub fn new_bang(l: usize, r: usize, source: &str) -> Bang {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Bang,
     }
 }
@@ -5651,9 +5543,10 @@ pub type BangEqual = TerminalType;
 
 pub fn new_bang_equal(l: usize, r: usize, source: &str) -> BangEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::BangEqual,
     }
 }
@@ -5662,9 +5555,10 @@ pub type Bar = TerminalType;
 
 pub fn new_bar(l: usize, r: usize, source: &str) -> Bar {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Bar,
     }
 }
@@ -5673,9 +5567,10 @@ pub type BarBar = TerminalType;
 
 pub fn new_bar_bar(l: usize, r: usize, source: &str) -> BarBar {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::BarBar,
     }
 }
@@ -5684,9 +5579,10 @@ pub type BarEqual = TerminalType;
 
 pub fn new_bar_equal(l: usize, r: usize, source: &str) -> BarEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::BarEqual,
     }
 }
@@ -5695,9 +5591,10 @@ pub type BoolKeyword_Reserved = TerminalType;
 
 pub fn new_bool_keyword_reserved(l: usize, r: usize, source: &str) -> BoolKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::BoolKeyword_Reserved,
     }
 }
@@ -5706,9 +5603,10 @@ pub type BreakKeyword_Reserved = TerminalType;
 
 pub fn new_break_keyword_reserved(l: usize, r: usize, source: &str) -> BreakKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::BreakKeyword_Reserved,
     }
 }
@@ -5717,9 +5615,10 @@ pub type ByteKeyword_Reserved = TerminalType;
 
 pub fn new_byte_keyword_reserved(l: usize, r: usize, source: &str) -> ByteKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ByteKeyword_Reserved,
     }
 }
@@ -5728,9 +5627,10 @@ pub type BytesKeyword_Reserved = TerminalType;
 
 pub fn new_bytes_keyword_reserved(l: usize, r: usize, source: &str) -> BytesKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::BytesKeyword_Reserved,
     }
 }
@@ -5743,9 +5643,10 @@ pub fn new_call_data_keyword_reserved(
     source: &str,
 ) -> CallDataKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CallDataKeyword_Reserved,
     }
 }
@@ -5758,9 +5659,10 @@ pub fn new_call_data_keyword_unreserved(
     source: &str,
 ) -> CallDataKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CallDataKeyword_Unreserved,
     }
 }
@@ -5769,9 +5671,10 @@ pub type Caret = TerminalType;
 
 pub fn new_caret(l: usize, r: usize, source: &str) -> Caret {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Caret,
     }
 }
@@ -5780,9 +5683,10 @@ pub type CaretEqual = TerminalType;
 
 pub fn new_caret_equal(l: usize, r: usize, source: &str) -> CaretEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CaretEqual,
     }
 }
@@ -5791,9 +5695,10 @@ pub type CaseKeyword_Reserved = TerminalType;
 
 pub fn new_case_keyword_reserved(l: usize, r: usize, source: &str) -> CaseKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CaseKeyword_Reserved,
     }
 }
@@ -5802,9 +5707,10 @@ pub type CatchKeyword_Reserved = TerminalType;
 
 pub fn new_catch_keyword_reserved(l: usize, r: usize, source: &str) -> CatchKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CatchKeyword_Reserved,
     }
 }
@@ -5813,9 +5719,10 @@ pub type CloseBrace = TerminalType;
 
 pub fn new_close_brace(l: usize, r: usize, source: &str) -> CloseBrace {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CloseBrace,
     }
 }
@@ -5824,9 +5731,10 @@ pub type CloseBracket = TerminalType;
 
 pub fn new_close_bracket(l: usize, r: usize, source: &str) -> CloseBracket {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CloseBracket,
     }
 }
@@ -5835,9 +5743,10 @@ pub type CloseParen = TerminalType;
 
 pub fn new_close_paren(l: usize, r: usize, source: &str) -> CloseParen {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CloseParen,
     }
 }
@@ -5846,9 +5755,10 @@ pub type Colon = TerminalType;
 
 pub fn new_colon(l: usize, r: usize, source: &str) -> Colon {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Colon,
     }
 }
@@ -5857,9 +5767,10 @@ pub type ColonEqual = TerminalType;
 
 pub fn new_colon_equal(l: usize, r: usize, source: &str) -> ColonEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ColonEqual,
     }
 }
@@ -5868,9 +5779,10 @@ pub type Comma = TerminalType;
 
 pub fn new_comma(l: usize, r: usize, source: &str) -> Comma {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Comma,
     }
 }
@@ -5879,9 +5791,10 @@ pub type ConstantKeyword_Reserved = TerminalType;
 
 pub fn new_constant_keyword_reserved(l: usize, r: usize, source: &str) -> ConstantKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ConstantKeyword_Reserved,
     }
 }
@@ -5894,9 +5807,10 @@ pub fn new_constructor_keyword_reserved(
     source: &str,
 ) -> ConstructorKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ConstructorKeyword_Reserved,
     }
 }
@@ -5909,9 +5823,10 @@ pub fn new_constructor_keyword_unreserved(
     source: &str,
 ) -> ConstructorKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ConstructorKeyword_Unreserved,
     }
 }
@@ -5920,9 +5835,10 @@ pub type ContinueKeyword_Reserved = TerminalType;
 
 pub fn new_continue_keyword_reserved(l: usize, r: usize, source: &str) -> ContinueKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ContinueKeyword_Reserved,
     }
 }
@@ -5931,9 +5847,10 @@ pub type ContractKeyword_Reserved = TerminalType;
 
 pub fn new_contract_keyword_reserved(l: usize, r: usize, source: &str) -> ContractKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ContractKeyword_Reserved,
     }
 }
@@ -5942,9 +5859,10 @@ pub type CopyOfKeyword_Reserved = TerminalType;
 
 pub fn new_copy_of_keyword_reserved(l: usize, r: usize, source: &str) -> CopyOfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CopyOfKeyword_Reserved,
     }
 }
@@ -5957,9 +5875,10 @@ pub fn new_copy_of_keyword_unreserved(
     source: &str,
 ) -> CopyOfKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::CopyOfKeyword_Unreserved,
     }
 }
@@ -5968,9 +5887,10 @@ pub type DaysKeyword_Reserved = TerminalType;
 
 pub fn new_days_keyword_reserved(l: usize, r: usize, source: &str) -> DaysKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DaysKeyword_Reserved,
     }
 }
@@ -5979,9 +5899,10 @@ pub type DecimalLiteral = TerminalType;
 
 pub fn new_decimal_literal(l: usize, r: usize, source: &str) -> DecimalLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DecimalLiteral,
     }
 }
@@ -5990,9 +5911,10 @@ pub type DefaultKeyword_Reserved = TerminalType;
 
 pub fn new_default_keyword_reserved(l: usize, r: usize, source: &str) -> DefaultKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DefaultKeyword_Reserved,
     }
 }
@@ -6001,9 +5923,10 @@ pub type DefineKeyword_Reserved = TerminalType;
 
 pub fn new_define_keyword_reserved(l: usize, r: usize, source: &str) -> DefineKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DefineKeyword_Reserved,
     }
 }
@@ -6012,9 +5935,10 @@ pub type DefineKeyword_Unreserved = TerminalType;
 
 pub fn new_define_keyword_unreserved(l: usize, r: usize, source: &str) -> DefineKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DefineKeyword_Unreserved,
     }
 }
@@ -6023,9 +5947,10 @@ pub type DeleteKeyword_Reserved = TerminalType;
 
 pub fn new_delete_keyword_reserved(l: usize, r: usize, source: &str) -> DeleteKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DeleteKeyword_Reserved,
     }
 }
@@ -6034,9 +5959,10 @@ pub type DoKeyword_Reserved = TerminalType;
 
 pub fn new_do_keyword_reserved(l: usize, r: usize, source: &str) -> DoKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DoKeyword_Reserved,
     }
 }
@@ -6049,9 +5975,10 @@ pub fn new_double_quoted_hex_string_literal(
     source: &str,
 ) -> DoubleQuotedHexStringLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DoubleQuotedHexStringLiteral,
     }
 }
@@ -6064,9 +5991,10 @@ pub fn new_double_quoted_string_literal(
     source: &str,
 ) -> DoubleQuotedStringLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DoubleQuotedStringLiteral,
     }
 }
@@ -6079,9 +6007,10 @@ pub fn new_double_quoted_unicode_string_literal(
     source: &str,
 ) -> DoubleQuotedUnicodeStringLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DoubleQuotedUnicodeStringLiteral,
     }
 }
@@ -6094,9 +6023,10 @@ pub fn new_double_quoted_version_literal(
     source: &str,
 ) -> DoubleQuotedVersionLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::DoubleQuotedVersionLiteral,
     }
 }
@@ -6105,9 +6035,10 @@ pub type ElseKeyword_Reserved = TerminalType;
 
 pub fn new_else_keyword_reserved(l: usize, r: usize, source: &str) -> ElseKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ElseKeyword_Reserved,
     }
 }
@@ -6116,9 +6047,10 @@ pub type EmitKeyword_Reserved = TerminalType;
 
 pub fn new_emit_keyword_reserved(l: usize, r: usize, source: &str) -> EmitKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EmitKeyword_Reserved,
     }
 }
@@ -6127,9 +6059,10 @@ pub type EmitKeyword_Unreserved = TerminalType;
 
 pub fn new_emit_keyword_unreserved(l: usize, r: usize, source: &str) -> EmitKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EmitKeyword_Unreserved,
     }
 }
@@ -6138,9 +6071,10 @@ pub type EndOfLine = TerminalType;
 
 pub fn new_end_of_line(l: usize, r: usize, source: &str) -> EndOfLine {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EndOfLine,
     }
 }
@@ -6149,9 +6083,10 @@ pub type EnumKeyword_Reserved = TerminalType;
 
 pub fn new_enum_keyword_reserved(l: usize, r: usize, source: &str) -> EnumKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EnumKeyword_Reserved,
     }
 }
@@ -6160,9 +6095,10 @@ pub type Equal = TerminalType;
 
 pub fn new_equal(l: usize, r: usize, source: &str) -> Equal {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Equal,
     }
 }
@@ -6171,9 +6107,10 @@ pub type EqualColon = TerminalType;
 
 pub fn new_equal_colon(l: usize, r: usize, source: &str) -> EqualColon {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EqualColon,
     }
 }
@@ -6182,9 +6119,10 @@ pub type EqualEqual = TerminalType;
 
 pub fn new_equal_equal(l: usize, r: usize, source: &str) -> EqualEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EqualEqual,
     }
 }
@@ -6193,9 +6131,10 @@ pub type EqualGreaterThan = TerminalType;
 
 pub fn new_equal_greater_than(l: usize, r: usize, source: &str) -> EqualGreaterThan {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EqualGreaterThan,
     }
 }
@@ -6204,9 +6143,10 @@ pub type ErrorKeyword_Reserved = TerminalType;
 
 pub fn new_error_keyword_reserved(l: usize, r: usize, source: &str) -> ErrorKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ErrorKeyword_Reserved,
     }
 }
@@ -6215,9 +6155,10 @@ pub type EtherKeyword_Reserved = TerminalType;
 
 pub fn new_ether_keyword_reserved(l: usize, r: usize, source: &str) -> EtherKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EtherKeyword_Reserved,
     }
 }
@@ -6226,9 +6167,10 @@ pub type EventKeyword_Reserved = TerminalType;
 
 pub fn new_event_keyword_reserved(l: usize, r: usize, source: &str) -> EventKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::EventKeyword_Reserved,
     }
 }
@@ -6241,9 +6183,10 @@ pub fn new_experimental_keyword_unreserved(
     source: &str,
 ) -> ExperimentalKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ExperimentalKeyword_Unreserved,
     }
 }
@@ -6252,9 +6195,10 @@ pub type ExternalKeyword_Reserved = TerminalType;
 
 pub fn new_external_keyword_reserved(l: usize, r: usize, source: &str) -> ExternalKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ExternalKeyword_Reserved,
     }
 }
@@ -6263,9 +6207,10 @@ pub type FallbackKeyword_Reserved = TerminalType;
 
 pub fn new_fallback_keyword_reserved(l: usize, r: usize, source: &str) -> FallbackKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FallbackKeyword_Reserved,
     }
 }
@@ -6278,9 +6223,10 @@ pub fn new_fallback_keyword_unreserved(
     source: &str,
 ) -> FallbackKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FallbackKeyword_Unreserved,
     }
 }
@@ -6289,9 +6235,10 @@ pub type FalseKeyword_Reserved = TerminalType;
 
 pub fn new_false_keyword_reserved(l: usize, r: usize, source: &str) -> FalseKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FalseKeyword_Reserved,
     }
 }
@@ -6300,9 +6247,10 @@ pub type FinalKeyword_Reserved = TerminalType;
 
 pub fn new_final_keyword_reserved(l: usize, r: usize, source: &str) -> FinalKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FinalKeyword_Reserved,
     }
 }
@@ -6311,9 +6259,10 @@ pub type FinneyKeyword_Reserved = TerminalType;
 
 pub fn new_finney_keyword_reserved(l: usize, r: usize, source: &str) -> FinneyKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FinneyKeyword_Reserved,
     }
 }
@@ -6322,9 +6271,10 @@ pub type FinneyKeyword_Unreserved = TerminalType;
 
 pub fn new_finney_keyword_unreserved(l: usize, r: usize, source: &str) -> FinneyKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FinneyKeyword_Unreserved,
     }
 }
@@ -6333,9 +6283,10 @@ pub type FixedKeyword_Reserved = TerminalType;
 
 pub fn new_fixed_keyword_reserved(l: usize, r: usize, source: &str) -> FixedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FixedKeyword_Reserved,
     }
 }
@@ -6344,9 +6295,10 @@ pub type FixedKeyword_Unreserved = TerminalType;
 
 pub fn new_fixed_keyword_unreserved(l: usize, r: usize, source: &str) -> FixedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FixedKeyword_Unreserved,
     }
 }
@@ -6355,9 +6307,10 @@ pub type ForKeyword_Reserved = TerminalType;
 
 pub fn new_for_keyword_reserved(l: usize, r: usize, source: &str) -> ForKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ForKeyword_Reserved,
     }
 }
@@ -6366,9 +6319,10 @@ pub type FromKeyword_Unreserved = TerminalType;
 
 pub fn new_from_keyword_unreserved(l: usize, r: usize, source: &str) -> FromKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FromKeyword_Unreserved,
     }
 }
@@ -6377,9 +6331,10 @@ pub type FunctionKeyword_Reserved = TerminalType;
 
 pub fn new_function_keyword_reserved(l: usize, r: usize, source: &str) -> FunctionKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::FunctionKeyword_Reserved,
     }
 }
@@ -6388,9 +6343,10 @@ pub type GlobalKeyword_Unreserved = TerminalType;
 
 pub fn new_global_keyword_unreserved(l: usize, r: usize, source: &str) -> GlobalKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GlobalKeyword_Unreserved,
     }
 }
@@ -6399,9 +6355,10 @@ pub type GreaterThan = TerminalType;
 
 pub fn new_greater_than(l: usize, r: usize, source: &str) -> GreaterThan {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GreaterThan,
     }
 }
@@ -6410,9 +6367,10 @@ pub type GreaterThanEqual = TerminalType;
 
 pub fn new_greater_than_equal(l: usize, r: usize, source: &str) -> GreaterThanEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GreaterThanEqual,
     }
 }
@@ -6421,9 +6379,10 @@ pub type GreaterThanGreaterThan = TerminalType;
 
 pub fn new_greater_than_greater_than(l: usize, r: usize, source: &str) -> GreaterThanGreaterThan {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GreaterThanGreaterThan,
     }
 }
@@ -6436,9 +6395,10 @@ pub fn new_greater_than_greater_than_equal(
     source: &str,
 ) -> GreaterThanGreaterThanEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GreaterThanGreaterThanEqual,
     }
 }
@@ -6451,9 +6411,10 @@ pub fn new_greater_than_greater_than_greater_than(
     source: &str,
 ) -> GreaterThanGreaterThanGreaterThan {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GreaterThanGreaterThanGreaterThan,
     }
 }
@@ -6466,9 +6427,10 @@ pub fn new_greater_than_greater_than_greater_than_equal(
     source: &str,
 ) -> GreaterThanGreaterThanGreaterThanEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GreaterThanGreaterThanGreaterThanEqual,
     }
 }
@@ -6477,9 +6439,10 @@ pub type GweiKeyword_Reserved = TerminalType;
 
 pub fn new_gwei_keyword_reserved(l: usize, r: usize, source: &str) -> GweiKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GweiKeyword_Reserved,
     }
 }
@@ -6488,9 +6451,10 @@ pub type GweiKeyword_Unreserved = TerminalType;
 
 pub fn new_gwei_keyword_unreserved(l: usize, r: usize, source: &str) -> GweiKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::GweiKeyword_Unreserved,
     }
 }
@@ -6499,9 +6463,10 @@ pub type HexKeyword_Reserved = TerminalType;
 
 pub fn new_hex_keyword_reserved(l: usize, r: usize, source: &str) -> HexKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::HexKeyword_Reserved,
     }
 }
@@ -6510,9 +6475,10 @@ pub type HexLiteral = TerminalType;
 
 pub fn new_hex_literal(l: usize, r: usize, source: &str) -> HexLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::HexLiteral,
     }
 }
@@ -6521,9 +6487,10 @@ pub type HoursKeyword_Reserved = TerminalType;
 
 pub fn new_hours_keyword_reserved(l: usize, r: usize, source: &str) -> HoursKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::HoursKeyword_Reserved,
     }
 }
@@ -6532,9 +6499,10 @@ pub type Identifier = TerminalType;
 
 pub fn new_identifier(l: usize, r: usize, source: &str) -> Identifier {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Identifier,
     }
 }
@@ -6543,9 +6511,10 @@ pub type IfKeyword_Reserved = TerminalType;
 
 pub fn new_if_keyword_reserved(l: usize, r: usize, source: &str) -> IfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::IfKeyword_Reserved,
     }
 }
@@ -6558,9 +6527,10 @@ pub fn new_immutable_keyword_reserved(
     source: &str,
 ) -> ImmutableKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ImmutableKeyword_Reserved,
     }
 }
@@ -6573,9 +6543,10 @@ pub fn new_immutable_keyword_unreserved(
     source: &str,
 ) -> ImmutableKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ImmutableKeyword_Unreserved,
     }
 }
@@ -6588,9 +6559,10 @@ pub fn new_implements_keyword_reserved(
     source: &str,
 ) -> ImplementsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ImplementsKeyword_Reserved,
     }
 }
@@ -6603,9 +6575,10 @@ pub fn new_implements_keyword_unreserved(
     source: &str,
 ) -> ImplementsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ImplementsKeyword_Unreserved,
     }
 }
@@ -6614,9 +6587,10 @@ pub type ImportKeyword_Reserved = TerminalType;
 
 pub fn new_import_keyword_reserved(l: usize, r: usize, source: &str) -> ImportKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ImportKeyword_Reserved,
     }
 }
@@ -6625,9 +6599,10 @@ pub type InKeyword_Reserved = TerminalType;
 
 pub fn new_in_keyword_reserved(l: usize, r: usize, source: &str) -> InKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::InKeyword_Reserved,
     }
 }
@@ -6636,9 +6611,10 @@ pub type IndexedKeyword_Reserved = TerminalType;
 
 pub fn new_indexed_keyword_reserved(l: usize, r: usize, source: &str) -> IndexedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::IndexedKeyword_Reserved,
     }
 }
@@ -6647,9 +6623,10 @@ pub type InlineKeyword_Reserved = TerminalType;
 
 pub fn new_inline_keyword_reserved(l: usize, r: usize, source: &str) -> InlineKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::InlineKeyword_Reserved,
     }
 }
@@ -6658,9 +6635,10 @@ pub type IntKeyword_Reserved = TerminalType;
 
 pub fn new_int_keyword_reserved(l: usize, r: usize, source: &str) -> IntKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::IntKeyword_Reserved,
     }
 }
@@ -6673,9 +6651,10 @@ pub fn new_interface_keyword_reserved(
     source: &str,
 ) -> InterfaceKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::InterfaceKeyword_Reserved,
     }
 }
@@ -6684,9 +6663,10 @@ pub type InternalKeyword_Reserved = TerminalType;
 
 pub fn new_internal_keyword_reserved(l: usize, r: usize, source: &str) -> InternalKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::InternalKeyword_Reserved,
     }
 }
@@ -6695,9 +6675,10 @@ pub type IsKeyword_Reserved = TerminalType;
 
 pub fn new_is_keyword_reserved(l: usize, r: usize, source: &str) -> IsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::IsKeyword_Reserved,
     }
 }
@@ -6706,9 +6687,10 @@ pub type LayoutKeyword_Unreserved = TerminalType;
 
 pub fn new_layout_keyword_unreserved(l: usize, r: usize, source: &str) -> LayoutKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::LayoutKeyword_Unreserved,
     }
 }
@@ -6717,9 +6699,10 @@ pub type LessThan = TerminalType;
 
 pub fn new_less_than(l: usize, r: usize, source: &str) -> LessThan {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::LessThan,
     }
 }
@@ -6728,9 +6711,10 @@ pub type LessThanEqual = TerminalType;
 
 pub fn new_less_than_equal(l: usize, r: usize, source: &str) -> LessThanEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::LessThanEqual,
     }
 }
@@ -6739,9 +6723,10 @@ pub type LessThanLessThan = TerminalType;
 
 pub fn new_less_than_less_than(l: usize, r: usize, source: &str) -> LessThanLessThan {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::LessThanLessThan,
     }
 }
@@ -6750,9 +6735,10 @@ pub type LessThanLessThanEqual = TerminalType;
 
 pub fn new_less_than_less_than_equal(l: usize, r: usize, source: &str) -> LessThanLessThanEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::LessThanLessThanEqual,
     }
 }
@@ -6761,9 +6747,10 @@ pub type LetKeyword_Reserved = TerminalType;
 
 pub fn new_let_keyword_reserved(l: usize, r: usize, source: &str) -> LetKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::LetKeyword_Reserved,
     }
 }
@@ -6772,9 +6759,10 @@ pub type LibraryKeyword_Reserved = TerminalType;
 
 pub fn new_library_keyword_reserved(l: usize, r: usize, source: &str) -> LibraryKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::LibraryKeyword_Reserved,
     }
 }
@@ -6783,9 +6771,10 @@ pub type MacroKeyword_Reserved = TerminalType;
 
 pub fn new_macro_keyword_reserved(l: usize, r: usize, source: &str) -> MacroKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MacroKeyword_Reserved,
     }
 }
@@ -6794,9 +6783,10 @@ pub type MacroKeyword_Unreserved = TerminalType;
 
 pub fn new_macro_keyword_unreserved(l: usize, r: usize, source: &str) -> MacroKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MacroKeyword_Unreserved,
     }
 }
@@ -6805,9 +6795,10 @@ pub type MappingKeyword_Reserved = TerminalType;
 
 pub fn new_mapping_keyword_reserved(l: usize, r: usize, source: &str) -> MappingKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MappingKeyword_Reserved,
     }
 }
@@ -6816,9 +6807,10 @@ pub type MatchKeyword_Reserved = TerminalType;
 
 pub fn new_match_keyword_reserved(l: usize, r: usize, source: &str) -> MatchKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MatchKeyword_Reserved,
     }
 }
@@ -6827,9 +6819,10 @@ pub type MemoryKeyword_Reserved = TerminalType;
 
 pub fn new_memory_keyword_reserved(l: usize, r: usize, source: &str) -> MemoryKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MemoryKeyword_Reserved,
     }
 }
@@ -6838,9 +6831,10 @@ pub type Minus = TerminalType;
 
 pub fn new_minus(l: usize, r: usize, source: &str) -> Minus {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Minus,
     }
 }
@@ -6849,9 +6843,10 @@ pub type MinusEqual = TerminalType;
 
 pub fn new_minus_equal(l: usize, r: usize, source: &str) -> MinusEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MinusEqual,
     }
 }
@@ -6860,9 +6855,10 @@ pub type MinusGreaterThan = TerminalType;
 
 pub fn new_minus_greater_than(l: usize, r: usize, source: &str) -> MinusGreaterThan {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MinusGreaterThan,
     }
 }
@@ -6871,9 +6867,10 @@ pub type MinusMinus = TerminalType;
 
 pub fn new_minus_minus(l: usize, r: usize, source: &str) -> MinusMinus {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MinusMinus,
     }
 }
@@ -6882,9 +6879,10 @@ pub type MinutesKeyword_Reserved = TerminalType;
 
 pub fn new_minutes_keyword_reserved(l: usize, r: usize, source: &str) -> MinutesKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MinutesKeyword_Reserved,
     }
 }
@@ -6893,9 +6891,10 @@ pub type ModifierKeyword_Reserved = TerminalType;
 
 pub fn new_modifier_keyword_reserved(l: usize, r: usize, source: &str) -> ModifierKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ModifierKeyword_Reserved,
     }
 }
@@ -6904,9 +6903,10 @@ pub type MultiLineComment = TerminalType;
 
 pub fn new_multi_line_comment(l: usize, r: usize, source: &str) -> MultiLineComment {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MultiLineComment,
     }
 }
@@ -6919,9 +6919,10 @@ pub fn new_multi_line_nat_spec_comment(
     source: &str,
 ) -> MultiLineNatSpecComment {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MultiLineNatSpecComment,
     }
 }
@@ -6930,9 +6931,10 @@ pub type MutableKeyword_Reserved = TerminalType;
 
 pub fn new_mutable_keyword_reserved(l: usize, r: usize, source: &str) -> MutableKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MutableKeyword_Reserved,
     }
 }
@@ -6945,9 +6947,10 @@ pub fn new_mutable_keyword_unreserved(
     source: &str,
 ) -> MutableKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::MutableKeyword_Unreserved,
     }
 }
@@ -6956,9 +6959,10 @@ pub type NewKeyword_Reserved = TerminalType;
 
 pub fn new_new_keyword_reserved(l: usize, r: usize, source: &str) -> NewKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::NewKeyword_Reserved,
     }
 }
@@ -6967,9 +6971,10 @@ pub type NullKeyword_Reserved = TerminalType;
 
 pub fn new_null_keyword_reserved(l: usize, r: usize, source: &str) -> NullKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::NullKeyword_Reserved,
     }
 }
@@ -6978,9 +6983,10 @@ pub type OfKeyword_Reserved = TerminalType;
 
 pub fn new_of_keyword_reserved(l: usize, r: usize, source: &str) -> OfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::OfKeyword_Reserved,
     }
 }
@@ -6989,9 +6995,10 @@ pub type OpenBrace = TerminalType;
 
 pub fn new_open_brace(l: usize, r: usize, source: &str) -> OpenBrace {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::OpenBrace,
     }
 }
@@ -7000,9 +7007,10 @@ pub type OpenBracket = TerminalType;
 
 pub fn new_open_bracket(l: usize, r: usize, source: &str) -> OpenBracket {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::OpenBracket,
     }
 }
@@ -7011,9 +7019,10 @@ pub type OpenParen = TerminalType;
 
 pub fn new_open_paren(l: usize, r: usize, source: &str) -> OpenParen {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::OpenParen,
     }
 }
@@ -7022,9 +7031,10 @@ pub type OverrideKeyword_Reserved = TerminalType;
 
 pub fn new_override_keyword_reserved(l: usize, r: usize, source: &str) -> OverrideKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::OverrideKeyword_Reserved,
     }
 }
@@ -7037,9 +7047,10 @@ pub fn new_override_keyword_unreserved(
     source: &str,
 ) -> OverrideKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::OverrideKeyword_Unreserved,
     }
 }
@@ -7048,9 +7059,10 @@ pub type PartialKeyword_Reserved = TerminalType;
 
 pub fn new_partial_keyword_reserved(l: usize, r: usize, source: &str) -> PartialKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PartialKeyword_Reserved,
     }
 }
@@ -7063,9 +7075,10 @@ pub fn new_partial_keyword_unreserved(
     source: &str,
 ) -> PartialKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PartialKeyword_Unreserved,
     }
 }
@@ -7074,9 +7087,10 @@ pub type PayableKeyword_Reserved = TerminalType;
 
 pub fn new_payable_keyword_reserved(l: usize, r: usize, source: &str) -> PayableKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PayableKeyword_Reserved,
     }
 }
@@ -7085,9 +7099,10 @@ pub type Percent = TerminalType;
 
 pub fn new_percent(l: usize, r: usize, source: &str) -> Percent {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Percent,
     }
 }
@@ -7096,9 +7111,10 @@ pub type PercentEqual = TerminalType;
 
 pub fn new_percent_equal(l: usize, r: usize, source: &str) -> PercentEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PercentEqual,
     }
 }
@@ -7107,9 +7123,10 @@ pub type Period = TerminalType;
 
 pub fn new_period(l: usize, r: usize, source: &str) -> Period {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Period,
     }
 }
@@ -7118,9 +7135,10 @@ pub type Plus = TerminalType;
 
 pub fn new_plus(l: usize, r: usize, source: &str) -> Plus {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Plus,
     }
 }
@@ -7129,9 +7147,10 @@ pub type PlusEqual = TerminalType;
 
 pub fn new_plus_equal(l: usize, r: usize, source: &str) -> PlusEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PlusEqual,
     }
 }
@@ -7140,9 +7159,10 @@ pub type PlusPlus = TerminalType;
 
 pub fn new_plus_plus(l: usize, r: usize, source: &str) -> PlusPlus {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PlusPlus,
     }
 }
@@ -7151,9 +7171,10 @@ pub type PragmaKeyword_Reserved = TerminalType;
 
 pub fn new_pragma_keyword_reserved(l: usize, r: usize, source: &str) -> PragmaKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PragmaKeyword_Reserved,
     }
 }
@@ -7162,9 +7183,10 @@ pub type PrivateKeyword_Reserved = TerminalType;
 
 pub fn new_private_keyword_reserved(l: usize, r: usize, source: &str) -> PrivateKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PrivateKeyword_Reserved,
     }
 }
@@ -7173,9 +7195,10 @@ pub type PromiseKeyword_Reserved = TerminalType;
 
 pub fn new_promise_keyword_reserved(l: usize, r: usize, source: &str) -> PromiseKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PromiseKeyword_Reserved,
     }
 }
@@ -7188,9 +7211,10 @@ pub fn new_promise_keyword_unreserved(
     source: &str,
 ) -> PromiseKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PromiseKeyword_Unreserved,
     }
 }
@@ -7199,9 +7223,10 @@ pub type PublicKeyword_Reserved = TerminalType;
 
 pub fn new_public_keyword_reserved(l: usize, r: usize, source: &str) -> PublicKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PublicKeyword_Reserved,
     }
 }
@@ -7210,9 +7235,10 @@ pub type PureKeyword_Reserved = TerminalType;
 
 pub fn new_pure_keyword_reserved(l: usize, r: usize, source: &str) -> PureKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::PureKeyword_Reserved,
     }
 }
@@ -7221,9 +7247,10 @@ pub type QuestionMark = TerminalType;
 
 pub fn new_question_mark(l: usize, r: usize, source: &str) -> QuestionMark {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::QuestionMark,
     }
 }
@@ -7232,9 +7259,10 @@ pub type ReceiveKeyword_Reserved = TerminalType;
 
 pub fn new_receive_keyword_reserved(l: usize, r: usize, source: &str) -> ReceiveKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ReceiveKeyword_Reserved,
     }
 }
@@ -7247,9 +7275,10 @@ pub fn new_receive_keyword_unreserved(
     source: &str,
 ) -> ReceiveKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ReceiveKeyword_Unreserved,
     }
 }
@@ -7262,9 +7291,10 @@ pub fn new_reference_keyword_reserved(
     source: &str,
 ) -> ReferenceKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ReferenceKeyword_Reserved,
     }
 }
@@ -7277,9 +7307,10 @@ pub fn new_reference_keyword_unreserved(
     source: &str,
 ) -> ReferenceKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ReferenceKeyword_Unreserved,
     }
 }
@@ -7292,9 +7323,10 @@ pub fn new_relocatable_keyword_reserved(
     source: &str,
 ) -> RelocatableKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::RelocatableKeyword_Reserved,
     }
 }
@@ -7303,9 +7335,10 @@ pub type ReturnKeyword_Reserved = TerminalType;
 
 pub fn new_return_keyword_reserved(l: usize, r: usize, source: &str) -> ReturnKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ReturnKeyword_Reserved,
     }
 }
@@ -7314,9 +7347,10 @@ pub type ReturnsKeyword_Reserved = TerminalType;
 
 pub fn new_returns_keyword_reserved(l: usize, r: usize, source: &str) -> ReturnsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ReturnsKeyword_Reserved,
     }
 }
@@ -7325,9 +7359,10 @@ pub type RevertKeyword_Reserved = TerminalType;
 
 pub fn new_revert_keyword_reserved(l: usize, r: usize, source: &str) -> RevertKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::RevertKeyword_Reserved,
     }
 }
@@ -7340,9 +7375,10 @@ pub fn new_smt_checker_keyword_unreserved(
     source: &str,
 ) -> SMTCheckerKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SMTCheckerKeyword_Unreserved,
     }
 }
@@ -7351,9 +7387,10 @@ pub type SealedKeyword_Reserved = TerminalType;
 
 pub fn new_sealed_keyword_reserved(l: usize, r: usize, source: &str) -> SealedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SealedKeyword_Reserved,
     }
 }
@@ -7362,9 +7399,10 @@ pub type SealedKeyword_Unreserved = TerminalType;
 
 pub fn new_sealed_keyword_unreserved(l: usize, r: usize, source: &str) -> SealedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SealedKeyword_Unreserved,
     }
 }
@@ -7373,9 +7411,10 @@ pub type SecondsKeyword_Reserved = TerminalType;
 
 pub fn new_seconds_keyword_reserved(l: usize, r: usize, source: &str) -> SecondsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SecondsKeyword_Reserved,
     }
 }
@@ -7384,9 +7423,10 @@ pub type Semicolon = TerminalType;
 
 pub fn new_semicolon(l: usize, r: usize, source: &str) -> Semicolon {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Semicolon,
     }
 }
@@ -7395,9 +7435,10 @@ pub type SingleLineComment = TerminalType;
 
 pub fn new_single_line_comment(l: usize, r: usize, source: &str) -> SingleLineComment {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SingleLineComment,
     }
 }
@@ -7410,9 +7451,10 @@ pub fn new_single_line_nat_spec_comment(
     source: &str,
 ) -> SingleLineNatSpecComment {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SingleLineNatSpecComment,
     }
 }
@@ -7425,9 +7467,10 @@ pub fn new_single_quoted_hex_string_literal(
     source: &str,
 ) -> SingleQuotedHexStringLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SingleQuotedHexStringLiteral,
     }
 }
@@ -7440,9 +7483,10 @@ pub fn new_single_quoted_string_literal(
     source: &str,
 ) -> SingleQuotedStringLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SingleQuotedStringLiteral,
     }
 }
@@ -7455,9 +7499,10 @@ pub fn new_single_quoted_unicode_string_literal(
     source: &str,
 ) -> SingleQuotedUnicodeStringLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SingleQuotedUnicodeStringLiteral,
     }
 }
@@ -7470,9 +7515,10 @@ pub fn new_single_quoted_version_literal(
     source: &str,
 ) -> SingleQuotedVersionLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SingleQuotedVersionLiteral,
     }
 }
@@ -7481,9 +7527,10 @@ pub type SizeOfKeyword_Reserved = TerminalType;
 
 pub fn new_size_of_keyword_reserved(l: usize, r: usize, source: &str) -> SizeOfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SizeOfKeyword_Reserved,
     }
 }
@@ -7496,9 +7543,10 @@ pub fn new_size_of_keyword_unreserved(
     source: &str,
 ) -> SizeOfKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SizeOfKeyword_Unreserved,
     }
 }
@@ -7507,9 +7555,10 @@ pub type Slash = TerminalType;
 
 pub fn new_slash(l: usize, r: usize, source: &str) -> Slash {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Slash,
     }
 }
@@ -7518,9 +7567,10 @@ pub type SlashEqual = TerminalType;
 
 pub fn new_slash_equal(l: usize, r: usize, source: &str) -> SlashEqual {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SlashEqual,
     }
 }
@@ -7533,9 +7583,10 @@ pub fn new_solidity_keyword_unreserved(
     source: &str,
 ) -> SolidityKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SolidityKeyword_Unreserved,
     }
 }
@@ -7544,9 +7595,10 @@ pub type StaticKeyword_Reserved = TerminalType;
 
 pub fn new_static_keyword_reserved(l: usize, r: usize, source: &str) -> StaticKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::StaticKeyword_Reserved,
     }
 }
@@ -7555,9 +7607,10 @@ pub type StorageKeyword_Reserved = TerminalType;
 
 pub fn new_storage_keyword_reserved(l: usize, r: usize, source: &str) -> StorageKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::StorageKeyword_Reserved,
     }
 }
@@ -7566,9 +7619,10 @@ pub type StringKeyword_Reserved = TerminalType;
 
 pub fn new_string_keyword_reserved(l: usize, r: usize, source: &str) -> StringKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::StringKeyword_Reserved,
     }
 }
@@ -7577,9 +7631,10 @@ pub type StructKeyword_Reserved = TerminalType;
 
 pub fn new_struct_keyword_reserved(l: usize, r: usize, source: &str) -> StructKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::StructKeyword_Reserved,
     }
 }
@@ -7588,9 +7643,10 @@ pub type SuperKeyword_Reserved = TerminalType;
 
 pub fn new_super_keyword_reserved(l: usize, r: usize, source: &str) -> SuperKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SuperKeyword_Reserved,
     }
 }
@@ -7599,9 +7655,10 @@ pub type SuperKeyword_Unreserved = TerminalType;
 
 pub fn new_super_keyword_unreserved(l: usize, r: usize, source: &str) -> SuperKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SuperKeyword_Unreserved,
     }
 }
@@ -7610,9 +7667,10 @@ pub type SupportsKeyword_Reserved = TerminalType;
 
 pub fn new_supports_keyword_reserved(l: usize, r: usize, source: &str) -> SupportsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SupportsKeyword_Reserved,
     }
 }
@@ -7625,9 +7683,10 @@ pub fn new_supports_keyword_unreserved(
     source: &str,
 ) -> SupportsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SupportsKeyword_Unreserved,
     }
 }
@@ -7636,9 +7695,10 @@ pub type SwitchKeyword_Reserved = TerminalType;
 
 pub fn new_switch_keyword_reserved(l: usize, r: usize, source: &str) -> SwitchKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SwitchKeyword_Reserved,
     }
 }
@@ -7647,9 +7707,10 @@ pub type SzaboKeyword_Reserved = TerminalType;
 
 pub fn new_szabo_keyword_reserved(l: usize, r: usize, source: &str) -> SzaboKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SzaboKeyword_Reserved,
     }
 }
@@ -7658,9 +7719,10 @@ pub type SzaboKeyword_Unreserved = TerminalType;
 
 pub fn new_szabo_keyword_unreserved(l: usize, r: usize, source: &str) -> SzaboKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::SzaboKeyword_Unreserved,
     }
 }
@@ -7669,9 +7731,10 @@ pub type ThisKeyword_Reserved = TerminalType;
 
 pub fn new_this_keyword_reserved(l: usize, r: usize, source: &str) -> ThisKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ThisKeyword_Reserved,
     }
 }
@@ -7680,9 +7743,10 @@ pub type ThisKeyword_Unreserved = TerminalType;
 
 pub fn new_this_keyword_unreserved(l: usize, r: usize, source: &str) -> ThisKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ThisKeyword_Unreserved,
     }
 }
@@ -7691,9 +7755,10 @@ pub type ThrowKeyword_Reserved = TerminalType;
 
 pub fn new_throw_keyword_reserved(l: usize, r: usize, source: &str) -> ThrowKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ThrowKeyword_Reserved,
     }
 }
@@ -7702,9 +7767,10 @@ pub type Tilde = TerminalType;
 
 pub fn new_tilde(l: usize, r: usize, source: &str) -> Tilde {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Tilde,
     }
 }
@@ -7717,9 +7783,10 @@ pub fn new_transient_keyword_reserved(
     source: &str,
 ) -> TransientKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::TransientKeyword_Reserved,
     }
 }
@@ -7728,9 +7795,10 @@ pub type TrueKeyword_Reserved = TerminalType;
 
 pub fn new_true_keyword_reserved(l: usize, r: usize, source: &str) -> TrueKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::TrueKeyword_Reserved,
     }
 }
@@ -7739,9 +7807,10 @@ pub type TryKeyword_Reserved = TerminalType;
 
 pub fn new_try_keyword_reserved(l: usize, r: usize, source: &str) -> TryKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::TryKeyword_Reserved,
     }
 }
@@ -7750,9 +7819,10 @@ pub type TypeDefKeyword_Reserved = TerminalType;
 
 pub fn new_type_def_keyword_reserved(l: usize, r: usize, source: &str) -> TypeDefKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::TypeDefKeyword_Reserved,
     }
 }
@@ -7765,9 +7835,10 @@ pub fn new_type_def_keyword_unreserved(
     source: &str,
 ) -> TypeDefKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::TypeDefKeyword_Unreserved,
     }
 }
@@ -7776,9 +7847,10 @@ pub type TypeKeyword_Reserved = TerminalType;
 
 pub fn new_type_keyword_reserved(l: usize, r: usize, source: &str) -> TypeKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::TypeKeyword_Reserved,
     }
 }
@@ -7787,9 +7859,10 @@ pub type TypeOfKeyword_Reserved = TerminalType;
 
 pub fn new_type_of_keyword_reserved(l: usize, r: usize, source: &str) -> TypeOfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::TypeOfKeyword_Reserved,
     }
 }
@@ -7798,9 +7871,10 @@ pub type UfixedKeyword_Reserved = TerminalType;
 
 pub fn new_ufixed_keyword_reserved(l: usize, r: usize, source: &str) -> UfixedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::UfixedKeyword_Reserved,
     }
 }
@@ -7809,9 +7883,10 @@ pub type UfixedKeyword_Unreserved = TerminalType;
 
 pub fn new_ufixed_keyword_unreserved(l: usize, r: usize, source: &str) -> UfixedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::UfixedKeyword_Unreserved,
     }
 }
@@ -7820,9 +7895,10 @@ pub type UintKeyword_Reserved = TerminalType;
 
 pub fn new_uint_keyword_reserved(l: usize, r: usize, source: &str) -> UintKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::UintKeyword_Reserved,
     }
 }
@@ -7835,9 +7911,10 @@ pub fn new_unchecked_keyword_reserved(
     source: &str,
 ) -> UncheckedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::UncheckedKeyword_Reserved,
     }
 }
@@ -7850,9 +7927,10 @@ pub fn new_unchecked_keyword_unreserved(
     source: &str,
 ) -> UncheckedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::UncheckedKeyword_Unreserved,
     }
 }
@@ -7861,9 +7939,10 @@ pub type UsingKeyword_Reserved = TerminalType;
 
 pub fn new_using_keyword_reserved(l: usize, r: usize, source: &str) -> UsingKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::UsingKeyword_Reserved,
     }
 }
@@ -7872,9 +7951,10 @@ pub type VarKeyword_Reserved = TerminalType;
 
 pub fn new_var_keyword_reserved(l: usize, r: usize, source: &str) -> VarKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::VarKeyword_Reserved,
     }
 }
@@ -7883,9 +7963,10 @@ pub type VersionSpecifier = TerminalType;
 
 pub fn new_version_specifier(l: usize, r: usize, source: &str) -> VersionSpecifier {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::VersionSpecifier,
     }
 }
@@ -7894,9 +7975,10 @@ pub type ViewKeyword_Reserved = TerminalType;
 
 pub fn new_view_keyword_reserved(l: usize, r: usize, source: &str) -> ViewKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::ViewKeyword_Reserved,
     }
 }
@@ -7905,9 +7987,10 @@ pub type VirtualKeyword_Reserved = TerminalType;
 
 pub fn new_virtual_keyword_reserved(l: usize, r: usize, source: &str) -> VirtualKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::VirtualKeyword_Reserved,
     }
 }
@@ -7920,9 +8003,10 @@ pub fn new_virtual_keyword_unreserved(
     source: &str,
 ) -> VirtualKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::VirtualKeyword_Unreserved,
     }
 }
@@ -7931,9 +8015,10 @@ pub type WeeksKeyword_Reserved = TerminalType;
 
 pub fn new_weeks_keyword_reserved(l: usize, r: usize, source: &str) -> WeeksKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::WeeksKeyword_Reserved,
     }
 }
@@ -7942,9 +8027,10 @@ pub type WeiKeyword_Reserved = TerminalType;
 
 pub fn new_wei_keyword_reserved(l: usize, r: usize, source: &str) -> WeiKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::WeiKeyword_Reserved,
     }
 }
@@ -7953,9 +8039,10 @@ pub type WhileKeyword_Reserved = TerminalType;
 
 pub fn new_while_keyword_reserved(l: usize, r: usize, source: &str) -> WhileKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::WhileKeyword_Reserved,
     }
 }
@@ -7964,9 +8051,10 @@ pub type Whitespace = TerminalType;
 
 pub fn new_whitespace(l: usize, r: usize, source: &str) -> Whitespace {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::Whitespace,
     }
 }
@@ -7975,9 +8063,10 @@ pub type YearsKeyword_Reserved = TerminalType;
 
 pub fn new_years_keyword_reserved(l: usize, r: usize, source: &str) -> YearsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YearsKeyword_Reserved,
     }
 }
@@ -7990,9 +8079,10 @@ pub fn new_yul_abstract_keyword_reserved(
     source: &str,
 ) -> YulAbstractKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAbstractKeyword_Reserved,
     }
 }
@@ -8005,9 +8095,10 @@ pub fn new_yul_abstract_keyword_unreserved(
     source: &str,
 ) -> YulAbstractKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAbstractKeyword_Unreserved,
     }
 }
@@ -8020,9 +8111,10 @@ pub fn new_yul_after_keyword_reserved(
     source: &str,
 ) -> YulAfterKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAfterKeyword_Reserved,
     }
 }
@@ -8035,9 +8127,10 @@ pub fn new_yul_after_keyword_unreserved(
     source: &str,
 ) -> YulAfterKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAfterKeyword_Unreserved,
     }
 }
@@ -8050,9 +8143,10 @@ pub fn new_yul_alias_keyword_reserved(
     source: &str,
 ) -> YulAliasKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAliasKeyword_Reserved,
     }
 }
@@ -8065,9 +8159,10 @@ pub fn new_yul_alias_keyword_unreserved(
     source: &str,
 ) -> YulAliasKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAliasKeyword_Unreserved,
     }
 }
@@ -8080,9 +8175,10 @@ pub fn new_yul_anonymous_keyword_reserved(
     source: &str,
 ) -> YulAnonymousKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAnonymousKeyword_Reserved,
     }
 }
@@ -8095,9 +8191,10 @@ pub fn new_yul_anonymous_keyword_unreserved(
     source: &str,
 ) -> YulAnonymousKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAnonymousKeyword_Unreserved,
     }
 }
@@ -8110,9 +8207,10 @@ pub fn new_yul_apply_keyword_reserved(
     source: &str,
 ) -> YulApplyKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulApplyKeyword_Reserved,
     }
 }
@@ -8125,9 +8223,10 @@ pub fn new_yul_apply_keyword_unreserved(
     source: &str,
 ) -> YulApplyKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulApplyKeyword_Unreserved,
     }
 }
@@ -8136,9 +8235,10 @@ pub type YulAsKeyword_Reserved = TerminalType;
 
 pub fn new_yul_as_keyword_reserved(l: usize, r: usize, source: &str) -> YulAsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAsKeyword_Reserved,
     }
 }
@@ -8147,9 +8247,10 @@ pub type YulAsKeyword_Unreserved = TerminalType;
 
 pub fn new_yul_as_keyword_unreserved(l: usize, r: usize, source: &str) -> YulAsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAsKeyword_Unreserved,
     }
 }
@@ -8162,9 +8263,10 @@ pub fn new_yul_assembly_keyword_reserved(
     source: &str,
 ) -> YulAssemblyKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAssemblyKeyword_Reserved,
     }
 }
@@ -8177,9 +8279,10 @@ pub fn new_yul_assembly_keyword_unreserved(
     source: &str,
 ) -> YulAssemblyKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAssemblyKeyword_Unreserved,
     }
 }
@@ -8188,9 +8291,10 @@ pub type YulAutoKeyword_Reserved = TerminalType;
 
 pub fn new_yul_auto_keyword_reserved(l: usize, r: usize, source: &str) -> YulAutoKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAutoKeyword_Reserved,
     }
 }
@@ -8203,9 +8307,10 @@ pub fn new_yul_auto_keyword_unreserved(
     source: &str,
 ) -> YulAutoKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulAutoKeyword_Unreserved,
     }
 }
@@ -8214,9 +8319,10 @@ pub type YulBoolKeyword_Reserved = TerminalType;
 
 pub fn new_yul_bool_keyword_reserved(l: usize, r: usize, source: &str) -> YulBoolKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulBoolKeyword_Reserved,
     }
 }
@@ -8229,9 +8335,10 @@ pub fn new_yul_bool_keyword_unreserved(
     source: &str,
 ) -> YulBoolKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulBoolKeyword_Unreserved,
     }
 }
@@ -8244,9 +8351,10 @@ pub fn new_yul_break_keyword_reserved(
     source: &str,
 ) -> YulBreakKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulBreakKeyword_Reserved,
     }
 }
@@ -8259,9 +8367,10 @@ pub fn new_yul_bytes_keyword_reserved(
     source: &str,
 ) -> YulBytesKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulBytesKeyword_Reserved,
     }
 }
@@ -8274,9 +8383,10 @@ pub fn new_yul_bytes_keyword_unreserved(
     source: &str,
 ) -> YulBytesKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulBytesKeyword_Unreserved,
     }
 }
@@ -8289,9 +8399,10 @@ pub fn new_yul_call_data_keyword_reserved(
     source: &str,
 ) -> YulCallDataKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulCallDataKeyword_Reserved,
     }
 }
@@ -8304,9 +8415,10 @@ pub fn new_yul_call_data_keyword_unreserved(
     source: &str,
 ) -> YulCallDataKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulCallDataKeyword_Unreserved,
     }
 }
@@ -8315,9 +8427,10 @@ pub type YulCaseKeyword_Reserved = TerminalType;
 
 pub fn new_yul_case_keyword_reserved(l: usize, r: usize, source: &str) -> YulCaseKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulCaseKeyword_Reserved,
     }
 }
@@ -8330,9 +8443,10 @@ pub fn new_yul_catch_keyword_reserved(
     source: &str,
 ) -> YulCatchKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulCatchKeyword_Reserved,
     }
 }
@@ -8345,9 +8459,10 @@ pub fn new_yul_catch_keyword_unreserved(
     source: &str,
 ) -> YulCatchKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulCatchKeyword_Unreserved,
     }
 }
@@ -8360,9 +8475,10 @@ pub fn new_yul_constant_keyword_reserved(
     source: &str,
 ) -> YulConstantKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulConstantKeyword_Reserved,
     }
 }
@@ -8375,9 +8491,10 @@ pub fn new_yul_constant_keyword_unreserved(
     source: &str,
 ) -> YulConstantKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulConstantKeyword_Unreserved,
     }
 }
@@ -8390,9 +8507,10 @@ pub fn new_yul_constructor_keyword_reserved(
     source: &str,
 ) -> YulConstructorKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulConstructorKeyword_Reserved,
     }
 }
@@ -8405,9 +8523,10 @@ pub fn new_yul_constructor_keyword_unreserved(
     source: &str,
 ) -> YulConstructorKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulConstructorKeyword_Unreserved,
     }
 }
@@ -8420,9 +8539,10 @@ pub fn new_yul_continue_keyword_reserved(
     source: &str,
 ) -> YulContinueKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulContinueKeyword_Reserved,
     }
 }
@@ -8435,9 +8555,10 @@ pub fn new_yul_contract_keyword_reserved(
     source: &str,
 ) -> YulContractKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulContractKeyword_Reserved,
     }
 }
@@ -8450,9 +8571,10 @@ pub fn new_yul_contract_keyword_unreserved(
     source: &str,
 ) -> YulContractKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulContractKeyword_Unreserved,
     }
 }
@@ -8465,9 +8587,10 @@ pub fn new_yul_copy_of_keyword_reserved(
     source: &str,
 ) -> YulCopyOfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulCopyOfKeyword_Reserved,
     }
 }
@@ -8480,9 +8603,10 @@ pub fn new_yul_copy_of_keyword_unreserved(
     source: &str,
 ) -> YulCopyOfKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulCopyOfKeyword_Unreserved,
     }
 }
@@ -8491,9 +8615,10 @@ pub type YulDaysKeyword_Reserved = TerminalType;
 
 pub fn new_yul_days_keyword_reserved(l: usize, r: usize, source: &str) -> YulDaysKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDaysKeyword_Reserved,
     }
 }
@@ -8506,9 +8631,10 @@ pub fn new_yul_days_keyword_unreserved(
     source: &str,
 ) -> YulDaysKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDaysKeyword_Unreserved,
     }
 }
@@ -8517,9 +8643,10 @@ pub type YulDecimalLiteral = TerminalType;
 
 pub fn new_yul_decimal_literal(l: usize, r: usize, source: &str) -> YulDecimalLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDecimalLiteral,
     }
 }
@@ -8532,9 +8659,10 @@ pub fn new_yul_default_keyword_reserved(
     source: &str,
 ) -> YulDefaultKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDefaultKeyword_Reserved,
     }
 }
@@ -8547,9 +8675,10 @@ pub fn new_yul_define_keyword_reserved(
     source: &str,
 ) -> YulDefineKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDefineKeyword_Reserved,
     }
 }
@@ -8562,9 +8691,10 @@ pub fn new_yul_define_keyword_unreserved(
     source: &str,
 ) -> YulDefineKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDefineKeyword_Unreserved,
     }
 }
@@ -8577,9 +8707,10 @@ pub fn new_yul_delete_keyword_reserved(
     source: &str,
 ) -> YulDeleteKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDeleteKeyword_Reserved,
     }
 }
@@ -8592,9 +8723,10 @@ pub fn new_yul_delete_keyword_unreserved(
     source: &str,
 ) -> YulDeleteKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDeleteKeyword_Unreserved,
     }
 }
@@ -8603,9 +8735,10 @@ pub type YulDoKeyword_Reserved = TerminalType;
 
 pub fn new_yul_do_keyword_reserved(l: usize, r: usize, source: &str) -> YulDoKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDoKeyword_Reserved,
     }
 }
@@ -8614,9 +8747,10 @@ pub type YulDoKeyword_Unreserved = TerminalType;
 
 pub fn new_yul_do_keyword_unreserved(l: usize, r: usize, source: &str) -> YulDoKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulDoKeyword_Unreserved,
     }
 }
@@ -8625,9 +8759,10 @@ pub type YulElseKeyword_Reserved = TerminalType;
 
 pub fn new_yul_else_keyword_reserved(l: usize, r: usize, source: &str) -> YulElseKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulElseKeyword_Reserved,
     }
 }
@@ -8640,9 +8775,10 @@ pub fn new_yul_else_keyword_unreserved(
     source: &str,
 ) -> YulElseKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulElseKeyword_Unreserved,
     }
 }
@@ -8651,9 +8787,10 @@ pub type YulEmitKeyword_Reserved = TerminalType;
 
 pub fn new_yul_emit_keyword_reserved(l: usize, r: usize, source: &str) -> YulEmitKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulEmitKeyword_Reserved,
     }
 }
@@ -8666,9 +8803,10 @@ pub fn new_yul_emit_keyword_unreserved(
     source: &str,
 ) -> YulEmitKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulEmitKeyword_Unreserved,
     }
 }
@@ -8677,9 +8815,10 @@ pub type YulEnumKeyword_Reserved = TerminalType;
 
 pub fn new_yul_enum_keyword_reserved(l: usize, r: usize, source: &str) -> YulEnumKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulEnumKeyword_Reserved,
     }
 }
@@ -8692,9 +8831,10 @@ pub fn new_yul_enum_keyword_unreserved(
     source: &str,
 ) -> YulEnumKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulEnumKeyword_Unreserved,
     }
 }
@@ -8707,9 +8847,10 @@ pub fn new_yul_ether_keyword_reserved(
     source: &str,
 ) -> YulEtherKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulEtherKeyword_Reserved,
     }
 }
@@ -8722,9 +8863,10 @@ pub fn new_yul_ether_keyword_unreserved(
     source: &str,
 ) -> YulEtherKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulEtherKeyword_Unreserved,
     }
 }
@@ -8737,9 +8879,10 @@ pub fn new_yul_event_keyword_reserved(
     source: &str,
 ) -> YulEventKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulEventKeyword_Reserved,
     }
 }
@@ -8752,9 +8895,10 @@ pub fn new_yul_event_keyword_unreserved(
     source: &str,
 ) -> YulEventKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulEventKeyword_Unreserved,
     }
 }
@@ -8767,9 +8911,10 @@ pub fn new_yul_external_keyword_reserved(
     source: &str,
 ) -> YulExternalKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulExternalKeyword_Reserved,
     }
 }
@@ -8782,9 +8927,10 @@ pub fn new_yul_external_keyword_unreserved(
     source: &str,
 ) -> YulExternalKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulExternalKeyword_Unreserved,
     }
 }
@@ -8797,9 +8943,10 @@ pub fn new_yul_fallback_keyword_reserved(
     source: &str,
 ) -> YulFallbackKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFallbackKeyword_Reserved,
     }
 }
@@ -8812,9 +8959,10 @@ pub fn new_yul_fallback_keyword_unreserved(
     source: &str,
 ) -> YulFallbackKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFallbackKeyword_Unreserved,
     }
 }
@@ -8827,9 +8975,10 @@ pub fn new_yul_false_keyword_reserved(
     source: &str,
 ) -> YulFalseKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFalseKeyword_Reserved,
     }
 }
@@ -8842,9 +8991,10 @@ pub fn new_yul_final_keyword_reserved(
     source: &str,
 ) -> YulFinalKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFinalKeyword_Reserved,
     }
 }
@@ -8857,9 +9007,10 @@ pub fn new_yul_final_keyword_unreserved(
     source: &str,
 ) -> YulFinalKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFinalKeyword_Unreserved,
     }
 }
@@ -8872,9 +9023,10 @@ pub fn new_yul_finney_keyword_reserved(
     source: &str,
 ) -> YulFinneyKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFinneyKeyword_Reserved,
     }
 }
@@ -8887,9 +9039,10 @@ pub fn new_yul_finney_keyword_unreserved(
     source: &str,
 ) -> YulFinneyKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFinneyKeyword_Unreserved,
     }
 }
@@ -8902,9 +9055,10 @@ pub fn new_yul_fixed_keyword_reserved(
     source: &str,
 ) -> YulFixedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFixedKeyword_Reserved,
     }
 }
@@ -8917,9 +9071,10 @@ pub fn new_yul_fixed_keyword_unreserved(
     source: &str,
 ) -> YulFixedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFixedKeyword_Unreserved,
     }
 }
@@ -8928,9 +9083,10 @@ pub type YulForKeyword_Reserved = TerminalType;
 
 pub fn new_yul_for_keyword_reserved(l: usize, r: usize, source: &str) -> YulForKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulForKeyword_Reserved,
     }
 }
@@ -8943,9 +9099,10 @@ pub fn new_yul_function_keyword_reserved(
     source: &str,
 ) -> YulFunctionKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulFunctionKeyword_Reserved,
     }
 }
@@ -8954,9 +9111,10 @@ pub type YulGweiKeyword_Reserved = TerminalType;
 
 pub fn new_yul_gwei_keyword_reserved(l: usize, r: usize, source: &str) -> YulGweiKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulGweiKeyword_Reserved,
     }
 }
@@ -8969,9 +9127,10 @@ pub fn new_yul_gwei_keyword_unreserved(
     source: &str,
 ) -> YulGweiKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulGweiKeyword_Unreserved,
     }
 }
@@ -8980,9 +9139,10 @@ pub type YulHexKeyword_Reserved = TerminalType;
 
 pub fn new_yul_hex_keyword_reserved(l: usize, r: usize, source: &str) -> YulHexKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulHexKeyword_Reserved,
     }
 }
@@ -8991,9 +9151,10 @@ pub type YulHexLiteral = TerminalType;
 
 pub fn new_yul_hex_literal(l: usize, r: usize, source: &str) -> YulHexLiteral {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulHexLiteral,
     }
 }
@@ -9006,9 +9167,10 @@ pub fn new_yul_hours_keyword_reserved(
     source: &str,
 ) -> YulHoursKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulHoursKeyword_Reserved,
     }
 }
@@ -9021,9 +9183,10 @@ pub fn new_yul_hours_keyword_unreserved(
     source: &str,
 ) -> YulHoursKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulHoursKeyword_Unreserved,
     }
 }
@@ -9032,9 +9195,10 @@ pub type YulIdentifier = TerminalType;
 
 pub fn new_yul_identifier(l: usize, r: usize, source: &str) -> YulIdentifier {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulIdentifier,
     }
 }
@@ -9043,9 +9207,10 @@ pub type YulIfKeyword_Reserved = TerminalType;
 
 pub fn new_yul_if_keyword_reserved(l: usize, r: usize, source: &str) -> YulIfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulIfKeyword_Reserved,
     }
 }
@@ -9058,9 +9223,10 @@ pub fn new_yul_immutable_keyword_reserved(
     source: &str,
 ) -> YulImmutableKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulImmutableKeyword_Reserved,
     }
 }
@@ -9073,9 +9239,10 @@ pub fn new_yul_immutable_keyword_unreserved(
     source: &str,
 ) -> YulImmutableKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulImmutableKeyword_Unreserved,
     }
 }
@@ -9088,9 +9255,10 @@ pub fn new_yul_implements_keyword_reserved(
     source: &str,
 ) -> YulImplementsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulImplementsKeyword_Reserved,
     }
 }
@@ -9103,9 +9271,10 @@ pub fn new_yul_implements_keyword_unreserved(
     source: &str,
 ) -> YulImplementsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulImplementsKeyword_Unreserved,
     }
 }
@@ -9118,9 +9287,10 @@ pub fn new_yul_import_keyword_reserved(
     source: &str,
 ) -> YulImportKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulImportKeyword_Reserved,
     }
 }
@@ -9133,9 +9303,10 @@ pub fn new_yul_import_keyword_unreserved(
     source: &str,
 ) -> YulImportKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulImportKeyword_Unreserved,
     }
 }
@@ -9144,9 +9315,10 @@ pub type YulInKeyword_Reserved = TerminalType;
 
 pub fn new_yul_in_keyword_reserved(l: usize, r: usize, source: &str) -> YulInKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulInKeyword_Reserved,
     }
 }
@@ -9155,9 +9327,10 @@ pub type YulInKeyword_Unreserved = TerminalType;
 
 pub fn new_yul_in_keyword_unreserved(l: usize, r: usize, source: &str) -> YulInKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulInKeyword_Unreserved,
     }
 }
@@ -9170,9 +9343,10 @@ pub fn new_yul_indexed_keyword_reserved(
     source: &str,
 ) -> YulIndexedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulIndexedKeyword_Reserved,
     }
 }
@@ -9185,9 +9359,10 @@ pub fn new_yul_indexed_keyword_unreserved(
     source: &str,
 ) -> YulIndexedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulIndexedKeyword_Unreserved,
     }
 }
@@ -9200,9 +9375,10 @@ pub fn new_yul_inline_keyword_reserved(
     source: &str,
 ) -> YulInlineKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulInlineKeyword_Reserved,
     }
 }
@@ -9215,9 +9391,10 @@ pub fn new_yul_inline_keyword_unreserved(
     source: &str,
 ) -> YulInlineKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulInlineKeyword_Unreserved,
     }
 }
@@ -9226,9 +9403,10 @@ pub type YulIntKeyword_Reserved = TerminalType;
 
 pub fn new_yul_int_keyword_reserved(l: usize, r: usize, source: &str) -> YulIntKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulIntKeyword_Reserved,
     }
 }
@@ -9241,9 +9419,10 @@ pub fn new_yul_int_keyword_unreserved(
     source: &str,
 ) -> YulIntKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulIntKeyword_Unreserved,
     }
 }
@@ -9256,9 +9435,10 @@ pub fn new_yul_interface_keyword_reserved(
     source: &str,
 ) -> YulInterfaceKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulInterfaceKeyword_Reserved,
     }
 }
@@ -9271,9 +9451,10 @@ pub fn new_yul_interface_keyword_unreserved(
     source: &str,
 ) -> YulInterfaceKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulInterfaceKeyword_Unreserved,
     }
 }
@@ -9286,9 +9467,10 @@ pub fn new_yul_internal_keyword_reserved(
     source: &str,
 ) -> YulInternalKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulInternalKeyword_Reserved,
     }
 }
@@ -9301,9 +9483,10 @@ pub fn new_yul_internal_keyword_unreserved(
     source: &str,
 ) -> YulInternalKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulInternalKeyword_Unreserved,
     }
 }
@@ -9312,9 +9495,10 @@ pub type YulIsKeyword_Reserved = TerminalType;
 
 pub fn new_yul_is_keyword_reserved(l: usize, r: usize, source: &str) -> YulIsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulIsKeyword_Reserved,
     }
 }
@@ -9323,9 +9507,10 @@ pub type YulIsKeyword_Unreserved = TerminalType;
 
 pub fn new_yul_is_keyword_unreserved(l: usize, r: usize, source: &str) -> YulIsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulIsKeyword_Unreserved,
     }
 }
@@ -9338,9 +9523,10 @@ pub fn new_yul_leave_keyword_reserved(
     source: &str,
 ) -> YulLeaveKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulLeaveKeyword_Reserved,
     }
 }
@@ -9353,9 +9539,10 @@ pub fn new_yul_leave_keyword_unreserved(
     source: &str,
 ) -> YulLeaveKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulLeaveKeyword_Unreserved,
     }
 }
@@ -9364,9 +9551,10 @@ pub type YulLetKeyword_Reserved = TerminalType;
 
 pub fn new_yul_let_keyword_reserved(l: usize, r: usize, source: &str) -> YulLetKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulLetKeyword_Reserved,
     }
 }
@@ -9379,9 +9567,10 @@ pub fn new_yul_library_keyword_reserved(
     source: &str,
 ) -> YulLibraryKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulLibraryKeyword_Reserved,
     }
 }
@@ -9394,9 +9583,10 @@ pub fn new_yul_library_keyword_unreserved(
     source: &str,
 ) -> YulLibraryKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulLibraryKeyword_Unreserved,
     }
 }
@@ -9409,9 +9599,10 @@ pub fn new_yul_macro_keyword_reserved(
     source: &str,
 ) -> YulMacroKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMacroKeyword_Reserved,
     }
 }
@@ -9424,9 +9615,10 @@ pub fn new_yul_macro_keyword_unreserved(
     source: &str,
 ) -> YulMacroKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMacroKeyword_Unreserved,
     }
 }
@@ -9439,9 +9631,10 @@ pub fn new_yul_mapping_keyword_reserved(
     source: &str,
 ) -> YulMappingKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMappingKeyword_Reserved,
     }
 }
@@ -9454,9 +9647,10 @@ pub fn new_yul_mapping_keyword_unreserved(
     source: &str,
 ) -> YulMappingKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMappingKeyword_Unreserved,
     }
 }
@@ -9469,9 +9663,10 @@ pub fn new_yul_match_keyword_reserved(
     source: &str,
 ) -> YulMatchKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMatchKeyword_Reserved,
     }
 }
@@ -9484,9 +9679,10 @@ pub fn new_yul_match_keyword_unreserved(
     source: &str,
 ) -> YulMatchKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMatchKeyword_Unreserved,
     }
 }
@@ -9499,9 +9695,10 @@ pub fn new_yul_memory_keyword_reserved(
     source: &str,
 ) -> YulMemoryKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMemoryKeyword_Reserved,
     }
 }
@@ -9514,9 +9711,10 @@ pub fn new_yul_memory_keyword_unreserved(
     source: &str,
 ) -> YulMemoryKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMemoryKeyword_Unreserved,
     }
 }
@@ -9529,9 +9727,10 @@ pub fn new_yul_minutes_keyword_reserved(
     source: &str,
 ) -> YulMinutesKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMinutesKeyword_Reserved,
     }
 }
@@ -9544,9 +9743,10 @@ pub fn new_yul_minutes_keyword_unreserved(
     source: &str,
 ) -> YulMinutesKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMinutesKeyword_Unreserved,
     }
 }
@@ -9559,9 +9759,10 @@ pub fn new_yul_modifier_keyword_reserved(
     source: &str,
 ) -> YulModifierKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulModifierKeyword_Reserved,
     }
 }
@@ -9574,9 +9775,10 @@ pub fn new_yul_modifier_keyword_unreserved(
     source: &str,
 ) -> YulModifierKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulModifierKeyword_Unreserved,
     }
 }
@@ -9589,9 +9791,10 @@ pub fn new_yul_mutable_keyword_reserved(
     source: &str,
 ) -> YulMutableKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMutableKeyword_Reserved,
     }
 }
@@ -9604,9 +9807,10 @@ pub fn new_yul_mutable_keyword_unreserved(
     source: &str,
 ) -> YulMutableKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulMutableKeyword_Unreserved,
     }
 }
@@ -9615,9 +9819,10 @@ pub type YulNewKeyword_Reserved = TerminalType;
 
 pub fn new_yul_new_keyword_reserved(l: usize, r: usize, source: &str) -> YulNewKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulNewKeyword_Reserved,
     }
 }
@@ -9630,9 +9835,10 @@ pub fn new_yul_new_keyword_unreserved(
     source: &str,
 ) -> YulNewKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulNewKeyword_Unreserved,
     }
 }
@@ -9641,9 +9847,10 @@ pub type YulNullKeyword_Reserved = TerminalType;
 
 pub fn new_yul_null_keyword_reserved(l: usize, r: usize, source: &str) -> YulNullKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulNullKeyword_Reserved,
     }
 }
@@ -9656,9 +9863,10 @@ pub fn new_yul_null_keyword_unreserved(
     source: &str,
 ) -> YulNullKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulNullKeyword_Unreserved,
     }
 }
@@ -9667,9 +9875,10 @@ pub type YulOfKeyword_Reserved = TerminalType;
 
 pub fn new_yul_of_keyword_reserved(l: usize, r: usize, source: &str) -> YulOfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulOfKeyword_Reserved,
     }
 }
@@ -9678,9 +9887,10 @@ pub type YulOfKeyword_Unreserved = TerminalType;
 
 pub fn new_yul_of_keyword_unreserved(l: usize, r: usize, source: &str) -> YulOfKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulOfKeyword_Unreserved,
     }
 }
@@ -9693,9 +9903,10 @@ pub fn new_yul_override_keyword_reserved(
     source: &str,
 ) -> YulOverrideKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulOverrideKeyword_Reserved,
     }
 }
@@ -9708,9 +9919,10 @@ pub fn new_yul_override_keyword_unreserved(
     source: &str,
 ) -> YulOverrideKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulOverrideKeyword_Unreserved,
     }
 }
@@ -9723,9 +9935,10 @@ pub fn new_yul_partial_keyword_reserved(
     source: &str,
 ) -> YulPartialKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPartialKeyword_Reserved,
     }
 }
@@ -9738,9 +9951,10 @@ pub fn new_yul_partial_keyword_unreserved(
     source: &str,
 ) -> YulPartialKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPartialKeyword_Unreserved,
     }
 }
@@ -9753,9 +9967,10 @@ pub fn new_yul_payable_keyword_reserved(
     source: &str,
 ) -> YulPayableKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPayableKeyword_Reserved,
     }
 }
@@ -9768,9 +9983,10 @@ pub fn new_yul_payable_keyword_unreserved(
     source: &str,
 ) -> YulPayableKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPayableKeyword_Unreserved,
     }
 }
@@ -9783,9 +9999,10 @@ pub fn new_yul_pragma_keyword_reserved(
     source: &str,
 ) -> YulPragmaKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPragmaKeyword_Reserved,
     }
 }
@@ -9798,9 +10015,10 @@ pub fn new_yul_pragma_keyword_unreserved(
     source: &str,
 ) -> YulPragmaKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPragmaKeyword_Unreserved,
     }
 }
@@ -9813,9 +10031,10 @@ pub fn new_yul_private_keyword_reserved(
     source: &str,
 ) -> YulPrivateKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPrivateKeyword_Reserved,
     }
 }
@@ -9828,9 +10047,10 @@ pub fn new_yul_private_keyword_unreserved(
     source: &str,
 ) -> YulPrivateKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPrivateKeyword_Unreserved,
     }
 }
@@ -9843,9 +10063,10 @@ pub fn new_yul_promise_keyword_reserved(
     source: &str,
 ) -> YulPromiseKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPromiseKeyword_Reserved,
     }
 }
@@ -9858,9 +10079,10 @@ pub fn new_yul_promise_keyword_unreserved(
     source: &str,
 ) -> YulPromiseKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPromiseKeyword_Unreserved,
     }
 }
@@ -9873,9 +10095,10 @@ pub fn new_yul_public_keyword_reserved(
     source: &str,
 ) -> YulPublicKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPublicKeyword_Reserved,
     }
 }
@@ -9888,9 +10111,10 @@ pub fn new_yul_public_keyword_unreserved(
     source: &str,
 ) -> YulPublicKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPublicKeyword_Unreserved,
     }
 }
@@ -9899,9 +10123,10 @@ pub type YulPureKeyword_Reserved = TerminalType;
 
 pub fn new_yul_pure_keyword_reserved(l: usize, r: usize, source: &str) -> YulPureKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPureKeyword_Reserved,
     }
 }
@@ -9914,9 +10139,10 @@ pub fn new_yul_pure_keyword_unreserved(
     source: &str,
 ) -> YulPureKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulPureKeyword_Unreserved,
     }
 }
@@ -9929,9 +10155,10 @@ pub fn new_yul_receive_keyword_reserved(
     source: &str,
 ) -> YulReceiveKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulReceiveKeyword_Reserved,
     }
 }
@@ -9944,9 +10171,10 @@ pub fn new_yul_receive_keyword_unreserved(
     source: &str,
 ) -> YulReceiveKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulReceiveKeyword_Unreserved,
     }
 }
@@ -9959,9 +10187,10 @@ pub fn new_yul_reference_keyword_reserved(
     source: &str,
 ) -> YulReferenceKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulReferenceKeyword_Reserved,
     }
 }
@@ -9974,9 +10203,10 @@ pub fn new_yul_reference_keyword_unreserved(
     source: &str,
 ) -> YulReferenceKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulReferenceKeyword_Unreserved,
     }
 }
@@ -9989,9 +10219,10 @@ pub fn new_yul_relocatable_keyword_reserved(
     source: &str,
 ) -> YulRelocatableKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulRelocatableKeyword_Reserved,
     }
 }
@@ -10004,9 +10235,10 @@ pub fn new_yul_relocatable_keyword_unreserved(
     source: &str,
 ) -> YulRelocatableKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulRelocatableKeyword_Unreserved,
     }
 }
@@ -10019,9 +10251,10 @@ pub fn new_yul_returns_keyword_reserved(
     source: &str,
 ) -> YulReturnsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulReturnsKeyword_Reserved,
     }
 }
@@ -10034,9 +10267,10 @@ pub fn new_yul_returns_keyword_unreserved(
     source: &str,
 ) -> YulReturnsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulReturnsKeyword_Unreserved,
     }
 }
@@ -10049,9 +10283,10 @@ pub fn new_yul_sealed_keyword_reserved(
     source: &str,
 ) -> YulSealedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSealedKeyword_Reserved,
     }
 }
@@ -10064,9 +10299,10 @@ pub fn new_yul_sealed_keyword_unreserved(
     source: &str,
 ) -> YulSealedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSealedKeyword_Unreserved,
     }
 }
@@ -10079,9 +10315,10 @@ pub fn new_yul_seconds_keyword_reserved(
     source: &str,
 ) -> YulSecondsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSecondsKeyword_Reserved,
     }
 }
@@ -10094,9 +10331,10 @@ pub fn new_yul_seconds_keyword_unreserved(
     source: &str,
 ) -> YulSecondsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSecondsKeyword_Unreserved,
     }
 }
@@ -10109,9 +10347,10 @@ pub fn new_yul_size_of_keyword_reserved(
     source: &str,
 ) -> YulSizeOfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSizeOfKeyword_Reserved,
     }
 }
@@ -10124,9 +10363,10 @@ pub fn new_yul_size_of_keyword_unreserved(
     source: &str,
 ) -> YulSizeOfKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSizeOfKeyword_Unreserved,
     }
 }
@@ -10139,9 +10379,10 @@ pub fn new_yul_static_keyword_reserved(
     source: &str,
 ) -> YulStaticKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulStaticKeyword_Reserved,
     }
 }
@@ -10154,9 +10395,10 @@ pub fn new_yul_static_keyword_unreserved(
     source: &str,
 ) -> YulStaticKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulStaticKeyword_Unreserved,
     }
 }
@@ -10169,9 +10411,10 @@ pub fn new_yul_storage_keyword_reserved(
     source: &str,
 ) -> YulStorageKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulStorageKeyword_Reserved,
     }
 }
@@ -10184,9 +10427,10 @@ pub fn new_yul_storage_keyword_unreserved(
     source: &str,
 ) -> YulStorageKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulStorageKeyword_Unreserved,
     }
 }
@@ -10199,9 +10443,10 @@ pub fn new_yul_string_keyword_reserved(
     source: &str,
 ) -> YulStringKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulStringKeyword_Reserved,
     }
 }
@@ -10214,9 +10459,10 @@ pub fn new_yul_string_keyword_unreserved(
     source: &str,
 ) -> YulStringKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulStringKeyword_Unreserved,
     }
 }
@@ -10229,9 +10475,10 @@ pub fn new_yul_struct_keyword_reserved(
     source: &str,
 ) -> YulStructKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulStructKeyword_Reserved,
     }
 }
@@ -10244,9 +10491,10 @@ pub fn new_yul_struct_keyword_unreserved(
     source: &str,
 ) -> YulStructKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulStructKeyword_Unreserved,
     }
 }
@@ -10259,9 +10507,10 @@ pub fn new_yul_super_keyword_reserved(
     source: &str,
 ) -> YulSuperKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSuperKeyword_Reserved,
     }
 }
@@ -10274,9 +10523,10 @@ pub fn new_yul_super_keyword_unreserved(
     source: &str,
 ) -> YulSuperKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSuperKeyword_Unreserved,
     }
 }
@@ -10289,9 +10539,10 @@ pub fn new_yul_supports_keyword_reserved(
     source: &str,
 ) -> YulSupportsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSupportsKeyword_Reserved,
     }
 }
@@ -10304,9 +10555,10 @@ pub fn new_yul_supports_keyword_unreserved(
     source: &str,
 ) -> YulSupportsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSupportsKeyword_Unreserved,
     }
 }
@@ -10319,9 +10571,10 @@ pub fn new_yul_switch_keyword_reserved(
     source: &str,
 ) -> YulSwitchKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSwitchKeyword_Reserved,
     }
 }
@@ -10334,9 +10587,10 @@ pub fn new_yul_szabo_keyword_reserved(
     source: &str,
 ) -> YulSzaboKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSzaboKeyword_Reserved,
     }
 }
@@ -10349,9 +10603,10 @@ pub fn new_yul_szabo_keyword_unreserved(
     source: &str,
 ) -> YulSzaboKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulSzaboKeyword_Unreserved,
     }
 }
@@ -10360,9 +10615,10 @@ pub type YulThisKeyword_Reserved = TerminalType;
 
 pub fn new_yul_this_keyword_reserved(l: usize, r: usize, source: &str) -> YulThisKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulThisKeyword_Reserved,
     }
 }
@@ -10375,9 +10631,10 @@ pub fn new_yul_this_keyword_unreserved(
     source: &str,
 ) -> YulThisKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulThisKeyword_Unreserved,
     }
 }
@@ -10390,9 +10647,10 @@ pub fn new_yul_throw_keyword_reserved(
     source: &str,
 ) -> YulThrowKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulThrowKeyword_Reserved,
     }
 }
@@ -10405,9 +10663,10 @@ pub fn new_yul_throw_keyword_unreserved(
     source: &str,
 ) -> YulThrowKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulThrowKeyword_Unreserved,
     }
 }
@@ -10416,9 +10675,10 @@ pub type YulTrueKeyword_Reserved = TerminalType;
 
 pub fn new_yul_true_keyword_reserved(l: usize, r: usize, source: &str) -> YulTrueKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTrueKeyword_Reserved,
     }
 }
@@ -10427,9 +10687,10 @@ pub type YulTryKeyword_Reserved = TerminalType;
 
 pub fn new_yul_try_keyword_reserved(l: usize, r: usize, source: &str) -> YulTryKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTryKeyword_Reserved,
     }
 }
@@ -10442,9 +10703,10 @@ pub fn new_yul_try_keyword_unreserved(
     source: &str,
 ) -> YulTryKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTryKeyword_Unreserved,
     }
 }
@@ -10457,9 +10719,10 @@ pub fn new_yul_type_def_keyword_reserved(
     source: &str,
 ) -> YulTypeDefKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTypeDefKeyword_Reserved,
     }
 }
@@ -10472,9 +10735,10 @@ pub fn new_yul_type_def_keyword_unreserved(
     source: &str,
 ) -> YulTypeDefKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTypeDefKeyword_Unreserved,
     }
 }
@@ -10483,9 +10747,10 @@ pub type YulTypeKeyword_Reserved = TerminalType;
 
 pub fn new_yul_type_keyword_reserved(l: usize, r: usize, source: &str) -> YulTypeKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTypeKeyword_Reserved,
     }
 }
@@ -10498,9 +10763,10 @@ pub fn new_yul_type_keyword_unreserved(
     source: &str,
 ) -> YulTypeKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTypeKeyword_Unreserved,
     }
 }
@@ -10513,9 +10779,10 @@ pub fn new_yul_type_of_keyword_reserved(
     source: &str,
 ) -> YulTypeOfKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTypeOfKeyword_Reserved,
     }
 }
@@ -10528,9 +10795,10 @@ pub fn new_yul_type_of_keyword_unreserved(
     source: &str,
 ) -> YulTypeOfKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulTypeOfKeyword_Unreserved,
     }
 }
@@ -10543,9 +10811,10 @@ pub fn new_yul_ufixed_keyword_reserved(
     source: &str,
 ) -> YulUfixedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulUfixedKeyword_Reserved,
     }
 }
@@ -10558,9 +10827,10 @@ pub fn new_yul_ufixed_keyword_unreserved(
     source: &str,
 ) -> YulUfixedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulUfixedKeyword_Unreserved,
     }
 }
@@ -10569,9 +10839,10 @@ pub type YulUintKeyword_Reserved = TerminalType;
 
 pub fn new_yul_uint_keyword_reserved(l: usize, r: usize, source: &str) -> YulUintKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulUintKeyword_Reserved,
     }
 }
@@ -10584,9 +10855,10 @@ pub fn new_yul_uint_keyword_unreserved(
     source: &str,
 ) -> YulUintKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulUintKeyword_Unreserved,
     }
 }
@@ -10599,9 +10871,10 @@ pub fn new_yul_unchecked_keyword_reserved(
     source: &str,
 ) -> YulUncheckedKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulUncheckedKeyword_Reserved,
     }
 }
@@ -10614,9 +10887,10 @@ pub fn new_yul_unchecked_keyword_unreserved(
     source: &str,
 ) -> YulUncheckedKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulUncheckedKeyword_Unreserved,
     }
 }
@@ -10629,9 +10903,10 @@ pub fn new_yul_using_keyword_reserved(
     source: &str,
 ) -> YulUsingKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulUsingKeyword_Reserved,
     }
 }
@@ -10644,9 +10919,10 @@ pub fn new_yul_using_keyword_unreserved(
     source: &str,
 ) -> YulUsingKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulUsingKeyword_Unreserved,
     }
 }
@@ -10655,9 +10931,10 @@ pub type YulVarKeyword_Reserved = TerminalType;
 
 pub fn new_yul_var_keyword_reserved(l: usize, r: usize, source: &str) -> YulVarKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulVarKeyword_Reserved,
     }
 }
@@ -10670,9 +10947,10 @@ pub fn new_yul_var_keyword_unreserved(
     source: &str,
 ) -> YulVarKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulVarKeyword_Unreserved,
     }
 }
@@ -10681,9 +10959,10 @@ pub type YulViewKeyword_Reserved = TerminalType;
 
 pub fn new_yul_view_keyword_reserved(l: usize, r: usize, source: &str) -> YulViewKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulViewKeyword_Reserved,
     }
 }
@@ -10696,9 +10975,10 @@ pub fn new_yul_view_keyword_unreserved(
     source: &str,
 ) -> YulViewKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulViewKeyword_Unreserved,
     }
 }
@@ -10711,9 +10991,10 @@ pub fn new_yul_virtual_keyword_reserved(
     source: &str,
 ) -> YulVirtualKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulVirtualKeyword_Reserved,
     }
 }
@@ -10726,9 +11007,10 @@ pub fn new_yul_virtual_keyword_unreserved(
     source: &str,
 ) -> YulVirtualKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulVirtualKeyword_Unreserved,
     }
 }
@@ -10741,9 +11023,10 @@ pub fn new_yul_weeks_keyword_reserved(
     source: &str,
 ) -> YulWeeksKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulWeeksKeyword_Reserved,
     }
 }
@@ -10756,9 +11039,10 @@ pub fn new_yul_weeks_keyword_unreserved(
     source: &str,
 ) -> YulWeeksKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulWeeksKeyword_Unreserved,
     }
 }
@@ -10767,9 +11051,10 @@ pub type YulWeiKeyword_Reserved = TerminalType;
 
 pub fn new_yul_wei_keyword_reserved(l: usize, r: usize, source: &str) -> YulWeiKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulWeiKeyword_Reserved,
     }
 }
@@ -10782,9 +11067,10 @@ pub fn new_yul_wei_keyword_unreserved(
     source: &str,
 ) -> YulWeiKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulWeiKeyword_Unreserved,
     }
 }
@@ -10797,9 +11083,10 @@ pub fn new_yul_while_keyword_reserved(
     source: &str,
 ) -> YulWhileKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulWhileKeyword_Reserved,
     }
 }
@@ -10812,9 +11099,10 @@ pub fn new_yul_while_keyword_unreserved(
     source: &str,
 ) -> YulWhileKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulWhileKeyword_Unreserved,
     }
 }
@@ -10827,9 +11115,10 @@ pub fn new_yul_years_keyword_reserved(
     source: &str,
 ) -> YulYearsKeyword_Reserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulYearsKeyword_Reserved,
     }
 }
@@ -10842,9 +11131,10 @@ pub fn new_yul_years_keyword_unreserved(
     source: &str,
 ) -> YulYearsKeyword_Unreserved {
     TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
-        l: l,
-        r: r,
+        l,
+        r,
         kind: LexemeKind::YulYearsKeyword_Unreserved,
     }
 }
