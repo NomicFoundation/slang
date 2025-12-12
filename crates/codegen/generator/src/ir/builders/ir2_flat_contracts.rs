@@ -280,6 +280,12 @@ fn simplify_imports(mutator: &mut IrModelMutator) {
     mutator.collapse_sequence("ImportDirective");
     // Remove `NamedImport`, since it can be converted to the equivalent `PathImport`
     mutator.remove_type("NamedImport");
+    // TODO: collapsing `ImportDirective` means that the `ImportClause` gets
+    // lifted to the `SourceUnitMember` enum and its name is inconsistent with
+    // the rest of the variants (eg. `PragmaDirective` or `UsingDirective`). We
+    // want to either rename `ImportClause` to `ImportDirective` (this may lead
+    // to confusion due to the difference against the CST) or find a new better
+    // name.
 }
 
 fn simplify_variable_declarations(mutator: &mut IrModelMutator) {
