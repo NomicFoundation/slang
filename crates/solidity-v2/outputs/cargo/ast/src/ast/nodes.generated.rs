@@ -12,6 +12,116 @@ use crate::ast::lexemes::LexemeKind;
 
 // Special cases
 
+// An IndexAccessPath represents a path or elementary type followed by
+// zero or more index accesses, e.g. foo.bar[0][1:3] or uint256[5][]
+//
+// It's heavily inspired by solc
+// https://github.com/argotorg/solidity/blob/194b114664c7daebc2ff68af3c573272f5d28913/libsolidity/parsing/Parser.h#L198-L209
+#[derive(Debug)]
+pub struct IndexAccessPath {
+    pub path: Path,
+    pub indices: Vec<Index>,
+}
+
+#[derive(Debug)]
+pub enum Path {
+    IdentifierPath(IdentifierPath),
+    ElementaryType(ElementaryType),
+}
+
+#[derive(Debug)]
+pub struct Index {
+    pub open_bracket: OpenBracket,
+    pub start: Option<Expression>,
+    pub end: Option<IndexAccessEnd>,
+    pub close_bracket: CloseBracket,
+}
+
+pub fn index_access_path_add_index(
+    mut iap: IndexAccessPath,
+    open_bracket: OpenBracket,
+    start: Option<Expression>,
+    end: Option<IndexAccessEnd>,
+    close_bracket: CloseBracket,
+) -> IndexAccessPath {
+    iap.indices.push(Index {
+        open_bracket,
+        start,
+        end,
+        close_bracket,
+    });
+    iap
+}
+
+pub fn new_index_access_path_from_identifier_path(
+    identifier_path: IdentifierPath,
+) -> IndexAccessPath {
+    IndexAccessPath {
+        path: Path::IdentifierPath(identifier_path),
+        indices: Vec::new(),
+    }
+}
+
+pub fn new_index_access_path_from_elementary_type(
+    elementary_type: ElementaryType,
+) -> IndexAccessPath {
+    IndexAccessPath {
+        path: Path::ElementaryType(elementary_type),
+        indices: Vec::new(),
+    }
+}
+
+pub fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> TypeName {
+    let IndexAccessPath { path, indices } = index_access_path;
+
+    let mut type_name = Some(match path {
+        Path::IdentifierPath(path) => new_type_name_identifier_path(path),
+        Path::ElementaryType(elem_type) => new_type_name_elementary_type(elem_type),
+    });
+
+    for index in indices.into_iter() {
+        assert!(
+            index.end.is_none(),
+            "Slicing is not supported in type names yet"
+        );
+        let array_type = new_array_type_name(
+            type_name
+                .take()
+                .expect("There surely is something in there"),
+            index.open_bracket,
+            index.start,
+            index.close_bracket,
+        );
+        type_name = Some(new_type_name_array_type_name(array_type));
+    }
+
+    type_name.expect("There surely is something in there")
+}
+
+pub fn new_expression_index_access_path(index_access_path: IndexAccessPath) -> Expression {
+    let IndexAccessPath { path, indices } = index_access_path;
+
+    let mut expression = Some(match path {
+        Path::IdentifierPath(path) => new_expression_identifier_path(path),
+        Path::ElementaryType(elem_type) => new_expression_elementary_type(elem_type),
+    });
+
+    for index in indices.into_iter() {
+        let array_expression = new_index_access_expression(
+            expression
+                .take()
+                .expect("There surely is something in there"),
+            index.open_bracket,
+            index.start,
+            index.end,
+            index.close_bracket,
+        );
+        expression = Some(new_expression_index_access_expression(array_expression));
+    }
+
+    expression.expect("There surely is something in there")
+}
+
 #[derive(Debug)]
 pub struct ProtoTuple {
     // Do we care about range in source code?

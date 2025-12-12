@@ -689,7 +689,7 @@ library PermitHelper {
     }
 
     function applyPermits(
-        ERC20PermitSignature calldata permits,
+        ERC20PermitSignature[] calldata permits,
         address owner,
         address spender
     ) internal {
