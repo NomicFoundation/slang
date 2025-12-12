@@ -5073,7 +5073,7 @@ extern {
 
 
          // If we're not using functions, then we can have all attributes
-            <_type_name: TypeName1<"False">>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+            <_type_name: TypeName1<"False", "True">>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
             // Otherwise, the fun begins
 
             // If the there is a return, the visibility doesnt really matter, it's ignored. 
@@ -5117,22 +5117,27 @@ extern {
 // 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
 // avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
 
-    TypeName0<Func>: TypeName = {
+    TypeName0<Func, IAP>: TypeName = {
          
             <_FunctionType: FunctionType> if Func == "True" => new_type_name_function_type(<>),
          
             <_MappingType: MappingType>  => new_type_name_mapping_type(<>),
          
-            <_ElementaryType: ElementaryType>  => new_type_name_elementary_type(<>),
+            // We disable ElementaryType and IdentifierPath for IndexAccessPath
+            //<_ElementaryType: ElementaryType>  => new_type_name_elementary_type(<>),
          
-            <_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(<>),
+            //<_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(<>),
+            
+            <_IndexAccessPath: IndexAccessPath<"True">> if IAP == "True" => new_type_name_index_access_path(<>),
         
     };
-    TypeName1<Func>: TypeName = {
+    
+    TypeName1<Func, IAP>: TypeName = {
 // TODO[2]: enable
         // It has problems with Access expression
-            //<_TypeName: TypeName1>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(<>),
-            <TypeName: TypeName0<Func>>  => <>,
+            // The base expression shouldn't end in a trailing IAP
+            <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(new_array_type_name(<>)),
+            <TypeName: TypeName0<Func, IAP>>  => <>,
 // ODOT
          
          
@@ -5140,7 +5145,7 @@ extern {
     };
     TypeName: TypeName = {
          
-            <TypeName: TypeName1<"True">>  => <>,
+            <TypeName: TypeName1<"True", "True">>  => <>,
         
     };
 // ODOT
@@ -5250,12 +5255,23 @@ extern {
     };
 // ODOT
 
+
+// An IAP that tracks whether it has a trailing identifier path
+IndexAccessPath<TrailingIdent>: IndexAccessPath = {
+    <mut iap: IndexAccessPath<"True">> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(<>),
+    <IndexAccessPath1<TrailingIdent>>  => <>,
+};
+IndexAccessPath1<TrailingIdent>: IndexAccessPath = {
+    <_Identifier: IdentifierPath> if TrailingIdent == "True" => new_index_access_path_from_identifier_path(<>),
+    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
+};
+
 // TODO[5] Expressions are expanded, this gives us more control
 // Ident is a variable to check whether this expression allows identifier paths or not
 // The problem comes from a.b.c, this can be either an identifier path or a member access, we should
 // always prefer identifier paths
-    Expression0<Ident>: Expression = {
-            <_IdentifierPath: IdentifierPath> if Ident == "True" => new_expression_identifier_path(<>),
+    Expression0<TrailingIdent, TrailingIAP>: Expression = {
+            <_IndexAccessPath: IndexAccessPath<TrailingIdent>> if TrailingIAP == "True" => new_expression_index_access_path(<>),
          
             <_NewExpression: NewExpression>  => new_expression_new_expression(<>),
          
@@ -5271,7 +5287,7 @@ extern {
          
             <_StringExpression: StringExpression>  => new_expression_string_expression(<>),
          
-            <_ElementaryType: ElementaryType>  => new_expression_elementary_type(<>),
+            // <_ElementaryType: ElementaryType>  => new_expression_elementary_type(<>),
          
             <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(<>),
          
@@ -5284,21 +5300,13 @@ extern {
             <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
         
     };
-    Expression1<Ident>: Expression = {
+    // We simplifiy all these levels of expressions into a single one, there's no need
+    // for precedence here
+    Expression1<TrailingIdent, TrailingIAP>: Expression = {
          
-            <_Expression: InternalExpression<"True">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+            <_Expression: Expression1<"False", "False">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
          
-            <Expression: Expression0<Ident>>  => <>,
-        
-    };
-    Expression2<Ident>: Expression = {
-         
-            <_Expression: InternalExpression<"False">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
-         
-            <Expression: Expression1<Ident>>  => <>,
-        
-    };
-    Expression3<Ident>: Expression = {
+            <_Expression: Expression1<"False", "True">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
          
          // TODO[6]: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()
@@ -5306,17 +5314,11 @@ extern {
         // https://github.com/argotorg/solidity/blob/0f6d9db4987d91c9ccaf991b6a1a6515655ed745/libsolidity/parsing/Parser.cpp#L2332-L2349
         // I'm still unsure how to solve this, so not worrying for now
 
-            //<_Expression: InternalExpression<"True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+            //<_Expression: Expression1<"True", "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
          
-            <Expression: Expression2<Ident>>  => <>,
-        
-// ODOT
-    };
-    Expression4<Ident>: Expression = {
+            <_Expression: Expression1<"True", "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
          
-            <_Expression: InternalExpression<"True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
-         
-            <Expression: Expression3<Ident>>  => <>,
+            <Expression: Expression0<TrailingIdent, TrailingIAP>>  => <>,
         
     };
     Expression5<Ident>: Expression = {
@@ -5333,7 +5335,7 @@ extern {
          
             <_operator: DeleteKeyword>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(new_prefix_expression(<>)),
          
-            <Expression: Expression4<Ident>>  => <>,
+            <Expression: Expression1<"True", Ident>>  => <>,
         
     };
     Expression6<Ident>: Expression = {
@@ -5475,13 +5477,6 @@ extern {
             <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(new_assignment_expression(<>)),
          
             <Expression: Expression18<Ident>>  => <>,
-        
-    };
-
-    #[inline]
-    InternalExpression<Ident>: Expression = {
-         
-            <_Expression: Expression4<Ident>>  => <>,
         
     };
 
