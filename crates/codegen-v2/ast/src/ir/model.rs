@@ -1,30 +1,47 @@
-// Copied from V1
+//! This model abstracts away some details from our language definition in order to
+//! facilitate generation of AST structures
+//!
+//! Note: This is a copy of the model in v1 (crates/codegen/generator/src/ir/model.rs) with
+//! some small changes
 
-use indexmap::{IndexMap, IndexSet};
+// TODO(v2):
+// - Collect the sizes of terminals and nonterminals
+// - Produce individual types for terminals, particularly useful for bounded sized tokens
+
+use std::collections::{BTreeMap, BTreeSet};
+
+use indexmap::IndexMap;
 use language_v2_definition::model::{self, Identifier, VersionSpecifier};
 use serde::ser::SerializeMap;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
 pub struct IrModel {
-    // Terminal nodes and whether they are unique or their value depends on the
-    // content. The collection is not needed for generating the code, so it's
-    // not necessary to serialize it.
-    pub terminals: IndexMap<model::Identifier, bool>,
-    pub terminal_wrappers: IndexSet<model::Identifier>,
+    /// Terminal nodes and whether they are unique or their value depends on the
+    /// content.
+    pub terminals: BTreeMap<model::Identifier, bool>,
 
-    pub sequences: IndexMap<model::Identifier, Sequence>,
-    pub choices: IndexMap<model::Identifier, Choice>,
-    pub collections: IndexMap<model::Identifier, Collection>,
+    /// Terminal wrappers are terminals that are never built dierectly, but
+    /// they rather represent a group of terminals
+    /// For example: a keyword item that can be either reserved or unreserved.
+    pub terminal_wrappers: BTreeSet<model::Identifier>,
+
+    /// Nonterminal nodes that are a fixed size group of potentially different nodes
+    /// ie a struct
+    pub sequences: BTreeMap<model::Identifier, Sequence>,
+
+    /// Nonterminal nodes that are a choice between other nodes
+    /// ie an enum
+    pub choices: BTreeMap<model::Identifier, Choice>,
+
+    /// Nonterminal nodes that are an unbounded collections of nodes of the same type
+    /// ie a vector
+    pub collections: BTreeMap<model::Identifier, Collection>,
 }
 
 #[derive(Clone, Serialize)]
 pub struct Sequence {
     pub fields: Vec<Field>,
-    // If true, this sequence models a precedence expression with multiple
-    // operators and the terminals should not be elided. This is only relevant
-    // for the initial builder from the CST.
-    pub multiple_operators: bool,
 }
 
 #[derive(Clone, Eq, PartialEq)]
@@ -121,21 +138,21 @@ impl IrModel {
 }
 
 struct IrModelBuilder {
-    pub terminals: IndexMap<model::Identifier, bool>,
-    pub terminal_wrappers: IndexSet<model::Identifier>,
-    pub sequences: IndexMap<model::Identifier, Sequence>,
-    pub choices: IndexMap<model::Identifier, Choice>,
-    pub collections: IndexMap<model::Identifier, Collection>,
+    pub terminals: BTreeMap<model::Identifier, bool>,
+    pub terminal_wrappers: BTreeSet<model::Identifier>,
+    pub sequences: BTreeMap<model::Identifier, Sequence>,
+    pub choices: BTreeMap<model::Identifier, Choice>,
+    pub collections: BTreeMap<model::Identifier, Collection>,
 }
 
 impl IrModelBuilder {
     fn create(language: &model::Language) -> Self {
         let mut builder = Self {
-            terminals: IndexMap::new(),
-            terminal_wrappers: IndexSet::new(),
-            sequences: IndexMap::new(),
-            choices: IndexMap::new(),
-            collections: IndexMap::new(),
+            terminals: BTreeMap::new(),
+            terminal_wrappers: BTreeSet::new(),
+            sequences: BTreeMap::new(),
+            choices: BTreeMap::new(),
+            collections: BTreeMap::new(),
         };
 
         // First pass: collect all terminals:
@@ -161,6 +178,8 @@ impl IrModelBuilder {
                     self.terminals.insert(item.name.clone(), false);
                 }
                 model::Item::Keyword { item } => {
+                    // Keywords can be reserved or unreserved, so we create each variant depending
+                    // on the definitions.
                     if item.definitions.iter().all(|def| {
                         def.reserved
                             .clone()
@@ -236,13 +255,7 @@ impl IrModelBuilder {
         let parent_type = item.name.clone();
         let fields: Vec<_> = self.convert_fields(&item.fields).collect();
 
-        self.sequences.insert(
-            parent_type,
-            Sequence {
-                fields,
-                multiple_operators: false,
-            },
-        );
+        self.sequences.insert(parent_type, Sequence { fields });
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
@@ -328,15 +341,8 @@ impl IrModelBuilder {
                 fields.push(operand(model::PredefinedLabel::RightOperand));
             }
         }
-        let multiple_operators = expression.operators.len() > 1;
 
-        self.sequences.insert(
-            parent_type,
-            Sequence {
-                fields,
-                multiple_operators,
-            },
-        );
+        self.sequences.insert(parent_type, Sequence { fields });
     }
 
     fn convert_fields<'a>(
