@@ -13,7 +13,7 @@ paste = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-slang_solidity = { workspace = true, features = ["__private_backend_api"] }
+slang_solidity = { workspace = true, features = ["__private_backend_api", "__private_testing_utils"] }
 solar = { workspace = true }
 solidity_testing_utils = { workspace = true }
 streaming-iterator = { workspace = true }

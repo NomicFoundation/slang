@@ -8,7 +8,7 @@ use crate::backend::types::{DataLocation, LiteralKind, Type};
 use crate::cst::TerminalKind;
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_7_0};
 
-impl Visitor for Pass {
+impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &input_ir::SourceUnit) -> bool {
         self.enter_scope_for_node_id(node.node_id);
         true

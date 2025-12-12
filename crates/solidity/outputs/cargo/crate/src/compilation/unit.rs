@@ -4,6 +4,8 @@ use std::rc::Rc;
 
 use semver::Version;
 
+#[cfg(feature = "__private_backend_api")]
+use crate::backend::SemanticAnalysis;
 use crate::bindings::{create_with_resolver_internal, BindingGraph};
 use crate::compilation::File;
 use crate::cst::{Cursor, KindTypes};
@@ -19,6 +21,9 @@ pub struct CompilationUnit {
     language_version: Version,
     files: BTreeMap<String, Rc<File>>,
     binding_graph: OnceCell<Rc<BindingGraph>>,
+
+    #[cfg(feature = "__private_backend_api")]
+    semantic_analysis: OnceCell<Rc<SemanticAnalysis>>,
 }
 
 impl CompilationUnit {
@@ -27,6 +32,9 @@ impl CompilationUnit {
             language_version,
             files,
             binding_graph: OnceCell::new(),
+
+            #[cfg(feature = "__private_backend_api")]
+            semantic_analysis: OnceCell::new(),
         }
     }
 
@@ -64,6 +72,17 @@ impl CompilationUnit {
             }
 
             builder.build()
+        })
+    }
+
+    #[cfg(feature = "__private_backend_api")]
+    #[doc(hidden)]
+    pub fn semantic_analysis(&self) -> &Rc<SemanticAnalysis> {
+        self.semantic_analysis.get_or_init(|| {
+            Rc::new(SemanticAnalysis::create(
+                self.language_version.clone(),
+                self.files.values(),
+            ))
         })
     }
 }

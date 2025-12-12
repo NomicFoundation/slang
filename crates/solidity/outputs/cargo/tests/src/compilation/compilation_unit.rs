@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use anyhow::Result;
 use metaslang_bindings::PathResolver;
 use semver::Version;
@@ -46,7 +48,7 @@ impl CompilationBuilderConfig for MultiPartBuildConfig<'_> {
 pub(crate) fn build_compilation_unit_from_multi_part_file(
     version: &Version,
     contents: &str,
-) -> Result<CompilationUnit> {
+) -> Result<Rc<CompilationUnit>> {
     let multi_part = split_multi_file(contents);
     let mut builder =
         CompilationBuilder::create(version.clone(), MultiPartBuildConfig::new(&multi_part))?;
@@ -55,5 +57,5 @@ pub(crate) fn build_compilation_unit_from_multi_part_file(
         builder.add_file(part.name)?;
     }
 
-    Ok(builder.build())
+    Ok(Rc::new(builder.build()))
 }

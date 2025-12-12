@@ -2,7 +2,6 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity::backend::build_binder_output;
 
 use super::diff_report::binding_graph_diff_report;
 use super::report::binder_report;
@@ -32,8 +31,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
             .iter()
             .any(|file| !file.errors().is_empty());
 
-        let binder_output = build_binder_output(compilation_unit);
-        let report_data = ReportData::prepare(&binder_output);
+        let semantic_analysis = compilation_unit.semantic_analysis();
+        let report_data = ReportData::prepare(semantic_analysis);
         let all_resolved = report_data.all_resolved();
         let status = if has_parse_errors || !all_resolved {
             "failure"
@@ -57,7 +56,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         if !skip_diff_report {
             // TODO: we need to review all the generated diff reports and double
             // check what changed wrt the stack graph binder
-            let (diff_report, has_diff) = binding_graph_diff_report(&report_data)?;
+            let binding_graph = compilation_unit.binding_graph();
+            let (diff_report, has_diff) = binding_graph_diff_report(&report_data, binding_graph)?;
             match last_diff_report {
                 Some(ref last) if last == &diff_report => (),
                 _ => {
