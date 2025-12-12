@@ -8,8 +8,8 @@ FunctionCallExpression(
                     DecimalNumberExpressionStruct {
                         literal: TerminalType {
                             value: "5.1",
-                            _l: 0,
-                            _r: 3,
+                            l: 0,
+                            r: 3,
                             kind: DecimalLiteral,
                         },
                         unit: None,
@@ -17,14 +17,14 @@ FunctionCallExpression(
                 ),
                 period: TerminalType {
                     value: ".",
-                    _l: 3,
-                    _r: 4,
+                    l: 3,
+                    r: 4,
                     kind: Period,
                 },
                 member: TerminalType {
                     value: "fromUint",
-                    _l: 4,
-                    _r: 12,
+                    l: 4,
+                    r: 12,
                     kind: Identifier,
                 },
             },
@@ -33,8 +33,8 @@ FunctionCallExpression(
             PositionalArgumentsDeclarationStruct {
                 open_paren: TerminalType {
                     value: "(",
-                    _l: 12,
-                    _r: 13,
+                    l: 12,
+                    r: 13,
                     kind: OpenParen,
                 },
                 arguments: PositionalArguments {
@@ -42,8 +42,8 @@ FunctionCallExpression(
                 },
                 close_paren: TerminalType {
                     value: ")",
-                    _l: 13,
-                    _r: 14,
+                    l: 13,
+                    r: 14,
                     kind: CloseParen,
                 },
             },

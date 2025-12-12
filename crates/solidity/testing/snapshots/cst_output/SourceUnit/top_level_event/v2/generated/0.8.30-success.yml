@@ -7,21 +7,21 @@ SourceUnitStruct {
                 EventDefinitionStruct {
                     event_keyword: TerminalType {
                         value: "event",
-                        _l: 0,
-                        _r: 5,
+                        l: 0,
+                        r: 5,
                         kind: EventKeyword_Reserved,
                     },
                     name: TerminalType {
                         value: "E1",
-                        _l: 6,
-                        _r: 8,
+                        l: 6,
+                        r: 8,
                         kind: Identifier,
                     },
                     parameters: EventParametersDeclarationStruct {
                         open_paren: TerminalType {
                             value: "(",
-                            _l: 8,
-                            _r: 9,
+                            l: 8,
+                            r: 9,
                             kind: OpenParen,
                         },
                         parameters: EventParameters {
@@ -31,8 +31,8 @@ SourceUnitStruct {
                                         UintKeyword(
                                             TerminalType {
                                                 value: "uint256",
-                                                _l: 9,
-                                                _r: 16,
+                                                l: 9,
+                                                r: 16,
                                                 kind: UintKeyword_Reserved,
                                             },
                                         ),
@@ -41,8 +41,8 @@ SourceUnitStruct {
                                     name: Some(
                                         TerminalType {
                                             value: "value",
-                                            _l: 17,
-                                            _r: 22,
+                                            l: 17,
+                                            r: 22,
                                             kind: Identifier,
                                         },
                                     ),
@@ -51,16 +51,16 @@ SourceUnitStruct {
                         },
                         close_paren: TerminalType {
                             value: ")",
-                            _l: 22,
-                            _r: 23,
+                            l: 22,
+                            r: 23,
                             kind: CloseParen,
                         },
                     },
                     anonymous_keyword: None,
                     semicolon: TerminalType {
                         value: ";",
-                        _l: 23,
-                        _r: 24,
+                        l: 23,
+                        r: 24,
                         kind: Semicolon,
                     },
                 },

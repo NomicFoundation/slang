@@ -7,23 +7,23 @@ SourceUnitStruct {
                 FunctionDefinitionStruct {
                     function_keyword: TerminalType {
                         value: "function",
-                        _l: 0,
-                        _r: 8,
+                        l: 0,
+                        r: 8,
                         kind: FunctionKeyword_Reserved,
                     },
                     name: Identifier(
                         TerminalType {
                             value: "foo",
-                            _l: 9,
-                            _r: 12,
+                            l: 9,
+                            r: 12,
                             kind: Identifier,
                         },
                     ),
                     parameters: ParametersDeclarationStruct {
                         open_paren: TerminalType {
                             value: "(",
-                            _l: 12,
-                            _r: 13,
+                            l: 12,
+                            r: 13,
                             kind: OpenParen,
                         },
                         parameters: Parameters {
@@ -31,8 +31,8 @@ SourceUnitStruct {
                         },
                         close_paren: TerminalType {
                             value: ")",
-                            _l: 13,
-                            _r: 14,
+                            l: 13,
+                            r: 14,
                             kind: CloseParen,
                         },
                     },
@@ -44,8 +44,8 @@ SourceUnitStruct {
                         BlockStruct {
                             open_brace: TerminalType {
                                 value: "{",
-                                _l: 15,
-                                _r: 16,
+                                l: 15,
+                                r: 16,
                                 kind: OpenBrace,
                             },
                             statements: Statements {
@@ -53,8 +53,8 @@ SourceUnitStruct {
                             },
                             close_brace: TerminalType {
                                 value: "}",
-                                _l: 17,
-                                _r: 18,
+                                l: 17,
+                                r: 18,
                                 kind: CloseBrace,
                             },
                         },

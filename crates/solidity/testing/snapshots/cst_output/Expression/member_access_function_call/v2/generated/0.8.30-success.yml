@@ -7,21 +7,21 @@ FunctionCallExpression(
                 operand: Identifier(
                     TerminalType {
                         value: "x",
-                        _l: 0,
-                        _r: 1,
+                        l: 0,
+                        r: 1,
                         kind: Identifier,
                     },
                 ),
                 period: TerminalType {
                     value: "",
-                    _l: 0,
-                    _r: 0,
+                    l: 0,
+                    r: 0,
                     kind: Period,
                 },
                 member: TerminalType {
                     value: "y",
-                    _l: 2,
-                    _r: 3,
+                    l: 2,
+                    r: 3,
                     kind: Identifier,
                 },
             },
@@ -30,8 +30,8 @@ FunctionCallExpression(
             PositionalArgumentsDeclarationStruct {
                 open_paren: TerminalType {
                     value: "(",
-                    _l: 3,
-                    _r: 4,
+                    l: 3,
+                    r: 4,
                     kind: OpenParen,
                 },
                 arguments: PositionalArguments {
@@ -39,8 +39,8 @@ FunctionCallExpression(
                 },
                 close_paren: TerminalType {
                     value: ")",
-                    _l: 4,
-                    _r: 5,
+                    l: 4,
+                    r: 5,
                     kind: CloseParen,
                 },
             },

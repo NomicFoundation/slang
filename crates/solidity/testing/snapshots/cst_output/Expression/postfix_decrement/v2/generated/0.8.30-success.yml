@@ -5,15 +5,15 @@ PostfixExpression(
         operand: Identifier(
             TerminalType {
                 value: "foo",
-                _l: 0,
-                _r: 3,
+                l: 0,
+                r: 3,
                 kind: Identifier,
             },
         ),
         operator: TerminalType {
             value: "--",
-            _l: 3,
-            _r: 5,
+            l: 3,
+            r: 5,
             kind: MinusMinus,
         },
     },

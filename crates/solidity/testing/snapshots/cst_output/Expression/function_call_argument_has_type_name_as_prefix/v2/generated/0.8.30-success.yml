@@ -5,8 +5,8 @@ FunctionCallExpression(
         operand: Identifier(
             TerminalType {
                 value: "x",
-                _l: 0,
-                _r: 1,
+                l: 0,
+                r: 1,
                 kind: Identifier,
             },
         ),
@@ -14,8 +14,8 @@ FunctionCallExpression(
             PositionalArgumentsDeclarationStruct {
                 open_paren: TerminalType {
                     value: "(",
-                    _l: 1,
-                    _r: 2,
+                    l: 1,
+                    r: 2,
                     kind: OpenParen,
                 },
                 arguments: PositionalArguments {
@@ -23,8 +23,8 @@ FunctionCallExpression(
                         Identifier(
                             TerminalType {
                                 value: "interested",
-                                _l: 2,
-                                _r: 12,
+                                l: 2,
+                                r: 12,
                                 kind: Identifier,
                             },
                         ),
@@ -32,8 +32,8 @@ FunctionCallExpression(
                 },
                 close_paren: TerminalType {
                     value: ")",
-                    _l: 12,
-                    _r: 13,
+                    l: 12,
+                    r: 13,
                     kind: CloseParen,
                 },
             },

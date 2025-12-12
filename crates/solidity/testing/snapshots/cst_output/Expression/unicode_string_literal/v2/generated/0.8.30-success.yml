@@ -7,8 +7,8 @@ StringExpression(
                 DoubleQuotedUnicodeStringLiteral(
                     TerminalType {
                         value: "unicode\"This Emoji: 😃\"",
-                        _l: 0,
-                        _r: 25,
+                        l: 0,
+                        r: 25,
                         kind: DoubleQuotedUnicodeStringLiteral,
                     },
                 ),

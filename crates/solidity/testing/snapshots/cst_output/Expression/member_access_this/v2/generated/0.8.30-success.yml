@@ -5,21 +5,21 @@ MemberAccessExpression(
         operand: ThisKeyword(
             TerminalType {
                 value: "this",
-                _l: 0,
-                _r: 4,
+                l: 0,
+                r: 4,
                 kind: ThisKeyword_Reserved,
             },
         ),
         period: TerminalType {
             value: ".",
-            _l: 4,
-            _r: 5,
+            l: 4,
+            r: 5,
             kind: Period,
         },
         member: TerminalType {
             value: "x",
-            _l: 5,
-            _r: 6,
+            l: 5,
+            r: 6,
             kind: Identifier,
         },
     },

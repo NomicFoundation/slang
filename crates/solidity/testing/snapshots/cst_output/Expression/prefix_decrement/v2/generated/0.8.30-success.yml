@@ -4,15 +4,15 @@ PrefixExpression(
     PrefixExpressionStruct {
         operator: TerminalType {
             value: "--",
-            _l: 0,
-            _r: 2,
+            l: 0,
+            r: 2,
             kind: MinusMinus,
         },
         operand: Identifier(
             TerminalType {
                 value: "foo",
-                _l: 2,
-                _r: 5,
+                l: 2,
+                r: 5,
                 kind: Identifier,
             },
         ),

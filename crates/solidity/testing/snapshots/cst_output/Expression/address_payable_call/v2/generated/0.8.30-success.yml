@@ -7,15 +7,15 @@ FunctionCallExpression(
                 AddressTypeStruct {
                     address_keyword: TerminalType {
                         value: "address",
-                        _l: 0,
-                        _r: 7,
+                        l: 0,
+                        r: 7,
                         kind: AddressKeyword_Reserved,
                     },
                     payable_keyword: Some(
                         TerminalType {
                             value: "payable",
-                            _l: 8,
-                            _r: 15,
+                            l: 8,
+                            r: 15,
                             kind: PayableKeyword_Reserved,
                         },
                     ),
@@ -26,8 +26,8 @@ FunctionCallExpression(
             PositionalArgumentsDeclarationStruct {
                 open_paren: TerminalType {
                     value: "(",
-                    _l: 15,
-                    _r: 16,
+                    l: 15,
+                    r: 16,
                     kind: OpenParen,
                 },
                 arguments: PositionalArguments {
@@ -35,8 +35,8 @@ FunctionCallExpression(
                         Identifier(
                             TerminalType {
                                 value: "value",
-                                _l: 16,
-                                _r: 21,
+                                l: 16,
+                                r: 21,
                                 kind: Identifier,
                             },
                         ),
@@ -44,8 +44,8 @@ FunctionCallExpression(
                 },
                 close_paren: TerminalType {
                     value: ")",
-                    _l: 21,
-                    _r: 22,
+                    l: 21,
+                    r: 22,
                     kind: CloseParen,
                 },
             },

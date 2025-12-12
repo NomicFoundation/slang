@@ -7,8 +7,8 @@ MemberAccessExpression(
                 operand: Identifier(
                     TerminalType {
                         value: "x",
-                        _l: 0,
-                        _r: 1,
+                        l: 0,
+                        r: 1,
                         kind: Identifier,
                     },
                 ),
@@ -16,8 +16,8 @@ MemberAccessExpression(
                     PositionalArgumentsDeclarationStruct {
                         open_paren: TerminalType {
                             value: "(",
-                            _l: 1,
-                            _r: 2,
+                            l: 1,
+                            r: 2,
                             kind: OpenParen,
                         },
                         arguments: PositionalArguments {
@@ -25,8 +25,8 @@ MemberAccessExpression(
                         },
                         close_paren: TerminalType {
                             value: ")",
-                            _l: 2,
-                            _r: 3,
+                            l: 2,
+                            r: 3,
                             kind: CloseParen,
                         },
                     },
@@ -35,14 +35,14 @@ MemberAccessExpression(
         ),
         period: TerminalType {
             value: ".",
-            _l: 3,
-            _r: 4,
+            l: 3,
+            r: 4,
             kind: Period,
         },
         member: TerminalType {
             value: "y",
-            _l: 4,
-            _r: 5,
+            l: 4,
+            r: 5,
             kind: Identifier,
         },
     },

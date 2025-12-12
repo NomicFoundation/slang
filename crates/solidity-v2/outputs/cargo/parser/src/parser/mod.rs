@@ -5,6 +5,8 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use crate::lexer::contexts::ContextKind;
 use crate::lexer::definition::Lexer;
 
+pub mod nodes;
+
 lalrpop_mod!(
     #[allow(non_snake_case)]
     pub grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP

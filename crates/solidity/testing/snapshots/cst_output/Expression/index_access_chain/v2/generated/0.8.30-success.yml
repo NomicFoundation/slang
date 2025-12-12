@@ -7,23 +7,23 @@ IndexAccessExpression(
                 operand: Identifier(
                     TerminalType {
                         value: "arr",
-                        _l: 0,
-                        _r: 3,
+                        l: 0,
+                        r: 3,
                         kind: Identifier,
                     },
                 ),
                 open_bracket: TerminalType {
                     value: "[",
-                    _l: 3,
-                    _r: 4,
+                    l: 3,
+                    r: 4,
                     kind: OpenBracket,
                 },
                 start: Some(
                     Identifier(
                         TerminalType {
                             value: "index1",
-                            _l: 4,
-                            _r: 10,
+                            l: 4,
+                            r: 10,
                             kind: Identifier,
                         },
                     ),
@@ -31,24 +31,24 @@ IndexAccessExpression(
                 end: None,
                 close_bracket: TerminalType {
                     value: "]",
-                    _l: 10,
-                    _r: 11,
+                    l: 10,
+                    r: 11,
                     kind: CloseBracket,
                 },
             },
         ),
         open_bracket: TerminalType {
             value: "[",
-            _l: 11,
-            _r: 12,
+            l: 11,
+            r: 12,
             kind: OpenBracket,
         },
         start: Some(
             Identifier(
                 TerminalType {
                     value: "index2",
-                    _l: 12,
-                    _r: 18,
+                    l: 12,
+                    r: 18,
                     kind: Identifier,
                 },
             ),
@@ -56,8 +56,8 @@ IndexAccessExpression(
         end: None,
         close_bracket: TerminalType {
             value: "]",
-            _l: 18,
-            _r: 19,
+            l: 18,
+            r: 19,
             kind: CloseBracket,
         },
     },

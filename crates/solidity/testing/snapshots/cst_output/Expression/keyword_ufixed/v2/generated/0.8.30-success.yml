@@ -4,8 +4,8 @@ ElementaryType(
     UfixedKeyword(
         TerminalType {
             value: "ufixed",
-            _l: 0,
-            _r: 6,
+            l: 0,
+            r: 6,
             kind: UfixedKeyword_Reserved,
         },
     ),

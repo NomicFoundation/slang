@@ -5,23 +5,23 @@ IndexAccessExpression(
         operand: Identifier(
             TerminalType {
                 value: "arr",
-                _l: 0,
-                _r: 3,
+                l: 0,
+                r: 3,
                 kind: Identifier,
             },
         ),
         open_bracket: TerminalType {
             value: "[",
-            _l: 3,
-            _r: 4,
+            l: 3,
+            r: 4,
             kind: OpenBracket,
         },
         start: Some(
             Identifier(
                 TerminalType {
                     value: "start",
-                    _l: 4,
-                    _r: 9,
+                    l: 4,
+                    r: 9,
                     kind: Identifier,
                 },
             ),
@@ -30,16 +30,16 @@ IndexAccessExpression(
             IndexAccessEndStruct {
                 colon: TerminalType {
                     value: ":",
-                    _l: 9,
-                    _r: 10,
+                    l: 9,
+                    r: 10,
                     kind: Colon,
                 },
                 end: Some(
                     Identifier(
                         TerminalType {
                             value: "end",
-                            _l: 10,
-                            _r: 13,
+                            l: 10,
+                            r: 13,
                             kind: Identifier,
                         },
                     ),
@@ -48,8 +48,8 @@ IndexAccessExpression(
         ),
         close_bracket: TerminalType {
             value: "]",
-            _l: 13,
-            _r: 14,
+            l: 13,
+            r: 14,
             kind: CloseBracket,
         },
     },
