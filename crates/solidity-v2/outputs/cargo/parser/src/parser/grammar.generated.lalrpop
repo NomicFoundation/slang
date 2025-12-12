@@ -15,23 +15,28 @@ Sep<S, T>: Vec<'arena, T> = {
 };
 
 SepOne<S, T>: Vec<'arena, T> = {
-    <mut v:(<T> S)*> <e:T>  => {
+    <e:T> => {
+        bumpalo::vec![in arena; e]
+    },
+    <mut v: SepOne<S, T>> S <e: T> => {
         v.push(e);
-        Vec::from_iter_in(v.into_iter(), arena)
-    }
-};
-
-#[inline]
-Rep<T>: Vec<'arena, T> = {
-    <v: (<T>)*> => {
-        Vec::from_iter_in(v.into_iter(), arena)
+        v
     },
 };
 
 #[inline]
+Rep<T>: Vec<'arena, T> = {
+    => Vec::new_in(arena),
+    RepOne<T> => <>,
+};
+
 RepOne<T>: Vec<'arena, T> = {
-    <v: (<T>)+> => {
-        Vec::from_iter_in(v.into_iter(), arena)
+    <T> => {
+        bumpalo::vec![in arena; <>]
+    },
+    <mut v: RepOne<T>> <e: T> => {
+        v.push(e);
+        v
     },
 };
 
