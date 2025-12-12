@@ -1,0 +1,119 @@
+  {%- set target = model.ir_model -%}
+  #![allow(non_camel_case_types)]
+  #![allow(dead_code)]
+
+  use crate::ast::lexemes::LexemeKind;
+  use std::rc::Rc;
+
+// TODO:
+// - (perf) don't use terminals that are not needed
+
+
+//
+// Sequences:
+//
+
+{% for parent_type, sequence in target.sequences %}
+  pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+  #[derive(Debug)]
+  pub struct {{ parent_type }}Struct {
+    {%- for field in sequence.fields %}
+      pub {{ field.label | snake_case }}:
+        {%- if field.is_optional -%}
+          Option<{{ field.type.name }}>,
+        {%- else -%}
+          {{ field.type.name }},
+        {%- endif -%}
+    {% endfor -%}
+  }
+
+  pub fn new_{{ parent_type | snake_case }}({% for field in sequence.fields -%}
+      {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.type.name }}{% if field.is_optional %}>{% endif %},
+    {%- endfor %}) -> {{ parent_type }} {
+      Rc::new({{ parent_type }}Struct {
+        {%- for field in sequence.fields %}
+          {{ field.label | snake_case }},
+        {%- endfor -%}
+      })
+  }
+
+{% endfor %}
+
+//
+// Choices:
+//
+
+
+{% for parent_type, choice in target.choices %}
+  #[derive(Debug, Clone)]
+  pub enum {{ parent_type }} {
+    {% for variant in choice.variants -%}
+      {{ variant.name }}({{ variant.name }}),
+    {%- endfor -%}
+  }
+
+  {% for variant in choice.variants %}
+    pub fn new_{{ parent_type | snake_case }}_{{ variant.name | snake_case }}( element: {{ variant.name }}) -> {{ parent_type }} {
+      {{ parent_type }}::{{ variant.name }}(element)
+    }
+  {% endfor %}
+
+
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections %}
+  #[derive(Debug, Clone)]
+  pub struct {{ parent_type }} {
+      pub elements: Vec<{{ collection.item_type.name }}>,
+  }
+
+  pub fn new_{{ parent_type | snake_case }}(elements: Vec<{{ collection.item_type.name }}>) -> {{ parent_type }} {
+    {{ parent_type }} { elements }
+  }
+
+{% endfor %}
+
+//
+// Terminals
+//
+#[derive(Debug, Clone)]
+pub struct TerminalType {
+    pub value: String,
+    pub l: usize,
+    pub r: usize,
+    pub kind: LexemeKind,
+}
+
+pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType {
+  TerminalType {
+    value: String::new(),
+    l: 0,
+    r: 0,
+    kind,
+  }
+}
+
+{% for parent_type in target.terminal_wrappers %}
+pub type {{ parent_type }} = TerminalType;
+{% endfor %}
+
+  {% for parent_type, unique in target.terminals %}
+    pub type {{ parent_type }} = TerminalType;
+
+    pub fn new_{{ parent_type | snake_case }}(l: usize, r: usize, source: &str) -> {{ parent_type }} {
+      TerminalType {
+        // TODO(v2): avoid the allocation here, it's not needed
+        value: source[l..r].to_owned(),
+        l,
+        r,
+        kind: LexemeKind::{{ parent_type }},
+      }
+    }
+    
+  {% endfor %}
+

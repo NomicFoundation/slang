@@ -8,6 +8,7 @@ publish = false
 [dependencies]
 anyhow = { workspace = true }
 codegen_ebnf = { workspace = true }
+codegen_v2_ast = { workspace = true }
 codegen_v2_parser = { workspace = true }
 indexmap = { workspace = true }
 Inflector = { workspace = true }
