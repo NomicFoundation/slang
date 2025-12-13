@@ -464,10 +464,10 @@ impl<'a> BuiltInsResolver<'a> {
                 "selector" if self.language_version >= VERSION_0_8_15 => Some(BuiltIn::Selector),
                 _ => None,
             },
-            Definition::UserDefinedValueType(udvt) if self.language_version >= VERSION_0_8_8 => {
+            Definition::UserDefinedValueType(_) if self.language_version >= VERSION_0_8_8 => {
                 match symbol {
-                    "wrap" => Some(BuiltIn::Wrap(udvt.node_id)),
-                    "unwrap" => Some(BuiltIn::Unwrap(udvt.node_id)),
+                    "wrap" => Some(BuiltIn::Wrap(definition.node_id())),
+                    "unwrap" => Some(BuiltIn::Unwrap(definition.node_id())),
                     _ => None,
                 }
             }
