@@ -9833,19 +9833,19 @@ pub fn new_tilde<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str)
     }
 }
 
-pub type TransientKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_transient_keyword_reserved<'arena>(
+pub type TransientKeyword_Unreserved<'arena> = TerminalType<'arena>;
+pub fn new_transient_keyword_unreserved<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
     source: &str,
-) -> TransientKeyword_Reserved<'arena> {
+) -> TransientKeyword_Unreserved<'arena> {
     TerminalType {
         // TODO(v2): avoid the allocation here, it's not needed
         value: source[l..r].to_owned(),
         l,
         r,
-        kind: LexemeKind::TransientKeyword_Reserved,
+        kind: LexemeKind::TransientKeyword_Unreserved,
         phantom: PhantomData,
     }
 }

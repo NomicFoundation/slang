@@ -142,6 +142,11 @@ fn trailing_trivia_only_until_newline() -> Result<()> {
 }
 
 #[test]
+fn unreserved_keywords() -> Result<()> {
+    run(T, "unreserved_keywords")
+}
+
+#[test]
 fn using_directive() -> Result<()> {
     run(T, "using_directive")
 }

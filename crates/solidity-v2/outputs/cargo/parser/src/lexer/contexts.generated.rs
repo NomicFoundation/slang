@@ -220,7 +220,7 @@ pub enum SolidityContext {
     #[regex(r#"szabo"#, |lexer| { if lexer.extras.language_version < LanguageVersion::V0_7_0 { LexemeKind::SzaboKeyword_Reserved } else { LexemeKind::SzaboKeyword_Unreserved } }, priority = 3000106)]
     #[regex(r#"this"#, |lexer| { if LanguageVersion::V0_8_0 <= lexer.extras.language_version { LexemeKind::ThisKeyword_Reserved } else { LexemeKind::ThisKeyword_Unreserved } }, priority = 3000107)]
     #[regex(r#"throw"#, |_| { LexemeKind::ThrowKeyword_Reserved }, priority = 3000108)]
-    #[regex(r#"transient"#, |_| { LexemeKind::TransientKeyword_Reserved }, priority = 3000109)]
+    #[regex(r#"transient"#, |_| { LexemeKind::TransientKeyword_Unreserved }, priority = 3000109)]
     #[regex(r#"true"#, |_| { LexemeKind::TrueKeyword_Reserved }, priority = 3000110)]
     #[regex(r#"try"#, |_| { LexemeKind::TryKeyword_Reserved }, priority = 3000111)]
     #[regex(r#"typedef"#, |lexer| { if LanguageVersion::V0_5_0 <= lexer.extras.language_version { LexemeKind::TypeDefKeyword_Reserved } else { LexemeKind::TypeDefKeyword_Unreserved } }, priority = 3000112)]

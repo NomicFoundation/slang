@@ -213,7 +213,7 @@ pub enum LexemeKind {
     ThisKeyword_Unreserved,
     ThrowKeyword_Reserved,
     Tilde,
-    TransientKeyword_Reserved,
+    TransientKeyword_Unreserved,
     TrueKeyword_Reserved,
     TryKeyword_Reserved,
     TypeDefKeyword_Reserved,

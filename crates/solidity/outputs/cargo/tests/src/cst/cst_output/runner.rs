@@ -131,25 +131,33 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             Ok(parsed_checker) => {
                 let mut s = String::new();
 
+                // Print output
                 s.push_str(&format!("{parsed_checker:#?}"));
 
-                assert!(
-                    output.is_valid(),
-                    "V1 parser is not valid, but V2 Parser is"
-                );
-
-                let checked = parsed_checker.check_node(&Node::Nonterminal(output.tree().clone()));
-                if !checked.is_empty() {
-                    s.push_str(&"\n----------------\n");
-                    for err in &checked {
-                        s.push_str(&format!("{}\n\n", err.err));
+                // check V1 validity
+                if output.is_valid() {
+                    let checked =
+                        parsed_checker.check_node(&Node::Nonterminal(output.tree().clone()));
+                    if !checked.is_empty() {
+                        s.push_str(&"\n----------------\n");
+                        for err in &checked {
+                            s.push_str(&format!("{}\n\n", err.err));
+                        }
                     }
+                    fs.write_file_raw(&snapshot_path, s)?;
+                    assert!(
+                        checked.is_empty(),
+                        "The AST is different between both parsers",
+                    );
+                } else {
+                    s.push_str(&"\n----------------\n");
+                    s.push_str("\nV1 Parser: Invalid\n");
+                    fs.write_file_raw(&snapshot_path, s)?;
+                    assert!(
+                        output.is_valid(),
+                        "V1 parser is not valid, but V2 Parser is"
+                    );
                 }
-                fs.write_file_raw(&snapshot_path, s)?;
-                assert!(
-                    checked.is_empty(),
-                    "The AST is different between both parsers",
-                );
             }
             Err(err) => {
                 // We don't care about the errors for now, we just write them

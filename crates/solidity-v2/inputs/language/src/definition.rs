@@ -1537,26 +1537,10 @@ language_v2_macros::compile!(Language(
                             name = TransientKeyword,
                             identifier = Identifier,
                             enabled = From("0.8.27"),
-                            // TODO(v2) we're making it reserved for now
-                            // [slang_solidity_v2_parser 1.3.0]   The problem arises after having observed the following symbols in the input:
-                            // [slang_solidity_v2_parser 1.3.0]     FunctionTypeInternalReturn
-                            // [slang_solidity_v2_parser 1.3.0]   At that point, if the next token is a `L_TransientKeyword_Unreserved`, then the parser can proceed in two different ways.
-                            // [slang_solidity_v2_parser 1.3.0]
-                            // [slang_solidity_v2_parser 1.3.0]   First, the parser could execute the production at
-                            // [slang_solidity_v2_parser 1.3.0]   /Users/teofr/Documents/Nomic/slang/crates/solidity-v2/outputs/cargo/parser/src/parser/grammar.generated.lalrpop:1178:13: 1178:104, which would consume
-                            // [slang_solidity_v2_parser 1.3.0]   the top 0 token(s) from the stack and produce a `StateVariableAttributes`. This might then yield a parse tree like
-                            // [slang_solidity_v2_parser 1.3.0]     FunctionTypeInternalReturn ╷                         ╷ Identifier L_Semicolon
-                            // [slang_solidity_v2_parser 1.3.0]     │                          └─StateVariableAttributes─┘                      │
-                            // [slang_solidity_v2_parser 1.3.0]     └─StateVariableDefinition───────────────────────────────────────────────────┘
-                            // [slang_solidity_v2_parser 1.3.0]
-                            // [slang_solidity_v2_parser 1.3.0]   Alternatively, the parser could shift the `L_TransientKeyword_Unreserved` token and later use it to construct a `StateVariableAttribute`. This might then
-                            // [slang_solidity_v2_parser 1.3.0]   yield a parse tree like
-                            // [slang_solidity_v2_parser 1.3.0]     FunctionTypeInternalReturn L_TransientKeyword_Unreserved ╷ Identifier L_Semicolon
-                            // [slang_solidity_v2_parser 1.3.0]     │                          ├─StateVariableAttribute──────┤                      │
-                            // [slang_solidity_v2_parser 1.3.0]     │                          ├─(<StateVariableAttribute>)+─┤                      │
-                            // [slang_solidity_v2_parser 1.3.0]     │                          └─StateVariableAttributes─────┘                      │
-                            // [slang_solidity_v2_parser 1.3.0]     └─StateVariableDefinition───────────────────────────────────────────────────────┘
-                            definitions = [KeywordDefinition(value = Atom("transient"))]
+                            definitions = [KeywordDefinition(
+                                reserved = Never,
+                                value = Atom("transient")
+                            )]
                         ),
                         Keyword(
                             name = TrueKeyword,

@@ -127,8 +127,11 @@ extern {
         
     };
 
+    // This needs to be inlined to disambiguate transient the attribute from
+    // transient as an identifier
+    #[inline]
     SpecialStateVariableAttributes: Vec<'arena, StateVariableAttribute<'arena>> = {
-                <_StateVariableAttribute: (<SpecialStateVariableAttribute>)*>  => {
+                <_StateVariableAttribute: Rep<SpecialStateVariableAttribute>>  => {
                     _StateVariableAttribute.into_iter().collect_in(arena)
                 },
         
@@ -138,6 +141,7 @@ extern {
     //.   ImmutableKeyword(ImmutableKeyword),
     //.   TransientKeyword(TransientKeyword),
 
+    #[inline]
     SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
          
             <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),

@@ -943,7 +943,7 @@ RepOne<T>: Vec<'arena, T> = {
     #[inline]
     TransientKeyword: TransientKeyword<'arena> = {
          
-            <_TransientKeyword: TransientKeyword_Reserved>  => <>,
+            <_TransientKeyword: TransientKeyword_Unreserved>  => <>,
         
     };
     #[inline]
@@ -1195,11 +1195,13 @@ RepOne<T>: Vec<'arena, T> = {
             <_equal: Equal>  <_value: Expression>  => new_state_variable_definition_value(arena, <>),
         
     };
+    #[inline]
     StateVariableAttributes: StateVariableAttributes<'arena> = {
          
             <_StateVariableAttribute: Rep<<StateVariableAttribute>>>  => new_state_variable_attributes(arena, <>),
         
     };
+    #[inline]
     StateVariableAttribute: StateVariableAttribute<'arena> = {
          
             <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
@@ -3161,6 +3163,8 @@ Identifier: Identifier<'arena> = {
      
         <l:@L> L_ThisKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
      
+        <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+     
         <l:@L> L_TypeDefKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
      
         <l:@L> L_UfixedKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
@@ -3751,8 +3755,8 @@ Tilde: Tilde<'arena> = {
     <l:@L> L_Tilde <r:@L> => new_tilde(arena, <>, source),
 }
 #[inline]
-TransientKeyword_Reserved: TransientKeyword_Reserved<'arena> = {
-    <l:@L> L_TransientKeyword_Reserved <r:@L> => new_transient_keyword_reserved(arena, <>, source),
+TransientKeyword_Unreserved: TransientKeyword_Unreserved<'arena> = {
+    <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_transient_keyword_unreserved(arena, <>, source),
 }
 #[inline]
 TrueKeyword_Reserved: TrueKeyword_Reserved<'arena> = {
@@ -4853,7 +4857,7 @@ extern {
         L_ThisKeyword_Unreserved => lexemes::LexemeKind::ThisKeyword_Unreserved,
         L_ThrowKeyword_Reserved => lexemes::LexemeKind::ThrowKeyword_Reserved,
         L_Tilde => lexemes::LexemeKind::Tilde,
-        L_TransientKeyword_Reserved => lexemes::LexemeKind::TransientKeyword_Reserved,
+        L_TransientKeyword_Unreserved => lexemes::LexemeKind::TransientKeyword_Unreserved,
         L_TrueKeyword_Reserved => lexemes::LexemeKind::TrueKeyword_Reserved,
         L_TryKeyword_Reserved => lexemes::LexemeKind::TryKeyword_Reserved,
         L_TypeDefKeyword_Reserved => lexemes::LexemeKind::TypeDefKeyword_Reserved,
@@ -5112,8 +5116,11 @@ extern {
         
     };
 
+    // This needs to be inlined to disambiguate transient the attribute from
+    // transient as an identifier
+    #[inline]
     SpecialStateVariableAttributes: Vec<'arena, StateVariableAttribute<'arena>> = {
-                <_StateVariableAttribute: (<SpecialStateVariableAttribute>)*>  => {
+                <_StateVariableAttribute: Rep<SpecialStateVariableAttribute>>  => {
                     _StateVariableAttribute.into_iter().collect_in(arena)
                 },
         
@@ -5123,6 +5130,7 @@ extern {
     //.   ImmutableKeyword(ImmutableKeyword),
     //.   TransientKeyword(TransientKeyword),
 
+    #[inline]
     SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
          
             <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),

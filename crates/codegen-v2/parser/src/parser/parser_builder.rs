@@ -199,6 +199,17 @@ impl<'a> ParserBuilder<'a> {
 
         items.retain(|item| !EXCLUDED_ITEMS.contains(&(*item.name).as_str()));
 
+        // These need to be inlined to avoid conflicts with using `transient` as an attribute or
+        // an identifier
+        for item in &mut items {
+            if matches!(
+                item.name.as_str(),
+                "StateVariableAttributes" | "StateVariableAttribute"
+            ) {
+                item.inline = true;
+            }
+        }
+
         items
 
         // This ended up making compilation slower, it may be worth checking the parser performance in the future with
