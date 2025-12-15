@@ -5,66 +5,52 @@ IndexAccessExpression(
         operand: IndexAccessExpression(
             IndexAccessExpressionStruct {
                 operand: Identifier(
-                    TerminalType {
-                        value: "arr",
+                    Identifier {
                         l: 0,
                         r: 3,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
                 ),
-                open_bracket: TerminalType {
-                    value: "[",
+                open_bracket: OpenBracket {
                     l: 3,
                     r: 4,
-                    kind: OpenBracket,
                     phantom: PhantomData<&()>,
                 },
                 start: Some(
                     Identifier(
-                        TerminalType {
-                            value: "index1",
+                        Identifier {
                             l: 4,
                             r: 10,
-                            kind: Identifier,
                             phantom: PhantomData<&()>,
                         },
                     ),
                 ),
                 end: None,
-                close_bracket: TerminalType {
-                    value: "]",
+                close_bracket: CloseBracket {
                     l: 10,
                     r: 11,
-                    kind: CloseBracket,
                     phantom: PhantomData<&()>,
                 },
             },
         ),
-        open_bracket: TerminalType {
-            value: "[",
+        open_bracket: OpenBracket {
             l: 11,
             r: 12,
-            kind: OpenBracket,
             phantom: PhantomData<&()>,
         },
         start: Some(
             Identifier(
-                TerminalType {
-                    value: "index2",
+                Identifier {
                     l: 12,
                     r: 18,
-                    kind: Identifier,
                     phantom: PhantomData<&()>,
                 },
             ),
         ),
         end: None,
-        close_bracket: TerminalType {
-            value: "]",
+        close_bracket: CloseBracket {
             l: 18,
             r: 19,
-            kind: CloseBracket,
             phantom: PhantomData<&()>,
         },
     },

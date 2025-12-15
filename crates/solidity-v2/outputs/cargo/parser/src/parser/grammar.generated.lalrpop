@@ -1692,6 +1692,98 @@ RepOne<T>: Vec<'arena, T> = {
 // Rules for section Expressions
 
 // Rules for topic Base Expressions
+    Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator<'arena> = {
+         
+            <_operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(arena, <>),
+         
+            <_operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(arena, <>),
+         
+            <_operator: Tilde>  => new_expression_prefix_expression_operator_tilde(arena, <>),
+         
+            <_operator: Bang>  => new_expression_prefix_expression_operator_bang(arena, <>),
+         
+            <_operator: Minus>  => new_expression_prefix_expression_operator_minus(arena, <>),
+         
+            <_operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(arena, <>),
+        
+    };
+    Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator<'arena> = {
+         
+            <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(arena, <>),
+         
+            <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(arena, <>),
+        
+    };
+    Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator<'arena> = {
+         
+            <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(arena, <>),
+         
+            <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(arena, <>),
+         
+            <_operator: Percent>  => new_expression_multiplicative_expression_operator_percent(arena, <>),
+        
+    };
+    Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator<'arena> = {
+         
+            <_operator: Plus>  => new_expression_additive_expression_operator_plus(arena, <>),
+         
+            <_operator: Minus>  => new_expression_additive_expression_operator_minus(arena, <>),
+        
+    };
+    Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator<'arena> = {
+         
+            <_operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(arena, <>),
+         
+            <_operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(arena, <>),
+         
+            <_operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(arena, <>),
+        
+    };
+    Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator<'arena> = {
+         
+            <_operator: LessThan>  => new_expression_inequality_expression_operator_less_than(arena, <>),
+         
+            <_operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(arena, <>),
+         
+            <_operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(arena, <>),
+         
+            <_operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(arena, <>),
+        
+    };
+    Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator<'arena> = {
+         
+            <_operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(arena, <>),
+         
+            <_operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(arena, <>),
+        
+    };
+    Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator<'arena> = {
+         
+            <_operator: Equal>  => new_expression_assignment_expression_operator_equal(arena, <>),
+         
+            <_operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(arena, <>),
+         
+            <_operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(arena, <>),
+         
+            <_operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(arena, <>),
+         
+            <_operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(arena, <>),
+         
+            <_operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(arena, <>),
+         
+            <_operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(arena, <>),
+         
+            <_operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(arena, <>),
+         
+            <_operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(arena, <>),
+         
+            <_operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(arena, <>),
+         
+            <_operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(arena, <>),
+         
+            <_operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(arena, <>),
+        
+    };
     IndexAccessEnd: IndexAccessEnd<'arena> = {
          
             <_colon: Colon>  <_end: (Expression)?>  => new_index_access_end(arena, <>),
@@ -2694,40 +2786,40 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Lexemes formatting
 #[inline]
-ABIEncoderV2Keyword_Unreserved: ABIEncoderV2Keyword_Unreserved<'arena> = {
-    <l:@L> L_ABIEncoderV2Keyword_Unreserved <r:@L> => new_abi_encoder_v2_keyword_unreserved(arena, <>, source),
+ABIEncoderV2Keyword_Unreserved: ABIEncoderV2Keyword<'arena> = {
+    <l:@L> L_ABIEncoderV2Keyword_Unreserved <r:@L> => new_abi_encoder_v2_keyword(arena, <>, source),
 }
 #[inline]
-AbicoderKeyword_Unreserved: AbicoderKeyword_Unreserved<'arena> = {
-    <l:@L> L_AbicoderKeyword_Unreserved <r:@L> => new_abicoder_keyword_unreserved(arena, <>, source),
+AbicoderKeyword_Unreserved: AbicoderKeyword<'arena> = {
+    <l:@L> L_AbicoderKeyword_Unreserved <r:@L> => new_abicoder_keyword(arena, <>, source),
 }
 #[inline]
-AbicoderV1Keyword_Unreserved: AbicoderV1Keyword_Unreserved<'arena> = {
-    <l:@L> L_AbicoderV1Keyword_Unreserved <r:@L> => new_abicoder_v1_keyword_unreserved(arena, <>, source),
+AbicoderV1Keyword_Unreserved: AbicoderV1Keyword<'arena> = {
+    <l:@L> L_AbicoderV1Keyword_Unreserved <r:@L> => new_abicoder_v1_keyword(arena, <>, source),
 }
 #[inline]
-AbicoderV2Keyword_Unreserved: AbicoderV2Keyword_Unreserved<'arena> = {
-    <l:@L> L_AbicoderV2Keyword_Unreserved <r:@L> => new_abicoder_v2_keyword_unreserved(arena, <>, source),
+AbicoderV2Keyword_Unreserved: AbicoderV2Keyword<'arena> = {
+    <l:@L> L_AbicoderV2Keyword_Unreserved <r:@L> => new_abicoder_v2_keyword(arena, <>, source),
 }
 #[inline]
-AbstractKeyword_Reserved: AbstractKeyword_Reserved<'arena> = {
-    <l:@L> L_AbstractKeyword_Reserved <r:@L> => new_abstract_keyword_reserved(arena, <>, source),
+AbstractKeyword_Reserved: AbstractKeyword<'arena> = {
+    <l:@L> L_AbstractKeyword_Reserved <r:@L> => new_abstract_keyword(arena, <>, source),
 }
 #[inline]
-AddressKeyword_Reserved: AddressKeyword_Reserved<'arena> = {
-    <l:@L> L_AddressKeyword_Reserved <r:@L> => new_address_keyword_reserved(arena, <>, source),
+AddressKeyword_Reserved: AddressKeyword<'arena> = {
+    <l:@L> L_AddressKeyword_Reserved <r:@L> => new_address_keyword(arena, <>, source),
 }
 #[inline]
-AfterKeyword_Reserved: AfterKeyword_Reserved<'arena> = {
-    <l:@L> L_AfterKeyword_Reserved <r:@L> => new_after_keyword_reserved(arena, <>, source),
+AfterKeyword_Reserved: AfterKeyword<'arena> = {
+    <l:@L> L_AfterKeyword_Reserved <r:@L> => new_after_keyword(arena, <>, source),
 }
 #[inline]
-AliasKeyword_Reserved: AliasKeyword_Reserved<'arena> = {
-    <l:@L> L_AliasKeyword_Reserved <r:@L> => new_alias_keyword_reserved(arena, <>, source),
+AliasKeyword_Reserved: AliasKeyword<'arena> = {
+    <l:@L> L_AliasKeyword_Reserved <r:@L> => new_alias_keyword(arena, <>, source),
 }
 #[inline]
-AliasKeyword_Unreserved: AliasKeyword_Unreserved<'arena> = {
-    <l:@L> L_AliasKeyword_Unreserved <r:@L> => new_alias_keyword_unreserved(arena, <>, source),
+AliasKeyword_Unreserved: AliasKeyword<'arena> = {
+    <l:@L> L_AliasKeyword_Unreserved <r:@L> => new_alias_keyword(arena, <>, source),
 }
 #[inline]
 Ampersand: Ampersand<'arena> = {
@@ -2742,24 +2834,24 @@ AmpersandEqual: AmpersandEqual<'arena> = {
     <l:@L> L_AmpersandEqual <r:@L> => new_ampersand_equal(arena, <>, source),
 }
 #[inline]
-AnonymousKeyword_Reserved: AnonymousKeyword_Reserved<'arena> = {
-    <l:@L> L_AnonymousKeyword_Reserved <r:@L> => new_anonymous_keyword_reserved(arena, <>, source),
+AnonymousKeyword_Reserved: AnonymousKeyword<'arena> = {
+    <l:@L> L_AnonymousKeyword_Reserved <r:@L> => new_anonymous_keyword(arena, <>, source),
 }
 #[inline]
-ApplyKeyword_Reserved: ApplyKeyword_Reserved<'arena> = {
-    <l:@L> L_ApplyKeyword_Reserved <r:@L> => new_apply_keyword_reserved(arena, <>, source),
+ApplyKeyword_Reserved: ApplyKeyword<'arena> = {
+    <l:@L> L_ApplyKeyword_Reserved <r:@L> => new_apply_keyword(arena, <>, source),
 }
 #[inline]
-ApplyKeyword_Unreserved: ApplyKeyword_Unreserved<'arena> = {
-    <l:@L> L_ApplyKeyword_Unreserved <r:@L> => new_apply_keyword_unreserved(arena, <>, source),
+ApplyKeyword_Unreserved: ApplyKeyword<'arena> = {
+    <l:@L> L_ApplyKeyword_Unreserved <r:@L> => new_apply_keyword(arena, <>, source),
 }
 #[inline]
-AsKeyword_Reserved: AsKeyword_Reserved<'arena> = {
-    <l:@L> L_AsKeyword_Reserved <r:@L> => new_as_keyword_reserved(arena, <>, source),
+AsKeyword_Reserved: AsKeyword<'arena> = {
+    <l:@L> L_AsKeyword_Reserved <r:@L> => new_as_keyword(arena, <>, source),
 }
 #[inline]
-AssemblyKeyword_Reserved: AssemblyKeyword_Reserved<'arena> = {
-    <l:@L> L_AssemblyKeyword_Reserved <r:@L> => new_assembly_keyword_reserved(arena, <>, source),
+AssemblyKeyword_Reserved: AssemblyKeyword<'arena> = {
+    <l:@L> L_AssemblyKeyword_Reserved <r:@L> => new_assembly_keyword(arena, <>, source),
 }
 #[inline]
 Asterisk: Asterisk<'arena> = {
@@ -2774,16 +2866,16 @@ AsteriskEqual: AsteriskEqual<'arena> = {
     <l:@L> L_AsteriskEqual <r:@L> => new_asterisk_equal(arena, <>, source),
 }
 #[inline]
-AtKeyword_Unreserved: AtKeyword_Unreserved<'arena> = {
-    <l:@L> L_AtKeyword_Unreserved <r:@L> => new_at_keyword_unreserved(arena, <>, source),
+AtKeyword_Unreserved: AtKeyword<'arena> = {
+    <l:@L> L_AtKeyword_Unreserved <r:@L> => new_at_keyword(arena, <>, source),
 }
 #[inline]
-AutoKeyword_Reserved: AutoKeyword_Reserved<'arena> = {
-    <l:@L> L_AutoKeyword_Reserved <r:@L> => new_auto_keyword_reserved(arena, <>, source),
+AutoKeyword_Reserved: AutoKeyword<'arena> = {
+    <l:@L> L_AutoKeyword_Reserved <r:@L> => new_auto_keyword(arena, <>, source),
 }
 #[inline]
-AutoKeyword_Unreserved: AutoKeyword_Unreserved<'arena> = {
-    <l:@L> L_AutoKeyword_Unreserved <r:@L> => new_auto_keyword_unreserved(arena, <>, source),
+AutoKeyword_Unreserved: AutoKeyword<'arena> = {
+    <l:@L> L_AutoKeyword_Unreserved <r:@L> => new_auto_keyword(arena, <>, source),
 }
 #[inline]
 Bang: Bang<'arena> = {
@@ -2806,28 +2898,28 @@ BarEqual: BarEqual<'arena> = {
     <l:@L> L_BarEqual <r:@L> => new_bar_equal(arena, <>, source),
 }
 #[inline]
-BoolKeyword_Reserved: BoolKeyword_Reserved<'arena> = {
-    <l:@L> L_BoolKeyword_Reserved <r:@L> => new_bool_keyword_reserved(arena, <>, source),
+BoolKeyword_Reserved: BoolKeyword<'arena> = {
+    <l:@L> L_BoolKeyword_Reserved <r:@L> => new_bool_keyword(arena, <>, source),
 }
 #[inline]
-BreakKeyword_Reserved: BreakKeyword_Reserved<'arena> = {
-    <l:@L> L_BreakKeyword_Reserved <r:@L> => new_break_keyword_reserved(arena, <>, source),
+BreakKeyword_Reserved: BreakKeyword<'arena> = {
+    <l:@L> L_BreakKeyword_Reserved <r:@L> => new_break_keyword(arena, <>, source),
 }
 #[inline]
-ByteKeyword_Reserved: ByteKeyword_Reserved<'arena> = {
-    <l:@L> L_ByteKeyword_Reserved <r:@L> => new_byte_keyword_reserved(arena, <>, source),
+ByteKeyword_Reserved: ByteKeyword<'arena> = {
+    <l:@L> L_ByteKeyword_Reserved <r:@L> => new_byte_keyword(arena, <>, source),
 }
 #[inline]
-BytesKeyword_Reserved: BytesKeyword_Reserved<'arena> = {
-    <l:@L> L_BytesKeyword_Reserved <r:@L> => new_bytes_keyword_reserved(arena, <>, source),
+BytesKeyword_Reserved: BytesKeyword<'arena> = {
+    <l:@L> L_BytesKeyword_Reserved <r:@L> => new_bytes_keyword(arena, <>, source),
 }
 #[inline]
-CallDataKeyword_Reserved: CallDataKeyword_Reserved<'arena> = {
-    <l:@L> L_CallDataKeyword_Reserved <r:@L> => new_call_data_keyword_reserved(arena, <>, source),
+CallDataKeyword_Reserved: CallDataKeyword<'arena> = {
+    <l:@L> L_CallDataKeyword_Reserved <r:@L> => new_call_data_keyword(arena, <>, source),
 }
 #[inline]
-CallDataKeyword_Unreserved: CallDataKeyword_Unreserved<'arena> = {
-    <l:@L> L_CallDataKeyword_Unreserved <r:@L> => new_call_data_keyword_unreserved(arena, <>, source),
+CallDataKeyword_Unreserved: CallDataKeyword<'arena> = {
+    <l:@L> L_CallDataKeyword_Unreserved <r:@L> => new_call_data_keyword(arena, <>, source),
 }
 #[inline]
 Caret: Caret<'arena> = {
@@ -2838,12 +2930,12 @@ CaretEqual: CaretEqual<'arena> = {
     <l:@L> L_CaretEqual <r:@L> => new_caret_equal(arena, <>, source),
 }
 #[inline]
-CaseKeyword_Reserved: CaseKeyword_Reserved<'arena> = {
-    <l:@L> L_CaseKeyword_Reserved <r:@L> => new_case_keyword_reserved(arena, <>, source),
+CaseKeyword_Reserved: CaseKeyword<'arena> = {
+    <l:@L> L_CaseKeyword_Reserved <r:@L> => new_case_keyword(arena, <>, source),
 }
 #[inline]
-CatchKeyword_Reserved: CatchKeyword_Reserved<'arena> = {
-    <l:@L> L_CatchKeyword_Reserved <r:@L> => new_catch_keyword_reserved(arena, <>, source),
+CatchKeyword_Reserved: CatchKeyword<'arena> = {
+    <l:@L> L_CatchKeyword_Reserved <r:@L> => new_catch_keyword(arena, <>, source),
 }
 #[inline]
 CloseBrace: CloseBrace<'arena> = {
@@ -2870,60 +2962,60 @@ Comma: Comma<'arena> = {
     <l:@L> L_Comma <r:@L> => new_comma(arena, <>, source),
 }
 #[inline]
-ConstantKeyword_Reserved: ConstantKeyword_Reserved<'arena> = {
-    <l:@L> L_ConstantKeyword_Reserved <r:@L> => new_constant_keyword_reserved(arena, <>, source),
+ConstantKeyword_Reserved: ConstantKeyword<'arena> = {
+    <l:@L> L_ConstantKeyword_Reserved <r:@L> => new_constant_keyword(arena, <>, source),
 }
 #[inline]
-ConstructorKeyword_Reserved: ConstructorKeyword_Reserved<'arena> = {
-    <l:@L> L_ConstructorKeyword_Reserved <r:@L> => new_constructor_keyword_reserved(arena, <>, source),
+ConstructorKeyword_Reserved: ConstructorKeyword<'arena> = {
+    <l:@L> L_ConstructorKeyword_Reserved <r:@L> => new_constructor_keyword(arena, <>, source),
 }
 #[inline]
-ConstructorKeyword_Unreserved: ConstructorKeyword_Unreserved<'arena> = {
-    <l:@L> L_ConstructorKeyword_Unreserved <r:@L> => new_constructor_keyword_unreserved(arena, <>, source),
+ConstructorKeyword_Unreserved: ConstructorKeyword<'arena> = {
+    <l:@L> L_ConstructorKeyword_Unreserved <r:@L> => new_constructor_keyword(arena, <>, source),
 }
 #[inline]
-ContinueKeyword_Reserved: ContinueKeyword_Reserved<'arena> = {
-    <l:@L> L_ContinueKeyword_Reserved <r:@L> => new_continue_keyword_reserved(arena, <>, source),
+ContinueKeyword_Reserved: ContinueKeyword<'arena> = {
+    <l:@L> L_ContinueKeyword_Reserved <r:@L> => new_continue_keyword(arena, <>, source),
 }
 #[inline]
-ContractKeyword_Reserved: ContractKeyword_Reserved<'arena> = {
-    <l:@L> L_ContractKeyword_Reserved <r:@L> => new_contract_keyword_reserved(arena, <>, source),
+ContractKeyword_Reserved: ContractKeyword<'arena> = {
+    <l:@L> L_ContractKeyword_Reserved <r:@L> => new_contract_keyword(arena, <>, source),
 }
 #[inline]
-CopyOfKeyword_Reserved: CopyOfKeyword_Reserved<'arena> = {
-    <l:@L> L_CopyOfKeyword_Reserved <r:@L> => new_copy_of_keyword_reserved(arena, <>, source),
+CopyOfKeyword_Reserved: CopyOfKeyword<'arena> = {
+    <l:@L> L_CopyOfKeyword_Reserved <r:@L> => new_copy_of_keyword(arena, <>, source),
 }
 #[inline]
-CopyOfKeyword_Unreserved: CopyOfKeyword_Unreserved<'arena> = {
-    <l:@L> L_CopyOfKeyword_Unreserved <r:@L> => new_copy_of_keyword_unreserved(arena, <>, source),
+CopyOfKeyword_Unreserved: CopyOfKeyword<'arena> = {
+    <l:@L> L_CopyOfKeyword_Unreserved <r:@L> => new_copy_of_keyword(arena, <>, source),
 }
 #[inline]
-DaysKeyword_Reserved: DaysKeyword_Reserved<'arena> = {
-    <l:@L> L_DaysKeyword_Reserved <r:@L> => new_days_keyword_reserved(arena, <>, source),
+DaysKeyword_Reserved: DaysKeyword<'arena> = {
+    <l:@L> L_DaysKeyword_Reserved <r:@L> => new_days_keyword(arena, <>, source),
 }
 #[inline]
 DecimalLiteral: DecimalLiteral<'arena> = {
     <l:@L> L_DecimalLiteral <r:@L> => new_decimal_literal(arena, <>, source),
 }
 #[inline]
-DefaultKeyword_Reserved: DefaultKeyword_Reserved<'arena> = {
-    <l:@L> L_DefaultKeyword_Reserved <r:@L> => new_default_keyword_reserved(arena, <>, source),
+DefaultKeyword_Reserved: DefaultKeyword<'arena> = {
+    <l:@L> L_DefaultKeyword_Reserved <r:@L> => new_default_keyword(arena, <>, source),
 }
 #[inline]
-DefineKeyword_Reserved: DefineKeyword_Reserved<'arena> = {
-    <l:@L> L_DefineKeyword_Reserved <r:@L> => new_define_keyword_reserved(arena, <>, source),
+DefineKeyword_Reserved: DefineKeyword<'arena> = {
+    <l:@L> L_DefineKeyword_Reserved <r:@L> => new_define_keyword(arena, <>, source),
 }
 #[inline]
-DefineKeyword_Unreserved: DefineKeyword_Unreserved<'arena> = {
-    <l:@L> L_DefineKeyword_Unreserved <r:@L> => new_define_keyword_unreserved(arena, <>, source),
+DefineKeyword_Unreserved: DefineKeyword<'arena> = {
+    <l:@L> L_DefineKeyword_Unreserved <r:@L> => new_define_keyword(arena, <>, source),
 }
 #[inline]
-DeleteKeyword_Reserved: DeleteKeyword_Reserved<'arena> = {
-    <l:@L> L_DeleteKeyword_Reserved <r:@L> => new_delete_keyword_reserved(arena, <>, source),
+DeleteKeyword_Reserved: DeleteKeyword<'arena> = {
+    <l:@L> L_DeleteKeyword_Reserved <r:@L> => new_delete_keyword(arena, <>, source),
 }
 #[inline]
-DoKeyword_Reserved: DoKeyword_Reserved<'arena> = {
-    <l:@L> L_DoKeyword_Reserved <r:@L> => new_do_keyword_reserved(arena, <>, source),
+DoKeyword_Reserved: DoKeyword<'arena> = {
+    <l:@L> L_DoKeyword_Reserved <r:@L> => new_do_keyword(arena, <>, source),
 }
 #[inline]
 DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral<'arena> = {
@@ -2942,24 +3034,24 @@ DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral<'arena> = {
     <l:@L> L_DoubleQuotedVersionLiteral <r:@L> => new_double_quoted_version_literal(arena, <>, source),
 }
 #[inline]
-ElseKeyword_Reserved: ElseKeyword_Reserved<'arena> = {
-    <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword_reserved(arena, <>, source),
+ElseKeyword_Reserved: ElseKeyword<'arena> = {
+    <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword(arena, <>, source),
 }
 #[inline]
-EmitKeyword_Reserved: EmitKeyword_Reserved<'arena> = {
-    <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword_reserved(arena, <>, source),
+EmitKeyword_Reserved: EmitKeyword<'arena> = {
+    <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword(arena, <>, source),
 }
 #[inline]
-EmitKeyword_Unreserved: EmitKeyword_Unreserved<'arena> = {
-    <l:@L> L_EmitKeyword_Unreserved <r:@L> => new_emit_keyword_unreserved(arena, <>, source),
+EmitKeyword_Unreserved: EmitKeyword<'arena> = {
+    <l:@L> L_EmitKeyword_Unreserved <r:@L> => new_emit_keyword(arena, <>, source),
 }
 #[inline]
 EndOfLine: EndOfLine<'arena> = {
     <l:@L> L_EndOfLine <r:@L> => new_end_of_line(arena, <>, source),
 }
 #[inline]
-EnumKeyword_Reserved: EnumKeyword_Reserved<'arena> = {
-    <l:@L> L_EnumKeyword_Reserved <r:@L> => new_enum_keyword_reserved(arena, <>, source),
+EnumKeyword_Reserved: EnumKeyword<'arena> = {
+    <l:@L> L_EnumKeyword_Reserved <r:@L> => new_enum_keyword(arena, <>, source),
 }
 #[inline]
 Equal: Equal<'arena> = {
@@ -2978,72 +3070,72 @@ EqualGreaterThan: EqualGreaterThan<'arena> = {
     <l:@L> L_EqualGreaterThan <r:@L> => new_equal_greater_than(arena, <>, source),
 }
 #[inline]
-ErrorKeyword_Reserved: ErrorKeyword_Reserved<'arena> = {
-    <l:@L> L_ErrorKeyword_Reserved <r:@L> => new_error_keyword_reserved(arena, <>, source),
+ErrorKeyword_Reserved: ErrorKeyword<'arena> = {
+    <l:@L> L_ErrorKeyword_Reserved <r:@L> => new_error_keyword(arena, <>, source),
 }
 #[inline]
-EtherKeyword_Reserved: EtherKeyword_Reserved<'arena> = {
-    <l:@L> L_EtherKeyword_Reserved <r:@L> => new_ether_keyword_reserved(arena, <>, source),
+EtherKeyword_Reserved: EtherKeyword<'arena> = {
+    <l:@L> L_EtherKeyword_Reserved <r:@L> => new_ether_keyword(arena, <>, source),
 }
 #[inline]
-EventKeyword_Reserved: EventKeyword_Reserved<'arena> = {
-    <l:@L> L_EventKeyword_Reserved <r:@L> => new_event_keyword_reserved(arena, <>, source),
+EventKeyword_Reserved: EventKeyword<'arena> = {
+    <l:@L> L_EventKeyword_Reserved <r:@L> => new_event_keyword(arena, <>, source),
 }
 #[inline]
-ExperimentalKeyword_Unreserved: ExperimentalKeyword_Unreserved<'arena> = {
-    <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> => new_experimental_keyword_unreserved(arena, <>, source),
+ExperimentalKeyword_Unreserved: ExperimentalKeyword<'arena> = {
+    <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> => new_experimental_keyword(arena, <>, source),
 }
 #[inline]
-ExternalKeyword_Reserved: ExternalKeyword_Reserved<'arena> = {
-    <l:@L> L_ExternalKeyword_Reserved <r:@L> => new_external_keyword_reserved(arena, <>, source),
+ExternalKeyword_Reserved: ExternalKeyword<'arena> = {
+    <l:@L> L_ExternalKeyword_Reserved <r:@L> => new_external_keyword(arena, <>, source),
 }
 #[inline]
-FallbackKeyword_Reserved: FallbackKeyword_Reserved<'arena> = {
-    <l:@L> L_FallbackKeyword_Reserved <r:@L> => new_fallback_keyword_reserved(arena, <>, source),
+FallbackKeyword_Reserved: FallbackKeyword<'arena> = {
+    <l:@L> L_FallbackKeyword_Reserved <r:@L> => new_fallback_keyword(arena, <>, source),
 }
 #[inline]
-FallbackKeyword_Unreserved: FallbackKeyword_Unreserved<'arena> = {
-    <l:@L> L_FallbackKeyword_Unreserved <r:@L> => new_fallback_keyword_unreserved(arena, <>, source),
+FallbackKeyword_Unreserved: FallbackKeyword<'arena> = {
+    <l:@L> L_FallbackKeyword_Unreserved <r:@L> => new_fallback_keyword(arena, <>, source),
 }
 #[inline]
-FalseKeyword_Reserved: FalseKeyword_Reserved<'arena> = {
-    <l:@L> L_FalseKeyword_Reserved <r:@L> => new_false_keyword_reserved(arena, <>, source),
+FalseKeyword_Reserved: FalseKeyword<'arena> = {
+    <l:@L> L_FalseKeyword_Reserved <r:@L> => new_false_keyword(arena, <>, source),
 }
 #[inline]
-FinalKeyword_Reserved: FinalKeyword_Reserved<'arena> = {
-    <l:@L> L_FinalKeyword_Reserved <r:@L> => new_final_keyword_reserved(arena, <>, source),
+FinalKeyword_Reserved: FinalKeyword<'arena> = {
+    <l:@L> L_FinalKeyword_Reserved <r:@L> => new_final_keyword(arena, <>, source),
 }
 #[inline]
-FinneyKeyword_Reserved: FinneyKeyword_Reserved<'arena> = {
-    <l:@L> L_FinneyKeyword_Reserved <r:@L> => new_finney_keyword_reserved(arena, <>, source),
+FinneyKeyword_Reserved: FinneyKeyword<'arena> = {
+    <l:@L> L_FinneyKeyword_Reserved <r:@L> => new_finney_keyword(arena, <>, source),
 }
 #[inline]
-FinneyKeyword_Unreserved: FinneyKeyword_Unreserved<'arena> = {
-    <l:@L> L_FinneyKeyword_Unreserved <r:@L> => new_finney_keyword_unreserved(arena, <>, source),
+FinneyKeyword_Unreserved: FinneyKeyword<'arena> = {
+    <l:@L> L_FinneyKeyword_Unreserved <r:@L> => new_finney_keyword(arena, <>, source),
 }
 #[inline]
-FixedKeyword_Reserved: FixedKeyword_Reserved<'arena> = {
-    <l:@L> L_FixedKeyword_Reserved <r:@L> => new_fixed_keyword_reserved(arena, <>, source),
+FixedKeyword_Reserved: FixedKeyword<'arena> = {
+    <l:@L> L_FixedKeyword_Reserved <r:@L> => new_fixed_keyword(arena, <>, source),
 }
 #[inline]
-FixedKeyword_Unreserved: FixedKeyword_Unreserved<'arena> = {
-    <l:@L> L_FixedKeyword_Unreserved <r:@L> => new_fixed_keyword_unreserved(arena, <>, source),
+FixedKeyword_Unreserved: FixedKeyword<'arena> = {
+    <l:@L> L_FixedKeyword_Unreserved <r:@L> => new_fixed_keyword(arena, <>, source),
 }
 #[inline]
-ForKeyword_Reserved: ForKeyword_Reserved<'arena> = {
-    <l:@L> L_ForKeyword_Reserved <r:@L> => new_for_keyword_reserved(arena, <>, source),
+ForKeyword_Reserved: ForKeyword<'arena> = {
+    <l:@L> L_ForKeyword_Reserved <r:@L> => new_for_keyword(arena, <>, source),
 }
 #[inline]
-FromKeyword_Unreserved: FromKeyword_Unreserved<'arena> = {
-    <l:@L> L_FromKeyword_Unreserved <r:@L> => new_from_keyword_unreserved(arena, <>, source),
+FromKeyword_Unreserved: FromKeyword<'arena> = {
+    <l:@L> L_FromKeyword_Unreserved <r:@L> => new_from_keyword(arena, <>, source),
 }
 #[inline]
-FunctionKeyword_Reserved: FunctionKeyword_Reserved<'arena> = {
-    <l:@L> L_FunctionKeyword_Reserved <r:@L> => new_function_keyword_reserved(arena, <>, source),
+FunctionKeyword_Reserved: FunctionKeyword<'arena> = {
+    <l:@L> L_FunctionKeyword_Reserved <r:@L> => new_function_keyword(arena, <>, source),
 }
 #[inline]
-GlobalKeyword_Unreserved: GlobalKeyword_Unreserved<'arena> = {
-    <l:@L> L_GlobalKeyword_Unreserved <r:@L> => new_global_keyword_unreserved(arena, <>, source),
+GlobalKeyword_Unreserved: GlobalKeyword<'arena> = {
+    <l:@L> L_GlobalKeyword_Unreserved <r:@L> => new_global_keyword(arena, <>, source),
 }
 #[inline]
 GreaterThan: GreaterThan<'arena> = {
@@ -3070,24 +3162,24 @@ GreaterThanGreaterThanGreaterThanEqual: GreaterThanGreaterThanGreaterThanEqual<'
     <l:@L> L_GreaterThanGreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_greater_than_equal(arena, <>, source),
 }
 #[inline]
-GweiKeyword_Reserved: GweiKeyword_Reserved<'arena> = {
-    <l:@L> L_GweiKeyword_Reserved <r:@L> => new_gwei_keyword_reserved(arena, <>, source),
+GweiKeyword_Reserved: GweiKeyword<'arena> = {
+    <l:@L> L_GweiKeyword_Reserved <r:@L> => new_gwei_keyword(arena, <>, source),
 }
 #[inline]
-GweiKeyword_Unreserved: GweiKeyword_Unreserved<'arena> = {
-    <l:@L> L_GweiKeyword_Unreserved <r:@L> => new_gwei_keyword_unreserved(arena, <>, source),
+GweiKeyword_Unreserved: GweiKeyword<'arena> = {
+    <l:@L> L_GweiKeyword_Unreserved <r:@L> => new_gwei_keyword(arena, <>, source),
 }
 #[inline]
-HexKeyword_Reserved: HexKeyword_Reserved<'arena> = {
-    <l:@L> L_HexKeyword_Reserved <r:@L> => new_hex_keyword_reserved(arena, <>, source),
+HexKeyword_Reserved: HexKeyword<'arena> = {
+    <l:@L> L_HexKeyword_Reserved <r:@L> => new_hex_keyword(arena, <>, source),
 }
 #[inline]
 HexLiteral: HexLiteral<'arena> = {
     <l:@L> L_HexLiteral <r:@L> => new_hex_literal(arena, <>, source),
 }
 #[inline]
-HoursKeyword_Reserved: HoursKeyword_Reserved<'arena> = {
-    <l:@L> L_HoursKeyword_Reserved <r:@L> => new_hours_keyword_reserved(arena, <>, source),
+HoursKeyword_Reserved: HoursKeyword<'arena> = {
+    <l:@L> L_HoursKeyword_Reserved <r:@L> => new_hours_keyword(arena, <>, source),
 }
 
 Identifier: Identifier<'arena> = {
@@ -3370,60 +3462,60 @@ Identifier: Identifier<'arena> = {
     
 }
 #[inline]
-IfKeyword_Reserved: IfKeyword_Reserved<'arena> = {
-    <l:@L> L_IfKeyword_Reserved <r:@L> => new_if_keyword_reserved(arena, <>, source),
+IfKeyword_Reserved: IfKeyword<'arena> = {
+    <l:@L> L_IfKeyword_Reserved <r:@L> => new_if_keyword(arena, <>, source),
 }
 #[inline]
-ImmutableKeyword_Reserved: ImmutableKeyword_Reserved<'arena> = {
-    <l:@L> L_ImmutableKeyword_Reserved <r:@L> => new_immutable_keyword_reserved(arena, <>, source),
+ImmutableKeyword_Reserved: ImmutableKeyword<'arena> = {
+    <l:@L> L_ImmutableKeyword_Reserved <r:@L> => new_immutable_keyword(arena, <>, source),
 }
 #[inline]
-ImmutableKeyword_Unreserved: ImmutableKeyword_Unreserved<'arena> = {
-    <l:@L> L_ImmutableKeyword_Unreserved <r:@L> => new_immutable_keyword_unreserved(arena, <>, source),
+ImmutableKeyword_Unreserved: ImmutableKeyword<'arena> = {
+    <l:@L> L_ImmutableKeyword_Unreserved <r:@L> => new_immutable_keyword(arena, <>, source),
 }
 #[inline]
-ImplementsKeyword_Reserved: ImplementsKeyword_Reserved<'arena> = {
-    <l:@L> L_ImplementsKeyword_Reserved <r:@L> => new_implements_keyword_reserved(arena, <>, source),
+ImplementsKeyword_Reserved: ImplementsKeyword<'arena> = {
+    <l:@L> L_ImplementsKeyword_Reserved <r:@L> => new_implements_keyword(arena, <>, source),
 }
 #[inline]
-ImplementsKeyword_Unreserved: ImplementsKeyword_Unreserved<'arena> = {
-    <l:@L> L_ImplementsKeyword_Unreserved <r:@L> => new_implements_keyword_unreserved(arena, <>, source),
+ImplementsKeyword_Unreserved: ImplementsKeyword<'arena> = {
+    <l:@L> L_ImplementsKeyword_Unreserved <r:@L> => new_implements_keyword(arena, <>, source),
 }
 #[inline]
-ImportKeyword_Reserved: ImportKeyword_Reserved<'arena> = {
-    <l:@L> L_ImportKeyword_Reserved <r:@L> => new_import_keyword_reserved(arena, <>, source),
+ImportKeyword_Reserved: ImportKeyword<'arena> = {
+    <l:@L> L_ImportKeyword_Reserved <r:@L> => new_import_keyword(arena, <>, source),
 }
 #[inline]
-InKeyword_Reserved: InKeyword_Reserved<'arena> = {
-    <l:@L> L_InKeyword_Reserved <r:@L> => new_in_keyword_reserved(arena, <>, source),
+InKeyword_Reserved: InKeyword<'arena> = {
+    <l:@L> L_InKeyword_Reserved <r:@L> => new_in_keyword(arena, <>, source),
 }
 #[inline]
-IndexedKeyword_Reserved: IndexedKeyword_Reserved<'arena> = {
-    <l:@L> L_IndexedKeyword_Reserved <r:@L> => new_indexed_keyword_reserved(arena, <>, source),
+IndexedKeyword_Reserved: IndexedKeyword<'arena> = {
+    <l:@L> L_IndexedKeyword_Reserved <r:@L> => new_indexed_keyword(arena, <>, source),
 }
 #[inline]
-InlineKeyword_Reserved: InlineKeyword_Reserved<'arena> = {
-    <l:@L> L_InlineKeyword_Reserved <r:@L> => new_inline_keyword_reserved(arena, <>, source),
+InlineKeyword_Reserved: InlineKeyword<'arena> = {
+    <l:@L> L_InlineKeyword_Reserved <r:@L> => new_inline_keyword(arena, <>, source),
 }
 #[inline]
-IntKeyword_Reserved: IntKeyword_Reserved<'arena> = {
-    <l:@L> L_IntKeyword_Reserved <r:@L> => new_int_keyword_reserved(arena, <>, source),
+IntKeyword_Reserved: IntKeyword<'arena> = {
+    <l:@L> L_IntKeyword_Reserved <r:@L> => new_int_keyword(arena, <>, source),
 }
 #[inline]
-InterfaceKeyword_Reserved: InterfaceKeyword_Reserved<'arena> = {
-    <l:@L> L_InterfaceKeyword_Reserved <r:@L> => new_interface_keyword_reserved(arena, <>, source),
+InterfaceKeyword_Reserved: InterfaceKeyword<'arena> = {
+    <l:@L> L_InterfaceKeyword_Reserved <r:@L> => new_interface_keyword(arena, <>, source),
 }
 #[inline]
-InternalKeyword_Reserved: InternalKeyword_Reserved<'arena> = {
-    <l:@L> L_InternalKeyword_Reserved <r:@L> => new_internal_keyword_reserved(arena, <>, source),
+InternalKeyword_Reserved: InternalKeyword<'arena> = {
+    <l:@L> L_InternalKeyword_Reserved <r:@L> => new_internal_keyword(arena, <>, source),
 }
 #[inline]
-IsKeyword_Reserved: IsKeyword_Reserved<'arena> = {
-    <l:@L> L_IsKeyword_Reserved <r:@L> => new_is_keyword_reserved(arena, <>, source),
+IsKeyword_Reserved: IsKeyword<'arena> = {
+    <l:@L> L_IsKeyword_Reserved <r:@L> => new_is_keyword(arena, <>, source),
 }
 #[inline]
-LayoutKeyword_Unreserved: LayoutKeyword_Unreserved<'arena> = {
-    <l:@L> L_LayoutKeyword_Unreserved <r:@L> => new_layout_keyword_unreserved(arena, <>, source),
+LayoutKeyword_Unreserved: LayoutKeyword<'arena> = {
+    <l:@L> L_LayoutKeyword_Unreserved <r:@L> => new_layout_keyword(arena, <>, source),
 }
 #[inline]
 LessThan: LessThan<'arena> = {
@@ -3442,32 +3534,32 @@ LessThanLessThanEqual: LessThanLessThanEqual<'arena> = {
     <l:@L> L_LessThanLessThanEqual <r:@L> => new_less_than_less_than_equal(arena, <>, source),
 }
 #[inline]
-LetKeyword_Reserved: LetKeyword_Reserved<'arena> = {
-    <l:@L> L_LetKeyword_Reserved <r:@L> => new_let_keyword_reserved(arena, <>, source),
+LetKeyword_Reserved: LetKeyword<'arena> = {
+    <l:@L> L_LetKeyword_Reserved <r:@L> => new_let_keyword(arena, <>, source),
 }
 #[inline]
-LibraryKeyword_Reserved: LibraryKeyword_Reserved<'arena> = {
-    <l:@L> L_LibraryKeyword_Reserved <r:@L> => new_library_keyword_reserved(arena, <>, source),
+LibraryKeyword_Reserved: LibraryKeyword<'arena> = {
+    <l:@L> L_LibraryKeyword_Reserved <r:@L> => new_library_keyword(arena, <>, source),
 }
 #[inline]
-MacroKeyword_Reserved: MacroKeyword_Reserved<'arena> = {
-    <l:@L> L_MacroKeyword_Reserved <r:@L> => new_macro_keyword_reserved(arena, <>, source),
+MacroKeyword_Reserved: MacroKeyword<'arena> = {
+    <l:@L> L_MacroKeyword_Reserved <r:@L> => new_macro_keyword(arena, <>, source),
 }
 #[inline]
-MacroKeyword_Unreserved: MacroKeyword_Unreserved<'arena> = {
-    <l:@L> L_MacroKeyword_Unreserved <r:@L> => new_macro_keyword_unreserved(arena, <>, source),
+MacroKeyword_Unreserved: MacroKeyword<'arena> = {
+    <l:@L> L_MacroKeyword_Unreserved <r:@L> => new_macro_keyword(arena, <>, source),
 }
 #[inline]
-MappingKeyword_Reserved: MappingKeyword_Reserved<'arena> = {
-    <l:@L> L_MappingKeyword_Reserved <r:@L> => new_mapping_keyword_reserved(arena, <>, source),
+MappingKeyword_Reserved: MappingKeyword<'arena> = {
+    <l:@L> L_MappingKeyword_Reserved <r:@L> => new_mapping_keyword(arena, <>, source),
 }
 #[inline]
-MatchKeyword_Reserved: MatchKeyword_Reserved<'arena> = {
-    <l:@L> L_MatchKeyword_Reserved <r:@L> => new_match_keyword_reserved(arena, <>, source),
+MatchKeyword_Reserved: MatchKeyword<'arena> = {
+    <l:@L> L_MatchKeyword_Reserved <r:@L> => new_match_keyword(arena, <>, source),
 }
 #[inline]
-MemoryKeyword_Reserved: MemoryKeyword_Reserved<'arena> = {
-    <l:@L> L_MemoryKeyword_Reserved <r:@L> => new_memory_keyword_reserved(arena, <>, source),
+MemoryKeyword_Reserved: MemoryKeyword<'arena> = {
+    <l:@L> L_MemoryKeyword_Reserved <r:@L> => new_memory_keyword(arena, <>, source),
 }
 #[inline]
 Minus: Minus<'arena> = {
@@ -3486,12 +3578,12 @@ MinusMinus: MinusMinus<'arena> = {
     <l:@L> L_MinusMinus <r:@L> => new_minus_minus(arena, <>, source),
 }
 #[inline]
-MinutesKeyword_Reserved: MinutesKeyword_Reserved<'arena> = {
-    <l:@L> L_MinutesKeyword_Reserved <r:@L> => new_minutes_keyword_reserved(arena, <>, source),
+MinutesKeyword_Reserved: MinutesKeyword<'arena> = {
+    <l:@L> L_MinutesKeyword_Reserved <r:@L> => new_minutes_keyword(arena, <>, source),
 }
 #[inline]
-ModifierKeyword_Reserved: ModifierKeyword_Reserved<'arena> = {
-    <l:@L> L_ModifierKeyword_Reserved <r:@L> => new_modifier_keyword_reserved(arena, <>, source),
+ModifierKeyword_Reserved: ModifierKeyword<'arena> = {
+    <l:@L> L_ModifierKeyword_Reserved <r:@L> => new_modifier_keyword(arena, <>, source),
 }
 #[inline]
 MultiLineComment: MultiLineComment<'arena> = {
@@ -3502,24 +3594,24 @@ MultiLineNatSpecComment: MultiLineNatSpecComment<'arena> = {
     <l:@L> L_MultiLineNatSpecComment <r:@L> => new_multi_line_nat_spec_comment(arena, <>, source),
 }
 #[inline]
-MutableKeyword_Reserved: MutableKeyword_Reserved<'arena> = {
-    <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword_reserved(arena, <>, source),
+MutableKeyword_Reserved: MutableKeyword<'arena> = {
+    <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword(arena, <>, source),
 }
 #[inline]
-MutableKeyword_Unreserved: MutableKeyword_Unreserved<'arena> = {
-    <l:@L> L_MutableKeyword_Unreserved <r:@L> => new_mutable_keyword_unreserved(arena, <>, source),
+MutableKeyword_Unreserved: MutableKeyword<'arena> = {
+    <l:@L> L_MutableKeyword_Unreserved <r:@L> => new_mutable_keyword(arena, <>, source),
 }
 #[inline]
-NewKeyword_Reserved: NewKeyword_Reserved<'arena> = {
-    <l:@L> L_NewKeyword_Reserved <r:@L> => new_new_keyword_reserved(arena, <>, source),
+NewKeyword_Reserved: NewKeyword<'arena> = {
+    <l:@L> L_NewKeyword_Reserved <r:@L> => new_new_keyword(arena, <>, source),
 }
 #[inline]
-NullKeyword_Reserved: NullKeyword_Reserved<'arena> = {
-    <l:@L> L_NullKeyword_Reserved <r:@L> => new_null_keyword_reserved(arena, <>, source),
+NullKeyword_Reserved: NullKeyword<'arena> = {
+    <l:@L> L_NullKeyword_Reserved <r:@L> => new_null_keyword(arena, <>, source),
 }
 #[inline]
-OfKeyword_Reserved: OfKeyword_Reserved<'arena> = {
-    <l:@L> L_OfKeyword_Reserved <r:@L> => new_of_keyword_reserved(arena, <>, source),
+OfKeyword_Reserved: OfKeyword<'arena> = {
+    <l:@L> L_OfKeyword_Reserved <r:@L> => new_of_keyword(arena, <>, source),
 }
 #[inline]
 OpenBrace: OpenBrace<'arena> = {
@@ -3534,24 +3626,24 @@ OpenParen: OpenParen<'arena> = {
     <l:@L> L_OpenParen <r:@L> => new_open_paren(arena, <>, source),
 }
 #[inline]
-OverrideKeyword_Reserved: OverrideKeyword_Reserved<'arena> = {
-    <l:@L> L_OverrideKeyword_Reserved <r:@L> => new_override_keyword_reserved(arena, <>, source),
+OverrideKeyword_Reserved: OverrideKeyword<'arena> = {
+    <l:@L> L_OverrideKeyword_Reserved <r:@L> => new_override_keyword(arena, <>, source),
 }
 #[inline]
-OverrideKeyword_Unreserved: OverrideKeyword_Unreserved<'arena> = {
-    <l:@L> L_OverrideKeyword_Unreserved <r:@L> => new_override_keyword_unreserved(arena, <>, source),
+OverrideKeyword_Unreserved: OverrideKeyword<'arena> = {
+    <l:@L> L_OverrideKeyword_Unreserved <r:@L> => new_override_keyword(arena, <>, source),
 }
 #[inline]
-PartialKeyword_Reserved: PartialKeyword_Reserved<'arena> = {
-    <l:@L> L_PartialKeyword_Reserved <r:@L> => new_partial_keyword_reserved(arena, <>, source),
+PartialKeyword_Reserved: PartialKeyword<'arena> = {
+    <l:@L> L_PartialKeyword_Reserved <r:@L> => new_partial_keyword(arena, <>, source),
 }
 #[inline]
-PartialKeyword_Unreserved: PartialKeyword_Unreserved<'arena> = {
-    <l:@L> L_PartialKeyword_Unreserved <r:@L> => new_partial_keyword_unreserved(arena, <>, source),
+PartialKeyword_Unreserved: PartialKeyword<'arena> = {
+    <l:@L> L_PartialKeyword_Unreserved <r:@L> => new_partial_keyword(arena, <>, source),
 }
 #[inline]
-PayableKeyword_Reserved: PayableKeyword_Reserved<'arena> = {
-    <l:@L> L_PayableKeyword_Reserved <r:@L> => new_payable_keyword_reserved(arena, <>, source),
+PayableKeyword_Reserved: PayableKeyword<'arena> = {
+    <l:@L> L_PayableKeyword_Reserved <r:@L> => new_payable_keyword(arena, <>, source),
 }
 #[inline]
 Percent: Percent<'arena> = {
@@ -3578,80 +3670,80 @@ PlusPlus: PlusPlus<'arena> = {
     <l:@L> L_PlusPlus <r:@L> => new_plus_plus(arena, <>, source),
 }
 #[inline]
-PragmaKeyword_Reserved: PragmaKeyword_Reserved<'arena> = {
-    <l:@L> L_PragmaKeyword_Reserved <r:@L> => new_pragma_keyword_reserved(arena, <>, source),
+PragmaKeyword_Reserved: PragmaKeyword<'arena> = {
+    <l:@L> L_PragmaKeyword_Reserved <r:@L> => new_pragma_keyword(arena, <>, source),
 }
 #[inline]
-PrivateKeyword_Reserved: PrivateKeyword_Reserved<'arena> = {
-    <l:@L> L_PrivateKeyword_Reserved <r:@L> => new_private_keyword_reserved(arena, <>, source),
+PrivateKeyword_Reserved: PrivateKeyword<'arena> = {
+    <l:@L> L_PrivateKeyword_Reserved <r:@L> => new_private_keyword(arena, <>, source),
 }
 #[inline]
-PromiseKeyword_Reserved: PromiseKeyword_Reserved<'arena> = {
-    <l:@L> L_PromiseKeyword_Reserved <r:@L> => new_promise_keyword_reserved(arena, <>, source),
+PromiseKeyword_Reserved: PromiseKeyword<'arena> = {
+    <l:@L> L_PromiseKeyword_Reserved <r:@L> => new_promise_keyword(arena, <>, source),
 }
 #[inline]
-PromiseKeyword_Unreserved: PromiseKeyword_Unreserved<'arena> = {
-    <l:@L> L_PromiseKeyword_Unreserved <r:@L> => new_promise_keyword_unreserved(arena, <>, source),
+PromiseKeyword_Unreserved: PromiseKeyword<'arena> = {
+    <l:@L> L_PromiseKeyword_Unreserved <r:@L> => new_promise_keyword(arena, <>, source),
 }
 #[inline]
-PublicKeyword_Reserved: PublicKeyword_Reserved<'arena> = {
-    <l:@L> L_PublicKeyword_Reserved <r:@L> => new_public_keyword_reserved(arena, <>, source),
+PublicKeyword_Reserved: PublicKeyword<'arena> = {
+    <l:@L> L_PublicKeyword_Reserved <r:@L> => new_public_keyword(arena, <>, source),
 }
 #[inline]
-PureKeyword_Reserved: PureKeyword_Reserved<'arena> = {
-    <l:@L> L_PureKeyword_Reserved <r:@L> => new_pure_keyword_reserved(arena, <>, source),
+PureKeyword_Reserved: PureKeyword<'arena> = {
+    <l:@L> L_PureKeyword_Reserved <r:@L> => new_pure_keyword(arena, <>, source),
 }
 #[inline]
 QuestionMark: QuestionMark<'arena> = {
     <l:@L> L_QuestionMark <r:@L> => new_question_mark(arena, <>, source),
 }
 #[inline]
-ReceiveKeyword_Reserved: ReceiveKeyword_Reserved<'arena> = {
-    <l:@L> L_ReceiveKeyword_Reserved <r:@L> => new_receive_keyword_reserved(arena, <>, source),
+ReceiveKeyword_Reserved: ReceiveKeyword<'arena> = {
+    <l:@L> L_ReceiveKeyword_Reserved <r:@L> => new_receive_keyword(arena, <>, source),
 }
 #[inline]
-ReceiveKeyword_Unreserved: ReceiveKeyword_Unreserved<'arena> = {
-    <l:@L> L_ReceiveKeyword_Unreserved <r:@L> => new_receive_keyword_unreserved(arena, <>, source),
+ReceiveKeyword_Unreserved: ReceiveKeyword<'arena> = {
+    <l:@L> L_ReceiveKeyword_Unreserved <r:@L> => new_receive_keyword(arena, <>, source),
 }
 #[inline]
-ReferenceKeyword_Reserved: ReferenceKeyword_Reserved<'arena> = {
-    <l:@L> L_ReferenceKeyword_Reserved <r:@L> => new_reference_keyword_reserved(arena, <>, source),
+ReferenceKeyword_Reserved: ReferenceKeyword<'arena> = {
+    <l:@L> L_ReferenceKeyword_Reserved <r:@L> => new_reference_keyword(arena, <>, source),
 }
 #[inline]
-ReferenceKeyword_Unreserved: ReferenceKeyword_Unreserved<'arena> = {
-    <l:@L> L_ReferenceKeyword_Unreserved <r:@L> => new_reference_keyword_unreserved(arena, <>, source),
+ReferenceKeyword_Unreserved: ReferenceKeyword<'arena> = {
+    <l:@L> L_ReferenceKeyword_Unreserved <r:@L> => new_reference_keyword(arena, <>, source),
 }
 #[inline]
-RelocatableKeyword_Reserved: RelocatableKeyword_Reserved<'arena> = {
-    <l:@L> L_RelocatableKeyword_Reserved <r:@L> => new_relocatable_keyword_reserved(arena, <>, source),
+RelocatableKeyword_Reserved: RelocatableKeyword<'arena> = {
+    <l:@L> L_RelocatableKeyword_Reserved <r:@L> => new_relocatable_keyword(arena, <>, source),
 }
 #[inline]
-ReturnKeyword_Reserved: ReturnKeyword_Reserved<'arena> = {
-    <l:@L> L_ReturnKeyword_Reserved <r:@L> => new_return_keyword_reserved(arena, <>, source),
+ReturnKeyword_Reserved: ReturnKeyword<'arena> = {
+    <l:@L> L_ReturnKeyword_Reserved <r:@L> => new_return_keyword(arena, <>, source),
 }
 #[inline]
-ReturnsKeyword_Reserved: ReturnsKeyword_Reserved<'arena> = {
-    <l:@L> L_ReturnsKeyword_Reserved <r:@L> => new_returns_keyword_reserved(arena, <>, source),
+ReturnsKeyword_Reserved: ReturnsKeyword<'arena> = {
+    <l:@L> L_ReturnsKeyword_Reserved <r:@L> => new_returns_keyword(arena, <>, source),
 }
 #[inline]
-RevertKeyword_Reserved: RevertKeyword_Reserved<'arena> = {
-    <l:@L> L_RevertKeyword_Reserved <r:@L> => new_revert_keyword_reserved(arena, <>, source),
+RevertKeyword_Reserved: RevertKeyword<'arena> = {
+    <l:@L> L_RevertKeyword_Reserved <r:@L> => new_revert_keyword(arena, <>, source),
 }
 #[inline]
-SMTCheckerKeyword_Unreserved: SMTCheckerKeyword_Unreserved<'arena> = {
-    <l:@L> L_SMTCheckerKeyword_Unreserved <r:@L> => new_smt_checker_keyword_unreserved(arena, <>, source),
+SMTCheckerKeyword_Unreserved: SMTCheckerKeyword<'arena> = {
+    <l:@L> L_SMTCheckerKeyword_Unreserved <r:@L> => new_smt_checker_keyword(arena, <>, source),
 }
 #[inline]
-SealedKeyword_Reserved: SealedKeyword_Reserved<'arena> = {
-    <l:@L> L_SealedKeyword_Reserved <r:@L> => new_sealed_keyword_reserved(arena, <>, source),
+SealedKeyword_Reserved: SealedKeyword<'arena> = {
+    <l:@L> L_SealedKeyword_Reserved <r:@L> => new_sealed_keyword(arena, <>, source),
 }
 #[inline]
-SealedKeyword_Unreserved: SealedKeyword_Unreserved<'arena> = {
-    <l:@L> L_SealedKeyword_Unreserved <r:@L> => new_sealed_keyword_unreserved(arena, <>, source),
+SealedKeyword_Unreserved: SealedKeyword<'arena> = {
+    <l:@L> L_SealedKeyword_Unreserved <r:@L> => new_sealed_keyword(arena, <>, source),
 }
 #[inline]
-SecondsKeyword_Reserved: SecondsKeyword_Reserved<'arena> = {
-    <l:@L> L_SecondsKeyword_Reserved <r:@L> => new_seconds_keyword_reserved(arena, <>, source),
+SecondsKeyword_Reserved: SecondsKeyword<'arena> = {
+    <l:@L> L_SecondsKeyword_Reserved <r:@L> => new_seconds_keyword(arena, <>, source),
 }
 #[inline]
 Semicolon: Semicolon<'arena> = {
@@ -3682,12 +3774,12 @@ SingleQuotedVersionLiteral: SingleQuotedVersionLiteral<'arena> = {
     <l:@L> L_SingleQuotedVersionLiteral <r:@L> => new_single_quoted_version_literal(arena, <>, source),
 }
 #[inline]
-SizeOfKeyword_Reserved: SizeOfKeyword_Reserved<'arena> = {
-    <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword_reserved(arena, <>, source),
+SizeOfKeyword_Reserved: SizeOfKeyword<'arena> = {
+    <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(arena, <>, source),
 }
 #[inline]
-SizeOfKeyword_Unreserved: SizeOfKeyword_Unreserved<'arena> = {
-    <l:@L> L_SizeOfKeyword_Unreserved <r:@L> => new_size_of_keyword_unreserved(arena, <>, source),
+SizeOfKeyword_Unreserved: SizeOfKeyword<'arena> = {
+    <l:@L> L_SizeOfKeyword_Unreserved <r:@L> => new_size_of_keyword(arena, <>, source),
 }
 #[inline]
 Slash: Slash<'arena> = {
@@ -3698,964 +3790,964 @@ SlashEqual: SlashEqual<'arena> = {
     <l:@L> L_SlashEqual <r:@L> => new_slash_equal(arena, <>, source),
 }
 #[inline]
-SolidityKeyword_Unreserved: SolidityKeyword_Unreserved<'arena> = {
-    <l:@L> L_SolidityKeyword_Unreserved <r:@L> => new_solidity_keyword_unreserved(arena, <>, source),
+SolidityKeyword_Unreserved: SolidityKeyword<'arena> = {
+    <l:@L> L_SolidityKeyword_Unreserved <r:@L> => new_solidity_keyword(arena, <>, source),
 }
 #[inline]
-StaticKeyword_Reserved: StaticKeyword_Reserved<'arena> = {
-    <l:@L> L_StaticKeyword_Reserved <r:@L> => new_static_keyword_reserved(arena, <>, source),
+StaticKeyword_Reserved: StaticKeyword<'arena> = {
+    <l:@L> L_StaticKeyword_Reserved <r:@L> => new_static_keyword(arena, <>, source),
 }
 #[inline]
-StorageKeyword_Reserved: StorageKeyword_Reserved<'arena> = {
-    <l:@L> L_StorageKeyword_Reserved <r:@L> => new_storage_keyword_reserved(arena, <>, source),
+StorageKeyword_Reserved: StorageKeyword<'arena> = {
+    <l:@L> L_StorageKeyword_Reserved <r:@L> => new_storage_keyword(arena, <>, source),
 }
 #[inline]
-StringKeyword_Reserved: StringKeyword_Reserved<'arena> = {
-    <l:@L> L_StringKeyword_Reserved <r:@L> => new_string_keyword_reserved(arena, <>, source),
+StringKeyword_Reserved: StringKeyword<'arena> = {
+    <l:@L> L_StringKeyword_Reserved <r:@L> => new_string_keyword(arena, <>, source),
 }
 #[inline]
-StructKeyword_Reserved: StructKeyword_Reserved<'arena> = {
-    <l:@L> L_StructKeyword_Reserved <r:@L> => new_struct_keyword_reserved(arena, <>, source),
+StructKeyword_Reserved: StructKeyword<'arena> = {
+    <l:@L> L_StructKeyword_Reserved <r:@L> => new_struct_keyword(arena, <>, source),
 }
 #[inline]
-SuperKeyword_Reserved: SuperKeyword_Reserved<'arena> = {
-    <l:@L> L_SuperKeyword_Reserved <r:@L> => new_super_keyword_reserved(arena, <>, source),
+SuperKeyword_Reserved: SuperKeyword<'arena> = {
+    <l:@L> L_SuperKeyword_Reserved <r:@L> => new_super_keyword(arena, <>, source),
 }
 #[inline]
-SuperKeyword_Unreserved: SuperKeyword_Unreserved<'arena> = {
-    <l:@L> L_SuperKeyword_Unreserved <r:@L> => new_super_keyword_unreserved(arena, <>, source),
+SuperKeyword_Unreserved: SuperKeyword<'arena> = {
+    <l:@L> L_SuperKeyword_Unreserved <r:@L> => new_super_keyword(arena, <>, source),
 }
 #[inline]
-SupportsKeyword_Reserved: SupportsKeyword_Reserved<'arena> = {
-    <l:@L> L_SupportsKeyword_Reserved <r:@L> => new_supports_keyword_reserved(arena, <>, source),
+SupportsKeyword_Reserved: SupportsKeyword<'arena> = {
+    <l:@L> L_SupportsKeyword_Reserved <r:@L> => new_supports_keyword(arena, <>, source),
 }
 #[inline]
-SupportsKeyword_Unreserved: SupportsKeyword_Unreserved<'arena> = {
-    <l:@L> L_SupportsKeyword_Unreserved <r:@L> => new_supports_keyword_unreserved(arena, <>, source),
+SupportsKeyword_Unreserved: SupportsKeyword<'arena> = {
+    <l:@L> L_SupportsKeyword_Unreserved <r:@L> => new_supports_keyword(arena, <>, source),
 }
 #[inline]
-SwitchKeyword_Reserved: SwitchKeyword_Reserved<'arena> = {
-    <l:@L> L_SwitchKeyword_Reserved <r:@L> => new_switch_keyword_reserved(arena, <>, source),
+SwitchKeyword_Reserved: SwitchKeyword<'arena> = {
+    <l:@L> L_SwitchKeyword_Reserved <r:@L> => new_switch_keyword(arena, <>, source),
 }
 #[inline]
-SzaboKeyword_Reserved: SzaboKeyword_Reserved<'arena> = {
-    <l:@L> L_SzaboKeyword_Reserved <r:@L> => new_szabo_keyword_reserved(arena, <>, source),
+SzaboKeyword_Reserved: SzaboKeyword<'arena> = {
+    <l:@L> L_SzaboKeyword_Reserved <r:@L> => new_szabo_keyword(arena, <>, source),
 }
 #[inline]
-SzaboKeyword_Unreserved: SzaboKeyword_Unreserved<'arena> = {
-    <l:@L> L_SzaboKeyword_Unreserved <r:@L> => new_szabo_keyword_unreserved(arena, <>, source),
+SzaboKeyword_Unreserved: SzaboKeyword<'arena> = {
+    <l:@L> L_SzaboKeyword_Unreserved <r:@L> => new_szabo_keyword(arena, <>, source),
 }
 #[inline]
-ThisKeyword_Reserved: ThisKeyword_Reserved<'arena> = {
-    <l:@L> L_ThisKeyword_Reserved <r:@L> => new_this_keyword_reserved(arena, <>, source),
+ThisKeyword_Reserved: ThisKeyword<'arena> = {
+    <l:@L> L_ThisKeyword_Reserved <r:@L> => new_this_keyword(arena, <>, source),
 }
 #[inline]
-ThisKeyword_Unreserved: ThisKeyword_Unreserved<'arena> = {
-    <l:@L> L_ThisKeyword_Unreserved <r:@L> => new_this_keyword_unreserved(arena, <>, source),
+ThisKeyword_Unreserved: ThisKeyword<'arena> = {
+    <l:@L> L_ThisKeyword_Unreserved <r:@L> => new_this_keyword(arena, <>, source),
 }
 #[inline]
-ThrowKeyword_Reserved: ThrowKeyword_Reserved<'arena> = {
-    <l:@L> L_ThrowKeyword_Reserved <r:@L> => new_throw_keyword_reserved(arena, <>, source),
+ThrowKeyword_Reserved: ThrowKeyword<'arena> = {
+    <l:@L> L_ThrowKeyword_Reserved <r:@L> => new_throw_keyword(arena, <>, source),
 }
 #[inline]
 Tilde: Tilde<'arena> = {
     <l:@L> L_Tilde <r:@L> => new_tilde(arena, <>, source),
 }
 #[inline]
-TransientKeyword_Unreserved: TransientKeyword_Unreserved<'arena> = {
-    <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_transient_keyword_unreserved(arena, <>, source),
+TransientKeyword_Unreserved: TransientKeyword<'arena> = {
+    <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_transient_keyword(arena, <>, source),
 }
 #[inline]
-TrueKeyword_Reserved: TrueKeyword_Reserved<'arena> = {
-    <l:@L> L_TrueKeyword_Reserved <r:@L> => new_true_keyword_reserved(arena, <>, source),
+TrueKeyword_Reserved: TrueKeyword<'arena> = {
+    <l:@L> L_TrueKeyword_Reserved <r:@L> => new_true_keyword(arena, <>, source),
 }
 #[inline]
-TryKeyword_Reserved: TryKeyword_Reserved<'arena> = {
-    <l:@L> L_TryKeyword_Reserved <r:@L> => new_try_keyword_reserved(arena, <>, source),
+TryKeyword_Reserved: TryKeyword<'arena> = {
+    <l:@L> L_TryKeyword_Reserved <r:@L> => new_try_keyword(arena, <>, source),
 }
 #[inline]
-TypeDefKeyword_Reserved: TypeDefKeyword_Reserved<'arena> = {
-    <l:@L> L_TypeDefKeyword_Reserved <r:@L> => new_type_def_keyword_reserved(arena, <>, source),
+TypeDefKeyword_Reserved: TypeDefKeyword<'arena> = {
+    <l:@L> L_TypeDefKeyword_Reserved <r:@L> => new_type_def_keyword(arena, <>, source),
 }
 #[inline]
-TypeDefKeyword_Unreserved: TypeDefKeyword_Unreserved<'arena> = {
-    <l:@L> L_TypeDefKeyword_Unreserved <r:@L> => new_type_def_keyword_unreserved(arena, <>, source),
+TypeDefKeyword_Unreserved: TypeDefKeyword<'arena> = {
+    <l:@L> L_TypeDefKeyword_Unreserved <r:@L> => new_type_def_keyword(arena, <>, source),
 }
 #[inline]
-TypeKeyword_Reserved: TypeKeyword_Reserved<'arena> = {
-    <l:@L> L_TypeKeyword_Reserved <r:@L> => new_type_keyword_reserved(arena, <>, source),
+TypeKeyword_Reserved: TypeKeyword<'arena> = {
+    <l:@L> L_TypeKeyword_Reserved <r:@L> => new_type_keyword(arena, <>, source),
 }
 #[inline]
-TypeOfKeyword_Reserved: TypeOfKeyword_Reserved<'arena> = {
-    <l:@L> L_TypeOfKeyword_Reserved <r:@L> => new_type_of_keyword_reserved(arena, <>, source),
+TypeOfKeyword_Reserved: TypeOfKeyword<'arena> = {
+    <l:@L> L_TypeOfKeyword_Reserved <r:@L> => new_type_of_keyword(arena, <>, source),
 }
 #[inline]
-UfixedKeyword_Reserved: UfixedKeyword_Reserved<'arena> = {
-    <l:@L> L_UfixedKeyword_Reserved <r:@L> => new_ufixed_keyword_reserved(arena, <>, source),
+UfixedKeyword_Reserved: UfixedKeyword<'arena> = {
+    <l:@L> L_UfixedKeyword_Reserved <r:@L> => new_ufixed_keyword(arena, <>, source),
 }
 #[inline]
-UfixedKeyword_Unreserved: UfixedKeyword_Unreserved<'arena> = {
-    <l:@L> L_UfixedKeyword_Unreserved <r:@L> => new_ufixed_keyword_unreserved(arena, <>, source),
+UfixedKeyword_Unreserved: UfixedKeyword<'arena> = {
+    <l:@L> L_UfixedKeyword_Unreserved <r:@L> => new_ufixed_keyword(arena, <>, source),
 }
 #[inline]
-UintKeyword_Reserved: UintKeyword_Reserved<'arena> = {
-    <l:@L> L_UintKeyword_Reserved <r:@L> => new_uint_keyword_reserved(arena, <>, source),
+UintKeyword_Reserved: UintKeyword<'arena> = {
+    <l:@L> L_UintKeyword_Reserved <r:@L> => new_uint_keyword(arena, <>, source),
 }
 #[inline]
-UncheckedKeyword_Reserved: UncheckedKeyword_Reserved<'arena> = {
-    <l:@L> L_UncheckedKeyword_Reserved <r:@L> => new_unchecked_keyword_reserved(arena, <>, source),
+UncheckedKeyword_Reserved: UncheckedKeyword<'arena> = {
+    <l:@L> L_UncheckedKeyword_Reserved <r:@L> => new_unchecked_keyword(arena, <>, source),
 }
 #[inline]
-UncheckedKeyword_Unreserved: UncheckedKeyword_Unreserved<'arena> = {
-    <l:@L> L_UncheckedKeyword_Unreserved <r:@L> => new_unchecked_keyword_unreserved(arena, <>, source),
+UncheckedKeyword_Unreserved: UncheckedKeyword<'arena> = {
+    <l:@L> L_UncheckedKeyword_Unreserved <r:@L> => new_unchecked_keyword(arena, <>, source),
 }
 #[inline]
-UsingKeyword_Reserved: UsingKeyword_Reserved<'arena> = {
-    <l:@L> L_UsingKeyword_Reserved <r:@L> => new_using_keyword_reserved(arena, <>, source),
+UsingKeyword_Reserved: UsingKeyword<'arena> = {
+    <l:@L> L_UsingKeyword_Reserved <r:@L> => new_using_keyword(arena, <>, source),
 }
 #[inline]
-VarKeyword_Reserved: VarKeyword_Reserved<'arena> = {
-    <l:@L> L_VarKeyword_Reserved <r:@L> => new_var_keyword_reserved(arena, <>, source),
+VarKeyword_Reserved: VarKeyword<'arena> = {
+    <l:@L> L_VarKeyword_Reserved <r:@L> => new_var_keyword(arena, <>, source),
 }
 #[inline]
 VersionSpecifier: VersionSpecifier<'arena> = {
     <l:@L> L_VersionSpecifier <r:@L> => new_version_specifier(arena, <>, source),
 }
 #[inline]
-ViewKeyword_Reserved: ViewKeyword_Reserved<'arena> = {
-    <l:@L> L_ViewKeyword_Reserved <r:@L> => new_view_keyword_reserved(arena, <>, source),
+ViewKeyword_Reserved: ViewKeyword<'arena> = {
+    <l:@L> L_ViewKeyword_Reserved <r:@L> => new_view_keyword(arena, <>, source),
 }
 #[inline]
-VirtualKeyword_Reserved: VirtualKeyword_Reserved<'arena> = {
-    <l:@L> L_VirtualKeyword_Reserved <r:@L> => new_virtual_keyword_reserved(arena, <>, source),
+VirtualKeyword_Reserved: VirtualKeyword<'arena> = {
+    <l:@L> L_VirtualKeyword_Reserved <r:@L> => new_virtual_keyword(arena, <>, source),
 }
 #[inline]
-VirtualKeyword_Unreserved: VirtualKeyword_Unreserved<'arena> = {
-    <l:@L> L_VirtualKeyword_Unreserved <r:@L> => new_virtual_keyword_unreserved(arena, <>, source),
+VirtualKeyword_Unreserved: VirtualKeyword<'arena> = {
+    <l:@L> L_VirtualKeyword_Unreserved <r:@L> => new_virtual_keyword(arena, <>, source),
 }
 #[inline]
-WeeksKeyword_Reserved: WeeksKeyword_Reserved<'arena> = {
-    <l:@L> L_WeeksKeyword_Reserved <r:@L> => new_weeks_keyword_reserved(arena, <>, source),
+WeeksKeyword_Reserved: WeeksKeyword<'arena> = {
+    <l:@L> L_WeeksKeyword_Reserved <r:@L> => new_weeks_keyword(arena, <>, source),
 }
 #[inline]
-WeiKeyword_Reserved: WeiKeyword_Reserved<'arena> = {
-    <l:@L> L_WeiKeyword_Reserved <r:@L> => new_wei_keyword_reserved(arena, <>, source),
+WeiKeyword_Reserved: WeiKeyword<'arena> = {
+    <l:@L> L_WeiKeyword_Reserved <r:@L> => new_wei_keyword(arena, <>, source),
 }
 #[inline]
-WhileKeyword_Reserved: WhileKeyword_Reserved<'arena> = {
-    <l:@L> L_WhileKeyword_Reserved <r:@L> => new_while_keyword_reserved(arena, <>, source),
+WhileKeyword_Reserved: WhileKeyword<'arena> = {
+    <l:@L> L_WhileKeyword_Reserved <r:@L> => new_while_keyword(arena, <>, source),
 }
 #[inline]
 Whitespace: Whitespace<'arena> = {
     <l:@L> L_Whitespace <r:@L> => new_whitespace(arena, <>, source),
 }
 #[inline]
-YearsKeyword_Reserved: YearsKeyword_Reserved<'arena> = {
-    <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword_reserved(arena, <>, source),
+YearsKeyword_Reserved: YearsKeyword<'arena> = {
+    <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword(arena, <>, source),
 }
 #[inline]
-YulAbstractKeyword_Reserved: YulAbstractKeyword_Reserved<'arena> = {
-    <l:@L> L_YulAbstractKeyword_Reserved <r:@L> => new_yul_abstract_keyword_reserved(arena, <>, source),
+YulAbstractKeyword_Reserved: YulAbstractKeyword<'arena> = {
+    <l:@L> L_YulAbstractKeyword_Reserved <r:@L> => new_yul_abstract_keyword(arena, <>, source),
 }
 #[inline]
-YulAbstractKeyword_Unreserved: YulAbstractKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_abstract_keyword_unreserved(arena, <>, source),
+YulAbstractKeyword_Unreserved: YulAbstractKeyword<'arena> = {
+    <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_abstract_keyword(arena, <>, source),
 }
 #[inline]
-YulAfterKeyword_Reserved: YulAfterKeyword_Reserved<'arena> = {
-    <l:@L> L_YulAfterKeyword_Reserved <r:@L> => new_yul_after_keyword_reserved(arena, <>, source),
+YulAfterKeyword_Reserved: YulAfterKeyword<'arena> = {
+    <l:@L> L_YulAfterKeyword_Reserved <r:@L> => new_yul_after_keyword(arena, <>, source),
 }
 #[inline]
-YulAfterKeyword_Unreserved: YulAfterKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_yul_after_keyword_unreserved(arena, <>, source),
+YulAfterKeyword_Unreserved: YulAfterKeyword<'arena> = {
+    <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_yul_after_keyword(arena, <>, source),
 }
 #[inline]
-YulAliasKeyword_Reserved: YulAliasKeyword_Reserved<'arena> = {
-    <l:@L> L_YulAliasKeyword_Reserved <r:@L> => new_yul_alias_keyword_reserved(arena, <>, source),
+YulAliasKeyword_Reserved: YulAliasKeyword<'arena> = {
+    <l:@L> L_YulAliasKeyword_Reserved <r:@L> => new_yul_alias_keyword(arena, <>, source),
 }
 #[inline]
-YulAliasKeyword_Unreserved: YulAliasKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_yul_alias_keyword_unreserved(arena, <>, source),
+YulAliasKeyword_Unreserved: YulAliasKeyword<'arena> = {
+    <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_yul_alias_keyword(arena, <>, source),
 }
 #[inline]
-YulAnonymousKeyword_Reserved: YulAnonymousKeyword_Reserved<'arena> = {
-    <l:@L> L_YulAnonymousKeyword_Reserved <r:@L> => new_yul_anonymous_keyword_reserved(arena, <>, source),
+YulAnonymousKeyword_Reserved: YulAnonymousKeyword<'arena> = {
+    <l:@L> L_YulAnonymousKeyword_Reserved <r:@L> => new_yul_anonymous_keyword(arena, <>, source),
 }
 #[inline]
-YulAnonymousKeyword_Unreserved: YulAnonymousKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_yul_anonymous_keyword_unreserved(arena, <>, source),
+YulAnonymousKeyword_Unreserved: YulAnonymousKeyword<'arena> = {
+    <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_yul_anonymous_keyword(arena, <>, source),
 }
 #[inline]
-YulApplyKeyword_Reserved: YulApplyKeyword_Reserved<'arena> = {
-    <l:@L> L_YulApplyKeyword_Reserved <r:@L> => new_yul_apply_keyword_reserved(arena, <>, source),
+YulApplyKeyword_Reserved: YulApplyKeyword<'arena> = {
+    <l:@L> L_YulApplyKeyword_Reserved <r:@L> => new_yul_apply_keyword(arena, <>, source),
 }
 #[inline]
-YulApplyKeyword_Unreserved: YulApplyKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_yul_apply_keyword_unreserved(arena, <>, source),
+YulApplyKeyword_Unreserved: YulApplyKeyword<'arena> = {
+    <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_yul_apply_keyword(arena, <>, source),
 }
 #[inline]
-YulAsKeyword_Reserved: YulAsKeyword_Reserved<'arena> = {
-    <l:@L> L_YulAsKeyword_Reserved <r:@L> => new_yul_as_keyword_reserved(arena, <>, source),
+YulAsKeyword_Reserved: YulAsKeyword<'arena> = {
+    <l:@L> L_YulAsKeyword_Reserved <r:@L> => new_yul_as_keyword(arena, <>, source),
 }
 #[inline]
-YulAsKeyword_Unreserved: YulAsKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_yul_as_keyword_unreserved(arena, <>, source),
+YulAsKeyword_Unreserved: YulAsKeyword<'arena> = {
+    <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_yul_as_keyword(arena, <>, source),
 }
 #[inline]
-YulAssemblyKeyword_Reserved: YulAssemblyKeyword_Reserved<'arena> = {
-    <l:@L> L_YulAssemblyKeyword_Reserved <r:@L> => new_yul_assembly_keyword_reserved(arena, <>, source),
+YulAssemblyKeyword_Reserved: YulAssemblyKeyword<'arena> = {
+    <l:@L> L_YulAssemblyKeyword_Reserved <r:@L> => new_yul_assembly_keyword(arena, <>, source),
 }
 #[inline]
-YulAssemblyKeyword_Unreserved: YulAssemblyKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_yul_assembly_keyword_unreserved(arena, <>, source),
+YulAssemblyKeyword_Unreserved: YulAssemblyKeyword<'arena> = {
+    <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_yul_assembly_keyword(arena, <>, source),
 }
 #[inline]
-YulAutoKeyword_Reserved: YulAutoKeyword_Reserved<'arena> = {
-    <l:@L> L_YulAutoKeyword_Reserved <r:@L> => new_yul_auto_keyword_reserved(arena, <>, source),
+YulAutoKeyword_Reserved: YulAutoKeyword<'arena> = {
+    <l:@L> L_YulAutoKeyword_Reserved <r:@L> => new_yul_auto_keyword(arena, <>, source),
 }
 #[inline]
-YulAutoKeyword_Unreserved: YulAutoKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_yul_auto_keyword_unreserved(arena, <>, source),
+YulAutoKeyword_Unreserved: YulAutoKeyword<'arena> = {
+    <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_yul_auto_keyword(arena, <>, source),
 }
 #[inline]
-YulBoolKeyword_Reserved: YulBoolKeyword_Reserved<'arena> = {
-    <l:@L> L_YulBoolKeyword_Reserved <r:@L> => new_yul_bool_keyword_reserved(arena, <>, source),
+YulBoolKeyword_Reserved: YulBoolKeyword<'arena> = {
+    <l:@L> L_YulBoolKeyword_Reserved <r:@L> => new_yul_bool_keyword(arena, <>, source),
 }
 #[inline]
-YulBoolKeyword_Unreserved: YulBoolKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulBoolKeyword_Unreserved <r:@L> => new_yul_bool_keyword_unreserved(arena, <>, source),
+YulBoolKeyword_Unreserved: YulBoolKeyword<'arena> = {
+    <l:@L> L_YulBoolKeyword_Unreserved <r:@L> => new_yul_bool_keyword(arena, <>, source),
 }
 #[inline]
-YulBreakKeyword_Reserved: YulBreakKeyword_Reserved<'arena> = {
-    <l:@L> L_YulBreakKeyword_Reserved <r:@L> => new_yul_break_keyword_reserved(arena, <>, source),
+YulBreakKeyword_Reserved: YulBreakKeyword<'arena> = {
+    <l:@L> L_YulBreakKeyword_Reserved <r:@L> => new_yul_break_keyword(arena, <>, source),
 }
 #[inline]
-YulBytesKeyword_Reserved: YulBytesKeyword_Reserved<'arena> = {
-    <l:@L> L_YulBytesKeyword_Reserved <r:@L> => new_yul_bytes_keyword_reserved(arena, <>, source),
+YulBytesKeyword_Reserved: YulBytesKeyword<'arena> = {
+    <l:@L> L_YulBytesKeyword_Reserved <r:@L> => new_yul_bytes_keyword(arena, <>, source),
 }
 #[inline]
-YulBytesKeyword_Unreserved: YulBytesKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_yul_bytes_keyword_unreserved(arena, <>, source),
+YulBytesKeyword_Unreserved: YulBytesKeyword<'arena> = {
+    <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_yul_bytes_keyword(arena, <>, source),
 }
 #[inline]
-YulCallDataKeyword_Reserved: YulCallDataKeyword_Reserved<'arena> = {
-    <l:@L> L_YulCallDataKeyword_Reserved <r:@L> => new_yul_call_data_keyword_reserved(arena, <>, source),
+YulCallDataKeyword_Reserved: YulCallDataKeyword<'arena> = {
+    <l:@L> L_YulCallDataKeyword_Reserved <r:@L> => new_yul_call_data_keyword(arena, <>, source),
 }
 #[inline]
-YulCallDataKeyword_Unreserved: YulCallDataKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_yul_call_data_keyword_unreserved(arena, <>, source),
+YulCallDataKeyword_Unreserved: YulCallDataKeyword<'arena> = {
+    <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_yul_call_data_keyword(arena, <>, source),
 }
 #[inline]
-YulCaseKeyword_Reserved: YulCaseKeyword_Reserved<'arena> = {
-    <l:@L> L_YulCaseKeyword_Reserved <r:@L> => new_yul_case_keyword_reserved(arena, <>, source),
+YulCaseKeyword_Reserved: YulCaseKeyword<'arena> = {
+    <l:@L> L_YulCaseKeyword_Reserved <r:@L> => new_yul_case_keyword(arena, <>, source),
 }
 #[inline]
-YulCatchKeyword_Reserved: YulCatchKeyword_Reserved<'arena> = {
-    <l:@L> L_YulCatchKeyword_Reserved <r:@L> => new_yul_catch_keyword_reserved(arena, <>, source),
+YulCatchKeyword_Reserved: YulCatchKeyword<'arena> = {
+    <l:@L> L_YulCatchKeyword_Reserved <r:@L> => new_yul_catch_keyword(arena, <>, source),
 }
 #[inline]
-YulCatchKeyword_Unreserved: YulCatchKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_yul_catch_keyword_unreserved(arena, <>, source),
+YulCatchKeyword_Unreserved: YulCatchKeyword<'arena> = {
+    <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_yul_catch_keyword(arena, <>, source),
 }
 #[inline]
-YulConstantKeyword_Reserved: YulConstantKeyword_Reserved<'arena> = {
-    <l:@L> L_YulConstantKeyword_Reserved <r:@L> => new_yul_constant_keyword_reserved(arena, <>, source),
+YulConstantKeyword_Reserved: YulConstantKeyword<'arena> = {
+    <l:@L> L_YulConstantKeyword_Reserved <r:@L> => new_yul_constant_keyword(arena, <>, source),
 }
 #[inline]
-YulConstantKeyword_Unreserved: YulConstantKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_yul_constant_keyword_unreserved(arena, <>, source),
+YulConstantKeyword_Unreserved: YulConstantKeyword<'arena> = {
+    <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_yul_constant_keyword(arena, <>, source),
 }
 #[inline]
-YulConstructorKeyword_Reserved: YulConstructorKeyword_Reserved<'arena> = {
-    <l:@L> L_YulConstructorKeyword_Reserved <r:@L> => new_yul_constructor_keyword_reserved(arena, <>, source),
+YulConstructorKeyword_Reserved: YulConstructorKeyword<'arena> = {
+    <l:@L> L_YulConstructorKeyword_Reserved <r:@L> => new_yul_constructor_keyword(arena, <>, source),
 }
 #[inline]
-YulConstructorKeyword_Unreserved: YulConstructorKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_yul_constructor_keyword_unreserved(arena, <>, source),
+YulConstructorKeyword_Unreserved: YulConstructorKeyword<'arena> = {
+    <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_yul_constructor_keyword(arena, <>, source),
 }
 #[inline]
-YulContinueKeyword_Reserved: YulContinueKeyword_Reserved<'arena> = {
-    <l:@L> L_YulContinueKeyword_Reserved <r:@L> => new_yul_continue_keyword_reserved(arena, <>, source),
+YulContinueKeyword_Reserved: YulContinueKeyword<'arena> = {
+    <l:@L> L_YulContinueKeyword_Reserved <r:@L> => new_yul_continue_keyword(arena, <>, source),
 }
 #[inline]
-YulContractKeyword_Reserved: YulContractKeyword_Reserved<'arena> = {
-    <l:@L> L_YulContractKeyword_Reserved <r:@L> => new_yul_contract_keyword_reserved(arena, <>, source),
+YulContractKeyword_Reserved: YulContractKeyword<'arena> = {
+    <l:@L> L_YulContractKeyword_Reserved <r:@L> => new_yul_contract_keyword(arena, <>, source),
 }
 #[inline]
-YulContractKeyword_Unreserved: YulContractKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_yul_contract_keyword_unreserved(arena, <>, source),
+YulContractKeyword_Unreserved: YulContractKeyword<'arena> = {
+    <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_yul_contract_keyword(arena, <>, source),
 }
 #[inline]
-YulCopyOfKeyword_Reserved: YulCopyOfKeyword_Reserved<'arena> = {
-    <l:@L> L_YulCopyOfKeyword_Reserved <r:@L> => new_yul_copy_of_keyword_reserved(arena, <>, source),
+YulCopyOfKeyword_Reserved: YulCopyOfKeyword<'arena> = {
+    <l:@L> L_YulCopyOfKeyword_Reserved <r:@L> => new_yul_copy_of_keyword(arena, <>, source),
 }
 #[inline]
-YulCopyOfKeyword_Unreserved: YulCopyOfKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_yul_copy_of_keyword_unreserved(arena, <>, source),
+YulCopyOfKeyword_Unreserved: YulCopyOfKeyword<'arena> = {
+    <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_yul_copy_of_keyword(arena, <>, source),
 }
 #[inline]
-YulDaysKeyword_Reserved: YulDaysKeyword_Reserved<'arena> = {
-    <l:@L> L_YulDaysKeyword_Reserved <r:@L> => new_yul_days_keyword_reserved(arena, <>, source),
+YulDaysKeyword_Reserved: YulDaysKeyword<'arena> = {
+    <l:@L> L_YulDaysKeyword_Reserved <r:@L> => new_yul_days_keyword(arena, <>, source),
 }
 #[inline]
-YulDaysKeyword_Unreserved: YulDaysKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_yul_days_keyword_unreserved(arena, <>, source),
+YulDaysKeyword_Unreserved: YulDaysKeyword<'arena> = {
+    <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_yul_days_keyword(arena, <>, source),
 }
 #[inline]
 YulDecimalLiteral: YulDecimalLiteral<'arena> = {
     <l:@L> L_YulDecimalLiteral <r:@L> => new_yul_decimal_literal(arena, <>, source),
 }
 #[inline]
-YulDefaultKeyword_Reserved: YulDefaultKeyword_Reserved<'arena> = {
-    <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword_reserved(arena, <>, source),
+YulDefaultKeyword_Reserved: YulDefaultKeyword<'arena> = {
+    <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword(arena, <>, source),
 }
 #[inline]
-YulDefineKeyword_Reserved: YulDefineKeyword_Reserved<'arena> = {
-    <l:@L> L_YulDefineKeyword_Reserved <r:@L> => new_yul_define_keyword_reserved(arena, <>, source),
+YulDefineKeyword_Reserved: YulDefineKeyword<'arena> = {
+    <l:@L> L_YulDefineKeyword_Reserved <r:@L> => new_yul_define_keyword(arena, <>, source),
 }
 #[inline]
-YulDefineKeyword_Unreserved: YulDefineKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_yul_define_keyword_unreserved(arena, <>, source),
+YulDefineKeyword_Unreserved: YulDefineKeyword<'arena> = {
+    <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_yul_define_keyword(arena, <>, source),
 }
 #[inline]
-YulDeleteKeyword_Reserved: YulDeleteKeyword_Reserved<'arena> = {
-    <l:@L> L_YulDeleteKeyword_Reserved <r:@L> => new_yul_delete_keyword_reserved(arena, <>, source),
+YulDeleteKeyword_Reserved: YulDeleteKeyword<'arena> = {
+    <l:@L> L_YulDeleteKeyword_Reserved <r:@L> => new_yul_delete_keyword(arena, <>, source),
 }
 #[inline]
-YulDeleteKeyword_Unreserved: YulDeleteKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_yul_delete_keyword_unreserved(arena, <>, source),
+YulDeleteKeyword_Unreserved: YulDeleteKeyword<'arena> = {
+    <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_yul_delete_keyword(arena, <>, source),
 }
 #[inline]
-YulDoKeyword_Reserved: YulDoKeyword_Reserved<'arena> = {
-    <l:@L> L_YulDoKeyword_Reserved <r:@L> => new_yul_do_keyword_reserved(arena, <>, source),
+YulDoKeyword_Reserved: YulDoKeyword<'arena> = {
+    <l:@L> L_YulDoKeyword_Reserved <r:@L> => new_yul_do_keyword(arena, <>, source),
 }
 #[inline]
-YulDoKeyword_Unreserved: YulDoKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_yul_do_keyword_unreserved(arena, <>, source),
+YulDoKeyword_Unreserved: YulDoKeyword<'arena> = {
+    <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_yul_do_keyword(arena, <>, source),
 }
 #[inline]
-YulElseKeyword_Reserved: YulElseKeyword_Reserved<'arena> = {
-    <l:@L> L_YulElseKeyword_Reserved <r:@L> => new_yul_else_keyword_reserved(arena, <>, source),
+YulElseKeyword_Reserved: YulElseKeyword<'arena> = {
+    <l:@L> L_YulElseKeyword_Reserved <r:@L> => new_yul_else_keyword(arena, <>, source),
 }
 #[inline]
-YulElseKeyword_Unreserved: YulElseKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_yul_else_keyword_unreserved(arena, <>, source),
+YulElseKeyword_Unreserved: YulElseKeyword<'arena> = {
+    <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_yul_else_keyword(arena, <>, source),
 }
 #[inline]
-YulEmitKeyword_Reserved: YulEmitKeyword_Reserved<'arena> = {
-    <l:@L> L_YulEmitKeyword_Reserved <r:@L> => new_yul_emit_keyword_reserved(arena, <>, source),
+YulEmitKeyword_Reserved: YulEmitKeyword<'arena> = {
+    <l:@L> L_YulEmitKeyword_Reserved <r:@L> => new_yul_emit_keyword(arena, <>, source),
 }
 #[inline]
-YulEmitKeyword_Unreserved: YulEmitKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_yul_emit_keyword_unreserved(arena, <>, source),
+YulEmitKeyword_Unreserved: YulEmitKeyword<'arena> = {
+    <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_yul_emit_keyword(arena, <>, source),
 }
 #[inline]
-YulEnumKeyword_Reserved: YulEnumKeyword_Reserved<'arena> = {
-    <l:@L> L_YulEnumKeyword_Reserved <r:@L> => new_yul_enum_keyword_reserved(arena, <>, source),
+YulEnumKeyword_Reserved: YulEnumKeyword<'arena> = {
+    <l:@L> L_YulEnumKeyword_Reserved <r:@L> => new_yul_enum_keyword(arena, <>, source),
 }
 #[inline]
-YulEnumKeyword_Unreserved: YulEnumKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_yul_enum_keyword_unreserved(arena, <>, source),
+YulEnumKeyword_Unreserved: YulEnumKeyword<'arena> = {
+    <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_yul_enum_keyword(arena, <>, source),
 }
 #[inline]
-YulEtherKeyword_Reserved: YulEtherKeyword_Reserved<'arena> = {
-    <l:@L> L_YulEtherKeyword_Reserved <r:@L> => new_yul_ether_keyword_reserved(arena, <>, source),
+YulEtherKeyword_Reserved: YulEtherKeyword<'arena> = {
+    <l:@L> L_YulEtherKeyword_Reserved <r:@L> => new_yul_ether_keyword(arena, <>, source),
 }
 #[inline]
-YulEtherKeyword_Unreserved: YulEtherKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_yul_ether_keyword_unreserved(arena, <>, source),
+YulEtherKeyword_Unreserved: YulEtherKeyword<'arena> = {
+    <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_yul_ether_keyword(arena, <>, source),
 }
 #[inline]
-YulEventKeyword_Reserved: YulEventKeyword_Reserved<'arena> = {
-    <l:@L> L_YulEventKeyword_Reserved <r:@L> => new_yul_event_keyword_reserved(arena, <>, source),
+YulEventKeyword_Reserved: YulEventKeyword<'arena> = {
+    <l:@L> L_YulEventKeyword_Reserved <r:@L> => new_yul_event_keyword(arena, <>, source),
 }
 #[inline]
-YulEventKeyword_Unreserved: YulEventKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_yul_event_keyword_unreserved(arena, <>, source),
+YulEventKeyword_Unreserved: YulEventKeyword<'arena> = {
+    <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_yul_event_keyword(arena, <>, source),
 }
 #[inline]
-YulExternalKeyword_Reserved: YulExternalKeyword_Reserved<'arena> = {
-    <l:@L> L_YulExternalKeyword_Reserved <r:@L> => new_yul_external_keyword_reserved(arena, <>, source),
+YulExternalKeyword_Reserved: YulExternalKeyword<'arena> = {
+    <l:@L> L_YulExternalKeyword_Reserved <r:@L> => new_yul_external_keyword(arena, <>, source),
 }
 #[inline]
-YulExternalKeyword_Unreserved: YulExternalKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_yul_external_keyword_unreserved(arena, <>, source),
+YulExternalKeyword_Unreserved: YulExternalKeyword<'arena> = {
+    <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_yul_external_keyword(arena, <>, source),
 }
 #[inline]
-YulFallbackKeyword_Reserved: YulFallbackKeyword_Reserved<'arena> = {
-    <l:@L> L_YulFallbackKeyword_Reserved <r:@L> => new_yul_fallback_keyword_reserved(arena, <>, source),
+YulFallbackKeyword_Reserved: YulFallbackKeyword<'arena> = {
+    <l:@L> L_YulFallbackKeyword_Reserved <r:@L> => new_yul_fallback_keyword(arena, <>, source),
 }
 #[inline]
-YulFallbackKeyword_Unreserved: YulFallbackKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_yul_fallback_keyword_unreserved(arena, <>, source),
+YulFallbackKeyword_Unreserved: YulFallbackKeyword<'arena> = {
+    <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_yul_fallback_keyword(arena, <>, source),
 }
 #[inline]
-YulFalseKeyword_Reserved: YulFalseKeyword_Reserved<'arena> = {
-    <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword_reserved(arena, <>, source),
+YulFalseKeyword_Reserved: YulFalseKeyword<'arena> = {
+    <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(arena, <>, source),
 }
 #[inline]
-YulFinalKeyword_Reserved: YulFinalKeyword_Reserved<'arena> = {
-    <l:@L> L_YulFinalKeyword_Reserved <r:@L> => new_yul_final_keyword_reserved(arena, <>, source),
+YulFinalKeyword_Reserved: YulFinalKeyword<'arena> = {
+    <l:@L> L_YulFinalKeyword_Reserved <r:@L> => new_yul_final_keyword(arena, <>, source),
 }
 #[inline]
-YulFinalKeyword_Unreserved: YulFinalKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_yul_final_keyword_unreserved(arena, <>, source),
+YulFinalKeyword_Unreserved: YulFinalKeyword<'arena> = {
+    <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_yul_final_keyword(arena, <>, source),
 }
 #[inline]
-YulFinneyKeyword_Reserved: YulFinneyKeyword_Reserved<'arena> = {
-    <l:@L> L_YulFinneyKeyword_Reserved <r:@L> => new_yul_finney_keyword_reserved(arena, <>, source),
+YulFinneyKeyword_Reserved: YulFinneyKeyword<'arena> = {
+    <l:@L> L_YulFinneyKeyword_Reserved <r:@L> => new_yul_finney_keyword(arena, <>, source),
 }
 #[inline]
-YulFinneyKeyword_Unreserved: YulFinneyKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_yul_finney_keyword_unreserved(arena, <>, source),
+YulFinneyKeyword_Unreserved: YulFinneyKeyword<'arena> = {
+    <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_yul_finney_keyword(arena, <>, source),
 }
 #[inline]
-YulFixedKeyword_Reserved: YulFixedKeyword_Reserved<'arena> = {
-    <l:@L> L_YulFixedKeyword_Reserved <r:@L> => new_yul_fixed_keyword_reserved(arena, <>, source),
+YulFixedKeyword_Reserved: YulFixedKeyword<'arena> = {
+    <l:@L> L_YulFixedKeyword_Reserved <r:@L> => new_yul_fixed_keyword(arena, <>, source),
 }
 #[inline]
-YulFixedKeyword_Unreserved: YulFixedKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_yul_fixed_keyword_unreserved(arena, <>, source),
+YulFixedKeyword_Unreserved: YulFixedKeyword<'arena> = {
+    <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_yul_fixed_keyword(arena, <>, source),
 }
 #[inline]
-YulForKeyword_Reserved: YulForKeyword_Reserved<'arena> = {
-    <l:@L> L_YulForKeyword_Reserved <r:@L> => new_yul_for_keyword_reserved(arena, <>, source),
+YulForKeyword_Reserved: YulForKeyword<'arena> = {
+    <l:@L> L_YulForKeyword_Reserved <r:@L> => new_yul_for_keyword(arena, <>, source),
 }
 #[inline]
-YulFunctionKeyword_Reserved: YulFunctionKeyword_Reserved<'arena> = {
-    <l:@L> L_YulFunctionKeyword_Reserved <r:@L> => new_yul_function_keyword_reserved(arena, <>, source),
+YulFunctionKeyword_Reserved: YulFunctionKeyword<'arena> = {
+    <l:@L> L_YulFunctionKeyword_Reserved <r:@L> => new_yul_function_keyword(arena, <>, source),
 }
 #[inline]
-YulGweiKeyword_Reserved: YulGweiKeyword_Reserved<'arena> = {
-    <l:@L> L_YulGweiKeyword_Reserved <r:@L> => new_yul_gwei_keyword_reserved(arena, <>, source),
+YulGweiKeyword_Reserved: YulGweiKeyword<'arena> = {
+    <l:@L> L_YulGweiKeyword_Reserved <r:@L> => new_yul_gwei_keyword(arena, <>, source),
 }
 #[inline]
-YulGweiKeyword_Unreserved: YulGweiKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_yul_gwei_keyword_unreserved(arena, <>, source),
+YulGweiKeyword_Unreserved: YulGweiKeyword<'arena> = {
+    <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_yul_gwei_keyword(arena, <>, source),
 }
 #[inline]
-YulHexKeyword_Reserved: YulHexKeyword_Reserved<'arena> = {
-    <l:@L> L_YulHexKeyword_Reserved <r:@L> => new_yul_hex_keyword_reserved(arena, <>, source),
+YulHexKeyword_Reserved: YulHexKeyword<'arena> = {
+    <l:@L> L_YulHexKeyword_Reserved <r:@L> => new_yul_hex_keyword(arena, <>, source),
 }
 #[inline]
 YulHexLiteral: YulHexLiteral<'arena> = {
     <l:@L> L_YulHexLiteral <r:@L> => new_yul_hex_literal(arena, <>, source),
 }
 #[inline]
-YulHoursKeyword_Reserved: YulHoursKeyword_Reserved<'arena> = {
-    <l:@L> L_YulHoursKeyword_Reserved <r:@L> => new_yul_hours_keyword_reserved(arena, <>, source),
+YulHoursKeyword_Reserved: YulHoursKeyword<'arena> = {
+    <l:@L> L_YulHoursKeyword_Reserved <r:@L> => new_yul_hours_keyword(arena, <>, source),
 }
 #[inline]
-YulHoursKeyword_Unreserved: YulHoursKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_hours_keyword_unreserved(arena, <>, source),
+YulHoursKeyword_Unreserved: YulHoursKeyword<'arena> = {
+    <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_hours_keyword(arena, <>, source),
 }
 #[inline]
 YulIdentifier: YulIdentifier<'arena> = {
     <l:@L> L_YulIdentifier <r:@L> => new_yul_identifier(arena, <>, source),
 }
 #[inline]
-YulIfKeyword_Reserved: YulIfKeyword_Reserved<'arena> = {
-    <l:@L> L_YulIfKeyword_Reserved <r:@L> => new_yul_if_keyword_reserved(arena, <>, source),
+YulIfKeyword_Reserved: YulIfKeyword<'arena> = {
+    <l:@L> L_YulIfKeyword_Reserved <r:@L> => new_yul_if_keyword(arena, <>, source),
 }
 #[inline]
-YulImmutableKeyword_Reserved: YulImmutableKeyword_Reserved<'arena> = {
-    <l:@L> L_YulImmutableKeyword_Reserved <r:@L> => new_yul_immutable_keyword_reserved(arena, <>, source),
+YulImmutableKeyword_Reserved: YulImmutableKeyword<'arena> = {
+    <l:@L> L_YulImmutableKeyword_Reserved <r:@L> => new_yul_immutable_keyword(arena, <>, source),
 }
 #[inline]
-YulImmutableKeyword_Unreserved: YulImmutableKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_yul_immutable_keyword_unreserved(arena, <>, source),
+YulImmutableKeyword_Unreserved: YulImmutableKeyword<'arena> = {
+    <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_yul_immutable_keyword(arena, <>, source),
 }
 #[inline]
-YulImplementsKeyword_Reserved: YulImplementsKeyword_Reserved<'arena> = {
-    <l:@L> L_YulImplementsKeyword_Reserved <r:@L> => new_yul_implements_keyword_reserved(arena, <>, source),
+YulImplementsKeyword_Reserved: YulImplementsKeyword<'arena> = {
+    <l:@L> L_YulImplementsKeyword_Reserved <r:@L> => new_yul_implements_keyword(arena, <>, source),
 }
 #[inline]
-YulImplementsKeyword_Unreserved: YulImplementsKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_yul_implements_keyword_unreserved(arena, <>, source),
+YulImplementsKeyword_Unreserved: YulImplementsKeyword<'arena> = {
+    <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_yul_implements_keyword(arena, <>, source),
 }
 #[inline]
-YulImportKeyword_Reserved: YulImportKeyword_Reserved<'arena> = {
-    <l:@L> L_YulImportKeyword_Reserved <r:@L> => new_yul_import_keyword_reserved(arena, <>, source),
+YulImportKeyword_Reserved: YulImportKeyword<'arena> = {
+    <l:@L> L_YulImportKeyword_Reserved <r:@L> => new_yul_import_keyword(arena, <>, source),
 }
 #[inline]
-YulImportKeyword_Unreserved: YulImportKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_yul_import_keyword_unreserved(arena, <>, source),
+YulImportKeyword_Unreserved: YulImportKeyword<'arena> = {
+    <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_yul_import_keyword(arena, <>, source),
 }
 #[inline]
-YulInKeyword_Reserved: YulInKeyword_Reserved<'arena> = {
-    <l:@L> L_YulInKeyword_Reserved <r:@L> => new_yul_in_keyword_reserved(arena, <>, source),
+YulInKeyword_Reserved: YulInKeyword<'arena> = {
+    <l:@L> L_YulInKeyword_Reserved <r:@L> => new_yul_in_keyword(arena, <>, source),
 }
 #[inline]
-YulInKeyword_Unreserved: YulInKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_yul_in_keyword_unreserved(arena, <>, source),
+YulInKeyword_Unreserved: YulInKeyword<'arena> = {
+    <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_yul_in_keyword(arena, <>, source),
 }
 #[inline]
-YulIndexedKeyword_Reserved: YulIndexedKeyword_Reserved<'arena> = {
-    <l:@L> L_YulIndexedKeyword_Reserved <r:@L> => new_yul_indexed_keyword_reserved(arena, <>, source),
+YulIndexedKeyword_Reserved: YulIndexedKeyword<'arena> = {
+    <l:@L> L_YulIndexedKeyword_Reserved <r:@L> => new_yul_indexed_keyword(arena, <>, source),
 }
 #[inline]
-YulIndexedKeyword_Unreserved: YulIndexedKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_yul_indexed_keyword_unreserved(arena, <>, source),
+YulIndexedKeyword_Unreserved: YulIndexedKeyword<'arena> = {
+    <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_yul_indexed_keyword(arena, <>, source),
 }
 #[inline]
-YulInlineKeyword_Reserved: YulInlineKeyword_Reserved<'arena> = {
-    <l:@L> L_YulInlineKeyword_Reserved <r:@L> => new_yul_inline_keyword_reserved(arena, <>, source),
+YulInlineKeyword_Reserved: YulInlineKeyword<'arena> = {
+    <l:@L> L_YulInlineKeyword_Reserved <r:@L> => new_yul_inline_keyword(arena, <>, source),
 }
 #[inline]
-YulInlineKeyword_Unreserved: YulInlineKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_yul_inline_keyword_unreserved(arena, <>, source),
+YulInlineKeyword_Unreserved: YulInlineKeyword<'arena> = {
+    <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_yul_inline_keyword(arena, <>, source),
 }
 #[inline]
-YulIntKeyword_Reserved: YulIntKeyword_Reserved<'arena> = {
-    <l:@L> L_YulIntKeyword_Reserved <r:@L> => new_yul_int_keyword_reserved(arena, <>, source),
+YulIntKeyword_Reserved: YulIntKeyword<'arena> = {
+    <l:@L> L_YulIntKeyword_Reserved <r:@L> => new_yul_int_keyword(arena, <>, source),
 }
 #[inline]
-YulIntKeyword_Unreserved: YulIntKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_yul_int_keyword_unreserved(arena, <>, source),
+YulIntKeyword_Unreserved: YulIntKeyword<'arena> = {
+    <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_yul_int_keyword(arena, <>, source),
 }
 #[inline]
-YulInterfaceKeyword_Reserved: YulInterfaceKeyword_Reserved<'arena> = {
-    <l:@L> L_YulInterfaceKeyword_Reserved <r:@L> => new_yul_interface_keyword_reserved(arena, <>, source),
+YulInterfaceKeyword_Reserved: YulInterfaceKeyword<'arena> = {
+    <l:@L> L_YulInterfaceKeyword_Reserved <r:@L> => new_yul_interface_keyword(arena, <>, source),
 }
 #[inline]
-YulInterfaceKeyword_Unreserved: YulInterfaceKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_yul_interface_keyword_unreserved(arena, <>, source),
+YulInterfaceKeyword_Unreserved: YulInterfaceKeyword<'arena> = {
+    <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_yul_interface_keyword(arena, <>, source),
 }
 #[inline]
-YulInternalKeyword_Reserved: YulInternalKeyword_Reserved<'arena> = {
-    <l:@L> L_YulInternalKeyword_Reserved <r:@L> => new_yul_internal_keyword_reserved(arena, <>, source),
+YulInternalKeyword_Reserved: YulInternalKeyword<'arena> = {
+    <l:@L> L_YulInternalKeyword_Reserved <r:@L> => new_yul_internal_keyword(arena, <>, source),
 }
 #[inline]
-YulInternalKeyword_Unreserved: YulInternalKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_yul_internal_keyword_unreserved(arena, <>, source),
+YulInternalKeyword_Unreserved: YulInternalKeyword<'arena> = {
+    <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_yul_internal_keyword(arena, <>, source),
 }
 #[inline]
-YulIsKeyword_Reserved: YulIsKeyword_Reserved<'arena> = {
-    <l:@L> L_YulIsKeyword_Reserved <r:@L> => new_yul_is_keyword_reserved(arena, <>, source),
+YulIsKeyword_Reserved: YulIsKeyword<'arena> = {
+    <l:@L> L_YulIsKeyword_Reserved <r:@L> => new_yul_is_keyword(arena, <>, source),
 }
 #[inline]
-YulIsKeyword_Unreserved: YulIsKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_is_keyword_unreserved(arena, <>, source),
+YulIsKeyword_Unreserved: YulIsKeyword<'arena> = {
+    <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_is_keyword(arena, <>, source),
 }
 #[inline]
-YulLeaveKeyword_Reserved: YulLeaveKeyword_Reserved<'arena> = {
-    <l:@L> L_YulLeaveKeyword_Reserved <r:@L> => new_yul_leave_keyword_reserved(arena, <>, source),
+YulLeaveKeyword_Reserved: YulLeaveKeyword<'arena> = {
+    <l:@L> L_YulLeaveKeyword_Reserved <r:@L> => new_yul_leave_keyword(arena, <>, source),
 }
 #[inline]
-YulLeaveKeyword_Unreserved: YulLeaveKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulLeaveKeyword_Unreserved <r:@L> => new_yul_leave_keyword_unreserved(arena, <>, source),
+YulLeaveKeyword_Unreserved: YulLeaveKeyword<'arena> = {
+    <l:@L> L_YulLeaveKeyword_Unreserved <r:@L> => new_yul_leave_keyword(arena, <>, source),
 }
 #[inline]
-YulLetKeyword_Reserved: YulLetKeyword_Reserved<'arena> = {
-    <l:@L> L_YulLetKeyword_Reserved <r:@L> => new_yul_let_keyword_reserved(arena, <>, source),
+YulLetKeyword_Reserved: YulLetKeyword<'arena> = {
+    <l:@L> L_YulLetKeyword_Reserved <r:@L> => new_yul_let_keyword(arena, <>, source),
 }
 #[inline]
-YulLibraryKeyword_Reserved: YulLibraryKeyword_Reserved<'arena> = {
-    <l:@L> L_YulLibraryKeyword_Reserved <r:@L> => new_yul_library_keyword_reserved(arena, <>, source),
+YulLibraryKeyword_Reserved: YulLibraryKeyword<'arena> = {
+    <l:@L> L_YulLibraryKeyword_Reserved <r:@L> => new_yul_library_keyword(arena, <>, source),
 }
 #[inline]
-YulLibraryKeyword_Unreserved: YulLibraryKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_library_keyword_unreserved(arena, <>, source),
+YulLibraryKeyword_Unreserved: YulLibraryKeyword<'arena> = {
+    <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_library_keyword(arena, <>, source),
 }
 #[inline]
-YulMacroKeyword_Reserved: YulMacroKeyword_Reserved<'arena> = {
-    <l:@L> L_YulMacroKeyword_Reserved <r:@L> => new_yul_macro_keyword_reserved(arena, <>, source),
+YulMacroKeyword_Reserved: YulMacroKeyword<'arena> = {
+    <l:@L> L_YulMacroKeyword_Reserved <r:@L> => new_yul_macro_keyword(arena, <>, source),
 }
 #[inline]
-YulMacroKeyword_Unreserved: YulMacroKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_macro_keyword_unreserved(arena, <>, source),
+YulMacroKeyword_Unreserved: YulMacroKeyword<'arena> = {
+    <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_macro_keyword(arena, <>, source),
 }
 #[inline]
-YulMappingKeyword_Reserved: YulMappingKeyword_Reserved<'arena> = {
-    <l:@L> L_YulMappingKeyword_Reserved <r:@L> => new_yul_mapping_keyword_reserved(arena, <>, source),
+YulMappingKeyword_Reserved: YulMappingKeyword<'arena> = {
+    <l:@L> L_YulMappingKeyword_Reserved <r:@L> => new_yul_mapping_keyword(arena, <>, source),
 }
 #[inline]
-YulMappingKeyword_Unreserved: YulMappingKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_yul_mapping_keyword_unreserved(arena, <>, source),
+YulMappingKeyword_Unreserved: YulMappingKeyword<'arena> = {
+    <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_yul_mapping_keyword(arena, <>, source),
 }
 #[inline]
-YulMatchKeyword_Reserved: YulMatchKeyword_Reserved<'arena> = {
-    <l:@L> L_YulMatchKeyword_Reserved <r:@L> => new_yul_match_keyword_reserved(arena, <>, source),
+YulMatchKeyword_Reserved: YulMatchKeyword<'arena> = {
+    <l:@L> L_YulMatchKeyword_Reserved <r:@L> => new_yul_match_keyword(arena, <>, source),
 }
 #[inline]
-YulMatchKeyword_Unreserved: YulMatchKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_yul_match_keyword_unreserved(arena, <>, source),
+YulMatchKeyword_Unreserved: YulMatchKeyword<'arena> = {
+    <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_yul_match_keyword(arena, <>, source),
 }
 #[inline]
-YulMemoryKeyword_Reserved: YulMemoryKeyword_Reserved<'arena> = {
-    <l:@L> L_YulMemoryKeyword_Reserved <r:@L> => new_yul_memory_keyword_reserved(arena, <>, source),
+YulMemoryKeyword_Reserved: YulMemoryKeyword<'arena> = {
+    <l:@L> L_YulMemoryKeyword_Reserved <r:@L> => new_yul_memory_keyword(arena, <>, source),
 }
 #[inline]
-YulMemoryKeyword_Unreserved: YulMemoryKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_yul_memory_keyword_unreserved(arena, <>, source),
+YulMemoryKeyword_Unreserved: YulMemoryKeyword<'arena> = {
+    <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_yul_memory_keyword(arena, <>, source),
 }
 #[inline]
-YulMinutesKeyword_Reserved: YulMinutesKeyword_Reserved<'arena> = {
-    <l:@L> L_YulMinutesKeyword_Reserved <r:@L> => new_yul_minutes_keyword_reserved(arena, <>, source),
+YulMinutesKeyword_Reserved: YulMinutesKeyword<'arena> = {
+    <l:@L> L_YulMinutesKeyword_Reserved <r:@L> => new_yul_minutes_keyword(arena, <>, source),
 }
 #[inline]
-YulMinutesKeyword_Unreserved: YulMinutesKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_yul_minutes_keyword_unreserved(arena, <>, source),
+YulMinutesKeyword_Unreserved: YulMinutesKeyword<'arena> = {
+    <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_yul_minutes_keyword(arena, <>, source),
 }
 #[inline]
-YulModifierKeyword_Reserved: YulModifierKeyword_Reserved<'arena> = {
-    <l:@L> L_YulModifierKeyword_Reserved <r:@L> => new_yul_modifier_keyword_reserved(arena, <>, source),
+YulModifierKeyword_Reserved: YulModifierKeyword<'arena> = {
+    <l:@L> L_YulModifierKeyword_Reserved <r:@L> => new_yul_modifier_keyword(arena, <>, source),
 }
 #[inline]
-YulModifierKeyword_Unreserved: YulModifierKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_yul_modifier_keyword_unreserved(arena, <>, source),
+YulModifierKeyword_Unreserved: YulModifierKeyword<'arena> = {
+    <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_yul_modifier_keyword(arena, <>, source),
 }
 #[inline]
-YulMutableKeyword_Reserved: YulMutableKeyword_Reserved<'arena> = {
-    <l:@L> L_YulMutableKeyword_Reserved <r:@L> => new_yul_mutable_keyword_reserved(arena, <>, source),
+YulMutableKeyword_Reserved: YulMutableKeyword<'arena> = {
+    <l:@L> L_YulMutableKeyword_Reserved <r:@L> => new_yul_mutable_keyword(arena, <>, source),
 }
 #[inline]
-YulMutableKeyword_Unreserved: YulMutableKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_yul_mutable_keyword_unreserved(arena, <>, source),
+YulMutableKeyword_Unreserved: YulMutableKeyword<'arena> = {
+    <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_yul_mutable_keyword(arena, <>, source),
 }
 #[inline]
-YulNewKeyword_Reserved: YulNewKeyword_Reserved<'arena> = {
-    <l:@L> L_YulNewKeyword_Reserved <r:@L> => new_yul_new_keyword_reserved(arena, <>, source),
+YulNewKeyword_Reserved: YulNewKeyword<'arena> = {
+    <l:@L> L_YulNewKeyword_Reserved <r:@L> => new_yul_new_keyword(arena, <>, source),
 }
 #[inline]
-YulNewKeyword_Unreserved: YulNewKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_yul_new_keyword_unreserved(arena, <>, source),
+YulNewKeyword_Unreserved: YulNewKeyword<'arena> = {
+    <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_yul_new_keyword(arena, <>, source),
 }
 #[inline]
-YulNullKeyword_Reserved: YulNullKeyword_Reserved<'arena> = {
-    <l:@L> L_YulNullKeyword_Reserved <r:@L> => new_yul_null_keyword_reserved(arena, <>, source),
+YulNullKeyword_Reserved: YulNullKeyword<'arena> = {
+    <l:@L> L_YulNullKeyword_Reserved <r:@L> => new_yul_null_keyword(arena, <>, source),
 }
 #[inline]
-YulNullKeyword_Unreserved: YulNullKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_yul_null_keyword_unreserved(arena, <>, source),
+YulNullKeyword_Unreserved: YulNullKeyword<'arena> = {
+    <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_yul_null_keyword(arena, <>, source),
 }
 #[inline]
-YulOfKeyword_Reserved: YulOfKeyword_Reserved<'arena> = {
-    <l:@L> L_YulOfKeyword_Reserved <r:@L> => new_yul_of_keyword_reserved(arena, <>, source),
+YulOfKeyword_Reserved: YulOfKeyword<'arena> = {
+    <l:@L> L_YulOfKeyword_Reserved <r:@L> => new_yul_of_keyword(arena, <>, source),
 }
 #[inline]
-YulOfKeyword_Unreserved: YulOfKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_yul_of_keyword_unreserved(arena, <>, source),
+YulOfKeyword_Unreserved: YulOfKeyword<'arena> = {
+    <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_yul_of_keyword(arena, <>, source),
 }
 #[inline]
-YulOverrideKeyword_Reserved: YulOverrideKeyword_Reserved<'arena> = {
-    <l:@L> L_YulOverrideKeyword_Reserved <r:@L> => new_yul_override_keyword_reserved(arena, <>, source),
+YulOverrideKeyword_Reserved: YulOverrideKeyword<'arena> = {
+    <l:@L> L_YulOverrideKeyword_Reserved <r:@L> => new_yul_override_keyword(arena, <>, source),
 }
 #[inline]
-YulOverrideKeyword_Unreserved: YulOverrideKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_yul_override_keyword_unreserved(arena, <>, source),
+YulOverrideKeyword_Unreserved: YulOverrideKeyword<'arena> = {
+    <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_yul_override_keyword(arena, <>, source),
 }
 #[inline]
-YulPartialKeyword_Reserved: YulPartialKeyword_Reserved<'arena> = {
-    <l:@L> L_YulPartialKeyword_Reserved <r:@L> => new_yul_partial_keyword_reserved(arena, <>, source),
+YulPartialKeyword_Reserved: YulPartialKeyword<'arena> = {
+    <l:@L> L_YulPartialKeyword_Reserved <r:@L> => new_yul_partial_keyword(arena, <>, source),
 }
 #[inline]
-YulPartialKeyword_Unreserved: YulPartialKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_yul_partial_keyword_unreserved(arena, <>, source),
+YulPartialKeyword_Unreserved: YulPartialKeyword<'arena> = {
+    <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_yul_partial_keyword(arena, <>, source),
 }
 #[inline]
-YulPayableKeyword_Reserved: YulPayableKeyword_Reserved<'arena> = {
-    <l:@L> L_YulPayableKeyword_Reserved <r:@L> => new_yul_payable_keyword_reserved(arena, <>, source),
+YulPayableKeyword_Reserved: YulPayableKeyword<'arena> = {
+    <l:@L> L_YulPayableKeyword_Reserved <r:@L> => new_yul_payable_keyword(arena, <>, source),
 }
 #[inline]
-YulPayableKeyword_Unreserved: YulPayableKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_yul_payable_keyword_unreserved(arena, <>, source),
+YulPayableKeyword_Unreserved: YulPayableKeyword<'arena> = {
+    <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_yul_payable_keyword(arena, <>, source),
 }
 #[inline]
-YulPragmaKeyword_Reserved: YulPragmaKeyword_Reserved<'arena> = {
-    <l:@L> L_YulPragmaKeyword_Reserved <r:@L> => new_yul_pragma_keyword_reserved(arena, <>, source),
+YulPragmaKeyword_Reserved: YulPragmaKeyword<'arena> = {
+    <l:@L> L_YulPragmaKeyword_Reserved <r:@L> => new_yul_pragma_keyword(arena, <>, source),
 }
 #[inline]
-YulPragmaKeyword_Unreserved: YulPragmaKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_yul_pragma_keyword_unreserved(arena, <>, source),
+YulPragmaKeyword_Unreserved: YulPragmaKeyword<'arena> = {
+    <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_yul_pragma_keyword(arena, <>, source),
 }
 #[inline]
-YulPrivateKeyword_Reserved: YulPrivateKeyword_Reserved<'arena> = {
-    <l:@L> L_YulPrivateKeyword_Reserved <r:@L> => new_yul_private_keyword_reserved(arena, <>, source),
+YulPrivateKeyword_Reserved: YulPrivateKeyword<'arena> = {
+    <l:@L> L_YulPrivateKeyword_Reserved <r:@L> => new_yul_private_keyword(arena, <>, source),
 }
 #[inline]
-YulPrivateKeyword_Unreserved: YulPrivateKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_yul_private_keyword_unreserved(arena, <>, source),
+YulPrivateKeyword_Unreserved: YulPrivateKeyword<'arena> = {
+    <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_yul_private_keyword(arena, <>, source),
 }
 #[inline]
-YulPromiseKeyword_Reserved: YulPromiseKeyword_Reserved<'arena> = {
-    <l:@L> L_YulPromiseKeyword_Reserved <r:@L> => new_yul_promise_keyword_reserved(arena, <>, source),
+YulPromiseKeyword_Reserved: YulPromiseKeyword<'arena> = {
+    <l:@L> L_YulPromiseKeyword_Reserved <r:@L> => new_yul_promise_keyword(arena, <>, source),
 }
 #[inline]
-YulPromiseKeyword_Unreserved: YulPromiseKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_yul_promise_keyword_unreserved(arena, <>, source),
+YulPromiseKeyword_Unreserved: YulPromiseKeyword<'arena> = {
+    <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_yul_promise_keyword(arena, <>, source),
 }
 #[inline]
-YulPublicKeyword_Reserved: YulPublicKeyword_Reserved<'arena> = {
-    <l:@L> L_YulPublicKeyword_Reserved <r:@L> => new_yul_public_keyword_reserved(arena, <>, source),
+YulPublicKeyword_Reserved: YulPublicKeyword<'arena> = {
+    <l:@L> L_YulPublicKeyword_Reserved <r:@L> => new_yul_public_keyword(arena, <>, source),
 }
 #[inline]
-YulPublicKeyword_Unreserved: YulPublicKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_yul_public_keyword_unreserved(arena, <>, source),
+YulPublicKeyword_Unreserved: YulPublicKeyword<'arena> = {
+    <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_yul_public_keyword(arena, <>, source),
 }
 #[inline]
-YulPureKeyword_Reserved: YulPureKeyword_Reserved<'arena> = {
-    <l:@L> L_YulPureKeyword_Reserved <r:@L> => new_yul_pure_keyword_reserved(arena, <>, source),
+YulPureKeyword_Reserved: YulPureKeyword<'arena> = {
+    <l:@L> L_YulPureKeyword_Reserved <r:@L> => new_yul_pure_keyword(arena, <>, source),
 }
 #[inline]
-YulPureKeyword_Unreserved: YulPureKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_yul_pure_keyword_unreserved(arena, <>, source),
+YulPureKeyword_Unreserved: YulPureKeyword<'arena> = {
+    <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_yul_pure_keyword(arena, <>, source),
 }
 #[inline]
-YulReceiveKeyword_Reserved: YulReceiveKeyword_Reserved<'arena> = {
-    <l:@L> L_YulReceiveKeyword_Reserved <r:@L> => new_yul_receive_keyword_reserved(arena, <>, source),
+YulReceiveKeyword_Reserved: YulReceiveKeyword<'arena> = {
+    <l:@L> L_YulReceiveKeyword_Reserved <r:@L> => new_yul_receive_keyword(arena, <>, source),
 }
 #[inline]
-YulReceiveKeyword_Unreserved: YulReceiveKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_yul_receive_keyword_unreserved(arena, <>, source),
+YulReceiveKeyword_Unreserved: YulReceiveKeyword<'arena> = {
+    <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_yul_receive_keyword(arena, <>, source),
 }
 #[inline]
-YulReferenceKeyword_Reserved: YulReferenceKeyword_Reserved<'arena> = {
-    <l:@L> L_YulReferenceKeyword_Reserved <r:@L> => new_yul_reference_keyword_reserved(arena, <>, source),
+YulReferenceKeyword_Reserved: YulReferenceKeyword<'arena> = {
+    <l:@L> L_YulReferenceKeyword_Reserved <r:@L> => new_yul_reference_keyword(arena, <>, source),
 }
 #[inline]
-YulReferenceKeyword_Unreserved: YulReferenceKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_yul_reference_keyword_unreserved(arena, <>, source),
+YulReferenceKeyword_Unreserved: YulReferenceKeyword<'arena> = {
+    <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_yul_reference_keyword(arena, <>, source),
 }
 #[inline]
-YulRelocatableKeyword_Reserved: YulRelocatableKeyword_Reserved<'arena> = {
-    <l:@L> L_YulRelocatableKeyword_Reserved <r:@L> => new_yul_relocatable_keyword_reserved(arena, <>, source),
+YulRelocatableKeyword_Reserved: YulRelocatableKeyword<'arena> = {
+    <l:@L> L_YulRelocatableKeyword_Reserved <r:@L> => new_yul_relocatable_keyword(arena, <>, source),
 }
 #[inline]
-YulRelocatableKeyword_Unreserved: YulRelocatableKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_yul_relocatable_keyword_unreserved(arena, <>, source),
+YulRelocatableKeyword_Unreserved: YulRelocatableKeyword<'arena> = {
+    <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_yul_relocatable_keyword(arena, <>, source),
 }
 #[inline]
-YulReturnsKeyword_Reserved: YulReturnsKeyword_Reserved<'arena> = {
-    <l:@L> L_YulReturnsKeyword_Reserved <r:@L> => new_yul_returns_keyword_reserved(arena, <>, source),
+YulReturnsKeyword_Reserved: YulReturnsKeyword<'arena> = {
+    <l:@L> L_YulReturnsKeyword_Reserved <r:@L> => new_yul_returns_keyword(arena, <>, source),
 }
 #[inline]
-YulReturnsKeyword_Unreserved: YulReturnsKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_yul_returns_keyword_unreserved(arena, <>, source),
+YulReturnsKeyword_Unreserved: YulReturnsKeyword<'arena> = {
+    <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_yul_returns_keyword(arena, <>, source),
 }
 #[inline]
-YulSealedKeyword_Reserved: YulSealedKeyword_Reserved<'arena> = {
-    <l:@L> L_YulSealedKeyword_Reserved <r:@L> => new_yul_sealed_keyword_reserved(arena, <>, source),
+YulSealedKeyword_Reserved: YulSealedKeyword<'arena> = {
+    <l:@L> L_YulSealedKeyword_Reserved <r:@L> => new_yul_sealed_keyword(arena, <>, source),
 }
 #[inline]
-YulSealedKeyword_Unreserved: YulSealedKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_yul_sealed_keyword_unreserved(arena, <>, source),
+YulSealedKeyword_Unreserved: YulSealedKeyword<'arena> = {
+    <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_yul_sealed_keyword(arena, <>, source),
 }
 #[inline]
-YulSecondsKeyword_Reserved: YulSecondsKeyword_Reserved<'arena> = {
-    <l:@L> L_YulSecondsKeyword_Reserved <r:@L> => new_yul_seconds_keyword_reserved(arena, <>, source),
+YulSecondsKeyword_Reserved: YulSecondsKeyword<'arena> = {
+    <l:@L> L_YulSecondsKeyword_Reserved <r:@L> => new_yul_seconds_keyword(arena, <>, source),
 }
 #[inline]
-YulSecondsKeyword_Unreserved: YulSecondsKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_yul_seconds_keyword_unreserved(arena, <>, source),
+YulSecondsKeyword_Unreserved: YulSecondsKeyword<'arena> = {
+    <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_yul_seconds_keyword(arena, <>, source),
 }
 #[inline]
-YulSizeOfKeyword_Reserved: YulSizeOfKeyword_Reserved<'arena> = {
-    <l:@L> L_YulSizeOfKeyword_Reserved <r:@L> => new_yul_size_of_keyword_reserved(arena, <>, source),
+YulSizeOfKeyword_Reserved: YulSizeOfKeyword<'arena> = {
+    <l:@L> L_YulSizeOfKeyword_Reserved <r:@L> => new_yul_size_of_keyword(arena, <>, source),
 }
 #[inline]
-YulSizeOfKeyword_Unreserved: YulSizeOfKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_yul_size_of_keyword_unreserved(arena, <>, source),
+YulSizeOfKeyword_Unreserved: YulSizeOfKeyword<'arena> = {
+    <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_yul_size_of_keyword(arena, <>, source),
 }
 #[inline]
-YulStaticKeyword_Reserved: YulStaticKeyword_Reserved<'arena> = {
-    <l:@L> L_YulStaticKeyword_Reserved <r:@L> => new_yul_static_keyword_reserved(arena, <>, source),
+YulStaticKeyword_Reserved: YulStaticKeyword<'arena> = {
+    <l:@L> L_YulStaticKeyword_Reserved <r:@L> => new_yul_static_keyword(arena, <>, source),
 }
 #[inline]
-YulStaticKeyword_Unreserved: YulStaticKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_yul_static_keyword_unreserved(arena, <>, source),
+YulStaticKeyword_Unreserved: YulStaticKeyword<'arena> = {
+    <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_yul_static_keyword(arena, <>, source),
 }
 #[inline]
-YulStorageKeyword_Reserved: YulStorageKeyword_Reserved<'arena> = {
-    <l:@L> L_YulStorageKeyword_Reserved <r:@L> => new_yul_storage_keyword_reserved(arena, <>, source),
+YulStorageKeyword_Reserved: YulStorageKeyword<'arena> = {
+    <l:@L> L_YulStorageKeyword_Reserved <r:@L> => new_yul_storage_keyword(arena, <>, source),
 }
 #[inline]
-YulStorageKeyword_Unreserved: YulStorageKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_yul_storage_keyword_unreserved(arena, <>, source),
+YulStorageKeyword_Unreserved: YulStorageKeyword<'arena> = {
+    <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_yul_storage_keyword(arena, <>, source),
 }
 #[inline]
-YulStringKeyword_Reserved: YulStringKeyword_Reserved<'arena> = {
-    <l:@L> L_YulStringKeyword_Reserved <r:@L> => new_yul_string_keyword_reserved(arena, <>, source),
+YulStringKeyword_Reserved: YulStringKeyword<'arena> = {
+    <l:@L> L_YulStringKeyword_Reserved <r:@L> => new_yul_string_keyword(arena, <>, source),
 }
 #[inline]
-YulStringKeyword_Unreserved: YulStringKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_yul_string_keyword_unreserved(arena, <>, source),
+YulStringKeyword_Unreserved: YulStringKeyword<'arena> = {
+    <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_yul_string_keyword(arena, <>, source),
 }
 #[inline]
-YulStructKeyword_Reserved: YulStructKeyword_Reserved<'arena> = {
-    <l:@L> L_YulStructKeyword_Reserved <r:@L> => new_yul_struct_keyword_reserved(arena, <>, source),
+YulStructKeyword_Reserved: YulStructKeyword<'arena> = {
+    <l:@L> L_YulStructKeyword_Reserved <r:@L> => new_yul_struct_keyword(arena, <>, source),
 }
 #[inline]
-YulStructKeyword_Unreserved: YulStructKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_struct_keyword_unreserved(arena, <>, source),
+YulStructKeyword_Unreserved: YulStructKeyword<'arena> = {
+    <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_struct_keyword(arena, <>, source),
 }
 #[inline]
-YulSuperKeyword_Reserved: YulSuperKeyword_Reserved<'arena> = {
-    <l:@L> L_YulSuperKeyword_Reserved <r:@L> => new_yul_super_keyword_reserved(arena, <>, source),
+YulSuperKeyword_Reserved: YulSuperKeyword<'arena> = {
+    <l:@L> L_YulSuperKeyword_Reserved <r:@L> => new_yul_super_keyword(arena, <>, source),
 }
 #[inline]
-YulSuperKeyword_Unreserved: YulSuperKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulSuperKeyword_Unreserved <r:@L> => new_yul_super_keyword_unreserved(arena, <>, source),
+YulSuperKeyword_Unreserved: YulSuperKeyword<'arena> = {
+    <l:@L> L_YulSuperKeyword_Unreserved <r:@L> => new_yul_super_keyword(arena, <>, source),
 }
 #[inline]
-YulSupportsKeyword_Reserved: YulSupportsKeyword_Reserved<'arena> = {
-    <l:@L> L_YulSupportsKeyword_Reserved <r:@L> => new_yul_supports_keyword_reserved(arena, <>, source),
+YulSupportsKeyword_Reserved: YulSupportsKeyword<'arena> = {
+    <l:@L> L_YulSupportsKeyword_Reserved <r:@L> => new_yul_supports_keyword(arena, <>, source),
 }
 #[inline]
-YulSupportsKeyword_Unreserved: YulSupportsKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_supports_keyword_unreserved(arena, <>, source),
+YulSupportsKeyword_Unreserved: YulSupportsKeyword<'arena> = {
+    <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_supports_keyword(arena, <>, source),
 }
 #[inline]
-YulSwitchKeyword_Reserved: YulSwitchKeyword_Reserved<'arena> = {
-    <l:@L> L_YulSwitchKeyword_Reserved <r:@L> => new_yul_switch_keyword_reserved(arena, <>, source),
+YulSwitchKeyword_Reserved: YulSwitchKeyword<'arena> = {
+    <l:@L> L_YulSwitchKeyword_Reserved <r:@L> => new_yul_switch_keyword(arena, <>, source),
 }
 #[inline]
-YulSzaboKeyword_Reserved: YulSzaboKeyword_Reserved<'arena> = {
-    <l:@L> L_YulSzaboKeyword_Reserved <r:@L> => new_yul_szabo_keyword_reserved(arena, <>, source),
+YulSzaboKeyword_Reserved: YulSzaboKeyword<'arena> = {
+    <l:@L> L_YulSzaboKeyword_Reserved <r:@L> => new_yul_szabo_keyword(arena, <>, source),
 }
 #[inline]
-YulSzaboKeyword_Unreserved: YulSzaboKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_szabo_keyword_unreserved(arena, <>, source),
+YulSzaboKeyword_Unreserved: YulSzaboKeyword<'arena> = {
+    <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_szabo_keyword(arena, <>, source),
 }
 #[inline]
-YulThisKeyword_Reserved: YulThisKeyword_Reserved<'arena> = {
-    <l:@L> L_YulThisKeyword_Reserved <r:@L> => new_yul_this_keyword_reserved(arena, <>, source),
+YulThisKeyword_Reserved: YulThisKeyword<'arena> = {
+    <l:@L> L_YulThisKeyword_Reserved <r:@L> => new_yul_this_keyword(arena, <>, source),
 }
 #[inline]
-YulThisKeyword_Unreserved: YulThisKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulThisKeyword_Unreserved <r:@L> => new_yul_this_keyword_unreserved(arena, <>, source),
+YulThisKeyword_Unreserved: YulThisKeyword<'arena> = {
+    <l:@L> L_YulThisKeyword_Unreserved <r:@L> => new_yul_this_keyword(arena, <>, source),
 }
 #[inline]
-YulThrowKeyword_Reserved: YulThrowKeyword_Reserved<'arena> = {
-    <l:@L> L_YulThrowKeyword_Reserved <r:@L> => new_yul_throw_keyword_reserved(arena, <>, source),
+YulThrowKeyword_Reserved: YulThrowKeyword<'arena> = {
+    <l:@L> L_YulThrowKeyword_Reserved <r:@L> => new_yul_throw_keyword(arena, <>, source),
 }
 #[inline]
-YulThrowKeyword_Unreserved: YulThrowKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_throw_keyword_unreserved(arena, <>, source),
+YulThrowKeyword_Unreserved: YulThrowKeyword<'arena> = {
+    <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_throw_keyword(arena, <>, source),
 }
 #[inline]
-YulTrueKeyword_Reserved: YulTrueKeyword_Reserved<'arena> = {
-    <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword_reserved(arena, <>, source),
+YulTrueKeyword_Reserved: YulTrueKeyword<'arena> = {
+    <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(arena, <>, source),
 }
 #[inline]
-YulTryKeyword_Reserved: YulTryKeyword_Reserved<'arena> = {
-    <l:@L> L_YulTryKeyword_Reserved <r:@L> => new_yul_try_keyword_reserved(arena, <>, source),
+YulTryKeyword_Reserved: YulTryKeyword<'arena> = {
+    <l:@L> L_YulTryKeyword_Reserved <r:@L> => new_yul_try_keyword(arena, <>, source),
 }
 #[inline]
-YulTryKeyword_Unreserved: YulTryKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_yul_try_keyword_unreserved(arena, <>, source),
+YulTryKeyword_Unreserved: YulTryKeyword<'arena> = {
+    <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_yul_try_keyword(arena, <>, source),
 }
 #[inline]
-YulTypeDefKeyword_Reserved: YulTypeDefKeyword_Reserved<'arena> = {
-    <l:@L> L_YulTypeDefKeyword_Reserved <r:@L> => new_yul_type_def_keyword_reserved(arena, <>, source),
+YulTypeDefKeyword_Reserved: YulTypeDefKeyword<'arena> = {
+    <l:@L> L_YulTypeDefKeyword_Reserved <r:@L> => new_yul_type_def_keyword(arena, <>, source),
 }
 #[inline]
-YulTypeDefKeyword_Unreserved: YulTypeDefKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_yul_type_def_keyword_unreserved(arena, <>, source),
+YulTypeDefKeyword_Unreserved: YulTypeDefKeyword<'arena> = {
+    <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_yul_type_def_keyword(arena, <>, source),
 }
 #[inline]
-YulTypeKeyword_Reserved: YulTypeKeyword_Reserved<'arena> = {
-    <l:@L> L_YulTypeKeyword_Reserved <r:@L> => new_yul_type_keyword_reserved(arena, <>, source),
+YulTypeKeyword_Reserved: YulTypeKeyword<'arena> = {
+    <l:@L> L_YulTypeKeyword_Reserved <r:@L> => new_yul_type_keyword(arena, <>, source),
 }
 #[inline]
-YulTypeKeyword_Unreserved: YulTypeKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_yul_type_keyword_unreserved(arena, <>, source),
+YulTypeKeyword_Unreserved: YulTypeKeyword<'arena> = {
+    <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_yul_type_keyword(arena, <>, source),
 }
 #[inline]
-YulTypeOfKeyword_Reserved: YulTypeOfKeyword_Reserved<'arena> = {
-    <l:@L> L_YulTypeOfKeyword_Reserved <r:@L> => new_yul_type_of_keyword_reserved(arena, <>, source),
+YulTypeOfKeyword_Reserved: YulTypeOfKeyword<'arena> = {
+    <l:@L> L_YulTypeOfKeyword_Reserved <r:@L> => new_yul_type_of_keyword(arena, <>, source),
 }
 #[inline]
-YulTypeOfKeyword_Unreserved: YulTypeOfKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_yul_type_of_keyword_unreserved(arena, <>, source),
+YulTypeOfKeyword_Unreserved: YulTypeOfKeyword<'arena> = {
+    <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_yul_type_of_keyword(arena, <>, source),
 }
 #[inline]
-YulUfixedKeyword_Reserved: YulUfixedKeyword_Reserved<'arena> = {
-    <l:@L> L_YulUfixedKeyword_Reserved <r:@L> => new_yul_ufixed_keyword_reserved(arena, <>, source),
+YulUfixedKeyword_Reserved: YulUfixedKeyword<'arena> = {
+    <l:@L> L_YulUfixedKeyword_Reserved <r:@L> => new_yul_ufixed_keyword(arena, <>, source),
 }
 #[inline]
-YulUfixedKeyword_Unreserved: YulUfixedKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_yul_ufixed_keyword_unreserved(arena, <>, source),
+YulUfixedKeyword_Unreserved: YulUfixedKeyword<'arena> = {
+    <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_yul_ufixed_keyword(arena, <>, source),
 }
 #[inline]
-YulUintKeyword_Reserved: YulUintKeyword_Reserved<'arena> = {
-    <l:@L> L_YulUintKeyword_Reserved <r:@L> => new_yul_uint_keyword_reserved(arena, <>, source),
+YulUintKeyword_Reserved: YulUintKeyword<'arena> = {
+    <l:@L> L_YulUintKeyword_Reserved <r:@L> => new_yul_uint_keyword(arena, <>, source),
 }
 #[inline]
-YulUintKeyword_Unreserved: YulUintKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_yul_uint_keyword_unreserved(arena, <>, source),
+YulUintKeyword_Unreserved: YulUintKeyword<'arena> = {
+    <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_yul_uint_keyword(arena, <>, source),
 }
 #[inline]
-YulUncheckedKeyword_Reserved: YulUncheckedKeyword_Reserved<'arena> = {
-    <l:@L> L_YulUncheckedKeyword_Reserved <r:@L> => new_yul_unchecked_keyword_reserved(arena, <>, source),
+YulUncheckedKeyword_Reserved: YulUncheckedKeyword<'arena> = {
+    <l:@L> L_YulUncheckedKeyword_Reserved <r:@L> => new_yul_unchecked_keyword(arena, <>, source),
 }
 #[inline]
-YulUncheckedKeyword_Unreserved: YulUncheckedKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_yul_unchecked_keyword_unreserved(arena, <>, source),
+YulUncheckedKeyword_Unreserved: YulUncheckedKeyword<'arena> = {
+    <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_yul_unchecked_keyword(arena, <>, source),
 }
 #[inline]
-YulUsingKeyword_Reserved: YulUsingKeyword_Reserved<'arena> = {
-    <l:@L> L_YulUsingKeyword_Reserved <r:@L> => new_yul_using_keyword_reserved(arena, <>, source),
+YulUsingKeyword_Reserved: YulUsingKeyword<'arena> = {
+    <l:@L> L_YulUsingKeyword_Reserved <r:@L> => new_yul_using_keyword(arena, <>, source),
 }
 #[inline]
-YulUsingKeyword_Unreserved: YulUsingKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_yul_using_keyword_unreserved(arena, <>, source),
+YulUsingKeyword_Unreserved: YulUsingKeyword<'arena> = {
+    <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_yul_using_keyword(arena, <>, source),
 }
 #[inline]
-YulVarKeyword_Reserved: YulVarKeyword_Reserved<'arena> = {
-    <l:@L> L_YulVarKeyword_Reserved <r:@L> => new_yul_var_keyword_reserved(arena, <>, source),
+YulVarKeyword_Reserved: YulVarKeyword<'arena> = {
+    <l:@L> L_YulVarKeyword_Reserved <r:@L> => new_yul_var_keyword(arena, <>, source),
 }
 #[inline]
-YulVarKeyword_Unreserved: YulVarKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_yul_var_keyword_unreserved(arena, <>, source),
+YulVarKeyword_Unreserved: YulVarKeyword<'arena> = {
+    <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_yul_var_keyword(arena, <>, source),
 }
 #[inline]
-YulViewKeyword_Reserved: YulViewKeyword_Reserved<'arena> = {
-    <l:@L> L_YulViewKeyword_Reserved <r:@L> => new_yul_view_keyword_reserved(arena, <>, source),
+YulViewKeyword_Reserved: YulViewKeyword<'arena> = {
+    <l:@L> L_YulViewKeyword_Reserved <r:@L> => new_yul_view_keyword(arena, <>, source),
 }
 #[inline]
-YulViewKeyword_Unreserved: YulViewKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_yul_view_keyword_unreserved(arena, <>, source),
+YulViewKeyword_Unreserved: YulViewKeyword<'arena> = {
+    <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_yul_view_keyword(arena, <>, source),
 }
 #[inline]
-YulVirtualKeyword_Reserved: YulVirtualKeyword_Reserved<'arena> = {
-    <l:@L> L_YulVirtualKeyword_Reserved <r:@L> => new_yul_virtual_keyword_reserved(arena, <>, source),
+YulVirtualKeyword_Reserved: YulVirtualKeyword<'arena> = {
+    <l:@L> L_YulVirtualKeyword_Reserved <r:@L> => new_yul_virtual_keyword(arena, <>, source),
 }
 #[inline]
-YulVirtualKeyword_Unreserved: YulVirtualKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_yul_virtual_keyword_unreserved(arena, <>, source),
+YulVirtualKeyword_Unreserved: YulVirtualKeyword<'arena> = {
+    <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_yul_virtual_keyword(arena, <>, source),
 }
 #[inline]
-YulWeeksKeyword_Reserved: YulWeeksKeyword_Reserved<'arena> = {
-    <l:@L> L_YulWeeksKeyword_Reserved <r:@L> => new_yul_weeks_keyword_reserved(arena, <>, source),
+YulWeeksKeyword_Reserved: YulWeeksKeyword<'arena> = {
+    <l:@L> L_YulWeeksKeyword_Reserved <r:@L> => new_yul_weeks_keyword(arena, <>, source),
 }
 #[inline]
-YulWeeksKeyword_Unreserved: YulWeeksKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_yul_weeks_keyword_unreserved(arena, <>, source),
+YulWeeksKeyword_Unreserved: YulWeeksKeyword<'arena> = {
+    <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_yul_weeks_keyword(arena, <>, source),
 }
 #[inline]
-YulWeiKeyword_Reserved: YulWeiKeyword_Reserved<'arena> = {
-    <l:@L> L_YulWeiKeyword_Reserved <r:@L> => new_yul_wei_keyword_reserved(arena, <>, source),
+YulWeiKeyword_Reserved: YulWeiKeyword<'arena> = {
+    <l:@L> L_YulWeiKeyword_Reserved <r:@L> => new_yul_wei_keyword(arena, <>, source),
 }
 #[inline]
-YulWeiKeyword_Unreserved: YulWeiKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_yul_wei_keyword_unreserved(arena, <>, source),
+YulWeiKeyword_Unreserved: YulWeiKeyword<'arena> = {
+    <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_yul_wei_keyword(arena, <>, source),
 }
 #[inline]
-YulWhileKeyword_Reserved: YulWhileKeyword_Reserved<'arena> = {
-    <l:@L> L_YulWhileKeyword_Reserved <r:@L> => new_yul_while_keyword_reserved(arena, <>, source),
+YulWhileKeyword_Reserved: YulWhileKeyword<'arena> = {
+    <l:@L> L_YulWhileKeyword_Reserved <r:@L> => new_yul_while_keyword(arena, <>, source),
 }
 #[inline]
-YulWhileKeyword_Unreserved: YulWhileKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_yul_while_keyword_unreserved(arena, <>, source),
+YulWhileKeyword_Unreserved: YulWhileKeyword<'arena> = {
+    <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_yul_while_keyword(arena, <>, source),
 }
 #[inline]
-YulYearsKeyword_Reserved: YulYearsKeyword_Reserved<'arena> = {
-    <l:@L> L_YulYearsKeyword_Reserved <r:@L> => new_yul_years_keyword_reserved(arena, <>, source),
+YulYearsKeyword_Reserved: YulYearsKeyword<'arena> = {
+    <l:@L> L_YulYearsKeyword_Reserved <r:@L> => new_yul_years_keyword(arena, <>, source),
 }
 #[inline]
-YulYearsKeyword_Unreserved: YulYearsKeyword_Unreserved<'arena> = {
-    <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_yul_years_keyword_unreserved(arena, <>, source),
+YulYearsKeyword_Unreserved: YulYearsKeyword<'arena> = {
+    <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_yul_years_keyword(arena, <>, source),
 }
 
 
@@ -5331,7 +5423,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
             <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(arena, <>),
          
             <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(arena, <>),
-        
+         
     };
     // We simplifiy all these levels of expressions into a single one, there's no need
     // for precedence here
@@ -5356,26 +5448,14 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression5<Ident>: Expression<'arena> = {
          
-            <_operator: PlusPlus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: MinusMinus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: Tilde>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: Bang>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: Minus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: DeleteKeyword>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
+            <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
          
             <Expression: Expression1<"True", Ident>>  => <>,
         
     };
     Expression6<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression6<"True">>  <_operator: PlusPlus>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
-         
-            <_Expression: Expression6<"True">>  <_operator: MinusMinus>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
+            <_Expression: Expression6<Ident>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
          
             <Expression: Expression5<Ident>>  => <>,
         
@@ -5389,31 +5469,21 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression8<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression8<"True">>  <_operator: Asterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
-         
-            <_Expression: Expression8<"True">>  <_operator: Slash>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
-         
-            <_Expression: Expression8<"True">>  <_operator: Percent>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
+            <_Expression: Expression8<"True">>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
          
             <Expression: Expression7<Ident>>  => <>,
         
     };
     Expression9<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression9<"True">>  <_operator: Plus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
-         
-            <_Expression: Expression9<"True">>  <_operator: Minus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
+            <_Expression: Expression9<"True">>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
          
             <Expression: Expression8<Ident>>  => <>,
         
     };
     Expression10<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
-         
-            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
-         
-            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
+            <_Expression: Expression10<"True">>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
          
             <Expression: Expression9<Ident>>  => <>,
         
@@ -5441,22 +5511,14 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression14<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression14<"True">>  <_operator: LessThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
-         
-            <_Expression: Expression14<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
-         
-            <_Expression: Expression14<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
-         
-            <_Expression: Expression14<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
+            <_Expression: Expression14<"True">>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
          
             <Expression: Expression13<Ident>>  => <>,
         
     };
     Expression15<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression15<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
-         
-            <_Expression: Expression15<"True">>  <_operator: BangEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
+            <_Expression: Expression15<"True">>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
          
             <Expression: Expression14<Ident>>  => <>,
         
@@ -5477,7 +5539,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression18<Ident>: Expression<'arena> = {
         // TODO: Not really sure the associativity is correct, we need to check
-
+         
             <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18<Ident>>  => new_expression_conditional_expression(arena, new_conditional_expression(arena, <>)),
          
             <Expression: Expression17<Ident>>  => <>,
@@ -5485,29 +5547,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression19<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression19<"True">>  <_operator: Equal>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: BarEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
+            <_Expression: Expression19<"True">>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
             <Expression: Expression18<Ident>>  => <>,
         

@@ -10,7 +10,9 @@ use crate::lexer::builder::LexerModelBuilder;
 #[derive(Clone, Debug, Serialize)]
 pub struct LexerModel {
     pub contexts: Vec<LexicalContext>,
-    pub lexeme_kinds: BTreeSet<String>,
+    // A lexeme kind can refer to a more general Terminal type on the AST.
+    // The first element is the lexeme kind, the second is the terminal it maps to.
+    pub lexeme_kinds: BTreeSet<(String, String)>,
     pub unreserved_keywords: BTreeSet<String>,
 }
 

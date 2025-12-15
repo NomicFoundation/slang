@@ -83,17 +83,17 @@ impl LexerModelBuilder {
             .collect()
     }
 
-    fn collect_lexeme_kinds(contexts: &Vec<LexicalContext>) -> BTreeSet<String> {
+    fn collect_lexeme_kinds(contexts: &Vec<LexicalContext>) -> BTreeSet<(String, String)> {
         let mut kinds = BTreeSet::new();
 
         for context in contexts {
             for lexeme in &context.lexemes {
                 match lexeme {
                     Lexeme::Trivia { kind, .. } => {
-                        kinds.insert(kind.clone());
+                        kinds.insert((kind.clone(), kind.clone()));
                     }
                     Lexeme::Token { kind, .. } => {
-                        kinds.insert(kind.clone());
+                        kinds.insert((kind.clone(), kind.clone()));
                     }
                     Lexeme::Keyword { kind, reserved, .. } => {
                         if match reserved {
@@ -103,11 +103,11 @@ impl LexerModelBuilder {
                             Some(VersionSpecifier::Till { .. }) => true,
                             Some(VersionSpecifier::Range { .. }) => true,
                         } {
-                            kinds.insert(format!("{kind}_Reserved"));
+                            kinds.insert((format!("{kind}_Reserved"), kind.clone()));
                         }
 
                         if reserved.is_some() {
-                            kinds.insert(format!("{kind}_Unreserved"));
+                            kinds.insert((format!("{kind}_Unreserved"), kind.clone()));
                         }
                     }
                 }

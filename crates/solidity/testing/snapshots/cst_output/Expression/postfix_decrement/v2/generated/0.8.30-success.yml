@@ -3,20 +3,18 @@
 PostfixExpression(
     PostfixExpressionStruct {
         operand: Identifier(
-            TerminalType {
-                value: "foo",
+            Identifier {
                 l: 0,
                 r: 3,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),
-        operator: TerminalType {
-            value: "--",
-            l: 3,
-            r: 5,
-            kind: MinusMinus,
-            phantom: PhantomData<&()>,
-        },
+        expression_postfix_expression_operator: MinusMinus(
+            MinusMinus {
+                l: 3,
+                r: 5,
+                phantom: PhantomData<&()>,
+            },
+        ),
     },
 )

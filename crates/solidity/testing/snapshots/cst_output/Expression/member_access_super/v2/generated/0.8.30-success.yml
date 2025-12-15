@@ -3,27 +3,21 @@
 MemberAccessExpression(
     MemberAccessExpressionStruct {
         operand: SuperKeyword(
-            TerminalType {
-                value: "super",
+            SuperKeyword {
                 l: 0,
                 r: 5,
-                kind: SuperKeyword_Reserved,
                 phantom: PhantomData<&()>,
             },
         ),
-        period: TerminalType {
-            value: ".",
+        period: Period {
             l: 5,
             r: 6,
-            kind: Period,
             phantom: PhantomData<&()>,
         },
         member: Identifier(
-            TerminalType {
-                value: "x",
+            Identifier {
                 l: 6,
                 r: 7,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),

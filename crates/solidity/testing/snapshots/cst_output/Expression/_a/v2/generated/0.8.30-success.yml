@@ -1,11 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Identifier(
-    TerminalType {
-        value: "_a",
+    Identifier {
         l: 0,
         r: 2,
-        kind: Identifier,
         phantom: PhantomData<&()>,
     },
 )

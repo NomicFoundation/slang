@@ -2,11 +2,9 @@
 
 ElementaryType(
     UfixedKeyword(
-        TerminalType {
-            value: "ufixed",
+        UfixedKeyword {
             l: 0,
             r: 6,
-            kind: UfixedKeyword_Reserved,
             phantom: PhantomData<&()>,
         },
     ),

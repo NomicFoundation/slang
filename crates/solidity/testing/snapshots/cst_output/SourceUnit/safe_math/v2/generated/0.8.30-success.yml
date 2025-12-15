@@ -5,53 +5,41 @@ SourceUnitStruct {
         elements: [
             LibraryDefinition(
                 LibraryDefinitionStruct {
-                    library_keyword: TerminalType {
-                        value: "library",
+                    library_keyword: LibraryKeyword {
                         l: 0,
                         r: 7,
-                        kind: LibraryKeyword_Reserved,
                         phantom: PhantomData<&()>,
                     },
-                    name: TerminalType {
-                        value: "SafeMath",
+                    name: Identifier {
                         l: 8,
                         r: 16,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
-                    open_brace: TerminalType {
-                        value: "{",
+                    open_brace: OpenBrace {
                         l: 17,
                         r: 18,
-                        kind: OpenBrace,
                         phantom: PhantomData<&()>,
                     },
                     members: LibraryMembers {
                         elements: [
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
-                                    function_keyword: TerminalType {
-                                        value: "function",
+                                    function_keyword: FunctionKeyword {
                                         l: 21,
                                         r: 29,
-                                        kind: FunctionKeyword_Reserved,
                                         phantom: PhantomData<&()>,
                                     },
                                     name: Identifier(
-                                        TerminalType {
-                                            value: "tryAdd",
+                                        Identifier {
                                             l: 30,
                                             r: 36,
-                                            kind: Identifier,
                                             phantom: PhantomData<&()>,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
-                                        open_paren: TerminalType {
-                                            value: "(",
+                                        open_paren: OpenParen {
                                             l: 36,
                                             r: 37,
-                                            kind: OpenParen,
                                             phantom: PhantomData<&()>,
                                         },
                                         parameters: Parameters {
@@ -59,22 +47,18 @@ SourceUnitStruct {
                                                 ParameterStruct {
                                                     type_name: ElementaryType(
                                                         UintKeyword(
-                                                            TerminalType {
-                                                                value: "uint256",
+                                                            UintKeyword {
                                                                 l: 37,
                                                                 r: 44,
-                                                                kind: UintKeyword_Reserved,
                                                                 phantom: PhantomData<&()>,
                                                             },
                                                         ),
                                                     ),
                                                     storage_location: None,
                                                     name: Some(
-                                                        TerminalType {
-                                                            value: "a",
+                                                        Identifier {
                                                             l: 45,
                                                             r: 46,
-                                                            kind: Identifier,
                                                             phantom: PhantomData<&()>,
                                                         },
                                                     ),
@@ -82,53 +66,43 @@ SourceUnitStruct {
                                                 ParameterStruct {
                                                     type_name: ElementaryType(
                                                         UintKeyword(
-                                                            TerminalType {
-                                                                value: "uint256",
+                                                            UintKeyword {
                                                                 l: 48,
                                                                 r: 55,
-                                                                kind: UintKeyword_Reserved,
                                                                 phantom: PhantomData<&()>,
                                                             },
                                                         ),
                                                     ),
                                                     storage_location: None,
                                                     name: Some(
-                                                        TerminalType {
-                                                            value: "b",
+                                                        Identifier {
                                                             l: 56,
                                                             r: 57,
-                                                            kind: Identifier,
                                                             phantom: PhantomData<&()>,
                                                         },
                                                     ),
                                                 },
                                             ],
                                         },
-                                        close_paren: TerminalType {
-                                            value: ")",
+                                        close_paren: CloseParen {
                                             l: 57,
                                             r: 58,
-                                            kind: CloseParen,
                                             phantom: PhantomData<&()>,
                                         },
                                     },
                                     attributes: FunctionAttributes {
                                         elements: [
                                             InternalKeyword(
-                                                TerminalType {
-                                                    value: "internal",
+                                                InternalKeyword {
                                                     l: 59,
                                                     r: 67,
-                                                    kind: InternalKeyword_Reserved,
                                                     phantom: PhantomData<&()>,
                                                 },
                                             ),
                                             PureKeyword(
-                                                TerminalType {
-                                                    value: "pure",
+                                                PureKeyword {
                                                     l: 68,
                                                     r: 72,
-                                                    kind: PureKeyword_Reserved,
                                                     phantom: PhantomData<&()>,
                                                 },
                                             ),
@@ -136,19 +110,15 @@ SourceUnitStruct {
                                     },
                                     returns: Some(
                                         ReturnsDeclarationStruct {
-                                            returns_keyword: TerminalType {
-                                                value: "returns",
+                                            returns_keyword: ReturnsKeyword {
                                                 l: 73,
                                                 r: 80,
-                                                kind: ReturnsKeyword_Reserved,
                                                 phantom: PhantomData<&()>,
                                             },
                                             variables: ParametersDeclarationStruct {
-                                                open_paren: TerminalType {
-                                                    value: "(",
+                                                open_paren: OpenParen {
                                                     l: 81,
                                                     r: 82,
-                                                    kind: OpenParen,
                                                     phantom: PhantomData<&()>,
                                                 },
                                                 parameters: Parameters {
@@ -156,11 +126,9 @@ SourceUnitStruct {
                                                         ParameterStruct {
                                                             type_name: ElementaryType(
                                                                 BoolKeyword(
-                                                                    TerminalType {
-                                                                        value: "bool",
+                                                                    BoolKeyword {
                                                                         l: 82,
                                                                         r: 86,
-                                                                        kind: BoolKeyword_Reserved,
                                                                         phantom: PhantomData<&()>,
                                                                     },
                                                                 ),
@@ -171,11 +139,9 @@ SourceUnitStruct {
                                                         ParameterStruct {
                                                             type_name: ElementaryType(
                                                                 UintKeyword(
-                                                                    TerminalType {
-                                                                        value: "uint256",
+                                                                    UintKeyword {
                                                                         l: 88,
                                                                         r: 95,
-                                                                        kind: UintKeyword_Reserved,
                                                                         phantom: PhantomData<&()>,
                                                                     },
                                                                 ),
@@ -185,11 +151,9 @@ SourceUnitStruct {
                                                         },
                                                     ],
                                                 },
-                                                close_paren: TerminalType {
-                                                    value: ")",
+                                                close_paren: CloseParen {
                                                     l: 95,
                                                     r: 96,
-                                                    kind: CloseParen,
                                                     phantom: PhantomData<&()>,
                                                 },
                                             },
@@ -197,30 +161,24 @@ SourceUnitStruct {
                                     ),
                                     body: Block(
                                         BlockStruct {
-                                            open_brace: TerminalType {
-                                                value: "{",
+                                            open_brace: OpenBrace {
                                                 l: 97,
                                                 r: 98,
-                                                kind: OpenBrace,
                                                 phantom: PhantomData<&()>,
                                             },
                                             statements: Statements {
                                                 elements: [
                                                     UncheckedBlock(
                                                         UncheckedBlockStruct {
-                                                            unchecked_keyword: TerminalType {
-                                                                value: "unchecked",
+                                                            unchecked_keyword: UncheckedKeyword {
                                                                 l: 103,
                                                                 r: 112,
-                                                                kind: UncheckedKeyword_Reserved,
                                                                 phantom: PhantomData<&()>,
                                                             },
                                                             block: BlockStruct {
-                                                                open_brace: TerminalType {
-                                                                    value: "{",
+                                                                open_brace: OpenBrace {
                                                                     l: 113,
                                                                     r: 114,
-                                                                    kind: OpenBrace,
                                                                     phantom: PhantomData<&()>,
                                                                 },
                                                                 statements: Statements {
@@ -231,58 +189,48 @@ SourceUnitStruct {
                                                                                     variable_type: TypeName(
                                                                                         ElementaryType(
                                                                                             UintKeyword(
-                                                                                                TerminalType {
-                                                                                                    value: "uint256",
+                                                                                                UintKeyword {
                                                                                                     l: 121,
                                                                                                     r: 128,
-                                                                                                    kind: UintKeyword_Reserved,
                                                                                                     phantom: PhantomData<&()>,
                                                                                                 },
                                                                                             ),
                                                                                         ),
                                                                                     ),
                                                                                     storage_location: None,
-                                                                                    name: TerminalType {
-                                                                                        value: "c",
+                                                                                    name: Identifier {
                                                                                         l: 129,
                                                                                         r: 130,
-                                                                                        kind: Identifier,
                                                                                         phantom: PhantomData<&()>,
                                                                                     },
                                                                                 },
                                                                                 value: Some(
                                                                                     VariableDeclarationValueStruct {
-                                                                                        equal: TerminalType {
-                                                                                            value: "=",
+                                                                                        equal: Equal {
                                                                                             l: 131,
                                                                                             r: 132,
-                                                                                            kind: Equal,
                                                                                             phantom: PhantomData<&()>,
                                                                                         },
                                                                                         expression: AdditiveExpression(
                                                                                             AdditiveExpressionStruct {
                                                                                                 left_operand: Identifier(
-                                                                                                    TerminalType {
-                                                                                                        value: "a",
+                                                                                                    Identifier {
                                                                                                         l: 133,
                                                                                                         r: 134,
-                                                                                                        kind: Identifier,
                                                                                                         phantom: PhantomData<&()>,
                                                                                                     },
                                                                                                 ),
-                                                                                                operator: TerminalType {
-                                                                                                    value: "+",
-                                                                                                    l: 135,
-                                                                                                    r: 136,
-                                                                                                    kind: Plus,
-                                                                                                    phantom: PhantomData<&()>,
-                                                                                                },
+                                                                                                expression_additive_expression_operator: Plus(
+                                                                                                    Plus {
+                                                                                                        l: 135,
+                                                                                                        r: 136,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                ),
                                                                                                 right_operand: Identifier(
-                                                                                                    TerminalType {
-                                                                                                        value: "b",
+                                                                                                    Identifier {
                                                                                                         l: 137,
                                                                                                         r: 138,
-                                                                                                        kind: Identifier,
                                                                                                         phantom: PhantomData<&()>,
                                                                                                     },
                                                                                                 ),
@@ -290,84 +238,68 @@ SourceUnitStruct {
                                                                                         ),
                                                                                     },
                                                                                 ),
-                                                                                semicolon: TerminalType {
-                                                                                    value: ";",
+                                                                                semicolon: Semicolon {
                                                                                     l: 138,
                                                                                     r: 139,
-                                                                                    kind: Semicolon,
                                                                                     phantom: PhantomData<&()>,
                                                                                 },
                                                                             },
                                                                         ),
                                                                         IfStatement(
                                                                             IfStatementStruct {
-                                                                                if_keyword: TerminalType {
-                                                                                    value: "if",
+                                                                                if_keyword: IfKeyword {
                                                                                     l: 146,
                                                                                     r: 148,
-                                                                                    kind: IfKeyword_Reserved,
                                                                                     phantom: PhantomData<&()>,
                                                                                 },
-                                                                                open_paren: TerminalType {
-                                                                                    value: "(",
+                                                                                open_paren: OpenParen {
                                                                                     l: 149,
                                                                                     r: 150,
-                                                                                    kind: OpenParen,
                                                                                     phantom: PhantomData<&()>,
                                                                                 },
                                                                                 condition: InequalityExpression(
                                                                                     InequalityExpressionStruct {
                                                                                         left_operand: Identifier(
-                                                                                            TerminalType {
-                                                                                                value: "c",
+                                                                                            Identifier {
                                                                                                 l: 150,
                                                                                                 r: 151,
-                                                                                                kind: Identifier,
                                                                                                 phantom: PhantomData<&()>,
                                                                                             },
                                                                                         ),
-                                                                                        operator: TerminalType {
-                                                                                            value: "<",
-                                                                                            l: 152,
-                                                                                            r: 153,
-                                                                                            kind: LessThan,
-                                                                                            phantom: PhantomData<&()>,
-                                                                                        },
+                                                                                        expression_inequality_expression_operator: LessThan(
+                                                                                            LessThan {
+                                                                                                l: 152,
+                                                                                                r: 153,
+                                                                                                phantom: PhantomData<&()>,
+                                                                                            },
+                                                                                        ),
                                                                                         right_operand: Identifier(
-                                                                                            TerminalType {
-                                                                                                value: "a",
+                                                                                            Identifier {
                                                                                                 l: 154,
                                                                                                 r: 155,
-                                                                                                kind: Identifier,
                                                                                                 phantom: PhantomData<&()>,
                                                                                             },
                                                                                         ),
                                                                                     },
                                                                                 ),
-                                                                                close_paren: TerminalType {
-                                                                                    value: ")",
+                                                                                close_paren: CloseParen {
                                                                                     l: 155,
                                                                                     r: 156,
-                                                                                    kind: CloseParen,
                                                                                     phantom: PhantomData<&()>,
                                                                                 },
                                                                                 body: ReturnStatement(
                                                                                     ReturnStatementStruct {
-                                                                                        return_keyword: TerminalType {
-                                                                                            value: "return",
+                                                                                        return_keyword: ReturnKeyword {
                                                                                             l: 157,
                                                                                             r: 163,
-                                                                                            kind: ReturnKeyword_Reserved,
                                                                                             phantom: PhantomData<&()>,
                                                                                         },
                                                                                         expression: Some(
                                                                                             TupleExpression(
                                                                                                 TupleExpressionStruct {
-                                                                                                    open_paren: TerminalType {
-                                                                                                        value: "(",
+                                                                                                    open_paren: OpenParen {
                                                                                                         l: 164,
                                                                                                         r: 165,
-                                                                                                        kind: OpenParen,
                                                                                                         phantom: PhantomData<&()>,
                                                                                                     },
                                                                                                     items: TupleValues {
@@ -375,11 +307,9 @@ SourceUnitStruct {
                                                                                                             TupleValueStruct {
                                                                                                                 expression: Some(
                                                                                                                     FalseKeyword(
-                                                                                                                        TerminalType {
-                                                                                                                            value: "false",
+                                                                                                                        FalseKeyword {
                                                                                                                             l: 165,
                                                                                                                             r: 170,
-                                                                                                                            kind: FalseKeyword_Reserved,
                                                                                                                             phantom: PhantomData<&()>,
                                                                                                                         },
                                                                                                                     ),
@@ -389,11 +319,9 @@ SourceUnitStruct {
                                                                                                                 expression: Some(
                                                                                                                     DecimalNumberExpression(
                                                                                                                         DecimalNumberExpressionStruct {
-                                                                                                                            literal: TerminalType {
-                                                                                                                                value: "0",
+                                                                                                                            literal: DecimalLiteral {
                                                                                                                                 l: 172,
                                                                                                                                 r: 173,
-                                                                                                                                kind: DecimalLiteral,
                                                                                                                                 phantom: PhantomData<&()>,
                                                                                                                             },
                                                                                                                             unit: None,
@@ -403,21 +331,17 @@ SourceUnitStruct {
                                                                                                             },
                                                                                                         ],
                                                                                                     },
-                                                                                                    close_paren: TerminalType {
-                                                                                                        value: ")",
+                                                                                                    close_paren: CloseParen {
                                                                                                         l: 173,
                                                                                                         r: 174,
-                                                                                                        kind: CloseParen,
                                                                                                         phantom: PhantomData<&()>,
                                                                                                     },
                                                                                                 },
                                                                                             ),
                                                                                         ),
-                                                                                        semicolon: TerminalType {
-                                                                                            value: ";",
+                                                                                        semicolon: Semicolon {
                                                                                             l: 174,
                                                                                             r: 175,
-                                                                                            kind: Semicolon,
                                                                                             phantom: PhantomData<&()>,
                                                                                         },
                                                                                     },
@@ -427,21 +351,17 @@ SourceUnitStruct {
                                                                         ),
                                                                         ReturnStatement(
                                                                             ReturnStatementStruct {
-                                                                                return_keyword: TerminalType {
-                                                                                    value: "return",
+                                                                                return_keyword: ReturnKeyword {
                                                                                     l: 182,
                                                                                     r: 188,
-                                                                                    kind: ReturnKeyword_Reserved,
                                                                                     phantom: PhantomData<&()>,
                                                                                 },
                                                                                 expression: Some(
                                                                                     TupleExpression(
                                                                                         TupleExpressionStruct {
-                                                                                            open_paren: TerminalType {
-                                                                                                value: "(",
+                                                                                            open_paren: OpenParen {
                                                                                                 l: 189,
                                                                                                 r: 190,
-                                                                                                kind: OpenParen,
                                                                                                 phantom: PhantomData<&()>,
                                                                                             },
                                                                                             items: TupleValues {
@@ -449,11 +369,9 @@ SourceUnitStruct {
                                                                                                     TupleValueStruct {
                                                                                                         expression: Some(
                                                                                                             TrueKeyword(
-                                                                                                                TerminalType {
-                                                                                                                    value: "true",
+                                                                                                                TrueKeyword {
                                                                                                                     l: 190,
                                                                                                                     r: 194,
-                                                                                                                    kind: TrueKeyword_Reserved,
                                                                                                                     phantom: PhantomData<&()>,
                                                                                                                 },
                                                                                                             ),
@@ -462,11 +380,9 @@ SourceUnitStruct {
                                                                                                     TupleValueStruct {
                                                                                                         expression: Some(
                                                                                                             Identifier(
-                                                                                                                TerminalType {
-                                                                                                                    value: "c",
+                                                                                                                Identifier {
                                                                                                                     l: 196,
                                                                                                                     r: 197,
-                                                                                                                    kind: Identifier,
                                                                                                                     phantom: PhantomData<&()>,
                                                                                                                 },
                                                                                                             ),
@@ -474,32 +390,26 @@ SourceUnitStruct {
                                                                                                     },
                                                                                                 ],
                                                                                             },
-                                                                                            close_paren: TerminalType {
-                                                                                                value: ")",
+                                                                                            close_paren: CloseParen {
                                                                                                 l: 197,
                                                                                                 r: 198,
-                                                                                                kind: CloseParen,
                                                                                                 phantom: PhantomData<&()>,
                                                                                             },
                                                                                         },
                                                                                     ),
                                                                                 ),
-                                                                                semicolon: TerminalType {
-                                                                                    value: ";",
+                                                                                semicolon: Semicolon {
                                                                                     l: 198,
                                                                                     r: 199,
-                                                                                    kind: Semicolon,
                                                                                     phantom: PhantomData<&()>,
                                                                                 },
                                                                             },
                                                                         ),
                                                                     ],
                                                                 },
-                                                                close_brace: TerminalType {
-                                                                    value: "}",
+                                                                close_brace: CloseBrace {
                                                                     l: 204,
                                                                     r: 205,
-                                                                    kind: CloseBrace,
                                                                     phantom: PhantomData<&()>,
                                                                 },
                                                             },
@@ -507,11 +417,9 @@ SourceUnitStruct {
                                                     ),
                                                 ],
                                             },
-                                            close_brace: TerminalType {
-                                                value: "}",
+                                            close_brace: CloseBrace {
                                                 l: 208,
                                                 r: 209,
-                                                kind: CloseBrace,
                                                 phantom: PhantomData<&()>,
                                             },
                                         },
@@ -520,11 +428,9 @@ SourceUnitStruct {
                             ),
                         ],
                     },
-                    close_brace: TerminalType {
-                        value: "}",
+                    close_brace: CloseBrace {
                         l: 210,
                         r: 211,
-                        kind: CloseBrace,
                         phantom: PhantomData<&()>,
                     },
                 },

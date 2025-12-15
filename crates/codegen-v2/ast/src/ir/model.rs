@@ -178,26 +178,7 @@ impl IrModelBuilder {
                     self.terminals.insert(item.name.clone(), false);
                 }
                 model::Item::Keyword { item } => {
-                    // Keywords can be reserved or unreserved, so we create each variant depending
-                    // on the definitions.
-                    if item.definitions.iter().all(|def| {
-                        def.reserved
-                            .clone()
-                            .is_none_or(|rng| rng != VersionSpecifier::Never)
-                    }) {
-                        let id: Identifier = format!("{}_Reserved", item.name).into();
-                        self.terminals.insert(id.clone(), item.is_unique());
-                    }
-                    if item
-                        .definitions
-                        .iter()
-                        .any(|def| def.reserved.clone().is_some())
-                    {
-                        let id: Identifier = format!("{}_Unreserved", item.name).into();
-                        self.terminals.insert(id.clone(), item.is_unique());
-                    }
-
-                    self.terminal_wrappers.insert(item.name.clone());
+                    self.terminals.insert(item.name.clone(), item.is_unique());
                 }
                 model::Item::Token { item } => {
                     self.terminals.insert(item.name.clone(), item.is_unique());
@@ -314,9 +295,52 @@ impl IrModelBuilder {
     ) {
         let parent_type = expression.name.clone();
 
-        // All operators should have the same structure (validated at compile-time),
-        // So let's pick up the first one to generate the types:
-        let operator = &expression.operators[0];
+        // TODO: The precedence operators is too complex, and we're making a lot
+        // of assumptions everywere.
+        // It should be simpler
+        let operator_fields = if expression.operators.len() == 1 {
+            // If there's a single operator, we jus use its fields directly
+            self.convert_fields(&expression.operators[0].fields)
+                .collect::<Vec<_>>()
+        } else {
+            // If there are multiple operators, we create a choice between them
+            // They must be single field required operators
+            let variants = expression
+                .operators
+                .iter()
+                .map(|operator| {
+                    assert!(
+                        operator.fields.len() == 1,
+                        "Multiple operators with multiple fields are not supported yet"
+                    );
+
+                    let a = operator.fields.first().unwrap();
+                    assert_eq!(
+                        a.0,
+                        &model::Identifier::from("operator"),
+                        "Operator field must be labeled 'operator'"
+                    );
+                    if let model::Field::Required { reference } = a.1 {
+                        self.find_node_type(reference)
+                    } else {
+                        panic!("Operator field must be required");
+                    }
+                })
+                .collect();
+
+            let ident =
+                model::Identifier::from(format!("{}_{}_Operator", base_name, expression.name));
+
+            self.choices.insert(ident.clone(), Choice { variants });
+
+            // The only field we care about then is a reference to that special operator
+            vec![Field {
+                label: ident.clone(),
+                r#type: NodeType::Nonterminal(ident),
+                is_optional: false,
+            }]
+        };
+
         let mut fields = vec![];
 
         let operand = |label: model::PredefinedLabel| Field {
@@ -325,19 +349,21 @@ impl IrModelBuilder {
             is_optional: false,
         };
 
-        match operator.model {
+        // All operators should have the same structure (validated at compile-time),
+        // So let's pick up the first one to generate the types:
+        match expression.operators[0].model {
             model::OperatorModel::Prefix => {
-                fields.extend(self.convert_fields(&operator.fields));
+                fields.extend(operator_fields);
                 fields.push(operand(model::PredefinedLabel::Operand));
             }
             model::OperatorModel::Postfix => {
                 fields.push(operand(model::PredefinedLabel::Operand));
-                fields.extend(self.convert_fields(&operator.fields));
+                fields.extend(operator_fields);
             }
             model::OperatorModel::BinaryLeftAssociative
             | model::OperatorModel::BinaryRightAssociative => {
                 fields.push(operand(model::PredefinedLabel::LeftOperand));
-                fields.extend(self.convert_fields(&operator.fields));
+                fields.extend(operator_fields);
                 fields.push(operand(model::PredefinedLabel::RightOperand));
             }
         }

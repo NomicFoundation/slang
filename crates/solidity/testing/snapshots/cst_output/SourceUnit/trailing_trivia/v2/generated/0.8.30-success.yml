@@ -6,38 +6,30 @@ SourceUnitStruct {
             ContractDefinition(
                 ContractDefinitionStruct {
                     abstract_keyword: None,
-                    contract_keyword: TerminalType {
-                        value: "contract",
+                    contract_keyword: ContractKeyword {
                         l: 0,
                         r: 8,
-                        kind: ContractKeyword_Reserved,
                         phantom: PhantomData<&()>,
                     },
-                    name: TerminalType {
-                        value: "First",
+                    name: Identifier {
                         l: 9,
                         r: 14,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
-                    open_brace: TerminalType {
-                        value: "{",
+                    open_brace: OpenBrace {
                         l: 15,
                         r: 16,
-                        kind: OpenBrace,
                         phantom: PhantomData<&()>,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
-                    close_brace: TerminalType {
-                        value: "}",
+                    close_brace: CloseBrace {
                         l: 16,
                         r: 17,
-                        kind: CloseBrace,
                         phantom: PhantomData<&()>,
                     },
                 },
@@ -45,38 +37,30 @@ SourceUnitStruct {
             ContractDefinition(
                 ContractDefinitionStruct {
                     abstract_keyword: None,
-                    contract_keyword: TerminalType {
-                        value: "contract",
+                    contract_keyword: ContractKeyword {
                         l: 129,
                         r: 137,
-                        kind: ContractKeyword_Reserved,
                         phantom: PhantomData<&()>,
                     },
-                    name: TerminalType {
-                        value: "Second",
+                    name: Identifier {
                         l: 138,
                         r: 144,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
-                    open_brace: TerminalType {
-                        value: "{",
+                    open_brace: OpenBrace {
                         l: 145,
                         r: 146,
-                        kind: OpenBrace,
                         phantom: PhantomData<&()>,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
-                    close_brace: TerminalType {
-                        value: "}",
+                    close_brace: CloseBrace {
                         l: 146,
                         r: 147,
-                        kind: CloseBrace,
                         phantom: PhantomData<&()>,
                     },
                 },

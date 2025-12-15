@@ -6,28 +6,22 @@ SourceUnitStruct {
             ContractDefinition(
                 ContractDefinitionStruct {
                     abstract_keyword: None,
-                    contract_keyword: TerminalType {
-                        value: "contract",
+                    contract_keyword: ContractKeyword {
                         l: 0,
                         r: 8,
-                        kind: ContractKeyword_Reserved,
                         phantom: PhantomData<&()>,
                     },
-                    name: TerminalType {
-                        value: "A",
+                    name: Identifier {
                         l: 9,
                         r: 10,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
-                    open_brace: TerminalType {
-                        value: "{",
+                    open_brace: OpenBrace {
                         l: 11,
                         r: 12,
-                        kind: OpenBrace,
                         phantom: PhantomData<&()>,
                     },
                     members: ContractMembers {
@@ -36,11 +30,9 @@ SourceUnitStruct {
                                 StateVariableDefinitionStruct {
                                     type_name: ElementaryType(
                                         UintKeyword(
-                                            TerminalType {
-                                                value: "uint",
+                                            UintKeyword {
                                                 l: 14,
                                                 r: 18,
-                                                kind: UintKeyword_Reserved,
                                                 phantom: PhantomData<&()>,
                                             },
                                         ),
@@ -48,29 +40,23 @@ SourceUnitStruct {
                                     attributes: StateVariableAttributes {
                                         elements: [
                                             TransientKeyword(
-                                                TerminalType {
-                                                    value: "transient",
+                                                TransientKeyword {
                                                     l: 19,
                                                     r: 28,
-                                                    kind: TransientKeyword_Unreserved,
                                                     phantom: PhantomData<&()>,
                                                 },
                                             ),
                                         ],
                                     },
-                                    name: TerminalType {
-                                        value: "foo",
+                                    name: Identifier {
                                         l: 29,
                                         r: 32,
-                                        kind: Identifier,
                                         phantom: PhantomData<&()>,
                                     },
                                     value: None,
-                                    semicolon: TerminalType {
-                                        value: ";",
+                                    semicolon: Semicolon {
                                         l: 32,
                                         r: 33,
-                                        kind: Semicolon,
                                         phantom: PhantomData<&()>,
                                     },
                                 },
@@ -79,11 +65,9 @@ SourceUnitStruct {
                                 StateVariableDefinitionStruct {
                                     type_name: ElementaryType(
                                         UintKeyword(
-                                            TerminalType {
-                                                value: "uint",
+                                            UintKeyword {
                                                 l: 35,
                                                 r: 39,
-                                                kind: UintKeyword_Reserved,
                                                 phantom: PhantomData<&()>,
                                             },
                                         ),
@@ -91,30 +75,24 @@ SourceUnitStruct {
                                     attributes: StateVariableAttributes {
                                         elements: [],
                                     },
-                                    name: TerminalType {
-                                        value: "transient",
+                                    name: Identifier {
                                         l: 40,
                                         r: 49,
-                                        kind: Identifier,
                                         phantom: PhantomData<&()>,
                                     },
                                     value: None,
-                                    semicolon: TerminalType {
-                                        value: ";",
+                                    semicolon: Semicolon {
                                         l: 49,
                                         r: 50,
-                                        kind: Semicolon,
                                         phantom: PhantomData<&()>,
                                     },
                                 },
                             ),
                         ],
                     },
-                    close_brace: TerminalType {
-                        value: "}",
+                    close_brace: CloseBrace {
                         l: 51,
                         r: 52,
-                        kind: CloseBrace,
                         phantom: PhantomData<&()>,
                     },
                 },

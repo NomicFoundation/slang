@@ -314,105 +314,146 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
         prec_counter += 1;
         let cur_name = format!("{}{}", item.name, prec_counter);
 
-        let mut options: Vec<LALRPOPOption> = prec
-            .operators
-            .iter()
-            .filter_map(move |op| {
-                if op.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
-                    return None;
-                }
-                let capturing_name = format!("_{}", item.name);
-                let fields = match op.model {
-                    OperatorModel::Prefix => {
-                        let mut fields = op
-                            .fields
-                            .iter()
-                            .filter_map(|(name, field)| field_to_lalrpop_field(&name, &field))
-                            .collect::<Vec<_>>();
-
-                        fields.push(LALRPOPField {
-                            is_optional: false,
-                            capturing_name: Some(capturing_name.clone().into()),
-                            rule: RustCode(cur_name.clone().to_string()),
-                        });
-                        Some(fields)
+        // Pre-process fields for operators
+        let mut pre_processed_fields = if prec.operators.len() == 1 {
+            // If there's a single operator, we use its fields directly
+            let op = &prec.operators[0];
+            if op.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+                vec![]
+            } else {
+                op.fields
+                    .iter()
+                    .filter_map(|(name, field)| field_to_lalrpop_field(&name, &field))
+                    .collect::<Vec<_>>()
+            }
+        } else {
+            // If there are multiple operators, we create a choice between them
+            let options = prec
+                .operators
+                .iter()
+                .filter_map(|op| {
+                    if op.enabled.clone().is_some_and(|v| !v.contains(&VERSION)) {
+                        return None;
                     }
-                    OperatorModel::Postfix => {
-                        let mut fields = vec![LALRPOPField {
-                            is_optional: false,
-                            capturing_name: Some(capturing_name.clone().into()),
-                            rule: RustCode(cur_name.clone().to_string()),
-                        }];
-
-                        let extra_fields = op
-                            .fields
-                            .iter()
-                            .filter_map(|(name, field)| field_to_lalrpop_field(&name, &field));
-
-                        fields.extend(extra_fields);
-
-                        Some(fields)
-                    }
-                    inner_op @ (OperatorModel::BinaryLeftAssociative
-                    | OperatorModel::BinaryRightAssociative) => {
-                        let op_ident: Identifier = "operator".into();
-
-                        debug_assert!(op.fields.len() == 1);
-                        debug_assert!(op.fields.contains_key(&op_ident));
-
-                        let operator =
-                            field_to_lalrpop_field(&op_ident, op.fields.get(&op_ident).unwrap());
-
-                        let (left_capture, right_capture) = match inner_op {
-                            OperatorModel::BinaryLeftAssociative => {
-                                (cur_name.clone(), prev_name.clone())
-                            }
-                            OperatorModel::BinaryRightAssociative => {
-                                (prev_name.clone(), cur_name.clone())
-                            }
-                            _ => unreachable!(),
-                        };
-
-                        operator.map(|op| {
-                            vec![
-                                LALRPOPField {
-                                    is_optional: false,
-                                    capturing_name: Some(format!("{capturing_name}").into()),
-                                    rule: RustCode(left_capture.clone().to_string()),
-                                },
-                                op,
-                                LALRPOPField {
-                                    is_optional: false,
-                                    capturing_name: Some(format!("{capturing_name}_2").into()),
-                                    rule: RustCode(right_capture.clone().to_string()),
-                                },
-                            ]
+                    assert!(
+                        op.fields.len() == 1,
+                        "Expected single field operators in multi-operator precedence expressions"
+                    );
+                    let a = op.fields.first().unwrap();
+                    assert_eq!(
+                        a.0,
+                        &Identifier::from("operator"),
+                        "Operator field must be labeled 'operator'"
+                    );
+                    if let Field::Required { reference } = a.1 {
+                        Some(LALRPOPOption {
+                            name: Some(reference.clone()),
+                            fields: vec![field_to_lalrpop_field(a.0, a.1).unwrap()],
+                            forward: false,
+                            prebuild: false,
+                            attributes: RustCode("".to_owned()),
                         })
+                    } else {
+                        panic!("Operator field must be required");
                     }
-                };
-
-                fields.map(|fields| LALRPOPOption {
-                    name: Some(prec.name.clone()),
-                    fields: fields.clone(),
-                    forward: false,
-                    prebuild: true,
-                    attributes: RustCode("".to_owned()),
                 })
-            })
-            .collect();
+                .collect();
+            let ident = Identifier::from(format!("{}_{}_Operator", item.name, prec.name));
 
-        // Add next case
-        options.push(LALRPOPOption {
-            name: None,
-            prebuild: false,
-            attributes: RustCode("".to_owned()),
-            fields: vec![LALRPOPField {
-                capturing_name: Some(item.name.clone()),
+            ans.push(LALRPOPItem {
+                name: ident.clone(),
+                producing_type: ident.clone(),
+                options,
+                inline: false,
+            });
+
+            // And we reference it from the single field
+            let capturing_name = format!("_{}", ident);
+            vec![LALRPOPField {
+                capturing_name: Some(capturing_name.clone().into()),
                 is_optional: false,
-                rule: RustCode(format!("{}{}", item.name, prec_counter - 1)),
-            }],
-            forward: true,
-        });
+                rule: RustCode(ident.clone().to_string()),
+            }]
+        };
+
+        // Now, we always have a single option, since we're common eliminating some choices
+        let option = {
+            let capturing_name = format!("_{}", item.name);
+
+            let fields = match prec.operators[0].model {
+                OperatorModel::Prefix => {
+                    let mut fields = pre_processed_fields;
+
+                    fields.push(LALRPOPField {
+                        is_optional: false,
+                        capturing_name: Some(capturing_name.clone().into()),
+                        rule: RustCode(cur_name.clone().to_string()),
+                    });
+                    fields
+                }
+                OperatorModel::Postfix => {
+                    let mut fields = vec![LALRPOPField {
+                        is_optional: false,
+                        capturing_name: Some(capturing_name.clone().into()),
+                        rule: RustCode(cur_name.clone().to_string()),
+                    }];
+
+                    fields.extend(pre_processed_fields);
+
+                    fields
+                }
+                inner_op @ (OperatorModel::BinaryLeftAssociative
+                | OperatorModel::BinaryRightAssociative) => {
+                    let (left_capture, right_capture) = match inner_op {
+                        OperatorModel::BinaryLeftAssociative => {
+                            (cur_name.clone(), prev_name.clone())
+                        }
+                        OperatorModel::BinaryRightAssociative => {
+                            (prev_name.clone(), cur_name.clone())
+                        }
+                        _ => unreachable!(),
+                    };
+
+                    vec![
+                        LALRPOPField {
+                            is_optional: false,
+                            capturing_name: Some(format!("{capturing_name}").into()),
+                            rule: RustCode(left_capture.clone().to_string()),
+                        },
+                        pre_processed_fields.remove(0),
+                        LALRPOPField {
+                            is_optional: false,
+                            capturing_name: Some(format!("{capturing_name}_2").into()),
+                            rule: RustCode(right_capture.clone().to_string()),
+                        },
+                    ]
+                }
+            };
+
+            LALRPOPOption {
+                name: Some(prec.name.clone()),
+                fields: fields.clone(),
+                forward: false,
+                prebuild: true,
+                attributes: RustCode("".to_owned()),
+            }
+        };
+
+        // Add recursive case
+        let options = vec![
+            option,
+            LALRPOPOption {
+                name: None,
+                prebuild: false,
+                attributes: RustCode("".to_owned()),
+                fields: vec![LALRPOPField {
+                    capturing_name: Some(item.name.clone()),
+                    is_optional: false,
+                    rule: RustCode(format!("{}{}", item.name, prec_counter - 1)),
+                }],
+                forward: true,
+            },
+        ];
 
         ans.push(LALRPOPItem {
             name: format!("{}{}", item.name, prec_counter).into(),

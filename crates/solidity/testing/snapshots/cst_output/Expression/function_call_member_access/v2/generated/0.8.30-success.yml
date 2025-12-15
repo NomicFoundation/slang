@@ -5,50 +5,40 @@ MemberAccessExpression(
         operand: FunctionCallExpression(
             FunctionCallExpressionStruct {
                 operand: Identifier(
-                    TerminalType {
-                        value: "x",
+                    Identifier {
                         l: 0,
                         r: 1,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
                 ),
                 arguments: PositionalArgumentsDeclaration(
                     PositionalArgumentsDeclarationStruct {
-                        open_paren: TerminalType {
-                            value: "(",
+                        open_paren: OpenParen {
                             l: 1,
                             r: 2,
-                            kind: OpenParen,
                             phantom: PhantomData<&()>,
                         },
                         arguments: PositionalArguments {
                             elements: [],
                         },
-                        close_paren: TerminalType {
-                            value: ")",
+                        close_paren: CloseParen {
                             l: 2,
                             r: 3,
-                            kind: CloseParen,
                             phantom: PhantomData<&()>,
                         },
                     },
                 ),
             },
         ),
-        period: TerminalType {
-            value: ".",
+        period: Period {
             l: 3,
             r: 4,
-            kind: Period,
             phantom: PhantomData<&()>,
         },
         member: Identifier(
-            TerminalType {
-                value: "y",
+            Identifier {
                 l: 4,
                 r: 5,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),

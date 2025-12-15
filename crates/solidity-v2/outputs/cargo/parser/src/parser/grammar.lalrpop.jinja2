@@ -70,13 +70,13 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Lexemes formatting
 {% for kind in model.parser.lexer.lexeme_kinds -%}
-{% if kind != "Identifier" %}#[inline]{% endif %}
-{{ kind }}: {{ kind }}<'arena> = {
-    <l:@L> L_{{ kind }} <r:@L> => new_{{kind | snake_case}}(arena, <>, source),
-    {%- if kind == "Identifier" %}
+{% if kind.1 != "Identifier" %}#[inline]{% endif %}
+{{ kind.0 }}: {{ kind.1 }}<'arena> = {
+    <l:@L> L_{{ kind.0 }} <r:@L> => new_{{kind.1 | snake_case}}(arena, <>, source),
+    {%- if kind.1 == "Identifier" %}
 // TODO: The identifier should also consider unreserved keywords
      {% for kw in model.parser.lexer.unreserved_keywords %} 
-        <l:@L> L_{{ kw }} <r:@L> => new_{{kind | snake_case}}(arena, <>, source),
+        <l:@L> L_{{ kw }} <r:@L> => new_identifier(arena, <>, source),
     {% endfor %}
 // ODOT
     {% endif %}
@@ -91,7 +91,7 @@ extern {
 
     enum lexemes::LexemeKind {
         {% for kind in model.parser.lexer.lexeme_kinds -%}
-            L_{{ kind }} => lexemes::LexemeKind::{{ kind }},
+            L_{{ kind.0 }} => lexemes::LexemeKind::{{ kind.0 }},
         {% endfor %}
     }
 }
@@ -335,7 +335,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
             <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(arena, <>),
          
             <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(arena, <>),
-        
+         
     };
     // We simplifiy all these levels of expressions into a single one, there's no need
     // for precedence here
@@ -360,26 +360,14 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression5<Ident>: Expression<'arena> = {
          
-            <_operator: PlusPlus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: MinusMinus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: Tilde>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: Bang>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: Minus>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
-         
-            <_operator: DeleteKeyword>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
+            <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
          
             <Expression: Expression1<"True", Ident>>  => <>,
         
     };
     Expression6<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression6<"True">>  <_operator: PlusPlus>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
-         
-            <_Expression: Expression6<"True">>  <_operator: MinusMinus>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
+            <_Expression: Expression6<Ident>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
          
             <Expression: Expression5<Ident>>  => <>,
         
@@ -393,31 +381,21 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression8<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression8<"True">>  <_operator: Asterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
-         
-            <_Expression: Expression8<"True">>  <_operator: Slash>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
-         
-            <_Expression: Expression8<"True">>  <_operator: Percent>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
+            <_Expression: Expression8<"True">>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
          
             <Expression: Expression7<Ident>>  => <>,
         
     };
     Expression9<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression9<"True">>  <_operator: Plus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
-         
-            <_Expression: Expression9<"True">>  <_operator: Minus>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
+            <_Expression: Expression9<"True">>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
          
             <Expression: Expression8<Ident>>  => <>,
         
     };
     Expression10<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression10<"True">>  <_operator: LessThanLessThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
-         
-            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
-         
-            <_Expression: Expression10<"True">>  <_operator: GreaterThanGreaterThanGreaterThan>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
+            <_Expression: Expression10<"True">>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
          
             <Expression: Expression9<Ident>>  => <>,
         
@@ -445,22 +423,14 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression14<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression14<"True">>  <_operator: LessThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
-         
-            <_Expression: Expression14<"True">>  <_operator: GreaterThan>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
-         
-            <_Expression: Expression14<"True">>  <_operator: LessThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
-         
-            <_Expression: Expression14<"True">>  <_operator: GreaterThanEqual>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
+            <_Expression: Expression14<"True">>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
          
             <Expression: Expression13<Ident>>  => <>,
         
     };
     Expression15<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression15<"True">>  <_operator: EqualEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
-         
-            <_Expression: Expression15<"True">>  <_operator: BangEqual>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
+            <_Expression: Expression15<"True">>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
          
             <Expression: Expression14<Ident>>  => <>,
         
@@ -481,7 +451,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression18<Ident>: Expression<'arena> = {
         // TODO: Not really sure the associativity is correct, we need to check
-
+         
             <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18<Ident>>  => new_expression_conditional_expression(arena, new_conditional_expression(arena, <>)),
          
             <Expression: Expression17<Ident>>  => <>,
@@ -489,29 +459,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression19<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression19<"True">>  <_operator: Equal>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: BarEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: PlusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: MinusEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: CaretEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: SlashEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: PercentEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: AsteriskEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: AmpersandEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: LessThanLessThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
-         
-            <_Expression: Expression19<"True">>  <_operator: GreaterThanGreaterThanGreaterThanEqual>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
+            <_Expression: Expression19<"True">>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
          
             <Expression: Expression18<Ident>>  => <>,
         

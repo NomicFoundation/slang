@@ -4,7 +4,7 @@ use slang_solidity_v2_ast::ast::nodes::*;
 use slang_solidity::cst::{NonterminalKind, NodeKind, Node, EdgeLabel, Edge};
 use crate::temp_sourcify::Comparator;
 use std::marker::PhantomData;
-use slang_solidity_v2_ast::ast::lexemes::LexemeKind;
+use crate::lexer::lexemes::LexemeKind;
 
 #[derive(Clone, Debug)]
 pub struct NodeCheckerError {
@@ -358,7 +358,25 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     {
     let {{ field.label | snake_case }} = &self.{{ field.label | snake_case }};
     {%- endif %}
-        if let Some(child) = extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::{{ field.label | pascal_case }}) {
+
+
+    // Prepare edge label
+    {% if field.label == "Expression_InequalityExpression_Operator" 
+    or field.label == "Expression_EqualityExpression_Operator" 
+    or field.label == "Expression_ShiftExpression_Operator" 
+    or field.label == "Expression_AdditiveExpression_Operator" 
+    or field.label == "Expression_MultiplicativeExpression_Operator" 
+    or field.label == "Expression_AssignmentExpression_Operator" 
+    or field.label == "Expression_PrefixExpression_Operator" 
+    or field.label == "Expression_PostfixExpression_Operator" %}
+    // Special case for operator fields that are merged together
+        {% set edge_label = "Operator" %}
+    {% else %}
+        {% set edge_label = field.label | pascal_case %}
+
+    {% endif %}
+
+        if let Some(child) = extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::{{ edge_label }}) {
             let child_errors = {{ field.label | snake_case }}.check_node(&child.node);
             errors.extend(child_errors);
         } else {
@@ -367,7 +385,7 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     } {% if field.is_optional -%}
     else {
         // If it's not there on the AST, it shouldn't be in the CST
-        if let Some(child) = extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::{{ field.label | pascal_case }}) {
+        if let Some(child) = extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::{{ edge_label }}) {
             errors.push(NodeCheckerError::new(format!("Expected {{ field.label }} to not be present in the CST, but it was there: {:#?}", child)));
         }
     }
@@ -391,30 +409,42 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
 
 
 {% for parent_type, choice in target.choices %}
-{% if parent_type == "MemberAccessIdentifier" %}
+{% if parent_type == "Expression_InequalityExpression_Operator" 
+or parent_type == "Expression_EqualityExpression_Operator" 
+or parent_type == "Expression_ShiftExpression_Operator" 
+or parent_type == "Expression_AdditiveExpression_Operator" 
+or parent_type == "Expression_MultiplicativeExpression_Operator" 
+or parent_type == "Expression_AssignmentExpression_Operator" 
+or parent_type == "Expression_PrefixExpression_Operator" 
+or parent_type == "Expression_PostfixExpression_Operator" %}
+
+// Special case for operator choices that are merged together
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
+fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+    match self {
+        {% for variant in choice.variants %}
+        Self::{{ variant.name }}(element) => element.check_node(node),
+        {% endfor %}
+    }
+}
+}
+
+
+{% elif parent_type == "MemberAccessIdentifier" %}
 
 impl<'arena> NodeChecker for MemberAccessIdentifier<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
-        let ident_node = match self {
-            Self::Identifier(element) => TerminalType {
-                // TODO(v2): avoid the allocation here, it's not needed
-                value: element.value.clone(),
-                l: element.l,
-                r: element.r,
-                kind: element.kind.clone(),
-                phantom: PhantomData,
+        match self {
+            Self::Identifier(element) => element.check_node(node),
+            Self::AddressKeyword(element) => {
+                let ident = Identifier {
+                    l: element.l,
+                    r: element.r,
+                    phantom: PhantomData,
+                };
+                ident.check_node(node)
             },
-            Self::AddressKeyword(element) => TerminalType {
-                // TODO(v2): avoid the allocation here, it's not needed
-                value: element.value.clone(),
-                l: element.l,
-                r: element.r,
-                kind: LexemeKind::Identifier,
-                phantom: PhantomData,
-            },
-        };
-
-        ident_node.check_node(node)
+        }
     }
 }
 
@@ -489,20 +519,21 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
 
 // Terminals
 
-impl<'arena> NodeChecker for TerminalType<'arena> {
+{% for parent_type, unique in target.terminals %}
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
 fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     let mut errors = vec![];
     if let NodeKind::Terminal(terminal_kind) = node.kind() {
         let v1_kind = terminal_kind.as_ref();
-        let v2_kind: &'static str = self.kind.clone().into();
+        let v2_kind = "{{ parent_type }}";
 
-        if !Comparator::match_terminal(v1_kind, v2_kind) {
+        if v1_kind != v2_kind {
             errors.push(NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", v2_kind, v1_kind)));
         }
     } else {
         errors.push(NodeCheckerError::new(format!("Expected node kind to be a terminal, but it was {}", node.kind())));
-
     }
     return errors;
 }
 }
+{% endfor %}

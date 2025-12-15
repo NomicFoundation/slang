@@ -5,11 +5,9 @@ StringExpression(
         UnicodeStringLiterals {
             elements: [
                 DoubleQuotedUnicodeStringLiteral(
-                    TerminalType {
-                        value: "unicode\"This Emoji: 😃\"",
+                    DoubleQuotedUnicodeStringLiteral {
                         l: 0,
                         r: 25,
-                        kind: DoubleQuotedUnicodeStringLiteral,
                         phantom: PhantomData<&()>,
                     },
                 ),

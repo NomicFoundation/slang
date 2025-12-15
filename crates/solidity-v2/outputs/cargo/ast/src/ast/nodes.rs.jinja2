@@ -84,42 +84,22 @@
 //
 // Terminals
 //
+
+{% for parent_type, unique in target.terminals %}
 #[derive(Debug)]
-pub struct TerminalType<'arena> {
-    pub value: String,
+  pub struct {{ parent_type }}<'arena> {
     pub l: usize,
     pub r: usize,
-    pub kind: LexemeKind,
     pub phantom: PhantomData<&'arena ()>,
-
-}
-
-pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType<'static> {
-  TerminalType {
-    value: String::new(),
-    l: 0,
-    r: 0,
-    kind,
-    phantom: PhantomData,
   }
-}
 
-{% for parent_type in target.terminal_wrappers %}
-pub type {{ parent_type }}<'arena> = TerminalType<'arena>;
-{% endfor %}
-
-  {% for parent_type, unique in target.terminals %}
-    pub type {{ parent_type }}<'arena> = TerminalType<'arena>;
-    pub fn new_{{ parent_type | snake_case }}<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> {{ parent_type }}<'arena> {
-      TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::{{ parent_type }},
-        phantom: PhantomData,
-      }
+  pub fn new_{{ parent_type | snake_case }}<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> {{ parent_type }}<'arena> {
+    {{ parent_type }} {
+      l,
+      r,
+      phantom: PhantomData,
     }
-    
-  {% endfor %}
+  }
+  
+{% endfor %}
 

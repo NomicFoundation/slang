@@ -3,27 +3,21 @@
 MemberAccessExpression(
     MemberAccessExpressionStruct {
         operand: Identifier(
-            TerminalType {
-                value: "x",
+            Identifier {
                 l: 0,
                 r: 1,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),
-        period: TerminalType {
-            value: "",
+        period: Period {
             l: 0,
             r: 0,
-            kind: Period,
             phantom: PhantomData<&()>,
         },
         member: Identifier(
-            TerminalType {
-                value: "y",
+            Identifier {
                 l: 2,
                 r: 3,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),

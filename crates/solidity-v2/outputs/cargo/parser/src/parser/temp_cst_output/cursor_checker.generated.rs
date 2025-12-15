@@ -3,9 +3,9 @@
 use std::marker::PhantomData;
 
 use slang_solidity::cst::{Edge, EdgeLabel, Node, NodeKind, NonterminalKind};
-use slang_solidity_v2_ast::ast::lexemes::LexemeKind;
 use slang_solidity_v2_ast::ast::nodes::*;
 
+use crate::lexer::lexemes::LexemeKind;
 use crate::temp_sourcify::Comparator;
 
 #[derive(Clone, Debug)]
@@ -62,6 +62,9 @@ impl<'arena> NodeChecker for AbicoderPragma<'arena> {
 
         {
             let abicoder_keyword = &self.abicoder_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::AbicoderKeyword
             }) {
@@ -78,6 +81,9 @@ impl<'arena> NodeChecker for AbicoderPragma<'arena> {
 
         {
             let version = &self.version;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Version
             }) {
@@ -121,6 +127,9 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -133,19 +142,21 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
             }
         }
 
-        // operator
+        // Expression_AdditiveExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_additive_expression_operator =
+                &self.expression_additive_expression_operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors = expression_additive_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_AdditiveExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -153,6 +164,9 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -196,6 +210,9 @@ impl<'arena> NodeChecker for AddressType<'arena> {
 
         {
             let address_keyword = &self.address_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::AddressKeyword
             }) {
@@ -210,6 +227,8 @@ impl<'arena> NodeChecker for AddressType<'arena> {
 
         // payable_keyword
         if let Some(payable_keyword) = &self.payable_keyword {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::PayableKeyword
             }) {
@@ -260,6 +279,9 @@ impl<'arena> NodeChecker for AndExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -276,6 +298,9 @@ impl<'arena> NodeChecker for AndExpression<'arena> {
 
         {
             let operator = &self.operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -292,6 +317,9 @@ impl<'arena> NodeChecker for AndExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -335,6 +363,9 @@ impl<'arena> NodeChecker for ArrayExpression<'arena> {
 
         {
             let open_bracket = &self.open_bracket;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBracket
             }) {
@@ -351,6 +382,9 @@ impl<'arena> NodeChecker for ArrayExpression<'arena> {
 
         {
             let items = &self.items;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Items
             }) {
@@ -367,6 +401,9 @@ impl<'arena> NodeChecker for ArrayExpression<'arena> {
 
         {
             let close_bracket = &self.close_bracket;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBracket
             }) {
@@ -410,6 +447,9 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -426,6 +466,9 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
 
         {
             let open_bracket = &self.open_bracket;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBracket
             }) {
@@ -440,6 +483,8 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
 
         // index
         if let Some(index) = &self.index {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Index
             }) {
@@ -466,6 +511,9 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
 
         {
             let close_bracket = &self.close_bracket;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBracket
             }) {
@@ -509,6 +557,9 @@ impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -525,6 +576,9 @@ impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
 
         {
             let flags = &self.flags;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Flags
             }) {
@@ -541,6 +595,9 @@ impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -584,6 +641,9 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
 
         {
             let assembly_keyword = &self.assembly_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::AssemblyKeyword
             }) {
@@ -598,6 +658,8 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
 
         // label
         if let Some(label) = &self.label {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Label
             }) {
@@ -622,6 +684,8 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
 
         // flags
         if let Some(flags) = &self.flags {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Flags
             }) {
@@ -648,6 +712,9 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -691,6 +758,9 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -703,19 +773,22 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
             }
         }
 
-        // operator
+        // Expression_AssignmentExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_assignment_expression_operator =
+                &self.expression_assignment_expression_operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors =
+                    expression_assignment_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_AssignmentExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -723,6 +796,9 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -766,6 +842,9 @@ impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -782,6 +861,9 @@ impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
 
         {
             let operator = &self.operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -798,6 +880,9 @@ impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -841,6 +926,9 @@ impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -857,6 +945,9 @@ impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
 
         {
             let operator = &self.operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -873,6 +964,9 @@ impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -916,6 +1010,9 @@ impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -932,6 +1029,9 @@ impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
 
         {
             let operator = &self.operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -948,6 +1048,9 @@ impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -991,6 +1094,9 @@ impl<'arena> NodeChecker for Block<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -1007,6 +1113,9 @@ impl<'arena> NodeChecker for Block<'arena> {
 
         {
             let statements = &self.statements;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Statements
             }) {
@@ -1023,6 +1132,9 @@ impl<'arena> NodeChecker for Block<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -1066,6 +1178,9 @@ impl<'arena> NodeChecker for BreakStatement<'arena> {
 
         {
             let break_keyword = &self.break_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::BreakKeyword
             }) {
@@ -1082,6 +1197,9 @@ impl<'arena> NodeChecker for BreakStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -1125,6 +1243,9 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -1141,6 +1262,9 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -1157,6 +1281,9 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
 
         {
             let options = &self.options;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Options
             }) {
@@ -1173,6 +1300,9 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -1218,6 +1348,9 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
 
         {
             let catch_keyword = &self.catch_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CatchKeyword
             }) {
@@ -1232,6 +1365,8 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
 
         // error
         if let Some(error) = &self.error {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Error
             }) {
@@ -1258,6 +1393,9 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -1299,6 +1437,8 @@ impl<'arena> NodeChecker for CatchClauseError<'arena> {
 
         // name
         if let Some(name) = &self.name {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -1325,6 +1465,9 @@ impl<'arena> NodeChecker for CatchClauseError<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -1368,6 +1511,9 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -1384,6 +1530,9 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
 
         {
             let question_mark = &self.question_mark;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::QuestionMark
             }) {
@@ -1400,6 +1549,9 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
 
         {
             let true_expression = &self.true_expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TrueExpression
             }) {
@@ -1416,6 +1568,9 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
 
         {
             let colon = &self.colon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Colon
             }) {
@@ -1432,6 +1587,9 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
 
         {
             let false_expression = &self.false_expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::FalseExpression
             }) {
@@ -1475,6 +1633,9 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -1491,6 +1652,9 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
 
         {
             let constant_keyword = &self.constant_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ConstantKeyword
             }) {
@@ -1507,6 +1671,9 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -1523,6 +1690,9 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
 
         {
             let equal = &self.equal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Equal
             }) {
@@ -1539,6 +1709,9 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
 
         {
             let value = &self.value;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Value
             }) {
@@ -1555,6 +1728,9 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -1598,6 +1774,9 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
 
         {
             let constructor_keyword = &self.constructor_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ConstructorKeyword
             }) {
@@ -1614,6 +1793,9 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -1630,6 +1812,9 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
 
         {
             let attributes = &self.attributes;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Attributes
             }) {
@@ -1646,6 +1831,9 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -1689,6 +1877,9 @@ impl<'arena> NodeChecker for ContinueStatement<'arena> {
 
         {
             let continue_keyword = &self.continue_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ContinueKeyword
             }) {
@@ -1705,6 +1896,9 @@ impl<'arena> NodeChecker for ContinueStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -1746,6 +1940,8 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
 
         // abstract_keyword
         if let Some(abstract_keyword) = &self.abstract_keyword {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::AbstractKeyword
             }) {
@@ -1769,6 +1965,9 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
 
         {
             let contract_keyword = &self.contract_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ContractKeyword
             }) {
@@ -1785,6 +1984,9 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -1801,6 +2003,9 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
 
         {
             let specifiers = &self.specifiers;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Specifiers
             }) {
@@ -1817,6 +2022,9 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -1833,6 +2041,9 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
 
         {
             let members = &self.members;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Members
             }) {
@@ -1849,6 +2060,9 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -1892,6 +2106,9 @@ impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
 
         {
             let literal = &self.literal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Literal
             }) {
@@ -1906,6 +2123,8 @@ impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
 
         // unit
         if let Some(unit) = &self.unit {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Unit)
             {
@@ -1959,6 +2178,9 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
 
         {
             let do_keyword = &self.do_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::DoKeyword
             }) {
@@ -1975,6 +2197,9 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -1991,6 +2216,9 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
 
         {
             let while_keyword = &self.while_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::WhileKeyword
             }) {
@@ -2007,6 +2235,9 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -2023,6 +2254,9 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
 
         {
             let condition = &self.condition;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Condition
             }) {
@@ -2039,6 +2273,9 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -2055,6 +2292,9 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -2098,6 +2338,9 @@ impl<'arena> NodeChecker for ElseBranch<'arena> {
 
         {
             let else_keyword = &self.else_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ElseKeyword
             }) {
@@ -2114,6 +2357,9 @@ impl<'arena> NodeChecker for ElseBranch<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -2157,6 +2403,9 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
 
         {
             let emit_keyword = &self.emit_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::EmitKeyword
             }) {
@@ -2173,6 +2422,9 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
 
         {
             let event = &self.event;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Event
             }) {
@@ -2189,6 +2441,9 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
 
         {
             let arguments = &self.arguments;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -2205,6 +2460,9 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -2248,6 +2506,9 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
 
         {
             let enum_keyword = &self.enum_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::EnumKeyword
             }) {
@@ -2264,6 +2525,9 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -2280,6 +2544,9 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -2296,6 +2563,9 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
 
         {
             let members = &self.members;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Members
             }) {
@@ -2312,6 +2582,9 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -2355,6 +2628,9 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -2367,19 +2643,21 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
             }
         }
 
-        // operator
+        // Expression_EqualityExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_equality_expression_operator =
+                &self.expression_equality_expression_operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors = expression_equality_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_EqualityExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -2387,6 +2665,9 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -2430,6 +2711,9 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
 
         {
             let error_keyword = &self.error_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ErrorKeyword
             }) {
@@ -2446,6 +2730,9 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -2462,6 +2749,9 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
 
         {
             let members = &self.members;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Members
             }) {
@@ -2478,6 +2768,9 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -2521,6 +2814,9 @@ impl<'arena> NodeChecker for ErrorParameter<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -2535,6 +2831,8 @@ impl<'arena> NodeChecker for ErrorParameter<'arena> {
 
         // name
         if let Some(name) = &self.name {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -2588,6 +2886,9 @@ impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -2604,6 +2905,9 @@ impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -2620,6 +2924,9 @@ impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -2663,6 +2970,9 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
 
         {
             let event_keyword = &self.event_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::EventKeyword
             }) {
@@ -2679,6 +2989,9 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -2695,6 +3008,9 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -2709,6 +3025,8 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
 
         // anonymous_keyword
         if let Some(anonymous_keyword) = &self.anonymous_keyword {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::AnonymousKeyword
             }) {
@@ -2732,6 +3050,9 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -2775,6 +3096,9 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -2789,6 +3113,8 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
 
         // indexed_keyword
         if let Some(indexed_keyword) = &self.indexed_keyword {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::IndexedKeyword
             }) {
@@ -2810,6 +3136,8 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
 
         // name
         if let Some(name) = &self.name {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -2863,6 +3191,9 @@ impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -2879,6 +3210,9 @@ impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -2895,6 +3229,9 @@ impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -2938,6 +3275,9 @@ impl<'arena> NodeChecker for ExperimentalPragma<'arena> {
 
         {
             let experimental_keyword = &self.experimental_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ExperimentalKeyword
             }) {
@@ -2954,6 +3294,9 @@ impl<'arena> NodeChecker for ExperimentalPragma<'arena> {
 
         {
             let feature = &self.feature;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Feature
             }) {
@@ -2997,6 +3340,9 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -3013,6 +3359,9 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
 
         {
             let operator = &self.operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -3029,6 +3378,9 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -3072,6 +3424,9 @@ impl<'arena> NodeChecker for ExpressionStatement<'arena> {
 
         {
             let expression = &self.expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -3088,6 +3443,9 @@ impl<'arena> NodeChecker for ExpressionStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -3131,6 +3489,9 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
 
         {
             let fallback_keyword = &self.fallback_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::FallbackKeyword
             }) {
@@ -3147,6 +3508,9 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -3163,6 +3527,9 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
 
         {
             let attributes = &self.attributes;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Attributes
             }) {
@@ -3177,6 +3544,8 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
 
         // returns
         if let Some(returns) = &self.returns {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Returns
             }) {
@@ -3203,6 +3572,9 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -3246,6 +3618,9 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
 
         {
             let for_keyword = &self.for_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ForKeyword
             }) {
@@ -3262,6 +3637,9 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -3278,6 +3656,9 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
 
         {
             let initialization = &self.initialization;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Initialization
             }) {
@@ -3294,6 +3675,9 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
 
         {
             let condition = &self.condition;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Condition
             }) {
@@ -3308,6 +3692,8 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
 
         // iterator
         if let Some(iterator) = &self.iterator {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Iterator
             }) {
@@ -3334,6 +3720,9 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -3350,6 +3739,9 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -3393,6 +3785,9 @@ impl<'arena> NodeChecker for FunctionCallExpression<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -3409,6 +3804,9 @@ impl<'arena> NodeChecker for FunctionCallExpression<'arena> {
 
         {
             let arguments = &self.arguments;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -3452,6 +3850,9 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
 
         {
             let function_keyword = &self.function_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::FunctionKeyword
             }) {
@@ -3468,6 +3869,9 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -3484,6 +3888,9 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -3500,6 +3907,9 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
 
         {
             let attributes = &self.attributes;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Attributes
             }) {
@@ -3514,6 +3924,8 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
 
         // returns
         if let Some(returns) = &self.returns {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Returns
             }) {
@@ -3540,6 +3952,9 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -3583,6 +3998,9 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
 
         {
             let function_keyword = &self.function_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::FunctionKeyword
             }) {
@@ -3599,6 +4017,9 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -3615,6 +4036,9 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
 
         {
             let attributes = &self.attributes;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Attributes
             }) {
@@ -3629,6 +4053,8 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
 
         // returns
         if let Some(returns) = &self.returns {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Returns
             }) {
@@ -3682,6 +4108,9 @@ impl<'arena> NodeChecker for HexNumberExpression<'arena> {
 
         {
             let literal = &self.literal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Literal
             }) {
@@ -3696,6 +4125,8 @@ impl<'arena> NodeChecker for HexNumberExpression<'arena> {
 
         // unit
         if let Some(unit) = &self.unit {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Unit)
             {
@@ -3749,6 +4180,9 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
 
         {
             let if_keyword = &self.if_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::IfKeyword
             }) {
@@ -3765,6 +4199,9 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -3781,6 +4218,9 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
 
         {
             let condition = &self.condition;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Condition
             }) {
@@ -3797,6 +4237,9 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -3813,6 +4256,9 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -3827,6 +4273,8 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
 
         // else_branch
         if let Some(else_branch) = &self.else_branch {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ElseBranch
             }) {
@@ -3880,6 +4328,9 @@ impl<'arena> NodeChecker for ImportAlias<'arena> {
 
         {
             let as_keyword = &self.as_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::AsKeyword
             }) {
@@ -3896,6 +4347,9 @@ impl<'arena> NodeChecker for ImportAlias<'arena> {
 
         {
             let identifier = &self.identifier;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Identifier
             }) {
@@ -3939,6 +4393,9 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -3955,6 +4412,9 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
 
         {
             let symbols = &self.symbols;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Symbols
             }) {
@@ -3971,6 +4431,9 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -3987,6 +4450,9 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
 
         {
             let from_keyword = &self.from_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::FromKeyword
             }) {
@@ -4003,6 +4469,9 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
 
         {
             let path = &self.path;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Path)
             {
@@ -4046,6 +4515,9 @@ impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -4060,6 +4532,8 @@ impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
 
         // alias
         if let Some(alias) = &self.alias {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Alias
             }) {
@@ -4113,6 +4587,9 @@ impl<'arena> NodeChecker for ImportDirective<'arena> {
 
         {
             let import_keyword = &self.import_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ImportKeyword
             }) {
@@ -4129,6 +4606,9 @@ impl<'arena> NodeChecker for ImportDirective<'arena> {
 
         {
             let clause = &self.clause;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Clause
             }) {
@@ -4145,6 +4625,9 @@ impl<'arena> NodeChecker for ImportDirective<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -4188,6 +4671,9 @@ impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
 
         {
             let colon = &self.colon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Colon
             }) {
@@ -4202,6 +4688,8 @@ impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
 
         // end
         if let Some(end) = &self.end {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::End)
             {
@@ -4255,6 +4743,9 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -4271,6 +4762,9 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
 
         {
             let open_bracket = &self.open_bracket;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBracket
             }) {
@@ -4285,6 +4779,8 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
 
         // start
         if let Some(start) = &self.start {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Start
             }) {
@@ -4309,6 +4805,8 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
 
         // end
         if let Some(end) = &self.end {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::End)
             {
@@ -4335,6 +4833,9 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
 
         {
             let close_bracket = &self.close_bracket;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBracket
             }) {
@@ -4378,6 +4879,9 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -4390,19 +4894,22 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
             }
         }
 
-        // operator
+        // Expression_InequalityExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_inequality_expression_operator =
+                &self.expression_inequality_expression_operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors =
+                    expression_inequality_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_InequalityExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -4410,6 +4917,9 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -4453,6 +4963,9 @@ impl<'arena> NodeChecker for InheritanceSpecifier<'arena> {
 
         {
             let is_keyword = &self.is_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::IsKeyword
             }) {
@@ -4469,6 +4982,9 @@ impl<'arena> NodeChecker for InheritanceSpecifier<'arena> {
 
         {
             let types = &self.types;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Types
             }) {
@@ -4512,6 +5028,9 @@ impl<'arena> NodeChecker for InheritanceType<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -4526,6 +5045,8 @@ impl<'arena> NodeChecker for InheritanceType<'arena> {
 
         // arguments
         if let Some(arguments) = &self.arguments {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -4579,6 +5100,9 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
 
         {
             let interface_keyword = &self.interface_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::InterfaceKeyword
             }) {
@@ -4595,6 +5119,9 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -4609,6 +5136,8 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
 
         // inheritance
         if let Some(inheritance) = &self.inheritance {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Inheritance
             }) {
@@ -4635,6 +5164,9 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -4651,6 +5183,9 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
 
         {
             let members = &self.members;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Members
             }) {
@@ -4667,6 +5202,9 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -4710,6 +5248,9 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
 
         {
             let library_keyword = &self.library_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LibraryKeyword
             }) {
@@ -4726,6 +5267,9 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -4742,6 +5286,9 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -4758,6 +5305,9 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
 
         {
             let members = &self.members;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Members
             }) {
@@ -4774,6 +5324,9 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -4817,6 +5370,9 @@ impl<'arena> NodeChecker for MappingKey<'arena> {
 
         {
             let key_type = &self.key_type;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::KeyType
             }) {
@@ -4831,6 +5387,8 @@ impl<'arena> NodeChecker for MappingKey<'arena> {
 
         // name
         if let Some(name) = &self.name {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -4884,6 +5442,9 @@ impl<'arena> NodeChecker for MappingType<'arena> {
 
         {
             let mapping_keyword = &self.mapping_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::MappingKeyword
             }) {
@@ -4900,6 +5461,9 @@ impl<'arena> NodeChecker for MappingType<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -4916,6 +5480,9 @@ impl<'arena> NodeChecker for MappingType<'arena> {
 
         {
             let key_type = &self.key_type;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::KeyType
             }) {
@@ -4932,6 +5499,9 @@ impl<'arena> NodeChecker for MappingType<'arena> {
 
         {
             let equal_greater_than = &self.equal_greater_than;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::EqualGreaterThan
             }) {
@@ -4948,6 +5518,9 @@ impl<'arena> NodeChecker for MappingType<'arena> {
 
         {
             let value_type = &self.value_type;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ValueType
             }) {
@@ -4964,6 +5537,9 @@ impl<'arena> NodeChecker for MappingType<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -5007,6 +5583,9 @@ impl<'arena> NodeChecker for MappingValue<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -5021,6 +5600,8 @@ impl<'arena> NodeChecker for MappingValue<'arena> {
 
         // name
         if let Some(name) = &self.name {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -5074,6 +5655,9 @@ impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -5090,6 +5674,9 @@ impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
 
         {
             let period = &self.period;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Period
             }) {
@@ -5106,6 +5693,9 @@ impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
 
         {
             let member = &self.member;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Member
             }) {
@@ -5149,6 +5739,9 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
 
         {
             let modifier_keyword = &self.modifier_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ModifierKeyword
             }) {
@@ -5165,6 +5758,9 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -5179,6 +5775,8 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
 
         // parameters
         if let Some(parameters) = &self.parameters {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -5205,6 +5803,9 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
 
         {
             let attributes = &self.attributes;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Attributes
             }) {
@@ -5221,6 +5822,9 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -5264,6 +5868,9 @@ impl<'arena> NodeChecker for ModifierInvocation<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -5278,6 +5885,8 @@ impl<'arena> NodeChecker for ModifierInvocation<'arena> {
 
         // arguments
         if let Some(arguments) = &self.arguments {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -5331,6 +5940,9 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -5343,19 +5955,22 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
             }
         }
 
-        // operator
+        // Expression_MultiplicativeExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_multiplicative_expression_operator =
+                &self.expression_multiplicative_expression_operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors =
+                    expression_multiplicative_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_MultiplicativeExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -5363,6 +5978,9 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -5406,6 +6024,9 @@ impl<'arena> NodeChecker for NamedArgument<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -5422,6 +6043,9 @@ impl<'arena> NodeChecker for NamedArgument<'arena> {
 
         {
             let colon = &self.colon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Colon
             }) {
@@ -5438,6 +6062,9 @@ impl<'arena> NodeChecker for NamedArgument<'arena> {
 
         {
             let value = &self.value;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Value
             }) {
@@ -5481,6 +6108,9 @@ impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -5497,6 +6127,9 @@ impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
 
         {
             let arguments = &self.arguments;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -5513,6 +6146,9 @@ impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -5556,6 +6192,9 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -5572,6 +6211,9 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
 
         {
             let arguments = &self.arguments;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -5588,6 +6230,9 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -5631,6 +6276,9 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
 
         {
             let asterisk = &self.asterisk;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Asterisk
             }) {
@@ -5647,6 +6295,9 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
 
         {
             let alias = &self.alias;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Alias
             }) {
@@ -5663,6 +6314,9 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
 
         {
             let from_keyword = &self.from_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::FromKeyword
             }) {
@@ -5679,6 +6333,9 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
 
         {
             let path = &self.path;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Path)
             {
@@ -5888,6 +6545,9 @@ impl<'arena> NodeChecker for OrExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -5904,6 +6564,9 @@ impl<'arena> NodeChecker for OrExpression<'arena> {
 
         {
             let operator = &self.operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -5920,6 +6583,9 @@ impl<'arena> NodeChecker for OrExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -5963,6 +6629,9 @@ impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -5979,6 +6648,9 @@ impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
 
         {
             let paths = &self.paths;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Paths
             }) {
@@ -5995,6 +6667,9 @@ impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -6038,6 +6713,9 @@ impl<'arena> NodeChecker for OverrideSpecifier<'arena> {
 
         {
             let override_keyword = &self.override_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OverrideKeyword
             }) {
@@ -6052,6 +6730,8 @@ impl<'arena> NodeChecker for OverrideSpecifier<'arena> {
 
         // overridden
         if let Some(overridden) = &self.overridden {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Overridden
             }) {
@@ -6105,6 +6785,9 @@ impl<'arena> NodeChecker for Parameter<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -6119,6 +6802,8 @@ impl<'arena> NodeChecker for Parameter<'arena> {
 
         // storage_location
         if let Some(storage_location) = &self.storage_location {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::StorageLocation
             }) {
@@ -6140,6 +6825,8 @@ impl<'arena> NodeChecker for Parameter<'arena> {
 
         // name
         if let Some(name) = &self.name {
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -6193,6 +6880,9 @@ impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -6209,6 +6899,9 @@ impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -6225,6 +6918,9 @@ impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -6268,6 +6964,9 @@ impl<'arena> NodeChecker for PathImport<'arena> {
 
         {
             let path = &self.path;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Path)
             {
@@ -6282,6 +6981,8 @@ impl<'arena> NodeChecker for PathImport<'arena> {
 
         // alias
         if let Some(alias) = &self.alias {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Alias
             }) {
@@ -6335,6 +7036,9 @@ impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -6351,6 +7055,9 @@ impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
 
         {
             let arguments = &self.arguments;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -6367,6 +7074,9 @@ impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -6410,6 +7120,9 @@ impl<'arena> NodeChecker for PostfixExpression<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -6422,19 +7135,21 @@ impl<'arena> NodeChecker for PostfixExpression<'arena> {
             }
         }
 
-        // operator
+        // Expression_PostfixExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_postfix_expression_operator =
+                &self.expression_postfix_expression_operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors = expression_postfix_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_PostfixExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -6469,6 +7184,9 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
 
         {
             let pragma_keyword = &self.pragma_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::PragmaKeyword
             }) {
@@ -6485,6 +7203,9 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
 
         {
             let pragma = &self.pragma;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Pragma
             }) {
@@ -6501,6 +7222,9 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -6540,19 +7264,20 @@ impl<'arena> NodeChecker for PrefixExpression<'arena> {
 
         let mut errors = vec![];
 
-        // operator
+        // Expression_PrefixExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_prefix_expression_operator = &self.expression_prefix_expression_operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors = expression_prefix_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_PrefixExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -6560,6 +7285,9 @@ impl<'arena> NodeChecker for PrefixExpression<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -6603,6 +7331,9 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
 
         {
             let receive_keyword = &self.receive_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ReceiveKeyword
             }) {
@@ -6619,6 +7350,9 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -6635,6 +7369,9 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
 
         {
             let attributes = &self.attributes;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Attributes
             }) {
@@ -6651,6 +7388,9 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -6694,6 +7434,9 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
 
         {
             let return_keyword = &self.return_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ReturnKeyword
             }) {
@@ -6708,6 +7451,8 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
 
         // expression
         if let Some(expression) = &self.expression {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -6734,6 +7479,9 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -6777,6 +7525,9 @@ impl<'arena> NodeChecker for ReturnsDeclaration<'arena> {
 
         {
             let returns_keyword = &self.returns_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ReturnsKeyword
             }) {
@@ -6793,6 +7544,9 @@ impl<'arena> NodeChecker for ReturnsDeclaration<'arena> {
 
         {
             let variables = &self.variables;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Variables
             }) {
@@ -6836,6 +7590,9 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
 
         {
             let revert_keyword = &self.revert_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RevertKeyword
             }) {
@@ -6850,6 +7607,8 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
 
         // error
         if let Some(error) = &self.error {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Error
             }) {
@@ -6876,6 +7635,9 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
 
         {
             let arguments = &self.arguments;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -6892,6 +7654,9 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -6935,6 +7700,9 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
 
         {
             let left_operand = &self.left_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeftOperand
             }) {
@@ -6947,19 +7715,20 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
             }
         }
 
-        // operator
+        // Expression_ShiftExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_shift_expression_operator = &self.expression_shift_expression_operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors = expression_shift_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_ShiftExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -6967,6 +7736,9 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
 
         {
             let right_operand = &self.right_operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::RightOperand
             }) {
@@ -7010,6 +7782,9 @@ impl<'arena> NodeChecker for SourceUnit<'arena> {
 
         {
             let members = &self.members;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Members
             }) {
@@ -7053,6 +7828,9 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -7069,6 +7847,9 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
 
         {
             let attributes = &self.attributes;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Attributes
             }) {
@@ -7085,6 +7866,9 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -7099,6 +7883,8 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
 
         // value
         if let Some(value) = &self.value {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Value
             }) {
@@ -7125,6 +7911,9 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -7168,6 +7957,9 @@ impl<'arena> NodeChecker for StateVariableDefinitionValue<'arena> {
 
         {
             let equal = &self.equal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Equal
             }) {
@@ -7184,6 +7976,9 @@ impl<'arena> NodeChecker for StateVariableDefinitionValue<'arena> {
 
         {
             let value = &self.value;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Value
             }) {
@@ -7227,6 +8022,9 @@ impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
 
         {
             let layout_keyword = &self.layout_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LayoutKeyword
             }) {
@@ -7243,6 +8041,9 @@ impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
 
         {
             let at_keyword = &self.at_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::AtKeyword
             }) {
@@ -7259,6 +8060,9 @@ impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
 
         {
             let expression = &self.expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -7302,6 +8106,9 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
 
         {
             let struct_keyword = &self.struct_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::StructKeyword
             }) {
@@ -7318,6 +8125,9 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -7334,6 +8144,9 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -7350,6 +8163,9 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
 
         {
             let members = &self.members;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Members
             }) {
@@ -7366,6 +8182,9 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -7409,6 +8228,9 @@ impl<'arena> NodeChecker for StructMember<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -7425,6 +8247,9 @@ impl<'arena> NodeChecker for StructMember<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -7441,6 +8266,9 @@ impl<'arena> NodeChecker for StructMember<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -7484,6 +8312,9 @@ impl<'arena> NodeChecker for ThrowStatement<'arena> {
 
         {
             let throw_keyword = &self.throw_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ThrowKeyword
             }) {
@@ -7500,6 +8331,9 @@ impl<'arena> NodeChecker for ThrowStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -7543,6 +8377,9 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
 
         {
             let try_keyword = &self.try_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TryKeyword
             }) {
@@ -7559,6 +8396,9 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
 
         {
             let expression = &self.expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -7573,6 +8413,8 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
 
         // returns
         if let Some(returns) = &self.returns {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Returns
             }) {
@@ -7599,6 +8441,9 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -7615,6 +8460,9 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
 
         {
             let catch_clauses = &self.catch_clauses;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CatchClauses
             }) {
@@ -7656,6 +8504,8 @@ impl<'arena> NodeChecker for TupleDeconstructionElement<'arena> {
 
         // member
         if let Some(member) = &self.member {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Member
             }) {
@@ -7707,6 +8557,8 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
 
         // var_keyword
         if let Some(var_keyword) = &self.var_keyword {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::VarKeyword
             }) {
@@ -7733,6 +8585,9 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -7749,6 +8604,9 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
 
         {
             let elements = &self.elements;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Elements
             }) {
@@ -7765,6 +8623,9 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -7781,6 +8642,9 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
 
         {
             let equal = &self.equal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Equal
             }) {
@@ -7797,6 +8661,9 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
 
         {
             let expression = &self.expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -7813,6 +8680,9 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -7856,6 +8726,9 @@ impl<'arena> NodeChecker for TupleExpression<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -7872,6 +8745,9 @@ impl<'arena> NodeChecker for TupleExpression<'arena> {
 
         {
             let items = &self.items;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Items
             }) {
@@ -7888,6 +8764,9 @@ impl<'arena> NodeChecker for TupleExpression<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -7929,6 +8808,8 @@ impl<'arena> NodeChecker for TupleValue<'arena> {
 
         // expression
         if let Some(expression) = &self.expression {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -7982,6 +8863,9 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
 
         {
             let type_keyword = &self.type_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeKeyword
             }) {
@@ -7998,6 +8882,9 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -8014,6 +8901,9 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -8030,6 +8920,9 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -8073,6 +8966,9 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
 
         {
             let type_name = &self.type_name;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeName
             }) {
@@ -8087,6 +8983,8 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
 
         // storage_location
         if let Some(storage_location) = &self.storage_location {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::StorageLocation
             }) {
@@ -8110,6 +9008,9 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -8153,6 +9054,9 @@ impl<'arena> NodeChecker for UncheckedBlock<'arena> {
 
         {
             let unchecked_keyword = &self.unchecked_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::UncheckedKeyword
             }) {
@@ -8169,6 +9073,9 @@ impl<'arena> NodeChecker for UncheckedBlock<'arena> {
 
         {
             let block = &self.block;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Block
             }) {
@@ -8212,6 +9119,9 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
 
         {
             let function_keyword = &self.function_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::FunctionKeyword
             }) {
@@ -8228,6 +9138,9 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -8244,6 +9157,9 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
 
         {
             let attributes = &self.attributes;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Attributes
             }) {
@@ -8260,6 +9176,9 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -8301,6 +9220,8 @@ impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
 
         // storage_location
         if let Some(storage_location) = &self.storage_location {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::StorageLocation
             }) {
@@ -8324,6 +9245,9 @@ impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -8367,6 +9291,9 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
 
         {
             let type_keyword = &self.type_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::TypeKeyword
             }) {
@@ -8383,6 +9310,9 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -8399,6 +9329,9 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
 
         {
             let is_keyword = &self.is_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::IsKeyword
             }) {
@@ -8415,6 +9348,9 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
 
         {
             let value_type = &self.value_type;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ValueType
             }) {
@@ -8431,6 +9367,9 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -8474,6 +9413,9 @@ impl<'arena> NodeChecker for UsingAlias<'arena> {
 
         {
             let as_keyword = &self.as_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::AsKeyword
             }) {
@@ -8490,6 +9432,9 @@ impl<'arena> NodeChecker for UsingAlias<'arena> {
 
         {
             let operator = &self.operator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -8533,6 +9478,9 @@ impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -8549,6 +9497,9 @@ impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
 
         {
             let symbols = &self.symbols;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Symbols
             }) {
@@ -8565,6 +9516,9 @@ impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -8608,6 +9562,9 @@ impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -8622,6 +9579,8 @@ impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
 
         // alias
         if let Some(alias) = &self.alias {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Alias
             }) {
@@ -8675,6 +9634,9 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
 
         {
             let using_keyword = &self.using_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::UsingKeyword
             }) {
@@ -8691,6 +9653,9 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
 
         {
             let clause = &self.clause;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Clause
             }) {
@@ -8707,6 +9672,9 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
 
         {
             let for_keyword = &self.for_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ForKeyword
             }) {
@@ -8723,6 +9691,9 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
 
         {
             let target = &self.target;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Target
             }) {
@@ -8737,6 +9708,8 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
 
         // global_keyword
         if let Some(global_keyword) = &self.global_keyword {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::GlobalKeyword
             }) {
@@ -8763,6 +9736,9 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
 
         {
             let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Semicolon
             }) {
@@ -8923,6 +9899,9 @@ impl<'arena> NodeChecker for VariableDeclarationValue<'arena> {
 
         {
             let equal = &self.equal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Equal
             }) {
@@ -8939,6 +9918,9 @@ impl<'arena> NodeChecker for VariableDeclarationValue<'arena> {
 
         {
             let expression = &self.expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -8982,6 +9964,9 @@ impl<'arena> NodeChecker for VersionPragma<'arena> {
 
         {
             let solidity_keyword = &self.solidity_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::SolidityKeyword
             }) {
@@ -8998,6 +9983,9 @@ impl<'arena> NodeChecker for VersionPragma<'arena> {
 
         {
             let sets = &self.sets;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Sets)
             {
@@ -9041,6 +10029,9 @@ impl<'arena> NodeChecker for VersionRange<'arena> {
 
         {
             let start = &self.start;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Start
             }) {
@@ -9057,6 +10048,9 @@ impl<'arena> NodeChecker for VersionRange<'arena> {
 
         {
             let minus = &self.minus;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Minus
             }) {
@@ -9073,6 +10067,9 @@ impl<'arena> NodeChecker for VersionRange<'arena> {
 
         {
             let end = &self.end;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::End)
             {
@@ -9114,6 +10111,8 @@ impl<'arena> NodeChecker for VersionTerm<'arena> {
 
         // operator
         if let Some(operator) = &self.operator {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -9140,6 +10139,9 @@ impl<'arena> NodeChecker for VersionTerm<'arena> {
 
         {
             let literal = &self.literal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Literal
             }) {
@@ -9183,6 +10185,9 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
 
         {
             let while_keyword = &self.while_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::WhileKeyword
             }) {
@@ -9199,6 +10204,9 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -9215,6 +10223,9 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
 
         {
             let condition = &self.condition;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Condition
             }) {
@@ -9231,6 +10242,9 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -9247,6 +10261,9 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -9290,6 +10307,9 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
 
         {
             let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenBrace
             }) {
@@ -9306,6 +10326,9 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
 
         {
             let statements = &self.statements;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Statements
             }) {
@@ -9322,6 +10345,9 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
 
         {
             let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseBrace
             }) {
@@ -9365,6 +10391,9 @@ impl<'arena> NodeChecker for YulBreakStatement<'arena> {
 
         {
             let break_keyword = &self.break_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::BreakKeyword
             }) {
@@ -9408,6 +10437,9 @@ impl<'arena> NodeChecker for YulColonAndEqual<'arena> {
 
         {
             let colon = &self.colon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Colon
             }) {
@@ -9424,6 +10456,9 @@ impl<'arena> NodeChecker for YulColonAndEqual<'arena> {
 
         {
             let equal = &self.equal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Equal
             }) {
@@ -9467,6 +10502,9 @@ impl<'arena> NodeChecker for YulContinueStatement<'arena> {
 
         {
             let continue_keyword = &self.continue_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ContinueKeyword
             }) {
@@ -9510,6 +10548,9 @@ impl<'arena> NodeChecker for YulDefaultCase<'arena> {
 
         {
             let default_keyword = &self.default_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::DefaultKeyword
             }) {
@@ -9526,6 +10567,9 @@ impl<'arena> NodeChecker for YulDefaultCase<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -9569,6 +10613,9 @@ impl<'arena> NodeChecker for YulEqualAndColon<'arena> {
 
         {
             let equal = &self.equal;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Equal
             }) {
@@ -9585,6 +10632,9 @@ impl<'arena> NodeChecker for YulEqualAndColon<'arena> {
 
         {
             let colon = &self.colon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Colon
             }) {
@@ -9628,6 +10678,9 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
 
         {
             let for_keyword = &self.for_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::ForKeyword
             }) {
@@ -9644,6 +10697,9 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
 
         {
             let initialization = &self.initialization;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Initialization
             }) {
@@ -9660,6 +10716,9 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
 
         {
             let condition = &self.condition;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Condition
             }) {
@@ -9676,6 +10735,9 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
 
         {
             let iterator = &self.iterator;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Iterator
             }) {
@@ -9692,6 +10754,9 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -9735,6 +10800,9 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
 
         {
             let operand = &self.operand;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operand
             }) {
@@ -9751,6 +10819,9 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -9767,6 +10838,9 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
 
         {
             let arguments = &self.arguments;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Arguments
             }) {
@@ -9783,6 +10857,9 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -9826,6 +10903,9 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
 
         {
             let function_keyword = &self.function_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::FunctionKeyword
             }) {
@@ -9842,6 +10922,9 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
 
         {
             let name = &self.name;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Name)
             {
@@ -9858,6 +10941,9 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -9872,6 +10958,8 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
 
         // returns
         if let Some(returns) = &self.returns {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Returns
             }) {
@@ -9898,6 +10986,9 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -9941,6 +11032,9 @@ impl<'arena> NodeChecker for YulIfStatement<'arena> {
 
         {
             let if_keyword = &self.if_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::IfKeyword
             }) {
@@ -9957,6 +11051,9 @@ impl<'arena> NodeChecker for YulIfStatement<'arena> {
 
         {
             let condition = &self.condition;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Condition
             }) {
@@ -9973,6 +11070,9 @@ impl<'arena> NodeChecker for YulIfStatement<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -10016,6 +11116,9 @@ impl<'arena> NodeChecker for YulLabel<'arena> {
 
         {
             let label = &self.label;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Label
             }) {
@@ -10032,6 +11135,9 @@ impl<'arena> NodeChecker for YulLabel<'arena> {
 
         {
             let colon = &self.colon;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Colon
             }) {
@@ -10075,6 +11181,9 @@ impl<'arena> NodeChecker for YulLeaveStatement<'arena> {
 
         {
             let leave_keyword = &self.leave_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LeaveKeyword
             }) {
@@ -10118,6 +11227,9 @@ impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
 
         {
             let open_paren = &self.open_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::OpenParen
             }) {
@@ -10134,6 +11246,9 @@ impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
 
         {
             let parameters = &self.parameters;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Parameters
             }) {
@@ -10150,6 +11265,9 @@ impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
 
         {
             let close_paren = &self.close_paren;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CloseParen
             }) {
@@ -10193,6 +11311,9 @@ impl<'arena> NodeChecker for YulReturnsDeclaration<'arena> {
 
         {
             let minus_greater_than = &self.minus_greater_than;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::MinusGreaterThan
             }) {
@@ -10209,6 +11330,9 @@ impl<'arena> NodeChecker for YulReturnsDeclaration<'arena> {
 
         {
             let variables = &self.variables;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Variables
             }) {
@@ -10252,6 +11376,9 @@ impl<'arena> NodeChecker for YulStackAssignmentStatement<'arena> {
 
         {
             let assignment = &self.assignment;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Assignment
             }) {
@@ -10268,6 +11395,9 @@ impl<'arena> NodeChecker for YulStackAssignmentStatement<'arena> {
 
         {
             let variable = &self.variable;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Variable
             }) {
@@ -10311,6 +11441,9 @@ impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
 
         {
             let switch_keyword = &self.switch_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::SwitchKeyword
             }) {
@@ -10327,6 +11460,9 @@ impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
 
         {
             let expression = &self.expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -10343,6 +11479,9 @@ impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
 
         {
             let cases = &self.cases;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Cases
             }) {
@@ -10386,6 +11525,9 @@ impl<'arena> NodeChecker for YulValueCase<'arena> {
 
         {
             let case_keyword = &self.case_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::CaseKeyword
             }) {
@@ -10402,6 +11544,9 @@ impl<'arena> NodeChecker for YulValueCase<'arena> {
 
         {
             let value = &self.value;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Value
             }) {
@@ -10418,6 +11563,9 @@ impl<'arena> NodeChecker for YulValueCase<'arena> {
 
         {
             let body = &self.body;
+
+            // Prepare edge label
+
             if let Some(child) =
                 extract_first(&mut children, |child: &Edge| child.label == EdgeLabel::Body)
             {
@@ -10461,6 +11609,9 @@ impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
 
         {
             let variables = &self.variables;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Variables
             }) {
@@ -10477,6 +11628,9 @@ impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
 
         {
             let assignment = &self.assignment;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Assignment
             }) {
@@ -10493,6 +11647,9 @@ impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
 
         {
             let expression = &self.expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -10536,6 +11693,9 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
 
         {
             let let_keyword = &self.let_keyword;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::LetKeyword
             }) {
@@ -10552,6 +11712,9 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
 
         {
             let variables = &self.variables;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Variables
             }) {
@@ -10566,6 +11729,8 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
 
         // value
         if let Some(value) = &self.value {
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Value
             }) {
@@ -10619,6 +11784,9 @@ impl<'arena> NodeChecker for YulVariableDeclarationValue<'arena> {
 
         {
             let assignment = &self.assignment;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Assignment
             }) {
@@ -10635,6 +11803,9 @@ impl<'arena> NodeChecker for YulVariableDeclarationValue<'arena> {
 
         {
             let expression = &self.expression;
+
+            // Prepare edge label
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Expression
             }) {
@@ -11254,6 +12425,124 @@ impl<'arena> NodeChecker for Expression<'arena> {
     }
 }
 
+impl<'arena> NodeChecker for Expression_AdditiveExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::Plus(element) => element.check_node(node),
+
+            Self::Minus(element) => element.check_node(node),
+        }
+    }
+}
+
+impl<'arena> NodeChecker for Expression_AssignmentExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::Equal(element) => element.check_node(node),
+
+            Self::BarEqual(element) => element.check_node(node),
+
+            Self::PlusEqual(element) => element.check_node(node),
+
+            Self::MinusEqual(element) => element.check_node(node),
+
+            Self::CaretEqual(element) => element.check_node(node),
+
+            Self::SlashEqual(element) => element.check_node(node),
+
+            Self::PercentEqual(element) => element.check_node(node),
+
+            Self::AsteriskEqual(element) => element.check_node(node),
+
+            Self::AmpersandEqual(element) => element.check_node(node),
+
+            Self::LessThanLessThanEqual(element) => element.check_node(node),
+
+            Self::GreaterThanGreaterThanEqual(element) => element.check_node(node),
+
+            Self::GreaterThanGreaterThanGreaterThanEqual(element) => element.check_node(node),
+        }
+    }
+}
+
+impl<'arena> NodeChecker for Expression_EqualityExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::EqualEqual(element) => element.check_node(node),
+
+            Self::BangEqual(element) => element.check_node(node),
+        }
+    }
+}
+
+impl<'arena> NodeChecker for Expression_InequalityExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::LessThan(element) => element.check_node(node),
+
+            Self::GreaterThan(element) => element.check_node(node),
+
+            Self::LessThanEqual(element) => element.check_node(node),
+
+            Self::GreaterThanEqual(element) => element.check_node(node),
+        }
+    }
+}
+
+impl<'arena> NodeChecker for Expression_MultiplicativeExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::Asterisk(element) => element.check_node(node),
+
+            Self::Slash(element) => element.check_node(node),
+
+            Self::Percent(element) => element.check_node(node),
+        }
+    }
+}
+
+impl<'arena> NodeChecker for Expression_PostfixExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::PlusPlus(element) => element.check_node(node),
+
+            Self::MinusMinus(element) => element.check_node(node),
+        }
+    }
+}
+
+impl<'arena> NodeChecker for Expression_PrefixExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::PlusPlus(element) => element.check_node(node),
+
+            Self::MinusMinus(element) => element.check_node(node),
+
+            Self::Tilde(element) => element.check_node(node),
+
+            Self::Bang(element) => element.check_node(node),
+
+            Self::Minus(element) => element.check_node(node),
+
+            Self::Plus(element) => element.check_node(node),
+
+            Self::DeleteKeyword(element) => element.check_node(node),
+        }
+    }
+}
+
+impl<'arena> NodeChecker for Expression_ShiftExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::LessThanLessThan(element) => element.check_node(node),
+
+            Self::GreaterThanGreaterThan(element) => element.check_node(node),
+
+            Self::GreaterThanGreaterThanGreaterThan(element) => element.check_node(node),
+        }
+    }
+}
+
 impl<'arena> NodeChecker for FallbackFunctionAttribute<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::FallbackFunctionAttribute) {
@@ -11822,26 +13111,17 @@ impl<'arena> NodeChecker for MappingKeyType<'arena> {
 
 impl<'arena> NodeChecker for MemberAccessIdentifier<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
-        let ident_node = match self {
-            Self::Identifier(element) => TerminalType {
-                // TODO(v2): avoid the allocation here, it's not needed
-                value: element.value.clone(),
-                l: element.l,
-                r: element.r,
-                kind: element.kind.clone(),
-                phantom: PhantomData,
-            },
-            Self::AddressKeyword(element) => TerminalType {
-                // TODO(v2): avoid the allocation here, it's not needed
-                value: element.value.clone(),
-                l: element.l,
-                r: element.r,
-                kind: LexemeKind::Identifier,
-                phantom: PhantomData,
-            },
-        };
-
-        ident_node.check_node(node)
+        match self {
+            Self::Identifier(element) => element.check_node(node),
+            Self::AddressKeyword(element) => {
+                let ident = Identifier {
+                    l: element.l,
+                    r: element.r,
+                    phantom: PhantomData,
+                };
+                ident.check_node(node)
+            }
+        }
     }
 }
 
@@ -14932,14 +16212,6845 @@ impl<'arena> NodeChecker for YulVariableNames<'arena> {
 
 // Terminals
 
-impl<'arena> NodeChecker for TerminalType<'arena> {
+impl<'arena> NodeChecker for ABIEncoderV2Keyword<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind: &'static str = self.kind.clone().into();
+            let v2_kind = "ABIEncoderV2Keyword";
 
-            if !Comparator::match_terminal(v1_kind, v2_kind) {
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AbicoderKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AbicoderKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AbicoderV1Keyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AbicoderV1Keyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AbicoderV2Keyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AbicoderV2Keyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AbstractKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AbstractKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AddressKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AddressKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AfterKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AfterKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AliasKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AliasKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Ampersand<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Ampersand";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AmpersandAmpersand<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AmpersandAmpersand";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AmpersandEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AmpersandEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AnonymousKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AnonymousKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ApplyKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ApplyKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AssemblyKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AssemblyKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Asterisk<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Asterisk";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AsteriskAsterisk<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AsteriskAsterisk";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AsteriskEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AsteriskEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AtKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AtKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for AutoKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "AutoKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Bang<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Bang";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for BangEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "BangEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Bar<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Bar";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for BarBar<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "BarBar";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for BarEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "BarEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for BoolKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "BoolKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for BreakKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "BreakKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ByteKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ByteKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for BytesKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "BytesKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for CallDataKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "CallDataKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Caret<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Caret";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for CaretEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "CaretEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for CaseKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "CaseKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for CatchKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "CatchKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for CloseBrace<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "CloseBrace";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for CloseBracket<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "CloseBracket";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for CloseParen<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "CloseParen";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Colon<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Colon";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ColonEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ColonEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Comma<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Comma";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ConstantKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ConstantKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ConstructorKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ConstructorKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ContinueKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ContinueKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ContractKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ContractKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for CopyOfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "CopyOfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DaysKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DaysKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DecimalLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DecimalLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DefaultKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DefaultKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DefineKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DefineKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DeleteKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DeleteKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DoKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DoKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DoubleQuotedHexStringLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DoubleQuotedHexStringLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DoubleQuotedStringLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DoubleQuotedStringLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DoubleQuotedUnicodeStringLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DoubleQuotedUnicodeStringLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for DoubleQuotedVersionLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "DoubleQuotedVersionLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ElseKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ElseKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for EmitKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "EmitKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for EndOfLine<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "EndOfLine";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for EnumKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "EnumKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Equal<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Equal";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for EqualColon<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "EqualColon";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for EqualEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "EqualEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for EqualGreaterThan<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "EqualGreaterThan";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ErrorKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ErrorKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for EtherKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "EtherKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for EventKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "EventKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ExperimentalKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ExperimentalKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ExternalKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ExternalKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for FallbackKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "FallbackKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for FalseKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "FalseKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for FinalKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "FinalKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for FinneyKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "FinneyKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for FixedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "FixedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ForKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ForKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for FromKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "FromKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for FunctionKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "FunctionKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for GlobalKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "GlobalKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for GreaterThan<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "GreaterThan";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for GreaterThanEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "GreaterThanEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for GreaterThanGreaterThan<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "GreaterThanGreaterThan";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for GreaterThanGreaterThanEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "GreaterThanGreaterThanEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for GreaterThanGreaterThanGreaterThan<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "GreaterThanGreaterThanGreaterThan";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for GreaterThanGreaterThanGreaterThanEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "GreaterThanGreaterThanGreaterThanEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for GweiKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "GweiKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for HexKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "HexKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for HexLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "HexLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for HoursKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "HoursKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Identifier<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Identifier";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for IfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "IfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ImmutableKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ImmutableKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ImplementsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ImplementsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ImportKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ImportKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for InKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "InKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for IndexedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "IndexedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for InlineKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "InlineKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for IntKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "IntKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for InterfaceKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "InterfaceKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for InternalKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "InternalKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for IsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "IsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for LayoutKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "LayoutKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for LessThan<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "LessThan";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for LessThanEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "LessThanEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for LessThanLessThan<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "LessThanLessThan";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for LessThanLessThanEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "LessThanLessThanEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for LetKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "LetKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for LibraryKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "LibraryKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MacroKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MacroKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MappingKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MappingKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MatchKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MatchKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MemoryKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MemoryKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Minus<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Minus";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MinusEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MinusEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MinusGreaterThan<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MinusGreaterThan";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MinusMinus<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MinusMinus";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MinutesKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MinutesKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ModifierKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ModifierKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MultiLineComment<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MultiLineComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MultiLineNatSpecComment<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MultiLineNatSpecComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for MutableKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "MutableKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for NewKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "NewKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for NullKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "NullKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for OfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "OfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for OpenBrace<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "OpenBrace";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for OpenBracket<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "OpenBracket";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for OpenParen<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "OpenParen";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for OverrideKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "OverrideKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PartialKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PartialKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PayableKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PayableKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Percent<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Percent";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PercentEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PercentEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Period<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Period";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Plus<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Plus";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PlusEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PlusEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PlusPlus<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PlusPlus";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PragmaKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PragmaKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PrivateKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PrivateKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PromiseKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PromiseKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PublicKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PublicKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for PureKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PureKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for QuestionMark<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "QuestionMark";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ReceiveKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ReceiveKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ReferenceKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ReferenceKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for RelocatableKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "RelocatableKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ReturnKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ReturnKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ReturnsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ReturnsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for RevertKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "RevertKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SMTCheckerKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SMTCheckerKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SealedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SealedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SecondsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SecondsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Semicolon<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Semicolon";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SingleLineComment<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SingleLineComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SingleLineNatSpecComment<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SingleLineNatSpecComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SingleQuotedHexStringLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SingleQuotedHexStringLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SingleQuotedStringLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SingleQuotedStringLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SingleQuotedUnicodeStringLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SingleQuotedUnicodeStringLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SingleQuotedVersionLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SingleQuotedVersionLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SizeOfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SizeOfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Slash<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Slash";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SlashEqual<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SlashEqual";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SolidityKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SolidityKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for StaticKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "StaticKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for StorageKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "StorageKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for StringKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "StringKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for StructKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "StructKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SuperKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SuperKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SupportsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SupportsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SwitchKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SwitchKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for SzaboKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "SzaboKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ThisKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ThisKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ThrowKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ThrowKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Tilde<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Tilde";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for TransientKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "TransientKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for TrueKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "TrueKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for TryKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "TryKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for TypeDefKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "TypeDefKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for TypeKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "TypeKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for TypeOfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "TypeOfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for UfixedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "UfixedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for UintKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "UintKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for UncheckedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "UncheckedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for UsingKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "UsingKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for VarKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "VarKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for VersionSpecifier<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "VersionSpecifier";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for ViewKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ViewKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for VirtualKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "VirtualKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for WeeksKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "WeeksKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for WeiKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "WeiKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for WhileKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "WhileKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for Whitespace<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "Whitespace";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YearsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YearsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulAbstractKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulAbstractKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulAfterKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulAfterKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulAliasKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulAliasKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulAnonymousKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulAnonymousKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulApplyKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulApplyKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulAsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulAsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulAssemblyKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulAssemblyKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulAutoKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulAutoKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulBoolKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulBoolKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulBreakKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulBreakKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulBytesKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulBytesKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulCallDataKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulCallDataKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulCaseKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulCaseKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulCatchKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulCatchKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulConstantKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulConstantKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulConstructorKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulConstructorKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulContinueKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulContinueKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulContractKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulContractKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulCopyOfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulCopyOfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulDaysKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulDaysKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulDecimalLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulDecimalLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulDefaultKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulDefaultKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulDefineKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulDefineKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulDeleteKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulDeleteKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulDoKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulDoKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulElseKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulElseKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulEmitKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulEmitKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulEnumKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulEnumKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulEtherKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulEtherKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulEventKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulEventKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulExternalKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulExternalKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulFallbackKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulFallbackKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulFalseKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulFalseKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulFinalKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulFinalKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulFinneyKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulFinneyKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulFixedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulFixedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulForKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulForKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulFunctionKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulFunctionKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulGweiKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulGweiKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulHexKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulHexKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulHexLiteral<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulHexLiteral";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulHoursKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulHoursKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulIdentifier<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulIdentifier";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulIfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulIfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulImmutableKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulImmutableKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulImplementsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulImplementsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulImportKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulImportKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulInKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulInKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulIndexedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulIndexedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulInlineKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulInlineKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulIntKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulIntKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulInterfaceKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulInterfaceKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulInternalKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulInternalKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulIsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulIsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulLeaveKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulLeaveKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulLetKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulLetKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulLibraryKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulLibraryKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulMacroKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulMacroKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulMappingKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulMappingKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulMatchKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulMatchKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulMemoryKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulMemoryKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulMinutesKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulMinutesKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulModifierKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulModifierKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulMutableKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulMutableKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulNewKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulNewKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulNullKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulNullKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulOfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulOfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulOverrideKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulOverrideKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulPartialKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulPartialKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulPayableKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulPayableKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulPragmaKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulPragmaKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulPrivateKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulPrivateKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulPromiseKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulPromiseKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulPublicKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulPublicKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulPureKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulPureKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulReceiveKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulReceiveKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulReferenceKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulReferenceKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulRelocatableKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulRelocatableKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulReturnsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulReturnsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulSealedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSealedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulSecondsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSecondsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulSizeOfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSizeOfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulStaticKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulStaticKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulStorageKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulStorageKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulStringKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulStringKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulStructKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulStructKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulSuperKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSuperKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulSupportsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSupportsKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulSwitchKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSwitchKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulSzaboKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSzaboKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulThisKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulThisKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulThrowKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulThrowKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulTrueKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulTrueKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulTryKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulTryKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulTypeDefKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulTypeDefKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulTypeKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulTypeKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulTypeOfKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulTypeOfKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulUfixedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulUfixedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulUintKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulUintKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulUncheckedKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulUncheckedKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulUsingKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulUsingKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulVarKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulVarKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulViewKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulViewKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulVirtualKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulVirtualKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulWeeksKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulWeeksKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulWeiKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulWeiKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulWhileKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulWhileKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected node kind to be {}, but it was {}",
+                    v2_kind, v1_kind
+                )));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected node kind to be a terminal, but it was {}",
+                node.kind()
+            )));
+        }
+        return errors;
+    }
+}
+
+impl<'arena> NodeChecker for YulYearsKeyword<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulYearsKeyword";
+
+            if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(format!(
                     "Expected node kind to be {}, but it was {}",
                     v2_kind, v1_kind

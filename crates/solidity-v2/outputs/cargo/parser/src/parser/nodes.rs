@@ -1,9 +1,10 @@
 use bumpalo::boxed::Box;
 use bumpalo::collections::{CollectIn, Vec};
 use bumpalo::Bump;
-use slang_solidity_v2_ast::ast::lexemes::LexemeKind;
 ///! This module contains certain nodes and functions used internally by the parser.
 use slang_solidity_v2_ast::ast::nodes::*;
+
+use crate::lexer::lexemes::LexemeKind;
 // Special cases
 
 // An IndexAccessPath represents a path or elementary type followed by
@@ -291,7 +292,11 @@ pub fn new_expression_identifier_path<'arena>(
                     new_member_access_expression(
                         arena,
                         acc,
-                        new_empty_terminal(LexemeKind::Period),
+                        Period {
+                            l: 0,
+                            r: 0,
+                            phantom: std::marker::PhantomData,
+                        },
                         new_member_access_identifier_identifier(arena, id),
                     ),
                 ),

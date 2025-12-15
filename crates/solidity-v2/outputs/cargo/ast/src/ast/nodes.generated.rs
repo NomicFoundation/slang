@@ -44,20 +44,20 @@ pub type AdditiveExpression<'arena> = Box<'arena, AdditiveExpressionStruct<'aren
 #[derive(Debug)]
 pub struct AdditiveExpressionStruct<'arena> {
     pub left_operand: Expression<'arena>,
-    pub operator: Plus<'arena>,
+    pub expression_additive_expression_operator: Expression_AdditiveExpression_Operator<'arena>,
     pub right_operand: Expression<'arena>,
 }
 
 pub fn new_additive_expression<'arena>(
     arena: &'arena Bump,
     left_operand: Expression<'arena>,
-    operator: Plus<'arena>,
+    expression_additive_expression_operator: Expression_AdditiveExpression_Operator<'arena>,
     right_operand: Expression<'arena>,
 ) -> AdditiveExpression<'arena> {
     Box::new_in(
         AdditiveExpressionStruct {
             left_operand,
-            operator,
+            expression_additive_expression_operator,
             right_operand,
         },
         arena,
@@ -222,20 +222,20 @@ pub type AssignmentExpression<'arena> = Box<'arena, AssignmentExpressionStruct<'
 #[derive(Debug)]
 pub struct AssignmentExpressionStruct<'arena> {
     pub left_operand: Expression<'arena>,
-    pub operator: Equal<'arena>,
+    pub expression_assignment_expression_operator: Expression_AssignmentExpression_Operator<'arena>,
     pub right_operand: Expression<'arena>,
 }
 
 pub fn new_assignment_expression<'arena>(
     arena: &'arena Bump,
     left_operand: Expression<'arena>,
-    operator: Equal<'arena>,
+    expression_assignment_expression_operator: Expression_AssignmentExpression_Operator<'arena>,
     right_operand: Expression<'arena>,
 ) -> AssignmentExpression<'arena> {
     Box::new_in(
         AssignmentExpressionStruct {
             left_operand,
-            operator,
+            expression_assignment_expression_operator,
             right_operand,
         },
         arena,
@@ -743,20 +743,20 @@ pub type EqualityExpression<'arena> = Box<'arena, EqualityExpressionStruct<'aren
 #[derive(Debug)]
 pub struct EqualityExpressionStruct<'arena> {
     pub left_operand: Expression<'arena>,
-    pub operator: EqualEqual<'arena>,
+    pub expression_equality_expression_operator: Expression_EqualityExpression_Operator<'arena>,
     pub right_operand: Expression<'arena>,
 }
 
 pub fn new_equality_expression<'arena>(
     arena: &'arena Bump,
     left_operand: Expression<'arena>,
-    operator: EqualEqual<'arena>,
+    expression_equality_expression_operator: Expression_EqualityExpression_Operator<'arena>,
     right_operand: Expression<'arena>,
 ) -> EqualityExpression<'arena> {
     Box::new_in(
         EqualityExpressionStruct {
             left_operand,
-            operator,
+            expression_equality_expression_operator,
             right_operand,
         },
         arena,
@@ -1324,20 +1324,20 @@ pub type InequalityExpression<'arena> = Box<'arena, InequalityExpressionStruct<'
 #[derive(Debug)]
 pub struct InequalityExpressionStruct<'arena> {
     pub left_operand: Expression<'arena>,
-    pub operator: LessThan<'arena>,
+    pub expression_inequality_expression_operator: Expression_InequalityExpression_Operator<'arena>,
     pub right_operand: Expression<'arena>,
 }
 
 pub fn new_inequality_expression<'arena>(
     arena: &'arena Bump,
     left_operand: Expression<'arena>,
-    operator: LessThan<'arena>,
+    expression_inequality_expression_operator: Expression_InequalityExpression_Operator<'arena>,
     right_operand: Expression<'arena>,
 ) -> InequalityExpression<'arena> {
     Box::new_in(
         InequalityExpressionStruct {
             left_operand,
-            operator,
+            expression_inequality_expression_operator,
             right_operand,
         },
         arena,
@@ -1590,20 +1590,23 @@ pub type MultiplicativeExpression<'arena> = Box<'arena, MultiplicativeExpression
 #[derive(Debug)]
 pub struct MultiplicativeExpressionStruct<'arena> {
     pub left_operand: Expression<'arena>,
-    pub operator: Asterisk<'arena>,
+    pub expression_multiplicative_expression_operator:
+        Expression_MultiplicativeExpression_Operator<'arena>,
     pub right_operand: Expression<'arena>,
 }
 
 pub fn new_multiplicative_expression<'arena>(
     arena: &'arena Bump,
     left_operand: Expression<'arena>,
-    operator: Asterisk<'arena>,
+    expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator<
+        'arena,
+    >,
     right_operand: Expression<'arena>,
 ) -> MultiplicativeExpression<'arena> {
     Box::new_in(
         MultiplicativeExpressionStruct {
             left_operand,
-            operator,
+            expression_multiplicative_expression_operator,
             right_operand,
         },
         arena,
@@ -1903,15 +1906,21 @@ pub type PostfixExpression<'arena> = Box<'arena, PostfixExpressionStruct<'arena>
 #[derive(Debug)]
 pub struct PostfixExpressionStruct<'arena> {
     pub operand: Expression<'arena>,
-    pub operator: PlusPlus<'arena>,
+    pub expression_postfix_expression_operator: Expression_PostfixExpression_Operator<'arena>,
 }
 
 pub fn new_postfix_expression<'arena>(
     arena: &'arena Bump,
     operand: Expression<'arena>,
-    operator: PlusPlus<'arena>,
+    expression_postfix_expression_operator: Expression_PostfixExpression_Operator<'arena>,
 ) -> PostfixExpression<'arena> {
-    Box::new_in(PostfixExpressionStruct { operand, operator }, arena)
+    Box::new_in(
+        PostfixExpressionStruct {
+            operand,
+            expression_postfix_expression_operator,
+        },
+        arena,
+    )
 }
 
 pub type PragmaDirective<'arena> = Box<'arena, PragmaDirectiveStruct<'arena>>;
@@ -1943,16 +1952,22 @@ pub type PrefixExpression<'arena> = Box<'arena, PrefixExpressionStruct<'arena>>;
 
 #[derive(Debug)]
 pub struct PrefixExpressionStruct<'arena> {
-    pub operator: PlusPlus<'arena>,
+    pub expression_prefix_expression_operator: Expression_PrefixExpression_Operator<'arena>,
     pub operand: Expression<'arena>,
 }
 
 pub fn new_prefix_expression<'arena>(
     arena: &'arena Bump,
-    operator: PlusPlus<'arena>,
+    expression_prefix_expression_operator: Expression_PrefixExpression_Operator<'arena>,
     operand: Expression<'arena>,
 ) -> PrefixExpression<'arena> {
-    Box::new_in(PrefixExpressionStruct { operator, operand }, arena)
+    Box::new_in(
+        PrefixExpressionStruct {
+            expression_prefix_expression_operator,
+            operand,
+        },
+        arena,
+    )
 }
 
 pub type ReceiveFunctionDefinition<'arena> = Box<'arena, ReceiveFunctionDefinitionStruct<'arena>>;
@@ -2063,20 +2078,20 @@ pub type ShiftExpression<'arena> = Box<'arena, ShiftExpressionStruct<'arena>>;
 #[derive(Debug)]
 pub struct ShiftExpressionStruct<'arena> {
     pub left_operand: Expression<'arena>,
-    pub operator: LessThanLessThan<'arena>,
+    pub expression_shift_expression_operator: Expression_ShiftExpression_Operator<'arena>,
     pub right_operand: Expression<'arena>,
 }
 
 pub fn new_shift_expression<'arena>(
     arena: &'arena Bump,
     left_operand: Expression<'arena>,
-    operator: LessThanLessThan<'arena>,
+    expression_shift_expression_operator: Expression_ShiftExpression_Operator<'arena>,
     right_operand: Expression<'arena>,
 ) -> ShiftExpression<'arena> {
     Box::new_in(
         ShiftExpressionStruct {
             left_operand,
-            operator,
+            expression_shift_expression_operator,
             right_operand,
         },
         arena,
@@ -3819,6 +3834,320 @@ pub fn new_expression_identifier<'arena>(
     element: Identifier<'arena>,
 ) -> Expression<'arena> {
     Expression::Identifier(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_AdditiveExpression_Operator<'arena> {
+    Plus(Plus<'arena>),
+    Minus(Minus<'arena>),
+}
+
+pub fn new_expression_additive_expression_operator_plus<'arena>(
+    arena: &'arena Bump,
+    element: Plus<'arena>,
+) -> Expression_AdditiveExpression_Operator<'arena> {
+    Expression_AdditiveExpression_Operator::Plus(element)
+}
+
+pub fn new_expression_additive_expression_operator_minus<'arena>(
+    arena: &'arena Bump,
+    element: Minus<'arena>,
+) -> Expression_AdditiveExpression_Operator<'arena> {
+    Expression_AdditiveExpression_Operator::Minus(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_AssignmentExpression_Operator<'arena> {
+    Equal(Equal<'arena>),
+    BarEqual(BarEqual<'arena>),
+    PlusEqual(PlusEqual<'arena>),
+    MinusEqual(MinusEqual<'arena>),
+    CaretEqual(CaretEqual<'arena>),
+    SlashEqual(SlashEqual<'arena>),
+    PercentEqual(PercentEqual<'arena>),
+    AsteriskEqual(AsteriskEqual<'arena>),
+    AmpersandEqual(AmpersandEqual<'arena>),
+    LessThanLessThanEqual(LessThanLessThanEqual<'arena>),
+    GreaterThanGreaterThanEqual(GreaterThanGreaterThanEqual<'arena>),
+    GreaterThanGreaterThanGreaterThanEqual(GreaterThanGreaterThanGreaterThanEqual<'arena>),
+}
+
+pub fn new_expression_assignment_expression_operator_equal<'arena>(
+    arena: &'arena Bump,
+    element: Equal<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::Equal(element)
+}
+
+pub fn new_expression_assignment_expression_operator_bar_equal<'arena>(
+    arena: &'arena Bump,
+    element: BarEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::BarEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_plus_equal<'arena>(
+    arena: &'arena Bump,
+    element: PlusEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::PlusEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_minus_equal<'arena>(
+    arena: &'arena Bump,
+    element: MinusEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::MinusEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_caret_equal<'arena>(
+    arena: &'arena Bump,
+    element: CaretEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::CaretEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_slash_equal<'arena>(
+    arena: &'arena Bump,
+    element: SlashEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::SlashEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_percent_equal<'arena>(
+    arena: &'arena Bump,
+    element: PercentEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::PercentEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_asterisk_equal<'arena>(
+    arena: &'arena Bump,
+    element: AsteriskEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::AsteriskEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_ampersand_equal<'arena>(
+    arena: &'arena Bump,
+    element: AmpersandEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::AmpersandEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_less_than_less_than_equal<'arena>(
+    arena: &'arena Bump,
+    element: LessThanLessThanEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::LessThanLessThanEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_greater_than_greater_than_equal<'arena>(
+    arena: &'arena Bump,
+    element: GreaterThanGreaterThanEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal<
+    'arena,
+>(
+    arena: &'arena Bump,
+    element: GreaterThanGreaterThanGreaterThanEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_EqualityExpression_Operator<'arena> {
+    EqualEqual(EqualEqual<'arena>),
+    BangEqual(BangEqual<'arena>),
+}
+
+pub fn new_expression_equality_expression_operator_equal_equal<'arena>(
+    arena: &'arena Bump,
+    element: EqualEqual<'arena>,
+) -> Expression_EqualityExpression_Operator<'arena> {
+    Expression_EqualityExpression_Operator::EqualEqual(element)
+}
+
+pub fn new_expression_equality_expression_operator_bang_equal<'arena>(
+    arena: &'arena Bump,
+    element: BangEqual<'arena>,
+) -> Expression_EqualityExpression_Operator<'arena> {
+    Expression_EqualityExpression_Operator::BangEqual(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_InequalityExpression_Operator<'arena> {
+    LessThan(LessThan<'arena>),
+    GreaterThan(GreaterThan<'arena>),
+    LessThanEqual(LessThanEqual<'arena>),
+    GreaterThanEqual(GreaterThanEqual<'arena>),
+}
+
+pub fn new_expression_inequality_expression_operator_less_than<'arena>(
+    arena: &'arena Bump,
+    element: LessThan<'arena>,
+) -> Expression_InequalityExpression_Operator<'arena> {
+    Expression_InequalityExpression_Operator::LessThan(element)
+}
+
+pub fn new_expression_inequality_expression_operator_greater_than<'arena>(
+    arena: &'arena Bump,
+    element: GreaterThan<'arena>,
+) -> Expression_InequalityExpression_Operator<'arena> {
+    Expression_InequalityExpression_Operator::GreaterThan(element)
+}
+
+pub fn new_expression_inequality_expression_operator_less_than_equal<'arena>(
+    arena: &'arena Bump,
+    element: LessThanEqual<'arena>,
+) -> Expression_InequalityExpression_Operator<'arena> {
+    Expression_InequalityExpression_Operator::LessThanEqual(element)
+}
+
+pub fn new_expression_inequality_expression_operator_greater_than_equal<'arena>(
+    arena: &'arena Bump,
+    element: GreaterThanEqual<'arena>,
+) -> Expression_InequalityExpression_Operator<'arena> {
+    Expression_InequalityExpression_Operator::GreaterThanEqual(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_MultiplicativeExpression_Operator<'arena> {
+    Asterisk(Asterisk<'arena>),
+    Slash(Slash<'arena>),
+    Percent(Percent<'arena>),
+}
+
+pub fn new_expression_multiplicative_expression_operator_asterisk<'arena>(
+    arena: &'arena Bump,
+    element: Asterisk<'arena>,
+) -> Expression_MultiplicativeExpression_Operator<'arena> {
+    Expression_MultiplicativeExpression_Operator::Asterisk(element)
+}
+
+pub fn new_expression_multiplicative_expression_operator_slash<'arena>(
+    arena: &'arena Bump,
+    element: Slash<'arena>,
+) -> Expression_MultiplicativeExpression_Operator<'arena> {
+    Expression_MultiplicativeExpression_Operator::Slash(element)
+}
+
+pub fn new_expression_multiplicative_expression_operator_percent<'arena>(
+    arena: &'arena Bump,
+    element: Percent<'arena>,
+) -> Expression_MultiplicativeExpression_Operator<'arena> {
+    Expression_MultiplicativeExpression_Operator::Percent(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_PostfixExpression_Operator<'arena> {
+    PlusPlus(PlusPlus<'arena>),
+    MinusMinus(MinusMinus<'arena>),
+}
+
+pub fn new_expression_postfix_expression_operator_plus_plus<'arena>(
+    arena: &'arena Bump,
+    element: PlusPlus<'arena>,
+) -> Expression_PostfixExpression_Operator<'arena> {
+    Expression_PostfixExpression_Operator::PlusPlus(element)
+}
+
+pub fn new_expression_postfix_expression_operator_minus_minus<'arena>(
+    arena: &'arena Bump,
+    element: MinusMinus<'arena>,
+) -> Expression_PostfixExpression_Operator<'arena> {
+    Expression_PostfixExpression_Operator::MinusMinus(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_PrefixExpression_Operator<'arena> {
+    PlusPlus(PlusPlus<'arena>),
+    MinusMinus(MinusMinus<'arena>),
+    Tilde(Tilde<'arena>),
+    Bang(Bang<'arena>),
+    Minus(Minus<'arena>),
+    Plus(Plus<'arena>),
+    DeleteKeyword(DeleteKeyword<'arena>),
+}
+
+pub fn new_expression_prefix_expression_operator_plus_plus<'arena>(
+    arena: &'arena Bump,
+    element: PlusPlus<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::PlusPlus(element)
+}
+
+pub fn new_expression_prefix_expression_operator_minus_minus<'arena>(
+    arena: &'arena Bump,
+    element: MinusMinus<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::MinusMinus(element)
+}
+
+pub fn new_expression_prefix_expression_operator_tilde<'arena>(
+    arena: &'arena Bump,
+    element: Tilde<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::Tilde(element)
+}
+
+pub fn new_expression_prefix_expression_operator_bang<'arena>(
+    arena: &'arena Bump,
+    element: Bang<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::Bang(element)
+}
+
+pub fn new_expression_prefix_expression_operator_minus<'arena>(
+    arena: &'arena Bump,
+    element: Minus<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::Minus(element)
+}
+
+pub fn new_expression_prefix_expression_operator_plus<'arena>(
+    arena: &'arena Bump,
+    element: Plus<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::Plus(element)
+}
+
+pub fn new_expression_prefix_expression_operator_delete_keyword<'arena>(
+    arena: &'arena Bump,
+    element: DeleteKeyword<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::DeleteKeyword(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_ShiftExpression_Operator<'arena> {
+    LessThanLessThan(LessThanLessThan<'arena>),
+    GreaterThanGreaterThan(GreaterThanGreaterThan<'arena>),
+    GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan<'arena>),
+}
+
+pub fn new_expression_shift_expression_operator_less_than_less_than<'arena>(
+    arena: &'arena Bump,
+    element: LessThanLessThan<'arena>,
+) -> Expression_ShiftExpression_Operator<'arena> {
+    Expression_ShiftExpression_Operator::LessThanLessThan(element)
+}
+
+pub fn new_expression_shift_expression_operator_greater_than_greater_than<'arena>(
+    arena: &'arena Bump,
+    element: GreaterThanGreaterThan<'arena>,
+) -> Expression_ShiftExpression_Operator<'arena> {
+    Expression_ShiftExpression_Operator::GreaterThanGreaterThan(element)
+}
+
+pub fn new_expression_shift_expression_operator_greater_than_greater_than_greater_than<'arena>(
+    arena: &'arena Bump,
+    element: GreaterThanGreaterThanGreaterThan<'arena>,
+) -> Expression_ShiftExpression_Operator<'arena> {
+    Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(element)
 }
 
 #[derive(Debug)]
@@ -6064,7597 +6393,5913 @@ pub fn new_yul_variable_names<'arena>(
 //
 // Terminals
 //
+
 #[derive(Debug)]
-pub struct TerminalType<'arena> {
-    pub value: String,
+pub struct ABIEncoderV2Keyword<'arena> {
     pub l: usize,
     pub r: usize,
-    pub kind: LexemeKind,
     pub phantom: PhantomData<&'arena ()>,
 }
 
-pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType<'static> {
-    TerminalType {
-        value: String::new(),
-        l: 0,
-        r: 0,
-        kind,
-        phantom: PhantomData,
-    }
-}
-
-pub type ABIEncoderV2Keyword<'arena> = TerminalType<'arena>;
-
-pub type AbicoderKeyword<'arena> = TerminalType<'arena>;
-
-pub type AbicoderV1Keyword<'arena> = TerminalType<'arena>;
-
-pub type AbicoderV2Keyword<'arena> = TerminalType<'arena>;
-
-pub type AbstractKeyword<'arena> = TerminalType<'arena>;
-
-pub type AddressKeyword<'arena> = TerminalType<'arena>;
-
-pub type AfterKeyword<'arena> = TerminalType<'arena>;
-
-pub type AliasKeyword<'arena> = TerminalType<'arena>;
-
-pub type AnonymousKeyword<'arena> = TerminalType<'arena>;
-
-pub type ApplyKeyword<'arena> = TerminalType<'arena>;
-
-pub type AsKeyword<'arena> = TerminalType<'arena>;
-
-pub type AssemblyKeyword<'arena> = TerminalType<'arena>;
-
-pub type AtKeyword<'arena> = TerminalType<'arena>;
-
-pub type AutoKeyword<'arena> = TerminalType<'arena>;
-
-pub type BoolKeyword<'arena> = TerminalType<'arena>;
-
-pub type BreakKeyword<'arena> = TerminalType<'arena>;
-
-pub type ByteKeyword<'arena> = TerminalType<'arena>;
-
-pub type BytesKeyword<'arena> = TerminalType<'arena>;
-
-pub type CallDataKeyword<'arena> = TerminalType<'arena>;
-
-pub type CaseKeyword<'arena> = TerminalType<'arena>;
-
-pub type CatchKeyword<'arena> = TerminalType<'arena>;
-
-pub type ConstantKeyword<'arena> = TerminalType<'arena>;
-
-pub type ConstructorKeyword<'arena> = TerminalType<'arena>;
-
-pub type ContinueKeyword<'arena> = TerminalType<'arena>;
-
-pub type ContractKeyword<'arena> = TerminalType<'arena>;
-
-pub type CopyOfKeyword<'arena> = TerminalType<'arena>;
-
-pub type DaysKeyword<'arena> = TerminalType<'arena>;
-
-pub type DefaultKeyword<'arena> = TerminalType<'arena>;
-
-pub type DefineKeyword<'arena> = TerminalType<'arena>;
-
-pub type DeleteKeyword<'arena> = TerminalType<'arena>;
-
-pub type DoKeyword<'arena> = TerminalType<'arena>;
-
-pub type ElseKeyword<'arena> = TerminalType<'arena>;
-
-pub type EmitKeyword<'arena> = TerminalType<'arena>;
-
-pub type EnumKeyword<'arena> = TerminalType<'arena>;
-
-pub type ErrorKeyword<'arena> = TerminalType<'arena>;
-
-pub type EtherKeyword<'arena> = TerminalType<'arena>;
-
-pub type EventKeyword<'arena> = TerminalType<'arena>;
-
-pub type ExperimentalKeyword<'arena> = TerminalType<'arena>;
-
-pub type ExternalKeyword<'arena> = TerminalType<'arena>;
-
-pub type FallbackKeyword<'arena> = TerminalType<'arena>;
-
-pub type FalseKeyword<'arena> = TerminalType<'arena>;
-
-pub type FinalKeyword<'arena> = TerminalType<'arena>;
-
-pub type FinneyKeyword<'arena> = TerminalType<'arena>;
-
-pub type FixedKeyword<'arena> = TerminalType<'arena>;
-
-pub type ForKeyword<'arena> = TerminalType<'arena>;
-
-pub type FromKeyword<'arena> = TerminalType<'arena>;
-
-pub type FunctionKeyword<'arena> = TerminalType<'arena>;
-
-pub type GlobalKeyword<'arena> = TerminalType<'arena>;
-
-pub type GweiKeyword<'arena> = TerminalType<'arena>;
-
-pub type HexKeyword<'arena> = TerminalType<'arena>;
-
-pub type HoursKeyword<'arena> = TerminalType<'arena>;
-
-pub type IfKeyword<'arena> = TerminalType<'arena>;
-
-pub type ImmutableKeyword<'arena> = TerminalType<'arena>;
-
-pub type ImplementsKeyword<'arena> = TerminalType<'arena>;
-
-pub type ImportKeyword<'arena> = TerminalType<'arena>;
-
-pub type InKeyword<'arena> = TerminalType<'arena>;
-
-pub type IndexedKeyword<'arena> = TerminalType<'arena>;
-
-pub type InlineKeyword<'arena> = TerminalType<'arena>;
-
-pub type IntKeyword<'arena> = TerminalType<'arena>;
-
-pub type InterfaceKeyword<'arena> = TerminalType<'arena>;
-
-pub type InternalKeyword<'arena> = TerminalType<'arena>;
-
-pub type IsKeyword<'arena> = TerminalType<'arena>;
-
-pub type LayoutKeyword<'arena> = TerminalType<'arena>;
-
-pub type LetKeyword<'arena> = TerminalType<'arena>;
-
-pub type LibraryKeyword<'arena> = TerminalType<'arena>;
-
-pub type MacroKeyword<'arena> = TerminalType<'arena>;
-
-pub type MappingKeyword<'arena> = TerminalType<'arena>;
-
-pub type MatchKeyword<'arena> = TerminalType<'arena>;
-
-pub type MemoryKeyword<'arena> = TerminalType<'arena>;
-
-pub type MinutesKeyword<'arena> = TerminalType<'arena>;
-
-pub type ModifierKeyword<'arena> = TerminalType<'arena>;
-
-pub type MutableKeyword<'arena> = TerminalType<'arena>;
-
-pub type NewKeyword<'arena> = TerminalType<'arena>;
-
-pub type NullKeyword<'arena> = TerminalType<'arena>;
-
-pub type OfKeyword<'arena> = TerminalType<'arena>;
-
-pub type OverrideKeyword<'arena> = TerminalType<'arena>;
-
-pub type PartialKeyword<'arena> = TerminalType<'arena>;
-
-pub type PayableKeyword<'arena> = TerminalType<'arena>;
-
-pub type PragmaKeyword<'arena> = TerminalType<'arena>;
-
-pub type PrivateKeyword<'arena> = TerminalType<'arena>;
-
-pub type PromiseKeyword<'arena> = TerminalType<'arena>;
-
-pub type PublicKeyword<'arena> = TerminalType<'arena>;
-
-pub type PureKeyword<'arena> = TerminalType<'arena>;
-
-pub type ReceiveKeyword<'arena> = TerminalType<'arena>;
-
-pub type ReferenceKeyword<'arena> = TerminalType<'arena>;
-
-pub type RelocatableKeyword<'arena> = TerminalType<'arena>;
-
-pub type ReturnKeyword<'arena> = TerminalType<'arena>;
-
-pub type ReturnsKeyword<'arena> = TerminalType<'arena>;
-
-pub type RevertKeyword<'arena> = TerminalType<'arena>;
-
-pub type SMTCheckerKeyword<'arena> = TerminalType<'arena>;
-
-pub type SealedKeyword<'arena> = TerminalType<'arena>;
-
-pub type SecondsKeyword<'arena> = TerminalType<'arena>;
-
-pub type SizeOfKeyword<'arena> = TerminalType<'arena>;
-
-pub type SolidityKeyword<'arena> = TerminalType<'arena>;
-
-pub type StaticKeyword<'arena> = TerminalType<'arena>;
-
-pub type StorageKeyword<'arena> = TerminalType<'arena>;
-
-pub type StringKeyword<'arena> = TerminalType<'arena>;
-
-pub type StructKeyword<'arena> = TerminalType<'arena>;
-
-pub type SuperKeyword<'arena> = TerminalType<'arena>;
-
-pub type SupportsKeyword<'arena> = TerminalType<'arena>;
-
-pub type SwitchKeyword<'arena> = TerminalType<'arena>;
-
-pub type SzaboKeyword<'arena> = TerminalType<'arena>;
-
-pub type ThisKeyword<'arena> = TerminalType<'arena>;
-
-pub type ThrowKeyword<'arena> = TerminalType<'arena>;
-
-pub type TransientKeyword<'arena> = TerminalType<'arena>;
-
-pub type TrueKeyword<'arena> = TerminalType<'arena>;
-
-pub type TryKeyword<'arena> = TerminalType<'arena>;
-
-pub type TypeDefKeyword<'arena> = TerminalType<'arena>;
-
-pub type TypeKeyword<'arena> = TerminalType<'arena>;
-
-pub type TypeOfKeyword<'arena> = TerminalType<'arena>;
-
-pub type UfixedKeyword<'arena> = TerminalType<'arena>;
-
-pub type UintKeyword<'arena> = TerminalType<'arena>;
-
-pub type UncheckedKeyword<'arena> = TerminalType<'arena>;
-
-pub type UsingKeyword<'arena> = TerminalType<'arena>;
-
-pub type VarKeyword<'arena> = TerminalType<'arena>;
-
-pub type ViewKeyword<'arena> = TerminalType<'arena>;
-
-pub type VirtualKeyword<'arena> = TerminalType<'arena>;
-
-pub type WeeksKeyword<'arena> = TerminalType<'arena>;
-
-pub type WeiKeyword<'arena> = TerminalType<'arena>;
-
-pub type WhileKeyword<'arena> = TerminalType<'arena>;
-
-pub type YearsKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulAbstractKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulAfterKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulAliasKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulAnonymousKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulApplyKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulAsKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulAssemblyKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulAutoKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulBoolKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulBreakKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulBytesKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulCallDataKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulCaseKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulCatchKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulConstantKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulConstructorKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulContinueKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulContractKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulCopyOfKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulDaysKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulDefaultKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulDefineKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulDeleteKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulDoKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulElseKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulEmitKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulEnumKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulEtherKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulEventKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulExternalKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulFallbackKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulFalseKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulFinalKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulFinneyKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulFixedKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulForKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulFunctionKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulGweiKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulHexKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulHoursKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulIfKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulImmutableKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulImplementsKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulImportKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulInKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulIndexedKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulInlineKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulIntKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulInterfaceKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulInternalKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulIsKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulLeaveKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulLetKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulLibraryKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulMacroKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulMappingKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulMatchKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulMemoryKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulMinutesKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulModifierKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulMutableKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulNewKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulNullKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulOfKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulOverrideKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulPartialKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulPayableKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulPragmaKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulPrivateKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulPromiseKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulPublicKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulPureKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulReceiveKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulReferenceKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulRelocatableKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulReturnsKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulSealedKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulSecondsKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulSizeOfKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulStaticKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulStorageKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulStringKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulStructKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulSuperKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulSupportsKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulSwitchKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulSzaboKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulThisKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulThrowKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulTrueKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulTryKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulTypeDefKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulTypeKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulTypeOfKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulUfixedKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulUintKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulUncheckedKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulUsingKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulVarKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulViewKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulVirtualKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulWeeksKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulWeiKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulWhileKeyword<'arena> = TerminalType<'arena>;
-
-pub type YulYearsKeyword<'arena> = TerminalType<'arena>;
-
-pub type ABIEncoderV2Keyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_abi_encoder_v2_keyword_unreserved<'arena>(
+pub fn new_abi_encoder_v2_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ABIEncoderV2Keyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ABIEncoderV2Keyword<'arena> {
+    ABIEncoderV2Keyword {
         l,
         r,
-        kind: LexemeKind::ABIEncoderV2Keyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type AbicoderKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_abicoder_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct AbicoderKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_abicoder_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AbicoderKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AbicoderKeyword<'arena> {
+    AbicoderKeyword {
         l,
         r,
-        kind: LexemeKind::AbicoderKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type AbicoderV1Keyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_abicoder_v1_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct AbicoderV1Keyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_abicoder_v1_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AbicoderV1Keyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AbicoderV1Keyword<'arena> {
+    AbicoderV1Keyword {
         l,
         r,
-        kind: LexemeKind::AbicoderV1Keyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type AbicoderV2Keyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_abicoder_v2_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct AbicoderV2Keyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_abicoder_v2_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AbicoderV2Keyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AbicoderV2Keyword<'arena> {
+    AbicoderV2Keyword {
         l,
         r,
-        kind: LexemeKind::AbicoderV2Keyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type AbstractKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_abstract_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct AbstractKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_abstract_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AbstractKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AbstractKeyword<'arena> {
+    AbstractKeyword {
         l,
         r,
-        kind: LexemeKind::AbstractKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type AddressKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_address_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct AddressKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_address_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AddressKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AddressKeyword<'arena> {
+    AddressKeyword {
         l,
         r,
-        kind: LexemeKind::AddressKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type AfterKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_after_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct AfterKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_after_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AfterKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AfterKeyword<'arena> {
+    AfterKeyword {
         l,
         r,
-        kind: LexemeKind::AfterKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type AliasKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_alias_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct AliasKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_alias_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AliasKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AliasKeyword<'arena> {
+    AliasKeyword {
         l,
         r,
-        kind: LexemeKind::AliasKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type AliasKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_alias_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> AliasKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::AliasKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct Ampersand<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type Ampersand<'arena> = TerminalType<'arena>;
 pub fn new_ampersand<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> Ampersand<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    Ampersand {
         l,
         r,
-        kind: LexemeKind::Ampersand,
         phantom: PhantomData,
     }
 }
 
-pub type AmpersandAmpersand<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct AmpersandAmpersand<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_ampersand_ampersand<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> AmpersandAmpersand<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    AmpersandAmpersand {
         l,
         r,
-        kind: LexemeKind::AmpersandAmpersand,
         phantom: PhantomData,
     }
 }
 
-pub type AmpersandEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct AmpersandEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_ampersand_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> AmpersandEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    AmpersandEqual {
         l,
         r,
-        kind: LexemeKind::AmpersandEqual,
         phantom: PhantomData,
     }
 }
 
-pub type AnonymousKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_anonymous_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct AnonymousKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_anonymous_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AnonymousKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AnonymousKeyword<'arena> {
+    AnonymousKeyword {
         l,
         r,
-        kind: LexemeKind::AnonymousKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ApplyKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_apply_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ApplyKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_apply_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ApplyKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ApplyKeyword<'arena> {
+    ApplyKeyword {
         l,
         r,
-        kind: LexemeKind::ApplyKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ApplyKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_apply_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct AsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_as_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ApplyKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AsKeyword<'arena> {
+    AsKeyword {
         l,
         r,
-        kind: LexemeKind::ApplyKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type AsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_as_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct AssemblyKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_assembly_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AssemblyKeyword<'arena> {
+    AssemblyKeyword {
         l,
         r,
-        kind: LexemeKind::AsKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type AssemblyKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_assembly_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> AssemblyKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::AssemblyKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct Asterisk<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type Asterisk<'arena> = TerminalType<'arena>;
 pub fn new_asterisk<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> Asterisk<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    Asterisk {
         l,
         r,
-        kind: LexemeKind::Asterisk,
         phantom: PhantomData,
     }
 }
 
-pub type AsteriskAsterisk<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct AsteriskAsterisk<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_asterisk_asterisk<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> AsteriskAsterisk<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    AsteriskAsterisk {
         l,
         r,
-        kind: LexemeKind::AsteriskAsterisk,
         phantom: PhantomData,
     }
 }
 
-pub type AsteriskEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct AsteriskEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_asterisk_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> AsteriskEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    AsteriskEqual {
         l,
         r,
-        kind: LexemeKind::AsteriskEqual,
         phantom: PhantomData,
     }
 }
 
-pub type AtKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_at_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct AtKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_at_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AtKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AtKeyword<'arena> {
+    AtKeyword {
         l,
         r,
-        kind: LexemeKind::AtKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type AutoKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_auto_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct AutoKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_auto_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> AutoKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> AutoKeyword<'arena> {
+    AutoKeyword {
         l,
         r,
-        kind: LexemeKind::AutoKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type AutoKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_auto_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> AutoKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Bang<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_bang<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Bang<'arena> {
+    Bang {
         l,
         r,
-        kind: LexemeKind::AutoKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type Bang<'arena> = TerminalType<'arena>;
-pub fn new_bang<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Bang<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::Bang,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct BangEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type BangEqual<'arena> = TerminalType<'arena>;
 pub fn new_bang_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> BangEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    BangEqual {
         l,
         r,
-        kind: LexemeKind::BangEqual,
         phantom: PhantomData,
     }
 }
 
-pub type Bar<'arena> = TerminalType<'arena>;
-pub fn new_bar<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Bar<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Bar<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_bar<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Bar<'arena> {
+    Bar {
         l,
         r,
-        kind: LexemeKind::Bar,
         phantom: PhantomData,
     }
 }
 
-pub type BarBar<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct BarBar<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_bar_bar<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> BarBar<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    BarBar {
         l,
         r,
-        kind: LexemeKind::BarBar,
         phantom: PhantomData,
     }
 }
 
-pub type BarEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct BarEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_bar_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> BarEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    BarEqual {
         l,
         r,
-        kind: LexemeKind::BarEqual,
         phantom: PhantomData,
     }
 }
 
-pub type BoolKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_bool_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct BoolKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_bool_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> BoolKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> BoolKeyword<'arena> {
+    BoolKeyword {
         l,
         r,
-        kind: LexemeKind::BoolKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type BreakKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_break_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct BreakKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_break_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> BreakKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> BreakKeyword<'arena> {
+    BreakKeyword {
         l,
         r,
-        kind: LexemeKind::BreakKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ByteKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_byte_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ByteKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_byte_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ByteKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ByteKeyword<'arena> {
+    ByteKeyword {
         l,
         r,
-        kind: LexemeKind::ByteKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type BytesKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_bytes_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct BytesKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_bytes_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> BytesKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> BytesKeyword<'arena> {
+    BytesKeyword {
         l,
         r,
-        kind: LexemeKind::BytesKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type CallDataKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_call_data_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct CallDataKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_call_data_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> CallDataKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> CallDataKeyword<'arena> {
+    CallDataKeyword {
         l,
         r,
-        kind: LexemeKind::CallDataKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type CallDataKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_call_data_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> CallDataKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Caret<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_caret<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Caret<'arena> {
+    Caret {
         l,
         r,
-        kind: LexemeKind::CallDataKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type Caret<'arena> = TerminalType<'arena>;
-pub fn new_caret<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Caret<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::Caret,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct CaretEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type CaretEqual<'arena> = TerminalType<'arena>;
 pub fn new_caret_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> CaretEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    CaretEqual {
         l,
         r,
-        kind: LexemeKind::CaretEqual,
         phantom: PhantomData,
     }
 }
 
-pub type CaseKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_case_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct CaseKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_case_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> CaseKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> CaseKeyword<'arena> {
+    CaseKeyword {
         l,
         r,
-        kind: LexemeKind::CaseKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type CatchKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_catch_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct CatchKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_catch_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> CatchKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> CatchKeyword<'arena> {
+    CatchKeyword {
         l,
         r,
-        kind: LexemeKind::CatchKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type CloseBrace<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct CloseBrace<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_close_brace<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> CloseBrace<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    CloseBrace {
         l,
         r,
-        kind: LexemeKind::CloseBrace,
         phantom: PhantomData,
     }
 }
 
-pub type CloseBracket<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct CloseBracket<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_close_bracket<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> CloseBracket<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    CloseBracket {
         l,
         r,
-        kind: LexemeKind::CloseBracket,
         phantom: PhantomData,
     }
 }
 
-pub type CloseParen<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct CloseParen<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_close_paren<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> CloseParen<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    CloseParen {
         l,
         r,
-        kind: LexemeKind::CloseParen,
         phantom: PhantomData,
     }
 }
 
-pub type Colon<'arena> = TerminalType<'arena>;
-pub fn new_colon<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Colon<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Colon<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_colon<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Colon<'arena> {
+    Colon {
         l,
         r,
-        kind: LexemeKind::Colon,
         phantom: PhantomData,
     }
 }
 
-pub type ColonEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct ColonEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_colon_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> ColonEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    ColonEqual {
         l,
         r,
-        kind: LexemeKind::ColonEqual,
         phantom: PhantomData,
     }
 }
 
-pub type Comma<'arena> = TerminalType<'arena>;
-pub fn new_comma<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Comma<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Comma<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_comma<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Comma<'arena> {
+    Comma {
         l,
         r,
-        kind: LexemeKind::Comma,
         phantom: PhantomData,
     }
 }
 
-pub type ConstantKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_constant_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ConstantKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_constant_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ConstantKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ConstantKeyword<'arena> {
+    ConstantKeyword {
         l,
         r,
-        kind: LexemeKind::ConstantKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ConstructorKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_constructor_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ConstructorKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_constructor_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ConstructorKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ConstructorKeyword<'arena> {
+    ConstructorKeyword {
         l,
         r,
-        kind: LexemeKind::ConstructorKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ConstructorKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_constructor_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct ContinueKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_continue_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ConstructorKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ContinueKeyword<'arena> {
+    ContinueKeyword {
         l,
         r,
-        kind: LexemeKind::ConstructorKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type ContinueKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_continue_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ContractKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_contract_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ContinueKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ContractKeyword<'arena> {
+    ContractKeyword {
         l,
         r,
-        kind: LexemeKind::ContinueKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ContractKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_contract_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct CopyOfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_copy_of_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ContractKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> CopyOfKeyword<'arena> {
+    CopyOfKeyword {
         l,
         r,
-        kind: LexemeKind::ContractKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type CopyOfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_copy_of_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct DaysKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_days_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> CopyOfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> DaysKeyword<'arena> {
+    DaysKeyword {
         l,
         r,
-        kind: LexemeKind::CopyOfKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type CopyOfKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_copy_of_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> CopyOfKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::CopyOfKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct DecimalLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type DaysKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_days_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> DaysKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::DaysKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type DecimalLiteral<'arena> = TerminalType<'arena>;
 pub fn new_decimal_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> DecimalLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    DecimalLiteral {
         l,
         r,
-        kind: LexemeKind::DecimalLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type DefaultKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_default_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct DefaultKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_default_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> DefaultKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> DefaultKeyword<'arena> {
+    DefaultKeyword {
         l,
         r,
-        kind: LexemeKind::DefaultKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type DefineKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_define_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct DefineKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_define_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> DefineKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> DefineKeyword<'arena> {
+    DefineKeyword {
         l,
         r,
-        kind: LexemeKind::DefineKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type DefineKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_define_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct DeleteKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_delete_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> DefineKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> DeleteKeyword<'arena> {
+    DeleteKeyword {
         l,
         r,
-        kind: LexemeKind::DefineKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type DeleteKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_delete_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct DoKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_do_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> DeleteKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> DoKeyword<'arena> {
+    DoKeyword {
         l,
         r,
-        kind: LexemeKind::DeleteKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type DoKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_do_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> DoKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::DoKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct DoubleQuotedHexStringLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type DoubleQuotedHexStringLiteral<'arena> = TerminalType<'arena>;
 pub fn new_double_quoted_hex_string_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> DoubleQuotedHexStringLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    DoubleQuotedHexStringLiteral {
         l,
         r,
-        kind: LexemeKind::DoubleQuotedHexStringLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type DoubleQuotedStringLiteral<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct DoubleQuotedStringLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_double_quoted_string_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> DoubleQuotedStringLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    DoubleQuotedStringLiteral {
         l,
         r,
-        kind: LexemeKind::DoubleQuotedStringLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type DoubleQuotedUnicodeStringLiteral<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct DoubleQuotedUnicodeStringLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_double_quoted_unicode_string_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> DoubleQuotedUnicodeStringLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    DoubleQuotedUnicodeStringLiteral {
         l,
         r,
-        kind: LexemeKind::DoubleQuotedUnicodeStringLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type DoubleQuotedVersionLiteral<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct DoubleQuotedVersionLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_double_quoted_version_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> DoubleQuotedVersionLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    DoubleQuotedVersionLiteral {
         l,
         r,
-        kind: LexemeKind::DoubleQuotedVersionLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type ElseKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_else_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ElseKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_else_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ElseKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ElseKeyword<'arena> {
+    ElseKeyword {
         l,
         r,
-        kind: LexemeKind::ElseKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type EmitKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_emit_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct EmitKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_emit_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> EmitKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> EmitKeyword<'arena> {
+    EmitKeyword {
         l,
         r,
-        kind: LexemeKind::EmitKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type EmitKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_emit_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> EmitKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::EmitKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct EndOfLine<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type EndOfLine<'arena> = TerminalType<'arena>;
 pub fn new_end_of_line<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> EndOfLine<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    EndOfLine {
         l,
         r,
-        kind: LexemeKind::EndOfLine,
         phantom: PhantomData,
     }
 }
 
-pub type EnumKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_enum_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct EnumKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_enum_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> EnumKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> EnumKeyword<'arena> {
+    EnumKeyword {
         l,
         r,
-        kind: LexemeKind::EnumKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type Equal<'arena> = TerminalType<'arena>;
-pub fn new_equal<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Equal<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Equal<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_equal<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Equal<'arena> {
+    Equal {
         l,
         r,
-        kind: LexemeKind::Equal,
         phantom: PhantomData,
     }
 }
 
-pub type EqualColon<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct EqualColon<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_equal_colon<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> EqualColon<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    EqualColon {
         l,
         r,
-        kind: LexemeKind::EqualColon,
         phantom: PhantomData,
     }
 }
 
-pub type EqualEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct EqualEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_equal_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> EqualEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    EqualEqual {
         l,
         r,
-        kind: LexemeKind::EqualEqual,
         phantom: PhantomData,
     }
 }
 
-pub type EqualGreaterThan<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct EqualGreaterThan<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_equal_greater_than<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> EqualGreaterThan<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    EqualGreaterThan {
         l,
         r,
-        kind: LexemeKind::EqualGreaterThan,
         phantom: PhantomData,
     }
 }
 
-pub type ErrorKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_error_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ErrorKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_error_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ErrorKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ErrorKeyword<'arena> {
+    ErrorKeyword {
         l,
         r,
-        kind: LexemeKind::ErrorKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type EtherKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_ether_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct EtherKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_ether_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> EtherKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> EtherKeyword<'arena> {
+    EtherKeyword {
         l,
         r,
-        kind: LexemeKind::EtherKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type EventKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_event_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct EventKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_event_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> EventKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> EventKeyword<'arena> {
+    EventKeyword {
         l,
         r,
-        kind: LexemeKind::EventKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ExperimentalKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_experimental_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct ExperimentalKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_experimental_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ExperimentalKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ExperimentalKeyword<'arena> {
+    ExperimentalKeyword {
         l,
         r,
-        kind: LexemeKind::ExperimentalKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type ExternalKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_external_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ExternalKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_external_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ExternalKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ExternalKeyword<'arena> {
+    ExternalKeyword {
         l,
         r,
-        kind: LexemeKind::ExternalKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type FallbackKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_fallback_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct FallbackKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_fallback_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> FallbackKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> FallbackKeyword<'arena> {
+    FallbackKeyword {
         l,
         r,
-        kind: LexemeKind::FallbackKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type FallbackKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_fallback_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct FalseKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_false_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> FallbackKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> FalseKeyword<'arena> {
+    FalseKeyword {
         l,
         r,
-        kind: LexemeKind::FallbackKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type FalseKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_false_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct FinalKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_final_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> FalseKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> FinalKeyword<'arena> {
+    FinalKeyword {
         l,
         r,
-        kind: LexemeKind::FalseKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type FinalKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_final_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct FinneyKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_finney_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> FinalKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> FinneyKeyword<'arena> {
+    FinneyKeyword {
         l,
         r,
-        kind: LexemeKind::FinalKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type FinneyKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_finney_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct FixedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_fixed_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> FinneyKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> FixedKeyword<'arena> {
+    FixedKeyword {
         l,
         r,
-        kind: LexemeKind::FinneyKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type FinneyKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_finney_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct ForKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_for_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> FinneyKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ForKeyword<'arena> {
+    ForKeyword {
         l,
         r,
-        kind: LexemeKind::FinneyKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type FixedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_fixed_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct FromKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_from_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> FixedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> FromKeyword<'arena> {
+    FromKeyword {
         l,
         r,
-        kind: LexemeKind::FixedKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type FixedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_fixed_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct FunctionKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_function_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> FixedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> FunctionKeyword<'arena> {
+    FunctionKeyword {
         l,
         r,
-        kind: LexemeKind::FixedKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type ForKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_for_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct GlobalKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_global_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ForKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> GlobalKeyword<'arena> {
+    GlobalKeyword {
         l,
         r,
-        kind: LexemeKind::ForKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type FromKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_from_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> FromKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::FromKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct GreaterThan<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type FunctionKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_function_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> FunctionKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::FunctionKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type GlobalKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_global_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> GlobalKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::GlobalKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type GreaterThan<'arena> = TerminalType<'arena>;
 pub fn new_greater_than<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> GreaterThan<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    GreaterThan {
         l,
         r,
-        kind: LexemeKind::GreaterThan,
         phantom: PhantomData,
     }
 }
 
-pub type GreaterThanEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct GreaterThanEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_greater_than_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> GreaterThanEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    GreaterThanEqual {
         l,
         r,
-        kind: LexemeKind::GreaterThanEqual,
         phantom: PhantomData,
     }
 }
 
-pub type GreaterThanGreaterThan<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct GreaterThanGreaterThan<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_greater_than_greater_than<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> GreaterThanGreaterThan<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    GreaterThanGreaterThan {
         l,
         r,
-        kind: LexemeKind::GreaterThanGreaterThan,
         phantom: PhantomData,
     }
 }
 
-pub type GreaterThanGreaterThanEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct GreaterThanGreaterThanEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_greater_than_greater_than_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> GreaterThanGreaterThanEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    GreaterThanGreaterThanEqual {
         l,
         r,
-        kind: LexemeKind::GreaterThanGreaterThanEqual,
         phantom: PhantomData,
     }
 }
 
-pub type GreaterThanGreaterThanGreaterThan<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct GreaterThanGreaterThanGreaterThan<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_greater_than_greater_than_greater_than<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> GreaterThanGreaterThanGreaterThan<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    GreaterThanGreaterThanGreaterThan {
         l,
         r,
-        kind: LexemeKind::GreaterThanGreaterThanGreaterThan,
         phantom: PhantomData,
     }
 }
 
-pub type GreaterThanGreaterThanGreaterThanEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct GreaterThanGreaterThanGreaterThanEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_greater_than_greater_than_greater_than_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> GreaterThanGreaterThanGreaterThanEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    GreaterThanGreaterThanGreaterThanEqual {
         l,
         r,
-        kind: LexemeKind::GreaterThanGreaterThanGreaterThanEqual,
         phantom: PhantomData,
     }
 }
 
-pub type GweiKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_gwei_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct GweiKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_gwei_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> GweiKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> GweiKeyword<'arena> {
+    GweiKeyword {
         l,
         r,
-        kind: LexemeKind::GweiKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type GweiKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_gwei_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct HexKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_hex_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> GweiKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> HexKeyword<'arena> {
+    HexKeyword {
         l,
         r,
-        kind: LexemeKind::GweiKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type HexKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_hex_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> HexKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::HexKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct HexLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type HexLiteral<'arena> = TerminalType<'arena>;
 pub fn new_hex_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> HexLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    HexLiteral {
         l,
         r,
-        kind: LexemeKind::HexLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type HoursKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_hours_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct HoursKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_hours_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> HoursKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> HoursKeyword<'arena> {
+    HoursKeyword {
         l,
         r,
-        kind: LexemeKind::HoursKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type Identifier<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct Identifier<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_identifier<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> Identifier<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    Identifier {
         l,
         r,
-        kind: LexemeKind::Identifier,
         phantom: PhantomData,
     }
 }
 
-pub type IfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_if_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct IfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_if_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> IfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> IfKeyword<'arena> {
+    IfKeyword {
         l,
         r,
-        kind: LexemeKind::IfKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ImmutableKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_immutable_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ImmutableKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_immutable_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ImmutableKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ImmutableKeyword<'arena> {
+    ImmutableKeyword {
         l,
         r,
-        kind: LexemeKind::ImmutableKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ImmutableKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_immutable_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct ImplementsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_implements_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ImmutableKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ImplementsKeyword<'arena> {
+    ImplementsKeyword {
         l,
         r,
-        kind: LexemeKind::ImmutableKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type ImplementsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_implements_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ImportKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_import_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ImplementsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ImportKeyword<'arena> {
+    ImportKeyword {
         l,
         r,
-        kind: LexemeKind::ImplementsKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ImplementsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_implements_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct InKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_in_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ImplementsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> InKeyword<'arena> {
+    InKeyword {
         l,
         r,
-        kind: LexemeKind::ImplementsKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type ImportKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_import_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct IndexedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_indexed_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ImportKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> IndexedKeyword<'arena> {
+    IndexedKeyword {
         l,
         r,
-        kind: LexemeKind::ImportKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type InKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_in_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct InlineKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_inline_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> InKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> InlineKeyword<'arena> {
+    InlineKeyword {
         l,
         r,
-        kind: LexemeKind::InKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type IndexedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_indexed_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct IntKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_int_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> IndexedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> IntKeyword<'arena> {
+    IntKeyword {
         l,
         r,
-        kind: LexemeKind::IndexedKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type InlineKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_inline_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct InterfaceKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_interface_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> InlineKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> InterfaceKeyword<'arena> {
+    InterfaceKeyword {
         l,
         r,
-        kind: LexemeKind::InlineKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type IntKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_int_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct InternalKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_internal_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> IntKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> InternalKeyword<'arena> {
+    InternalKeyword {
         l,
         r,
-        kind: LexemeKind::IntKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type InterfaceKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_interface_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct IsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_is_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> InterfaceKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> IsKeyword<'arena> {
+    IsKeyword {
         l,
         r,
-        kind: LexemeKind::InterfaceKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type InternalKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_internal_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct LayoutKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_layout_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> InternalKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> LayoutKeyword<'arena> {
+    LayoutKeyword {
         l,
         r,
-        kind: LexemeKind::InternalKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type IsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_is_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> IsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::IsKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct LessThan<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type LayoutKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_layout_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> LayoutKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::LayoutKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type LessThan<'arena> = TerminalType<'arena>;
 pub fn new_less_than<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> LessThan<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    LessThan {
         l,
         r,
-        kind: LexemeKind::LessThan,
         phantom: PhantomData,
     }
 }
 
-pub type LessThanEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct LessThanEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_less_than_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> LessThanEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    LessThanEqual {
         l,
         r,
-        kind: LexemeKind::LessThanEqual,
         phantom: PhantomData,
     }
 }
 
-pub type LessThanLessThan<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct LessThanLessThan<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_less_than_less_than<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> LessThanLessThan<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    LessThanLessThan {
         l,
         r,
-        kind: LexemeKind::LessThanLessThan,
         phantom: PhantomData,
     }
 }
 
-pub type LessThanLessThanEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct LessThanLessThanEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_less_than_less_than_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> LessThanLessThanEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    LessThanLessThanEqual {
         l,
         r,
-        kind: LexemeKind::LessThanLessThanEqual,
         phantom: PhantomData,
     }
 }
 
-pub type LetKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_let_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct LetKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_let_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> LetKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> LetKeyword<'arena> {
+    LetKeyword {
         l,
         r,
-        kind: LexemeKind::LetKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type LibraryKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_library_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct LibraryKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_library_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> LibraryKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> LibraryKeyword<'arena> {
+    LibraryKeyword {
         l,
         r,
-        kind: LexemeKind::LibraryKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type MacroKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_macro_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct MacroKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_macro_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> MacroKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> MacroKeyword<'arena> {
+    MacroKeyword {
         l,
         r,
-        kind: LexemeKind::MacroKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type MacroKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_macro_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct MappingKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_mapping_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> MacroKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> MappingKeyword<'arena> {
+    MappingKeyword {
         l,
         r,
-        kind: LexemeKind::MacroKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type MappingKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_mapping_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct MatchKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_match_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> MappingKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> MatchKeyword<'arena> {
+    MatchKeyword {
         l,
         r,
-        kind: LexemeKind::MappingKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type MatchKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_match_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct MemoryKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_memory_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> MatchKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> MemoryKeyword<'arena> {
+    MemoryKeyword {
         l,
         r,
-        kind: LexemeKind::MatchKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type MemoryKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_memory_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> MemoryKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Minus<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_minus<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Minus<'arena> {
+    Minus {
         l,
         r,
-        kind: LexemeKind::MemoryKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type Minus<'arena> = TerminalType<'arena>;
-pub fn new_minus<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Minus<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::Minus,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct MinusEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type MinusEqual<'arena> = TerminalType<'arena>;
 pub fn new_minus_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> MinusEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    MinusEqual {
         l,
         r,
-        kind: LexemeKind::MinusEqual,
         phantom: PhantomData,
     }
 }
 
-pub type MinusGreaterThan<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct MinusGreaterThan<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_minus_greater_than<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> MinusGreaterThan<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    MinusGreaterThan {
         l,
         r,
-        kind: LexemeKind::MinusGreaterThan,
         phantom: PhantomData,
     }
 }
 
-pub type MinusMinus<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct MinusMinus<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_minus_minus<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> MinusMinus<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    MinusMinus {
         l,
         r,
-        kind: LexemeKind::MinusMinus,
         phantom: PhantomData,
     }
 }
 
-pub type MinutesKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_minutes_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct MinutesKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_minutes_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> MinutesKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> MinutesKeyword<'arena> {
+    MinutesKeyword {
         l,
         r,
-        kind: LexemeKind::MinutesKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ModifierKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_modifier_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ModifierKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_modifier_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ModifierKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ModifierKeyword<'arena> {
+    ModifierKeyword {
         l,
         r,
-        kind: LexemeKind::ModifierKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type MultiLineComment<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct MultiLineComment<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_multi_line_comment<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> MultiLineComment<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    MultiLineComment {
         l,
         r,
-        kind: LexemeKind::MultiLineComment,
         phantom: PhantomData,
     }
 }
 
-pub type MultiLineNatSpecComment<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct MultiLineNatSpecComment<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_multi_line_nat_spec_comment<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> MultiLineNatSpecComment<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    MultiLineNatSpecComment {
         l,
         r,
-        kind: LexemeKind::MultiLineNatSpecComment,
         phantom: PhantomData,
     }
 }
 
-pub type MutableKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_mutable_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct MutableKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_mutable_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> MutableKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> MutableKeyword<'arena> {
+    MutableKeyword {
         l,
         r,
-        kind: LexemeKind::MutableKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type MutableKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_mutable_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct NewKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_new_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> MutableKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> NewKeyword<'arena> {
+    NewKeyword {
         l,
         r,
-        kind: LexemeKind::MutableKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type NewKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_new_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct NullKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_null_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> NewKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> NullKeyword<'arena> {
+    NullKeyword {
         l,
         r,
-        kind: LexemeKind::NewKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type NullKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_null_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct OfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_of_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> NullKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> OfKeyword<'arena> {
+    OfKeyword {
         l,
         r,
-        kind: LexemeKind::NullKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type OfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_of_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> OfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::OfKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct OpenBrace<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type OpenBrace<'arena> = TerminalType<'arena>;
 pub fn new_open_brace<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> OpenBrace<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    OpenBrace {
         l,
         r,
-        kind: LexemeKind::OpenBrace,
         phantom: PhantomData,
     }
 }
 
-pub type OpenBracket<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct OpenBracket<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_open_bracket<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> OpenBracket<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    OpenBracket {
         l,
         r,
-        kind: LexemeKind::OpenBracket,
         phantom: PhantomData,
     }
 }
 
-pub type OpenParen<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct OpenParen<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_open_paren<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> OpenParen<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    OpenParen {
         l,
         r,
-        kind: LexemeKind::OpenParen,
         phantom: PhantomData,
     }
 }
 
-pub type OverrideKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_override_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct OverrideKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_override_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> OverrideKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> OverrideKeyword<'arena> {
+    OverrideKeyword {
         l,
         r,
-        kind: LexemeKind::OverrideKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type OverrideKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_override_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct PartialKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_partial_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> OverrideKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> PartialKeyword<'arena> {
+    PartialKeyword {
         l,
         r,
-        kind: LexemeKind::OverrideKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type PartialKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_partial_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct PayableKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_payable_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> PartialKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> PayableKeyword<'arena> {
+    PayableKeyword {
         l,
         r,
-        kind: LexemeKind::PartialKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type PartialKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_partial_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> PartialKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::PartialKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct Percent<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type PayableKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_payable_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> PayableKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::PayableKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type Percent<'arena> = TerminalType<'arena>;
 pub fn new_percent<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> Percent<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    Percent {
         l,
         r,
-        kind: LexemeKind::Percent,
         phantom: PhantomData,
     }
 }
 
-pub type PercentEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct PercentEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_percent_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> PercentEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    PercentEqual {
         l,
         r,
-        kind: LexemeKind::PercentEqual,
         phantom: PhantomData,
     }
 }
 
-pub type Period<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct Period<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_period<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> Period<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    Period {
         l,
         r,
-        kind: LexemeKind::Period,
         phantom: PhantomData,
     }
 }
 
-pub type Plus<'arena> = TerminalType<'arena>;
-pub fn new_plus<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Plus<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Plus<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_plus<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Plus<'arena> {
+    Plus {
         l,
         r,
-        kind: LexemeKind::Plus,
         phantom: PhantomData,
     }
 }
 
-pub type PlusEqual<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct PlusEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_plus_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> PlusEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    PlusEqual {
         l,
         r,
-        kind: LexemeKind::PlusEqual,
         phantom: PhantomData,
     }
 }
 
-pub type PlusPlus<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct PlusPlus<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_plus_plus<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> PlusPlus<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    PlusPlus {
         l,
         r,
-        kind: LexemeKind::PlusPlus,
         phantom: PhantomData,
     }
 }
 
-pub type PragmaKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_pragma_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct PragmaKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_pragma_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> PragmaKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> PragmaKeyword<'arena> {
+    PragmaKeyword {
         l,
         r,
-        kind: LexemeKind::PragmaKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type PrivateKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_private_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct PrivateKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_private_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> PrivateKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> PrivateKeyword<'arena> {
+    PrivateKeyword {
         l,
         r,
-        kind: LexemeKind::PrivateKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type PromiseKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_promise_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct PromiseKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_promise_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> PromiseKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> PromiseKeyword<'arena> {
+    PromiseKeyword {
         l,
         r,
-        kind: LexemeKind::PromiseKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type PromiseKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_promise_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct PublicKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_public_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> PromiseKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> PublicKeyword<'arena> {
+    PublicKeyword {
         l,
         r,
-        kind: LexemeKind::PromiseKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type PublicKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_public_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct PureKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_pure_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> PublicKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> PureKeyword<'arena> {
+    PureKeyword {
         l,
         r,
-        kind: LexemeKind::PublicKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type PureKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_pure_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> PureKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::PureKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct QuestionMark<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type QuestionMark<'arena> = TerminalType<'arena>;
 pub fn new_question_mark<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> QuestionMark<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    QuestionMark {
         l,
         r,
-        kind: LexemeKind::QuestionMark,
         phantom: PhantomData,
     }
 }
 
-pub type ReceiveKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_receive_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ReceiveKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_receive_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ReceiveKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ReceiveKeyword<'arena> {
+    ReceiveKeyword {
         l,
         r,
-        kind: LexemeKind::ReceiveKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ReceiveKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_receive_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct ReferenceKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_reference_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ReceiveKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ReferenceKeyword<'arena> {
+    ReferenceKeyword {
         l,
         r,
-        kind: LexemeKind::ReceiveKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type ReferenceKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_reference_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct RelocatableKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_relocatable_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ReferenceKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> RelocatableKeyword<'arena> {
+    RelocatableKeyword {
         l,
         r,
-        kind: LexemeKind::ReferenceKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ReferenceKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_reference_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct ReturnKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_return_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ReferenceKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ReturnKeyword<'arena> {
+    ReturnKeyword {
         l,
         r,
-        kind: LexemeKind::ReferenceKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type RelocatableKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_relocatable_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ReturnsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_returns_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> RelocatableKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ReturnsKeyword<'arena> {
+    ReturnsKeyword {
         l,
         r,
-        kind: LexemeKind::RelocatableKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ReturnKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_return_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct RevertKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_revert_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ReturnKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> RevertKeyword<'arena> {
+    RevertKeyword {
         l,
         r,
-        kind: LexemeKind::ReturnKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ReturnsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_returns_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct SMTCheckerKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_smt_checker_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ReturnsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SMTCheckerKeyword<'arena> {
+    SMTCheckerKeyword {
         l,
         r,
-        kind: LexemeKind::ReturnsKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type RevertKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_revert_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct SealedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_sealed_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> RevertKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SealedKeyword<'arena> {
+    SealedKeyword {
         l,
         r,
-        kind: LexemeKind::RevertKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type SMTCheckerKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_smt_checker_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct SecondsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_seconds_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SMTCheckerKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SecondsKeyword<'arena> {
+    SecondsKeyword {
         l,
         r,
-        kind: LexemeKind::SMTCheckerKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type SealedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_sealed_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> SealedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::SealedKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct Semicolon<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type SealedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_sealed_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> SealedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::SealedKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type SecondsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_seconds_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> SecondsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::SecondsKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type Semicolon<'arena> = TerminalType<'arena>;
 pub fn new_semicolon<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> Semicolon<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    Semicolon {
         l,
         r,
-        kind: LexemeKind::Semicolon,
         phantom: PhantomData,
     }
 }
 
-pub type SingleLineComment<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct SingleLineComment<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_single_line_comment<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> SingleLineComment<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    SingleLineComment {
         l,
         r,
-        kind: LexemeKind::SingleLineComment,
         phantom: PhantomData,
     }
 }
 
-pub type SingleLineNatSpecComment<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct SingleLineNatSpecComment<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_single_line_nat_spec_comment<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> SingleLineNatSpecComment<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    SingleLineNatSpecComment {
         l,
         r,
-        kind: LexemeKind::SingleLineNatSpecComment,
         phantom: PhantomData,
     }
 }
 
-pub type SingleQuotedHexStringLiteral<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct SingleQuotedHexStringLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_single_quoted_hex_string_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> SingleQuotedHexStringLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    SingleQuotedHexStringLiteral {
         l,
         r,
-        kind: LexemeKind::SingleQuotedHexStringLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type SingleQuotedStringLiteral<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct SingleQuotedStringLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_single_quoted_string_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> SingleQuotedStringLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    SingleQuotedStringLiteral {
         l,
         r,
-        kind: LexemeKind::SingleQuotedStringLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type SingleQuotedUnicodeStringLiteral<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct SingleQuotedUnicodeStringLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_single_quoted_unicode_string_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> SingleQuotedUnicodeStringLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    SingleQuotedUnicodeStringLiteral {
         l,
         r,
-        kind: LexemeKind::SingleQuotedUnicodeStringLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type SingleQuotedVersionLiteral<'arena> = TerminalType<'arena>;
+#[derive(Debug)]
+pub struct SingleQuotedVersionLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
 pub fn new_single_quoted_version_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> SingleQuotedVersionLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    SingleQuotedVersionLiteral {
         l,
         r,
-        kind: LexemeKind::SingleQuotedVersionLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type SizeOfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_size_of_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct SizeOfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_size_of_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SizeOfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SizeOfKeyword<'arena> {
+    SizeOfKeyword {
         l,
         r,
-        kind: LexemeKind::SizeOfKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type SizeOfKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_size_of_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> SizeOfKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+#[derive(Debug)]
+pub struct Slash<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_slash<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Slash<'arena> {
+    Slash {
         l,
         r,
-        kind: LexemeKind::SizeOfKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type Slash<'arena> = TerminalType<'arena>;
-pub fn new_slash<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Slash<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::Slash,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct SlashEqual<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type SlashEqual<'arena> = TerminalType<'arena>;
 pub fn new_slash_equal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> SlashEqual<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    SlashEqual {
         l,
         r,
-        kind: LexemeKind::SlashEqual,
         phantom: PhantomData,
     }
 }
 
-pub type SolidityKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_solidity_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct SolidityKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_solidity_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SolidityKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SolidityKeyword<'arena> {
+    SolidityKeyword {
         l,
         r,
-        kind: LexemeKind::SolidityKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type StaticKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_static_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct StaticKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_static_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> StaticKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> StaticKeyword<'arena> {
+    StaticKeyword {
         l,
         r,
-        kind: LexemeKind::StaticKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type StorageKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_storage_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct StorageKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_storage_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> StorageKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> StorageKeyword<'arena> {
+    StorageKeyword {
         l,
         r,
-        kind: LexemeKind::StorageKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type StringKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_string_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct StringKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_string_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> StringKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> StringKeyword<'arena> {
+    StringKeyword {
         l,
         r,
-        kind: LexemeKind::StringKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type StructKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_struct_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct StructKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_struct_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> StructKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> StructKeyword<'arena> {
+    StructKeyword {
         l,
         r,
-        kind: LexemeKind::StructKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type SuperKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_super_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct SuperKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_super_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SuperKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SuperKeyword<'arena> {
+    SuperKeyword {
         l,
         r,
-        kind: LexemeKind::SuperKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type SuperKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_super_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct SupportsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_supports_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SuperKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SupportsKeyword<'arena> {
+    SupportsKeyword {
         l,
         r,
-        kind: LexemeKind::SuperKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type SupportsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_supports_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct SwitchKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_switch_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SupportsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SwitchKeyword<'arena> {
+    SwitchKeyword {
         l,
         r,
-        kind: LexemeKind::SupportsKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type SupportsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_supports_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct SzaboKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_szabo_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SupportsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> SzaboKeyword<'arena> {
+    SzaboKeyword {
         l,
         r,
-        kind: LexemeKind::SupportsKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type SwitchKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_switch_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ThisKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_this_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SwitchKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ThisKeyword<'arena> {
+    ThisKeyword {
         l,
         r,
-        kind: LexemeKind::SwitchKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type SzaboKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_szabo_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ThrowKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_throw_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SzaboKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ThrowKeyword<'arena> {
+    ThrowKeyword {
         l,
         r,
-        kind: LexemeKind::SzaboKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type SzaboKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_szabo_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct Tilde<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_tilde<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> Tilde<'arena> {
+    Tilde {
+        l,
+        r,
+        phantom: PhantomData,
+    }
+}
+
+#[derive(Debug)]
+pub struct TransientKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_transient_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> SzaboKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> TransientKeyword<'arena> {
+    TransientKeyword {
         l,
         r,
-        kind: LexemeKind::SzaboKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type ThisKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_this_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct TrueKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_true_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ThisKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> TrueKeyword<'arena> {
+    TrueKeyword {
         l,
         r,
-        kind: LexemeKind::ThisKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type ThisKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_this_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct TryKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_try_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ThisKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> TryKeyword<'arena> {
+    TryKeyword {
         l,
         r,
-        kind: LexemeKind::ThisKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type ThrowKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_throw_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct TypeDefKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_type_def_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ThrowKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> TypeDefKeyword<'arena> {
+    TypeDefKeyword {
         l,
         r,
-        kind: LexemeKind::ThrowKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type Tilde<'arena> = TerminalType<'arena>;
-pub fn new_tilde<'arena>(_arena: &'arena Bump, l: usize, r: usize, source: &str) -> Tilde<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::Tilde,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct TypeKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type TransientKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_transient_keyword_unreserved<'arena>(
+pub fn new_type_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> TransientKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> TypeKeyword<'arena> {
+    TypeKeyword {
         l,
         r,
-        kind: LexemeKind::TransientKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type TrueKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_true_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct TypeOfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_type_of_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> TrueKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> TypeOfKeyword<'arena> {
+    TypeOfKeyword {
         l,
         r,
-        kind: LexemeKind::TrueKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type TryKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_try_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct UfixedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_ufixed_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> TryKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> UfixedKeyword<'arena> {
+    UfixedKeyword {
         l,
         r,
-        kind: LexemeKind::TryKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type TypeDefKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_type_def_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct UintKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_uint_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> TypeDefKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> UintKeyword<'arena> {
+    UintKeyword {
         l,
         r,
-        kind: LexemeKind::TypeDefKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type TypeDefKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_type_def_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct UncheckedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_unchecked_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> TypeDefKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> UncheckedKeyword<'arena> {
+    UncheckedKeyword {
         l,
         r,
-        kind: LexemeKind::TypeDefKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type TypeKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_type_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct UsingKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_using_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> TypeKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> UsingKeyword<'arena> {
+    UsingKeyword {
         l,
         r,
-        kind: LexemeKind::TypeKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type TypeOfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_type_of_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct VarKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_var_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> TypeOfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> VarKeyword<'arena> {
+    VarKeyword {
         l,
         r,
-        kind: LexemeKind::TypeOfKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type UfixedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_ufixed_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> UfixedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::UfixedKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct VersionSpecifier<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type UfixedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_ufixed_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> UfixedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::UfixedKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type UintKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_uint_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> UintKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::UintKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type UncheckedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_unchecked_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> UncheckedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::UncheckedKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type UncheckedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_unchecked_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> UncheckedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::UncheckedKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type UsingKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_using_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> UsingKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::UsingKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type VarKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_var_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> VarKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::VarKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type VersionSpecifier<'arena> = TerminalType<'arena>;
 pub fn new_version_specifier<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> VersionSpecifier<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    VersionSpecifier {
         l,
         r,
-        kind: LexemeKind::VersionSpecifier,
         phantom: PhantomData,
     }
 }
 
-pub type ViewKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_view_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct ViewKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_view_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> ViewKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> ViewKeyword<'arena> {
+    ViewKeyword {
         l,
         r,
-        kind: LexemeKind::ViewKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type VirtualKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_virtual_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct VirtualKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_virtual_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> VirtualKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> VirtualKeyword<'arena> {
+    VirtualKeyword {
         l,
         r,
-        kind: LexemeKind::VirtualKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type VirtualKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_virtual_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct WeeksKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_weeks_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> VirtualKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> WeeksKeyword<'arena> {
+    WeeksKeyword {
         l,
         r,
-        kind: LexemeKind::VirtualKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type WeeksKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_weeks_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct WeiKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_wei_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> WeeksKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> WeiKeyword<'arena> {
+    WeiKeyword {
         l,
         r,
-        kind: LexemeKind::WeeksKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type WeiKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_wei_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct WhileKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_while_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> WeiKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> WhileKeyword<'arena> {
+    WhileKeyword {
         l,
         r,
-        kind: LexemeKind::WeiKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type WhileKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_while_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> WhileKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::WhileKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct Whitespace<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type Whitespace<'arena> = TerminalType<'arena>;
 pub fn new_whitespace<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> Whitespace<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    Whitespace {
         l,
         r,
-        kind: LexemeKind::Whitespace,
         phantom: PhantomData,
     }
 }
 
-pub type YearsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_years_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YearsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_years_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YearsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YearsKeyword<'arena> {
+    YearsKeyword {
         l,
         r,
-        kind: LexemeKind::YearsKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAbstractKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_abstract_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulAbstractKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_abstract_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAbstractKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulAbstractKeyword<'arena> {
+    YulAbstractKeyword {
         l,
         r,
-        kind: LexemeKind::YulAbstractKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAbstractKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_abstract_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulAfterKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_after_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAbstractKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulAfterKeyword<'arena> {
+    YulAfterKeyword {
         l,
         r,
-        kind: LexemeKind::YulAbstractKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAfterKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_after_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulAliasKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_alias_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAfterKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulAliasKeyword<'arena> {
+    YulAliasKeyword {
         l,
         r,
-        kind: LexemeKind::YulAfterKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAfterKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_after_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulAnonymousKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_anonymous_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAfterKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulAnonymousKeyword<'arena> {
+    YulAnonymousKeyword {
         l,
         r,
-        kind: LexemeKind::YulAfterKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAliasKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_alias_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulApplyKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_apply_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAliasKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulApplyKeyword<'arena> {
+    YulApplyKeyword {
         l,
         r,
-        kind: LexemeKind::YulAliasKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAliasKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_alias_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulAsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_as_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAliasKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulAsKeyword<'arena> {
+    YulAsKeyword {
         l,
         r,
-        kind: LexemeKind::YulAliasKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAnonymousKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_anonymous_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulAssemblyKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_assembly_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAnonymousKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulAssemblyKeyword<'arena> {
+    YulAssemblyKeyword {
         l,
         r,
-        kind: LexemeKind::YulAnonymousKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAnonymousKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_anonymous_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulAutoKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_auto_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAnonymousKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulAutoKeyword<'arena> {
+    YulAutoKeyword {
         l,
         r,
-        kind: LexemeKind::YulAnonymousKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulApplyKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_apply_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulBoolKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_bool_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulApplyKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulBoolKeyword<'arena> {
+    YulBoolKeyword {
         l,
         r,
-        kind: LexemeKind::YulApplyKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulApplyKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_apply_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulBreakKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_break_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulApplyKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulBreakKeyword<'arena> {
+    YulBreakKeyword {
         l,
         r,
-        kind: LexemeKind::YulApplyKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_as_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulBytesKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_bytes_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulBytesKeyword<'arena> {
+    YulBytesKeyword {
         l,
         r,
-        kind: LexemeKind::YulAsKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_as_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulCallDataKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_call_data_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulCallDataKeyword<'arena> {
+    YulCallDataKeyword {
         l,
         r,
-        kind: LexemeKind::YulAsKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAssemblyKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_assembly_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulCaseKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_case_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAssemblyKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulCaseKeyword<'arena> {
+    YulCaseKeyword {
         l,
         r,
-        kind: LexemeKind::YulAssemblyKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAssemblyKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_assembly_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulCatchKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_catch_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAssemblyKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulCatchKeyword<'arena> {
+    YulCatchKeyword {
         l,
         r,
-        kind: LexemeKind::YulAssemblyKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAutoKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_auto_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulConstantKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_constant_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAutoKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulConstantKeyword<'arena> {
+    YulConstantKeyword {
         l,
         r,
-        kind: LexemeKind::YulAutoKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulAutoKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_auto_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulConstructorKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_constructor_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulAutoKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulConstructorKeyword<'arena> {
+    YulConstructorKeyword {
         l,
         r,
-        kind: LexemeKind::YulAutoKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulBoolKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_bool_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulContinueKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_continue_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulBoolKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulContinueKeyword<'arena> {
+    YulContinueKeyword {
         l,
         r,
-        kind: LexemeKind::YulBoolKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulBoolKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_bool_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulContractKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_contract_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulBoolKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulContractKeyword<'arena> {
+    YulContractKeyword {
         l,
         r,
-        kind: LexemeKind::YulBoolKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulBreakKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_break_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulCopyOfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_copy_of_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulBreakKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulCopyOfKeyword<'arena> {
+    YulCopyOfKeyword {
         l,
         r,
-        kind: LexemeKind::YulBreakKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulBytesKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_bytes_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulDaysKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_days_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulBytesKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulDaysKeyword<'arena> {
+    YulDaysKeyword {
         l,
         r,
-        kind: LexemeKind::YulBytesKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulBytesKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_bytes_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulBytesKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulBytesKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulDecimalLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulCallDataKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_call_data_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulCallDataKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulCallDataKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulCallDataKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_call_data_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulCallDataKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulCallDataKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulCaseKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_case_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulCaseKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulCaseKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulCatchKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_catch_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulCatchKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulCatchKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulCatchKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_catch_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulCatchKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulCatchKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulConstantKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_constant_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulConstantKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulConstantKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulConstantKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_constant_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulConstantKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulConstantKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulConstructorKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_constructor_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulConstructorKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulConstructorKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulConstructorKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_constructor_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulConstructorKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulConstructorKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulContinueKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_continue_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulContinueKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulContinueKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulContractKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_contract_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulContractKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulContractKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulContractKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_contract_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulContractKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulContractKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulCopyOfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_copy_of_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulCopyOfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulCopyOfKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulCopyOfKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_copy_of_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulCopyOfKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulCopyOfKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulDaysKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_days_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulDaysKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulDaysKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulDaysKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_days_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulDaysKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulDaysKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulDecimalLiteral<'arena> = TerminalType<'arena>;
 pub fn new_yul_decimal_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> YulDecimalLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    YulDecimalLiteral {
         l,
         r,
-        kind: LexemeKind::YulDecimalLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type YulDefaultKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_default_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulDefaultKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_default_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulDefaultKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulDefaultKeyword<'arena> {
+    YulDefaultKeyword {
         l,
         r,
-        kind: LexemeKind::YulDefaultKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulDefineKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_define_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulDefineKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_define_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulDefineKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulDefineKeyword<'arena> {
+    YulDefineKeyword {
         l,
         r,
-        kind: LexemeKind::YulDefineKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulDefineKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_define_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulDeleteKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_delete_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulDefineKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulDeleteKeyword<'arena> {
+    YulDeleteKeyword {
         l,
         r,
-        kind: LexemeKind::YulDefineKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulDeleteKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_delete_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulDoKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_do_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulDeleteKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulDoKeyword<'arena> {
+    YulDoKeyword {
         l,
         r,
-        kind: LexemeKind::YulDeleteKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulDeleteKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_delete_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulElseKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_else_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulDeleteKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulElseKeyword<'arena> {
+    YulElseKeyword {
         l,
         r,
-        kind: LexemeKind::YulDeleteKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulDoKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_do_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulEmitKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_emit_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulDoKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulEmitKeyword<'arena> {
+    YulEmitKeyword {
         l,
         r,
-        kind: LexemeKind::YulDoKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulDoKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_do_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulEnumKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_enum_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulDoKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulEnumKeyword<'arena> {
+    YulEnumKeyword {
         l,
         r,
-        kind: LexemeKind::YulDoKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulElseKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_else_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulEtherKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_ether_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulElseKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulEtherKeyword<'arena> {
+    YulEtherKeyword {
         l,
         r,
-        kind: LexemeKind::YulElseKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulElseKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_else_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulEventKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_event_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulElseKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulEventKeyword<'arena> {
+    YulEventKeyword {
         l,
         r,
-        kind: LexemeKind::YulElseKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulEmitKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_emit_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulExternalKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_external_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulEmitKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulExternalKeyword<'arena> {
+    YulExternalKeyword {
         l,
         r,
-        kind: LexemeKind::YulEmitKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulEmitKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_emit_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulFallbackKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_fallback_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulEmitKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulFallbackKeyword<'arena> {
+    YulFallbackKeyword {
         l,
         r,
-        kind: LexemeKind::YulEmitKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulEnumKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_enum_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulFalseKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_false_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulEnumKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulFalseKeyword<'arena> {
+    YulFalseKeyword {
         l,
         r,
-        kind: LexemeKind::YulEnumKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulEnumKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_enum_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulFinalKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_final_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulEnumKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulFinalKeyword<'arena> {
+    YulFinalKeyword {
         l,
         r,
-        kind: LexemeKind::YulEnumKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulEtherKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_ether_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulFinneyKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_finney_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulEtherKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulFinneyKeyword<'arena> {
+    YulFinneyKeyword {
         l,
         r,
-        kind: LexemeKind::YulEtherKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulEtherKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_ether_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulFixedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_fixed_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulEtherKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulFixedKeyword<'arena> {
+    YulFixedKeyword {
         l,
         r,
-        kind: LexemeKind::YulEtherKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulEventKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_event_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulForKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_for_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulEventKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulForKeyword<'arena> {
+    YulForKeyword {
         l,
         r,
-        kind: LexemeKind::YulEventKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulEventKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_event_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulFunctionKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_function_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulEventKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulFunctionKeyword<'arena> {
+    YulFunctionKeyword {
         l,
         r,
-        kind: LexemeKind::YulEventKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulExternalKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_external_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulGweiKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_gwei_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulExternalKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulGweiKeyword<'arena> {
+    YulGweiKeyword {
         l,
         r,
-        kind: LexemeKind::YulExternalKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulExternalKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_external_keyword_unreserved<'arena>(
+#[derive(Debug)]
+pub struct YulHexKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_hex_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulExternalKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulHexKeyword<'arena> {
+    YulHexKeyword {
         l,
         r,
-        kind: LexemeKind::YulExternalKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulFallbackKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_fallback_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFallbackKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFallbackKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulHexLiteral<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulFallbackKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_fallback_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFallbackKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFallbackKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulFalseKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_false_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFalseKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFalseKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulFinalKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_final_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFinalKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFinalKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulFinalKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_final_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFinalKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFinalKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulFinneyKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_finney_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFinneyKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFinneyKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulFinneyKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_finney_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFinneyKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFinneyKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulFixedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_fixed_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFixedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFixedKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulFixedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_fixed_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFixedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFixedKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulForKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_for_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulForKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulForKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulFunctionKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_function_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulFunctionKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulFunctionKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulGweiKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_gwei_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulGweiKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulGweiKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulGweiKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_gwei_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulGweiKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulGweiKeyword_Unreserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulHexKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_hex_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulHexKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulHexKeyword_Reserved,
-        phantom: PhantomData,
-    }
-}
-
-pub type YulHexLiteral<'arena> = TerminalType<'arena>;
 pub fn new_yul_hex_literal<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> YulHexLiteral<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    YulHexLiteral {
         l,
         r,
-        kind: LexemeKind::YulHexLiteral,
         phantom: PhantomData,
     }
 }
 
-pub type YulHoursKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_hours_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulHoursKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_hours_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulHoursKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulHoursKeyword<'arena> {
+    YulHoursKeyword {
         l,
         r,
-        kind: LexemeKind::YulHoursKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulHoursKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_hours_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulHoursKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulHoursKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulIdentifier<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulIdentifier<'arena> = TerminalType<'arena>;
 pub fn new_yul_identifier<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
+    _source: &str,
 ) -> YulIdentifier<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    YulIdentifier {
         l,
         r,
-        kind: LexemeKind::YulIdentifier,
         phantom: PhantomData,
     }
 }
 
-pub type YulIfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_if_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulIfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulIfKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulIfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulImmutableKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_immutable_keyword_reserved<'arena>(
+pub fn new_yul_if_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulImmutableKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulIfKeyword<'arena> {
+    YulIfKeyword {
         l,
         r,
-        kind: LexemeKind::YulImmutableKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulImmutableKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_immutable_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulImmutableKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulImmutableKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulImmutableKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulImplementsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_implements_keyword_reserved<'arena>(
+pub fn new_yul_immutable_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulImplementsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulImmutableKeyword<'arena> {
+    YulImmutableKeyword {
         l,
         r,
-        kind: LexemeKind::YulImplementsKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulImplementsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_implements_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulImplementsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulImplementsKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulImplementsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulImportKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_import_keyword_reserved<'arena>(
+pub fn new_yul_implements_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulImportKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulImplementsKeyword<'arena> {
+    YulImplementsKeyword {
         l,
         r,
-        kind: LexemeKind::YulImportKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulImportKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_import_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulImportKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulImportKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulImportKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulInKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_in_keyword_reserved<'arena>(
+pub fn new_yul_import_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulInKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulImportKeyword<'arena> {
+    YulImportKeyword {
         l,
         r,
-        kind: LexemeKind::YulInKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulInKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_in_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulInKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulInKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulInKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulIndexedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_indexed_keyword_reserved<'arena>(
+pub fn new_yul_in_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulIndexedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulInKeyword<'arena> {
+    YulInKeyword {
         l,
         r,
-        kind: LexemeKind::YulIndexedKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulIndexedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_indexed_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulIndexedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulIndexedKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulIndexedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulInlineKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_inline_keyword_reserved<'arena>(
+pub fn new_yul_indexed_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulInlineKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulIndexedKeyword<'arena> {
+    YulIndexedKeyword {
         l,
         r,
-        kind: LexemeKind::YulInlineKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulInlineKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_inline_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulInlineKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulInlineKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulInlineKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulIntKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_int_keyword_reserved<'arena>(
+pub fn new_yul_inline_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulIntKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulInlineKeyword<'arena> {
+    YulInlineKeyword {
         l,
         r,
-        kind: LexemeKind::YulIntKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulIntKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_int_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulIntKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulIntKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulIntKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulInterfaceKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_interface_keyword_reserved<'arena>(
+pub fn new_yul_int_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulInterfaceKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulIntKeyword<'arena> {
+    YulIntKeyword {
         l,
         r,
-        kind: LexemeKind::YulInterfaceKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulInterfaceKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_interface_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulInterfaceKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulInterfaceKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulInterfaceKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulInternalKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_internal_keyword_reserved<'arena>(
+pub fn new_yul_interface_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulInternalKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulInterfaceKeyword<'arena> {
+    YulInterfaceKeyword {
         l,
         r,
-        kind: LexemeKind::YulInternalKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulInternalKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_internal_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulInternalKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulInternalKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulInternalKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulIsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_is_keyword_reserved<'arena>(
+pub fn new_yul_internal_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulIsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulInternalKeyword<'arena> {
+    YulInternalKeyword {
         l,
         r,
-        kind: LexemeKind::YulIsKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulIsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_is_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulIsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulIsKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulIsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulLeaveKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_leave_keyword_reserved<'arena>(
+pub fn new_yul_is_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulLeaveKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulIsKeyword<'arena> {
+    YulIsKeyword {
         l,
         r,
-        kind: LexemeKind::YulLeaveKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulLeaveKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_leave_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulLeaveKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulLeaveKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulLeaveKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulLetKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_let_keyword_reserved<'arena>(
+pub fn new_yul_leave_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulLetKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulLeaveKeyword<'arena> {
+    YulLeaveKeyword {
         l,
         r,
-        kind: LexemeKind::YulLetKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulLibraryKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_library_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulLibraryKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulLibraryKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulLetKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulLibraryKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_library_keyword_unreserved<'arena>(
+pub fn new_yul_let_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulLibraryKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulLetKeyword<'arena> {
+    YulLetKeyword {
         l,
         r,
-        kind: LexemeKind::YulLibraryKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulMacroKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_macro_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulMacroKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulMacroKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulLibraryKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulMacroKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_macro_keyword_unreserved<'arena>(
+pub fn new_yul_library_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulMacroKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulLibraryKeyword<'arena> {
+    YulLibraryKeyword {
         l,
         r,
-        kind: LexemeKind::YulMacroKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulMappingKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_mapping_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulMappingKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulMappingKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulMacroKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulMappingKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_mapping_keyword_unreserved<'arena>(
+pub fn new_yul_macro_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulMappingKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulMacroKeyword<'arena> {
+    YulMacroKeyword {
         l,
         r,
-        kind: LexemeKind::YulMappingKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulMatchKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_match_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulMatchKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulMatchKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulMappingKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulMatchKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_match_keyword_unreserved<'arena>(
+pub fn new_yul_mapping_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulMatchKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulMappingKeyword<'arena> {
+    YulMappingKeyword {
         l,
         r,
-        kind: LexemeKind::YulMatchKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulMemoryKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_memory_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulMemoryKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulMemoryKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulMatchKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulMemoryKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_memory_keyword_unreserved<'arena>(
+pub fn new_yul_match_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulMemoryKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulMatchKeyword<'arena> {
+    YulMatchKeyword {
         l,
         r,
-        kind: LexemeKind::YulMemoryKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulMinutesKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_minutes_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulMinutesKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulMinutesKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulMemoryKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulMinutesKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_minutes_keyword_unreserved<'arena>(
+pub fn new_yul_memory_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulMinutesKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulMemoryKeyword<'arena> {
+    YulMemoryKeyword {
         l,
         r,
-        kind: LexemeKind::YulMinutesKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulModifierKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_modifier_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulModifierKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulModifierKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulMinutesKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulModifierKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_modifier_keyword_unreserved<'arena>(
+pub fn new_yul_minutes_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulModifierKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulMinutesKeyword<'arena> {
+    YulMinutesKeyword {
         l,
         r,
-        kind: LexemeKind::YulModifierKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulMutableKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_mutable_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulMutableKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulMutableKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulModifierKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulMutableKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_mutable_keyword_unreserved<'arena>(
+pub fn new_yul_modifier_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulMutableKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulModifierKeyword<'arena> {
+    YulModifierKeyword {
         l,
         r,
-        kind: LexemeKind::YulMutableKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulNewKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_new_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulNewKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulNewKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulMutableKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulNewKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_new_keyword_unreserved<'arena>(
+pub fn new_yul_mutable_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulNewKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulMutableKeyword<'arena> {
+    YulMutableKeyword {
         l,
         r,
-        kind: LexemeKind::YulNewKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulNullKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_null_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulNullKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulNullKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulNewKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulNullKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_null_keyword_unreserved<'arena>(
+pub fn new_yul_new_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulNullKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulNewKeyword<'arena> {
+    YulNewKeyword {
         l,
         r,
-        kind: LexemeKind::YulNullKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulOfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_of_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulOfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulOfKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulNullKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulOfKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_of_keyword_unreserved<'arena>(
+pub fn new_yul_null_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulOfKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulNullKeyword<'arena> {
+    YulNullKeyword {
         l,
         r,
-        kind: LexemeKind::YulOfKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulOverrideKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_override_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulOverrideKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulOverrideKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulOfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulOverrideKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_override_keyword_unreserved<'arena>(
+pub fn new_yul_of_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulOverrideKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulOfKeyword<'arena> {
+    YulOfKeyword {
         l,
         r,
-        kind: LexemeKind::YulOverrideKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulPartialKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_partial_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulPartialKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulPartialKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulOverrideKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulPartialKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_partial_keyword_unreserved<'arena>(
+pub fn new_yul_override_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulPartialKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulOverrideKeyword<'arena> {
+    YulOverrideKeyword {
         l,
         r,
-        kind: LexemeKind::YulPartialKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulPayableKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_payable_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulPayableKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulPayableKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulPartialKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulPayableKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_payable_keyword_unreserved<'arena>(
+pub fn new_yul_partial_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulPayableKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulPartialKeyword<'arena> {
+    YulPartialKeyword {
         l,
         r,
-        kind: LexemeKind::YulPayableKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulPragmaKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_pragma_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulPragmaKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulPragmaKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulPayableKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulPragmaKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_pragma_keyword_unreserved<'arena>(
+pub fn new_yul_payable_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulPragmaKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulPayableKeyword<'arena> {
+    YulPayableKeyword {
         l,
         r,
-        kind: LexemeKind::YulPragmaKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulPrivateKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_private_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulPrivateKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulPrivateKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulPragmaKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulPrivateKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_private_keyword_unreserved<'arena>(
+pub fn new_yul_pragma_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulPrivateKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulPragmaKeyword<'arena> {
+    YulPragmaKeyword {
         l,
         r,
-        kind: LexemeKind::YulPrivateKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulPromiseKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_promise_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulPromiseKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulPromiseKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulPrivateKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulPromiseKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_promise_keyword_unreserved<'arena>(
+pub fn new_yul_private_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulPromiseKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulPrivateKeyword<'arena> {
+    YulPrivateKeyword {
         l,
         r,
-        kind: LexemeKind::YulPromiseKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulPublicKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_public_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulPublicKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulPublicKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulPromiseKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulPublicKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_public_keyword_unreserved<'arena>(
+pub fn new_yul_promise_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulPublicKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulPromiseKeyword<'arena> {
+    YulPromiseKeyword {
         l,
         r,
-        kind: LexemeKind::YulPublicKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulPureKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_pure_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulPureKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulPureKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulPublicKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulPureKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_pure_keyword_unreserved<'arena>(
+pub fn new_yul_public_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulPureKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulPublicKeyword<'arena> {
+    YulPublicKeyword {
         l,
         r,
-        kind: LexemeKind::YulPureKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulReceiveKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_receive_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulReceiveKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulReceiveKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulPureKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulReceiveKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_receive_keyword_unreserved<'arena>(
+pub fn new_yul_pure_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulReceiveKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulPureKeyword<'arena> {
+    YulPureKeyword {
         l,
         r,
-        kind: LexemeKind::YulReceiveKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulReferenceKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_reference_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulReferenceKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulReferenceKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulReceiveKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulReferenceKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_reference_keyword_unreserved<'arena>(
+pub fn new_yul_receive_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulReferenceKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulReceiveKeyword<'arena> {
+    YulReceiveKeyword {
         l,
         r,
-        kind: LexemeKind::YulReferenceKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulRelocatableKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_relocatable_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulRelocatableKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulRelocatableKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulReferenceKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulRelocatableKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_relocatable_keyword_unreserved<'arena>(
+pub fn new_yul_reference_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulRelocatableKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulReferenceKeyword<'arena> {
+    YulReferenceKeyword {
         l,
         r,
-        kind: LexemeKind::YulRelocatableKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulReturnsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_returns_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulReturnsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulReturnsKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulRelocatableKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulReturnsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_returns_keyword_unreserved<'arena>(
+pub fn new_yul_relocatable_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulReturnsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulRelocatableKeyword<'arena> {
+    YulRelocatableKeyword {
         l,
         r,
-        kind: LexemeKind::YulReturnsKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulSealedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_sealed_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulSealedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulSealedKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulReturnsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulSealedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_sealed_keyword_unreserved<'arena>(
+pub fn new_yul_returns_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulSealedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulReturnsKeyword<'arena> {
+    YulReturnsKeyword {
         l,
         r,
-        kind: LexemeKind::YulSealedKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulSecondsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_seconds_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulSecondsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulSecondsKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulSealedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulSecondsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_seconds_keyword_unreserved<'arena>(
+pub fn new_yul_sealed_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulSecondsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulSealedKeyword<'arena> {
+    YulSealedKeyword {
         l,
         r,
-        kind: LexemeKind::YulSecondsKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulSizeOfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_size_of_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulSizeOfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulSizeOfKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulSecondsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulSizeOfKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_size_of_keyword_unreserved<'arena>(
+pub fn new_yul_seconds_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulSizeOfKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulSecondsKeyword<'arena> {
+    YulSecondsKeyword {
         l,
         r,
-        kind: LexemeKind::YulSizeOfKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulStaticKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_static_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulStaticKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulStaticKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulSizeOfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulStaticKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_static_keyword_unreserved<'arena>(
+pub fn new_yul_size_of_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulStaticKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulSizeOfKeyword<'arena> {
+    YulSizeOfKeyword {
         l,
         r,
-        kind: LexemeKind::YulStaticKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulStorageKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_storage_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulStorageKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulStorageKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulStaticKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulStorageKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_storage_keyword_unreserved<'arena>(
+pub fn new_yul_static_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulStorageKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulStaticKeyword<'arena> {
+    YulStaticKeyword {
         l,
         r,
-        kind: LexemeKind::YulStorageKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulStringKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_string_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulStringKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulStringKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulStorageKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulStringKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_string_keyword_unreserved<'arena>(
+pub fn new_yul_storage_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulStringKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulStorageKeyword<'arena> {
+    YulStorageKeyword {
         l,
         r,
-        kind: LexemeKind::YulStringKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulStructKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_struct_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulStructKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulStructKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulStringKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulStructKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_struct_keyword_unreserved<'arena>(
+pub fn new_yul_string_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulStructKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulStringKeyword<'arena> {
+    YulStringKeyword {
         l,
         r,
-        kind: LexemeKind::YulStructKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulSuperKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_super_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulSuperKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulSuperKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulStructKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulSuperKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_super_keyword_unreserved<'arena>(
+pub fn new_yul_struct_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulSuperKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulStructKeyword<'arena> {
+    YulStructKeyword {
         l,
         r,
-        kind: LexemeKind::YulSuperKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulSupportsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_supports_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulSupportsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulSupportsKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulSuperKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulSupportsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_supports_keyword_unreserved<'arena>(
+pub fn new_yul_super_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulSupportsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulSuperKeyword<'arena> {
+    YulSuperKeyword {
         l,
         r,
-        kind: LexemeKind::YulSupportsKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulSwitchKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_switch_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulSwitchKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulSwitchKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulSupportsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulSzaboKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_szabo_keyword_reserved<'arena>(
+pub fn new_yul_supports_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulSzaboKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulSupportsKeyword<'arena> {
+    YulSupportsKeyword {
         l,
         r,
-        kind: LexemeKind::YulSzaboKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulSzaboKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_szabo_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulSzaboKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulSzaboKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulSwitchKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulThisKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_this_keyword_reserved<'arena>(
+pub fn new_yul_switch_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulThisKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulSwitchKeyword<'arena> {
+    YulSwitchKeyword {
         l,
         r,
-        kind: LexemeKind::YulThisKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulThisKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_this_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulThisKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulThisKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulSzaboKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulThrowKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_throw_keyword_reserved<'arena>(
+pub fn new_yul_szabo_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulThrowKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulSzaboKeyword<'arena> {
+    YulSzaboKeyword {
         l,
         r,
-        kind: LexemeKind::YulThrowKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulThrowKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_throw_keyword_unreserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulThrowKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulThrowKeyword_Unreserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulThisKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulTrueKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_true_keyword_reserved<'arena>(
+pub fn new_yul_this_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulTrueKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulThisKeyword<'arena> {
+    YulThisKeyword {
         l,
         r,
-        kind: LexemeKind::YulTrueKeyword_Reserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulTryKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_try_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulTryKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulTryKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulThrowKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulTryKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_try_keyword_unreserved<'arena>(
+pub fn new_yul_throw_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulTryKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulThrowKeyword<'arena> {
+    YulThrowKeyword {
         l,
         r,
-        kind: LexemeKind::YulTryKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulTypeDefKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_type_def_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulTypeDefKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulTypeDefKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulTrueKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulTypeDefKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_type_def_keyword_unreserved<'arena>(
+pub fn new_yul_true_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulTypeDefKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulTrueKeyword<'arena> {
+    YulTrueKeyword {
         l,
         r,
-        kind: LexemeKind::YulTypeDefKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulTypeKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_type_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulTypeKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulTypeKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulTryKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulTypeKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_type_keyword_unreserved<'arena>(
+pub fn new_yul_try_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulTypeKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulTryKeyword<'arena> {
+    YulTryKeyword {
         l,
         r,
-        kind: LexemeKind::YulTypeKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulTypeOfKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_type_of_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulTypeOfKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulTypeOfKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulTypeDefKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulTypeOfKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_type_of_keyword_unreserved<'arena>(
+pub fn new_yul_type_def_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulTypeOfKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulTypeDefKeyword<'arena> {
+    YulTypeDefKeyword {
         l,
         r,
-        kind: LexemeKind::YulTypeOfKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulUfixedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_ufixed_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulUfixedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulUfixedKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulTypeKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulUfixedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_ufixed_keyword_unreserved<'arena>(
+pub fn new_yul_type_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulUfixedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulTypeKeyword<'arena> {
+    YulTypeKeyword {
         l,
         r,
-        kind: LexemeKind::YulUfixedKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulUintKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_uint_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulUintKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulUintKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulTypeOfKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulUintKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_uint_keyword_unreserved<'arena>(
+pub fn new_yul_type_of_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulUintKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulTypeOfKeyword<'arena> {
+    YulTypeOfKeyword {
         l,
         r,
-        kind: LexemeKind::YulUintKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulUncheckedKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_unchecked_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulUncheckedKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulUncheckedKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulUfixedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulUncheckedKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_unchecked_keyword_unreserved<'arena>(
+pub fn new_yul_ufixed_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulUncheckedKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulUfixedKeyword<'arena> {
+    YulUfixedKeyword {
         l,
         r,
-        kind: LexemeKind::YulUncheckedKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulUsingKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_using_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulUsingKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulUsingKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulUintKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulUsingKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_using_keyword_unreserved<'arena>(
+pub fn new_yul_uint_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulUsingKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulUintKeyword<'arena> {
+    YulUintKeyword {
         l,
         r,
-        kind: LexemeKind::YulUsingKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulVarKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_var_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulVarKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulVarKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulUncheckedKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulVarKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_var_keyword_unreserved<'arena>(
+pub fn new_yul_unchecked_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulVarKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulUncheckedKeyword<'arena> {
+    YulUncheckedKeyword {
         l,
         r,
-        kind: LexemeKind::YulVarKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulViewKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_view_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulViewKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulViewKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulUsingKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulViewKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_view_keyword_unreserved<'arena>(
+pub fn new_yul_using_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulViewKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulUsingKeyword<'arena> {
+    YulUsingKeyword {
         l,
         r,
-        kind: LexemeKind::YulViewKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulVirtualKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_virtual_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulVirtualKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulVirtualKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulVarKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulVirtualKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_virtual_keyword_unreserved<'arena>(
+pub fn new_yul_var_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulVirtualKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulVarKeyword<'arena> {
+    YulVarKeyword {
         l,
         r,
-        kind: LexemeKind::YulVirtualKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulWeeksKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_weeks_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulWeeksKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulWeeksKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulViewKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulWeeksKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_weeks_keyword_unreserved<'arena>(
+pub fn new_yul_view_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulWeeksKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulViewKeyword<'arena> {
+    YulViewKeyword {
         l,
         r,
-        kind: LexemeKind::YulWeeksKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulWeiKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_wei_keyword_reserved<'arena>(
-    _arena: &'arena Bump,
-    l: usize,
-    r: usize,
-    source: &str,
-) -> YulWeiKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
-        l,
-        r,
-        kind: LexemeKind::YulWeiKeyword_Reserved,
-        phantom: PhantomData,
-    }
+#[derive(Debug)]
+pub struct YulVirtualKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulWeiKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_wei_keyword_unreserved<'arena>(
+pub fn new_yul_virtual_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulWeiKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulVirtualKeyword<'arena> {
+    YulVirtualKeyword {
         l,
         r,
-        kind: LexemeKind::YulWeiKeyword_Unreserved,
         phantom: PhantomData,
     }
+}
+
+#[derive(Debug)]
+pub struct YulWeeksKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulWhileKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_while_keyword_reserved<'arena>(
+pub fn new_yul_weeks_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulWhileKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulWeeksKeyword<'arena> {
+    YulWeeksKeyword {
         l,
         r,
-        kind: LexemeKind::YulWhileKeyword_Reserved,
         phantom: PhantomData,
     }
+}
+
+#[derive(Debug)]
+pub struct YulWeiKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulWhileKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_while_keyword_unreserved<'arena>(
+pub fn new_yul_wei_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulWhileKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulWeiKeyword<'arena> {
+    YulWeiKeyword {
         l,
         r,
-        kind: LexemeKind::YulWhileKeyword_Unreserved,
         phantom: PhantomData,
     }
 }
 
-pub type YulYearsKeyword_Reserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_years_keyword_reserved<'arena>(
+#[derive(Debug)]
+pub struct YulWhileKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+}
+
+pub fn new_yul_while_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulYearsKeyword_Reserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulWhileKeyword<'arena> {
+    YulWhileKeyword {
         l,
         r,
-        kind: LexemeKind::YulYearsKeyword_Reserved,
         phantom: PhantomData,
     }
+}
+
+#[derive(Debug)]
+pub struct YulYearsKeyword<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
-pub type YulYearsKeyword_Unreserved<'arena> = TerminalType<'arena>;
-pub fn new_yul_years_keyword_unreserved<'arena>(
+pub fn new_yul_years_keyword<'arena>(
     _arena: &'arena Bump,
     l: usize,
     r: usize,
-    source: &str,
-) -> YulYearsKeyword_Unreserved<'arena> {
-    TerminalType {
-        // TODO(v2): avoid the allocation here, it's not needed
-        value: source[l..r].to_owned(),
+    _source: &str,
+) -> YulYearsKeyword<'arena> {
+    YulYearsKeyword {
         l,
         r,
-        kind: LexemeKind::YulYearsKeyword_Unreserved,
         phantom: PhantomData,
     }
 }

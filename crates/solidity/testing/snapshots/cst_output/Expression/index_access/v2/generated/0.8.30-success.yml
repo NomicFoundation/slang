@@ -3,38 +3,30 @@
 IndexAccessExpression(
     IndexAccessExpressionStruct {
         operand: Identifier(
-            TerminalType {
-                value: "arr",
+            Identifier {
                 l: 0,
                 r: 3,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),
-        open_bracket: TerminalType {
-            value: "[",
+        open_bracket: OpenBracket {
             l: 3,
             r: 4,
-            kind: OpenBracket,
             phantom: PhantomData<&()>,
         },
         start: Some(
             Identifier(
-                TerminalType {
-                    value: "index",
+                Identifier {
                     l: 4,
                     r: 9,
-                    kind: Identifier,
                     phantom: PhantomData<&()>,
                 },
             ),
         ),
         end: None,
-        close_bracket: TerminalType {
-            value: "]",
+        close_bracket: CloseBracket {
             l: 9,
             r: 10,
-            kind: CloseBracket,
             phantom: PhantomData<&()>,
         },
     },

@@ -2,19 +2,17 @@
 
 PrefixExpression(
     PrefixExpressionStruct {
-        operator: TerminalType {
-            value: "-",
-            l: 0,
-            r: 1,
-            kind: Minus,
-            phantom: PhantomData<&()>,
-        },
+        expression_prefix_expression_operator: Minus(
+            Minus {
+                l: 0,
+                r: 1,
+                phantom: PhantomData<&()>,
+            },
+        ),
         operand: Identifier(
-            TerminalType {
-                value: "foo",
+            Identifier {
                 l: 1,
                 r: 4,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),

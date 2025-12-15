@@ -6,38 +6,30 @@ SourceUnitStruct {
             ContractDefinition(
                 ContractDefinitionStruct {
                     abstract_keyword: None,
-                    contract_keyword: TerminalType {
-                        value: "contract",
+                    contract_keyword: ContractKeyword {
                         l: 0,
                         r: 8,
-                        kind: ContractKeyword_Reserved,
                         phantom: PhantomData<&()>,
                     },
-                    name: TerminalType {
-                        value: "X",
+                    name: Identifier {
                         l: 9,
                         r: 10,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
-                    open_brace: TerminalType {
-                        value: "{",
+                    open_brace: OpenBrace {
                         l: 11,
                         r: 12,
-                        kind: OpenBrace,
                         phantom: PhantomData<&()>,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
-                    close_brace: TerminalType {
-                        value: "}",
+                    close_brace: CloseBrace {
                         l: 13,
                         r: 14,
-                        kind: CloseBrace,
                         phantom: PhantomData<&()>,
                     },
                 },

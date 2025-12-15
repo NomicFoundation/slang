@@ -3,41 +3,33 @@
 FunctionCallExpression(
     FunctionCallExpressionStruct {
         operand: Identifier(
-            TerminalType {
-                value: "x",
+            Identifier {
                 l: 0,
                 r: 1,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),
         arguments: PositionalArgumentsDeclaration(
             PositionalArgumentsDeclarationStruct {
-                open_paren: TerminalType {
-                    value: "(",
+                open_paren: OpenParen {
                     l: 1,
                     r: 2,
-                    kind: OpenParen,
                     phantom: PhantomData<&()>,
                 },
                 arguments: PositionalArguments {
                     elements: [
                         Identifier(
-                            TerminalType {
-                                value: "interested",
+                            Identifier {
                                 l: 2,
                                 r: 12,
-                                kind: Identifier,
                                 phantom: PhantomData<&()>,
                             },
                         ),
                     ],
                 },
-                close_paren: TerminalType {
-                    value: ")",
+                close_paren: CloseParen {
                     l: 12,
                     r: 13,
-                    kind: CloseParen,
                     phantom: PhantomData<&()>,
                 },
             },

@@ -5,45 +5,35 @@ AndExpression(
         left_operand: BitwiseAndExpression(
             BitwiseAndExpressionStruct {
                 left_operand: Identifier(
-                    TerminalType {
-                        value: "a",
+                    Identifier {
                         l: 0,
                         r: 1,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
                 ),
-                operator: TerminalType {
-                    value: "&",
+                operator: Ampersand {
                     l: 2,
                     r: 3,
-                    kind: Ampersand,
                     phantom: PhantomData<&()>,
                 },
                 right_operand: Identifier(
-                    TerminalType {
-                        value: "b",
+                    Identifier {
                         l: 4,
                         r: 5,
-                        kind: Identifier,
                         phantom: PhantomData<&()>,
                     },
                 ),
             },
         ),
-        operator: TerminalType {
-            value: "&&",
+        operator: AmpersandAmpersand {
             l: 6,
             r: 8,
-            kind: AmpersandAmpersand,
             phantom: PhantomData<&()>,
         },
         right_operand: Identifier(
-            TerminalType {
-                value: "c",
+            Identifier {
                 l: 9,
                 r: 10,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),

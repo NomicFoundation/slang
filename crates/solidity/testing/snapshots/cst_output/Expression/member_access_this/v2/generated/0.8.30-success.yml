@@ -3,27 +3,21 @@
 MemberAccessExpression(
     MemberAccessExpressionStruct {
         operand: ThisKeyword(
-            TerminalType {
-                value: "this",
+            ThisKeyword {
                 l: 0,
                 r: 4,
-                kind: ThisKeyword_Reserved,
                 phantom: PhantomData<&()>,
             },
         ),
-        period: TerminalType {
-            value: ".",
+        period: Period {
             l: 4,
             r: 5,
-            kind: Period,
             phantom: PhantomData<&()>,
         },
         member: Identifier(
-            TerminalType {
-                value: "x",
+            Identifier {
                 l: 5,
                 r: 6,
-                kind: Identifier,
                 phantom: PhantomData<&()>,
             },
         ),
