@@ -10,8 +10,6 @@ use bumpalo::boxed::Box;
 use bumpalo::collections::Vec;
 use bumpalo::Bump;
 
-use crate::ast::lexemes::LexemeKind;
-
 // TODO:
 // - (perf) don't use terminals that are not needed
 

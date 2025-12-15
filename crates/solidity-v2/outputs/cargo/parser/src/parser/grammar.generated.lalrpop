@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use slang_solidity_v2_ast::ast::lexemes;
+use crate::lexer::lexemes;
 use slang_solidity_v2_ast::ast::nodes::*;
 use crate::parser::nodes::*;
 use bumpalo::Bump;
