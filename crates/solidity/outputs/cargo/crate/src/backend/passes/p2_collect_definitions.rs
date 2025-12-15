@@ -297,10 +297,12 @@ impl Visitor for Pass<'_> {
                     let enclosing_definition =
                         self.binder.find_definition_by_id(current_scope_node_id);
                     let enclosing_contract_name =
-                        if let Some(Definition::Contract(contract_definition)) =
-                            enclosing_definition
-                        {
-                            Some(contract_definition.name())
+                        if let Some(enclosing_definition) = enclosing_definition {
+                            if matches!(enclosing_definition, Definition::Contract(_)) {
+                                Some(enclosing_definition.identifier().unparse())
+                            } else {
+                                None
+                            }
                         } else {
                             None
                         };

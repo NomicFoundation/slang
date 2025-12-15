@@ -47,12 +47,6 @@ pub struct ContractDefinition {
     pub constructor_parameters_scope_id: Option<ScopeId>,
 }
 
-impl ContractDefinition {
-    pub(crate) fn name(&self) -> String {
-        self.ir_node.name.unparse()
-    }
-}
-
 #[derive(Debug)]
 pub struct EnumDefinition {
     pub(crate) ir_node: output_ir::EnumDefinition,
