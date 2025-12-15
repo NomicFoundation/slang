@@ -23,13 +23,15 @@ FunctionCallExpression(
                     kind: Period,
                     phantom: PhantomData<&()>,
                 },
-                member: TerminalType {
-                    value: "fromUint",
-                    l: 2,
-                    r: 10,
-                    kind: Identifier,
-                    phantom: PhantomData<&()>,
-                },
+                member: Identifier(
+                    TerminalType {
+                        value: "fromUint",
+                        l: 2,
+                        r: 10,
+                        kind: Identifier,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
             },
         ),
         arguments: PositionalArgumentsDeclaration(

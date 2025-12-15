@@ -20,13 +20,15 @@ FunctionCallExpression(
                     kind: Period,
                     phantom: PhantomData<&()>,
                 },
-                member: TerminalType {
-                    value: "y",
-                    l: 2,
-                    r: 3,
-                    kind: Identifier,
-                    phantom: PhantomData<&()>,
-                },
+                member: Identifier(
+                    TerminalType {
+                        value: "y",
+                        l: 2,
+                        r: 3,
+                        kind: Identifier,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
             },
         ),
         arguments: PositionalArgumentsDeclaration(

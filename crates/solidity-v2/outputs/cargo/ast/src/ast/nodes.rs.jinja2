@@ -91,7 +91,7 @@ pub struct TerminalType<'arena> {
     pub l: usize,
     pub r: usize,
     pub kind: LexemeKind,
-    phantom: PhantomData<&'arena ()>,
+    pub phantom: PhantomData<&'arena ()>,
 
 }
 

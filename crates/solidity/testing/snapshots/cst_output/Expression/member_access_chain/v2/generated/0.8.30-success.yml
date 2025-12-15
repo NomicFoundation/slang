@@ -20,13 +20,15 @@ MemberAccessExpression(
                     kind: Period,
                     phantom: PhantomData<&()>,
                 },
-                member: TerminalType {
-                    value: "y",
-                    l: 2,
-                    r: 3,
-                    kind: Identifier,
-                    phantom: PhantomData<&()>,
-                },
+                member: Identifier(
+                    TerminalType {
+                        value: "y",
+                        l: 2,
+                        r: 3,
+                        kind: Identifier,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
             },
         ),
         period: TerminalType {
@@ -36,12 +38,14 @@ MemberAccessExpression(
             kind: Period,
             phantom: PhantomData<&()>,
         },
-        member: TerminalType {
-            value: "z",
-            l: 4,
-            r: 5,
-            kind: Identifier,
-            phantom: PhantomData<&()>,
-        },
+        member: Identifier(
+            TerminalType {
+                value: "z",
+                l: 4,
+                r: 5,
+                kind: Identifier,
+                phantom: PhantomData<&()>,
+            },
+        ),
     },
 )

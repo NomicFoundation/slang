@@ -343,7 +343,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
          
             <_Expression: Expression1<"False", "False">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(arena, new_index_access_expression(arena, <>)),
          
-            <_Expression: Expression1<"False", "True">>  <_period: Period>  <_member: Identifier>  => new_expression_member_access_expression(arena, new_member_access_expression(arena, <>)),
+            <_Expression: Expression1<"False", "True">>  <_period: Period>  <_member: MemberAccessIdentifier>  => new_expression_member_access_expression(arena, new_member_access_expression(arena, <>)),
          
          // TODO[6]: enable, doesn't work nicely with try statements
         // in particular try foo {...} ()

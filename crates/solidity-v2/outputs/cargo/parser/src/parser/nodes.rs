@@ -292,7 +292,7 @@ pub fn new_expression_identifier_path<'arena>(
                         arena,
                         acc,
                         new_empty_terminal(LexemeKind::Period),
-                        id,
+                        new_member_access_identifier_identifier(arena, id),
                     ),
                 ),
             })

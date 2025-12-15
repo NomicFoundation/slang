@@ -1,6 +1,9 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use std::marker::PhantomData;
+
 use slang_solidity::cst::{Edge, EdgeLabel, Node, NodeKind, NonterminalKind};
+use slang_solidity_v2_ast::ast::lexemes::LexemeKind;
 use slang_solidity_v2_ast::ast::nodes::*;
 
 use crate::temp_sourcify::Comparator;
@@ -11814,6 +11817,31 @@ impl<'arena> NodeChecker for MappingKeyType<'arena> {
         }
 
         errors
+    }
+}
+
+impl<'arena> NodeChecker for MemberAccessIdentifier<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let ident_node = match self {
+            Self::Identifier(element) => TerminalType {
+                // TODO(v2): avoid the allocation here, it's not needed
+                value: element.value.clone(),
+                l: element.l,
+                r: element.r,
+                kind: element.kind.clone(),
+                phantom: PhantomData,
+            },
+            Self::AddressKeyword(element) => TerminalType {
+                // TODO(v2): avoid the allocation here, it's not needed
+                value: element.value.clone(),
+                l: element.l,
+                r: element.r,
+                kind: LexemeKind::Identifier,
+                phantom: PhantomData,
+            },
+        };
+
+        ident_node.check_node(node)
     }
 }
 

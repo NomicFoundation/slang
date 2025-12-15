@@ -3,6 +3,8 @@
 use slang_solidity_v2_ast::ast::nodes::*;
 use slang_solidity::cst::{NonterminalKind, NodeKind, Node, EdgeLabel, Edge};
 use crate::temp_sourcify::Comparator;
+use std::marker::PhantomData;
+use slang_solidity_v2_ast::ast::lexemes::LexemeKind;
 
 #[derive(Clone, Debug)]
 pub struct NodeCheckerError {
@@ -389,6 +391,34 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
 
 
 {% for parent_type, choice in target.choices %}
+{% if parent_type == "MemberAccessIdentifier" %}
+
+impl<'arena> NodeChecker for MemberAccessIdentifier<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        let ident_node = match self {
+            Self::Identifier(element) => TerminalType {
+                // TODO(v2): avoid the allocation here, it's not needed
+                value: element.value.clone(),
+                l: element.l,
+                r: element.r,
+                kind: element.kind.clone(),
+                phantom: PhantomData,
+            },
+            Self::AddressKeyword(element) => TerminalType {
+                // TODO(v2): avoid the allocation here, it's not needed
+                value: element.value.clone(),
+                l: element.l,
+                r: element.r,
+                kind: LexemeKind::Identifier,
+                phantom: PhantomData,
+            },
+        };
+
+        ident_node.check_node(node)
+    }
+}
+
+{% else %}
 impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
 fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
@@ -422,6 +452,7 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     errors
 }
 }
+{% endif %}
 {% endfor %}
 
   //

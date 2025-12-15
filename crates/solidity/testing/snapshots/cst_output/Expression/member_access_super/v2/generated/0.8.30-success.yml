@@ -18,12 +18,14 @@ MemberAccessExpression(
             kind: Period,
             phantom: PhantomData<&()>,
         },
-        member: TerminalType {
-            value: "x",
-            l: 6,
-            r: 7,
-            kind: Identifier,
-            phantom: PhantomData<&()>,
-        },
+        member: Identifier(
+            TerminalType {
+                value: "x",
+                l: 6,
+                r: 7,
+                kind: Identifier,
+                phantom: PhantomData<&()>,
+            },
+        ),
     },
 )

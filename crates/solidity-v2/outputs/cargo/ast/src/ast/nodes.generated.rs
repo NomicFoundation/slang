@@ -1521,14 +1521,14 @@ pub type MemberAccessExpression<'arena> = Box<'arena, MemberAccessExpressionStru
 pub struct MemberAccessExpressionStruct<'arena> {
     pub operand: Expression<'arena>,
     pub period: Period<'arena>,
-    pub member: Identifier<'arena>,
+    pub member: MemberAccessIdentifier<'arena>,
 }
 
 pub fn new_member_access_expression<'arena>(
     arena: &'arena Bump,
     operand: Expression<'arena>,
     period: Period<'arena>,
-    member: Identifier<'arena>,
+    member: MemberAccessIdentifier<'arena>,
 ) -> MemberAccessExpression<'arena> {
     Box::new_in(
         MemberAccessExpressionStruct {
@@ -4216,6 +4216,26 @@ pub fn new_mapping_key_type_identifier_path<'arena>(
 }
 
 #[derive(Debug)]
+pub enum MemberAccessIdentifier<'arena> {
+    Identifier(Identifier<'arena>),
+    AddressKeyword(AddressKeyword<'arena>),
+}
+
+pub fn new_member_access_identifier_identifier<'arena>(
+    arena: &'arena Bump,
+    element: Identifier<'arena>,
+) -> MemberAccessIdentifier<'arena> {
+    MemberAccessIdentifier::Identifier(element)
+}
+
+pub fn new_member_access_identifier_address_keyword<'arena>(
+    arena: &'arena Bump,
+    element: AddressKeyword<'arena>,
+) -> MemberAccessIdentifier<'arena> {
+    MemberAccessIdentifier::AddressKeyword(element)
+}
+
+#[derive(Debug)]
 pub enum ModifierAttribute<'arena> {
     OverrideSpecifier(OverrideSpecifier<'arena>),
     VirtualKeyword(VirtualKeyword<'arena>),
@@ -6052,7 +6072,7 @@ pub struct TerminalType<'arena> {
     pub l: usize,
     pub r: usize,
     pub kind: LexemeKind,
-    phantom: PhantomData<&'arena ()>,
+    pub phantom: PhantomData<&'arena ()>,
 }
 
 pub fn new_empty_terminal(kind: LexemeKind) -> TerminalType<'static> {
