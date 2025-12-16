@@ -1,0 +1,107 @@
+  {%- set target = model.ir_model -%}
+#![allow(non_camel_case_types)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
+use std::marker::PhantomData;
+
+use bumpalo::boxed::Box;
+use bumpalo::collections::Vec;
+use bumpalo::Bump;
+
+
+// TODO(v2):
+// - (perf) don't use terminals that are not needed
+// - (feat) visitor/traversal/serializer
+// - (feat) span information, where applicable
+
+
+//
+// Sequences:
+//
+// Note: All sequences are boxed, this keeps sizes down and avoids recursive types
+{% for parent_type, sequence in target.sequences %}
+  pub type {{ parent_type }}<'arena> = Box<'arena, {{ parent_type }}Struct<'arena>>;
+
+  #[derive(Debug)]
+  pub struct {{ parent_type }}Struct<'arena> {
+    {%- for field in sequence.fields %}
+      pub {{ field.label | snake_case }}:
+        {%- if field.is_optional -%}
+          Option<{{ field.type.name }}<'arena>>,
+        {%- else -%}
+          {{ field.type.name }}<'arena>,
+        {%- endif -%}
+    {% endfor -%}
+  }
+
+  pub fn new_{{ parent_type | snake_case }}<'arena>(arena: &'arena Bump, {% for field in sequence.fields -%}
+      {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.type.name }}<'arena>{% if field.is_optional %}>{% endif %},
+    {%- endfor %}) -> {{ parent_type }}<'arena> {
+      Box::new_in({{ parent_type }}Struct {
+        {%- for field in sequence.fields %}
+          {{ field.label | snake_case }},
+        {%- endfor -%}
+      }, arena)
+  }
+
+{% endfor %}
+
+//
+// Choices:
+//
+// Note: We create a constructor function for each variant
+{% for parent_type, choice in target.choices %}
+  #[derive(Debug)]
+  pub enum {{ parent_type }}<'arena> {
+    {% for variant in choice.variants -%}
+      {{ variant.name }}({{ variant.name }}<'arena>),
+    {%- endfor -%}
+  }
+
+  {% for variant in choice.variants %}
+    pub fn new_{{ parent_type | snake_case }}_{{ variant.name | snake_case }}<'arena>(arena: &'arena Bump, element: {{ variant.name }}<'arena>) -> {{ parent_type }}<'arena> {
+      {{ parent_type }}::{{ variant.name }}(element)
+    }
+  {% endfor %}
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+// TODO(v2): consider using a transparent representation
+{% for parent_type, collection in target.collections %}
+  #[derive(Debug)]
+  pub struct {{ parent_type }}<'arena> {
+      pub elements: Vec<'arena, {{ collection.item_type.name }}<'arena>>,
+  }
+
+  pub fn new_{{ parent_type | snake_case }}<'arena>(arena: &'arena Bump, elements: Vec<'arena, {{ collection.item_type.name }}<'arena>>) -> {{ parent_type }}<'arena> {
+    {{ parent_type }} { elements }
+  }
+
+{% endfor %}
+
+//
+// Terminals
+//
+// Note: _arena and _source are unused on the constructor methods, but kept for uniformity with other constructors
+// and because they may be needed in the future
+// Note: Similarly we keep the 'arena lifetime parameter even if unused
+{% for parent_type, unique in target.terminals %}
+#[derive(Debug)]
+  pub struct {{ parent_type }}<'arena> {
+    pub l: usize,
+    pub r: usize,
+    pub phantom: PhantomData<&'arena ()>,
+  }
+
+  pub fn new_{{ parent_type | snake_case }}<'arena>(_arena: &'arena Bump, l: usize, r: usize, _source: &str) -> {{ parent_type }}<'arena> {
+    {{ parent_type }} {
+      l,
+      r,
+      phantom: PhantomData,
+    }
+  }
+{% endfor %}
+
