@@ -8,10 +8,10 @@
 // - Collect the sizes of terminals and nonterminals
 // - Produce individual types for terminals, particularly useful for bounded sized tokens
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 use indexmap::IndexMap;
-use language_v2_definition::model::{self, Identifier, VersionSpecifier};
+use language_v2_definition::model;
 use serde::ser::SerializeMap;
 use serde::Serialize;
 
@@ -20,11 +20,6 @@ pub struct IrModel {
     /// Terminal nodes and whether they are unique or their value depends on the
     /// content.
     pub terminals: BTreeMap<model::Identifier, bool>,
-
-    /// Terminal wrappers are terminals that are never built dierectly, but
-    /// they rather represent a group of terminals
-    /// For example: a keyword item that can be either reserved or unreserved.
-    pub terminal_wrappers: BTreeSet<model::Identifier>,
 
     /// Nonterminal nodes that are a fixed size group of potentially different nodes
     /// ie a struct
@@ -119,7 +114,6 @@ impl IrModel {
 
         Self {
             terminals: builder.terminals,
-            terminal_wrappers: builder.terminal_wrappers,
             sequences: builder.sequences,
             choices: builder.choices,
             collections: builder.collections,
@@ -129,7 +123,6 @@ impl IrModel {
     pub fn from_model(model: &Self) -> Self {
         Self {
             terminals: model.terminals.clone(),
-            terminal_wrappers: model.terminal_wrappers.clone(),
             sequences: model.sequences.clone(),
             choices: model.choices.clone(),
             collections: model.collections.clone(),
@@ -139,7 +132,6 @@ impl IrModel {
 
 struct IrModelBuilder {
     pub terminals: BTreeMap<model::Identifier, bool>,
-    pub terminal_wrappers: BTreeSet<model::Identifier>,
     pub sequences: BTreeMap<model::Identifier, Sequence>,
     pub choices: BTreeMap<model::Identifier, Choice>,
     pub collections: BTreeMap<model::Identifier, Collection>,
@@ -149,7 +141,6 @@ impl IrModelBuilder {
     fn create(language: &model::Language) -> Self {
         let mut builder = Self {
             terminals: BTreeMap::new(),
-            terminal_wrappers: BTreeSet::new(),
             sequences: BTreeMap::new(),
             choices: BTreeMap::new(),
             collections: BTreeMap::new(),

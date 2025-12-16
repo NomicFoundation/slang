@@ -5,9 +5,6 @@ use std::marker::PhantomData;
 use slang_solidity::cst::{Edge, EdgeLabel, Node, NodeKind, NonterminalKind};
 use slang_solidity_v2_ast::ast::nodes::*;
 
-use crate::lexer::lexemes::LexemeKind;
-use crate::temp_sourcify::Comparator;
-
 #[derive(Clone, Debug)]
 pub struct NodeCheckerError {
     pub err: String,
@@ -149,6 +146,8 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
                 &self.expression_additive_expression_operator;
 
             // Prepare edge label
+
+            // Special case for operator fields that are merged together
 
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
@@ -780,6 +779,8 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
                 &self.expression_assignment_expression_operator;
 
             // Prepare edge label
+
+            // Special case for operator fields that are merged together
 
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
@@ -2650,6 +2651,8 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
                 &self.expression_equality_expression_operator;
 
             // Prepare edge label
+
+            // Special case for operator fields that are merged together
 
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
@@ -4902,6 +4905,8 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
 
             // Prepare edge label
 
+            // Special case for operator fields that are merged together
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -5962,6 +5967,8 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
                 &self.expression_multiplicative_expression_operator;
 
             // Prepare edge label
+
+            // Special case for operator fields that are merged together
 
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
@@ -7143,6 +7150,8 @@ impl<'arena> NodeChecker for PostfixExpression<'arena> {
 
             // Prepare edge label
 
+            // Special case for operator fields that are merged together
+
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
@@ -7270,6 +7279,8 @@ impl<'arena> NodeChecker for PrefixExpression<'arena> {
             let expression_prefix_expression_operator = &self.expression_prefix_expression_operator;
 
             // Prepare edge label
+
+            // Special case for operator fields that are merged together
 
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
@@ -7721,6 +7732,8 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
             let expression_shift_expression_operator = &self.expression_shift_expression_operator;
 
             // Prepare edge label
+
+            // Special case for operator fields that are merged together
 
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
@@ -12425,6 +12438,7 @@ impl<'arena> NodeChecker for Expression<'arena> {
     }
 }
 
+// Special case for operator choices that are merged together
 impl<'arena> NodeChecker for Expression_AdditiveExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
@@ -12435,6 +12449,7 @@ impl<'arena> NodeChecker for Expression_AdditiveExpression_Operator<'arena> {
     }
 }
 
+// Special case for operator choices that are merged together
 impl<'arena> NodeChecker for Expression_AssignmentExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
@@ -12465,6 +12480,7 @@ impl<'arena> NodeChecker for Expression_AssignmentExpression_Operator<'arena> {
     }
 }
 
+// Special case for operator choices that are merged together
 impl<'arena> NodeChecker for Expression_EqualityExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
@@ -12475,6 +12491,7 @@ impl<'arena> NodeChecker for Expression_EqualityExpression_Operator<'arena> {
     }
 }
 
+// Special case for operator choices that are merged together
 impl<'arena> NodeChecker for Expression_InequalityExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
@@ -12489,6 +12506,7 @@ impl<'arena> NodeChecker for Expression_InequalityExpression_Operator<'arena> {
     }
 }
 
+// Special case for operator choices that are merged together
 impl<'arena> NodeChecker for Expression_MultiplicativeExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
@@ -12501,6 +12519,7 @@ impl<'arena> NodeChecker for Expression_MultiplicativeExpression_Operator<'arena
     }
 }
 
+// Special case for operator choices that are merged together
 impl<'arena> NodeChecker for Expression_PostfixExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
@@ -12511,6 +12530,7 @@ impl<'arena> NodeChecker for Expression_PostfixExpression_Operator<'arena> {
     }
 }
 
+// Special case for operator choices that are merged together
 impl<'arena> NodeChecker for Expression_PrefixExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
@@ -12531,6 +12551,7 @@ impl<'arena> NodeChecker for Expression_PrefixExpression_Operator<'arena> {
     }
 }
 
+// Special case for operator choices that are merged together
 impl<'arena> NodeChecker for Expression_ShiftExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {

@@ -10,12 +10,15 @@ use bumpalo::boxed::Box;
 use bumpalo::collections::Vec;
 use bumpalo::Bump;
 
-// TODO:
+// TODO(v2):
 // - (perf) don't use terminals that are not needed
+// - (feat) visitor/traversal/serializer
+// - (feat) span information, where applicable
 
 //
 // Sequences:
 //
+// Note: All sequences are boxed, this keeps sizes down and avoids recursive types
 
 pub type AbicoderPragma<'arena> = Box<'arena, AbicoderPragmaStruct<'arena>>;
 
@@ -3243,6 +3246,7 @@ pub fn new_yul_variable_declaration_value<'arena>(
 //
 // Choices:
 //
+// Note: We create a constructor function for each variant
 
 #[derive(Debug)]
 pub enum AbicoderVersion<'arena> {
@@ -5849,6 +5853,7 @@ pub fn new_yul_switch_case_yul_value_case<'arena>(
 //
 // Repeated & Separated
 //
+// TODO(v2): consider using a transparent representation
 
 #[derive(Debug)]
 pub struct ArrayValues<'arena> {
@@ -6393,6 +6398,9 @@ pub fn new_yul_variable_names<'arena>(
 //
 // Terminals
 //
+// Note: _arena and _source are unused on the constructor methods, but kept for uniformity with other constructors
+// and because they may be needed in the future
+// Note: Similarly we keep the 'arena lifetime parameter even if unused
 
 #[derive(Debug)]
 pub struct ABIEncoderV2Keyword<'arena> {

@@ -2,9 +2,7 @@
 
 use slang_solidity_v2_ast::ast::nodes::*;
 use slang_solidity::cst::{NonterminalKind, NodeKind, Node, EdgeLabel, Edge};
-use crate::temp_sourcify::Comparator;
 use std::marker::PhantomData;
-use crate::lexer::lexemes::LexemeKind;
 
 #[derive(Clone, Debug)]
 pub struct NodeCheckerError {

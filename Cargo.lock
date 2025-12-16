@@ -3700,7 +3700,6 @@ name = "slang_solidity_v2_ast"
 version = "1.3.2"
 dependencies = [
  "bumpalo",
- "strum_macros 0.26.4",
 ]
 
 [[package]]

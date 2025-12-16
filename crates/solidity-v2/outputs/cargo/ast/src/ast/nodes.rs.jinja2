@@ -1,21 +1,25 @@
   {%- set target = model.ir_model -%}
-  #![allow(non_camel_case_types)]
-  #![allow(dead_code)]
-  #![allow(unused_variables)]
+#![allow(non_camel_case_types)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
+use std::marker::PhantomData;
+
+use bumpalo::boxed::Box;
+use bumpalo::collections::Vec;
+use bumpalo::Bump;
 
 
-  use bumpalo::{Bump, collections::Vec, boxed::Box};
-  use std::marker::PhantomData;
-
-
-// TODO:
+// TODO(v2):
 // - (perf) don't use terminals that are not needed
+// - (feat) visitor/traversal/serializer
+// - (feat) span information, where applicable
 
 
 //
 // Sequences:
 //
-
+// Note: All sequences are boxed, this keeps sizes down and avoids recursive types
 {% for parent_type, sequence in target.sequences %}
   pub type {{ parent_type }}<'arena> = Box<'arena, {{ parent_type }}Struct<'arena>>;
 
@@ -46,8 +50,7 @@
 //
 // Choices:
 //
-
-
+// Note: We create a constructor function for each variant
 {% for parent_type, choice in target.choices %}
   #[derive(Debug)]
   pub enum {{ parent_type }}<'arena> {
@@ -61,14 +64,12 @@
       {{ parent_type }}::{{ variant.name }}(element)
     }
   {% endfor %}
-
-
 {% endfor %}
 
 //
 // Repeated & Separated
 //
-
+// TODO(v2): consider using a transparent representation
 {% for parent_type, collection in target.collections %}
   #[derive(Debug)]
   pub struct {{ parent_type }}<'arena> {
@@ -84,7 +85,9 @@
 //
 // Terminals
 //
-
+// Note: _arena and _source are unused on the constructor methods, but kept for uniformity with other constructors
+// and because they may be needed in the future
+// Note: Similarly we keep the 'arena lifetime parameter even if unused
 {% for parent_type, unique in target.terminals %}
 #[derive(Debug)]
   pub struct {{ parent_type }}<'arena> {
@@ -100,6 +103,5 @@
       phantom: PhantomData,
     }
   }
-  
 {% endfor %}
 

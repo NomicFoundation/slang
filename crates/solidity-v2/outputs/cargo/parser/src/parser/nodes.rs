@@ -4,7 +4,6 @@ use bumpalo::Bump;
 ///! This module contains certain nodes and functions used internally by the parser.
 use slang_solidity_v2_ast::ast::nodes::*;
 
-use crate::lexer::lexemes::LexemeKind;
 // Special cases
 
 // An IndexAccessPath represents a path or elementary type followed by
