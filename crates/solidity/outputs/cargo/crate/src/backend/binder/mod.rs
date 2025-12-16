@@ -11,7 +11,7 @@ mod scopes;
 pub use definitions::Definition;
 pub(crate) use definitions::{
     ContractDefinition, FunctionVisibility, ImportDefinition, InterfaceDefinition,
-    LibraryDefinition, StateVariableVisibility,
+    StateVariableVisibility,
 };
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
