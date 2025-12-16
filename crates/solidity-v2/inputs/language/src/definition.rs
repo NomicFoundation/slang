@@ -3469,12 +3469,11 @@ language_v2_macros::compile!(Language(
                                     name = ExponentiationExpression,
                                     operators = [
                                         // Before '0.8.0', it was left-associative:
-                                        // Todo(v2) this is so annoying i'll remove it for now
-                                        // PrecedenceOperator(
-                                        //     model = BinaryLeftAssociative,
-                                        //     enabled = Till("0.8.0"),
-                                        //     fields = (operator = Required(AsteriskAsterisk))
-                                        // ),
+                                        PrecedenceOperator(
+                                            model = BinaryLeftAssociative,
+                                            enabled = Till("0.8.0"),
+                                            fields = (operator = Required(AsteriskAsterisk))
+                                        ),
                                         // In '0.8.0', it became right-associative:
                                         PrecedenceOperator(
                                             model = BinaryRightAssociative,

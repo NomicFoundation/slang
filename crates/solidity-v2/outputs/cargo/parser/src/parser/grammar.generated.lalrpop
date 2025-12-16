@@ -1714,6 +1714,11 @@ RepOne<T>: Vec<'arena, T> = {
             <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(arena, <>),
         
     };
+    Expression_ExponentiationExpression_Operator: Expression_ExponentiationExpression_Operator<'arena> = {
+         
+            <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(arena, <>),
+        
+    };
     Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator<'arena> = {
          
             <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(arena, <>),
@@ -5462,7 +5467,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     Expression7<Ident>: Expression<'arena> = {
          
-            <_Expression: Expression6<"True">>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression7<Ident>>  => new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, <>)),
+            <_Expression: Expression6<"True">>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Ident>>  => new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, <>)),
          
             <Expression: Expression6<Ident>>  => <>,
         

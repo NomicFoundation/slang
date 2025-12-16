@@ -3358,22 +3358,24 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
             }
         }
 
-        // operator
+        // Expression_ExponentiationExpression_Operator
 
         {
-            let operator = &self.operator;
+            let expression_exponentiation_expression_operator =
+                &self.expression_exponentiation_expression_operator;
 
             // Prepare edge label
+
+            // Special case for operator fields that are merged together
 
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Operator
             }) {
-                let child_errors = operator.check_node(&child.node);
+                let child_errors =
+                    expression_exponentiation_expression_operator.check_node(&child.node);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected operator to be present in the CST, but it was not"
-                )));
+                errors.push(NodeCheckerError::new(format!("Expected Expression_ExponentiationExpression_Operator to be present in the CST, but it was not")));
             }
         }
 
@@ -12442,9 +12444,9 @@ impl<'arena> NodeChecker for Expression<'arena> {
 impl<'arena> NodeChecker for Expression_AdditiveExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
-            Self::Plus(element) => element.check_node(node),
-
             Self::Minus(element) => element.check_node(node),
+
+            Self::Plus(element) => element.check_node(node),
         }
     }
 }
@@ -12453,29 +12455,29 @@ impl<'arena> NodeChecker for Expression_AdditiveExpression_Operator<'arena> {
 impl<'arena> NodeChecker for Expression_AssignmentExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
-            Self::Equal(element) => element.check_node(node),
-
-            Self::BarEqual(element) => element.check_node(node),
-
-            Self::PlusEqual(element) => element.check_node(node),
-
-            Self::MinusEqual(element) => element.check_node(node),
-
-            Self::CaretEqual(element) => element.check_node(node),
-
-            Self::SlashEqual(element) => element.check_node(node),
-
-            Self::PercentEqual(element) => element.check_node(node),
+            Self::AmpersandEqual(element) => element.check_node(node),
 
             Self::AsteriskEqual(element) => element.check_node(node),
 
-            Self::AmpersandEqual(element) => element.check_node(node),
+            Self::BarEqual(element) => element.check_node(node),
 
-            Self::LessThanLessThanEqual(element) => element.check_node(node),
+            Self::CaretEqual(element) => element.check_node(node),
+
+            Self::Equal(element) => element.check_node(node),
 
             Self::GreaterThanGreaterThanEqual(element) => element.check_node(node),
 
             Self::GreaterThanGreaterThanGreaterThanEqual(element) => element.check_node(node),
+
+            Self::LessThanLessThanEqual(element) => element.check_node(node),
+
+            Self::MinusEqual(element) => element.check_node(node),
+
+            Self::PercentEqual(element) => element.check_node(node),
+
+            Self::PlusEqual(element) => element.check_node(node),
+
+            Self::SlashEqual(element) => element.check_node(node),
         }
     }
 }
@@ -12484,9 +12486,18 @@ impl<'arena> NodeChecker for Expression_AssignmentExpression_Operator<'arena> {
 impl<'arena> NodeChecker for Expression_EqualityExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
-            Self::EqualEqual(element) => element.check_node(node),
-
             Self::BangEqual(element) => element.check_node(node),
+
+            Self::EqualEqual(element) => element.check_node(node),
+        }
+    }
+}
+
+// Special case for operator choices that are merged together
+impl<'arena> NodeChecker for Expression_ExponentiationExpression_Operator<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        match self {
+            Self::AsteriskAsterisk(element) => element.check_node(node),
         }
     }
 }
@@ -12495,13 +12506,13 @@ impl<'arena> NodeChecker for Expression_EqualityExpression_Operator<'arena> {
 impl<'arena> NodeChecker for Expression_InequalityExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
-            Self::LessThan(element) => element.check_node(node),
-
             Self::GreaterThan(element) => element.check_node(node),
 
-            Self::LessThanEqual(element) => element.check_node(node),
-
             Self::GreaterThanEqual(element) => element.check_node(node),
+
+            Self::LessThan(element) => element.check_node(node),
+
+            Self::LessThanEqual(element) => element.check_node(node),
         }
     }
 }
@@ -12512,9 +12523,9 @@ impl<'arena> NodeChecker for Expression_MultiplicativeExpression_Operator<'arena
         match self {
             Self::Asterisk(element) => element.check_node(node),
 
-            Self::Slash(element) => element.check_node(node),
-
             Self::Percent(element) => element.check_node(node),
+
+            Self::Slash(element) => element.check_node(node),
         }
     }
 }
@@ -12523,9 +12534,9 @@ impl<'arena> NodeChecker for Expression_MultiplicativeExpression_Operator<'arena
 impl<'arena> NodeChecker for Expression_PostfixExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
-            Self::PlusPlus(element) => element.check_node(node),
-
             Self::MinusMinus(element) => element.check_node(node),
+
+            Self::PlusPlus(element) => element.check_node(node),
         }
     }
 }
@@ -12534,19 +12545,19 @@ impl<'arena> NodeChecker for Expression_PostfixExpression_Operator<'arena> {
 impl<'arena> NodeChecker for Expression_PrefixExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
-            Self::PlusPlus(element) => element.check_node(node),
-
-            Self::MinusMinus(element) => element.check_node(node),
-
-            Self::Tilde(element) => element.check_node(node),
-
             Self::Bang(element) => element.check_node(node),
+
+            Self::DeleteKeyword(element) => element.check_node(node),
 
             Self::Minus(element) => element.check_node(node),
 
+            Self::MinusMinus(element) => element.check_node(node),
+
             Self::Plus(element) => element.check_node(node),
 
-            Self::DeleteKeyword(element) => element.check_node(node),
+            Self::PlusPlus(element) => element.check_node(node),
+
+            Self::Tilde(element) => element.check_node(node),
         }
     }
 }
@@ -12555,11 +12566,11 @@ impl<'arena> NodeChecker for Expression_PrefixExpression_Operator<'arena> {
 impl<'arena> NodeChecker for Expression_ShiftExpression_Operator<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         match self {
-            Self::LessThanLessThan(element) => element.check_node(node),
-
             Self::GreaterThanGreaterThan(element) => element.check_node(node),
 
             Self::GreaterThanGreaterThanGreaterThan(element) => element.check_node(node),
+
+            Self::LessThanLessThan(element) => element.check_node(node),
         }
     }
 }

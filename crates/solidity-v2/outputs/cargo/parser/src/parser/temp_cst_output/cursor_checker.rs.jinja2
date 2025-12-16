@@ -365,6 +365,7 @@ fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
     or field.label == "Expression_AdditiveExpression_Operator" 
     or field.label == "Expression_MultiplicativeExpression_Operator" 
     or field.label == "Expression_AssignmentExpression_Operator" 
+    or field.label == "Expression_ExponentiationExpression_Operator" 
     or field.label == "Expression_PrefixExpression_Operator" 
     or field.label == "Expression_PostfixExpression_Operator" %}
     // Special case for operator fields that are merged together
@@ -413,6 +414,7 @@ or parent_type == "Expression_ShiftExpression_Operator"
 or parent_type == "Expression_AdditiveExpression_Operator" 
 or parent_type == "Expression_MultiplicativeExpression_Operator" 
 or parent_type == "Expression_AssignmentExpression_Operator" 
+or parent_type == "Expression_ExponentiationExpression_Operator" 
 or parent_type == "Expression_PrefixExpression_Operator" 
 or parent_type == "Expression_PostfixExpression_Operator" %}
 

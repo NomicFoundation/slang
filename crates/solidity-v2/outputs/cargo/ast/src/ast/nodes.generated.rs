@@ -943,20 +943,23 @@ pub type ExponentiationExpression<'arena> = Box<'arena, ExponentiationExpression
 #[derive(Debug)]
 pub struct ExponentiationExpressionStruct<'arena> {
     pub left_operand: Expression<'arena>,
-    pub operator: AsteriskAsterisk<'arena>,
+    pub expression_exponentiation_expression_operator:
+        Expression_ExponentiationExpression_Operator<'arena>,
     pub right_operand: Expression<'arena>,
 }
 
 pub fn new_exponentiation_expression<'arena>(
     arena: &'arena Bump,
     left_operand: Expression<'arena>,
-    operator: AsteriskAsterisk<'arena>,
+    expression_exponentiation_expression_operator: Expression_ExponentiationExpression_Operator<
+        'arena,
+    >,
     right_operand: Expression<'arena>,
 ) -> ExponentiationExpression<'arena> {
     Box::new_in(
         ExponentiationExpressionStruct {
             left_operand,
-            operator,
+            expression_exponentiation_expression_operator,
             right_operand,
         },
         arena,
@@ -3842,15 +3845,8 @@ pub fn new_expression_identifier<'arena>(
 
 #[derive(Debug)]
 pub enum Expression_AdditiveExpression_Operator<'arena> {
-    Plus(Plus<'arena>),
     Minus(Minus<'arena>),
-}
-
-pub fn new_expression_additive_expression_operator_plus<'arena>(
-    arena: &'arena Bump,
-    element: Plus<'arena>,
-) -> Expression_AdditiveExpression_Operator<'arena> {
-    Expression_AdditiveExpression_Operator::Plus(element)
+    Plus(Plus<'arena>),
 }
 
 pub fn new_expression_additive_expression_operator_minus<'arena>(
@@ -3860,76 +3856,27 @@ pub fn new_expression_additive_expression_operator_minus<'arena>(
     Expression_AdditiveExpression_Operator::Minus(element)
 }
 
+pub fn new_expression_additive_expression_operator_plus<'arena>(
+    arena: &'arena Bump,
+    element: Plus<'arena>,
+) -> Expression_AdditiveExpression_Operator<'arena> {
+    Expression_AdditiveExpression_Operator::Plus(element)
+}
+
 #[derive(Debug)]
 pub enum Expression_AssignmentExpression_Operator<'arena> {
-    Equal(Equal<'arena>),
-    BarEqual(BarEqual<'arena>),
-    PlusEqual(PlusEqual<'arena>),
-    MinusEqual(MinusEqual<'arena>),
-    CaretEqual(CaretEqual<'arena>),
-    SlashEqual(SlashEqual<'arena>),
-    PercentEqual(PercentEqual<'arena>),
-    AsteriskEqual(AsteriskEqual<'arena>),
     AmpersandEqual(AmpersandEqual<'arena>),
-    LessThanLessThanEqual(LessThanLessThanEqual<'arena>),
+    AsteriskEqual(AsteriskEqual<'arena>),
+    BarEqual(BarEqual<'arena>),
+    CaretEqual(CaretEqual<'arena>),
+    Equal(Equal<'arena>),
     GreaterThanGreaterThanEqual(GreaterThanGreaterThanEqual<'arena>),
     GreaterThanGreaterThanGreaterThanEqual(GreaterThanGreaterThanGreaterThanEqual<'arena>),
-}
-
-pub fn new_expression_assignment_expression_operator_equal<'arena>(
-    arena: &'arena Bump,
-    element: Equal<'arena>,
-) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::Equal(element)
-}
-
-pub fn new_expression_assignment_expression_operator_bar_equal<'arena>(
-    arena: &'arena Bump,
-    element: BarEqual<'arena>,
-) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::BarEqual(element)
-}
-
-pub fn new_expression_assignment_expression_operator_plus_equal<'arena>(
-    arena: &'arena Bump,
-    element: PlusEqual<'arena>,
-) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::PlusEqual(element)
-}
-
-pub fn new_expression_assignment_expression_operator_minus_equal<'arena>(
-    arena: &'arena Bump,
-    element: MinusEqual<'arena>,
-) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::MinusEqual(element)
-}
-
-pub fn new_expression_assignment_expression_operator_caret_equal<'arena>(
-    arena: &'arena Bump,
-    element: CaretEqual<'arena>,
-) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::CaretEqual(element)
-}
-
-pub fn new_expression_assignment_expression_operator_slash_equal<'arena>(
-    arena: &'arena Bump,
-    element: SlashEqual<'arena>,
-) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::SlashEqual(element)
-}
-
-pub fn new_expression_assignment_expression_operator_percent_equal<'arena>(
-    arena: &'arena Bump,
-    element: PercentEqual<'arena>,
-) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::PercentEqual(element)
-}
-
-pub fn new_expression_assignment_expression_operator_asterisk_equal<'arena>(
-    arena: &'arena Bump,
-    element: AsteriskEqual<'arena>,
-) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::AsteriskEqual(element)
+    LessThanLessThanEqual(LessThanLessThanEqual<'arena>),
+    MinusEqual(MinusEqual<'arena>),
+    PercentEqual(PercentEqual<'arena>),
+    PlusEqual(PlusEqual<'arena>),
+    SlashEqual(SlashEqual<'arena>),
 }
 
 pub fn new_expression_assignment_expression_operator_ampersand_equal<'arena>(
@@ -3939,11 +3886,32 @@ pub fn new_expression_assignment_expression_operator_ampersand_equal<'arena>(
     Expression_AssignmentExpression_Operator::AmpersandEqual(element)
 }
 
-pub fn new_expression_assignment_expression_operator_less_than_less_than_equal<'arena>(
+pub fn new_expression_assignment_expression_operator_asterisk_equal<'arena>(
     arena: &'arena Bump,
-    element: LessThanLessThanEqual<'arena>,
+    element: AsteriskEqual<'arena>,
 ) -> Expression_AssignmentExpression_Operator<'arena> {
-    Expression_AssignmentExpression_Operator::LessThanLessThanEqual(element)
+    Expression_AssignmentExpression_Operator::AsteriskEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_bar_equal<'arena>(
+    arena: &'arena Bump,
+    element: BarEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::BarEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_caret_equal<'arena>(
+    arena: &'arena Bump,
+    element: CaretEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::CaretEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_equal<'arena>(
+    arena: &'arena Bump,
+    element: Equal<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::Equal(element)
 }
 
 pub fn new_expression_assignment_expression_operator_greater_than_greater_than_equal<'arena>(
@@ -3962,17 +3930,45 @@ pub fn new_expression_assignment_expression_operator_greater_than_greater_than_g
     Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(element)
 }
 
-#[derive(Debug)]
-pub enum Expression_EqualityExpression_Operator<'arena> {
-    EqualEqual(EqualEqual<'arena>),
-    BangEqual(BangEqual<'arena>),
+pub fn new_expression_assignment_expression_operator_less_than_less_than_equal<'arena>(
+    arena: &'arena Bump,
+    element: LessThanLessThanEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::LessThanLessThanEqual(element)
 }
 
-pub fn new_expression_equality_expression_operator_equal_equal<'arena>(
+pub fn new_expression_assignment_expression_operator_minus_equal<'arena>(
     arena: &'arena Bump,
-    element: EqualEqual<'arena>,
-) -> Expression_EqualityExpression_Operator<'arena> {
-    Expression_EqualityExpression_Operator::EqualEqual(element)
+    element: MinusEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::MinusEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_percent_equal<'arena>(
+    arena: &'arena Bump,
+    element: PercentEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::PercentEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_plus_equal<'arena>(
+    arena: &'arena Bump,
+    element: PlusEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::PlusEqual(element)
+}
+
+pub fn new_expression_assignment_expression_operator_slash_equal<'arena>(
+    arena: &'arena Bump,
+    element: SlashEqual<'arena>,
+) -> Expression_AssignmentExpression_Operator<'arena> {
+    Expression_AssignmentExpression_Operator::SlashEqual(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_EqualityExpression_Operator<'arena> {
+    BangEqual(BangEqual<'arena>),
+    EqualEqual(EqualEqual<'arena>),
 }
 
 pub fn new_expression_equality_expression_operator_bang_equal<'arena>(
@@ -3982,19 +3978,31 @@ pub fn new_expression_equality_expression_operator_bang_equal<'arena>(
     Expression_EqualityExpression_Operator::BangEqual(element)
 }
 
-#[derive(Debug)]
-pub enum Expression_InequalityExpression_Operator<'arena> {
-    LessThan(LessThan<'arena>),
-    GreaterThan(GreaterThan<'arena>),
-    LessThanEqual(LessThanEqual<'arena>),
-    GreaterThanEqual(GreaterThanEqual<'arena>),
+pub fn new_expression_equality_expression_operator_equal_equal<'arena>(
+    arena: &'arena Bump,
+    element: EqualEqual<'arena>,
+) -> Expression_EqualityExpression_Operator<'arena> {
+    Expression_EqualityExpression_Operator::EqualEqual(element)
 }
 
-pub fn new_expression_inequality_expression_operator_less_than<'arena>(
+#[derive(Debug)]
+pub enum Expression_ExponentiationExpression_Operator<'arena> {
+    AsteriskAsterisk(AsteriskAsterisk<'arena>),
+}
+
+pub fn new_expression_exponentiation_expression_operator_asterisk_asterisk<'arena>(
     arena: &'arena Bump,
-    element: LessThan<'arena>,
-) -> Expression_InequalityExpression_Operator<'arena> {
-    Expression_InequalityExpression_Operator::LessThan(element)
+    element: AsteriskAsterisk<'arena>,
+) -> Expression_ExponentiationExpression_Operator<'arena> {
+    Expression_ExponentiationExpression_Operator::AsteriskAsterisk(element)
+}
+
+#[derive(Debug)]
+pub enum Expression_InequalityExpression_Operator<'arena> {
+    GreaterThan(GreaterThan<'arena>),
+    GreaterThanEqual(GreaterThanEqual<'arena>),
+    LessThan(LessThan<'arena>),
+    LessThanEqual(LessThanEqual<'arena>),
 }
 
 pub fn new_expression_inequality_expression_operator_greater_than<'arena>(
@@ -4004,13 +4012,6 @@ pub fn new_expression_inequality_expression_operator_greater_than<'arena>(
     Expression_InequalityExpression_Operator::GreaterThan(element)
 }
 
-pub fn new_expression_inequality_expression_operator_less_than_equal<'arena>(
-    arena: &'arena Bump,
-    element: LessThanEqual<'arena>,
-) -> Expression_InequalityExpression_Operator<'arena> {
-    Expression_InequalityExpression_Operator::LessThanEqual(element)
-}
-
 pub fn new_expression_inequality_expression_operator_greater_than_equal<'arena>(
     arena: &'arena Bump,
     element: GreaterThanEqual<'arena>,
@@ -4018,11 +4019,25 @@ pub fn new_expression_inequality_expression_operator_greater_than_equal<'arena>(
     Expression_InequalityExpression_Operator::GreaterThanEqual(element)
 }
 
+pub fn new_expression_inequality_expression_operator_less_than<'arena>(
+    arena: &'arena Bump,
+    element: LessThan<'arena>,
+) -> Expression_InequalityExpression_Operator<'arena> {
+    Expression_InequalityExpression_Operator::LessThan(element)
+}
+
+pub fn new_expression_inequality_expression_operator_less_than_equal<'arena>(
+    arena: &'arena Bump,
+    element: LessThanEqual<'arena>,
+) -> Expression_InequalityExpression_Operator<'arena> {
+    Expression_InequalityExpression_Operator::LessThanEqual(element)
+}
+
 #[derive(Debug)]
 pub enum Expression_MultiplicativeExpression_Operator<'arena> {
     Asterisk(Asterisk<'arena>),
-    Slash(Slash<'arena>),
     Percent(Percent<'arena>),
+    Slash(Slash<'arena>),
 }
 
 pub fn new_expression_multiplicative_expression_operator_asterisk<'arena>(
@@ -4032,13 +4047,6 @@ pub fn new_expression_multiplicative_expression_operator_asterisk<'arena>(
     Expression_MultiplicativeExpression_Operator::Asterisk(element)
 }
 
-pub fn new_expression_multiplicative_expression_operator_slash<'arena>(
-    arena: &'arena Bump,
-    element: Slash<'arena>,
-) -> Expression_MultiplicativeExpression_Operator<'arena> {
-    Expression_MultiplicativeExpression_Operator::Slash(element)
-}
-
 pub fn new_expression_multiplicative_expression_operator_percent<'arena>(
     arena: &'arena Bump,
     element: Percent<'arena>,
@@ -4046,17 +4054,17 @@ pub fn new_expression_multiplicative_expression_operator_percent<'arena>(
     Expression_MultiplicativeExpression_Operator::Percent(element)
 }
 
-#[derive(Debug)]
-pub enum Expression_PostfixExpression_Operator<'arena> {
-    PlusPlus(PlusPlus<'arena>),
-    MinusMinus(MinusMinus<'arena>),
+pub fn new_expression_multiplicative_expression_operator_slash<'arena>(
+    arena: &'arena Bump,
+    element: Slash<'arena>,
+) -> Expression_MultiplicativeExpression_Operator<'arena> {
+    Expression_MultiplicativeExpression_Operator::Slash(element)
 }
 
-pub fn new_expression_postfix_expression_operator_plus_plus<'arena>(
-    arena: &'arena Bump,
-    element: PlusPlus<'arena>,
-) -> Expression_PostfixExpression_Operator<'arena> {
-    Expression_PostfixExpression_Operator::PlusPlus(element)
+#[derive(Debug)]
+pub enum Expression_PostfixExpression_Operator<'arena> {
+    MinusMinus(MinusMinus<'arena>),
+    PlusPlus(PlusPlus<'arena>),
 }
 
 pub fn new_expression_postfix_expression_operator_minus_minus<'arena>(
@@ -4066,36 +4074,22 @@ pub fn new_expression_postfix_expression_operator_minus_minus<'arena>(
     Expression_PostfixExpression_Operator::MinusMinus(element)
 }
 
-#[derive(Debug)]
-pub enum Expression_PrefixExpression_Operator<'arena> {
-    PlusPlus(PlusPlus<'arena>),
-    MinusMinus(MinusMinus<'arena>),
-    Tilde(Tilde<'arena>),
-    Bang(Bang<'arena>),
-    Minus(Minus<'arena>),
-    Plus(Plus<'arena>),
-    DeleteKeyword(DeleteKeyword<'arena>),
-}
-
-pub fn new_expression_prefix_expression_operator_plus_plus<'arena>(
+pub fn new_expression_postfix_expression_operator_plus_plus<'arena>(
     arena: &'arena Bump,
     element: PlusPlus<'arena>,
-) -> Expression_PrefixExpression_Operator<'arena> {
-    Expression_PrefixExpression_Operator::PlusPlus(element)
+) -> Expression_PostfixExpression_Operator<'arena> {
+    Expression_PostfixExpression_Operator::PlusPlus(element)
 }
 
-pub fn new_expression_prefix_expression_operator_minus_minus<'arena>(
-    arena: &'arena Bump,
-    element: MinusMinus<'arena>,
-) -> Expression_PrefixExpression_Operator<'arena> {
-    Expression_PrefixExpression_Operator::MinusMinus(element)
-}
-
-pub fn new_expression_prefix_expression_operator_tilde<'arena>(
-    arena: &'arena Bump,
-    element: Tilde<'arena>,
-) -> Expression_PrefixExpression_Operator<'arena> {
-    Expression_PrefixExpression_Operator::Tilde(element)
+#[derive(Debug)]
+pub enum Expression_PrefixExpression_Operator<'arena> {
+    Bang(Bang<'arena>),
+    DeleteKeyword(DeleteKeyword<'arena>),
+    Minus(Minus<'arena>),
+    MinusMinus(MinusMinus<'arena>),
+    Plus(Plus<'arena>),
+    PlusPlus(PlusPlus<'arena>),
+    Tilde(Tilde<'arena>),
 }
 
 pub fn new_expression_prefix_expression_operator_bang<'arena>(
@@ -4105,11 +4099,25 @@ pub fn new_expression_prefix_expression_operator_bang<'arena>(
     Expression_PrefixExpression_Operator::Bang(element)
 }
 
+pub fn new_expression_prefix_expression_operator_delete_keyword<'arena>(
+    arena: &'arena Bump,
+    element: DeleteKeyword<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::DeleteKeyword(element)
+}
+
 pub fn new_expression_prefix_expression_operator_minus<'arena>(
     arena: &'arena Bump,
     element: Minus<'arena>,
 ) -> Expression_PrefixExpression_Operator<'arena> {
     Expression_PrefixExpression_Operator::Minus(element)
+}
+
+pub fn new_expression_prefix_expression_operator_minus_minus<'arena>(
+    arena: &'arena Bump,
+    element: MinusMinus<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::MinusMinus(element)
 }
 
 pub fn new_expression_prefix_expression_operator_plus<'arena>(
@@ -4119,25 +4127,25 @@ pub fn new_expression_prefix_expression_operator_plus<'arena>(
     Expression_PrefixExpression_Operator::Plus(element)
 }
 
-pub fn new_expression_prefix_expression_operator_delete_keyword<'arena>(
+pub fn new_expression_prefix_expression_operator_plus_plus<'arena>(
     arena: &'arena Bump,
-    element: DeleteKeyword<'arena>,
+    element: PlusPlus<'arena>,
 ) -> Expression_PrefixExpression_Operator<'arena> {
-    Expression_PrefixExpression_Operator::DeleteKeyword(element)
+    Expression_PrefixExpression_Operator::PlusPlus(element)
+}
+
+pub fn new_expression_prefix_expression_operator_tilde<'arena>(
+    arena: &'arena Bump,
+    element: Tilde<'arena>,
+) -> Expression_PrefixExpression_Operator<'arena> {
+    Expression_PrefixExpression_Operator::Tilde(element)
 }
 
 #[derive(Debug)]
 pub enum Expression_ShiftExpression_Operator<'arena> {
-    LessThanLessThan(LessThanLessThan<'arena>),
     GreaterThanGreaterThan(GreaterThanGreaterThan<'arena>),
     GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan<'arena>),
-}
-
-pub fn new_expression_shift_expression_operator_less_than_less_than<'arena>(
-    arena: &'arena Bump,
-    element: LessThanLessThan<'arena>,
-) -> Expression_ShiftExpression_Operator<'arena> {
-    Expression_ShiftExpression_Operator::LessThanLessThan(element)
+    LessThanLessThan(LessThanLessThan<'arena>),
 }
 
 pub fn new_expression_shift_expression_operator_greater_than_greater_than<'arena>(
@@ -4152,6 +4160,13 @@ pub fn new_expression_shift_expression_operator_greater_than_greater_than_greate
     element: GreaterThanGreaterThanGreaterThan<'arena>,
 ) -> Expression_ShiftExpression_Operator<'arena> {
     Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(element)
+}
+
+pub fn new_expression_shift_expression_operator_less_than_less_than<'arena>(
+    arena: &'arena Bump,
+    element: LessThanLessThan<'arena>,
+) -> Expression_ShiftExpression_Operator<'arena> {
+    Expression_ShiftExpression_Operator::LessThanLessThan(element)
 }
 
 #[derive(Debug)]

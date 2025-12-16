@@ -9,7 +9,7 @@
 //   in particular, terminals with size 1 can be represented as `()` (or anything 0 sized) and
 //   terminals with size N can be represented with an enum
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use indexmap::IndexMap;
 use language_v2_definition::model;
@@ -40,7 +40,7 @@ pub struct Sequence {
     pub fields: Vec<Field>,
 }
 
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub enum NodeType {
     Nonterminal(model::Identifier),
     Terminal(model::Identifier),
@@ -298,7 +298,11 @@ impl IrModelBuilder {
         } else {
             // If there are multiple operators, we create a choice between them
             // They must have a single required field labeled "operator"
-            let variants = expression
+            //
+            // Note: We use a set to avoid duplicate variants, in particular exponentiation
+            // uses the same operator symbol for right and left associative versions, although they live in different
+            // versions
+            let variants: BTreeSet<_> = expression
                 .operators
                 .iter()
                 .map(|operator| {
@@ -325,7 +329,12 @@ impl IrModelBuilder {
                 model::Identifier::from(format!("{}_{}_Operator", base_name, expression.name));
 
             // Insert the created choice
-            self.choices.insert(ident.clone(), Choice { variants });
+            self.choices.insert(
+                ident.clone(),
+                Choice {
+                    variants: variants.into_iter().collect(),
+                },
+            );
 
             // The only field we care about then is a reference to that special operator
             vec![Field {
