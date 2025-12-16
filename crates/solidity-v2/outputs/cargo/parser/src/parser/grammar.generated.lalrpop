@@ -44,270 +44,192 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Rules for topic Source Unit
     pub SourceUnit: SourceUnit<'arena> = {
-         
-            <_members: SourceUnitMembers>  => new_source_unit(arena, <>),
+        <_members: SourceUnitMembers>  => new_source_unit(arena, <>),
         
     };
     SourceUnitMembers: SourceUnitMembers<'arena> = {
-         
-            <_SourceUnitMember: Rep<<SourceUnitMember>>>  => new_source_unit_members(arena, <>),
+        <_SourceUnitMember: Rep<<SourceUnitMember>>>  => new_source_unit_members(arena, <>),
         
     };
     SourceUnitMember: SourceUnitMember<'arena> = {
-         
-            <_PragmaDirective: PragmaDirective>  => new_source_unit_member_pragma_directive(arena, <>),
-         
-            <_ImportDirective: ImportDirective>  => new_source_unit_member_import_directive(arena, <>),
-         
-            <_ContractDefinition: ContractDefinition>  => new_source_unit_member_contract_definition(arena, <>),
-         
-            <_InterfaceDefinition: InterfaceDefinition>  => new_source_unit_member_interface_definition(arena, <>),
-         
-            <_LibraryDefinition: LibraryDefinition>  => new_source_unit_member_library_definition(arena, <>),
-         
-            <_StructDefinition: StructDefinition>  => new_source_unit_member_struct_definition(arena, <>),
-         
-            <_EnumDefinition: EnumDefinition>  => new_source_unit_member_enum_definition(arena, <>),
-         
-            <_FunctionDefinition: FunctionDefinition>  => new_source_unit_member_function_definition(arena, <>),
-         
-            <_ErrorDefinition: ErrorDefinition>  => new_source_unit_member_error_definition(arena, <>),
-         
-            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_source_unit_member_user_defined_value_type_definition(arena, <>),
-         
-            <_UsingDirective: UsingDirective>  => new_source_unit_member_using_directive(arena, <>),
-         
-            <_EventDefinition: EventDefinition>  => new_source_unit_member_event_definition(arena, <>),
-         
-            <_ConstantDefinition: ConstantDefinition>  => new_source_unit_member_constant_definition(arena, <>),
+        <_PragmaDirective: PragmaDirective>  => new_source_unit_member_pragma_directive(arena, <>),
+        <_ImportDirective: ImportDirective>  => new_source_unit_member_import_directive(arena, <>),
+        <_ContractDefinition: ContractDefinition>  => new_source_unit_member_contract_definition(arena, <>),
+        <_InterfaceDefinition: InterfaceDefinition>  => new_source_unit_member_interface_definition(arena, <>),
+        <_LibraryDefinition: LibraryDefinition>  => new_source_unit_member_library_definition(arena, <>),
+        <_StructDefinition: StructDefinition>  => new_source_unit_member_struct_definition(arena, <>),
+        <_EnumDefinition: EnumDefinition>  => new_source_unit_member_enum_definition(arena, <>),
+        <_FunctionDefinition: FunctionDefinition>  => new_source_unit_member_function_definition(arena, <>),
+        <_ErrorDefinition: ErrorDefinition>  => new_source_unit_member_error_definition(arena, <>),
+        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_source_unit_member_user_defined_value_type_definition(arena, <>),
+        <_UsingDirective: UsingDirective>  => new_source_unit_member_using_directive(arena, <>),
+        <_EventDefinition: EventDefinition>  => new_source_unit_member_event_definition(arena, <>),
+        <_ConstantDefinition: ConstantDefinition>  => new_source_unit_member_constant_definition(arena, <>),
         
     };
     
 
 // Rules for topic Pragma Directives
     PragmaDirective: PragmaDirective<'arena> = {
-         
-            <_pragma_keyword: PragmaKeyword>  <_pragma: Pragma>  <_semicolon: Semicolon>  => new_pragma_directive(arena, <>),
+        <_pragma_keyword: PragmaKeyword>  <_pragma: Pragma>  <_semicolon: Semicolon>  => new_pragma_directive(arena, <>),
         
     };
     Pragma: Pragma<'arena> = {
-         
-            <_VersionPragma: VersionPragma>  => new_pragma_version_pragma(arena, <>),
-         
-            <_AbicoderPragma: AbicoderPragma>  => new_pragma_abicoder_pragma(arena, <>),
-         
-            <_ExperimentalPragma: ExperimentalPragma>  => new_pragma_experimental_pragma(arena, <>),
+        <_VersionPragma: VersionPragma>  => new_pragma_version_pragma(arena, <>),
+        <_AbicoderPragma: AbicoderPragma>  => new_pragma_abicoder_pragma(arena, <>),
+        <_ExperimentalPragma: ExperimentalPragma>  => new_pragma_experimental_pragma(arena, <>),
         
     };
     AbicoderPragma: AbicoderPragma<'arena> = {
-         
-            <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => new_abicoder_pragma(arena, <>),
+        <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => new_abicoder_pragma(arena, <>),
         
     };
     ExperimentalPragma: ExperimentalPragma<'arena> = {
-         
-            <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => new_experimental_pragma(arena, <>),
+        <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => new_experimental_pragma(arena, <>),
         
     };
     AbicoderVersion: AbicoderVersion<'arena> = {
-         
-            <_AbicoderV1Keyword: AbicoderV1Keyword>  => new_abicoder_version_abicoder_v1_keyword(arena, <>),
-         
-            <_AbicoderV2Keyword: AbicoderV2Keyword>  => new_abicoder_version_abicoder_v2_keyword(arena, <>),
+        <_AbicoderV1Keyword: AbicoderV1Keyword>  => new_abicoder_version_abicoder_v1_keyword(arena, <>),
+        <_AbicoderV2Keyword: AbicoderV2Keyword>  => new_abicoder_version_abicoder_v2_keyword(arena, <>),
         
     };
     ExperimentalFeature: ExperimentalFeature<'arena> = {
-         
-            <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => new_experimental_feature_abi_encoder_v2_keyword(arena, <>),
-         
-            <_SMTCheckerKeyword: SMTCheckerKeyword>  => new_experimental_feature_smt_checker_keyword(arena, <>),
-         
-            <_StringLiteral: StringLiteral>  => new_experimental_feature_string_literal(arena, <>),
+        <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => new_experimental_feature_abi_encoder_v2_keyword(arena, <>),
+        <_SMTCheckerKeyword: SMTCheckerKeyword>  => new_experimental_feature_smt_checker_keyword(arena, <>),
+        <_StringLiteral: StringLiteral>  => new_experimental_feature_string_literal(arena, <>),
         
     };
     VersionPragma: VersionPragma<'arena> = {
-         
-            <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => new_version_pragma(arena, <>),
+        <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => new_version_pragma(arena, <>),
         
     };
     VersionExpressionSets: VersionExpressionSets<'arena> = {
-         
-            <_VersionExpressionSet: SepOne<BarBar, <VersionExpressionSet>>>  => new_version_expression_sets(arena, <>),
+        <_VersionExpressionSet: SepOne<BarBar, <VersionExpressionSet>>>  => new_version_expression_sets(arena, <>),
         
     };
     VersionExpressionSet: VersionExpressionSet<'arena> = {
-         
-            <_VersionExpression: RepOne<<VersionExpression>>>  => new_version_expression_set(arena, <>),
+        <_VersionExpression: RepOne<<VersionExpression>>>  => new_version_expression_set(arena, <>),
         
     };
     VersionExpression: VersionExpression<'arena> = {
-         
-            <_VersionRange: VersionRange>  => new_version_expression_version_range(arena, <>),
-         
-            <_VersionTerm: VersionTerm>  => new_version_expression_version_term(arena, <>),
+        <_VersionRange: VersionRange>  => new_version_expression_version_range(arena, <>),
+        <_VersionTerm: VersionTerm>  => new_version_expression_version_term(arena, <>),
         
     };
     VersionRange: VersionRange<'arena> = {
-         
-            <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => new_version_range(arena, <>),
+        <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => new_version_range(arena, <>),
         
     };
     VersionTerm: VersionTerm<'arena> = {
-         
-            <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => new_version_term(arena, <>),
+        <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => new_version_term(arena, <>),
         
     };
     VersionOperator: VersionOperator<'arena> = {
-         
-            <_Caret: Caret>  => new_version_operator_caret(arena, <>),
-         
-            <_Tilde: Tilde>  => new_version_operator_tilde(arena, <>),
-         
-            <_Equal: Equal>  => new_version_operator_equal(arena, <>),
-         
-            <_LessThan: LessThan>  => new_version_operator_less_than(arena, <>),
-         
-            <_GreaterThan: GreaterThan>  => new_version_operator_greater_than(arena, <>),
-         
-            <_LessThanEqual: LessThanEqual>  => new_version_operator_less_than_equal(arena, <>),
-         
-            <_GreaterThanEqual: GreaterThanEqual>  => new_version_operator_greater_than_equal(arena, <>),
+        <_Caret: Caret>  => new_version_operator_caret(arena, <>),
+        <_Tilde: Tilde>  => new_version_operator_tilde(arena, <>),
+        <_Equal: Equal>  => new_version_operator_equal(arena, <>),
+        <_LessThan: LessThan>  => new_version_operator_less_than(arena, <>),
+        <_GreaterThan: GreaterThan>  => new_version_operator_greater_than(arena, <>),
+        <_LessThanEqual: LessThanEqual>  => new_version_operator_less_than_equal(arena, <>),
+        <_GreaterThanEqual: GreaterThanEqual>  => new_version_operator_greater_than_equal(arena, <>),
         
     };
     VersionLiteral: VersionLiteral<'arena> = {
-         
-            <_SimpleVersionLiteral: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(arena, <>),
-         
-            <_SingleQuotedVersionLiteral: SingleQuotedVersionLiteral>  => new_version_literal_single_quoted_version_literal(arena, <>),
-         
-            <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => new_version_literal_double_quoted_version_literal(arena, <>),
+        <_SimpleVersionLiteral: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(arena, <>),
+        <_SingleQuotedVersionLiteral: SingleQuotedVersionLiteral>  => new_version_literal_single_quoted_version_literal(arena, <>),
+        <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => new_version_literal_double_quoted_version_literal(arena, <>),
         
     };
     SimpleVersionLiteral: SimpleVersionLiteral<'arena> = {
-         
-            <_VersionSpecifier: SepOne<Period, <VersionSpecifier>>>  => new_simple_version_literal(arena, <>),
+        <_VersionSpecifier: SepOne<Period, <VersionSpecifier>>>  => new_simple_version_literal(arena, <>),
         
     };
     
 
 // Rules for topic Import Directives
     ImportDirective: ImportDirective<'arena> = {
-         
-            <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => new_import_directive(arena, <>),
+        <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => new_import_directive(arena, <>),
         
     };
     ImportClause: ImportClause<'arena> = {
-         
-            <_PathImport: PathImport>  => new_import_clause_path_import(arena, <>),
-         
-            <_NamedImport: NamedImport>  => new_import_clause_named_import(arena, <>),
-         
-            <_ImportDeconstruction: ImportDeconstruction>  => new_import_clause_import_deconstruction(arena, <>),
+        <_PathImport: PathImport>  => new_import_clause_path_import(arena, <>),
+        <_NamedImport: NamedImport>  => new_import_clause_named_import(arena, <>),
+        <_ImportDeconstruction: ImportDeconstruction>  => new_import_clause_import_deconstruction(arena, <>),
         
     };
     PathImport: PathImport<'arena> = {
-         
-            <_path: StringLiteral>  <_alias: (ImportAlias)?>  => new_path_import(arena, <>),
+        <_path: StringLiteral>  <_alias: (ImportAlias)?>  => new_path_import(arena, <>),
         
     };
     NamedImport: NamedImport<'arena> = {
-         
-            <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_named_import(arena, <>),
+        <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_named_import(arena, <>),
         
     };
     ImportDeconstruction: ImportDeconstruction<'arena> = {
-         
-            <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_import_deconstruction(arena, <>),
+        <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_import_deconstruction(arena, <>),
         
     };
     ImportDeconstructionSymbols: ImportDeconstructionSymbols<'arena> = {
-         
-            <_ImportDeconstructionSymbol: SepOne<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(arena, <>),
+        <_ImportDeconstructionSymbol: SepOne<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(arena, <>),
         
     };
     ImportDeconstructionSymbol: ImportDeconstructionSymbol<'arena> = {
-         
-            <_name: Identifier>  <_alias: (ImportAlias)?>  => new_import_deconstruction_symbol(arena, <>),
+        <_name: Identifier>  <_alias: (ImportAlias)?>  => new_import_deconstruction_symbol(arena, <>),
         
     };
     ImportAlias: ImportAlias<'arena> = {
-         
-            <_as_keyword: AsKeyword>  <_identifier: Identifier>  => new_import_alias(arena, <>),
+        <_as_keyword: AsKeyword>  <_identifier: Identifier>  => new_import_alias(arena, <>),
         
     };
     
 
 // Rules for topic Using Directives
     UsingDirective: UsingDirective<'arena> = {
-         
-            <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => new_using_directive(arena, <>),
+        <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => new_using_directive(arena, <>),
         
     };
     UsingClause: UsingClause<'arena> = {
-         
-            <_IdentifierPath: IdentifierPath>  => new_using_clause_identifier_path(arena, <>),
-         
-            <_UsingDeconstruction: UsingDeconstruction>  => new_using_clause_using_deconstruction(arena, <>),
+        <_IdentifierPath: IdentifierPath>  => new_using_clause_identifier_path(arena, <>),
+        <_UsingDeconstruction: UsingDeconstruction>  => new_using_clause_using_deconstruction(arena, <>),
         
     };
     UsingDeconstruction: UsingDeconstruction<'arena> = {
-         
-            <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => new_using_deconstruction(arena, <>),
+        <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => new_using_deconstruction(arena, <>),
         
     };
     UsingDeconstructionSymbols: UsingDeconstructionSymbols<'arena> = {
-         
-            <_UsingDeconstructionSymbol: SepOne<Comma, <UsingDeconstructionSymbol>>>  => new_using_deconstruction_symbols(arena, <>),
+        <_UsingDeconstructionSymbol: SepOne<Comma, <UsingDeconstructionSymbol>>>  => new_using_deconstruction_symbols(arena, <>),
         
     };
     UsingDeconstructionSymbol: UsingDeconstructionSymbol<'arena> = {
-         
-            <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => new_using_deconstruction_symbol(arena, <>),
+        <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => new_using_deconstruction_symbol(arena, <>),
         
     };
     UsingAlias: UsingAlias<'arena> = {
-         
-            <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => new_using_alias(arena, <>),
+        <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => new_using_alias(arena, <>),
         
     };
     UsingOperator: UsingOperator<'arena> = {
-         
-            <_Ampersand: Ampersand>  => new_using_operator_ampersand(arena, <>),
-         
-            <_Asterisk: Asterisk>  => new_using_operator_asterisk(arena, <>),
-         
-            <_BangEqual: BangEqual>  => new_using_operator_bang_equal(arena, <>),
-         
-            <_Bar: Bar>  => new_using_operator_bar(arena, <>),
-         
-            <_Caret: Caret>  => new_using_operator_caret(arena, <>),
-         
-            <_EqualEqual: EqualEqual>  => new_using_operator_equal_equal(arena, <>),
-         
-            <_GreaterThan: GreaterThan>  => new_using_operator_greater_than(arena, <>),
-         
-            <_GreaterThanEqual: GreaterThanEqual>  => new_using_operator_greater_than_equal(arena, <>),
-         
-            <_LessThan: LessThan>  => new_using_operator_less_than(arena, <>),
-         
-            <_LessThanEqual: LessThanEqual>  => new_using_operator_less_than_equal(arena, <>),
-         
-            <_Minus: Minus>  => new_using_operator_minus(arena, <>),
-         
-            <_Percent: Percent>  => new_using_operator_percent(arena, <>),
-         
-            <_Plus: Plus>  => new_using_operator_plus(arena, <>),
-         
-            <_Slash: Slash>  => new_using_operator_slash(arena, <>),
-         
-            <_Tilde: Tilde>  => new_using_operator_tilde(arena, <>),
+        <_Ampersand: Ampersand>  => new_using_operator_ampersand(arena, <>),
+        <_Asterisk: Asterisk>  => new_using_operator_asterisk(arena, <>),
+        <_BangEqual: BangEqual>  => new_using_operator_bang_equal(arena, <>),
+        <_Bar: Bar>  => new_using_operator_bar(arena, <>),
+        <_Caret: Caret>  => new_using_operator_caret(arena, <>),
+        <_EqualEqual: EqualEqual>  => new_using_operator_equal_equal(arena, <>),
+        <_GreaterThan: GreaterThan>  => new_using_operator_greater_than(arena, <>),
+        <_GreaterThanEqual: GreaterThanEqual>  => new_using_operator_greater_than_equal(arena, <>),
+        <_LessThan: LessThan>  => new_using_operator_less_than(arena, <>),
+        <_LessThanEqual: LessThanEqual>  => new_using_operator_less_than_equal(arena, <>),
+        <_Minus: Minus>  => new_using_operator_minus(arena, <>),
+        <_Percent: Percent>  => new_using_operator_percent(arena, <>),
+        <_Plus: Plus>  => new_using_operator_plus(arena, <>),
+        <_Slash: Slash>  => new_using_operator_slash(arena, <>),
+        <_Tilde: Tilde>  => new_using_operator_tilde(arena, <>),
         
     };
     UsingTarget: UsingTarget<'arena> = {
-         
-            <_TypeName: TypeName>  => new_using_target_type_name(arena, <>),
-         
-            <_Asterisk: Asterisk>  => new_using_target_asterisk(arena, <>),
+        <_TypeName: TypeName>  => new_using_target_type_name(arena, <>),
+        <_Asterisk: Asterisk>  => new_using_target_asterisk(arena, <>),
         
     };
     
@@ -318,728 +240,607 @@ RepOne<T>: Vec<'arena, T> = {
 // Rules for topic Keywords
     #[inline]
     AbicoderKeyword: AbicoderKeyword<'arena> = {
-         
-            <_AbicoderKeyword: AbicoderKeyword_Unreserved>  => <>,
+        <_AbicoderKeyword: AbicoderKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     AbicoderV1Keyword: AbicoderV1Keyword<'arena> = {
-         
-            <_AbicoderV1Keyword: AbicoderV1Keyword_Unreserved>  => <>,
+        <_AbicoderV1Keyword: AbicoderV1Keyword_Unreserved>  => <>,
         
     };
     #[inline]
     AbicoderV2Keyword: AbicoderV2Keyword<'arena> = {
-         
-            <_AbicoderV2Keyword: AbicoderV2Keyword_Unreserved>  => <>,
+        <_AbicoderV2Keyword: AbicoderV2Keyword_Unreserved>  => <>,
         
     };
     #[inline]
     ABIEncoderV2Keyword: ABIEncoderV2Keyword<'arena> = {
-         
-            <_ABIEncoderV2Keyword: ABIEncoderV2Keyword_Unreserved>  => <>,
+        <_ABIEncoderV2Keyword: ABIEncoderV2Keyword_Unreserved>  => <>,
         
     };
     #[inline]
     AbstractKeyword: AbstractKeyword<'arena> = {
-         
-            <_AbstractKeyword: AbstractKeyword_Reserved>  => <>,
+        <_AbstractKeyword: AbstractKeyword_Reserved>  => <>,
         
     };
     #[inline]
     AddressKeyword: AddressKeyword<'arena> = {
-         
-            <_AddressKeyword: AddressKeyword_Reserved>  => <>,
+        <_AddressKeyword: AddressKeyword_Reserved>  => <>,
         
     };
     #[inline]
     AfterKeyword: AfterKeyword<'arena> = {
-         
-            <_AfterKeyword: AfterKeyword_Reserved>  => <>,
+        <_AfterKeyword: AfterKeyword_Reserved>  => <>,
         
     };
     #[inline]
     AliasKeyword: AliasKeyword<'arena> = {
-         
-            <_AliasKeyword: AliasKeyword_Reserved>  => <>,
+        <_AliasKeyword: AliasKeyword_Reserved>  => <>,
         
     };
     #[inline]
     AnonymousKeyword: AnonymousKeyword<'arena> = {
-         
-            <_AnonymousKeyword: AnonymousKeyword_Reserved>  => <>,
+        <_AnonymousKeyword: AnonymousKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ApplyKeyword: ApplyKeyword<'arena> = {
-         
-            <_ApplyKeyword: ApplyKeyword_Reserved>  => <>,
+        <_ApplyKeyword: ApplyKeyword_Reserved>  => <>,
         
     };
     #[inline]
     AsKeyword: AsKeyword<'arena> = {
-         
-            <_AsKeyword: AsKeyword_Reserved>  => <>,
+        <_AsKeyword: AsKeyword_Reserved>  => <>,
         
     };
     #[inline]
     AssemblyKeyword: AssemblyKeyword<'arena> = {
-         
-            <_AssemblyKeyword: AssemblyKeyword_Reserved>  => <>,
+        <_AssemblyKeyword: AssemblyKeyword_Reserved>  => <>,
         
     };
     #[inline]
     AtKeyword: AtKeyword<'arena> = {
-         
-            <_AtKeyword: AtKeyword_Unreserved>  => <>,
+        <_AtKeyword: AtKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     AutoKeyword: AutoKeyword<'arena> = {
-         
-            <_AutoKeyword: AutoKeyword_Reserved>  => <>,
+        <_AutoKeyword: AutoKeyword_Reserved>  => <>,
         
     };
     #[inline]
     BoolKeyword: BoolKeyword<'arena> = {
-         
-            <_BoolKeyword: BoolKeyword_Reserved>  => <>,
+        <_BoolKeyword: BoolKeyword_Reserved>  => <>,
         
     };
     #[inline]
     BreakKeyword: BreakKeyword<'arena> = {
-         
-            <_BreakKeyword: BreakKeyword_Reserved>  => <>,
+        <_BreakKeyword: BreakKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ByteKeyword: ByteKeyword<'arena> = {
-         
-            <_ByteKeyword: ByteKeyword_Reserved>  => <>,
+        <_ByteKeyword: ByteKeyword_Reserved>  => <>,
         
     };
     #[inline]
     BytesKeyword: BytesKeyword<'arena> = {
-         
-            <_BytesKeyword: BytesKeyword_Reserved>  => <>,
+        <_BytesKeyword: BytesKeyword_Reserved>  => <>,
         
     };
     #[inline]
     CallDataKeyword: CallDataKeyword<'arena> = {
-         
-            <_CallDataKeyword: CallDataKeyword_Reserved>  => <>,
+        <_CallDataKeyword: CallDataKeyword_Reserved>  => <>,
         
     };
     #[inline]
     CaseKeyword: CaseKeyword<'arena> = {
-         
-            <_CaseKeyword: CaseKeyword_Reserved>  => <>,
+        <_CaseKeyword: CaseKeyword_Reserved>  => <>,
         
     };
     #[inline]
     CatchKeyword: CatchKeyword<'arena> = {
-         
-            <_CatchKeyword: CatchKeyword_Reserved>  => <>,
+        <_CatchKeyword: CatchKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ConstantKeyword: ConstantKeyword<'arena> = {
-         
-            <_ConstantKeyword: ConstantKeyword_Reserved>  => <>,
+        <_ConstantKeyword: ConstantKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ConstructorKeyword: ConstructorKeyword<'arena> = {
-         
-            <_ConstructorKeyword: ConstructorKeyword_Reserved>  => <>,
+        <_ConstructorKeyword: ConstructorKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ContinueKeyword: ContinueKeyword<'arena> = {
-         
-            <_ContinueKeyword: ContinueKeyword_Reserved>  => <>,
+        <_ContinueKeyword: ContinueKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ContractKeyword: ContractKeyword<'arena> = {
-         
-            <_ContractKeyword: ContractKeyword_Reserved>  => <>,
+        <_ContractKeyword: ContractKeyword_Reserved>  => <>,
         
     };
     #[inline]
     CopyOfKeyword: CopyOfKeyword<'arena> = {
-         
-            <_CopyOfKeyword: CopyOfKeyword_Reserved>  => <>,
+        <_CopyOfKeyword: CopyOfKeyword_Reserved>  => <>,
         
     };
     #[inline]
     DaysKeyword: DaysKeyword<'arena> = {
-         
-            <_DaysKeyword: DaysKeyword_Reserved>  => <>,
+        <_DaysKeyword: DaysKeyword_Reserved>  => <>,
         
     };
     #[inline]
     DefaultKeyword: DefaultKeyword<'arena> = {
-         
-            <_DefaultKeyword: DefaultKeyword_Reserved>  => <>,
+        <_DefaultKeyword: DefaultKeyword_Reserved>  => <>,
         
     };
     #[inline]
     DefineKeyword: DefineKeyword<'arena> = {
-         
-            <_DefineKeyword: DefineKeyword_Reserved>  => <>,
+        <_DefineKeyword: DefineKeyword_Reserved>  => <>,
         
     };
     #[inline]
     DeleteKeyword: DeleteKeyword<'arena> = {
-         
-            <_DeleteKeyword: DeleteKeyword_Reserved>  => <>,
+        <_DeleteKeyword: DeleteKeyword_Reserved>  => <>,
         
     };
     #[inline]
     DoKeyword: DoKeyword<'arena> = {
-         
-            <_DoKeyword: DoKeyword_Reserved>  => <>,
+        <_DoKeyword: DoKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ElseKeyword: ElseKeyword<'arena> = {
-         
-            <_ElseKeyword: ElseKeyword_Reserved>  => <>,
+        <_ElseKeyword: ElseKeyword_Reserved>  => <>,
         
     };
     #[inline]
     EmitKeyword: EmitKeyword<'arena> = {
-         
-            <_EmitKeyword: EmitKeyword_Reserved>  => <>,
+        <_EmitKeyword: EmitKeyword_Reserved>  => <>,
         
     };
     #[inline]
     EnumKeyword: EnumKeyword<'arena> = {
-         
-            <_EnumKeyword: EnumKeyword_Reserved>  => <>,
+        <_EnumKeyword: EnumKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ErrorKeyword: ErrorKeyword<'arena> = {
-         
-            <_ErrorKeyword: ErrorKeyword_Reserved>  => <>,
+        <_ErrorKeyword: ErrorKeyword_Reserved>  => <>,
         
     };
     #[inline]
     EtherKeyword: EtherKeyword<'arena> = {
-         
-            <_EtherKeyword: EtherKeyword_Reserved>  => <>,
+        <_EtherKeyword: EtherKeyword_Reserved>  => <>,
         
     };
     #[inline]
     EventKeyword: EventKeyword<'arena> = {
-         
-            <_EventKeyword: EventKeyword_Reserved>  => <>,
+        <_EventKeyword: EventKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ExperimentalKeyword: ExperimentalKeyword<'arena> = {
-         
-            <_ExperimentalKeyword: ExperimentalKeyword_Unreserved>  => <>,
+        <_ExperimentalKeyword: ExperimentalKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     ExternalKeyword: ExternalKeyword<'arena> = {
-         
-            <_ExternalKeyword: ExternalKeyword_Reserved>  => <>,
+        <_ExternalKeyword: ExternalKeyword_Reserved>  => <>,
         
     };
     #[inline]
     FallbackKeyword: FallbackKeyword<'arena> = {
-         
-            <_FallbackKeyword: FallbackKeyword_Reserved>  => <>,
+        <_FallbackKeyword: FallbackKeyword_Reserved>  => <>,
         
     };
     #[inline]
     FalseKeyword: FalseKeyword<'arena> = {
-         
-            <_FalseKeyword: FalseKeyword_Reserved>  => <>,
+        <_FalseKeyword: FalseKeyword_Reserved>  => <>,
         
     };
     #[inline]
     FinalKeyword: FinalKeyword<'arena> = {
-         
-            <_FinalKeyword: FinalKeyword_Reserved>  => <>,
+        <_FinalKeyword: FinalKeyword_Reserved>  => <>,
         
     };
     #[inline]
     FinneyKeyword: FinneyKeyword<'arena> = {
-         
-            <_FinneyKeyword: FinneyKeyword_Unreserved>  => <>,
+        <_FinneyKeyword: FinneyKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     FixedKeyword: FixedKeyword<'arena> = {
-         
-            <_FixedKeyword: FixedKeyword_Reserved>  => <>,
+        <_FixedKeyword: FixedKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ForKeyword: ForKeyword<'arena> = {
-         
-            <_ForKeyword: ForKeyword_Reserved>  => <>,
+        <_ForKeyword: ForKeyword_Reserved>  => <>,
         
     };
     #[inline]
     FromKeyword: FromKeyword<'arena> = {
-         
-            <_FromKeyword: FromKeyword_Unreserved>  => <>,
+        <_FromKeyword: FromKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     FunctionKeyword: FunctionKeyword<'arena> = {
-         
-            <_FunctionKeyword: FunctionKeyword_Reserved>  => <>,
+        <_FunctionKeyword: FunctionKeyword_Reserved>  => <>,
         
     };
     #[inline]
     GlobalKeyword: GlobalKeyword<'arena> = {
-         
-            <_GlobalKeyword: GlobalKeyword_Unreserved>  => <>,
+        <_GlobalKeyword: GlobalKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     GweiKeyword: GweiKeyword<'arena> = {
-         
-            <_GweiKeyword: GweiKeyword_Reserved>  => <>,
+        <_GweiKeyword: GweiKeyword_Reserved>  => <>,
         
     };
     #[inline]
     HexKeyword: HexKeyword<'arena> = {
-         
-            <_HexKeyword: HexKeyword_Reserved>  => <>,
+        <_HexKeyword: HexKeyword_Reserved>  => <>,
         
     };
     #[inline]
     HoursKeyword: HoursKeyword<'arena> = {
-         
-            <_HoursKeyword: HoursKeyword_Reserved>  => <>,
+        <_HoursKeyword: HoursKeyword_Reserved>  => <>,
         
     };
     #[inline]
     IfKeyword: IfKeyword<'arena> = {
-         
-            <_IfKeyword: IfKeyword_Reserved>  => <>,
+        <_IfKeyword: IfKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ImmutableKeyword: ImmutableKeyword<'arena> = {
-         
-            <_ImmutableKeyword: ImmutableKeyword_Reserved>  => <>,
+        <_ImmutableKeyword: ImmutableKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ImplementsKeyword: ImplementsKeyword<'arena> = {
-         
-            <_ImplementsKeyword: ImplementsKeyword_Reserved>  => <>,
+        <_ImplementsKeyword: ImplementsKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ImportKeyword: ImportKeyword<'arena> = {
-         
-            <_ImportKeyword: ImportKeyword_Reserved>  => <>,
+        <_ImportKeyword: ImportKeyword_Reserved>  => <>,
         
     };
     #[inline]
     IndexedKeyword: IndexedKeyword<'arena> = {
-         
-            <_IndexedKeyword: IndexedKeyword_Reserved>  => <>,
+        <_IndexedKeyword: IndexedKeyword_Reserved>  => <>,
         
     };
     #[inline]
     InKeyword: InKeyword<'arena> = {
-         
-            <_InKeyword: InKeyword_Reserved>  => <>,
+        <_InKeyword: InKeyword_Reserved>  => <>,
         
     };
     #[inline]
     InlineKeyword: InlineKeyword<'arena> = {
-         
-            <_InlineKeyword: InlineKeyword_Reserved>  => <>,
+        <_InlineKeyword: InlineKeyword_Reserved>  => <>,
         
     };
     #[inline]
     InterfaceKeyword: InterfaceKeyword<'arena> = {
-         
-            <_InterfaceKeyword: InterfaceKeyword_Reserved>  => <>,
+        <_InterfaceKeyword: InterfaceKeyword_Reserved>  => <>,
         
     };
     #[inline]
     InternalKeyword: InternalKeyword<'arena> = {
-         
-            <_InternalKeyword: InternalKeyword_Reserved>  => <>,
+        <_InternalKeyword: InternalKeyword_Reserved>  => <>,
         
     };
     #[inline]
     IntKeyword: IntKeyword<'arena> = {
-         
-            <_IntKeyword: IntKeyword_Reserved>  => <>,
+        <_IntKeyword: IntKeyword_Reserved>  => <>,
         
     };
     #[inline]
     IsKeyword: IsKeyword<'arena> = {
-         
-            <_IsKeyword: IsKeyword_Reserved>  => <>,
+        <_IsKeyword: IsKeyword_Reserved>  => <>,
         
     };
     #[inline]
     LayoutKeyword: LayoutKeyword<'arena> = {
-         
-            <_LayoutKeyword: LayoutKeyword_Unreserved>  => <>,
+        <_LayoutKeyword: LayoutKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     LetKeyword: LetKeyword<'arena> = {
-         
-            <_LetKeyword: LetKeyword_Reserved>  => <>,
+        <_LetKeyword: LetKeyword_Reserved>  => <>,
         
     };
     #[inline]
     LibraryKeyword: LibraryKeyword<'arena> = {
-         
-            <_LibraryKeyword: LibraryKeyword_Reserved>  => <>,
+        <_LibraryKeyword: LibraryKeyword_Reserved>  => <>,
         
     };
     #[inline]
     MacroKeyword: MacroKeyword<'arena> = {
-         
-            <_MacroKeyword: MacroKeyword_Reserved>  => <>,
+        <_MacroKeyword: MacroKeyword_Reserved>  => <>,
         
     };
     #[inline]
     MappingKeyword: MappingKeyword<'arena> = {
-         
-            <_MappingKeyword: MappingKeyword_Reserved>  => <>,
+        <_MappingKeyword: MappingKeyword_Reserved>  => <>,
         
     };
     #[inline]
     MatchKeyword: MatchKeyword<'arena> = {
-         
-            <_MatchKeyword: MatchKeyword_Reserved>  => <>,
+        <_MatchKeyword: MatchKeyword_Reserved>  => <>,
         
     };
     #[inline]
     MemoryKeyword: MemoryKeyword<'arena> = {
-         
-            <_MemoryKeyword: MemoryKeyword_Reserved>  => <>,
+        <_MemoryKeyword: MemoryKeyword_Reserved>  => <>,
         
     };
     #[inline]
     MinutesKeyword: MinutesKeyword<'arena> = {
-         
-            <_MinutesKeyword: MinutesKeyword_Reserved>  => <>,
+        <_MinutesKeyword: MinutesKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ModifierKeyword: ModifierKeyword<'arena> = {
-         
-            <_ModifierKeyword: ModifierKeyword_Reserved>  => <>,
+        <_ModifierKeyword: ModifierKeyword_Reserved>  => <>,
         
     };
     #[inline]
     MutableKeyword: MutableKeyword<'arena> = {
-         
-            <_MutableKeyword: MutableKeyword_Reserved>  => <>,
+        <_MutableKeyword: MutableKeyword_Reserved>  => <>,
         
     };
     #[inline]
     NewKeyword: NewKeyword<'arena> = {
-         
-            <_NewKeyword: NewKeyword_Reserved>  => <>,
+        <_NewKeyword: NewKeyword_Reserved>  => <>,
         
     };
     #[inline]
     NullKeyword: NullKeyword<'arena> = {
-         
-            <_NullKeyword: NullKeyword_Reserved>  => <>,
+        <_NullKeyword: NullKeyword_Reserved>  => <>,
         
     };
     #[inline]
     OfKeyword: OfKeyword<'arena> = {
-         
-            <_OfKeyword: OfKeyword_Reserved>  => <>,
+        <_OfKeyword: OfKeyword_Reserved>  => <>,
         
     };
     #[inline]
     OverrideKeyword: OverrideKeyword<'arena> = {
-         
-            <_OverrideKeyword: OverrideKeyword_Reserved>  => <>,
+        <_OverrideKeyword: OverrideKeyword_Reserved>  => <>,
         
     };
     #[inline]
     PartialKeyword: PartialKeyword<'arena> = {
-         
-            <_PartialKeyword: PartialKeyword_Reserved>  => <>,
+        <_PartialKeyword: PartialKeyword_Reserved>  => <>,
         
     };
     #[inline]
     PayableKeyword: PayableKeyword<'arena> = {
-         
-            <_PayableKeyword: PayableKeyword_Reserved>  => <>,
+        <_PayableKeyword: PayableKeyword_Reserved>  => <>,
         
     };
     #[inline]
     PragmaKeyword: PragmaKeyword<'arena> = {
-         
-            <_PragmaKeyword: PragmaKeyword_Reserved>  => <>,
+        <_PragmaKeyword: PragmaKeyword_Reserved>  => <>,
         
     };
     #[inline]
     PrivateKeyword: PrivateKeyword<'arena> = {
-         
-            <_PrivateKeyword: PrivateKeyword_Reserved>  => <>,
+        <_PrivateKeyword: PrivateKeyword_Reserved>  => <>,
         
     };
     #[inline]
     PromiseKeyword: PromiseKeyword<'arena> = {
-         
-            <_PromiseKeyword: PromiseKeyword_Reserved>  => <>,
+        <_PromiseKeyword: PromiseKeyword_Reserved>  => <>,
         
     };
     #[inline]
     PublicKeyword: PublicKeyword<'arena> = {
-         
-            <_PublicKeyword: PublicKeyword_Reserved>  => <>,
+        <_PublicKeyword: PublicKeyword_Reserved>  => <>,
         
     };
     #[inline]
     PureKeyword: PureKeyword<'arena> = {
-         
-            <_PureKeyword: PureKeyword_Reserved>  => <>,
+        <_PureKeyword: PureKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ReceiveKeyword: ReceiveKeyword<'arena> = {
-         
-            <_ReceiveKeyword: ReceiveKeyword_Reserved>  => <>,
+        <_ReceiveKeyword: ReceiveKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ReferenceKeyword: ReferenceKeyword<'arena> = {
-         
-            <_ReferenceKeyword: ReferenceKeyword_Reserved>  => <>,
+        <_ReferenceKeyword: ReferenceKeyword_Reserved>  => <>,
         
     };
     #[inline]
     RelocatableKeyword: RelocatableKeyword<'arena> = {
-         
-            <_RelocatableKeyword: RelocatableKeyword_Reserved>  => <>,
+        <_RelocatableKeyword: RelocatableKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ReturnKeyword: ReturnKeyword<'arena> = {
-         
-            <_ReturnKeyword: ReturnKeyword_Reserved>  => <>,
+        <_ReturnKeyword: ReturnKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ReturnsKeyword: ReturnsKeyword<'arena> = {
-         
-            <_ReturnsKeyword: ReturnsKeyword_Reserved>  => <>,
+        <_ReturnsKeyword: ReturnsKeyword_Reserved>  => <>,
         
     };
     #[inline]
     RevertKeyword: RevertKeyword<'arena> = {
-         
-            <_RevertKeyword: RevertKeyword_Reserved>  => <>,
+        <_RevertKeyword: RevertKeyword_Reserved>  => <>,
         
     };
     #[inline]
     SealedKeyword: SealedKeyword<'arena> = {
-         
-            <_SealedKeyword: SealedKeyword_Reserved>  => <>,
+        <_SealedKeyword: SealedKeyword_Reserved>  => <>,
         
     };
     #[inline]
     SecondsKeyword: SecondsKeyword<'arena> = {
-         
-            <_SecondsKeyword: SecondsKeyword_Reserved>  => <>,
+        <_SecondsKeyword: SecondsKeyword_Reserved>  => <>,
         
     };
     #[inline]
     SizeOfKeyword: SizeOfKeyword<'arena> = {
-         
-            <_SizeOfKeyword: SizeOfKeyword_Reserved>  => <>,
+        <_SizeOfKeyword: SizeOfKeyword_Reserved>  => <>,
         
     };
     #[inline]
     SMTCheckerKeyword: SMTCheckerKeyword<'arena> = {
-         
-            <_SMTCheckerKeyword: SMTCheckerKeyword_Unreserved>  => <>,
+        <_SMTCheckerKeyword: SMTCheckerKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     SolidityKeyword: SolidityKeyword<'arena> = {
-         
-            <_SolidityKeyword: SolidityKeyword_Unreserved>  => <>,
+        <_SolidityKeyword: SolidityKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     StaticKeyword: StaticKeyword<'arena> = {
-         
-            <_StaticKeyword: StaticKeyword_Reserved>  => <>,
+        <_StaticKeyword: StaticKeyword_Reserved>  => <>,
         
     };
     #[inline]
     StorageKeyword: StorageKeyword<'arena> = {
-         
-            <_StorageKeyword: StorageKeyword_Reserved>  => <>,
+        <_StorageKeyword: StorageKeyword_Reserved>  => <>,
         
     };
     #[inline]
     StringKeyword: StringKeyword<'arena> = {
-         
-            <_StringKeyword: StringKeyword_Reserved>  => <>,
+        <_StringKeyword: StringKeyword_Reserved>  => <>,
         
     };
     #[inline]
     StructKeyword: StructKeyword<'arena> = {
-         
-            <_StructKeyword: StructKeyword_Reserved>  => <>,
+        <_StructKeyword: StructKeyword_Reserved>  => <>,
         
     };
     #[inline]
     SuperKeyword: SuperKeyword<'arena> = {
-         
-            <_SuperKeyword: SuperKeyword_Reserved>  => <>,
+        <_SuperKeyword: SuperKeyword_Reserved>  => <>,
         
     };
     #[inline]
     SupportsKeyword: SupportsKeyword<'arena> = {
-         
-            <_SupportsKeyword: SupportsKeyword_Reserved>  => <>,
+        <_SupportsKeyword: SupportsKeyword_Reserved>  => <>,
         
     };
     #[inline]
     SwitchKeyword: SwitchKeyword<'arena> = {
-         
-            <_SwitchKeyword: SwitchKeyword_Reserved>  => <>,
+        <_SwitchKeyword: SwitchKeyword_Reserved>  => <>,
         
     };
     #[inline]
     SzaboKeyword: SzaboKeyword<'arena> = {
-         
-            <_SzaboKeyword: SzaboKeyword_Unreserved>  => <>,
+        <_SzaboKeyword: SzaboKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     ThisKeyword: ThisKeyword<'arena> = {
-         
-            <_ThisKeyword: ThisKeyword_Reserved>  => <>,
+        <_ThisKeyword: ThisKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ThrowKeyword: ThrowKeyword<'arena> = {
-         
-            <_ThrowKeyword: ThrowKeyword_Reserved>  => <>,
+        <_ThrowKeyword: ThrowKeyword_Reserved>  => <>,
         
     };
     #[inline]
     TransientKeyword: TransientKeyword<'arena> = {
-         
-            <_TransientKeyword: TransientKeyword_Unreserved>  => <>,
+        <_TransientKeyword: TransientKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     TrueKeyword: TrueKeyword<'arena> = {
-         
-            <_TrueKeyword: TrueKeyword_Reserved>  => <>,
+        <_TrueKeyword: TrueKeyword_Reserved>  => <>,
         
     };
     #[inline]
     TryKeyword: TryKeyword<'arena> = {
-         
-            <_TryKeyword: TryKeyword_Reserved>  => <>,
+        <_TryKeyword: TryKeyword_Reserved>  => <>,
         
     };
     #[inline]
     TypeDefKeyword: TypeDefKeyword<'arena> = {
-         
-            <_TypeDefKeyword: TypeDefKeyword_Reserved>  => <>,
+        <_TypeDefKeyword: TypeDefKeyword_Reserved>  => <>,
         
     };
     #[inline]
     TypeKeyword: TypeKeyword<'arena> = {
-         
-            <_TypeKeyword: TypeKeyword_Reserved>  => <>,
+        <_TypeKeyword: TypeKeyword_Reserved>  => <>,
         
     };
     #[inline]
     TypeOfKeyword: TypeOfKeyword<'arena> = {
-         
-            <_TypeOfKeyword: TypeOfKeyword_Reserved>  => <>,
+        <_TypeOfKeyword: TypeOfKeyword_Reserved>  => <>,
         
     };
     #[inline]
     UfixedKeyword: UfixedKeyword<'arena> = {
-         
-            <_UfixedKeyword: UfixedKeyword_Reserved>  => <>,
+        <_UfixedKeyword: UfixedKeyword_Reserved>  => <>,
         
     };
     #[inline]
     UintKeyword: UintKeyword<'arena> = {
-         
-            <_UintKeyword: UintKeyword_Reserved>  => <>,
+        <_UintKeyword: UintKeyword_Reserved>  => <>,
         
     };
     #[inline]
     UncheckedKeyword: UncheckedKeyword<'arena> = {
-         
-            <_UncheckedKeyword: UncheckedKeyword_Reserved>  => <>,
+        <_UncheckedKeyword: UncheckedKeyword_Reserved>  => <>,
         
     };
     #[inline]
     UsingKeyword: UsingKeyword<'arena> = {
-         
-            <_UsingKeyword: UsingKeyword_Reserved>  => <>,
+        <_UsingKeyword: UsingKeyword_Reserved>  => <>,
         
     };
     #[inline]
     VarKeyword: VarKeyword<'arena> = {
-         
-            <_VarKeyword: VarKeyword_Reserved>  => <>,
+        <_VarKeyword: VarKeyword_Reserved>  => <>,
         
     };
     #[inline]
     ViewKeyword: ViewKeyword<'arena> = {
-         
-            <_ViewKeyword: ViewKeyword_Reserved>  => <>,
+        <_ViewKeyword: ViewKeyword_Reserved>  => <>,
         
     };
     #[inline]
     VirtualKeyword: VirtualKeyword<'arena> = {
-         
-            <_VirtualKeyword: VirtualKeyword_Reserved>  => <>,
+        <_VirtualKeyword: VirtualKeyword_Reserved>  => <>,
         
     };
     #[inline]
     WeeksKeyword: WeeksKeyword<'arena> = {
-         
-            <_WeeksKeyword: WeeksKeyword_Reserved>  => <>,
+        <_WeeksKeyword: WeeksKeyword_Reserved>  => <>,
         
     };
     #[inline]
     WeiKeyword: WeiKeyword<'arena> = {
-         
-            <_WeiKeyword: WeiKeyword_Reserved>  => <>,
+        <_WeiKeyword: WeiKeyword_Reserved>  => <>,
         
     };
     #[inline]
     WhileKeyword: WhileKeyword<'arena> = {
-         
-            <_WhileKeyword: WhileKeyword_Reserved>  => <>,
+        <_WhileKeyword: WhileKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YearsKeyword: YearsKeyword<'arena> = {
-         
-            <_YearsKeyword: YearsKeyword_Reserved>  => <>,
+        <_YearsKeyword: YearsKeyword_Reserved>  => <>,
         
     };
     
@@ -1054,406 +855,306 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Rules for topic Contracts
     ContractDefinition: ContractDefinition<'arena> = {
-         
-            <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => new_contract_definition(arena, <>),
+        <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => new_contract_definition(arena, <>),
         
     };
     ContractSpecifiers: ContractSpecifiers<'arena> = {
-         
-            <_ContractSpecifier: Rep<<ContractSpecifier>>>  => new_contract_specifiers(arena, <>),
+        <_ContractSpecifier: Rep<<ContractSpecifier>>>  => new_contract_specifiers(arena, <>),
         
     };
     ContractSpecifier: ContractSpecifier<'arena> = {
-         
-            <_InheritanceSpecifier: InheritanceSpecifier>  => new_contract_specifier_inheritance_specifier(arena, <>),
-         
-            <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => new_contract_specifier_storage_layout_specifier(arena, <>),
+        <_InheritanceSpecifier: InheritanceSpecifier>  => new_contract_specifier_inheritance_specifier(arena, <>),
+        <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => new_contract_specifier_storage_layout_specifier(arena, <>),
         
     };
     InheritanceSpecifier: InheritanceSpecifier<'arena> = {
-         
-            <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => new_inheritance_specifier(arena, <>),
+        <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => new_inheritance_specifier(arena, <>),
         
     };
     InheritanceTypes: InheritanceTypes<'arena> = {
-         
-            <_InheritanceType: SepOne<Comma, <InheritanceType>>>  => new_inheritance_types(arena, <>),
+        <_InheritanceType: SepOne<Comma, <InheritanceType>>>  => new_inheritance_types(arena, <>),
         
     };
     InheritanceType: InheritanceType<'arena> = {
-         
-            <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_inheritance_type(arena, <>),
+        <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_inheritance_type(arena, <>),
         
     };
     StorageLayoutSpecifier: StorageLayoutSpecifier<'arena> = {
-         
-            <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => new_storage_layout_specifier(arena, <>),
+        <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => new_storage_layout_specifier(arena, <>),
         
     };
     ContractMembers: ContractMembers<'arena> = {
-         
-            <_ContractMember: Rep<<ContractMember>>>  => new_contract_members(arena, <>),
+        <_ContractMember: Rep<<ContractMember>>>  => new_contract_members(arena, <>),
         
     };
     ContractMember: ContractMember<'arena> = {
-         
-            <_UsingDirective: UsingDirective>  => new_contract_member_using_directive(arena, <>),
-         
-            <_FunctionDefinition: FunctionDefinition>  => new_contract_member_function_definition(arena, <>),
-         
-            <_ConstructorDefinition: ConstructorDefinition>  => new_contract_member_constructor_definition(arena, <>),
-         
-            <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => new_contract_member_receive_function_definition(arena, <>),
-         
-            <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => new_contract_member_fallback_function_definition(arena, <>),
-         
-            <_ModifierDefinition: ModifierDefinition>  => new_contract_member_modifier_definition(arena, <>),
-         
-            <_StructDefinition: StructDefinition>  => new_contract_member_struct_definition(arena, <>),
-         
-            <_EnumDefinition: EnumDefinition>  => new_contract_member_enum_definition(arena, <>),
-         
-            <_EventDefinition: EventDefinition>  => new_contract_member_event_definition(arena, <>),
-         
-            <_ErrorDefinition: ErrorDefinition>  => new_contract_member_error_definition(arena, <>),
-         
-            <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_contract_member_user_defined_value_type_definition(arena, <>),
-         
-            <_StateVariableDefinition: StateVariableDefinition>  => new_contract_member_state_variable_definition(arena, <>),
+        <_UsingDirective: UsingDirective>  => new_contract_member_using_directive(arena, <>),
+        <_FunctionDefinition: FunctionDefinition>  => new_contract_member_function_definition(arena, <>),
+        <_ConstructorDefinition: ConstructorDefinition>  => new_contract_member_constructor_definition(arena, <>),
+        <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => new_contract_member_receive_function_definition(arena, <>),
+        <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => new_contract_member_fallback_function_definition(arena, <>),
+        <_ModifierDefinition: ModifierDefinition>  => new_contract_member_modifier_definition(arena, <>),
+        <_StructDefinition: StructDefinition>  => new_contract_member_struct_definition(arena, <>),
+        <_EnumDefinition: EnumDefinition>  => new_contract_member_enum_definition(arena, <>),
+        <_EventDefinition: EventDefinition>  => new_contract_member_event_definition(arena, <>),
+        <_ErrorDefinition: ErrorDefinition>  => new_contract_member_error_definition(arena, <>),
+        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_contract_member_user_defined_value_type_definition(arena, <>),
+        <_StateVariableDefinition: StateVariableDefinition>  => new_contract_member_state_variable_definition(arena, <>),
         
     };
     
 
 // Rules for topic Interfaces
     InterfaceDefinition: InterfaceDefinition<'arena> = {
-         
-            <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => new_interface_definition(arena, <>),
+        <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => new_interface_definition(arena, <>),
         
     };
     InterfaceMembers: InterfaceMembers<'arena> = {
-         
-            <_ContractMember: Rep<<ContractMember>>>  => new_interface_members(arena, <>),
+        <_ContractMember: Rep<<ContractMember>>>  => new_interface_members(arena, <>),
         
     };
     
 
 // Rules for topic Libraries
     LibraryDefinition: LibraryDefinition<'arena> = {
-         
-            <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => new_library_definition(arena, <>),
+        <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => new_library_definition(arena, <>),
         
     };
     LibraryMembers: LibraryMembers<'arena> = {
-         
-            <_ContractMember: Rep<<ContractMember>>>  => new_library_members(arena, <>),
+        <_ContractMember: Rep<<ContractMember>>>  => new_library_members(arena, <>),
         
     };
     
 
 // Rules for topic Structs
     StructDefinition: StructDefinition<'arena> = {
-         
-            <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => new_struct_definition(arena, <>),
+        <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => new_struct_definition(arena, <>),
         
     };
     StructMembers: StructMembers<'arena> = {
-         
-            <_StructMember: Rep<<StructMember>>>  => new_struct_members(arena, <>),
+        <_StructMember: Rep<<StructMember>>>  => new_struct_members(arena, <>),
         
     };
     StructMember: StructMember<'arena> = {
-         
-            <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => new_struct_member(arena, <>),
+        <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => new_struct_member(arena, <>),
         
     };
     
 
 // Rules for topic Enums
     EnumDefinition: EnumDefinition<'arena> = {
-         
-            <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => new_enum_definition(arena, <>),
+        <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => new_enum_definition(arena, <>),
         
     };
     EnumMembers: EnumMembers<'arena> = {
-         
-            <_Identifier: Sep<Comma, <Identifier>>>  => new_enum_members(arena, <>),
+        <_Identifier: Sep<Comma, <Identifier>>>  => new_enum_members(arena, <>),
         
     };
     
 
 // Rules for topic Constants
     ConstantDefinition: ConstantDefinition<'arena> = {
-         
-            <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => new_constant_definition(arena, <>),
+        <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => new_constant_definition(arena, <>),
         
     };
     
 
 // Rules for topic State Variables
     StateVariableDefinitionValue: StateVariableDefinitionValue<'arena> = {
-         
-            <_equal: Equal>  <_value: Expression>  => new_state_variable_definition_value(arena, <>),
+        <_equal: Equal>  <_value: Expression>  => new_state_variable_definition_value(arena, <>),
         
     };
     #[inline]
     StateVariableAttributes: StateVariableAttributes<'arena> = {
-         
-            <_StateVariableAttribute: Rep<<StateVariableAttribute>>>  => new_state_variable_attributes(arena, <>),
+        <_StateVariableAttribute: Rep<<StateVariableAttribute>>>  => new_state_variable_attributes(arena, <>),
         
     };
     #[inline]
     StateVariableAttribute: StateVariableAttribute<'arena> = {
-         
-            <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
-         
-            <_ConstantKeyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(arena, <>),
-         
-            <_InternalKeyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(arena, <>),
-         
-            <_PrivateKeyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(arena, <>),
-         
-            <_PublicKeyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(arena, <>),
-         
-            <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(arena, <>),
-         
-            <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(arena, <>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
+        <_ConstantKeyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(arena, <>),
+        <_InternalKeyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(arena, <>),
+        <_PrivateKeyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(arena, <>),
+        <_PublicKeyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(arena, <>),
+        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(arena, <>),
+        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(arena, <>),
         
     };
     
 
 // Rules for topic Functions
     FunctionDefinition: FunctionDefinition<'arena> = {
-         
-            <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_function_definition(arena, <>),
+        <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_function_definition(arena, <>),
         
     };
     FunctionName: FunctionName<'arena> = {
-         
-            <_Identifier: Identifier>  => new_function_name_identifier(arena, <>),
-         
-            <_FallbackKeyword: FallbackKeyword>  => new_function_name_fallback_keyword(arena, <>),
-         
-            <_ReceiveKeyword: ReceiveKeyword>  => new_function_name_receive_keyword(arena, <>),
+        <_Identifier: Identifier>  => new_function_name_identifier(arena, <>),
+        <_FallbackKeyword: FallbackKeyword>  => new_function_name_fallback_keyword(arena, <>),
+        <_ReceiveKeyword: ReceiveKeyword>  => new_function_name_receive_keyword(arena, <>),
         
     };
     ParametersDeclaration: ParametersDeclaration<'arena> = {
-         
-            <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => new_parameters_declaration(arena, <>),
+        <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => new_parameters_declaration(arena, <>),
         
     };
     Parameters: Parameters<'arena> = {
-         
-            <_Parameter: Sep<Comma, <Parameter>>>  => new_parameters(arena, <>),
+        <_Parameter: Sep<Comma, <Parameter>>>  => new_parameters(arena, <>),
         
     };
     Parameter: Parameter<'arena> = {
-         
-            <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => new_parameter(arena, <>),
+        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => new_parameter(arena, <>),
         
     };
     FunctionAttributes: FunctionAttributes<'arena> = {
-         
-            <_FunctionAttribute: Rep<<FunctionAttribute>>>  => new_function_attributes(arena, <>),
+        <_FunctionAttribute: Rep<<FunctionAttribute>>>  => new_function_attributes(arena, <>),
         
     };
     FunctionAttribute: FunctionAttribute<'arena> = {
-         
-            <_ModifierInvocation: ModifierInvocation>  => new_function_attribute_modifier_invocation(arena, <>),
-         
-            <_OverrideSpecifier: OverrideSpecifier>  => new_function_attribute_override_specifier(arena, <>),
-         
-            <_ExternalKeyword: ExternalKeyword>  => new_function_attribute_external_keyword(arena, <>),
-         
-            <_InternalKeyword: InternalKeyword>  => new_function_attribute_internal_keyword(arena, <>),
-         
-            <_PayableKeyword: PayableKeyword>  => new_function_attribute_payable_keyword(arena, <>),
-         
-            <_PrivateKeyword: PrivateKeyword>  => new_function_attribute_private_keyword(arena, <>),
-         
-            <_PublicKeyword: PublicKeyword>  => new_function_attribute_public_keyword(arena, <>),
-         
-            <_PureKeyword: PureKeyword>  => new_function_attribute_pure_keyword(arena, <>),
-         
-            <_ViewKeyword: ViewKeyword>  => new_function_attribute_view_keyword(arena, <>),
-         
-            <_VirtualKeyword: VirtualKeyword>  => new_function_attribute_virtual_keyword(arena, <>),
+        <_ModifierInvocation: ModifierInvocation>  => new_function_attribute_modifier_invocation(arena, <>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_function_attribute_override_specifier(arena, <>),
+        <_ExternalKeyword: ExternalKeyword>  => new_function_attribute_external_keyword(arena, <>),
+        <_InternalKeyword: InternalKeyword>  => new_function_attribute_internal_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_function_attribute_payable_keyword(arena, <>),
+        <_PrivateKeyword: PrivateKeyword>  => new_function_attribute_private_keyword(arena, <>),
+        <_PublicKeyword: PublicKeyword>  => new_function_attribute_public_keyword(arena, <>),
+        <_PureKeyword: PureKeyword>  => new_function_attribute_pure_keyword(arena, <>),
+        <_ViewKeyword: ViewKeyword>  => new_function_attribute_view_keyword(arena, <>),
+        <_VirtualKeyword: VirtualKeyword>  => new_function_attribute_virtual_keyword(arena, <>),
         
     };
     OverrideSpecifier: OverrideSpecifier<'arena> = {
-         
-            <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => new_override_specifier(arena, <>),
+        <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => new_override_specifier(arena, <>),
         
     };
     OverridePathsDeclaration: OverridePathsDeclaration<'arena> = {
-         
-            <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => new_override_paths_declaration(arena, <>),
+        <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => new_override_paths_declaration(arena, <>),
         
     };
     OverridePaths: OverridePaths<'arena> = {
-         
-            <_IdentifierPath: SepOne<Comma, <IdentifierPath>>>  => new_override_paths(arena, <>),
+        <_IdentifierPath: SepOne<Comma, <IdentifierPath>>>  => new_override_paths(arena, <>),
         
     };
     ReturnsDeclaration: ReturnsDeclaration<'arena> = {
-         
-            <_returns_keyword: ReturnsKeyword>  <_variables: ParametersDeclaration>  => new_returns_declaration(arena, <>),
+        <_returns_keyword: ReturnsKeyword>  <_variables: ParametersDeclaration>  => new_returns_declaration(arena, <>),
         
     };
     FunctionBody: FunctionBody<'arena> = {
-         
-            <_Block: Block>  => new_function_body_block(arena, <>),
-         
-            <_Semicolon: Semicolon>  => new_function_body_semicolon(arena, <>),
+        <_Block: Block>  => new_function_body_block(arena, <>),
+        <_Semicolon: Semicolon>  => new_function_body_semicolon(arena, <>),
         
     };
     ConstructorDefinition: ConstructorDefinition<'arena> = {
-         
-            <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => new_constructor_definition(arena, <>),
+        <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => new_constructor_definition(arena, <>),
         
     };
     ConstructorAttributes: ConstructorAttributes<'arena> = {
-         
-            <_ConstructorAttribute: Rep<<ConstructorAttribute>>>  => new_constructor_attributes(arena, <>),
+        <_ConstructorAttribute: Rep<<ConstructorAttribute>>>  => new_constructor_attributes(arena, <>),
         
     };
     ConstructorAttribute: ConstructorAttribute<'arena> = {
-         
-            <_ModifierInvocation: ModifierInvocation>  => new_constructor_attribute_modifier_invocation(arena, <>),
-         
-            <_InternalKeyword: InternalKeyword>  => new_constructor_attribute_internal_keyword(arena, <>),
-         
-            <_PayableKeyword: PayableKeyword>  => new_constructor_attribute_payable_keyword(arena, <>),
-         
-            <_PublicKeyword: PublicKeyword>  => new_constructor_attribute_public_keyword(arena, <>),
+        <_ModifierInvocation: ModifierInvocation>  => new_constructor_attribute_modifier_invocation(arena, <>),
+        <_InternalKeyword: InternalKeyword>  => new_constructor_attribute_internal_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_constructor_attribute_payable_keyword(arena, <>),
+        <_PublicKeyword: PublicKeyword>  => new_constructor_attribute_public_keyword(arena, <>),
         
     };
     FallbackFunctionDefinition: FallbackFunctionDefinition<'arena> = {
-         
-            <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_fallback_function_definition(arena, <>),
+        <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_fallback_function_definition(arena, <>),
         
     };
     FallbackFunctionAttributes: FallbackFunctionAttributes<'arena> = {
-         
-            <_FallbackFunctionAttribute: Rep<<FallbackFunctionAttribute>>>  => new_fallback_function_attributes(arena, <>),
+        <_FallbackFunctionAttribute: Rep<<FallbackFunctionAttribute>>>  => new_fallback_function_attributes(arena, <>),
         
     };
     FallbackFunctionAttribute: FallbackFunctionAttribute<'arena> = {
-         
-            <_ModifierInvocation: ModifierInvocation>  => new_fallback_function_attribute_modifier_invocation(arena, <>),
-         
-            <_OverrideSpecifier: OverrideSpecifier>  => new_fallback_function_attribute_override_specifier(arena, <>),
-         
-            <_ExternalKeyword: ExternalKeyword>  => new_fallback_function_attribute_external_keyword(arena, <>),
-         
-            <_PayableKeyword: PayableKeyword>  => new_fallback_function_attribute_payable_keyword(arena, <>),
-         
-            <_PureKeyword: PureKeyword>  => new_fallback_function_attribute_pure_keyword(arena, <>),
-         
-            <_ViewKeyword: ViewKeyword>  => new_fallback_function_attribute_view_keyword(arena, <>),
-         
-            <_VirtualKeyword: VirtualKeyword>  => new_fallback_function_attribute_virtual_keyword(arena, <>),
+        <_ModifierInvocation: ModifierInvocation>  => new_fallback_function_attribute_modifier_invocation(arena, <>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_fallback_function_attribute_override_specifier(arena, <>),
+        <_ExternalKeyword: ExternalKeyword>  => new_fallback_function_attribute_external_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_fallback_function_attribute_payable_keyword(arena, <>),
+        <_PureKeyword: PureKeyword>  => new_fallback_function_attribute_pure_keyword(arena, <>),
+        <_ViewKeyword: ViewKeyword>  => new_fallback_function_attribute_view_keyword(arena, <>),
+        <_VirtualKeyword: VirtualKeyword>  => new_fallback_function_attribute_virtual_keyword(arena, <>),
         
     };
     ReceiveFunctionDefinition: ReceiveFunctionDefinition<'arena> = {
-         
-            <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => new_receive_function_definition(arena, <>),
+        <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => new_receive_function_definition(arena, <>),
         
     };
     ReceiveFunctionAttributes: ReceiveFunctionAttributes<'arena> = {
-         
-            <_ReceiveFunctionAttribute: Rep<<ReceiveFunctionAttribute>>>  => new_receive_function_attributes(arena, <>),
+        <_ReceiveFunctionAttribute: Rep<<ReceiveFunctionAttribute>>>  => new_receive_function_attributes(arena, <>),
         
     };
     ReceiveFunctionAttribute: ReceiveFunctionAttribute<'arena> = {
-         
-            <_ModifierInvocation: ModifierInvocation>  => new_receive_function_attribute_modifier_invocation(arena, <>),
-         
-            <_OverrideSpecifier: OverrideSpecifier>  => new_receive_function_attribute_override_specifier(arena, <>),
-         
-            <_ExternalKeyword: ExternalKeyword>  => new_receive_function_attribute_external_keyword(arena, <>),
-         
-            <_PayableKeyword: PayableKeyword>  => new_receive_function_attribute_payable_keyword(arena, <>),
-         
-            <_VirtualKeyword: VirtualKeyword>  => new_receive_function_attribute_virtual_keyword(arena, <>),
+        <_ModifierInvocation: ModifierInvocation>  => new_receive_function_attribute_modifier_invocation(arena, <>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_receive_function_attribute_override_specifier(arena, <>),
+        <_ExternalKeyword: ExternalKeyword>  => new_receive_function_attribute_external_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_receive_function_attribute_payable_keyword(arena, <>),
+        <_VirtualKeyword: VirtualKeyword>  => new_receive_function_attribute_virtual_keyword(arena, <>),
         
     };
     
 
 // Rules for topic Modifiers
     ModifierDefinition: ModifierDefinition<'arena> = {
-         
-            <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => new_modifier_definition(arena, <>),
+        <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => new_modifier_definition(arena, <>),
         
     };
     ModifierAttributes: ModifierAttributes<'arena> = {
-         
-            <_ModifierAttribute: Rep<<ModifierAttribute>>>  => new_modifier_attributes(arena, <>),
+        <_ModifierAttribute: Rep<<ModifierAttribute>>>  => new_modifier_attributes(arena, <>),
         
     };
     ModifierAttribute: ModifierAttribute<'arena> = {
-         
-            <_OverrideSpecifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(arena, <>),
-         
-            <_VirtualKeyword: VirtualKeyword>  => new_modifier_attribute_virtual_keyword(arena, <>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(arena, <>),
+        <_VirtualKeyword: VirtualKeyword>  => new_modifier_attribute_virtual_keyword(arena, <>),
         
     };
     ModifierInvocation: ModifierInvocation<'arena> = {
-         
-            <_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_modifier_invocation(arena, <>),
+        <_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_modifier_invocation(arena, <>),
         
     };
     
 
 // Rules for topic Events
     EventDefinition: EventDefinition<'arena> = {
-         
-            <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => new_event_definition(arena, <>),
+        <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => new_event_definition(arena, <>),
         
     };
     EventParametersDeclaration: EventParametersDeclaration<'arena> = {
-         
-            <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => new_event_parameters_declaration(arena, <>),
+        <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => new_event_parameters_declaration(arena, <>),
         
     };
     EventParameters: EventParameters<'arena> = {
-         
-            <_EventParameter: Sep<Comma, <EventParameter>>>  => new_event_parameters(arena, <>),
+        <_EventParameter: Sep<Comma, <EventParameter>>>  => new_event_parameters(arena, <>),
         
     };
     EventParameter: EventParameter<'arena> = {
-         
-            <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => new_event_parameter(arena, <>),
+        <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => new_event_parameter(arena, <>),
         
     };
     
 
 // Rules for topic User Defined Value Types
     UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition<'arena> = {
-         
-            <_type_keyword: TypeKeyword>  <_name: Identifier>  <_is_keyword: IsKeyword>  <_value_type: ElementaryType>  <_semicolon: Semicolon>  => new_user_defined_value_type_definition(arena, <>),
+        <_type_keyword: TypeKeyword>  <_name: Identifier>  <_is_keyword: IsKeyword>  <_value_type: ElementaryType>  <_semicolon: Semicolon>  => new_user_defined_value_type_definition(arena, <>),
         
     };
     
 
 // Rules for topic Errors
     ErrorDefinition: ErrorDefinition<'arena> = {
-         
-            <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => new_error_definition(arena, <>),
+        <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => new_error_definition(arena, <>),
         
     };
     ErrorParametersDeclaration: ErrorParametersDeclaration<'arena> = {
-         
-            <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => new_error_parameters_declaration(arena, <>),
+        <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => new_error_parameters_declaration(arena, <>),
         
     };
     ErrorParameters: ErrorParameters<'arena> = {
-         
-            <_ErrorParameter: Sep<Comma, <ErrorParameter>>>  => new_error_parameters(arena, <>),
+        <_ErrorParameter: Sep<Comma, <ErrorParameter>>>  => new_error_parameters(arena, <>),
         
     };
     ErrorParameter: ErrorParameter<'arena> = {
-         
-            <_type_name: TypeName>  <_name: (Identifier)?>  => new_error_parameter(arena, <>),
+        <_type_name: TypeName>  <_name: (Identifier)?>  => new_error_parameter(arena, <>),
         
     };
     
@@ -1465,74 +1166,52 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Rules for topic Advanced Types
     FunctionTypeAttributes: FunctionTypeAttributes<'arena> = {
-         
-            <_FunctionTypeAttribute: Rep<<FunctionTypeAttribute>>>  => new_function_type_attributes(arena, <>),
+        <_FunctionTypeAttribute: Rep<<FunctionTypeAttribute>>>  => new_function_type_attributes(arena, <>),
         
     };
     FunctionTypeAttribute: FunctionTypeAttribute<'arena> = {
-         
-            <_InternalKeyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(arena, <>),
-         
-            <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(arena, <>),
-         
-            <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(arena, <>),
-         
-            <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(arena, <>),
-         
-            <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(arena, <>),
-         
-            <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(arena, <>),
-         
-            <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(arena, <>),
+        <_InternalKeyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(arena, <>),
+        <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(arena, <>),
+        <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(arena, <>),
+        <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(arena, <>),
+        <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(arena, <>),
+        <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(arena, <>),
+        <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(arena, <>),
         
     };
     MappingType: MappingType<'arena> = {
-         
-            <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => new_mapping_type(arena, <>),
+        <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => new_mapping_type(arena, <>),
         
     };
     MappingKey: MappingKey<'arena> = {
-         
-            <_key_type: MappingKeyType>  <_name: (Identifier)?>  => new_mapping_key(arena, <>),
+        <_key_type: MappingKeyType>  <_name: (Identifier)?>  => new_mapping_key(arena, <>),
         
     };
     MappingKeyType: MappingKeyType<'arena> = {
-         
-            <_ElementaryType: ElementaryType>  => new_mapping_key_type_elementary_type(arena, <>),
-         
-            <_IdentifierPath: IdentifierPath>  => new_mapping_key_type_identifier_path(arena, <>),
+        <_ElementaryType: ElementaryType>  => new_mapping_key_type_elementary_type(arena, <>),
+        <_IdentifierPath: IdentifierPath>  => new_mapping_key_type_identifier_path(arena, <>),
         
     };
     MappingValue: MappingValue<'arena> = {
-         
-            <_type_name: TypeName>  <_name: (Identifier)?>  => new_mapping_value(arena, <>),
+        <_type_name: TypeName>  <_name: (Identifier)?>  => new_mapping_value(arena, <>),
         
     };
     
 
 // Rules for topic Elementary Types
     ElementaryType: ElementaryType<'arena> = {
-         
-            <_BoolKeyword: BoolKeyword>  => new_elementary_type_bool_keyword(arena, <>),
-         
-            <_StringKeyword: StringKeyword>  => new_elementary_type_string_keyword(arena, <>),
-         
-            <_AddressType: AddressType>  => new_elementary_type_address_type(arena, <>),
-         
-            <_BytesKeyword: BytesKeyword>  => new_elementary_type_bytes_keyword(arena, <>),
-         
-            <_IntKeyword: IntKeyword>  => new_elementary_type_int_keyword(arena, <>),
-         
-            <_UintKeyword: UintKeyword>  => new_elementary_type_uint_keyword(arena, <>),
-         
-            <_FixedKeyword: FixedKeyword>  => new_elementary_type_fixed_keyword(arena, <>),
-         
-            <_UfixedKeyword: UfixedKeyword>  => new_elementary_type_ufixed_keyword(arena, <>),
+        <_BoolKeyword: BoolKeyword>  => new_elementary_type_bool_keyword(arena, <>),
+        <_StringKeyword: StringKeyword>  => new_elementary_type_string_keyword(arena, <>),
+        <_AddressType: AddressType>  => new_elementary_type_address_type(arena, <>),
+        <_BytesKeyword: BytesKeyword>  => new_elementary_type_bytes_keyword(arena, <>),
+        <_IntKeyword: IntKeyword>  => new_elementary_type_int_keyword(arena, <>),
+        <_UintKeyword: UintKeyword>  => new_elementary_type_uint_keyword(arena, <>),
+        <_FixedKeyword: FixedKeyword>  => new_elementary_type_fixed_keyword(arena, <>),
+        <_UfixedKeyword: UfixedKeyword>  => new_elementary_type_ufixed_keyword(arena, <>),
         
     };
     AddressType: AddressType<'arena> = {
-         
-            <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => new_address_type(arena, <>),
+        <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => new_address_type(arena, <>),
         
     };
     
@@ -1544,144 +1223,114 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Rules for topic Blocks
     Block: Block<'arena> = {
-         
-            <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => new_block(arena, <>),
+        <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => new_block(arena, <>),
         
     };
     Statements: Statements<'arena> = {
-         
-            <_Statement: Rep<<Statement>>>  => new_statements(arena, <>),
+        <_Statement: Rep<<Statement>>>  => new_statements(arena, <>),
         
     };
     UncheckedBlock: UncheckedBlock<'arena> = {
-         
-            <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => new_unchecked_block(arena, <>),
+        <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => new_unchecked_block(arena, <>),
         
     };
     ExpressionStatement: ExpressionStatement<'arena> = {
-         
-            <_expression: Expression>  <_semicolon: Semicolon>  => new_expression_statement(arena, <>),
+        <_expression: Expression>  <_semicolon: Semicolon>  => new_expression_statement(arena, <>),
         
     };
     AssemblyStatement: AssemblyStatement<'arena> = {
-         
-            <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => new_assembly_statement(arena, <>),
+        <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => new_assembly_statement(arena, <>),
         
     };
     AssemblyFlagsDeclaration: AssemblyFlagsDeclaration<'arena> = {
-         
-            <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => new_assembly_flags_declaration(arena, <>),
+        <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => new_assembly_flags_declaration(arena, <>),
         
     };
     AssemblyFlags: AssemblyFlags<'arena> = {
-         
-            <_StringLiteral: SepOne<Comma, <StringLiteral>>>  => new_assembly_flags(arena, <>),
+        <_StringLiteral: SepOne<Comma, <StringLiteral>>>  => new_assembly_flags(arena, <>),
         
     };
     
 
 // Rules for topic Declaration Statements
     VariableDeclarationStatement: VariableDeclarationStatement<'arena> = {
-         
-            <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(arena, <>),
+        <_variable_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(arena, <>),
         
     };
     VariableDeclaration: VariableDeclaration<'arena> = {
-         
-            <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(arena, <>),
+        <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(arena, <>),
         
     };
     VariableDeclarationType: VariableDeclarationType<'arena> = {
-         
-            <_TypeName: TypeName>  => new_variable_declaration_type_type_name(arena, <>),
+        <_TypeName: TypeName>  => new_variable_declaration_type_type_name(arena, <>),
         
     };
     VariableDeclarationValue: VariableDeclarationValue<'arena> = {
-         
-            <_equal: Equal>  <_expression: Expression>  => new_variable_declaration_value(arena, <>),
+        <_equal: Equal>  <_expression: Expression>  => new_variable_declaration_value(arena, <>),
         
     };
     StorageLocation: StorageLocation<'arena> = {
-         
-            <_MemoryKeyword: MemoryKeyword>  => new_storage_location_memory_keyword(arena, <>),
-         
-            <_StorageKeyword: StorageKeyword>  => new_storage_location_storage_keyword(arena, <>),
-         
-            <_CallDataKeyword: CallDataKeyword>  => new_storage_location_call_data_keyword(arena, <>),
+        <_MemoryKeyword: MemoryKeyword>  => new_storage_location_memory_keyword(arena, <>),
+        <_StorageKeyword: StorageKeyword>  => new_storage_location_storage_keyword(arena, <>),
+        <_CallDataKeyword: CallDataKeyword>  => new_storage_location_call_data_keyword(arena, <>),
         
     };
     
 
 // Rules for topic Control Statements
     ForStatementInitialization: ForStatementInitialization<'arena> = {
-         
-            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_for_statement_initialization_tuple_deconstruction_statement(arena, <>),
-         
-            <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_for_statement_initialization_variable_declaration_statement(arena, <>),
-         
-            <_ExpressionStatement: ExpressionStatement>  => new_for_statement_initialization_expression_statement(arena, <>),
-         
-            <_Semicolon: Semicolon>  => new_for_statement_initialization_semicolon(arena, <>),
+        <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_for_statement_initialization_tuple_deconstruction_statement(arena, <>),
+        <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_for_statement_initialization_variable_declaration_statement(arena, <>),
+        <_ExpressionStatement: ExpressionStatement>  => new_for_statement_initialization_expression_statement(arena, <>),
+        <_Semicolon: Semicolon>  => new_for_statement_initialization_semicolon(arena, <>),
         
     };
     ForStatementCondition: ForStatementCondition<'arena> = {
-         
-            <_ExpressionStatement: ExpressionStatement>  => new_for_statement_condition_expression_statement(arena, <>),
-         
-            <_Semicolon: Semicolon>  => new_for_statement_condition_semicolon(arena, <>),
+        <_ExpressionStatement: ExpressionStatement>  => new_for_statement_condition_expression_statement(arena, <>),
+        <_Semicolon: Semicolon>  => new_for_statement_condition_semicolon(arena, <>),
         
     };
     DoWhileStatement: DoWhileStatement<'arena> = {
-         
-            <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => new_do_while_statement(arena, <>),
+        <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => new_do_while_statement(arena, <>),
         
     };
     ContinueStatement: ContinueStatement<'arena> = {
-         
-            <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => new_continue_statement(arena, <>),
+        <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => new_continue_statement(arena, <>),
         
     };
     BreakStatement: BreakStatement<'arena> = {
-         
-            <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => new_break_statement(arena, <>),
+        <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => new_break_statement(arena, <>),
         
     };
     ReturnStatement: ReturnStatement<'arena> = {
-         
-            <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => new_return_statement(arena, <>),
+        <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => new_return_statement(arena, <>),
         
     };
     EmitStatement: EmitStatement<'arena> = {
-         
-            <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_emit_statement(arena, <>),
+        <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_emit_statement(arena, <>),
         
     };
     
 
 // Rules for topic Error Handling
     TryStatement: TryStatement<'arena> = {
-         
-            <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)?>  <_body: Block>  <_catch_clauses: CatchClauses>  => new_try_statement(arena, <>),
+        <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)?>  <_body: Block>  <_catch_clauses: CatchClauses>  => new_try_statement(arena, <>),
         
     };
     CatchClauses: CatchClauses<'arena> = {
-         
-            <_CatchClause: RepOne<<CatchClause>>>  => new_catch_clauses(arena, <>),
+        <_CatchClause: RepOne<<CatchClause>>>  => new_catch_clauses(arena, <>),
         
     };
     CatchClause: CatchClause<'arena> = {
-         
-            <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => new_catch_clause(arena, <>),
+        <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => new_catch_clause(arena, <>),
         
     };
     CatchClauseError: CatchClauseError<'arena> = {
-         
-            <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => new_catch_clause_error(arena, <>),
+        <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => new_catch_clause_error(arena, <>),
         
     };
     RevertStatement: RevertStatement<'arena> = {
-         
-            <_revert_keyword: RevertKeyword>  <_error: (IdentifierPath)?>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_revert_statement(arena, <>),
+        <_revert_keyword: RevertKeyword>  <_error: (IdentifierPath)?>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_revert_statement(arena, <>),
         
     };
     
@@ -1693,268 +1342,194 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Rules for topic Base Expressions
     Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator<'arena> = {
-         
-            <_operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(arena, <>),
-         
-            <_operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(arena, <>),
-         
-            <_operator: Tilde>  => new_expression_prefix_expression_operator_tilde(arena, <>),
-         
-            <_operator: Bang>  => new_expression_prefix_expression_operator_bang(arena, <>),
-         
-            <_operator: Minus>  => new_expression_prefix_expression_operator_minus(arena, <>),
-         
-            <_operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(arena, <>),
+        <_operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(arena, <>),
+        <_operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(arena, <>),
+        <_operator: Tilde>  => new_expression_prefix_expression_operator_tilde(arena, <>),
+        <_operator: Bang>  => new_expression_prefix_expression_operator_bang(arena, <>),
+        <_operator: Minus>  => new_expression_prefix_expression_operator_minus(arena, <>),
+        <_operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(arena, <>),
         
     };
     Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator<'arena> = {
-         
-            <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(arena, <>),
-         
-            <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(arena, <>),
+        <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(arena, <>),
+        <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(arena, <>),
         
     };
     Expression_ExponentiationExpression_Operator: Expression_ExponentiationExpression_Operator<'arena> = {
-         
-            <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(arena, <>),
+        <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(arena, <>),
         
     };
     Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator<'arena> = {
-         
-            <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(arena, <>),
-         
-            <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(arena, <>),
-         
-            <_operator: Percent>  => new_expression_multiplicative_expression_operator_percent(arena, <>),
+        <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(arena, <>),
+        <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(arena, <>),
+        <_operator: Percent>  => new_expression_multiplicative_expression_operator_percent(arena, <>),
         
     };
     Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator<'arena> = {
-         
-            <_operator: Plus>  => new_expression_additive_expression_operator_plus(arena, <>),
-         
-            <_operator: Minus>  => new_expression_additive_expression_operator_minus(arena, <>),
+        <_operator: Plus>  => new_expression_additive_expression_operator_plus(arena, <>),
+        <_operator: Minus>  => new_expression_additive_expression_operator_minus(arena, <>),
         
     };
     Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator<'arena> = {
-         
-            <_operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(arena, <>),
-         
-            <_operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(arena, <>),
-         
-            <_operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(arena, <>),
+        <_operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(arena, <>),
+        <_operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(arena, <>),
+        <_operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(arena, <>),
         
     };
     Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator<'arena> = {
-         
-            <_operator: LessThan>  => new_expression_inequality_expression_operator_less_than(arena, <>),
-         
-            <_operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(arena, <>),
-         
-            <_operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(arena, <>),
-         
-            <_operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(arena, <>),
+        <_operator: LessThan>  => new_expression_inequality_expression_operator_less_than(arena, <>),
+        <_operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(arena, <>),
+        <_operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(arena, <>),
+        <_operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(arena, <>),
         
     };
     Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator<'arena> = {
-         
-            <_operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(arena, <>),
-         
-            <_operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(arena, <>),
+        <_operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(arena, <>),
+        <_operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(arena, <>),
         
     };
     Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator<'arena> = {
-         
-            <_operator: Equal>  => new_expression_assignment_expression_operator_equal(arena, <>),
-         
-            <_operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(arena, <>),
-         
-            <_operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(arena, <>),
-         
-            <_operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(arena, <>),
-         
-            <_operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(arena, <>),
-         
-            <_operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(arena, <>),
-         
-            <_operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(arena, <>),
-         
-            <_operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(arena, <>),
-         
-            <_operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(arena, <>),
-         
-            <_operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(arena, <>),
-         
-            <_operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(arena, <>),
-         
-            <_operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(arena, <>),
+        <_operator: Equal>  => new_expression_assignment_expression_operator_equal(arena, <>),
+        <_operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(arena, <>),
+        <_operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(arena, <>),
+        <_operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(arena, <>),
+        <_operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(arena, <>),
+        <_operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(arena, <>),
+        <_operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(arena, <>),
+        <_operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(arena, <>),
+        <_operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(arena, <>),
+        <_operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(arena, <>),
+        <_operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(arena, <>),
+        <_operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(arena, <>),
         
     };
     IndexAccessEnd: IndexAccessEnd<'arena> = {
-         
-            <_colon: Colon>  <_end: (Expression)?>  => new_index_access_end(arena, <>),
+        <_colon: Colon>  <_end: (Expression)?>  => new_index_access_end(arena, <>),
         
     };
     MemberAccessIdentifier: MemberAccessIdentifier<'arena> = {
-         
-            <_Identifier: Identifier>  => new_member_access_identifier_identifier(arena, <>),
-         
-            <_AddressKeyword: AddressKeyword>  => new_member_access_identifier_address_keyword(arena, <>),
+        <_Identifier: Identifier>  => new_member_access_identifier_identifier(arena, <>),
+        <_AddressKeyword: AddressKeyword>  => new_member_access_identifier_address_keyword(arena, <>),
         
     };
     
 
 // Rules for topic Function Calls
     ArgumentsDeclaration: ArgumentsDeclaration<'arena> = {
-         
-            <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(arena, <>),
-         
-            <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(arena, <>),
+        <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(arena, <>),
+        <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(arena, <>),
         
     };
     PositionalArgumentsDeclaration: PositionalArgumentsDeclaration<'arena> = {
-         
-            <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => new_positional_arguments_declaration(arena, <>),
+        <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => new_positional_arguments_declaration(arena, <>),
         
     };
     PositionalArguments: PositionalArguments<'arena> = {
-         
-            <_Expression: Sep<Comma, <Expression>>>  => new_positional_arguments(arena, <>),
+        <_Expression: Sep<Comma, <Expression>>>  => new_positional_arguments(arena, <>),
         
     };
     NamedArgumentsDeclaration: NamedArgumentsDeclaration<'arena> = {
-         
-            <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(arena, <>),
+        <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(arena, <>),
         
     };
     NamedArgumentGroup: NamedArgumentGroup<'arena> = {
-         
-            <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => new_named_argument_group(arena, <>),
+        <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => new_named_argument_group(arena, <>),
         
     };
     NamedArguments: NamedArguments<'arena> = {
-         
-            <_NamedArgument: Sep<Comma, <NamedArgument>>>  => new_named_arguments(arena, <>),
+        <_NamedArgument: Sep<Comma, <NamedArgument>>>  => new_named_arguments(arena, <>),
         
     };
     CallOptions: CallOptions<'arena> = {
-         
-            <_NamedArgument: SepOne<Comma, <NamedArgument>>>  => new_call_options(arena, <>),
+        <_NamedArgument: SepOne<Comma, <NamedArgument>>>  => new_call_options(arena, <>),
         
     };
     NamedArgument: NamedArgument<'arena> = {
-         
-            <_name: Identifier>  <_colon: Colon>  <_value: Expression>  => new_named_argument(arena, <>),
+        <_name: Identifier>  <_colon: Colon>  <_value: Expression>  => new_named_argument(arena, <>),
         
     };
     
 
 // Rules for topic Primary Expressions
     TypeExpression: TypeExpression<'arena> = {
-         
-            <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => new_type_expression(arena, <>),
+        <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => new_type_expression(arena, <>),
         
     };
     NewExpression: NewExpression<'arena> = {
-         
-            <_new_keyword: NewKeyword>  <_type_name: TypeName>  <_options: (CallOptionsNew)?>  <_arguments: ArgumentsDeclaration>  => new_new_expression(arena, <>),
+        <_new_keyword: NewKeyword>  <_type_name: TypeName>  <_options: (CallOptionsNew)?>  <_arguments: ArgumentsDeclaration>  => new_new_expression(arena, <>),
         
     };
     CallOptionsNew: CallOptionsNew<'arena> = {
-         
-            <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_call_options_new(arena, <>),
+        <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_call_options_new(arena, <>),
         
     };
     ArrayExpression: ArrayExpression<'arena> = {
-         
-            <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => new_array_expression(arena, <>),
+        <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => new_array_expression(arena, <>),
         
     };
     ArrayValues: ArrayValues<'arena> = {
-         
-            <_Expression: SepOne<Comma, <Expression>>>  => new_array_values(arena, <>),
+        <_Expression: SepOne<Comma, <Expression>>>  => new_array_values(arena, <>),
         
     };
     
 
 // Rules for topic Numbers
     DecimalNumberExpression: DecimalNumberExpression<'arena> = {
-         
-            <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => new_decimal_number_expression(arena, <>),
+        <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => new_decimal_number_expression(arena, <>),
         
     };
     NumberUnit: NumberUnit<'arena> = {
-         
-            <_WeiKeyword: WeiKeyword>  => new_number_unit_wei_keyword(arena, <>),
-         
-            <_GweiKeyword: GweiKeyword>  => new_number_unit_gwei_keyword(arena, <>),
-         
-            <_EtherKeyword: EtherKeyword>  => new_number_unit_ether_keyword(arena, <>),
-         
-            <_SecondsKeyword: SecondsKeyword>  => new_number_unit_seconds_keyword(arena, <>),
-         
-            <_MinutesKeyword: MinutesKeyword>  => new_number_unit_minutes_keyword(arena, <>),
-         
-            <_HoursKeyword: HoursKeyword>  => new_number_unit_hours_keyword(arena, <>),
-         
-            <_DaysKeyword: DaysKeyword>  => new_number_unit_days_keyword(arena, <>),
-         
-            <_WeeksKeyword: WeeksKeyword>  => new_number_unit_weeks_keyword(arena, <>),
+        <_WeiKeyword: WeiKeyword>  => new_number_unit_wei_keyword(arena, <>),
+        <_GweiKeyword: GweiKeyword>  => new_number_unit_gwei_keyword(arena, <>),
+        <_EtherKeyword: EtherKeyword>  => new_number_unit_ether_keyword(arena, <>),
+        <_SecondsKeyword: SecondsKeyword>  => new_number_unit_seconds_keyword(arena, <>),
+        <_MinutesKeyword: MinutesKeyword>  => new_number_unit_minutes_keyword(arena, <>),
+        <_HoursKeyword: HoursKeyword>  => new_number_unit_hours_keyword(arena, <>),
+        <_DaysKeyword: DaysKeyword>  => new_number_unit_days_keyword(arena, <>),
+        <_WeeksKeyword: WeeksKeyword>  => new_number_unit_weeks_keyword(arena, <>),
         
     };
     
 
 // Rules for topic Strings
     StringExpression: StringExpression<'arena> = {
-         
-            <_StringLiterals: StringLiterals>  => new_string_expression_string_literals(arena, <>),
-         
-            <_HexStringLiterals: HexStringLiterals>  => new_string_expression_hex_string_literals(arena, <>),
-         
-            <_UnicodeStringLiterals: UnicodeStringLiterals>  => new_string_expression_unicode_string_literals(arena, <>),
+        <_StringLiterals: StringLiterals>  => new_string_expression_string_literals(arena, <>),
+        <_HexStringLiterals: HexStringLiterals>  => new_string_expression_hex_string_literals(arena, <>),
+        <_UnicodeStringLiterals: UnicodeStringLiterals>  => new_string_expression_unicode_string_literals(arena, <>),
         
     };
     StringLiterals: StringLiterals<'arena> = {
-         
-            <_StringLiteral: RepOne<<StringLiteral>>>  => new_string_literals(arena, <>),
+        <_StringLiteral: RepOne<<StringLiteral>>>  => new_string_literals(arena, <>),
         
     };
     StringLiteral: StringLiteral<'arena> = {
-         
-            <_SingleQuotedStringLiteral: SingleQuotedStringLiteral>  => new_string_literal_single_quoted_string_literal(arena, <>),
-         
-            <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => new_string_literal_double_quoted_string_literal(arena, <>),
+        <_SingleQuotedStringLiteral: SingleQuotedStringLiteral>  => new_string_literal_single_quoted_string_literal(arena, <>),
+        <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => new_string_literal_double_quoted_string_literal(arena, <>),
         
     };
     HexStringLiterals: HexStringLiterals<'arena> = {
-         
-            <_HexStringLiteral: RepOne<<HexStringLiteral>>>  => new_hex_string_literals(arena, <>),
+        <_HexStringLiteral: RepOne<<HexStringLiteral>>>  => new_hex_string_literals(arena, <>),
         
     };
     HexStringLiteral: HexStringLiteral<'arena> = {
-         
-            <_SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral>  => new_hex_string_literal_single_quoted_hex_string_literal(arena, <>),
-         
-            <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => new_hex_string_literal_double_quoted_hex_string_literal(arena, <>),
+        <_SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral>  => new_hex_string_literal_single_quoted_hex_string_literal(arena, <>),
+        <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => new_hex_string_literal_double_quoted_hex_string_literal(arena, <>),
         
     };
     UnicodeStringLiterals: UnicodeStringLiterals<'arena> = {
-         
-            <_UnicodeStringLiteral: RepOne<<UnicodeStringLiteral>>>  => new_unicode_string_literals(arena, <>),
+        <_UnicodeStringLiteral: RepOne<<UnicodeStringLiteral>>>  => new_unicode_string_literals(arena, <>),
         
     };
     UnicodeStringLiteral: UnicodeStringLiteral<'arena> = {
-         
-            <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_single_quoted_unicode_string_literal(arena, <>),
-         
-            <_DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_double_quoted_unicode_string_literal(arena, <>),
+        <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_single_quoted_unicode_string_literal(arena, <>),
+        <_DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_double_quoted_unicode_string_literal(arena, <>),
         
     };
     
 
 // Rules for topic Identifiers
     IdentifierPath: IdentifierPath<'arena> = {
-         
-            <_Identifier: SepOne<Period, <Identifier>>>  => new_identifier_path(arena, <>),
+        <_Identifier: SepOne<Period, <Identifier>>>  => new_identifier_path(arena, <>),
         
     };
     
@@ -1966,187 +1541,145 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Rules for topic Yul Statements
     YulBlock: YulBlock<'arena> = {
-         
-            <_open_brace: OpenBrace>  <_statements: YulStatements>  <_close_brace: CloseBrace>  => new_yul_block(arena, <>),
+        <_open_brace: OpenBrace>  <_statements: YulStatements>  <_close_brace: CloseBrace>  => new_yul_block(arena, <>),
         
     };
     YulStatements: YulStatements<'arena> = {
-         
-            <_YulStatement: Rep<<YulStatement>>>  => new_yul_statements(arena, <>),
+        <_YulStatement: Rep<<YulStatement>>>  => new_yul_statements(arena, <>),
         
     };
     YulStatement: YulStatement<'arena> = {
-         
-            <_YulBlock: YulBlock>  => new_yul_statement_yul_block(arena, <>),
-         
-            <_YulFunctionDefinition: YulFunctionDefinition>  => new_yul_statement_yul_function_definition(arena, <>),
-         
-            <_YulIfStatement: YulIfStatement>  => new_yul_statement_yul_if_statement(arena, <>),
-         
-            <_YulForStatement: YulForStatement>  => new_yul_statement_yul_for_statement(arena, <>),
-         
-            <_YulSwitchStatement: YulSwitchStatement>  => new_yul_statement_yul_switch_statement(arena, <>),
-         
-            <_YulLeaveStatement: YulLeaveStatement>  => new_yul_statement_yul_leave_statement(arena, <>),
-         
-            <_YulBreakStatement: YulBreakStatement>  => new_yul_statement_yul_break_statement(arena, <>),
-         
-            <_YulContinueStatement: YulContinueStatement>  => new_yul_statement_yul_continue_statement(arena, <>),
-         
-            <_YulVariableAssignmentStatement: YulVariableAssignmentStatement>  => new_yul_statement_yul_variable_assignment_statement(arena, <>),
-         
-            <_YulVariableDeclarationStatement: YulVariableDeclarationStatement>  => new_yul_statement_yul_variable_declaration_statement(arena, <>),
-         
-            <_YulExpression: YulExpression>  => new_yul_statement_yul_expression(arena, <>),
+        <_YulBlock: YulBlock>  => new_yul_statement_yul_block(arena, <>),
+        <_YulFunctionDefinition: YulFunctionDefinition>  => new_yul_statement_yul_function_definition(arena, <>),
+        <_YulIfStatement: YulIfStatement>  => new_yul_statement_yul_if_statement(arena, <>),
+        <_YulForStatement: YulForStatement>  => new_yul_statement_yul_for_statement(arena, <>),
+        <_YulSwitchStatement: YulSwitchStatement>  => new_yul_statement_yul_switch_statement(arena, <>),
+        <_YulLeaveStatement: YulLeaveStatement>  => new_yul_statement_yul_leave_statement(arena, <>),
+        <_YulBreakStatement: YulBreakStatement>  => new_yul_statement_yul_break_statement(arena, <>),
+        <_YulContinueStatement: YulContinueStatement>  => new_yul_statement_yul_continue_statement(arena, <>),
+        <_YulVariableAssignmentStatement: YulVariableAssignmentStatement>  => new_yul_statement_yul_variable_assignment_statement(arena, <>),
+        <_YulVariableDeclarationStatement: YulVariableDeclarationStatement>  => new_yul_statement_yul_variable_declaration_statement(arena, <>),
+        <_YulExpression: YulExpression>  => new_yul_statement_yul_expression(arena, <>),
         
     };
     YulFunctionDefinition: YulFunctionDefinition<'arena> = {
-         
-            <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => new_yul_function_definition(arena, <>),
+        <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => new_yul_function_definition(arena, <>),
         
     };
     YulParametersDeclaration: YulParametersDeclaration<'arena> = {
-         
-            <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => new_yul_parameters_declaration(arena, <>),
+        <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => new_yul_parameters_declaration(arena, <>),
         
     };
     YulParameters: YulParameters<'arena> = {
-         
-            <_YulIdentifier: Sep<Comma, <YulIdentifier>>>  => new_yul_parameters(arena, <>),
+        <_YulIdentifier: Sep<Comma, <YulIdentifier>>>  => new_yul_parameters(arena, <>),
         
     };
     YulReturnsDeclaration: YulReturnsDeclaration<'arena> = {
-         
-            <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => new_yul_returns_declaration(arena, <>),
+        <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => new_yul_returns_declaration(arena, <>),
         
     };
     YulVariableNames: YulVariableNames<'arena> = {
-         
-            <_YulIdentifier: SepOne<Comma, <YulIdentifier>>>  => new_yul_variable_names(arena, <>),
+        <_YulIdentifier: SepOne<Comma, <YulIdentifier>>>  => new_yul_variable_names(arena, <>),
         
     };
     YulVariableDeclarationStatement: YulVariableDeclarationStatement<'arena> = {
-         
-            <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => new_yul_variable_declaration_statement(arena, <>),
+        <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => new_yul_variable_declaration_statement(arena, <>),
         
     };
     YulVariableDeclarationValue: YulVariableDeclarationValue<'arena> = {
-         
-            <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_declaration_value(arena, <>),
+        <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_declaration_value(arena, <>),
         
     };
     YulVariableAssignmentStatement: YulVariableAssignmentStatement<'arena> = {
-         
-            <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_assignment_statement(arena, <>),
+        <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_assignment_statement(arena, <>),
         
     };
     YulAssignmentOperator: YulAssignmentOperator<'arena> = {
-         
-            <_ColonEqual: ColonEqual>  => new_yul_assignment_operator_colon_equal(arena, <>),
+        <_ColonEqual: ColonEqual>  => new_yul_assignment_operator_colon_equal(arena, <>),
         
     };
     YulIfStatement: YulIfStatement<'arena> = {
-         
-            <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => new_yul_if_statement(arena, <>),
+        <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => new_yul_if_statement(arena, <>),
         
     };
     YulForStatement: YulForStatement<'arena> = {
-         
-            <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => new_yul_for_statement(arena, <>),
+        <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => new_yul_for_statement(arena, <>),
         
     };
     YulSwitchStatement: YulSwitchStatement<'arena> = {
-         
-            <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => new_yul_switch_statement(arena, <>),
+        <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => new_yul_switch_statement(arena, <>),
         
     };
     YulSwitchCases: YulSwitchCases<'arena> = {
-         
-            <_YulSwitchCase: RepOne<<YulSwitchCase>>>  => new_yul_switch_cases(arena, <>),
+        <_YulSwitchCase: RepOne<<YulSwitchCase>>>  => new_yul_switch_cases(arena, <>),
         
     };
     YulSwitchCase: YulSwitchCase<'arena> = {
-         
-            <_YulDefaultCase: YulDefaultCase>  => new_yul_switch_case_yul_default_case(arena, <>),
-         
-            <_YulValueCase: YulValueCase>  => new_yul_switch_case_yul_value_case(arena, <>),
+        <_YulDefaultCase: YulDefaultCase>  => new_yul_switch_case_yul_default_case(arena, <>),
+        <_YulValueCase: YulValueCase>  => new_yul_switch_case_yul_value_case(arena, <>),
         
     };
     YulDefaultCase: YulDefaultCase<'arena> = {
-         
-            <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => new_yul_default_case(arena, <>),
+        <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => new_yul_default_case(arena, <>),
         
     };
     YulValueCase: YulValueCase<'arena> = {
-         
-            <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => new_yul_value_case(arena, <>),
+        <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => new_yul_value_case(arena, <>),
         
     };
     YulLeaveStatement: YulLeaveStatement<'arena> = {
-         
-            <_leave_keyword: YulLeaveKeyword>  => new_yul_leave_statement(arena, <>),
+        <_leave_keyword: YulLeaveKeyword>  => new_yul_leave_statement(arena, <>),
         
     };
     YulBreakStatement: YulBreakStatement<'arena> = {
-         
-            <_break_keyword: YulBreakKeyword>  => new_yul_break_statement(arena, <>),
+        <_break_keyword: YulBreakKeyword>  => new_yul_break_statement(arena, <>),
         
     };
     YulContinueStatement: YulContinueStatement<'arena> = {
-         
-            <_continue_keyword: YulContinueKeyword>  => new_yul_continue_statement(arena, <>),
+        <_continue_keyword: YulContinueKeyword>  => new_yul_continue_statement(arena, <>),
         
     };
     
 
 // Rules for topic Yul Expressions
     YulExpression0: YulExpression<'arena> = {
-         
-            <_YulLiteral: YulLiteral>  => new_yul_expression_yul_literal(arena, <>),
-         
-            <_YulPath: YulPath>  => new_yul_expression_yul_path(arena, <>),
+        <_YulLiteral: YulLiteral>  => new_yul_expression_yul_literal(arena, <>),
+        <_YulPath: YulPath>  => new_yul_expression_yul_path(arena, <>),
+        
+    };
+    #[inline]
+    YulFunctionCallExpression: YulFunctionCallExpression<'arena> = {
+        <_YulExpression: YulExpression1>  <_open_paren: OpenParen>  <_arguments: YulArguments>  <_close_paren: CloseParen>  => new_yul_function_call_expression(arena, <>),
         
     };
     YulExpression1: YulExpression<'arena> = {
-         
-            <_YulExpression: YulExpression1>  <_open_paren: OpenParen>  <_arguments: YulArguments>  <_close_paren: CloseParen>  => new_yul_expression_yul_function_call_expression(arena, new_yul_function_call_expression(arena, <>)),
-         
-            <YulExpression: YulExpression0>  => <>,
+        <_YulExpression: YulFunctionCallExpression>  => new_yul_expression_yul_function_call_expression(arena, <>),
+        <YulExpression: YulExpression0>  => <>,
         
     };
     YulExpression: YulExpression<'arena> = {
-         
-            <YulExpression: YulExpression1>  => <>,
+        <YulExpression: YulExpression1>  => <>,
         
     };
     YulArguments: YulArguments<'arena> = {
-         
-            <_YulExpression: Sep<Comma, <YulExpression>>>  => new_yul_arguments(arena, <>),
+        <_YulExpression: Sep<Comma, <YulExpression>>>  => new_yul_arguments(arena, <>),
         
     };
     YulPaths: YulPaths<'arena> = {
-         
-            <_YulPath: SepOne<Comma, <YulPath>>>  => new_yul_paths(arena, <>),
+        <_YulPath: SepOne<Comma, <YulPath>>>  => new_yul_paths(arena, <>),
         
     };
     YulPath: YulPath<'arena> = {
-         
-            <_YulIdentifier: SepOne<Period, <YulIdentifier>>>  => new_yul_path(arena, <>),
+        <_YulIdentifier: SepOne<Period, <YulIdentifier>>>  => new_yul_path(arena, <>),
         
     };
     YulLiteral: YulLiteral<'arena> = {
-         
-            <_YulTrueKeyword: YulTrueKeyword>  => new_yul_literal_yul_true_keyword(arena, <>),
-         
-            <_YulFalseKeyword: YulFalseKeyword>  => new_yul_literal_yul_false_keyword(arena, <>),
-         
-            <_YulDecimalLiteral: YulDecimalLiteral>  => new_yul_literal_yul_decimal_literal(arena, <>),
-         
-            <_YulHexLiteral: YulHexLiteral>  => new_yul_literal_yul_hex_literal(arena, <>),
-         
-            <_HexStringLiteral: HexStringLiteral>  => new_yul_literal_hex_string_literal(arena, <>),
-         
-            <_StringLiteral: StringLiteral>  => new_yul_literal_string_literal(arena, <>),
+        <_YulTrueKeyword: YulTrueKeyword>  => new_yul_literal_yul_true_keyword(arena, <>),
+        <_YulFalseKeyword: YulFalseKeyword>  => new_yul_literal_yul_false_keyword(arena, <>),
+        <_YulDecimalLiteral: YulDecimalLiteral>  => new_yul_literal_yul_decimal_literal(arena, <>),
+        <_YulHexLiteral: YulHexLiteral>  => new_yul_literal_yul_hex_literal(arena, <>),
+        <_HexStringLiteral: HexStringLiteral>  => new_yul_literal_hex_string_literal(arena, <>),
+        <_StringLiteral: StringLiteral>  => new_yul_literal_string_literal(arena, <>),
         
     };
     
@@ -2154,632 +1687,527 @@ RepOne<T>: Vec<'arena, T> = {
 // Rules for topic Yul Keywords
     #[inline]
     YulAbstractKeyword: YulAbstractKeyword<'arena> = {
-         
-            <_YulAbstractKeyword: YulAbstractKeyword_Unreserved>  => <>,
+        <_YulAbstractKeyword: YulAbstractKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulAfterKeyword: YulAfterKeyword<'arena> = {
-         
-            <_YulAfterKeyword: YulAfterKeyword_Unreserved>  => <>,
+        <_YulAfterKeyword: YulAfterKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulAliasKeyword: YulAliasKeyword<'arena> = {
-         
-            <_YulAliasKeyword: YulAliasKeyword_Unreserved>  => <>,
+        <_YulAliasKeyword: YulAliasKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulAnonymousKeyword: YulAnonymousKeyword<'arena> = {
-         
-            <_YulAnonymousKeyword: YulAnonymousKeyword_Unreserved>  => <>,
+        <_YulAnonymousKeyword: YulAnonymousKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulApplyKeyword: YulApplyKeyword<'arena> = {
-         
-            <_YulApplyKeyword: YulApplyKeyword_Unreserved>  => <>,
+        <_YulApplyKeyword: YulApplyKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulAsKeyword: YulAsKeyword<'arena> = {
-         
-            <_YulAsKeyword: YulAsKeyword_Unreserved>  => <>,
+        <_YulAsKeyword: YulAsKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulAssemblyKeyword: YulAssemblyKeyword<'arena> = {
-         
-            <_YulAssemblyKeyword: YulAssemblyKeyword_Unreserved>  => <>,
+        <_YulAssemblyKeyword: YulAssemblyKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulAutoKeyword: YulAutoKeyword<'arena> = {
-         
-            <_YulAutoKeyword: YulAutoKeyword_Unreserved>  => <>,
+        <_YulAutoKeyword: YulAutoKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulBoolKeyword: YulBoolKeyword<'arena> = {
-         
-            <_YulBoolKeyword: YulBoolKeyword_Unreserved>  => <>,
+        <_YulBoolKeyword: YulBoolKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulBreakKeyword: YulBreakKeyword<'arena> = {
-         
-            <_YulBreakKeyword: YulBreakKeyword_Reserved>  => <>,
+        <_YulBreakKeyword: YulBreakKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulBytesKeyword: YulBytesKeyword<'arena> = {
-         
-            <_YulBytesKeyword: YulBytesKeyword_Unreserved>  => <>,
+        <_YulBytesKeyword: YulBytesKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulCallDataKeyword: YulCallDataKeyword<'arena> = {
-         
-            <_YulCallDataKeyword: YulCallDataKeyword_Unreserved>  => <>,
+        <_YulCallDataKeyword: YulCallDataKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulCaseKeyword: YulCaseKeyword<'arena> = {
-         
-            <_YulCaseKeyword: YulCaseKeyword_Reserved>  => <>,
+        <_YulCaseKeyword: YulCaseKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulCatchKeyword: YulCatchKeyword<'arena> = {
-         
-            <_YulCatchKeyword: YulCatchKeyword_Unreserved>  => <>,
+        <_YulCatchKeyword: YulCatchKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulConstantKeyword: YulConstantKeyword<'arena> = {
-         
-            <_YulConstantKeyword: YulConstantKeyword_Unreserved>  => <>,
+        <_YulConstantKeyword: YulConstantKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulConstructorKeyword: YulConstructorKeyword<'arena> = {
-         
-            <_YulConstructorKeyword: YulConstructorKeyword_Unreserved>  => <>,
+        <_YulConstructorKeyword: YulConstructorKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulContinueKeyword: YulContinueKeyword<'arena> = {
-         
-            <_YulContinueKeyword: YulContinueKeyword_Reserved>  => <>,
+        <_YulContinueKeyword: YulContinueKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulContractKeyword: YulContractKeyword<'arena> = {
-         
-            <_YulContractKeyword: YulContractKeyword_Unreserved>  => <>,
+        <_YulContractKeyword: YulContractKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulCopyOfKeyword: YulCopyOfKeyword<'arena> = {
-         
-            <_YulCopyOfKeyword: YulCopyOfKeyword_Unreserved>  => <>,
+        <_YulCopyOfKeyword: YulCopyOfKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulDaysKeyword: YulDaysKeyword<'arena> = {
-         
-            <_YulDaysKeyword: YulDaysKeyword_Unreserved>  => <>,
+        <_YulDaysKeyword: YulDaysKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulDefaultKeyword: YulDefaultKeyword<'arena> = {
-         
-            <_YulDefaultKeyword: YulDefaultKeyword_Reserved>  => <>,
+        <_YulDefaultKeyword: YulDefaultKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulDefineKeyword: YulDefineKeyword<'arena> = {
-         
-            <_YulDefineKeyword: YulDefineKeyword_Unreserved>  => <>,
+        <_YulDefineKeyword: YulDefineKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulDeleteKeyword: YulDeleteKeyword<'arena> = {
-         
-            <_YulDeleteKeyword: YulDeleteKeyword_Unreserved>  => <>,
+        <_YulDeleteKeyword: YulDeleteKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulDoKeyword: YulDoKeyword<'arena> = {
-         
-            <_YulDoKeyword: YulDoKeyword_Unreserved>  => <>,
+        <_YulDoKeyword: YulDoKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulElseKeyword: YulElseKeyword<'arena> = {
-         
-            <_YulElseKeyword: YulElseKeyword_Unreserved>  => <>,
+        <_YulElseKeyword: YulElseKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulEmitKeyword: YulEmitKeyword<'arena> = {
-         
-            <_YulEmitKeyword: YulEmitKeyword_Unreserved>  => <>,
+        <_YulEmitKeyword: YulEmitKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulEnumKeyword: YulEnumKeyword<'arena> = {
-         
-            <_YulEnumKeyword: YulEnumKeyword_Unreserved>  => <>,
+        <_YulEnumKeyword: YulEnumKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulEtherKeyword: YulEtherKeyword<'arena> = {
-         
-            <_YulEtherKeyword: YulEtherKeyword_Unreserved>  => <>,
+        <_YulEtherKeyword: YulEtherKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulEventKeyword: YulEventKeyword<'arena> = {
-         
-            <_YulEventKeyword: YulEventKeyword_Unreserved>  => <>,
+        <_YulEventKeyword: YulEventKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulExternalKeyword: YulExternalKeyword<'arena> = {
-         
-            <_YulExternalKeyword: YulExternalKeyword_Unreserved>  => <>,
+        <_YulExternalKeyword: YulExternalKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulFallbackKeyword: YulFallbackKeyword<'arena> = {
-         
-            <_YulFallbackKeyword: YulFallbackKeyword_Unreserved>  => <>,
+        <_YulFallbackKeyword: YulFallbackKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulFalseKeyword: YulFalseKeyword<'arena> = {
-         
-            <_YulFalseKeyword: YulFalseKeyword_Reserved>  => <>,
+        <_YulFalseKeyword: YulFalseKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulFinalKeyword: YulFinalKeyword<'arena> = {
-         
-            <_YulFinalKeyword: YulFinalKeyword_Unreserved>  => <>,
+        <_YulFinalKeyword: YulFinalKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulFinneyKeyword: YulFinneyKeyword<'arena> = {
-         
-            <_YulFinneyKeyword: YulFinneyKeyword_Unreserved>  => <>,
+        <_YulFinneyKeyword: YulFinneyKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulFixedKeyword: YulFixedKeyword<'arena> = {
-         
-            <_YulFixedKeyword: YulFixedKeyword_Unreserved>  => <>,
+        <_YulFixedKeyword: YulFixedKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulForKeyword: YulForKeyword<'arena> = {
-         
-            <_YulForKeyword: YulForKeyword_Reserved>  => <>,
+        <_YulForKeyword: YulForKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulFunctionKeyword: YulFunctionKeyword<'arena> = {
-         
-            <_YulFunctionKeyword: YulFunctionKeyword_Reserved>  => <>,
+        <_YulFunctionKeyword: YulFunctionKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulGweiKeyword: YulGweiKeyword<'arena> = {
-         
-            <_YulGweiKeyword: YulGweiKeyword_Unreserved>  => <>,
+        <_YulGweiKeyword: YulGweiKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulHexKeyword: YulHexKeyword<'arena> = {
-         
-            <_YulHexKeyword: YulHexKeyword_Reserved>  => <>,
+        <_YulHexKeyword: YulHexKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulHoursKeyword: YulHoursKeyword<'arena> = {
-         
-            <_YulHoursKeyword: YulHoursKeyword_Unreserved>  => <>,
+        <_YulHoursKeyword: YulHoursKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulIfKeyword: YulIfKeyword<'arena> = {
-         
-            <_YulIfKeyword: YulIfKeyword_Reserved>  => <>,
+        <_YulIfKeyword: YulIfKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulImmutableKeyword: YulImmutableKeyword<'arena> = {
-         
-            <_YulImmutableKeyword: YulImmutableKeyword_Unreserved>  => <>,
+        <_YulImmutableKeyword: YulImmutableKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulImplementsKeyword: YulImplementsKeyword<'arena> = {
-         
-            <_YulImplementsKeyword: YulImplementsKeyword_Unreserved>  => <>,
+        <_YulImplementsKeyword: YulImplementsKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulImportKeyword: YulImportKeyword<'arena> = {
-         
-            <_YulImportKeyword: YulImportKeyword_Unreserved>  => <>,
+        <_YulImportKeyword: YulImportKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulIndexedKeyword: YulIndexedKeyword<'arena> = {
-         
-            <_YulIndexedKeyword: YulIndexedKeyword_Unreserved>  => <>,
+        <_YulIndexedKeyword: YulIndexedKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulInKeyword: YulInKeyword<'arena> = {
-         
-            <_YulInKeyword: YulInKeyword_Unreserved>  => <>,
+        <_YulInKeyword: YulInKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulInlineKeyword: YulInlineKeyword<'arena> = {
-         
-            <_YulInlineKeyword: YulInlineKeyword_Unreserved>  => <>,
+        <_YulInlineKeyword: YulInlineKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulInterfaceKeyword: YulInterfaceKeyword<'arena> = {
-         
-            <_YulInterfaceKeyword: YulInterfaceKeyword_Unreserved>  => <>,
+        <_YulInterfaceKeyword: YulInterfaceKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulInternalKeyword: YulInternalKeyword<'arena> = {
-         
-            <_YulInternalKeyword: YulInternalKeyword_Unreserved>  => <>,
+        <_YulInternalKeyword: YulInternalKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulIntKeyword: YulIntKeyword<'arena> = {
-         
-            <_YulIntKeyword: YulIntKeyword_Unreserved>  => <>,
+        <_YulIntKeyword: YulIntKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulIsKeyword: YulIsKeyword<'arena> = {
-         
-            <_YulIsKeyword: YulIsKeyword_Unreserved>  => <>,
+        <_YulIsKeyword: YulIsKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulLeaveKeyword: YulLeaveKeyword<'arena> = {
-         
-            <_YulLeaveKeyword: YulLeaveKeyword_Reserved>  => <>,
+        <_YulLeaveKeyword: YulLeaveKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulLetKeyword: YulLetKeyword<'arena> = {
-         
-            <_YulLetKeyword: YulLetKeyword_Reserved>  => <>,
+        <_YulLetKeyword: YulLetKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulLibraryKeyword: YulLibraryKeyword<'arena> = {
-         
-            <_YulLibraryKeyword: YulLibraryKeyword_Unreserved>  => <>,
+        <_YulLibraryKeyword: YulLibraryKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulMacroKeyword: YulMacroKeyword<'arena> = {
-         
-            <_YulMacroKeyword: YulMacroKeyword_Unreserved>  => <>,
+        <_YulMacroKeyword: YulMacroKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulMappingKeyword: YulMappingKeyword<'arena> = {
-         
-            <_YulMappingKeyword: YulMappingKeyword_Unreserved>  => <>,
+        <_YulMappingKeyword: YulMappingKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulMatchKeyword: YulMatchKeyword<'arena> = {
-         
-            <_YulMatchKeyword: YulMatchKeyword_Unreserved>  => <>,
+        <_YulMatchKeyword: YulMatchKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulMemoryKeyword: YulMemoryKeyword<'arena> = {
-         
-            <_YulMemoryKeyword: YulMemoryKeyword_Unreserved>  => <>,
+        <_YulMemoryKeyword: YulMemoryKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulMinutesKeyword: YulMinutesKeyword<'arena> = {
-         
-            <_YulMinutesKeyword: YulMinutesKeyword_Unreserved>  => <>,
+        <_YulMinutesKeyword: YulMinutesKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulModifierKeyword: YulModifierKeyword<'arena> = {
-         
-            <_YulModifierKeyword: YulModifierKeyword_Unreserved>  => <>,
+        <_YulModifierKeyword: YulModifierKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulMutableKeyword: YulMutableKeyword<'arena> = {
-         
-            <_YulMutableKeyword: YulMutableKeyword_Unreserved>  => <>,
+        <_YulMutableKeyword: YulMutableKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulNewKeyword: YulNewKeyword<'arena> = {
-         
-            <_YulNewKeyword: YulNewKeyword_Unreserved>  => <>,
+        <_YulNewKeyword: YulNewKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulNullKeyword: YulNullKeyword<'arena> = {
-         
-            <_YulNullKeyword: YulNullKeyword_Unreserved>  => <>,
+        <_YulNullKeyword: YulNullKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulOfKeyword: YulOfKeyword<'arena> = {
-         
-            <_YulOfKeyword: YulOfKeyword_Unreserved>  => <>,
+        <_YulOfKeyword: YulOfKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulOverrideKeyword: YulOverrideKeyword<'arena> = {
-         
-            <_YulOverrideKeyword: YulOverrideKeyword_Unreserved>  => <>,
+        <_YulOverrideKeyword: YulOverrideKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulPartialKeyword: YulPartialKeyword<'arena> = {
-         
-            <_YulPartialKeyword: YulPartialKeyword_Unreserved>  => <>,
+        <_YulPartialKeyword: YulPartialKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulPayableKeyword: YulPayableKeyword<'arena> = {
-         
-            <_YulPayableKeyword: YulPayableKeyword_Unreserved>  => <>,
+        <_YulPayableKeyword: YulPayableKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulPragmaKeyword: YulPragmaKeyword<'arena> = {
-         
-            <_YulPragmaKeyword: YulPragmaKeyword_Unreserved>  => <>,
+        <_YulPragmaKeyword: YulPragmaKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulPrivateKeyword: YulPrivateKeyword<'arena> = {
-         
-            <_YulPrivateKeyword: YulPrivateKeyword_Unreserved>  => <>,
+        <_YulPrivateKeyword: YulPrivateKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulPromiseKeyword: YulPromiseKeyword<'arena> = {
-         
-            <_YulPromiseKeyword: YulPromiseKeyword_Unreserved>  => <>,
+        <_YulPromiseKeyword: YulPromiseKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulPublicKeyword: YulPublicKeyword<'arena> = {
-         
-            <_YulPublicKeyword: YulPublicKeyword_Unreserved>  => <>,
+        <_YulPublicKeyword: YulPublicKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulPureKeyword: YulPureKeyword<'arena> = {
-         
-            <_YulPureKeyword: YulPureKeyword_Unreserved>  => <>,
+        <_YulPureKeyword: YulPureKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulReceiveKeyword: YulReceiveKeyword<'arena> = {
-         
-            <_YulReceiveKeyword: YulReceiveKeyword_Unreserved>  => <>,
+        <_YulReceiveKeyword: YulReceiveKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulReferenceKeyword: YulReferenceKeyword<'arena> = {
-         
-            <_YulReferenceKeyword: YulReferenceKeyword_Unreserved>  => <>,
+        <_YulReferenceKeyword: YulReferenceKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulRelocatableKeyword: YulRelocatableKeyword<'arena> = {
-         
-            <_YulRelocatableKeyword: YulRelocatableKeyword_Unreserved>  => <>,
+        <_YulRelocatableKeyword: YulRelocatableKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulReturnsKeyword: YulReturnsKeyword<'arena> = {
-         
-            <_YulReturnsKeyword: YulReturnsKeyword_Unreserved>  => <>,
+        <_YulReturnsKeyword: YulReturnsKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulSealedKeyword: YulSealedKeyword<'arena> = {
-         
-            <_YulSealedKeyword: YulSealedKeyword_Unreserved>  => <>,
+        <_YulSealedKeyword: YulSealedKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulSecondsKeyword: YulSecondsKeyword<'arena> = {
-         
-            <_YulSecondsKeyword: YulSecondsKeyword_Unreserved>  => <>,
+        <_YulSecondsKeyword: YulSecondsKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulSizeOfKeyword: YulSizeOfKeyword<'arena> = {
-         
-            <_YulSizeOfKeyword: YulSizeOfKeyword_Unreserved>  => <>,
+        <_YulSizeOfKeyword: YulSizeOfKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulStaticKeyword: YulStaticKeyword<'arena> = {
-         
-            <_YulStaticKeyword: YulStaticKeyword_Unreserved>  => <>,
+        <_YulStaticKeyword: YulStaticKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulStorageKeyword: YulStorageKeyword<'arena> = {
-         
-            <_YulStorageKeyword: YulStorageKeyword_Unreserved>  => <>,
+        <_YulStorageKeyword: YulStorageKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulStringKeyword: YulStringKeyword<'arena> = {
-         
-            <_YulStringKeyword: YulStringKeyword_Unreserved>  => <>,
+        <_YulStringKeyword: YulStringKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulStructKeyword: YulStructKeyword<'arena> = {
-         
-            <_YulStructKeyword: YulStructKeyword_Unreserved>  => <>,
+        <_YulStructKeyword: YulStructKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulSuperKeyword: YulSuperKeyword<'arena> = {
-         
-            <_YulSuperKeyword: YulSuperKeyword_Reserved>  => <>,
+        <_YulSuperKeyword: YulSuperKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulSupportsKeyword: YulSupportsKeyword<'arena> = {
-         
-            <_YulSupportsKeyword: YulSupportsKeyword_Unreserved>  => <>,
+        <_YulSupportsKeyword: YulSupportsKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulSwitchKeyword: YulSwitchKeyword<'arena> = {
-         
-            <_YulSwitchKeyword: YulSwitchKeyword_Reserved>  => <>,
+        <_YulSwitchKeyword: YulSwitchKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulSzaboKeyword: YulSzaboKeyword<'arena> = {
-         
-            <_YulSzaboKeyword: YulSzaboKeyword_Unreserved>  => <>,
+        <_YulSzaboKeyword: YulSzaboKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulThisKeyword: YulThisKeyword<'arena> = {
-         
-            <_YulThisKeyword: YulThisKeyword_Reserved>  => <>,
+        <_YulThisKeyword: YulThisKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulThrowKeyword: YulThrowKeyword<'arena> = {
-         
-            <_YulThrowKeyword: YulThrowKeyword_Unreserved>  => <>,
+        <_YulThrowKeyword: YulThrowKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulTrueKeyword: YulTrueKeyword<'arena> = {
-         
-            <_YulTrueKeyword: YulTrueKeyword_Reserved>  => <>,
+        <_YulTrueKeyword: YulTrueKeyword_Reserved>  => <>,
         
     };
     #[inline]
     YulTryKeyword: YulTryKeyword<'arena> = {
-         
-            <_YulTryKeyword: YulTryKeyword_Unreserved>  => <>,
+        <_YulTryKeyword: YulTryKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulTypeDefKeyword: YulTypeDefKeyword<'arena> = {
-         
-            <_YulTypeDefKeyword: YulTypeDefKeyword_Unreserved>  => <>,
+        <_YulTypeDefKeyword: YulTypeDefKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulTypeKeyword: YulTypeKeyword<'arena> = {
-         
-            <_YulTypeKeyword: YulTypeKeyword_Unreserved>  => <>,
+        <_YulTypeKeyword: YulTypeKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulTypeOfKeyword: YulTypeOfKeyword<'arena> = {
-         
-            <_YulTypeOfKeyword: YulTypeOfKeyword_Unreserved>  => <>,
+        <_YulTypeOfKeyword: YulTypeOfKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulUfixedKeyword: YulUfixedKeyword<'arena> = {
-         
-            <_YulUfixedKeyword: YulUfixedKeyword_Unreserved>  => <>,
+        <_YulUfixedKeyword: YulUfixedKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulUintKeyword: YulUintKeyword<'arena> = {
-         
-            <_YulUintKeyword: YulUintKeyword_Unreserved>  => <>,
+        <_YulUintKeyword: YulUintKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulUncheckedKeyword: YulUncheckedKeyword<'arena> = {
-         
-            <_YulUncheckedKeyword: YulUncheckedKeyword_Unreserved>  => <>,
+        <_YulUncheckedKeyword: YulUncheckedKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulUsingKeyword: YulUsingKeyword<'arena> = {
-         
-            <_YulUsingKeyword: YulUsingKeyword_Unreserved>  => <>,
+        <_YulUsingKeyword: YulUsingKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulVarKeyword: YulVarKeyword<'arena> = {
-         
-            <_YulVarKeyword: YulVarKeyword_Unreserved>  => <>,
+        <_YulVarKeyword: YulVarKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulViewKeyword: YulViewKeyword<'arena> = {
-         
-            <_YulViewKeyword: YulViewKeyword_Unreserved>  => <>,
+        <_YulViewKeyword: YulViewKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulVirtualKeyword: YulVirtualKeyword<'arena> = {
-         
-            <_YulVirtualKeyword: YulVirtualKeyword_Unreserved>  => <>,
+        <_YulVirtualKeyword: YulVirtualKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulWeeksKeyword: YulWeeksKeyword<'arena> = {
-         
-            <_YulWeeksKeyword: YulWeeksKeyword_Unreserved>  => <>,
+        <_YulWeeksKeyword: YulWeeksKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulWeiKeyword: YulWeiKeyword<'arena> = {
-         
-            <_YulWeiKeyword: YulWeiKeyword_Unreserved>  => <>,
+        <_YulWeiKeyword: YulWeiKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulWhileKeyword: YulWhileKeyword<'arena> = {
-         
-            <_YulWhileKeyword: YulWhileKeyword_Unreserved>  => <>,
+        <_YulWhileKeyword: YulWhileKeyword_Unreserved>  => <>,
         
     };
     #[inline]
     YulYearsKeyword: YulYearsKeyword<'arena> = {
-         
-            <_YulYearsKeyword: YulYearsKeyword_Unreserved>  => <>,
+        <_YulYearsKeyword: YulYearsKeyword_Unreserved>  => <>,
         
     };
     
@@ -5264,12 +4692,12 @@ extern {
             //<_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(arena, <>),
             
             <_IndexAccessPath: IndexAccessPath<"True">> if IAP == "True" => new_type_name_index_access_path(arena, <>),
-        
+
     };
-    
     TypeName1<Func, IAP>: TypeName<'arena> = {
-            // The base expression shouldn't end in a trailing IAP
-            <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(arena, new_array_type_name(arena, <>)),
+         
+            <_TypeName: ArrayTypeName<Func>>  => new_type_name_array_type_name(arena, <>),
+         
             <TypeName: TypeName0<Func, IAP>>  => <>,
         
     };
@@ -5277,6 +4705,11 @@ extern {
          
             <TypeName: TypeName1<"True", "True">>  => <>,
         
+    };
+    #[inline]
+    ArrayTypeName<Func>: ArrayTypeName<'arena> = {
+            // The base expression shouldn't end in a trailing IAP
+            <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
     };
 // ODOT
 
@@ -5400,6 +4833,8 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
 // Ident is a variable to check whether this expression allows identifier paths or not
 // The problem comes from a.b.c, this can be either an identifier path or a member access, we should
 // always prefer identifier paths
+//
+// Note: To simplify my life right now, this is a bit different from what's generated, but we'll get there
     Expression0<TrailingIdent, TrailingIAP>: Expression<'arena> = {
             <_IndexAccessPath: IndexAccessPath<TrailingIdent>> if TrailingIAP == "True" => new_expression_index_access_path(arena, <>),
          

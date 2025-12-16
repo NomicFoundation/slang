@@ -20,8 +20,6 @@ pub(crate) struct LALRPOPItem {
 #[derive(Clone, Debug, Serialize)]
 struct LALRPOPOption {
     name: Option<Identifier>,
-    prebuild: bool,
-    attributes: RustCode,
     fields: Vec<LALRPOPField>,
     forward: bool,
 }
@@ -78,8 +76,6 @@ impl TryFrom<&StructItem> for LALRPOPItem {
             name: None,
             fields: fields.clone().collect(),
             forward: false,
-            prebuild: false,
-            attributes: RustCode("".to_owned()),
         };
 
         Ok(LALRPOPItem {
@@ -119,8 +115,6 @@ impl TryFrom<&EnumItem> for LALRPOPItem {
                     name: Some(variant.reference.clone()),
                     fields: fields.clone(),
                     forward: false,
-                    prebuild: false,
-                    attributes: RustCode("".to_owned()),
                 })
             })
             .collect();
@@ -153,8 +147,6 @@ impl TryFrom<&RepeatedItem> for LALRPOPItem {
             name: None,
             fields: fields.clone(),
             forward: false,
-            prebuild: false,
-            attributes: RustCode("".to_owned()),
         };
 
         Ok(LALRPOPItem {
@@ -189,8 +181,6 @@ impl TryFrom<&SeparatedItem> for LALRPOPItem {
             name: None,
             fields: fields.clone(),
             forward: false,
-            prebuild: false,
-            attributes: RustCode("".to_owned()),
         };
 
         Ok(LALRPOPItem {
@@ -208,7 +198,6 @@ impl From<&KeywordItem> for LALRPOPItem {
         let capturing_name = format!("_{}", item.name);
         let keyword_option = |reserved: bool| {
             LALRPOPOption {
-                prebuild: false,
                 name: None,
                 fields: vec![LALRPOPField {
                     is_optional: false,
@@ -221,7 +210,6 @@ impl From<&KeywordItem> for LALRPOPItem {
                     )),
                 }],
                 forward: true,
-                attributes: RustCode("".to_owned()),
             }
         };
         let mut options = vec![];
@@ -294,8 +282,6 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                     rule: RustCode(exp.reference.clone().to_string()),
                 }],
                 forward: false,
-                prebuild: false,
-                attributes: RustCode("".to_owned()),
             })
         })
         .collect();
@@ -350,8 +336,6 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                             name: Some(reference.clone()),
                             fields: vec![field_to_lalrpop_field(a.0, a.1).unwrap()],
                             forward: false,
-                            prebuild: false,
-                            attributes: RustCode("".to_owned()),
                         })
                     } else {
                         panic!("Operator field must be required");
@@ -430,12 +414,26 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 }
             };
 
+            ans.push(LALRPOPItem {
+                name: prec.name.clone(),
+                producing_type: prec.name.clone(),
+                options: vec![LALRPOPOption {
+                    name: None,
+                    fields: fields.clone(),
+                    forward: false,
+                }],
+                inline: true,
+            });
+
+            // And we reference it from the single field
             LALRPOPOption {
                 name: Some(prec.name.clone()),
-                fields: fields.clone(),
+                fields: vec![LALRPOPField {
+                    capturing_name: Some(capturing_name.clone().into()),
+                    is_optional: false,
+                    rule: RustCode(prec.name.clone().to_string()),
+                }],
                 forward: false,
-                prebuild: true,
-                attributes: RustCode("".to_owned()),
             }
         };
 
@@ -444,8 +442,6 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
             option,
             LALRPOPOption {
                 name: None,
-                prebuild: false,
-                attributes: RustCode("".to_owned()),
                 fields: vec![LALRPOPField {
                     capturing_name: Some(item.name.clone()),
                     is_optional: false,
@@ -469,8 +465,6 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
         producing_type: item.name.clone(),
         options: vec![LALRPOPOption {
             name: None,
-            prebuild: false,
-            attributes: RustCode("".to_owned()),
             fields: vec![LALRPOPField {
                 capturing_name: Some(item.name.clone()),
                 is_optional: false,

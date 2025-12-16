@@ -49,15 +49,10 @@ RepOne<T>: Vec<'arena, T> = {
     {% if item.inline %}#[inline]
     {% endif %}{% if item.name == model.parser.root_item -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }}<'arena> = {
         {% for option in item.options -%}
-            {{ option.attributes }} 
             {% for field in option.fields -%}   
                 <{{ field.capturing_name }}: {{ field.rule }}> {{ " " }}
             {%- endfor %}=> {% if option.forward %}<>{% else -%}
-            new_{{ item.producing_type | snake_case }}{% if option.name %}_{{ option.name | snake_case }}{% endif %}(arena, {% if option.prebuild -%}
-            new_{{option.name | snake_case}}(arena, <>)
-            {%- else -%}
-            <>
-            {%- endif %})
+            new_{{ item.producing_type | snake_case }}{% if option.name %}_{{ option.name | snake_case }}{% endif %}(arena, <>)
             {%- endif %},
         {% endfor %}
     };
@@ -171,12 +166,12 @@ extern {
             //<_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(arena, <>),
             
             <_IndexAccessPath: IndexAccessPath<"True">> if IAP == "True" => new_type_name_index_access_path(arena, <>),
-        
+
     };
-    
     TypeName1<Func, IAP>: TypeName<'arena> = {
-            // The base expression shouldn't end in a trailing IAP
-            <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_type_name_array_type_name(arena, new_array_type_name(arena, <>)),
+         
+            <_TypeName: ArrayTypeName<Func>>  => new_type_name_array_type_name(arena, <>),
+         
             <TypeName: TypeName0<Func, IAP>>  => <>,
         
     };
@@ -184,6 +179,11 @@ extern {
          
             <TypeName: TypeName1<"True", "True">>  => <>,
         
+    };
+    #[inline]
+    ArrayTypeName<Func>: ArrayTypeName<'arena> = {
+            // The base expression shouldn't end in a trailing IAP
+            <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
     };
 // ODOT
 
@@ -307,6 +307,8 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
 // Ident is a variable to check whether this expression allows identifier paths or not
 // The problem comes from a.b.c, this can be either an identifier path or a member access, we should
 // always prefer identifier paths
+//
+// Note: To simplify my life right now, this is a bit different from what's generated, but we'll get there
     Expression0<TrailingIdent, TrailingIAP>: Expression<'arena> = {
             <_IndexAccessPath: IndexAccessPath<TrailingIdent>> if TrailingIAP == "True" => new_expression_index_access_path(arena, <>),
          

@@ -153,11 +153,12 @@ impl<'a> ParserBuilder<'a> {
         };
 
         // Remove all rules that we generate by hand, a bit hacky
-        const EXCLUDED_ITEMS: [&str; 41] = [
+        const EXCLUDED_ITEMS: [&str; 61] = [
             "StateVariableDefinition",
             "TypeName0",
             "TypeName1",
             "TypeName",
+            "ArrayTypeName",
             "FunctionType",
             "Statement",
             "TupleDeconstructionStatement",
@@ -195,6 +196,25 @@ impl<'a> ParserBuilder<'a> {
             "TupleValues",
             "TupleValue",
             "HexNumberExpression",
+            "IndexAccessExpression",
+            "MemberAccessExpression",
+            "CallOptionsExpression",
+            "FunctionCallExpression",
+            "PrefixExpression",
+            "PostfixExpression",
+            "ExponentiationExpression",
+            "MultiplicativeExpression",
+            "AdditiveExpression",
+            "ShiftExpression",
+            "BitwiseAndExpression",
+            "BitwiseXorExpression",
+            "BitwiseOrExpression",
+            "InequalityExpression",
+            "EqualityExpression",
+            "AndExpression",
+            "OrExpression",
+            "ConditionalExpression",
+            "AssignmentExpression",
         ];
 
         items.retain(|item| !EXCLUDED_ITEMS.contains(&(*item.name).as_str()));
