@@ -2473,8 +2473,12 @@ pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut i
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
     match &node.ir_node {
-        input_ir::ArgumentsDeclaration::PositionalArguments(_) => {}
-        input_ir::ArgumentsDeclaration::NamedArguments(_) => {}
+        input_ir::ArgumentsDeclaration::PositionalArguments(_) => {
+            accept_positional_arguments(&node.as_positional_arguments().unwrap(), visitor);
+        }
+        input_ir::ArgumentsDeclaration::NamedArguments(_) => {
+            accept_named_arguments(&node.as_named_arguments().unwrap(), visitor);
+        }
     }
     visitor.leave_arguments_declaration(node);
 }

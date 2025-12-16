@@ -119,6 +119,14 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
                 &node.as_{{ nonterminal.name | snake_case }}().unwrap(),
                 visitor,
               );
+            {%- elif target.collections is containing(nonterminal.name) -%}
+              {%- set item_type = target.collections[nonterminal.name].item_type -%}
+              {% if custom_types is containing(item_type.name) or not item_type.is_terminal %}
+                accept_{{ nonterminal.name | snake_case }}(
+                  &node.as_{{ nonterminal.name | snake_case }}().unwrap(),
+                  visitor,
+                );
+              {% endif %}
             {%- endif -%}
           }
         {%- endfor %}

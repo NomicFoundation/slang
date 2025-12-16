@@ -135,20 +135,18 @@
         {% if target.collections is containing(variant.name) %}
           {% set item_type = target.collections[variant.name].item_type %}
           {% if item_type.is_terminal %}
-            pub fn as_{{ variant.name | snake_case }}(&self) -> Option<impl Iterator<Item = Rc<TerminalNode>> + use<'_>> {
+            pub fn as_{{ variant.name | snake_case }}(&self) -> Option<Vec<Rc<TerminalNode>>> {
               if let input_ir::{{ parent_type }}::{{ variant.name }}(variant) = &self.ir_node {
-                Some(variant.iter().map(Rc::clone))
+                Some(variant.clone())
               } else {
                 None
               }
             }
           {% elif target.sequences is containing(item_type.name)
                or target.choices is containing(item_type.name) %}
-            pub fn as_{{ variant.name | snake_case }}(&self) -> Option<impl Iterator<Item = {{ item_type.name }}> + use<'_>> {
+            pub fn as_{{ variant.name | snake_case }}(&self) -> Option<{{ variant.name }}> {
               if let input_ir::{{ parent_type }}::{{ variant.name }}(variant) = &self.ir_node {
-                Some(variant.iter().map(|child| {
-                  Rc::new({{ item_type.name }}Struct::create(child, &self.semantic))
-                }))
+                Some(Rc::new({{ variant.name }}Struct::create(variant, &self.semantic)))
               } else {
                 None
               }

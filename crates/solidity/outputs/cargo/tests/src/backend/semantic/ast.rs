@@ -10,12 +10,30 @@ fn test_ast_visitor() -> Result<()> {
 
     let main_ast = semantic.get_file_ast_root("main.sol").unwrap();
 
-    let mut visitor = IdentifierCounter::default();
-    ast::visitor::accept_source_unit(&main_ast, &mut visitor);
+    let mut main_visitor = IdentifierCounter::default();
+    ast::visitor::accept_source_unit(&main_ast, &mut main_visitor);
 
-    assert_eq!(visitor.total, 25);
-    assert_eq!(visitor.definitions, 9);
-    assert_eq!(visitor.references, 18);
+    assert_eq!(main_visitor.total, 25);
+    assert_eq!(main_visitor.definitions, 9);
+    assert_eq!(main_visitor.references, 18);
+
+    let ownable_ast = semantic.get_file_ast_root("ownable.sol").unwrap();
+
+    let mut ownable_visitor = IdentifierCounter::default();
+    ast::visitor::accept_source_unit(&ownable_ast, &mut ownable_visitor);
+
+    assert_eq!(ownable_visitor.total, 11);
+    assert_eq!(ownable_visitor.definitions, 3);
+    assert_eq!(ownable_visitor.references, 8);
+
+    let activatable_ast = semantic.get_file_ast_root("activatable.sol").unwrap();
+
+    let mut activatable_visitor = IdentifierCounter::default();
+    ast::visitor::accept_source_unit(&activatable_ast, &mut activatable_visitor);
+
+    assert_eq!(activatable_visitor.total, 31);
+    assert_eq!(activatable_visitor.definitions, 10);
+    assert_eq!(activatable_visitor.references, 22);
 
     Ok(())
 }

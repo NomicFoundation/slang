@@ -3575,11 +3575,9 @@ impl VersionLiteralStruct {
         )
     }
 
-    pub fn as_simple_version_literal(
-        &self,
-    ) -> Option<impl Iterator<Item = Rc<TerminalNode>> + use<'_>> {
+    pub fn as_simple_version_literal(&self) -> Option<Vec<Rc<TerminalNode>>> {
         if let input_ir::VersionLiteral::SimpleVersionLiteral(variant) = &self.ir_node {
-            Some(variant.iter().map(Rc::clone))
+            Some(variant.clone())
         } else {
             None
         }
@@ -5031,13 +5029,12 @@ impl ArgumentsDeclarationStruct {
         )
     }
 
-    pub fn as_positional_arguments(&self) -> Option<impl Iterator<Item = Expression> + use<'_>> {
+    pub fn as_positional_arguments(&self) -> Option<PositionalArguments> {
         if let input_ir::ArgumentsDeclaration::PositionalArguments(variant) = &self.ir_node {
-            Some(
-                variant
-                    .iter()
-                    .map(|child| Rc::new(ExpressionStruct::create(child, &self.semantic))),
-            )
+            Some(Rc::new(PositionalArgumentsStruct::create(
+                variant,
+                &self.semantic,
+            )))
         } else {
             None
         }
@@ -5050,13 +5047,12 @@ impl ArgumentsDeclarationStruct {
         )
     }
 
-    pub fn as_named_arguments(&self) -> Option<impl Iterator<Item = NamedArgument> + use<'_>> {
+    pub fn as_named_arguments(&self) -> Option<NamedArguments> {
         if let input_ir::ArgumentsDeclaration::NamedArguments(variant) = &self.ir_node {
-            Some(
-                variant
-                    .iter()
-                    .map(|child| Rc::new(NamedArgumentStruct::create(child, &self.semantic))),
-            )
+            Some(Rc::new(NamedArgumentsStruct::create(
+                variant,
+                &self.semantic,
+            )))
         } else {
             None
         }
@@ -5145,9 +5141,9 @@ impl StringExpressionStruct {
         matches!(self.ir_node, input_ir::StringExpression::Strings(_))
     }
 
-    pub fn as_strings(&self) -> Option<impl Iterator<Item = Rc<TerminalNode>> + use<'_>> {
+    pub fn as_strings(&self) -> Option<Vec<Rc<TerminalNode>>> {
         if let input_ir::StringExpression::Strings(variant) = &self.ir_node {
-            Some(variant.iter().map(Rc::clone))
+            Some(variant.clone())
         } else {
             None
         }
@@ -5157,9 +5153,9 @@ impl StringExpressionStruct {
         matches!(self.ir_node, input_ir::StringExpression::HexStrings(_))
     }
 
-    pub fn as_hex_strings(&self) -> Option<impl Iterator<Item = Rc<TerminalNode>> + use<'_>> {
+    pub fn as_hex_strings(&self) -> Option<Vec<Rc<TerminalNode>>> {
         if let input_ir::StringExpression::HexStrings(variant) = &self.ir_node {
-            Some(variant.iter().map(Rc::clone))
+            Some(variant.clone())
         } else {
             None
         }
@@ -5169,9 +5165,9 @@ impl StringExpressionStruct {
         matches!(self.ir_node, input_ir::StringExpression::UnicodeStrings(_))
     }
 
-    pub fn as_unicode_strings(&self) -> Option<impl Iterator<Item = Rc<TerminalNode>> + use<'_>> {
+    pub fn as_unicode_strings(&self) -> Option<Vec<Rc<TerminalNode>>> {
         if let input_ir::StringExpression::UnicodeStrings(variant) = &self.ir_node {
-            Some(variant.iter().map(Rc::clone))
+            Some(variant.clone())
         } else {
             None
         }
