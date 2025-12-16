@@ -38,6 +38,20 @@ impl IdentifierStruct {
             &self.semantic,
         )))
     }
+
+    pub fn is_definition(&self) -> bool {
+        self.semantic
+            .binder()
+            .find_definition_by_identifier_node_id(self.ir_node.id())
+            .is_some()
+    }
+
+    pub fn is_reference(&self) -> bool {
+        self.semantic
+            .binder()
+            .find_reference_by_identifier_node_id(self.ir_node.id())
+            .is_some()
+    }
 }
 
 pub type IdentifierPath = Rc<IdentifierPathStruct>;

@@ -3,6 +3,8 @@ use slang_solidity::backend::ir::ast::ContractBase;
 
 use super::sample::build_compilation_unit;
 
+mod ast;
+
 #[test]
 fn test_semantic_analysis_and_ast_tree() -> Result<()> {
     let unit = build_compilation_unit()?;

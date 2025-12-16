@@ -1965,6 +1965,7 @@ pub fn accept_yul_function_call_expression(
 // Choices:
 //
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Visitor) {
     if !visitor.enter_source_unit_member(node) {
         return;
@@ -2018,6 +2019,7 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
     visitor.leave_source_unit_member(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
     if !visitor.enter_pragma(node) {
         return;
@@ -2040,8 +2042,21 @@ pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
 
 pub fn accept_abicoder_version(_node: &AbicoderVersion, _visitor: &mut impl Visitor) {}
 
-pub fn accept_experimental_feature(_node: &ExperimentalFeature, _visitor: &mut impl Visitor) {}
+#[allow(clippy::too_many_lines)]
+pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut impl Visitor) {
+    if !visitor.enter_experimental_feature(node) {
+        return;
+    }
+    #[allow(clippy::single_match)]
+    #[allow(clippy::match_wildcard_for_single_variants)]
+    match &node.ir_node {
+        input_ir::ExperimentalFeature::StringLiteral(_) => {}
+        _ => {}
+    }
+    visitor.leave_experimental_feature(node);
+}
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_version_expression(node: &VersionExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_version_expression(node) {
         return;
@@ -2061,6 +2076,7 @@ pub fn accept_version_expression(node: &VersionExpression, visitor: &mut impl Vi
 
 pub fn accept_version_operator(_node: &VersionOperator, _visitor: &mut impl Visitor) {}
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor) {
     if !visitor.enter_version_literal(node) {
         return;
@@ -2069,11 +2085,13 @@ pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor)
     #[allow(clippy::match_wildcard_for_single_variants)]
     match &node.ir_node {
         input_ir::VersionLiteral::SimpleVersionLiteral(_) => {}
-        _ => {}
+        input_ir::VersionLiteral::SingleQuotedVersionLiteral(_) => {}
+        input_ir::VersionLiteral::DoubleQuotedVersionLiteral(_) => {}
     }
     visitor.leave_version_literal(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     if !visitor.enter_import_clause(node) {
         return;
@@ -2091,6 +2109,7 @@ pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     visitor.leave_import_clause(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
     if !visitor.enter_using_clause(node) {
         return;
@@ -2098,7 +2117,9 @@ pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
     match &node.ir_node {
-        input_ir::UsingClause::IdentifierPath(_) => {}
+        input_ir::UsingClause::IdentifierPath(_) => {
+            accept_identifier_path(&node.as_identifier_path().unwrap(), visitor);
+        }
         input_ir::UsingClause::UsingDeconstruction(_) => {
             accept_using_deconstruction(&node.as_using_deconstruction().unwrap(), visitor);
         }
@@ -2108,6 +2129,7 @@ pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
 
 pub fn accept_using_operator(_node: &UsingOperator, _visitor: &mut impl Visitor) {}
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
     if !visitor.enter_using_target(node) {
         return;
@@ -2118,11 +2140,13 @@ pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
         input_ir::UsingTarget::TypeName(_) => {
             accept_type_name(&node.as_type_name().unwrap(), visitor);
         }
+
         _ => {}
     }
     visitor.leave_using_target(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor) {
     if !visitor.enter_contract_member(node) {
         return;
@@ -2167,6 +2191,7 @@ pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor)
     visitor.leave_contract_member(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
     if !visitor.enter_type_name(node) {
         return;
@@ -2186,11 +2211,14 @@ pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
         input_ir::TypeName::ElementaryType(_) => {
             accept_elementary_type(&node.as_elementary_type().unwrap(), visitor);
         }
-        input_ir::TypeName::IdentifierPath(_) => {}
+        input_ir::TypeName::IdentifierPath(_) => {
+            accept_identifier_path(&node.as_identifier_path().unwrap(), visitor);
+        }
     }
     visitor.leave_type_name(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor) {
     if !visitor.enter_elementary_type(node) {
         return;
@@ -2201,11 +2229,17 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         input_ir::ElementaryType::AddressType(_) => {
             accept_address_type(&node.as_address_type().unwrap(), visitor);
         }
+        input_ir::ElementaryType::BytesKeyword(_) => {}
+        input_ir::ElementaryType::IntKeyword(_) => {}
+        input_ir::ElementaryType::UintKeyword(_) => {}
+        input_ir::ElementaryType::FixedKeyword(_) => {}
+        input_ir::ElementaryType::UfixedKeyword(_) => {}
         _ => {}
     }
     visitor.leave_elementary_type(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
     if !visitor.enter_statement(node) {
         return;
@@ -2276,6 +2310,7 @@ pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
 
 pub fn accept_storage_location(_node: &StorageLocation, _visitor: &mut impl Visitor) {}
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_for_statement_initialization(
     node: &ForStatementInitialization,
     visitor: &mut impl Visitor,
@@ -2301,11 +2336,13 @@ pub fn accept_for_statement_initialization(
         input_ir::ForStatementInitialization::ExpressionStatement(_) => {
             accept_expression_statement(&node.as_expression_statement().unwrap(), visitor);
         }
+
         _ => {}
     }
     visitor.leave_for_statement_initialization(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mut impl Visitor) {
     if !visitor.enter_for_statement_condition(node) {
         return;
@@ -2316,11 +2353,13 @@ pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mu
         input_ir::ForStatementCondition::ExpressionStatement(_) => {
             accept_expression_statement(&node.as_expression_statement().unwrap(), visitor);
         }
+
         _ => {}
     }
     visitor.leave_for_statement_condition(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
     if !visitor.enter_expression(node) {
         return;
@@ -2418,11 +2457,15 @@ pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
         input_ir::Expression::ElementaryType(_) => {
             accept_elementary_type(&node.as_elementary_type().unwrap(), visitor);
         }
+        input_ir::Expression::Identifier(_) => {
+            accept_identifier(&node.as_identifier().unwrap(), visitor);
+        }
         _ => {}
     }
     visitor.leave_expression(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut impl Visitor) {
     if !visitor.enter_arguments_declaration(node) {
         return;
@@ -2438,6 +2481,7 @@ pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut i
 
 pub fn accept_number_unit(_node: &NumberUnit, _visitor: &mut impl Visitor) {}
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_string_expression(node) {
         return;
@@ -2452,6 +2496,7 @@ pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visi
     visitor.leave_string_expression(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_statement(node) {
         return;
@@ -2511,6 +2556,7 @@ pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
     visitor.leave_yul_statement(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_yul_assignment_operator(node: &YulAssignmentOperator, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_assignment_operator(node) {
         return;
@@ -2521,11 +2567,13 @@ pub fn accept_yul_assignment_operator(node: &YulAssignmentOperator, visitor: &mu
         input_ir::YulAssignmentOperator::YulColonAndEqual(_) => {
             accept_yul_colon_and_equal(&node.as_yul_colon_and_equal().unwrap(), visitor);
         }
+
         _ => {}
     }
     visitor.leave_yul_assignment_operator(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_yul_stack_assignment_operator(
     node: &YulStackAssignmentOperator,
     visitor: &mut impl Visitor,
@@ -2539,11 +2587,13 @@ pub fn accept_yul_stack_assignment_operator(
         input_ir::YulStackAssignmentOperator::YulEqualAndColon(_) => {
             accept_yul_equal_and_colon(&node.as_yul_equal_and_colon().unwrap(), visitor);
         }
+
         _ => {}
     }
     visitor.leave_yul_stack_assignment_operator(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_yul_switch_case(node: &YulSwitchCase, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_switch_case(node) {
         return;
@@ -2561,6 +2611,7 @@ pub fn accept_yul_switch_case(node: &YulSwitchCase, visitor: &mut impl Visitor) 
     visitor.leave_yul_switch_case(node);
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_expression(node) {
         return;
@@ -2577,12 +2628,29 @@ pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
         input_ir::YulExpression::YulLiteral(_) => {
             accept_yul_literal(&node.as_yul_literal().unwrap(), visitor);
         }
-        input_ir::YulExpression::YulPath(_) => {}
+        input_ir::YulExpression::YulPath(_) => {
+            accept_yul_path(&node.as_yul_path().unwrap(), visitor);
+        }
     }
     visitor.leave_yul_expression(node);
 }
 
-pub fn accept_yul_literal(_node: &YulLiteral, _visitor: &mut impl Visitor) {}
+#[allow(clippy::too_many_lines)]
+pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
+    if !visitor.enter_yul_literal(node) {
+        return;
+    }
+    #[allow(clippy::single_match)]
+    #[allow(clippy::match_wildcard_for_single_variants)]
+    match &node.ir_node {
+        input_ir::YulLiteral::YulDecimalLiteral(_) => {}
+        input_ir::YulLiteral::YulHexLiteral(_) => {}
+        input_ir::YulLiteral::StringLiteral(_) => {}
+        input_ir::YulLiteral::HexStringLiteral(_) => {}
+        _ => {}
+    }
+    visitor.leave_yul_literal(node);
+}
 
 pub fn accept_function_kind(_node: &FunctionKind, _visitor: &mut impl Visitor) {}
 
@@ -2602,6 +2670,7 @@ pub fn accept_state_variable_mutability(
 ) {
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn accept_tuple_deconstruction_member(
     node: &TupleDeconstructionMember,
     visitor: &mut impl Visitor,
@@ -2617,6 +2686,9 @@ pub fn accept_tuple_deconstruction_member(
                 &node.as_variable_declaration_statement().unwrap(),
                 visitor,
             );
+        }
+        input_ir::TupleDeconstructionMember::Identifier(_) => {
+            accept_identifier(&node.as_identifier().unwrap(), visitor);
         }
         _ => {}
     }

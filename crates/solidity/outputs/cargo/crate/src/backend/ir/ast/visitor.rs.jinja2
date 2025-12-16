@@ -99,9 +99,10 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
   {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
   {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
   {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
-  {% if nonterminals | length == 0 %}
+  {% if (nonterminals | length == 0) and (non_unique_terminals | length == 0) %}
     pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
   {% else %}
+    #[allow(clippy::too_many_lines)]
     pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
       if !visitor.enter_{{ parent_type | snake_case }}(node) {
         return;
@@ -111,7 +112,8 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
       match &node.ir_node {
         {% for nonterminal in nonterminals -%}
           input_ir::{{ parent_type }}::{{ nonterminal.name }}(_) => {
-            {%- if target.sequences is containing(nonterminal.name) or
+            {%- if custom_types is containing(nonterminal.name) or
+                   target.sequences is containing(nonterminal.name) or
                    target.choices is containing(nonterminal.name) -%}
               accept_{{ nonterminal.name | snake_case }}(
                 &node.as_{{ nonterminal.name | snake_case }}().unwrap(),
@@ -120,7 +122,17 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
             {%- endif -%}
           }
         {%- endfor %}
-        {%- if (non_unique_terminals | length > 0) or (unique_terminals | length > 0) %}
+        {% for terminal in non_unique_terminals -%}
+          input_ir::{{ parent_type }}::{{ terminal.name }}(_) => {
+            {%- if custom_types is containing(terminal.name) %}
+              accept_{{ terminal.name | snake_case }}(
+                &node.as_{{ terminal.name | snake_case }}().unwrap(),
+                visitor,
+              );
+            {%- endif %}
+          }
+        {%- endfor %}
+        {%- if unique_terminals | length > 0 %}
           _ => {}
         {% endif -%}
       }
