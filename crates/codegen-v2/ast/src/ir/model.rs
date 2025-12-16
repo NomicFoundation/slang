@@ -5,8 +5,9 @@
 //! some small changes
 
 // TODO(v2):
-// - Collect the sizes of terminals and nonterminals
-// - Produce individual types for terminals, particularly useful for bounded sized tokens
+// - Collect the sizes of terminals and nonterminals, this should allow us to optimize space usage
+//   in particular, terminals with size 1 can be represented as `()` (or anything 0 sized) and
+//   terminals with size N can be represented with an enum
 
 use std::collections::BTreeMap;
 
@@ -288,30 +289,31 @@ impl IrModelBuilder {
 
         // TODO: The precedence operators is too complex, and we're making a lot
         // of assumptions everywere.
-        // It should be simpler
+        // We should make it simpler, in particular it should be correct by construction
+
         let operator_fields = if expression.operators.len() == 1 {
-            // If there's a single operator, we jus use its fields directly
+            // If there's a single operator, we just use its fields directly
             self.convert_fields(&expression.operators[0].fields)
                 .collect::<Vec<_>>()
         } else {
             // If there are multiple operators, we create a choice between them
-            // They must be single field required operators
+            // They must have a single required field labeled "operator"
             let variants = expression
                 .operators
                 .iter()
                 .map(|operator| {
                     assert!(
                         operator.fields.len() == 1,
-                        "Multiple operators with multiple fields are not supported yet"
+                        "Multiple operators with multiple fields are not supported"
                     );
 
-                    let a = operator.fields.first().unwrap();
+                    let (ident, field) = operator.fields.first().unwrap();
                     assert_eq!(
-                        a.0,
+                        ident,
                         &model::Identifier::from("operator"),
                         "Operator field must be labeled 'operator'"
                     );
-                    if let model::Field::Required { reference } = a.1 {
+                    if let model::Field::Required { reference } = field {
                         self.find_node_type(reference)
                     } else {
                         panic!("Operator field must be required");
@@ -322,6 +324,7 @@ impl IrModelBuilder {
             let ident =
                 model::Identifier::from(format!("{}_{}_Operator", base_name, expression.name));
 
+            // Insert the created choice
             self.choices.insert(ident.clone(), Choice { variants });
 
             // The only field we care about then is a reference to that special operator
@@ -332,13 +335,13 @@ impl IrModelBuilder {
             }]
         };
 
-        let mut fields = vec![];
-
         let operand = |label: model::PredefinedLabel| Field {
             label: label.as_ref().into(),
             r#type: NodeType::Nonterminal(base_name.clone()),
             is_optional: false,
         };
+
+        let mut fields = vec![];
 
         // All operators should have the same structure (validated at compile-time),
         // So let's pick up the first one to generate the types:
