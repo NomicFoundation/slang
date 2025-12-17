@@ -1,0 +1,481 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 32,
+        r: 40,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 41,
+        r: 44,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        l: 45,
+        r: 46,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        l: 49,
+                        r: 57,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            l: 58,
+                            r: 67,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 67,
+                            r: 68,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: Parameters {
+                            elements: [
+                                ParameterStruct {
+                                    type_name: ElementaryType(
+                                        AddressType(
+                                            AddressTypeStruct {
+                                                address_keyword: AddressKeyword {
+                                                    l: 68,
+                                                    r: 75,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                                payable_keyword: Some(
+                                                    PayableKeyword {
+                                                        l: 76,
+                                                        r: 83,
+                                                        phantom: PhantomData<&()>,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                    ),
+                                    storage_location: None,
+                                    name: Some(
+                                        Identifier {
+                                            l: 84,
+                                            r: 93,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                },
+                                ParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                l: 95,
+                                                r: 102,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ),
+                                    storage_location: None,
+                                    name: Some(
+                                        Identifier {
+                                            l: 103,
+                                            r: 109,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            l: 109,
+                            r: 110,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [
+                            InternalKeyword(
+                                InternalKeyword {
+                                    l: 111,
+                                    r: 119,
+                                    phantom: PhantomData<&()>,
+                                },
+                            ),
+                        ],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                l: 120,
+                                r: 121,
+                                phantom: PhantomData<&()>,
+                            },
+                            statements: Statements {
+                                elements: [
+                                    ExpressionStatement(
+                                        ExpressionStatementStruct {
+                                            expression: FunctionCallExpression(
+                                                FunctionCallExpressionStruct {
+                                                    operand: Identifier(
+                                                        Identifier {
+                                                            l: 126,
+                                                            r: 133,
+                                                            phantom: PhantomData<&()>,
+                                                        },
+                                                    ),
+                                                    arguments: PositionalArgumentsDeclaration(
+                                                        PositionalArgumentsDeclarationStruct {
+                                                            open_paren: OpenParen {
+                                                                l: 133,
+                                                                r: 134,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                            arguments: PositionalArguments {
+                                                                elements: [
+                                                                    InequalityExpression(
+                                                                        InequalityExpressionStruct {
+                                                                            left_operand: MemberAccessExpression(
+                                                                                MemberAccessExpressionStruct {
+                                                                                    operand: FunctionCallExpression(
+                                                                                        FunctionCallExpressionStruct {
+                                                                                            operand: ElementaryType(
+                                                                                                AddressType(
+                                                                                                    AddressTypeStruct {
+                                                                                                        address_keyword: AddressKeyword {
+                                                                                                            l: 134,
+                                                                                                            r: 141,
+                                                                                                            phantom: PhantomData<&()>,
+                                                                                                        },
+                                                                                                        payable_keyword: None,
+                                                                                                    },
+                                                                                                ),
+                                                                                            ),
+                                                                                            arguments: PositionalArgumentsDeclaration(
+                                                                                                PositionalArgumentsDeclarationStruct {
+                                                                                                    open_paren: OpenParen {
+                                                                                                        l: 141,
+                                                                                                        r: 142,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                    arguments: PositionalArguments {
+                                                                                                        elements: [
+                                                                                                            ThisKeyword(
+                                                                                                                ThisKeyword {
+                                                                                                                    l: 142,
+                                                                                                                    r: 146,
+                                                                                                                    phantom: PhantomData<&()>,
+                                                                                                                },
+                                                                                                            ),
+                                                                                                        ],
+                                                                                                    },
+                                                                                                    close_paren: CloseParen {
+                                                                                                        l: 146,
+                                                                                                        r: 147,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                },
+                                                                                            ),
+                                                                                        },
+                                                                                    ),
+                                                                                    period: Period {
+                                                                                        l: 147,
+                                                                                        r: 148,
+                                                                                        phantom: PhantomData<&()>,
+                                                                                    },
+                                                                                    member: Identifier(
+                                                                                        Identifier {
+                                                                                            l: 148,
+                                                                                            r: 155,
+                                                                                            phantom: PhantomData<&()>,
+                                                                                        },
+                                                                                    ),
+                                                                                },
+                                                                            ),
+                                                                            expression_inequality_expression_operator: GreaterThanEqual(
+                                                                                GreaterThanEqual {
+                                                                                    l: 156,
+                                                                                    r: 158,
+                                                                                    phantom: PhantomData<&()>,
+                                                                                },
+                                                                            ),
+                                                                            right_operand: Identifier(
+                                                                                Identifier {
+                                                                                    l: 159,
+                                                                                    r: 165,
+                                                                                    phantom: PhantomData<&()>,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    StringExpression(
+                                                                        StringLiterals(
+                                                                            StringLiterals {
+                                                                                elements: [
+                                                                                    DoubleQuotedStringLiteral(
+                                                                                        DoubleQuotedStringLiteral {
+                                                                                            l: 167,
+                                                                                            r: 198,
+                                                                                            phantom: PhantomData<&()>,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                            },
+                                                            close_paren: CloseParen {
+                                                                l: 198,
+                                                                r: 199,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                            semicolon: Semicolon {
+                                                l: 199,
+                                                r: 200,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        },
+                                    ),
+                                    TupleDeconstructionStatement(
+                                        TupleDeconstructionStatementStruct {
+                                            var_keyword: None,
+                                            open_paren: OpenParen {
+                                                l: 206,
+                                                r: 207,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            elements: TupleDeconstructionElements {
+                                                elements: [
+                                                    TupleDeconstructionElementStruct {
+                                                        member: Some(
+                                                            TypedTupleMember(
+                                                                TypedTupleMemberStruct {
+                                                                    type_name: ElementaryType(
+                                                                        BoolKeyword(
+                                                                            BoolKeyword {
+                                                                                l: 207,
+                                                                                r: 211,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                    storage_location: None,
+                                                                    name: Identifier {
+                                                                        l: 212,
+                                                                        r: 219,
+                                                                        phantom: PhantomData<&()>,
+                                                                    },
+                                                                },
+                                                            ),
+                                                        ),
+                                                    },
+                                                    TupleDeconstructionElementStruct {
+                                                        member: None,
+                                                    },
+                                                ],
+                                            },
+                                            close_paren: CloseParen {
+                                                l: 221,
+                                                r: 222,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            equal: Equal {
+                                                l: 223,
+                                                r: 224,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            expression: FunctionCallExpression(
+                                                FunctionCallExpressionStruct {
+                                                    operand: CallOptionsExpression(
+                                                        CallOptionsExpressionStruct {
+                                                            operand: MemberAccessExpression(
+                                                                MemberAccessExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            l: 225,
+                                                                            r: 234,
+                                                                            phantom: PhantomData<&()>,
+                                                                        },
+                                                                    ),
+                                                                    period: Period {
+                                                                        l: 0,
+                                                                        r: 0,
+                                                                        phantom: PhantomData<&()>,
+                                                                    },
+                                                                    member: Identifier(
+                                                                        Identifier {
+                                                                            l: 235,
+                                                                            r: 239,
+                                                                            phantom: PhantomData<&()>,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            open_brace: OpenBrace {
+                                                                l: 239,
+                                                                r: 240,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                            options: CallOptions {
+                                                                elements: [
+                                                                    NamedArgumentStruct {
+                                                                        name: Identifier {
+                                                                            l: 241,
+                                                                            r: 246,
+                                                                            phantom: PhantomData<&()>,
+                                                                        },
+                                                                        colon: Colon {
+                                                                            l: 246,
+                                                                            r: 247,
+                                                                            phantom: PhantomData<&()>,
+                                                                        },
+                                                                        value: Identifier(
+                                                                            Identifier {
+                                                                                l: 248,
+                                                                                r: 254,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                ],
+                                                            },
+                                                            close_brace: CloseBrace {
+                                                                l: 255,
+                                                                r: 256,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                    arguments: PositionalArgumentsDeclaration(
+                                                        PositionalArgumentsDeclarationStruct {
+                                                            open_paren: OpenParen {
+                                                                l: 256,
+                                                                r: 257,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                            arguments: PositionalArguments {
+                                                                elements: [
+                                                                    StringExpression(
+                                                                        StringLiterals(
+                                                                            StringLiterals {
+                                                                                elements: [
+                                                                                    DoubleQuotedStringLiteral(
+                                                                                        DoubleQuotedStringLiteral {
+                                                                                            l: 257,
+                                                                                            r: 259,
+                                                                                            phantom: PhantomData<&()>,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                            },
+                                                            close_paren: CloseParen {
+                                                                l: 259,
+                                                                r: 260,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                            semicolon: Semicolon {
+                                                l: 260,
+                                                r: 261,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        },
+                                    ),
+                                    ExpressionStatement(
+                                        ExpressionStatementStruct {
+                                            expression: FunctionCallExpression(
+                                                FunctionCallExpressionStruct {
+                                                    operand: Identifier(
+                                                        Identifier {
+                                                            l: 266,
+                                                            r: 273,
+                                                            phantom: PhantomData<&()>,
+                                                        },
+                                                    ),
+                                                    arguments: PositionalArgumentsDeclaration(
+                                                        PositionalArgumentsDeclarationStruct {
+                                                            open_paren: OpenParen {
+                                                                l: 273,
+                                                                r: 274,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                            arguments: PositionalArguments {
+                                                                elements: [
+                                                                    Identifier(
+                                                                        Identifier {
+                                                                            l: 274,
+                                                                            r: 281,
+                                                                            phantom: PhantomData<&()>,
+                                                                        },
+                                                                    ),
+                                                                    StringExpression(
+                                                                        StringLiterals(
+                                                                            StringLiterals {
+                                                                                elements: [
+                                                                                    DoubleQuotedStringLiteral(
+                                                                                        DoubleQuotedStringLiteral {
+                                                                                            l: 283,
+                                                                                            r: 343,
+                                                                                            phantom: PhantomData<&()>,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                            },
+                                                            close_paren: CloseParen {
+                                                                l: 343,
+                                                                r: 344,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                            semicolon: Semicolon {
+                                                l: 344,
+                                                r: 345,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        },
+                                    ),
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                l: 348,
+                                r: 349,
+                                phantom: PhantomData<&()>,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        l: 350,
+        r: 351,
+        phantom: PhantomData<&()>,
+    },
+}

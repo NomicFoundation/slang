@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 1986,
+        r: 1994,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 1995,
+        r: 1998,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        l: 1999,
+        r: 2000,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [],
+    },
+    close_brace: CloseBrace {
+        l: 2000,
+        r: 2001,
+        phantom: PhantomData<&()>,
+    },
+}

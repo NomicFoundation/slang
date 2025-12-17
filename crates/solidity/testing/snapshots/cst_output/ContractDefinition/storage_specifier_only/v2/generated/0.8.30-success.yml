@@ -1,0 +1,109 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 0,
+        r: 8,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 9,
+        r: 12,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [
+            StorageLayoutSpecifier(
+                StorageLayoutSpecifierStruct {
+                    layout_keyword: LayoutKeyword {
+                        l: 13,
+                        r: 19,
+                        phantom: PhantomData<&()>,
+                    },
+                    at_keyword: AtKeyword {
+                        l: 20,
+                        r: 22,
+                        phantom: PhantomData<&()>,
+                    },
+                    expression: DecimalNumberExpression(
+                        DecimalNumberExpressionStruct {
+                            literal: DecimalLiteral {
+                                l: 23,
+                                r: 24,
+                                phantom: PhantomData<&()>,
+                            },
+                            unit: None,
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    open_brace: OpenBrace {
+        l: 25,
+        r: 26,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        l: 31,
+                        r: 39,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            l: 40,
+                            r: 43,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 43,
+                            r: 44,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            l: 44,
+                            r: 45,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                l: 45,
+                                r: 46,
+                                phantom: PhantomData<&()>,
+                            },
+                            statements: Statements {
+                                elements: [],
+                            },
+                            close_brace: CloseBrace {
+                                l: 46,
+                                r: 47,
+                                phantom: PhantomData<&()>,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        l: 48,
+        r: 49,
+        phantom: PhantomData<&()>,
+    },
+}

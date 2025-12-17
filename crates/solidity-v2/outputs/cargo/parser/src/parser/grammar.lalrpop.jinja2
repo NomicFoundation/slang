@@ -726,7 +726,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
 
 // Disabling for now
 
-    ContractDefinition: ContractDefinition<'arena> = {
+    pub ContractDefinition: ContractDefinition<'arena> = {
         <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  => {
             let (specifiers, _open_brace, _members, _close_brace) = _specifiers;
             new_contract_definition(arena, _abstract_keyword, _contract_keyword, _name, specifiers, _open_brace, _members, _close_brace)

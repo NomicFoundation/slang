@@ -1,6 +1,6 @@
 use bumpalo::Bump;
 use lalrpop_util::lalrpop_mod;
-use slang_solidity_v2_ast::ast::nodes::{Expression, SourceUnit};
+use slang_solidity_v2_ast::ast::nodes::{ContractDefinition, Expression, SourceUnit};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::ContextKind;
@@ -54,6 +54,21 @@ impl Parser {
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::ExpressionParser::new();
+        parser
+            .parse(&self.arena, input, lexer)
+            // TODO(v2): Improve on showing the error
+            .map_err(|e| format!("{e:?}"))
+    }
+
+    pub fn parse_contract_definition<'arena>(
+        &'arena self,
+        input: &str,
+        version: LanguageVersion,
+    ) -> Result<ContractDefinition<'arena>, String> {
+        assert!(version == LanguageVersion::V0_8_30);
+
+        let lexer = Lexer::new(ContextKind::Solidity, input, version);
+        let parser = grammar::ContractDefinitionParser::new();
         parser
             .parse(&self.arena, input, lexer)
             // TODO(v2): Improve on showing the error

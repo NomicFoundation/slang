@@ -111,6 +111,9 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             "Expression" => parser
                 .parse_expression(&source, LanguageVersion::V0_8_30)
                 .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
+            "ContractDefinition" => parser
+                .parse_contract_definition(&source, LanguageVersion::V0_8_30)
+                .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
             _ => {
                 // Ignore everything else
                 return Ok(());
