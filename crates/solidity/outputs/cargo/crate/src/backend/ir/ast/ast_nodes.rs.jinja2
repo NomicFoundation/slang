@@ -1,5 +1,5 @@
 {%- set target = model.ir_languages['ir2_flat_contracts'].target -%}
-{%- set custom_types = ["EnumMembers", "Identifier", "IdentifierPath", "YulIdentifier", "YulParameters", "YulPath", "YulVariableNames"] -%}
+{%- set custom_types = ["Identifier", "YulIdentifier"] -%}
 
 //
 // Sequences:
@@ -134,19 +134,20 @@
       {% elif variant.kind == "Nonterminal" %}
         {% if target.collections is containing(variant.name) %}
           {% set item_type = target.collections[variant.name].item_type %}
-          {% if item_type.is_terminal %}
-            pub fn as_{{ variant.name | snake_case }}(&self) -> Option<Vec<Rc<TerminalNode>>> {
-              if let input_ir::{{ parent_type }}::{{ variant.name }}(variant) = &self.ir_node {
-                Some(variant.clone())
-              } else {
-                None
-              }
-            }
-          {% elif target.sequences is containing(item_type.name)
+          {% if custom_types is containing(item_type.name)
+               or target.sequences is containing(item_type.name)
                or target.choices is containing(item_type.name) %}
             pub fn as_{{ variant.name | snake_case }}(&self) -> Option<{{ variant.name }}> {
               if let input_ir::{{ parent_type }}::{{ variant.name }}(variant) = &self.ir_node {
                 Some(Rc::new({{ variant.name }}Struct::create(variant, &self.semantic)))
+              } else {
+                None
+              }
+            }
+          {% elif item_type.is_terminal %}
+            pub fn as_{{ variant.name | snake_case }}(&self) -> Option<Vec<Rc<TerminalNode>>> {
+              if let input_ir::{{ parent_type }}::{{ variant.name }}(variant) = &self.ir_node {
+                Some(variant.clone())
               } else {
                 None
               }
@@ -172,27 +173,43 @@
 //
 
 {%- for parent_type, collection in target.collections %}
-  {%- if custom_types is not containing(parent_type) and not collection.item_type.is_terminal %}
+  {%- if not collection.item_type.is_terminal or
+         custom_types is containing(collection.item_type.name) %}
     pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
     pub struct {{ parent_type }}Struct {
-      pub(crate) ir_nodes: Vec<input_ir::{{ collection.item_type.name }}>,
+      {% if collection.item_type.is_terminal -%}
+        pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
+      {% else %}
+        pub(crate) ir_nodes: Vec<input_ir::{{ collection.item_type.name }}>,
+      {%- endif %}
       semantic: Rc<SemanticAnalysis>,
     }
 
     impl {{ parent_type }}Struct {
+      {% if collection.item_type.is_terminal %}
+      fn create(nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
+      {% else %}
       fn create(nodes: &[input_ir::{{ collection.item_type.name }}], semantic: &Rc<SemanticAnalysis>) -> Self {
+      {% endif %}
         Self {
           ir_nodes: nodes.to_vec(),
           semantic: Rc::clone(semantic),
         }
       }
 
-      pub fn iter(&self) -> impl Iterator<Item = {{ collection.item_type.name }}> + use<'_> {
+      {% if collection.item_type.is_terminal and
+            custom_types is not containing(collection.item_type.name) %}
+        pub fn iter(&self) -> impl Iterator<Item = Rc<TerminalNode>> + use<'_> {
+          self.ir_nodes.iter()
+        }
+      {% else %}
+        pub fn iter(&self) -> impl Iterator<Item = {{ collection.item_type.name }}> + use<'_> {
           self.ir_nodes
               .iter()
               .map(|ir_node| Rc::new({{ collection.item_type.name }}Struct::create(ir_node, &self.semantic)))
-      }
+        }
+      {% endif %}
     }
   {% endif %}
 {% endfor -%}

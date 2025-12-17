@@ -54,82 +54,8 @@ impl IdentifierStruct {
     }
 }
 
-pub type IdentifierPath = Rc<IdentifierPathStruct>;
-
-pub struct IdentifierPathStruct {
-    ir_nodes: Vec<Rc<TerminalNode>>,
-    semantic: Rc<SemanticAnalysis>,
-}
-
-impl IdentifierPathStruct {
-    fn create(ir_nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: ir_nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn unparse(&self) -> String {
-        self.ir_nodes
-            .iter()
-            .map(|ir_node| ir_node.unparse())
-            .collect::<Vec<_>>()
-            .join(".")
-    }
-
-    pub fn resolve_to_definition(&self) -> Option<Definition> {
-        let ir_node = self.ir_nodes.last()?;
-        let reference = self
-            .semantic
-            .binder()
-            .find_reference_by_identifier_node_id(ir_node.id())?;
-        let definition_id = reference.resolution.as_definition_id()?;
-        Some(Rc::new(DefinitionStruct::create(
-            definition_id,
-            &self.semantic,
-        )))
-    }
-
-    pub fn iter(&self) -> impl Iterator<Item = Identifier> + use<'_> {
-        self.ir_nodes
-            .iter()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
-    }
-}
-
 pub type YulIdentifierStruct = IdentifierStruct;
 pub type YulIdentifier = Rc<YulIdentifierStruct>;
-pub type YulPathStruct = IdentifierPathStruct;
-pub type YulPath = Rc<YulPathStruct>;
-
-pub type IdentifierCollection = Rc<IdentifierCollectionStruct>;
-
-pub struct IdentifierCollectionStruct {
-    ir_nodes: Vec<Rc<TerminalNode>>,
-    semantic: Rc<SemanticAnalysis>,
-}
-
-impl IdentifierCollectionStruct {
-    fn create(ir_nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: ir_nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn iter(&self) -> impl Iterator<Item = Identifier> + use<'_> {
-        self.ir_nodes
-            .iter()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
-    }
-}
-
-pub type EnumMembers = IdentifierCollection;
-pub type EnumMembersStruct = IdentifierCollectionStruct;
-pub type YulVariableNames = IdentifierCollection;
-pub type YulVariableNamesStruct = IdentifierCollectionStruct;
-pub type YulParameters = IdentifierCollection;
-pub type YulParametersStruct = IdentifierCollectionStruct;
 
 pub type Definition = Rc<DefinitionStruct>;
 
@@ -271,5 +197,28 @@ impl ContractDefinitionStruct {
                     .expect("Linearised base is either a contract or interface")
             })
             .collect()
+    }
+}
+
+impl IdentifierPathStruct {
+    pub fn unparse(&self) -> String {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| ir_node.unparse())
+            .collect::<Vec<_>>()
+            .join(".")
+    }
+
+    pub fn resolve_to_definition(&self) -> Option<Definition> {
+        let ir_node = self.ir_nodes.last()?;
+        let reference = self
+            .semantic
+            .binder()
+            .find_reference_by_identifier_node_id(ir_node.id())?;
+        let definition_id = reference.resolution.as_definition_id()?;
+        Some(Rc::new(DefinitionStruct::create(
+            definition_id,
+            &self.semantic,
+        )))
     }
 }
