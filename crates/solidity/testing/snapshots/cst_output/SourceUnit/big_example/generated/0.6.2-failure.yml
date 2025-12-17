@@ -3323,9 +3323,9 @@ Source: >
   3320 │     }                                                                                                                                                            │ 127229..127234
   3321 │ }                                                                                                                                                                │ 127235..127236
 
-Errors: # 80 total
+Errors: # 93 total
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:629:9]
          │
      629 │ ╭─▶         unchecked {
@@ -3625,6 +3625,14 @@ Errors: # 80 total
           │                                                 ╰── Error occurred here.
     ──────╯
   - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:1473:20]
+          │
+     1473 │     address public immutable override positionManager;
+          │                    ─────────────────┬────────────────  
+          │                                     ╰────────────────── Error occurred here.
+    ──────╯
+  - >
     Error: Expected Equal or Semicolon.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:1479:46]
           │
@@ -3697,7 +3705,7 @@ Errors: # 80 total
           │                          ╰── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:1846:9]
           │
      1846 │ ╭─▶         unchecked {
@@ -3707,7 +3715,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:1879:9]
           │
      1879 │ ╭─▶         unchecked {
@@ -3717,7 +3725,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:1906:9]
           │
      1906 │ ╭─▶         unchecked {
@@ -3727,7 +3735,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:1933:9]
           │
      1933 │ ╭─▶         unchecked {
@@ -3737,7 +3745,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:1985:13]
           │
      1985 │ ╭─▶             unchecked {
@@ -3747,7 +3755,15 @@ Errors: # 80 total
           │ ╰─────────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2044:19]
+          │
+     2044 │     IERC20 public immutable underlying;
+          │                   ──────────┬─────────  
+          │                             ╰─────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2152:9]
           │
      2152 │ ╭─▶         unchecked {
@@ -3757,7 +3773,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2254:9]
           │
      2254 │ ╭─▶         unchecked {
@@ -3767,7 +3783,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2270:9]
           │
      2270 │ ╭─▶         unchecked {
@@ -3777,7 +3793,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2282:9]
           │
      2282 │ ╭─▶         unchecked {
@@ -3787,7 +3803,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2323:9]
           │
      2323 │ ╭─▶         unchecked {
@@ -3797,7 +3813,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2335:9]
           │
      2335 │ ╭─▶         unchecked {
@@ -3807,7 +3823,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2372:9]
           │
      2372 │ ╭─▶         unchecked {
@@ -3817,7 +3833,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2386:9]
           │
      2386 │ ╭─▶         unchecked {
@@ -3827,7 +3843,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2415:9]
           │
      2415 │ ╭─▶         unchecked {
@@ -3837,7 +3853,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2433:9]
           │
      2433 │ ╭─▶         unchecked {
@@ -3847,7 +3863,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2456:9]
           │
      2456 │ ╭─▶         unchecked {
@@ -3857,7 +3873,55 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2713:21]
+          │
+     2713 │     bytes32 private immutable _CACHED_DOMAIN_SEPARATOR;
+          │                     ─────────────────┬────────────────  
+          │                                      ╰────────────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2714:21]
+          │
+     2714 │     uint256 private immutable _CACHED_CHAIN_ID;
+          │                     ─────────────┬────────────  
+          │                                  ╰────────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2715:21]
+          │
+     2715 │     address private immutable _CACHED_THIS;
+          │                     ───────────┬──────────  
+          │                                ╰──────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2717:21]
+          │
+     2717 │     bytes32 private immutable _HASHED_NAME;
+          │                     ───────────┬──────────  
+          │                                ╰──────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2718:21]
+          │
+     2718 │     bytes32 private immutable _HASHED_VERSION;
+          │                     ────────────┬────────────  
+          │                                 ╰────────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2719:21]
+          │
+     2719 │     bytes32 private immutable _TYPE_HASH;
+          │                     ──────────┬─────────  
+          │                               ╰─────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2811:9]
           │
      2811 │ ╭─▶         unchecked {
@@ -3867,7 +3931,7 @@ Errors: # 80 total
           │ ╰─────────── Error occurred here.
     ──────╯
   - >
-    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or DoubleQuotedUnicodeStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or SingleQuotedUnicodeStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or WhileKeyword.
           ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:2819:9]
           │
      2819 │ ╭─▶         unchecked {
@@ -3963,6 +4027,46 @@ Errors: # 80 total
      3054 │         revert Unsupported();
           │                           ─┬  
           │                            ╰── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:3079:21]
+          │
+     3079 │         IAMM public immutable override amm;
+          │                     ───────────┬──────────  
+          │                                ╰──────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:3080:19]
+          │
+     3080 │     IERC20 public immutable override collateralToken;
+          │                   ─────────────────┬────────────────  
+          │                                    ╰────────────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:3081:19]
+          │
+     3081 │     IERC20 public immutable override underlyingCollateralToken;
+          │                   ──────────────────────┬─────────────────────  
+          │                                         ╰─────────────────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:3082:28]
+          │
+     3082 │     IERC20Indexable public immutable override raftDebtToken;
+          │                            ────────────────┬───────────────  
+          │                                            ╰───────────────── Error occurred here.
+    ──────╯
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+          ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/big_example/input.sol:3083:28]
+          │
+     3083 │     IERC20Indexable public immutable override raftCollateralToken;
+          │                            ───────────────────┬──────────────────  
+          │                                               ╰──────────────────── Error occurred here.
     ──────╯
   - >
     Error: Expected Equal or Semicolon.
@@ -12921,18 +13025,12 @@ Tree:
                       - (leading_trivia꞉ EndOfLine): "\n" # (59608..59609)
                       - (leading_trivia꞉ Whitespace): "    " # (59609..59613)
                       - (address_keyword꞉ AddressKeyword): "address" # (59613..59620)
-                  - (attributes꞉ StateVariableAttributes): # " public immutable override" (59620..59646)
+                  - (attributes꞉ StateVariableAttributes): # " public" (59620..59627)
                       - (item꞉ StateVariableAttribute): # " public" (59620..59627)
                           - (leading_trivia꞉ Whitespace): " " # (59620..59621)
                           - (variant꞉ PublicKeyword): "public" # (59621..59627)
-                      - (item꞉ StateVariableAttribute): # " immutable" (59627..59637)
-                          - (leading_trivia꞉ Whitespace): " " # (59627..59628)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (59628..59637)
-                      - (item꞉ StateVariableAttribute) ► (variant꞉ OverrideSpecifier): # " override" (59637..59646)
-                          - (leading_trivia꞉ Whitespace): " " # (59637..59638)
-                          - (override_keyword꞉ OverrideKeyword): "override" # (59638..59646)
-                  - (leading_trivia꞉ Whitespace): " " # (59646..59647)
-                  - (name꞉ Identifier): "positionManager" # (59647..59662)
+                  - (leading_trivia꞉ Whitespace): " " # (59627..59628)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable override positionManager" # (59628..59662)
                   - (semicolon꞉ Semicolon): ";" # (59662..59663)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (59663..59664)
               - (item꞉ ContractMember) ► (variant꞉ ModifierDefinition): # "\n    // --- Modifiers ---\n\n    modifier onlyPositi..." (59664..59859)
@@ -15875,15 +15973,12 @@ Tree:
                   - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "    IERC20" (80303..80313)
                       - (leading_trivia꞉ Whitespace): "    " # (80303..80307)
                       - (item꞉ Identifier): "IERC20" # (80307..80313)
-                  - (attributes꞉ StateVariableAttributes): # " public immutable" (80313..80330)
+                  - (attributes꞉ StateVariableAttributes): # " public" (80313..80320)
                       - (item꞉ StateVariableAttribute): # " public" (80313..80320)
                           - (leading_trivia꞉ Whitespace): " " # (80313..80314)
                           - (variant꞉ PublicKeyword): "public" # (80314..80320)
-                      - (item꞉ StateVariableAttribute): # " immutable" (80320..80330)
-                          - (leading_trivia꞉ Whitespace): " " # (80320..80321)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (80321..80330)
-                  - (leading_trivia꞉ Whitespace): " " # (80330..80331)
-                  - (name꞉ Identifier): "underlying" # (80331..80341)
+                  - (leading_trivia꞉ Whitespace): " " # (80320..80321)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable underlying" # (80321..80341)
                   - (semicolon꞉ Semicolon): ";" # (80341..80342)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (80342..80343)
               - (item꞉ ContractMember) ► (variant꞉ ConstructorDefinition): # "\n    constructor(IERC20 underlyingToken) {\n       ..." (80343..80430)
@@ -19421,45 +19516,36 @@ Tree:
                       - (leading_trivia꞉ EndOfLine): "\n" # (105484..105485)
                       - (leading_trivia꞉ Whitespace): "    " # (105485..105489)
                       - (variant꞉ BytesKeyword): "bytes32" # (105489..105496)
-                  - (attributes꞉ StateVariableAttributes): # " private immutable" (105496..105514)
+                  - (attributes꞉ StateVariableAttributes): # " private" (105496..105504)
                       - (item꞉ StateVariableAttribute): # " private" (105496..105504)
                           - (leading_trivia꞉ Whitespace): " " # (105496..105497)
                           - (variant꞉ PrivateKeyword): "private" # (105497..105504)
-                      - (item꞉ StateVariableAttribute): # " immutable" (105504..105514)
-                          - (leading_trivia꞉ Whitespace): " " # (105504..105505)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (105505..105514)
-                  - (leading_trivia꞉ Whitespace): " " # (105514..105515)
-                  - (name꞉ Identifier): "_CACHED_DOMAIN_SEPARATOR" # (105515..105539)
+                  - (leading_trivia꞉ Whitespace): " " # (105504..105505)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable _CACHED_DOMAIN_SEPARATOR" # (105505..105539)
                   - (semicolon꞉ Semicolon): ";" # (105539..105540)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (105540..105541)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "    uint256 private immutable _CACHED_CHAIN_ID;\n" (105541..105589)
                   - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # "    uint256" (105541..105552)
                       - (leading_trivia꞉ Whitespace): "    " # (105541..105545)
                       - (variant꞉ UintKeyword): "uint256" # (105545..105552)
-                  - (attributes꞉ StateVariableAttributes): # " private immutable" (105552..105570)
+                  - (attributes꞉ StateVariableAttributes): # " private" (105552..105560)
                       - (item꞉ StateVariableAttribute): # " private" (105552..105560)
                           - (leading_trivia꞉ Whitespace): " " # (105552..105553)
                           - (variant꞉ PrivateKeyword): "private" # (105553..105560)
-                      - (item꞉ StateVariableAttribute): # " immutable" (105560..105570)
-                          - (leading_trivia꞉ Whitespace): " " # (105560..105561)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (105561..105570)
-                  - (leading_trivia꞉ Whitespace): " " # (105570..105571)
-                  - (name꞉ Identifier): "_CACHED_CHAIN_ID" # (105571..105587)
+                  - (leading_trivia꞉ Whitespace): " " # (105560..105561)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable _CACHED_CHAIN_ID" # (105561..105587)
                   - (semicolon꞉ Semicolon): ";" # (105587..105588)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (105588..105589)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "    address private immutable _CACHED_THIS;\n" (105589..105633)
                   - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType): # "    address" (105589..105600)
                       - (leading_trivia꞉ Whitespace): "    " # (105589..105593)
                       - (address_keyword꞉ AddressKeyword): "address" # (105593..105600)
-                  - (attributes꞉ StateVariableAttributes): # " private immutable" (105600..105618)
+                  - (attributes꞉ StateVariableAttributes): # " private" (105600..105608)
                       - (item꞉ StateVariableAttribute): # " private" (105600..105608)
                           - (leading_trivia꞉ Whitespace): " " # (105600..105601)
                           - (variant꞉ PrivateKeyword): "private" # (105601..105608)
-                      - (item꞉ StateVariableAttribute): # " immutable" (105608..105618)
-                          - (leading_trivia꞉ Whitespace): " " # (105608..105609)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (105609..105618)
-                  - (leading_trivia꞉ Whitespace): " " # (105618..105619)
-                  - (name꞉ Identifier): "_CACHED_THIS" # (105619..105631)
+                  - (leading_trivia꞉ Whitespace): " " # (105608..105609)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable _CACHED_THIS" # (105609..105631)
                   - (semicolon꞉ Semicolon): ";" # (105631..105632)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (105632..105633)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "\n    bytes32 private immutable _HASHED_NAME;\n" (105633..105678)
@@ -19467,45 +19553,36 @@ Tree:
                       - (leading_trivia꞉ EndOfLine): "\n" # (105633..105634)
                       - (leading_trivia꞉ Whitespace): "    " # (105634..105638)
                       - (variant꞉ BytesKeyword): "bytes32" # (105638..105645)
-                  - (attributes꞉ StateVariableAttributes): # " private immutable" (105645..105663)
+                  - (attributes꞉ StateVariableAttributes): # " private" (105645..105653)
                       - (item꞉ StateVariableAttribute): # " private" (105645..105653)
                           - (leading_trivia꞉ Whitespace): " " # (105645..105646)
                           - (variant꞉ PrivateKeyword): "private" # (105646..105653)
-                      - (item꞉ StateVariableAttribute): # " immutable" (105653..105663)
-                          - (leading_trivia꞉ Whitespace): " " # (105653..105654)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (105654..105663)
-                  - (leading_trivia꞉ Whitespace): " " # (105663..105664)
-                  - (name꞉ Identifier): "_HASHED_NAME" # (105664..105676)
+                  - (leading_trivia꞉ Whitespace): " " # (105653..105654)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable _HASHED_NAME" # (105654..105676)
                   - (semicolon꞉ Semicolon): ";" # (105676..105677)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (105677..105678)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "    bytes32 private immutable _HASHED_VERSION;\n" (105678..105725)
                   - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # "    bytes32" (105678..105689)
                       - (leading_trivia꞉ Whitespace): "    " # (105678..105682)
                       - (variant꞉ BytesKeyword): "bytes32" # (105682..105689)
-                  - (attributes꞉ StateVariableAttributes): # " private immutable" (105689..105707)
+                  - (attributes꞉ StateVariableAttributes): # " private" (105689..105697)
                       - (item꞉ StateVariableAttribute): # " private" (105689..105697)
                           - (leading_trivia꞉ Whitespace): " " # (105689..105690)
                           - (variant꞉ PrivateKeyword): "private" # (105690..105697)
-                      - (item꞉ StateVariableAttribute): # " immutable" (105697..105707)
-                          - (leading_trivia꞉ Whitespace): " " # (105697..105698)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (105698..105707)
-                  - (leading_trivia꞉ Whitespace): " " # (105707..105708)
-                  - (name꞉ Identifier): "_HASHED_VERSION" # (105708..105723)
+                  - (leading_trivia꞉ Whitespace): " " # (105697..105698)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable _HASHED_VERSION" # (105698..105723)
                   - (semicolon꞉ Semicolon): ";" # (105723..105724)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (105724..105725)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "    bytes32 private immutable _TYPE_HASH;\n" (105725..105767)
                   - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # "    bytes32" (105725..105736)
                       - (leading_trivia꞉ Whitespace): "    " # (105725..105729)
                       - (variant꞉ BytesKeyword): "bytes32" # (105729..105736)
-                  - (attributes꞉ StateVariableAttributes): # " private immutable" (105736..105754)
+                  - (attributes꞉ StateVariableAttributes): # " private" (105736..105744)
                       - (item꞉ StateVariableAttribute): # " private" (105736..105744)
                           - (leading_trivia꞉ Whitespace): " " # (105736..105737)
                           - (variant꞉ PrivateKeyword): "private" # (105737..105744)
-                      - (item꞉ StateVariableAttribute): # " immutable" (105744..105754)
-                          - (leading_trivia꞉ Whitespace): " " # (105744..105745)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (105745..105754)
-                  - (leading_trivia꞉ Whitespace): " " # (105754..105755)
-                  - (name꞉ Identifier): "_TYPE_HASH" # (105755..105765)
+                  - (leading_trivia꞉ Whitespace): " " # (105744..105745)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable _TYPE_HASH" # (105745..105765)
                   - (semicolon꞉ Semicolon): ";" # (105765..105766)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (105766..105767)
               - (item꞉ ContractMember) ► (variant꞉ ConstructorDefinition): # "\n    /* solhint-enable var-name-mixedcase */\n\n    ..." (105767..106976)
@@ -22453,90 +22530,60 @@ Tree:
                       - (leading_trivia꞉ EndOfLine): "\n" # (118175..118176)
                       - (leading_trivia꞉ Whitespace): "        " # (118176..118184)
                       - (item꞉ Identifier): "IAMM" # (118184..118188)
-                  - (attributes꞉ StateVariableAttributes): # " public immutable override" (118188..118214)
+                  - (attributes꞉ StateVariableAttributes): # " public" (118188..118195)
                       - (item꞉ StateVariableAttribute): # " public" (118188..118195)
                           - (leading_trivia꞉ Whitespace): " " # (118188..118189)
                           - (variant꞉ PublicKeyword): "public" # (118189..118195)
-                      - (item꞉ StateVariableAttribute): # " immutable" (118195..118205)
-                          - (leading_trivia꞉ Whitespace): " " # (118195..118196)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (118196..118205)
-                      - (item꞉ StateVariableAttribute) ► (variant꞉ OverrideSpecifier): # " override" (118205..118214)
-                          - (leading_trivia꞉ Whitespace): " " # (118205..118206)
-                          - (override_keyword꞉ OverrideKeyword): "override" # (118206..118214)
-                  - (leading_trivia꞉ Whitespace): " " # (118214..118215)
-                  - (name꞉ Identifier): "amm" # (118215..118218)
+                  - (leading_trivia꞉ Whitespace): " " # (118195..118196)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable override amm" # (118196..118218)
                   - (semicolon꞉ Semicolon): ";" # (118218..118219)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (118219..118220)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "    IERC20 public immutable override collateralTok..." (118220..118274)
                   - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "    IERC20" (118220..118230)
                       - (leading_trivia꞉ Whitespace): "    " # (118220..118224)
                       - (item꞉ Identifier): "IERC20" # (118224..118230)
-                  - (attributes꞉ StateVariableAttributes): # " public immutable override" (118230..118256)
+                  - (attributes꞉ StateVariableAttributes): # " public" (118230..118237)
                       - (item꞉ StateVariableAttribute): # " public" (118230..118237)
                           - (leading_trivia꞉ Whitespace): " " # (118230..118231)
                           - (variant꞉ PublicKeyword): "public" # (118231..118237)
-                      - (item꞉ StateVariableAttribute): # " immutable" (118237..118247)
-                          - (leading_trivia꞉ Whitespace): " " # (118237..118238)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (118238..118247)
-                      - (item꞉ StateVariableAttribute) ► (variant꞉ OverrideSpecifier): # " override" (118247..118256)
-                          - (leading_trivia꞉ Whitespace): " " # (118247..118248)
-                          - (override_keyword꞉ OverrideKeyword): "override" # (118248..118256)
-                  - (leading_trivia꞉ Whitespace): " " # (118256..118257)
-                  - (name꞉ Identifier): "collateralToken" # (118257..118272)
+                  - (leading_trivia꞉ Whitespace): " " # (118237..118238)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable override collateralToken" # (118238..118272)
                   - (semicolon꞉ Semicolon): ";" # (118272..118273)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (118273..118274)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "    IERC20 public immutable override underlyingCol..." (118274..118338)
                   - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "    IERC20" (118274..118284)
                       - (leading_trivia꞉ Whitespace): "    " # (118274..118278)
                       - (item꞉ Identifier): "IERC20" # (118278..118284)
-                  - (attributes꞉ StateVariableAttributes): # " public immutable override" (118284..118310)
+                  - (attributes꞉ StateVariableAttributes): # " public" (118284..118291)
                       - (item꞉ StateVariableAttribute): # " public" (118284..118291)
                           - (leading_trivia꞉ Whitespace): " " # (118284..118285)
                           - (variant꞉ PublicKeyword): "public" # (118285..118291)
-                      - (item꞉ StateVariableAttribute): # " immutable" (118291..118301)
-                          - (leading_trivia꞉ Whitespace): " " # (118291..118292)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (118292..118301)
-                      - (item꞉ StateVariableAttribute) ► (variant꞉ OverrideSpecifier): # " override" (118301..118310)
-                          - (leading_trivia꞉ Whitespace): " " # (118301..118302)
-                          - (override_keyword꞉ OverrideKeyword): "override" # (118302..118310)
-                  - (leading_trivia꞉ Whitespace): " " # (118310..118311)
-                  - (name꞉ Identifier): "underlyingCollateralToken" # (118311..118336)
+                  - (leading_trivia꞉ Whitespace): " " # (118291..118292)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable override underlyingCollateralToken" # (118292..118336)
                   - (semicolon꞉ Semicolon): ";" # (118336..118337)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (118337..118338)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "    IERC20Indexable public immutable override raft..." (118338..118399)
                   - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "    IERC20Indexable" (118338..118357)
                       - (leading_trivia꞉ Whitespace): "    " # (118338..118342)
                       - (item꞉ Identifier): "IERC20Indexable" # (118342..118357)
-                  - (attributes꞉ StateVariableAttributes): # " public immutable override" (118357..118383)
+                  - (attributes꞉ StateVariableAttributes): # " public" (118357..118364)
                       - (item꞉ StateVariableAttribute): # " public" (118357..118364)
                           - (leading_trivia꞉ Whitespace): " " # (118357..118358)
                           - (variant꞉ PublicKeyword): "public" # (118358..118364)
-                      - (item꞉ StateVariableAttribute): # " immutable" (118364..118374)
-                          - (leading_trivia꞉ Whitespace): " " # (118364..118365)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (118365..118374)
-                      - (item꞉ StateVariableAttribute) ► (variant꞉ OverrideSpecifier): # " override" (118374..118383)
-                          - (leading_trivia꞉ Whitespace): " " # (118374..118375)
-                          - (override_keyword꞉ OverrideKeyword): "override" # (118375..118383)
-                  - (leading_trivia꞉ Whitespace): " " # (118383..118384)
-                  - (name꞉ Identifier): "raftDebtToken" # (118384..118397)
+                  - (leading_trivia꞉ Whitespace): " " # (118364..118365)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable override raftDebtToken" # (118365..118397)
                   - (semicolon꞉ Semicolon): ";" # (118397..118398)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (118398..118399)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "    IERC20Indexable public immutable override raft..." (118399..118466)
                   - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "    IERC20Indexable" (118399..118418)
                       - (leading_trivia꞉ Whitespace): "    " # (118399..118403)
                       - (item꞉ Identifier): "IERC20Indexable" # (118403..118418)
-                  - (attributes꞉ StateVariableAttributes): # " public immutable override" (118418..118444)
+                  - (attributes꞉ StateVariableAttributes): # " public" (118418..118425)
                       - (item꞉ StateVariableAttribute): # " public" (118418..118425)
                           - (leading_trivia꞉ Whitespace): " " # (118418..118419)
                           - (variant꞉ PublicKeyword): "public" # (118419..118425)
-                      - (item꞉ StateVariableAttribute): # " immutable" (118425..118435)
-                          - (leading_trivia꞉ Whitespace): " " # (118425..118426)
-                          - (variant꞉ ImmutableKeyword): "immutable" # (118426..118435)
-                      - (item꞉ StateVariableAttribute) ► (variant꞉ OverrideSpecifier): # " override" (118435..118444)
-                          - (leading_trivia꞉ Whitespace): " " # (118435..118436)
-                          - (override_keyword꞉ OverrideKeyword): "override" # (118436..118444)
-                  - (leading_trivia꞉ Whitespace): " " # (118444..118445)
-                  - (name꞉ Identifier): "raftCollateralToken" # (118445..118464)
+                  - (leading_trivia꞉ Whitespace): " " # (118425..118426)
+                  - (unrecognized꞉ UNRECOGNIZED): "immutable override raftCollateralToken" # (118426..118464)
                   - (semicolon꞉ Semicolon): ";" # (118464..118465)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (118465..118466)
               - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "\n    uint256 public constant override MAX_LEFTOVER..." (118466..118527)
