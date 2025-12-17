@@ -153,8 +153,9 @@ impl<'a> ParserBuilder<'a> {
         };
 
         // Remove all rules that we generate by hand, a bit hacky
-        const EXCLUDED_ITEMS: [&str; 63] = [
-            "ContractSpecifier",
+        const EXCLUDED_ITEMS: [&str; 64] = [
+            "ContractSpecifiers",
+            "ContractDefinition",
             "StateVariableDefinition",
             "TypeName0",
             "TypeName1",
