@@ -184,11 +184,16 @@ impl ContractDefinitionStruct {
     }
 
     pub fn linearised_bases(&self) -> Vec<ContractBase> {
-        let base_node_ids = self
+        let Some(base_node_ids) = self
             .semantic
             .binder()
             .get_linearised_bases(self.ir_node.node_id)
-            .expect("Contract should be linearised");
+        else {
+            // TODO(validation): once we have validation implemented, this
+            // branch should not be reachable, or we should generate an error
+            // while building the `SemanticAnalysis`.
+            return Vec::new();
+        };
         base_node_ids
             .iter()
             .map(|node_id| {
