@@ -5869,6 +5869,7 @@ impl TupleDeconstructionMemberStruct {
 //
 // Repeated & Separated
 //
+
 pub type SourceUnitMembers = Rc<SourceUnitMembersStruct>;
 
 pub struct SourceUnitMembersStruct {
@@ -6105,7 +6106,6 @@ pub type EnumMembers = Rc<EnumMembersStruct>;
 
 pub struct EnumMembersStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -6326,7 +6326,6 @@ pub type IdentifierPath = Rc<IdentifierPathStruct>;
 
 pub struct IdentifierPathStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -6371,7 +6370,6 @@ pub type YulParameters = Rc<YulParametersStruct>;
 
 pub struct YulParametersStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -6394,7 +6392,6 @@ pub type YulVariableNames = Rc<YulVariableNamesStruct>;
 
 pub struct YulVariableNamesStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-
     semantic: Rc<SemanticAnalysis>,
 }
 
@@ -6483,7 +6480,6 @@ pub type YulPath = Rc<YulPathStruct>;
 
 pub struct YulPathStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-
     semantic: Rc<SemanticAnalysis>,
 }
 

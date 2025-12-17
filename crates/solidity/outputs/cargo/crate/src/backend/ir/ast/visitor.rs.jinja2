@@ -27,6 +27,7 @@ pub trait Visitor {
     {% endif -%}
   {% endfor -%}
 
+  // Terminal types that are visited
   fn visit_identifier(&mut self, _node: &Identifier) {}
   fn visit_yul_identifier(&mut self, _node: &YulIdentifier) {}
 }
@@ -70,10 +71,18 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
 // Choices:
 //
 
+{% macro render_accept_variant(variant) %}
+  accept_{{ variant.name | snake_case }}(
+    &node.as_{{ variant.name | snake_case }}().unwrap(),
+    visitor,
+  );
+{% endmacro render_accept_variant %}
+
 {% for parent_type, choice in target.choices %}
   {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
   {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
   {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
+
   {% if (nonterminals | length == 0) and (non_unique_terminals | length == 0) %}
     pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
   {% else %}
@@ -90,17 +99,11 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
             {%- if custom_types is containing(nonterminal.name) or
                    target.sequences is containing(nonterminal.name) or
                    target.choices is containing(nonterminal.name) -%}
-              accept_{{ nonterminal.name | snake_case }}(
-                &node.as_{{ nonterminal.name | snake_case }}().unwrap(),
-                visitor,
-              );
+              {{ self::render_accept_variant(variant = nonterminal) }}
             {%- elif target.collections is containing(nonterminal.name) -%}
               {%- set item_type = target.collections[nonterminal.name].item_type -%}
               {% if custom_types is containing(item_type.name) or not item_type.is_terminal %}
-                accept_{{ nonterminal.name | snake_case }}(
-                  &node.as_{{ nonterminal.name | snake_case }}().unwrap(),
-                  visitor,
-                );
+                {{ self::render_accept_variant(variant = nonterminal) }}
               {% endif %}
             {%- endif -%}
           }
@@ -108,10 +111,7 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
         {% for terminal in non_unique_terminals -%}
           input_ir::{{ parent_type }}::{{ terminal.name }}(_) => {
             {%- if custom_types is containing(terminal.name) %}
-              accept_{{ terminal.name | snake_case }}(
-                &node.as_{{ terminal.name | snake_case }}().unwrap(),
-                visitor,
-              );
+              {{ self::render_accept_variant(variant = terminal) }}
             {%- endif %}
           }
         {%- endfor %}
@@ -129,16 +129,19 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
 //
 
 {% for parent_type, collection in target.collections -%}
-  {%- if collection.item_type.is_terminal and custom_types is not containing(collection.item_type.name) %}
-    pub fn accept_{{ parent_type | snake_case }}(items: &[Rc<TerminalNode>], visitor: &mut impl Visitor) {
+  {%- if custom_types is containing(collection.item_type.name) or
+         not collection.item_type.is_terminal %}
+    {% set actual_type = parent_type %}
+    {% set visit_items = True %}
   {% else %}
-    pub fn accept_{{ parent_type | snake_case }}(items: &{{ parent_type }}, visitor: &mut impl Visitor) {
+    {% set actual_type = "[Rc<TerminalNode>]" %}
   {%- endif %}
+
+  pub fn accept_{{ parent_type | snake_case }}(items: &{{ actual_type }}, visitor: &mut impl Visitor) {
     if !visitor.enter_{{ parent_type | snake_case }}(items) {
       return;
     }
-    {%- if not collection.item_type.is_terminal or
-           custom_types is containing(collection.item_type.name) %}
+    {%- if visit_items %}
       for item in items.iter() {
         accept_{{ collection.item_type.name | snake_case }}(&item, visitor);
       }

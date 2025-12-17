@@ -866,6 +866,7 @@ pub trait Visitor {
         true
     }
     fn leave_tuple_deconstruction_members(&mut self, _items: &TupleDeconstructionMembers) {}
+    // Terminal types that are visited
     fn visit_identifier(&mut self, _node: &Identifier) {}
     fn visit_yul_identifier(&mut self, _node: &YulIdentifier) {}
 }
