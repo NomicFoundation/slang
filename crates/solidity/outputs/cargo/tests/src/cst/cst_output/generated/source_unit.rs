@@ -62,6 +62,11 @@ fn everything() -> Result<()> {
 }
 
 #[test]
+fn layout_at() -> Result<()> {
+    run(T, "layout_at")
+}
+
+#[test]
 fn leading_trivia_multi_line() -> Result<()> {
     run(T, "leading_trivia_multi_line")
 }

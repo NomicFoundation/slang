@@ -280,13 +280,13 @@ pub fn new_expression_identifier_path<'arena>(
     arena: &'arena Bump,
     identifier_path: IdentifierPath<'arena>,
 ) -> Expression<'arena> {
-    identifier_path
-        .elements
-        .into_iter()
-        .fold(None, |acc, id| {
-            Some(match acc {
-                None => new_expression_identifier(arena, id),
-                Some(acc) => new_expression_member_access_expression(
+    let IdentifierPathStruct { head, tail } = Box::into_inner(identifier_path);
+    match tail {
+        None => new_expression_identifier(arena, head),
+        Some(tail) => Box::into_inner(tail).elements.elements.into_iter().fold(
+            new_expression_identifier(arena, head),
+            |acc, id| {
+                new_expression_member_access_expression(
                     arena,
                     new_member_access_expression(
                         arena,
@@ -296,12 +296,19 @@ pub fn new_expression_identifier_path<'arena>(
                             r: 0,
                             phantom: std::marker::PhantomData,
                         },
-                        new_member_access_identifier_identifier(arena, id),
+                        match id {
+                            MemberAccessIdentifier::AddressKeyword(ak) => {
+                                new_member_access_identifier_address_keyword(arena, ak)
+                            }
+                            MemberAccessIdentifier::Identifier(id) => {
+                                new_member_access_identifier_identifier(arena, id)
+                            }
+                        },
                     ),
-                ),
-            })
-        })
-        .expect("There is at least one element in the identifier path")
+                )
+            },
+        ),
+    }
 }
 
 /// We use this function to share attributes between a state variable that has a function type.

@@ -1517,7 +1517,15 @@ RepOne<T>: Vec<'arena, T> = {
 
 // Rules for topic Identifiers
     IdentifierPath: IdentifierPath<'arena> = {
-        <_Identifier: SepOne<Period, <Identifier>>>  => new_identifier_path(arena, <>),
+        <_head: Identifier>  <_tail: (IdentifierPathTail)?>  => new_identifier_path(arena, <>),
+        
+    };
+    IdentifierPathTail: IdentifierPathTail<'arena> = {
+        <_sep: Period>  <_elements: IdentifierPathTailElements>  => new_identifier_path_tail(arena, <>),
+        
+    };
+    IdentifierPathTailElements: IdentifierPathTailElements<'arena> = {
+        <_MemberAccessIdentifier: SepOne<Period, <MemberAccessIdentifier>>>  => new_identifier_path_tail_elements(arena, <>),
         
     };
     

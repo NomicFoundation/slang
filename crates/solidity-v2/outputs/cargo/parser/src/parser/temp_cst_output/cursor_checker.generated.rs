@@ -4165,6 +4165,54 @@ impl<'arena> NodeChecker for HexNumberExpression<'arena> {
     }
 }
 
+impl<'arena> NodeChecker for IdentifierPath<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::IdentifierPath) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be {}, but it was {}",
+                NonterminalKind::IdentifierPath,
+                node.kind()
+            ))];
+        }
+
+        let mut children = node.children().to_vec();
+        remove_trivia(&mut children);
+
+        let tail_len = self
+            .tail
+            .as_ref()
+            .map_or(0, |tail| tail.elements.elements.len());
+
+        if children.len() != 1 + tail_len {
+            return vec![NodeCheckerError::new(format!(
+                "Expected {} elements, but got: {:#?}",
+                1 + tail_len,
+                children
+            ))];
+        }
+
+        let mut errors = vec![];
+
+        for (i, child) in children.iter().enumerate() {
+            if i == 0 {
+                // head
+                let head = &self.head;
+                let child_errors = head.check_node(child);
+                errors.extend(child_errors);
+                continue;
+            }
+            // tail elements
+
+            let element = &self.tail.as_ref().unwrap().elements.elements[i - 1];
+            errors.extend(element.check_node(child));
+        }
+        errors
+    }
+}
+
+// We skip NodeChecker for IdentifierPathTail
+
 impl<'arena> NodeChecker for IfStatement<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::IfStatement) {
@@ -15250,37 +15298,7 @@ impl<'arena> NodeChecker for HexStringLiterals<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for IdentifierPath<'arena> {
-    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::IdentifierPath) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(format!(
-                "Expected node kind to be {}, but it was {}",
-                NonterminalKind::IdentifierPath,
-                node.kind()
-            ))];
-        }
-
-        let mut children = node.children().to_vec();
-        remove_trivia(&mut children);
-
-        if children.len() != self.elements.len() {
-            return vec![NodeCheckerError::new(format!(
-                "Expected {} elements, but got: {:#?}",
-                self.elements.len(),
-                children
-            ))];
-        }
-
-        let mut errors = vec![];
-
-        for (i, child) in children.iter().enumerate() {
-            let element = &self.elements[i];
-            errors.extend(element.check_node(child));
-        }
-        errors
-    }
-}
+// Skip NodeChecker for IdentifierPathTailElements
 
 impl<'arena> NodeChecker for ImportDeconstructionSymbols<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {

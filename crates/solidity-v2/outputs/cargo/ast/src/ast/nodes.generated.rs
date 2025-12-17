@@ -1151,6 +1151,38 @@ pub fn new_hex_number_expression<'arena>(
     Box::new_in(HexNumberExpressionStruct { literal, unit }, arena)
 }
 
+pub type IdentifierPath<'arena> = Box<'arena, IdentifierPathStruct<'arena>>;
+
+#[derive(Debug)]
+pub struct IdentifierPathStruct<'arena> {
+    pub head: Identifier<'arena>,
+    pub tail: Option<IdentifierPathTail<'arena>>,
+}
+
+pub fn new_identifier_path<'arena>(
+    arena: &'arena Bump,
+    head: Identifier<'arena>,
+    tail: Option<IdentifierPathTail<'arena>>,
+) -> IdentifierPath<'arena> {
+    Box::new_in(IdentifierPathStruct { head, tail }, arena)
+}
+
+pub type IdentifierPathTail<'arena> = Box<'arena, IdentifierPathTailStruct<'arena>>;
+
+#[derive(Debug)]
+pub struct IdentifierPathTailStruct<'arena> {
+    pub sep: Period<'arena>,
+    pub elements: IdentifierPathTailElements<'arena>,
+}
+
+pub fn new_identifier_path_tail<'arena>(
+    arena: &'arena Bump,
+    sep: Period<'arena>,
+    elements: IdentifierPathTailElements<'arena>,
+) -> IdentifierPathTail<'arena> {
+    Box::new_in(IdentifierPathTailStruct { sep, elements }, arena)
+}
+
 pub type IfStatement<'arena> = Box<'arena, IfStatementStruct<'arena>>;
 
 #[derive(Debug)]
@@ -6040,15 +6072,15 @@ pub fn new_hex_string_literals<'arena>(
 }
 
 #[derive(Debug)]
-pub struct IdentifierPath<'arena> {
-    pub elements: Vec<'arena, Identifier<'arena>>,
+pub struct IdentifierPathTailElements<'arena> {
+    pub elements: Vec<'arena, MemberAccessIdentifier<'arena>>,
 }
 
-pub fn new_identifier_path<'arena>(
+pub fn new_identifier_path_tail_elements<'arena>(
     arena: &'arena Bump,
-    elements: Vec<'arena, Identifier<'arena>>,
-) -> IdentifierPath<'arena> {
-    IdentifierPath { elements }
+    elements: Vec<'arena, MemberAccessIdentifier<'arena>>,
+) -> IdentifierPathTailElements<'arena> {
+    IdentifierPathTailElements { elements }
 }
 
 #[derive(Debug)]

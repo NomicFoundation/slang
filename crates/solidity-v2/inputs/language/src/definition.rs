@@ -4086,9 +4086,23 @@ language_v2_macros::compile!(Language(
                     title = "Identifiers",
                     lexical_context = Solidity,
                     items = [
-                        Separated(
+                        Struct(
                             name = IdentifierPath,
-                            reference = Identifier,
+                            fields = (
+                                head = Required(Identifier),
+                                tail = Optional(reference = IdentifierPathTail)
+                            )
+                        ),
+                        Struct(
+                            name = IdentifierPathTail,
+                            fields = (
+                                sep = Required(Period),
+                                elements = Required(IdentifierPathTailElements)
+                            )
+                        ),
+                        Separated(
+                            name = IdentifierPathTailElements,
+                            reference = MemberAccessIdentifier,
                             separator = Period
                         ),
                         Token(

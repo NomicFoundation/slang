@@ -262,6 +262,11 @@ fn member_access_address() -> Result<()> {
 }
 
 #[test]
+fn member_access_addresses() -> Result<()> {
+    run(T, "member_access_addresses")
+}
+
+#[test]
 fn member_access_chain() -> Result<()> {
     run(T, "member_access_chain")
 }
