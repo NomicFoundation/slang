@@ -153,7 +153,8 @@ impl<'a> ParserBuilder<'a> {
         };
 
         // Remove all rules that we generate by hand, a bit hacky
-        const EXCLUDED_ITEMS: [&str; 61] = [
+        const EXCLUDED_ITEMS: [&str; 63] = [
+            "ContractSpecifier",
             "StateVariableDefinition",
             "TypeName0",
             "TypeName1",
@@ -215,6 +216,7 @@ impl<'a> ParserBuilder<'a> {
             "OrExpression",
             "ConditionalExpression",
             "AssignmentExpression",
+            "TryStatement",
         ];
 
         items.retain(|item| !EXCLUDED_ITEMS.contains(&(*item.name).as_str()));

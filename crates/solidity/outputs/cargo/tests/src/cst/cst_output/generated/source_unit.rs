@@ -142,6 +142,21 @@ fn trailing_trivia_only_until_newline() -> Result<()> {
 }
 
 #[test]
+fn try_options() -> Result<()> {
+    run(T, "try_options")
+}
+
+#[test]
+fn try_options_2() -> Result<()> {
+    run(T, "try_options_2")
+}
+
+#[test]
+fn try_options_3() -> Result<()> {
+    run(T, "try_options_3")
+}
+
+#[test]
 fn unreserved_keywords() -> Result<()> {
     run(T, "unreserved_keywords")
 }

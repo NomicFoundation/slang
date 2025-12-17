@@ -862,11 +862,6 @@ RepOne<T>: Vec<'arena, T> = {
         <_ContractSpecifier: Rep<<ContractSpecifier>>>  => new_contract_specifiers(arena, <>),
         
     };
-    ContractSpecifier: ContractSpecifier<'arena> = {
-        <_InheritanceSpecifier: InheritanceSpecifier>  => new_contract_specifier_inheritance_specifier(arena, <>),
-        <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => new_contract_specifier_storage_layout_specifier(arena, <>),
-        
-    };
     InheritanceSpecifier: InheritanceSpecifier<'arena> = {
         <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => new_inheritance_specifier(arena, <>),
         
@@ -1313,10 +1308,6 @@ RepOne<T>: Vec<'arena, T> = {
     
 
 // Rules for topic Error Handling
-    TryStatement: TryStatement<'arena> = {
-        <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)?>  <_body: Block>  <_catch_clauses: CatchClauses>  => new_try_statement(arena, <>),
-        
-    };
     CatchClauses: CatchClauses<'arena> = {
         <_CatchClause: RepOne<<CatchClause>>>  => new_catch_clauses(arena, <>),
         
@@ -4786,6 +4777,17 @@ extern {
 
 // ODOT
 
+    TryStatement: TryStatement<'arena> = {
+        <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
+            new_try_statement(arena, _try_keyword, _expression, Some(_returns), _body, _catch_clauses)
+        },
+        <_try_keyword: TryKeyword>  <_expression: ExpressionDanglingBlock>   <_catch_clauses: CatchClauses>  => {
+            let (expr, body) = _expression;
+            new_try_statement(arena, _try_keyword, expr, None, body, _catch_clauses)
+        },
+        
+    };
+
 
 
 // TODO[3] IfStatement now tracks whether it has a dangling If, and only allows
@@ -4879,7 +4881,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
         // https://github.com/argotorg/solidity/blob/0f6d9db4987d91c9ccaf991b6a1a6515655ed745/libsolidity/parsing/Parser.cpp#L2332-L2349
         // I'm still unsure how to solve this, so not worrying for now
 
-            //<_Expression: Expression1<"True", "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(arena, new_call_options_expression(arena, <>)),
+            <_Expression: Expression1<"True", "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(arena, new_call_options_expression(arena, <>)),
          
             <_Expression: Expression1<"True", "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(arena, new_function_call_expression(arena, <>)),
          
@@ -5003,6 +5005,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
 
 
 
+
 // TODO[4] These are the new tuples, we get a prototuple that can be a pattern/declaration
 // or a tuple value, we then disambigguate
 
@@ -5066,4 +5069,180 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
         
     };
 // ODOT
+
+    // We simplifiy all these levels of expressions into a single one, there's no need
+    // for precedence here
+    Expression1DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <Expression: Expression1<"True", "True">> <b: Block>  => {
+                (Expression, b)
+            },
+        
+    };
+    Expression5DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5DB>  => {
+                let (expr, block) = _Expression;
+                (new_expression_prefix_expression(arena, new_prefix_expression(arena, _Expression_PrefixExpression_Operator, expr)), block)
+            },
+         
+            <Expression: Expression1DB>  => <>,
+        
+    };
+    Expression6DB: (Expression<'arena>, Block<'arena>) = {
+         
+            // Not sure what happens here, should I get a block?
+            <_Expression: Expression6<"True">>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <b: Block>  => {
+                (new_expression_postfix_expression(arena, new_postfix_expression(arena, _Expression, _Expression_PostfixExpression_Operator)), b)
+            },
+         
+            <Expression: Expression5DB>  => <>,
+        
+    };
+    Expression7DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression6<"True">>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, _Expression, _operator, e)), db)
+            },
+         
+            <Expression: Expression6DB>  => <>,
+        
+    };
+    Expression8DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression8<"True">>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7DB>  =>  {
+                let (e, db) = _Expression_2;
+                (new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, _Expression, _Expression_MultiplicativeExpression_Operator, e)), db)
+            },
+         
+            <Expression: Expression7DB>  => <>,
+        
+    };
+    Expression9DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression9<"True">>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_additive_expression(arena, new_additive_expression(arena, _Expression, _Expression_AdditiveExpression_Operator, e)), db)
+            },
+         
+            <Expression: Expression8DB>  => <>,
+        
+    };
+    Expression10DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression10<"True">>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_shift_expression(arena, new_shift_expression(arena, _Expression, _Expression_ShiftExpression_Operator, e)), db)
+            },
+         
+            <Expression: Expression9DB>  => <>,
+        
+    };
+    Expression11DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression11<"True">>  <_operator: Ampersand>  <_Expression_2: Expression10DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_bitwise_and_expression(arena, new_bitwise_and_expression(arena, _Expression, _operator, e)), db)
+            },
+         
+            <Expression: Expression10DB>  => <>,
+        
+    };
+    Expression12DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression12<"True">>  <_operator: Caret>  <_Expression_2: Expression11DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_bitwise_xor_expression(arena, new_bitwise_xor_expression(arena, _Expression, _operator, e)), db)
+            },
+         
+            <Expression: Expression11DB>  => <>,
+        
+    };
+    Expression13DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression13<"True">>  <_operator: Bar>  <_Expression_2: Expression12DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_bitwise_or_expression(arena, new_bitwise_or_expression(arena, _Expression, _operator, e)), db)
+            },
+         
+            <Expression: Expression12DB>  => <>,
+        
+    };
+    Expression14DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression14<"True">>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_inequality_expression(arena, new_inequality_expression(arena, _Expression, _Expression_InequalityExpression_Operator, e)), db)
+            },
+         
+            <Expression: Expression13DB>  => <>,
+        
+    };
+    Expression15DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression15<"True">>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_equality_expression(arena, new_equality_expression(arena, _Expression, _Expression_EqualityExpression_Operator, e)), db)
+            },  
+         
+            <Expression: Expression14DB>  => <>,
+        
+    };
+    Expression16DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression16<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_and_expression(arena, new_and_expression(arena, _Expression, _operator, e)), db)
+            },  
+         
+            <Expression: Expression15DB>  => <>,
+        
+    };
+    Expression17DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression17<"True">>  <_operator: BarBar>  <_Expression_2: Expression16DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_or_expression(arena, new_or_expression(arena, _Expression, _operator, e)), db)
+            },
+         
+            <Expression: Expression16DB>  => <>,
+        
+    };
+    
+    Expression18DB: (Expression<'arena>, Block<'arena>) = {
+        // TODO: Not really sure the associativity is correct, we need to check
+         
+            <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18DB>  => {
+                let (e, db) = _false_expression;
+                (new_expression_conditional_expression(arena, new_conditional_expression(arena, _Expression, _question_mark, _true_expression, _colon, e)), db)
+            },  
+         
+            <Expression: Expression17DB>  => <>,
+        
+    };
+    Expression19DB: (Expression<'arena>, Block<'arena>) = {
+         
+            <_Expression: Expression19<"True">>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18DB>  => {
+                let (e, db) = _Expression_2;
+                (new_expression_assignment_expression(arena, new_assignment_expression(arena, _Expression, _Expression_AssignmentExpression_Operator, e)), db)
+            },
+         
+            <Expression: Expression18DB>  => <>,
+        
+    };
+
+    // TODO(v2): We're making this pub to allow testing Expressions
+    ExpressionDanglingBlock: (Expression<'arena>, Block<'arena>) = {
+         
+            <Expression: Expression19DB>  => <>,
+        
+    };
+
+        ContractSpecifier: ContractSpecifier<'arena> = {
+        <_InheritanceSpecifier: InheritanceSpecifier>  => new_contract_specifier_inheritance_specifier(arena, <>),
+//        <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => new_contract_specifier_storage_layout_specifier(arena, <>),
+        
+    };
+
 
