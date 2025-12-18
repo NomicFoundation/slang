@@ -1,5 +1,5 @@
 //! This model abstracts away some details from our language definition in order to
-//! facilitate generation of AST structures
+//! facilitate generation of CST structures
 //!
 //! Note: This is a copy of the model in v1 (crates/codegen/generator/src/ir/model.rs) with
 //! some small changes
