@@ -1,6 +1,6 @@
 [package]
-name = "codegen_v2_ast"
-description = "Utilities to generate an AST from a language definition."
+name = "codegen_v2_cst"
+description = "Utilities to generate a structured CST from a language definition."
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
