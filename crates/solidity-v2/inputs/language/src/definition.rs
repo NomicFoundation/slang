@@ -3477,7 +3477,7 @@ language_v2_macros::compile!(Language(
                                         // In '0.8.0', it became right-associative:
                                         PrecedenceOperator(
                                             model = BinaryRightAssociative,
-                                            // enabled = From("0.8.0"),
+                                            enabled = From("0.8.0"),
                                             fields = (operator = Required(AsteriskAsterisk))
                                         )
                                     ]
