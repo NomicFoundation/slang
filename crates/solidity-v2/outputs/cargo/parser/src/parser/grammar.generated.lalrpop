@@ -4636,28 +4636,21 @@ extern {
             <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, new_type_name_function_type(arena, _type_name), _attributes, _name, _value, _semicolon),
 
             // If there is no return, then we need to post process the attributes
-            <_type_name: FunctionTypeInternalNoReturn> <special_attributes: SpecialStateVariableAttributes> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
+            <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
                 let (function_type, mut extra_attributes) = extract_extra_attributes(arena, _type_name);
-                extra_attributes.extend(special_attributes);
+                if let Some(special_attributes) = special_attributes {
+                    extra_attributes.push(special_attributes.0);
+                    extra_attributes.extend(special_attributes.1.elements);
+                }
                 new_state_variable_definition(arena, new_type_name_function_type(arena, function_type), new_state_variable_attributes(arena, extra_attributes), _name, _value, _semicolon)
             },
         
     };
 
-    // This needs to be inlined to disambiguate transient the attribute from
-    // transient as an identifier
-    #[inline]
-    SpecialStateVariableAttributes: Vec<'arena, StateVariableAttribute<'arena>> = {
-                <_StateVariableAttribute: Rep<SpecialStateVariableAttribute>>  => {
-                    _StateVariableAttribute.into_iter().collect_in(arena)
-                },
-        
-    };
     // Only these ones, since they're not shared with functions:
     //    OverrideSpecifier(OverrideSpecifier),
     //.   ImmutableKeyword(ImmutableKeyword),
     //.   TransientKeyword(TransientKeyword),
-
     #[inline]
     SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
          

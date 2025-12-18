@@ -110,19 +110,108 @@ SourceUnitStruct {
                             ),
                             StateVariableDefinition(
                                 StateVariableDefinitionStruct {
+                                    type_name: FunctionType(
+                                        FunctionTypeStruct {
+                                            function_keyword: FunctionKeyword {
+                                                l: 63,
+                                                r: 71,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            parameters: ParametersDeclarationStruct {
+                                                open_paren: OpenParen {
+                                                    l: 72,
+                                                    r: 73,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                                parameters: Parameters {
+                                                    elements: [
+                                                        ParameterStruct {
+                                                            type_name: ElementaryType(
+                                                                UintKeyword(
+                                                                    UintKeyword {
+                                                                        l: 73,
+                                                                        r: 77,
+                                                                        phantom: PhantomData<&()>,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            storage_location: None,
+                                                            name: Some(
+                                                                Identifier {
+                                                                    l: 78,
+                                                                    r: 79,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                            ),
+                                                        },
+                                                    ],
+                                                },
+                                                close_paren: CloseParen {
+                                                    l: 79,
+                                                    r: 80,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            },
+                                            attributes: FunctionTypeAttributes {
+                                                elements: [
+                                                    InternalKeyword(
+                                                        InternalKeyword {
+                                                            l: 81,
+                                                            r: 89,
+                                                            phantom: PhantomData<&()>,
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            returns: None,
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            ImmutableKeyword(
+                                                ImmutableKeyword {
+                                                    l: 90,
+                                                    r: 99,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    l: 100,
+                                                    r: 108,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        l: 109,
+                                        r: 112,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        l: 112,
+                                        r: 113,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
                                     type_name: ArrayTypeName(
                                         ArrayTypeNameStruct {
                                             operand: FunctionType(
                                                 FunctionTypeStruct {
                                                     function_keyword: FunctionKeyword {
-                                                        l: 63,
-                                                        r: 71,
+                                                        l: 118,
+                                                        r: 126,
                                                         phantom: PhantomData<&()>,
                                                     },
                                                     parameters: ParametersDeclarationStruct {
                                                         open_paren: OpenParen {
-                                                            l: 72,
-                                                            r: 73,
+                                                            l: 127,
+                                                            r: 128,
                                                             phantom: PhantomData<&()>,
                                                         },
                                                         parameters: Parameters {
@@ -131,8 +220,8 @@ SourceUnitStruct {
                                                                     type_name: ElementaryType(
                                                                         UintKeyword(
                                                                             UintKeyword {
-                                                                                l: 73,
-                                                                                r: 77,
+                                                                                l: 128,
+                                                                                r: 132,
                                                                                 phantom: PhantomData<&()>,
                                                                             },
                                                                         ),
@@ -140,8 +229,8 @@ SourceUnitStruct {
                                                                     storage_location: None,
                                                                     name: Some(
                                                                         Identifier {
-                                                                            l: 78,
-                                                                            r: 79,
+                                                                            l: 133,
+                                                                            r: 134,
                                                                             phantom: PhantomData<&()>,
                                                                         },
                                                                     ),
@@ -149,8 +238,8 @@ SourceUnitStruct {
                                                             ],
                                                         },
                                                         close_paren: CloseParen {
-                                                            l: 79,
-                                                            r: 80,
+                                                            l: 134,
+                                                            r: 135,
                                                             phantom: PhantomData<&()>,
                                                         },
                                                     },
@@ -161,16 +250,16 @@ SourceUnitStruct {
                                                 },
                                             ),
                                             open_bracket: OpenBracket {
-                                                l: 80,
-                                                r: 81,
+                                                l: 135,
+                                                r: 136,
                                                 phantom: PhantomData<&()>,
                                             },
                                             index: Some(
                                                 DecimalNumberExpression(
                                                     DecimalNumberExpressionStruct {
                                                         literal: DecimalLiteral {
-                                                            l: 81,
-                                                            r: 82,
+                                                            l: 136,
+                                                            r: 137,
                                                             phantom: PhantomData<&()>,
                                                         },
                                                         unit: None,
@@ -178,8 +267,8 @@ SourceUnitStruct {
                                                 ),
                                             ),
                                             close_bracket: CloseBracket {
-                                                l: 82,
-                                                r: 83,
+                                                l: 137,
+                                                r: 138,
                                                 phantom: PhantomData<&()>,
                                             },
                                         },
@@ -188,29 +277,29 @@ SourceUnitStruct {
                                         elements: [
                                             InternalKeyword(
                                                 InternalKeyword {
-                                                    l: 84,
-                                                    r: 92,
+                                                    l: 139,
+                                                    r: 147,
                                                     phantom: PhantomData<&()>,
                                                 },
                                             ),
                                             InternalKeyword(
                                                 InternalKeyword {
-                                                    l: 93,
-                                                    r: 101,
+                                                    l: 148,
+                                                    r: 156,
                                                     phantom: PhantomData<&()>,
                                                 },
                                             ),
                                         ],
                                     },
                                     name: Identifier {
-                                        l: 102,
-                                        r: 105,
+                                        l: 157,
+                                        r: 160,
                                         phantom: PhantomData<&()>,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        l: 105,
-                                        r: 106,
+                                        l: 160,
+                                        r: 161,
                                         phantom: PhantomData<&()>,
                                     },
                                 },
@@ -218,8 +307,8 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        l: 107,
-                        r: 108,
+                        l: 162,
+                        r: 163,
                         phantom: PhantomData<&()>,
                     },
                 },
