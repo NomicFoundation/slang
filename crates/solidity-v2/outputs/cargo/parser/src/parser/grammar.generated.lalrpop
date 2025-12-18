@@ -4629,7 +4629,7 @@ extern {
 // that do not specify a return; and one where only function types without return are allowed.
     StateVariableDefinition: StateVariableDefinition<'arena> = {
         // If we're not using functions without return, then we can have all attributes
-            <_type_name: TypeName1<FunctionTypeInternalReturn, "True">>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
+            <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<"True">>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
 
             // If there is no return, then we need a single special attribute to disambiguate and to post process the attributes
             <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
@@ -4652,37 +4652,35 @@ extern {
     };
 
 
-// TODO[1]: We're doing two things here:
-// 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
-// avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
-
-    TypeName0<FunctionRule, IAP>: TypeName<'arena> = {
-         
+// TypeName has two peculiarities:
+// 1. We need to parametrize the FunctionRule to allow StateVariableDefinition to disable FunctionTypes without returns
+// 2. A TypeName that can be represented as an `IndexAccessPath` can conflict with a `MemberAccess`, for example
+//    `a.b[c]` can be either a member access over an identifier path, or array type, depending on what comes next.
+//    This means we need to treat these constructs as IAPs for as long as possible, and only convert them to TypeNames
+//    when it's certainly a type. `new_type_name_index_access_path` transforms an IAP into a TypeName.
+//    However, since a IAP and an array type conflict, we need to make sure that array types are only matched against
+//    base types that are not IAPs, hence the parametric IAPRule.
+    TypeName0<FunctionRule, IAPRule>: TypeName<'arena> = {
             <_FunctionType: FunctionRule> => new_type_name_function_type(arena, <>),
-         
             <_MappingType: MappingType>  => new_type_name_mapping_type(arena, <>),
-         
-            <_IndexAccessPath: IndexAccessPath<"True">> if IAP == "True" => new_type_name_index_access_path(arena, <>),
-
+            <_IndexAccessPath: IAPRule> => new_type_name_index_access_path(arena, <>),
     };
-    TypeName1<FunctionRule, IAP>: TypeName<'arena> = {
-         
+    TypeName1<FunctionRule, IAPRule>: TypeName<'arena> = {
             <_TypeName: ArrayTypeName>  => new_type_name_array_type_name(arena, <>),
-         
-            <TypeName: TypeName0<FunctionRule, IAP>>  => <>,
-        
+            <TypeName: TypeName0<FunctionRule, IAPRule>>  => <>,
     };
     TypeName: TypeName<'arena> = {
-         
-            <TypeName: TypeName1<FunctionType, "True">>  => <>,
-        
+            // A regular type can have any function type and an IAP
+            <TypeName: TypeName1<FunctionType, IndexAccessPath<"True">>>  => <>,
     };
     #[inline]
     ArrayTypeName: ArrayTypeName<'arena> = {
             // The base expression shouldn't end in a trailing IAP
-            <_TypeName: TypeName1<FunctionType, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
+            <_TypeName: TypeName1<FunctionType, NoIndexAccessPath>>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
     };
-// ODOT
+
+    // An empty rule to disable IAPs
+    NoIndexAccessPath: IndexAccessPath<'arena> = {};
 
 // TODO[1]: Again with the attributes, we need to differentiate between a `FunctionType` that ends
 // with a `returns` and one that ends with attributes, because the one that ends with attributes
