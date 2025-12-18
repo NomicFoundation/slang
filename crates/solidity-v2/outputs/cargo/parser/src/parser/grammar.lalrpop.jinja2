@@ -92,28 +92,24 @@ extern {
 }
 
 {% raw %}
-// Added rules
+// Manually added rules
 
+// State variable definitions have a conflict when used with function types, since some attributes
+// can be both function type attributes and state variable attributes.
+// For example in `function (uint a) internal internal foo;`, the first `internal` is a function type attribute,
+// while the second `internal` is a state variable attribute.
+//
+// To disambiguate in these cases we need to count, everything from the second attribute onwards
+// belongs to the state variable. This is very hard to do in LR(1) grammars, so we resort to letting
+// the function type capture all attributes, and then extract the trailing ones to use them in the state variable.
+// 
+// This is done by splitting the state variable rules into two cases, one where any type is allowed, except function types
+// that do not specify a return; and one where only function types without return are allowed.
     StateVariableDefinition: StateVariableDefinition<'arena> = {
-// TODO[1] This is an annoying hack, the problem is when we have a function type
-// in a variable declaration type, then some attributes (visibility ones) can be both
-// at the end of the type, or just after the type.
-// Right now I'm trying some strange hack for counting used attributes, but I'm
-// leaning towards having the function type take every attribute, and then reparse
-// up here, and extract attributes that belong to the variable
+        // If we're not using functions without return, then we can have all attributes
+            <_type_name: TypeName1<FunctionTypeInternalReturn, "True">>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
 
-            //<_type_name: TypeName>  /*<_attributes: StateVariableAttributes> Removing to test conflicts*/  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => format!("{{ \"item\": \"Struct\", \"name\": \"StateVariableDefinition\", \"_type_name\": {}, \"_attributes\": {}, \"_name\": {}, \"_value\": {}, \"_semicolon\": {} }}", _type_name, _attributes, _name, _value.unwrap_or("\"\"".into()), _semicolon),
-
-
-         // If we're not using functions, then we can have all attributes
-            <_type_name: TypeName1<"False", "True">>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
-            // Otherwise, the fun begins
-
-            // If the there is a return, the visibility doesnt really matter, it's ignored. 
-            // So we can either have or not have a vis
-            <_type_name: FunctionTypeInternalReturn>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, new_type_name_function_type(arena, _type_name), _attributes, _name, _value, _semicolon),
-
-            // If there is no return, then we need to post process the attributes
+            // If there is no return, then we need a single special attribute to disambiguate and to post process the attributes
             <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
                 let (function_type, mut extra_attributes) = extract_extra_attributes(arena, _type_name);
                 if let Some(special_attributes) = special_attributes {
@@ -122,61 +118,47 @@ extern {
                 }
                 new_state_variable_definition(arena, new_type_name_function_type(arena, function_type), new_state_variable_attributes(arena, extra_attributes), _name, _value, _semicolon)
             },
-        
     };
 
-    // Only these ones, since they're not shared with functions:
-    //    OverrideSpecifier(OverrideSpecifier),
-    //.   ImmutableKeyword(ImmutableKeyword),
-    //.   TransientKeyword(TransientKeyword),
+    // These are the attributes that can appear in a state variable but not a function,
+    // they can work as a limit between these definitions.
     #[inline]
     SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
-         
             <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
-         
             <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(arena, <>),
-         
             <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(arena, <>),
     };
 
 
-// ODOT
-
-    
 // TODO[1]: We're doing two things here:
 // 2. Making it possible to disable `FunctionType` for the `TypeName`, this is used to
 // avoid the clashing of attributes between `FunctionType` and `StateVariableAttribute`
 
-    TypeName0<Func, IAP>: TypeName<'arena> = {
+    TypeName0<FunctionRule, IAP>: TypeName<'arena> = {
          
-            <_FunctionType: FunctionType> if Func == "True" => new_type_name_function_type(arena, <>),
+            <_FunctionType: FunctionRule> => new_type_name_function_type(arena, <>),
          
             <_MappingType: MappingType>  => new_type_name_mapping_type(arena, <>),
          
-            // We disable ElementaryType and IdentifierPath for IndexAccessPath
-            //<_ElementaryType: ElementaryType>  => new_type_name_elementary_type(arena, <>),
-         
-            //<_IdentifierPath: IdentifierPath>  => new_type_name_identifier_path(arena, <>),
-            
             <_IndexAccessPath: IndexAccessPath<"True">> if IAP == "True" => new_type_name_index_access_path(arena, <>),
 
     };
-    TypeName1<Func, IAP>: TypeName<'arena> = {
+    TypeName1<FunctionRule, IAP>: TypeName<'arena> = {
          
-            <_TypeName: ArrayTypeName<Func>>  => new_type_name_array_type_name(arena, <>),
+            <_TypeName: ArrayTypeName>  => new_type_name_array_type_name(arena, <>),
          
-            <TypeName: TypeName0<Func, IAP>>  => <>,
+            <TypeName: TypeName0<FunctionRule, IAP>>  => <>,
         
     };
     TypeName: TypeName<'arena> = {
          
-            <TypeName: TypeName1<"True", "True">>  => <>,
+            <TypeName: TypeName1<FunctionType, "True">>  => <>,
         
     };
     #[inline]
-    ArrayTypeName<Func>: ArrayTypeName<'arena> = {
+    ArrayTypeName: ArrayTypeName<'arena> = {
             // The base expression shouldn't end in a trailing IAP
-            <_TypeName: TypeName1<"True", "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
+            <_TypeName: TypeName1<FunctionType, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
     };
 // ODOT
 
