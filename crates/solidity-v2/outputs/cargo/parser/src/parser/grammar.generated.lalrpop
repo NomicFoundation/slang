@@ -4682,68 +4682,80 @@ extern {
     // An empty rule to disable IAPs
     NoIndexAccessPath: IndexAccessPath<'arena> = {};
 
-// TODO[1]: Again with the attributes, we need to differentiate between a `FunctionType` that ends
-// with a `returns` and one that ends with attributes, because the one that ends with attributes
-// has problems in VariableDeclarationStatement
+// The only reason to split FunctionType into two rules is to allow StateVariableDefinition
+// to choose whether to allow FunctionTypes without returns or not.
+// Note: This could be solved with macros, but is short enough to be explicit
     FunctionType: FunctionType<'arena> = {
         FunctionTypeInternalNoReturn => <>,
         FunctionTypeInternalReturn => <>,
     };
 
-    // We dont inline this to break a cycle between type names
     FunctionTypeInternalNoReturn: FunctionType<'arena> = {
             <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(arena, _function_keyword, _parameters, _attributes, None),
     };
     FunctionTypeInternalReturn: FunctionType<'arena> = {
-         
             <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(arena, _function_keyword, _parameters, _attributes, Some(_returns)),
         
     };
-// ODOT
 
-// TODO[3]: We need to disable dangling If's on nested if else statements, but that can
-// also happen with For and While statements, since they have a trailing statement
-        // By default statements allos dangling `if`s
-    Statement = _Statement<"True">;
-         
-        // A Statement that either allows (DI == "True") or disallows (DI == "False")
-        // dangling `if`s
-    _Statement<DI>: Statement<'arena> = {
-         
-            <_IfStatement: IfStatement<DI>>  => new_statement_if_statement(arena, <>),
-         
-            <_ForStatement: ForStatement<DI>>  => new_statement_for_statement(arena, <>),
-         
-            <_WhileStatement: WhileStatement<DI>>  => new_statement_while_statement(arena, <>),
-         
-            <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(arena, <>),
-         
-            <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(arena, <>),
-         
-            <_BreakStatement: BreakStatement>  => new_statement_break_statement(arena, <>),
-         
-            <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(arena, <>),
-         
-            <_EmitStatement: EmitStatement>  => new_statement_emit_statement(arena, <>),
-         
-            <_TryStatement: TryStatement>  => new_statement_try_statement(arena, <>),
-         
-            <_RevertStatement: RevertStatement>  => new_statement_revert_statement(arena, <>),
-         
-            <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(arena, <>),
-         
-            <_Block: Block>  => new_statement_block(arena, <>),
-         
-            <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(arena, <>),
-         
-            <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(arena, <>),
-         
-            <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_statement_variable_declaration_statement(arena, <>),
-         
-            <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(arena, <>),
-        
+    // This is a common problem in grammars[1]. To not reinvent the wheel we follow advice from
+    // LALRPOP community[2].
+    // Briefly, we parametrize statements on whether they allow a trailing else or not, forcing `else`s to attach to
+    // the innermost `if`` possible.
+    //
+    // [1]: https://en.wikipedia.org/wiki/Dangling_else
+    // [2]: https://github.com/lalrpop/lalrpop/issues/67#issuecomment-188951041
+    _Statement<TrailingElse>: Statement<'arena> = {
+        <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(arena, <>),
+        <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(arena, <>),
+        <_WhileStatement: WhileStatement<TrailingElse>>  => new_statement_while_statement(arena, <>),
+        <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(arena, <>),
+        <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(arena, <>),
+        <_BreakStatement: BreakStatement>  => new_statement_break_statement(arena, <>),
+        <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(arena, <>),
+        <_EmitStatement: EmitStatement>  => new_statement_emit_statement(arena, <>),
+        <_TryStatement: TryStatement>  => new_statement_try_statement(arena, <>),
+        <_RevertStatement: RevertStatement>  => new_statement_revert_statement(arena, <>),
+        <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(arena, <>),
+        <_Block: Block>  => new_statement_block(arena, <>),
+        <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(arena, <>),
+        <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(arena, <>),
+        <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_statement_variable_declaration_statement(arena, <>),
+        <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(arena, <>),
     };
-//ODOT
+
+    // By default statements allos dangling `else`s
+        Statement = _Statement<"True">;
+
+        IfStatement<TrailingElse>: IfStatement<'arena> = {
+            // IfStatement only allows dangling `if`s (ie without an else) if TrailingElse == "True"
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(arena, <>, None),
+            // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
+            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<TrailingElse>>  => new_if_statement(arena, _if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(arena, _else_keyword, _else_branch))),
+    };
+
+    ForStatement<TrailingElse>: ForStatement<'arena> = {
+            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_for_statement(arena, <>),
+    };
+
+    WhileStatement<TrailingElse>: WhileStatement<'arena> = {
+            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_while_statement(arena, <>),
+    };
+
+    // A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
+    // at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
+    // start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
+    TryStatement: TryStatement<'arena> = {
+        <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
+            new_try_statement(arena, _try_keyword, _expression, Some(_returns), _body, _catch_clauses)
+        },
+        <_try_keyword: TryKeyword>  <_expression: ExpressionTrailingBlock>   <_catch_clauses: CatchClauses>  => {
+            let (expr, body) = _expression;
+            new_try_statement(arena, _try_keyword, expr, None, body, _catch_clauses)
+        },
+    };
+
+
 
 // TODO[4] We remove the TupleDeconstructionStatement sub NonTerminals from here, it's now a ProtoTuple
 // shared with the tuples
@@ -4755,48 +4767,65 @@ extern {
 
 // ODOT
 
-    TryStatement: TryStatement<'arena> = {
-        <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
-            new_try_statement(arena, _try_keyword, _expression, Some(_returns), _body, _catch_clauses)
+
+// Tuple expressions and tuple declarations can conflict in some situations, for example if the parser sees `(a, b` 
+// it doesn't know whether it's parsing a tuple expression with two identifiers inside, or a tuple pattern/declaration.
+// We solve this by delaying the decision, and parsing common prefixes as ProtoTuples.
+// ProtoTuples are marked with a boolean generic on whether they are tuples (ie, expressions) or patterns (ie, declarations).
+//
+// Note: One caveat of this is that an assignemnt over a tuple (ie, `(a, b) = foo();`) is parsed as an expression.
+// 
+// Note: the solidity grammar chooses to allow tuple expressions to not have any expressions (ie `(,,)` is valid),
+// and then the difference between an assignemtn with a lhs being a tuple expression and a tuple deconstruction statement
+// is whether it has any declaration within itself.
+// We follow a different path, the reason may make a difference in the future when `var` declarations are allowed
+// (`var (a, b) = foo();`), but for now it's mostly a design choice.
+//
+// TODO: Empty tuples are considered patterns, I'm not sure if that's actually allowed
+// TODO: maybe we could get rid of this if we use a right-recursive rules for tuples, but I'm not 100% sure
+    ProtoTuple<Tuple>: ProtoTuple<'arena> = {
+        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(arena, _open_paren, _elements, _close_paren),
+    }
+
+    ProtoTupleElements<Tuple>: Vec<'arena, ProtoTupleElement<'arena>> = {
+        // A single element can be a tuple or a pattern
+        <_elem: TupleElementExpression> if Tuple == "True" => bumpalo::vec![in arena; <>],
+        <_elem: TupleElementPattern> if Tuple == "False" => bumpalo::vec![in arena; <>],
+        
+        // A ProtoTuple only ProtoTupleElements<True> is a Tuple expression
+        <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementExpression> if Tuple == "True" => {
+            _elems.push(_elem);
+            _elems
         },
-        <_try_keyword: TryKeyword>  <_expression: ExpressionDanglingBlock>   <_catch_clauses: CatchClauses>  => {
-            let (expr, body) = _expression;
-            new_try_statement(arena, _try_keyword, expr, None, body, _catch_clauses)
+
+        // But we can mix and match with patterns
+        <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
+            _elems.push(_elem);
+            _elems
         },
-        
+
+        <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
+            _elems.push(_elem);
+            _elems
+        },
+
+        <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementExpression> if Tuple == "False" => {
+            _elems.push(_elem);
+            _elems
+        },
     };
 
-
-
-// TODO[3] IfStatement now tracks whether it has a dangling If, and only allows
-// else branches if there's no dalgnling if
-    IfStatement<DI>: IfStatement<'arena> = {
-         
-            // IfStatement only allows dangling `if`s (ie without an else) if DI == "True"
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if DI == "True"  => new_if_statement(arena, <>, None),
-
-            // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<DI>>  => new_if_statement(arena, _if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(arena, _else_keyword, _else_branch))),
-        
+    TupleElementExpression: ProtoTupleElement<'arena> = {
+        // A Tuple expression must be present and only be an identifier
+        <_name: Expression> => new_proto_tuple_element_expression(arena, _name),
     };
-// ODOT
 
-// TODO[3] ForStatement now tracks whether it has a dangling If, and only allows
-    // TODO Maybe inline
-    ForStatement<DI>: ForStatement<'arena> = {
-         
-            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_for_statement(arena, <>),
-        
+    TupleElementPattern: ProtoTupleElement<'arena> = {
+        <_decl: VariableDeclaration>  => new_proto_tuple_element_declaration(arena, _decl),
+        <_storage_location: StorageLocation> <_name: Identifier>  => new_proto_tuple_element_storage_location(arena, _storage_location, _name),
+        () => new_proto_tuple_element_empty(arena),
     };
-// ODOT
-
-// TODO[3] WhileStatement now tracks whether it has a dangling If, and only allows
-    WhileStatement<DI>: WhileStatement<'arena> = {
-         
-            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<DI>>  => new_while_statement(arena, <>),
         
-    };
-// ODOT
 
 
 // An IAP that tracks whether it has a trailing identifier path
@@ -4808,6 +4837,16 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     <_Identifier: IdentifierPath> if TrailingIdent == "True" => new_index_access_path_from_identifier_path(arena, <>),
     <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(arena, <>),
 };
+
+
+// This rule shouldn't be manual, but the node constructor takes an optional argument that is not
+// enabled in 0.8.30, therefore we don't have it automatically generated
+//
+// TODO: rather than erasing disabled fields, just match nothing
+    HexNumberExpression: HexNumberExpression<'arena> = {
+            <_literal: HexLiteral>  => new_hex_number_expression(arena, <>, None),
+        
+    };
 
 // TODO[5] Expressions are expanded, this gives us more control
 // Ident is a variable to check whether this expression allows identifier paths or not
@@ -4984,69 +5023,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
 
 
 
-// TODO[4] These are the new tuples, we get a prototuple that can be a pattern/declaration
-// or a tuple value, we then disambigguate
 
-    // A ProtoTuple can match both a TupleExpression (ie, a tuple with expressions inside, separated by commas)
-    // as well as a TuplePattern, which is a tuple with optional patterns or declarations inside, separated by commas.
-    // Every Tuple is a TuplePattern, not the other way around, so we also make that distinction with the generics.
-
-    ProtoTuple<Tuple>: ProtoTuple<'arena> = {
-        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(arena, _open_paren, _elements, _close_paren),
-    }
-
-    
-    ProtoTupleElements<Tuple>: Vec<'arena, ProtoTupleElement<'arena>> = {
-        // TODO: empty tuple
-
-        // A single element can be True or False
-        // Note that ProtoTupleElement<"False"> allows empty elements, we have to change that
-        <_elem: ProtoTupleElement<"True">> if Tuple == "True" => bumpalo::vec![in arena; <>],
-        <_elem: ProtoTupleElement<"False">> if Tuple == "False" => bumpalo::vec![in arena; <>],
-        
-        // A ProtoTuple only ProtoTupleElements<True> is a Tuple
-        <mut _elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "True" => {
-            _elems.push(_elem);
-            _elems
-        },
-
-        <mut _elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => {
-            _elems.push(_elem);
-            _elems
-        },
-
-        <mut _elems: ProtoTupleElements<"True">> Comma <_elem: ProtoTupleElement<"False">> if Tuple == "False" => {
-            _elems.push(_elem);
-            _elems
-        },
-
-        <mut _elems: ProtoTupleElements<"False">> Comma <_elem: ProtoTupleElement<"True">> if Tuple == "False" => {
-            _elems.push(_elem);
-            _elems
-        },
-
-
-    };
-
-    ProtoTupleElement<Tuple>: ProtoTupleElement<'arena> = {
-        // A Tuple expression must be present and only be an identifier
-        <_name: Expression> if Tuple == "True" => new_proto_tuple_element_expression(arena, _name),
-
-        <_decl: VariableDeclaration> if Tuple == "False" => new_proto_tuple_element_declaration(arena, _decl),
-        <_storage_location: StorageLocation> <_name: Identifier> if Tuple == "False" => new_proto_tuple_element_storage_location(arena, _storage_location, _name),
-        () if Tuple == "False" => new_proto_tuple_element_empty(arena),
-    };
-        
-// ODOT
-
-// TODO This is just because the function is not prepared for 0.8.30
-// The grammar rule is correct, but the builder function expects an optional unit
-// Yes, this is a silly hack for now
-    HexNumberExpression: HexNumberExpression<'arena> = {
-            <_literal: HexLiteral>  => new_hex_number_expression(arena, <>, None),
-        
-    };
-// ODOT
 
     // We simplifiy all these levels of expressions into a single one, there's no need
     // for precedence here
@@ -5211,7 +5188,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
 
     // TODO(v2): We're making this pub to allow testing Expressions
-    ExpressionDanglingBlock: (Expression<'arena>, Block<'arena>) = {
+    ExpressionTrailingBlock: (Expression<'arena>, Block<'arena>) = {
          
             <Expression: Expression19DB>  => <>,
         
