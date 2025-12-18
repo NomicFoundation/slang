@@ -183,7 +183,7 @@ extern {
     #[inline]
     ArrayTypeName<Func>: ArrayTypeName<'arena> = {
             // The base expression shouldn't end in a trailing IAP
-            <_TypeName: TypeName1<Func, "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
+            <_TypeName: TypeName1<"True", "False">>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(arena, <>),
     };
 // ODOT
 

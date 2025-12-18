@@ -117,6 +117,11 @@ fn safe_math() -> Result<()> {
 }
 
 #[test]
+fn state_variable_function() -> Result<()> {
+    run(T, "state_variable_function")
+}
+
+#[test]
 fn top_level_event() -> Result<()> {
     run(T, "top_level_event")
 }
