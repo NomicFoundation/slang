@@ -4,8 +4,8 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
-name = "slang_solidity_v2_ast"
-description = "AST library and support utilities for the [slang_solidity](https://crates.io/crates/slang_solidity) crate."
+name = "slang_solidity_v2_cst"
+description = "CST library and support utilities for the [slang_solidity](https://crates.io/crates/slang_solidity) crate."
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"
 authors = [
@@ -15,8 +15,8 @@ authors = [
 
 readme = "README.md"
 license = "MIT"
-keywords = ["AST"]
-categories = ["compilers", "AST"]
+keywords = ["CST"]
+categories = ["compilers", "CST"]
 
 
 [dependencies]
