@@ -2,9 +2,9 @@
 
 use std::rc::Rc;
 
-use super::input as input_ir;
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
+use super::{input as input_ir, Identifier, YulIdentifier};
 use crate::cst::TerminalNode;
 
 pub trait Visitor {

@@ -3,7 +3,18 @@ use std::rc::Rc;
 
 use paste::paste;
 
-use super::input as input_ir;
+use super::nodes::{
+    ConstantDefinition, ConstantDefinitionStruct, ContractDefinition, ContractDefinitionStruct,
+    EnumDefinition, EnumDefinitionStruct, ErrorDefinition, ErrorDefinitionStruct, EventDefinition,
+    EventDefinitionStruct, FunctionDefinition, FunctionDefinitionStruct, IdentifierPathStruct,
+    ImportDeconstructionSymbol, ImportDeconstructionSymbolStruct, InterfaceDefinition,
+    InterfaceDefinitionStruct, LibraryDefinition, LibraryDefinitionStruct, Parameter,
+    ParameterStruct, PathImport, PathImportStruct, SourceUnitStruct, StateVariableDefinition,
+    StateVariableDefinitionStruct, StructDefinition, StructDefinitionStruct, StructMember,
+    StructMemberStruct, UserDefinedValueTypeDefinition, UserDefinedValueTypeDefinitionStruct,
+    VariableDeclarationStatement, VariableDeclarationStatementStruct, YulFunctionDefinition,
+    YulFunctionDefinitionStruct, YulLabel, YulLabelStruct,
+};
 use crate::backend::{binder, SemanticAnalysis};
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -15,7 +26,7 @@ pub struct IdentifierStruct {
 }
 
 impl IdentifierStruct {
-    fn create(ir_node: &Rc<TerminalNode>, semantic: &Rc<SemanticAnalysis>) -> Self {
+    pub(crate) fn create(ir_node: &Rc<TerminalNode>, semantic: &Rc<SemanticAnalysis>) -> Self {
         assert!(ir_node.kind == TerminalKind::Identifier);
         Self {
             ir_node: Rc::clone(ir_node),
@@ -140,8 +151,6 @@ impl DefinitionStruct {
     define_variant!(YulParameter, Identifier);
     define_variant!(YulVariable, Identifier);
 }
-
-include!("ast_nodes.generated.rs");
 
 impl SourceUnitStruct {
     pub fn file_id(&self) -> String {

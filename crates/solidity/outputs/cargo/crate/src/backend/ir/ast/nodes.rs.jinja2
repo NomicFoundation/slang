@@ -1,6 +1,16 @@
 {%- set target = model.ir_languages['ir2_flat_contracts'].target -%}
 {%- set custom_types = ["Identifier", "YulIdentifier"] -%}
 
+#![allow(unused)]
+use std::rc::Rc;
+
+use paste::paste;
+
+use super::input as input_ir;
+use crate::backend::{binder, SemanticAnalysis};
+use crate::cst::{NodeId, TerminalKind, TerminalNode};
+use super::node_extensions::{Identifier, IdentifierStruct, YulIdentifier, YulIdentifierStruct};
+
 //
 // Sequences:
 //
@@ -10,7 +20,7 @@
 
   pub struct {{ parent_type }}Struct {
     pub(crate) ir_node: input_ir::{{ parent_type }},
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
   }
 
   impl {{ parent_type }}Struct {
@@ -94,7 +104,7 @@
 
   pub struct {{ parent_type }}Struct {
     pub(crate) ir_node: input_ir::{{ parent_type }},
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
   }
 
   impl {{ parent_type }}Struct {
@@ -171,7 +181,7 @@
 
     pub struct {{ parent_type }}Struct {
       pub(crate) ir_nodes: Vec<{{ ir_type }}>,
-      semantic: Rc<SemanticAnalysis>,
+      pub(crate) semantic: Rc<SemanticAnalysis>,
     }
 
     impl {{ parent_type }}Struct {

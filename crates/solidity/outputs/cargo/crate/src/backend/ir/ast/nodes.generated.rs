@@ -1,5 +1,15 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+#![allow(unused)]
+use std::rc::Rc;
+
+use paste::paste;
+
+use super::input as input_ir;
+use super::node_extensions::{Identifier, IdentifierStruct, YulIdentifier, YulIdentifierStruct};
+use crate::backend::{binder, SemanticAnalysis};
+use crate::cst::{NodeId, TerminalKind, TerminalNode};
+
 //
 // Sequences:
 //
@@ -8,7 +18,7 @@ pub type SourceUnit = Rc<SourceUnitStruct>;
 
 pub struct SourceUnitStruct {
     pub(crate) ir_node: input_ir::SourceUnit,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl SourceUnitStruct {
@@ -31,7 +41,7 @@ pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
 pub struct PragmaDirectiveStruct {
     pub(crate) ir_node: input_ir::PragmaDirective,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl PragmaDirectiveStruct {
@@ -54,7 +64,7 @@ pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
 pub struct AbicoderPragmaStruct {
     pub(crate) ir_node: input_ir::AbicoderPragma,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl AbicoderPragmaStruct {
@@ -80,7 +90,7 @@ pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
 pub struct ExperimentalPragmaStruct {
     pub(crate) ir_node: input_ir::ExperimentalPragma,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ExperimentalPragmaStruct {
@@ -106,7 +116,7 @@ pub type VersionPragma = Rc<VersionPragmaStruct>;
 
 pub struct VersionPragmaStruct {
     pub(crate) ir_node: input_ir::VersionPragma,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VersionPragmaStruct {
@@ -132,7 +142,7 @@ pub type VersionRange = Rc<VersionRangeStruct>;
 
 pub struct VersionRangeStruct {
     pub(crate) ir_node: input_ir::VersionRange,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VersionRangeStruct {
@@ -165,7 +175,7 @@ pub type VersionTerm = Rc<VersionTermStruct>;
 
 pub struct VersionTermStruct {
     pub(crate) ir_node: input_ir::VersionTerm,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VersionTermStruct {
@@ -195,7 +205,7 @@ pub type PathImport = Rc<PathImportStruct>;
 
 pub struct PathImportStruct {
     pub(crate) ir_node: input_ir::PathImport,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl PathImportStruct {
@@ -222,7 +232,7 @@ pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
 pub struct ImportDeconstructionStruct {
     pub(crate) ir_node: input_ir::ImportDeconstruction,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ImportDeconstructionStruct {
@@ -252,7 +262,7 @@ pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
 pub struct ImportDeconstructionSymbolStruct {
     pub(crate) ir_node: input_ir::ImportDeconstructionSymbol,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ImportDeconstructionSymbolStruct {
@@ -282,7 +292,7 @@ pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
 pub struct UsingDirectiveStruct {
     pub(crate) ir_node: input_ir::UsingDirective,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UsingDirectiveStruct {
@@ -319,7 +329,7 @@ pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
 pub struct UsingDeconstructionStruct {
     pub(crate) ir_node: input_ir::UsingDeconstruction,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UsingDeconstructionStruct {
@@ -345,7 +355,7 @@ pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
 pub struct UsingDeconstructionSymbolStruct {
     pub(crate) ir_node: input_ir::UsingDeconstructionSymbol,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UsingDeconstructionSymbolStruct {
@@ -378,7 +388,7 @@ pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
 pub struct ContractDefinitionStruct {
     pub(crate) ir_node: input_ir::ContractDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ContractDefinitionStruct {
@@ -426,7 +436,7 @@ pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
 pub struct InheritanceTypeStruct {
     pub(crate) ir_node: input_ir::InheritanceType,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl InheritanceTypeStruct {
@@ -459,7 +469,7 @@ pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
 pub struct InterfaceDefinitionStruct {
     pub(crate) ir_node: input_ir::InterfaceDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl InterfaceDefinitionStruct {
@@ -496,7 +506,7 @@ pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
 pub struct LibraryDefinitionStruct {
     pub(crate) ir_node: input_ir::LibraryDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl LibraryDefinitionStruct {
@@ -526,7 +536,7 @@ pub type StructDefinition = Rc<StructDefinitionStruct>;
 
 pub struct StructDefinitionStruct {
     pub(crate) ir_node: input_ir::StructDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StructDefinitionStruct {
@@ -556,7 +566,7 @@ pub type StructMember = Rc<StructMemberStruct>;
 
 pub struct StructMemberStruct {
     pub(crate) ir_node: input_ir::StructMember,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StructMemberStruct {
@@ -586,7 +596,7 @@ pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
 pub struct EnumDefinitionStruct {
     pub(crate) ir_node: input_ir::EnumDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl EnumDefinitionStruct {
@@ -616,7 +626,7 @@ pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
 pub struct ConstantDefinitionStruct {
     pub(crate) ir_node: input_ir::ConstantDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ConstantDefinitionStruct {
@@ -662,7 +672,7 @@ pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
 pub struct StateVariableDefinitionStruct {
     pub(crate) ir_node: input_ir::StateVariableDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StateVariableDefinitionStruct {
@@ -720,7 +730,7 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
 pub struct FunctionDefinitionStruct {
     pub(crate) ir_node: input_ir::FunctionDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl FunctionDefinitionStruct {
@@ -806,7 +816,7 @@ pub type Parameter = Rc<ParameterStruct>;
 
 pub struct ParameterStruct {
     pub(crate) ir_node: input_ir::Parameter,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ParameterStruct {
@@ -847,7 +857,7 @@ pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
 pub struct OverrideSpecifierStruct {
     pub(crate) ir_node: input_ir::OverrideSpecifier,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl OverrideSpecifierStruct {
@@ -873,7 +883,7 @@ pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
 pub struct ModifierInvocationStruct {
     pub(crate) ir_node: input_ir::ModifierInvocation,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ModifierInvocationStruct {
@@ -906,7 +916,7 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 
 pub struct EventDefinitionStruct {
     pub(crate) ir_node: input_ir::EventDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl EventDefinitionStruct {
@@ -940,7 +950,7 @@ pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruc
 
 pub struct UserDefinedValueTypeDefinitionStruct {
     pub(crate) ir_node: input_ir::UserDefinedValueTypeDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UserDefinedValueTypeDefinitionStruct {
@@ -970,7 +980,7 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
 pub struct ErrorDefinitionStruct {
     pub(crate) ir_node: input_ir::ErrorDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ErrorDefinitionStruct {
@@ -1000,7 +1010,7 @@ pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
 pub struct ArrayTypeNameStruct {
     pub(crate) ir_node: input_ir::ArrayTypeName,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ArrayTypeNameStruct {
@@ -1033,7 +1043,7 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 
 pub struct FunctionTypeStruct {
     pub(crate) ir_node: input_ir::FunctionType,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl FunctionTypeStruct {
@@ -1080,7 +1090,7 @@ pub type MappingType = Rc<MappingTypeStruct>;
 
 pub struct MappingTypeStruct {
     pub(crate) ir_node: input_ir::MappingType,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl MappingTypeStruct {
@@ -1110,7 +1120,7 @@ pub type AddressType = Rc<AddressTypeStruct>;
 
 pub struct AddressTypeStruct {
     pub(crate) ir_node: input_ir::AddressType,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl AddressTypeStruct {
@@ -1130,7 +1140,7 @@ pub type Block = Rc<BlockStruct>;
 
 pub struct BlockStruct {
     pub(crate) ir_node: input_ir::Block,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl BlockStruct {
@@ -1153,7 +1163,7 @@ pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
 pub struct UncheckedBlockStruct {
     pub(crate) ir_node: input_ir::UncheckedBlock,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UncheckedBlockStruct {
@@ -1176,7 +1186,7 @@ pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
 pub struct ExpressionStatementStruct {
     pub(crate) ir_node: input_ir::ExpressionStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ExpressionStatementStruct {
@@ -1202,7 +1212,7 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
 pub struct AssemblyStatementStruct {
     pub(crate) ir_node: input_ir::AssemblyStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl AssemblyStatementStruct {
@@ -1233,7 +1243,7 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
 pub struct TupleDeconstructionStatementStruct {
     pub(crate) ir_node: input_ir::TupleDeconstructionStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TupleDeconstructionStatementStruct {
@@ -1266,7 +1276,7 @@ pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
 pub struct VariableDeclarationStatementStruct {
     pub(crate) ir_node: input_ir::VariableDeclarationStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VariableDeclarationStatementStruct {
@@ -1310,7 +1320,7 @@ pub type IfStatement = Rc<IfStatementStruct>;
 
 pub struct IfStatementStruct {
     pub(crate) ir_node: input_ir::IfStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl IfStatementStruct {
@@ -1344,7 +1354,7 @@ pub type ForStatement = Rc<ForStatementStruct>;
 
 pub struct ForStatementStruct {
     pub(crate) ir_node: input_ir::ForStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ForStatementStruct {
@@ -1388,7 +1398,7 @@ pub type WhileStatement = Rc<WhileStatementStruct>;
 
 pub struct WhileStatementStruct {
     pub(crate) ir_node: input_ir::WhileStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl WhileStatementStruct {
@@ -1418,7 +1428,7 @@ pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
 pub struct DoWhileStatementStruct {
     pub(crate) ir_node: input_ir::DoWhileStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl DoWhileStatementStruct {
@@ -1448,7 +1458,7 @@ pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
 pub struct ContinueStatementStruct {
     pub(crate) ir_node: input_ir::ContinueStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ContinueStatementStruct {
@@ -1467,7 +1477,7 @@ pub type BreakStatement = Rc<BreakStatementStruct>;
 
 pub struct BreakStatementStruct {
     pub(crate) ir_node: input_ir::BreakStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl BreakStatementStruct {
@@ -1486,7 +1496,7 @@ pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
 pub struct ReturnStatementStruct {
     pub(crate) ir_node: input_ir::ReturnStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ReturnStatementStruct {
@@ -1512,7 +1522,7 @@ pub type EmitStatement = Rc<EmitStatementStruct>;
 
 pub struct EmitStatementStruct {
     pub(crate) ir_node: input_ir::EmitStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl EmitStatementStruct {
@@ -1545,7 +1555,7 @@ pub type TryStatement = Rc<TryStatementStruct>;
 
 pub struct TryStatementStruct {
     pub(crate) ir_node: input_ir::TryStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TryStatementStruct {
@@ -1589,7 +1599,7 @@ pub type CatchClause = Rc<CatchClauseStruct>;
 
 pub struct CatchClauseStruct {
     pub(crate) ir_node: input_ir::CatchClause,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl CatchClauseStruct {
@@ -1616,7 +1626,7 @@ pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
 pub struct CatchClauseErrorStruct {
     pub(crate) ir_node: input_ir::CatchClauseError,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl CatchClauseErrorStruct {
@@ -1649,7 +1659,7 @@ pub type RevertStatement = Rc<RevertStatementStruct>;
 
 pub struct RevertStatementStruct {
     pub(crate) ir_node: input_ir::RevertStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl RevertStatementStruct {
@@ -1682,7 +1692,7 @@ pub type ThrowStatement = Rc<ThrowStatementStruct>;
 
 pub struct ThrowStatementStruct {
     pub(crate) ir_node: input_ir::ThrowStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ThrowStatementStruct {
@@ -1701,7 +1711,7 @@ pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
 pub struct AssignmentExpressionStruct {
     pub(crate) ir_node: input_ir::AssignmentExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl AssignmentExpressionStruct {
@@ -1738,7 +1748,7 @@ pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
 pub struct ConditionalExpressionStruct {
     pub(crate) ir_node: input_ir::ConditionalExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ConditionalExpressionStruct {
@@ -1778,7 +1788,7 @@ pub type OrExpression = Rc<OrExpressionStruct>;
 
 pub struct OrExpressionStruct {
     pub(crate) ir_node: input_ir::OrExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl OrExpressionStruct {
@@ -1811,7 +1821,7 @@ pub type AndExpression = Rc<AndExpressionStruct>;
 
 pub struct AndExpressionStruct {
     pub(crate) ir_node: input_ir::AndExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl AndExpressionStruct {
@@ -1844,7 +1854,7 @@ pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
 pub struct EqualityExpressionStruct {
     pub(crate) ir_node: input_ir::EqualityExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl EqualityExpressionStruct {
@@ -1881,7 +1891,7 @@ pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
 pub struct InequalityExpressionStruct {
     pub(crate) ir_node: input_ir::InequalityExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl InequalityExpressionStruct {
@@ -1918,7 +1928,7 @@ pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
 pub struct BitwiseOrExpressionStruct {
     pub(crate) ir_node: input_ir::BitwiseOrExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl BitwiseOrExpressionStruct {
@@ -1951,7 +1961,7 @@ pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
 pub struct BitwiseXorExpressionStruct {
     pub(crate) ir_node: input_ir::BitwiseXorExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl BitwiseXorExpressionStruct {
@@ -1984,7 +1994,7 @@ pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
 pub struct BitwiseAndExpressionStruct {
     pub(crate) ir_node: input_ir::BitwiseAndExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl BitwiseAndExpressionStruct {
@@ -2017,7 +2027,7 @@ pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
 pub struct ShiftExpressionStruct {
     pub(crate) ir_node: input_ir::ShiftExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ShiftExpressionStruct {
@@ -2054,7 +2064,7 @@ pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
 pub struct AdditiveExpressionStruct {
     pub(crate) ir_node: input_ir::AdditiveExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl AdditiveExpressionStruct {
@@ -2091,7 +2101,7 @@ pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
 pub struct MultiplicativeExpressionStruct {
     pub(crate) ir_node: input_ir::MultiplicativeExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl MultiplicativeExpressionStruct {
@@ -2128,7 +2138,7 @@ pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
 pub struct ExponentiationExpressionStruct {
     pub(crate) ir_node: input_ir::ExponentiationExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ExponentiationExpressionStruct {
@@ -2165,7 +2175,7 @@ pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
 pub struct PostfixExpressionStruct {
     pub(crate) ir_node: input_ir::PostfixExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl PostfixExpressionStruct {
@@ -2195,7 +2205,7 @@ pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
 pub struct PrefixExpressionStruct {
     pub(crate) ir_node: input_ir::PrefixExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl PrefixExpressionStruct {
@@ -2225,7 +2235,7 @@ pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
 pub struct FunctionCallExpressionStruct {
     pub(crate) ir_node: input_ir::FunctionCallExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl FunctionCallExpressionStruct {
@@ -2258,7 +2268,7 @@ pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
 pub struct CallOptionsExpressionStruct {
     pub(crate) ir_node: input_ir::CallOptionsExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl CallOptionsExpressionStruct {
@@ -2291,7 +2301,7 @@ pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
 pub struct MemberAccessExpressionStruct {
     pub(crate) ir_node: input_ir::MemberAccessExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl MemberAccessExpressionStruct {
@@ -2324,7 +2334,7 @@ pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
 pub struct IndexAccessExpressionStruct {
     pub(crate) ir_node: input_ir::IndexAccessExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl IndexAccessExpressionStruct {
@@ -2364,7 +2374,7 @@ pub type NamedArgument = Rc<NamedArgumentStruct>;
 
 pub struct NamedArgumentStruct {
     pub(crate) ir_node: input_ir::NamedArgument,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl NamedArgumentStruct {
@@ -2394,7 +2404,7 @@ pub type TypeExpression = Rc<TypeExpressionStruct>;
 
 pub struct TypeExpressionStruct {
     pub(crate) ir_node: input_ir::TypeExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TypeExpressionStruct {
@@ -2420,7 +2430,7 @@ pub type NewExpression = Rc<NewExpressionStruct>;
 
 pub struct NewExpressionStruct {
     pub(crate) ir_node: input_ir::NewExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl NewExpressionStruct {
@@ -2446,7 +2456,7 @@ pub type TupleExpression = Rc<TupleExpressionStruct>;
 
 pub struct TupleExpressionStruct {
     pub(crate) ir_node: input_ir::TupleExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TupleExpressionStruct {
@@ -2472,7 +2482,7 @@ pub type TupleValue = Rc<TupleValueStruct>;
 
 pub struct TupleValueStruct {
     pub(crate) ir_node: input_ir::TupleValue,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TupleValueStruct {
@@ -2495,7 +2505,7 @@ pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
 pub struct ArrayExpressionStruct {
     pub(crate) ir_node: input_ir::ArrayExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ArrayExpressionStruct {
@@ -2521,7 +2531,7 @@ pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
 pub struct HexNumberExpressionStruct {
     pub(crate) ir_node: input_ir::HexNumberExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl HexNumberExpressionStruct {
@@ -2551,7 +2561,7 @@ pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
 pub struct DecimalNumberExpressionStruct {
     pub(crate) ir_node: input_ir::DecimalNumberExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl DecimalNumberExpressionStruct {
@@ -2581,7 +2591,7 @@ pub type YulBlock = Rc<YulBlockStruct>;
 
 pub struct YulBlockStruct {
     pub(crate) ir_node: input_ir::YulBlock,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulBlockStruct {
@@ -2604,7 +2614,7 @@ pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
 pub struct YulFunctionDefinitionStruct {
     pub(crate) ir_node: input_ir::YulFunctionDefinition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulFunctionDefinitionStruct {
@@ -2648,7 +2658,7 @@ pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStr
 
 pub struct YulVariableDeclarationStatementStruct {
     pub(crate) ir_node: input_ir::YulVariableDeclarationStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulVariableDeclarationStatementStruct {
@@ -2683,7 +2693,7 @@ pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
 pub struct YulVariableDeclarationValueStruct {
     pub(crate) ir_node: input_ir::YulVariableDeclarationValue,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulVariableDeclarationValueStruct {
@@ -2716,7 +2726,7 @@ pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruc
 
 pub struct YulVariableAssignmentStatementStruct {
     pub(crate) ir_node: input_ir::YulVariableAssignmentStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulVariableAssignmentStatementStruct {
@@ -2756,7 +2766,7 @@ pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
 
 pub struct YulColonAndEqualStruct {
     pub(crate) ir_node: input_ir::YulColonAndEqual,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulColonAndEqualStruct {
@@ -2775,7 +2785,7 @@ pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
 pub struct YulStackAssignmentStatementStruct {
     pub(crate) ir_node: input_ir::YulStackAssignmentStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulStackAssignmentStatementStruct {
@@ -2808,7 +2818,7 @@ pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
 
 pub struct YulEqualAndColonStruct {
     pub(crate) ir_node: input_ir::YulEqualAndColon,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulEqualAndColonStruct {
@@ -2827,7 +2837,7 @@ pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
 pub struct YulIfStatementStruct {
     pub(crate) ir_node: input_ir::YulIfStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulIfStatementStruct {
@@ -2857,7 +2867,7 @@ pub type YulForStatement = Rc<YulForStatementStruct>;
 
 pub struct YulForStatementStruct {
     pub(crate) ir_node: input_ir::YulForStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulForStatementStruct {
@@ -2901,7 +2911,7 @@ pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
 pub struct YulSwitchStatementStruct {
     pub(crate) ir_node: input_ir::YulSwitchStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulSwitchStatementStruct {
@@ -2934,7 +2944,7 @@ pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
 pub struct YulDefaultCaseStruct {
     pub(crate) ir_node: input_ir::YulDefaultCase,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulDefaultCaseStruct {
@@ -2957,7 +2967,7 @@ pub type YulValueCase = Rc<YulValueCaseStruct>;
 
 pub struct YulValueCaseStruct {
     pub(crate) ir_node: input_ir::YulValueCase,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulValueCaseStruct {
@@ -2987,7 +2997,7 @@ pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
 pub struct YulLeaveStatementStruct {
     pub(crate) ir_node: input_ir::YulLeaveStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulLeaveStatementStruct {
@@ -3006,7 +3016,7 @@ pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
 pub struct YulBreakStatementStruct {
     pub(crate) ir_node: input_ir::YulBreakStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulBreakStatementStruct {
@@ -3025,7 +3035,7 @@ pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
 pub struct YulContinueStatementStruct {
     pub(crate) ir_node: input_ir::YulContinueStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulContinueStatementStruct {
@@ -3044,7 +3054,7 @@ pub type YulLabel = Rc<YulLabelStruct>;
 
 pub struct YulLabelStruct {
     pub(crate) ir_node: input_ir::YulLabel,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulLabelStruct {
@@ -3067,7 +3077,7 @@ pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
 pub struct YulFunctionCallExpressionStruct {
     pub(crate) ir_node: input_ir::YulFunctionCallExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulFunctionCallExpressionStruct {
@@ -3104,7 +3114,7 @@ pub type SourceUnitMember = Rc<SourceUnitMemberStruct>;
 
 pub struct SourceUnitMemberStruct {
     pub(crate) ir_node: input_ir::SourceUnitMember,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl SourceUnitMemberStruct {
@@ -3336,7 +3346,7 @@ pub type Pragma = Rc<PragmaStruct>;
 
 pub struct PragmaStruct {
     pub(crate) ir_node: input_ir::Pragma,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl PragmaStruct {
@@ -3397,7 +3407,7 @@ pub type AbicoderVersion = Rc<AbicoderVersionStruct>;
 
 pub struct AbicoderVersionStruct {
     pub(crate) ir_node: input_ir::AbicoderVersion,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl AbicoderVersionStruct {
@@ -3424,7 +3434,7 @@ pub type ExperimentalFeature = Rc<ExperimentalFeatureStruct>;
 
 pub struct ExperimentalFeatureStruct {
     pub(crate) ir_node: input_ir::ExperimentalFeature,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ExperimentalFeatureStruct {
@@ -3464,7 +3474,7 @@ pub type VersionExpression = Rc<VersionExpressionStruct>;
 
 pub struct VersionExpressionStruct {
     pub(crate) ir_node: input_ir::VersionExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VersionExpressionStruct {
@@ -3507,7 +3517,7 @@ pub type VersionOperator = Rc<VersionOperatorStruct>;
 
 pub struct VersionOperatorStruct {
     pub(crate) ir_node: input_ir::VersionOperator,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VersionOperatorStruct {
@@ -3554,7 +3564,7 @@ pub type VersionLiteral = Rc<VersionLiteralStruct>;
 
 pub struct VersionLiteralStruct {
     pub(crate) ir_node: input_ir::VersionLiteral,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VersionLiteralStruct {
@@ -3602,7 +3612,7 @@ pub type ImportClause = Rc<ImportClauseStruct>;
 
 pub struct ImportClauseStruct {
     pub(crate) ir_node: input_ir::ImportClause,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ImportClauseStruct {
@@ -3651,7 +3661,7 @@ pub type UsingClause = Rc<UsingClauseStruct>;
 
 pub struct UsingClauseStruct {
     pub(crate) ir_node: input_ir::UsingClause,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UsingClauseStruct {
@@ -3697,7 +3707,7 @@ pub type UsingOperator = Rc<UsingOperatorStruct>;
 
 pub struct UsingOperatorStruct {
     pub(crate) ir_node: input_ir::UsingOperator,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UsingOperatorStruct {
@@ -3776,7 +3786,7 @@ pub type UsingTarget = Rc<UsingTargetStruct>;
 
 pub struct UsingTargetStruct {
     pub(crate) ir_node: input_ir::UsingTarget,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UsingTargetStruct {
@@ -3808,7 +3818,7 @@ pub type ContractMember = Rc<ContractMemberStruct>;
 
 pub struct ContractMemberStruct {
     pub(crate) ir_node: input_ir::ContractMember,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ContractMemberStruct {
@@ -3974,7 +3984,7 @@ pub type TypeName = Rc<TypeNameStruct>;
 
 pub struct TypeNameStruct {
     pub(crate) ir_node: input_ir::TypeName,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TypeNameStruct {
@@ -4059,7 +4069,7 @@ pub type ElementaryType = Rc<ElementaryTypeStruct>;
 
 pub struct ElementaryTypeStruct {
     pub(crate) ir_node: input_ir::ElementaryType,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ElementaryTypeStruct {
@@ -4122,7 +4132,7 @@ pub type Statement = Rc<StatementStruct>;
 
 pub struct StatementStruct {
     pub(crate) ir_node: input_ir::Statement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StatementStruct {
@@ -4387,7 +4397,7 @@ pub type StorageLocation = Rc<StorageLocationStruct>;
 
 pub struct StorageLocationStruct {
     pub(crate) ir_node: input_ir::StorageLocation,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StorageLocationStruct {
@@ -4418,7 +4428,7 @@ pub type ForStatementInitialization = Rc<ForStatementInitializationStruct>;
 
 pub struct ForStatementInitializationStruct {
     pub(crate) ir_node: input_ir::ForStatementInitialization,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ForStatementInitializationStruct {
@@ -4502,7 +4512,7 @@ pub type ForStatementCondition = Rc<ForStatementConditionStruct>;
 
 pub struct ForStatementConditionStruct {
     pub(crate) ir_node: input_ir::ForStatementCondition,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ForStatementConditionStruct {
@@ -4543,7 +4553,7 @@ pub type Expression = Rc<ExpressionStruct>;
 
 pub struct ExpressionStruct {
     pub(crate) ir_node: input_ir::Expression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ExpressionStruct {
@@ -5008,7 +5018,7 @@ pub type ArgumentsDeclaration = Rc<ArgumentsDeclarationStruct>;
 
 pub struct ArgumentsDeclarationStruct {
     pub(crate) ir_node: input_ir::ArgumentsDeclaration,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ArgumentsDeclarationStruct {
@@ -5063,7 +5073,7 @@ pub type NumberUnit = Rc<NumberUnitStruct>;
 
 pub struct NumberUnitStruct {
     pub(crate) ir_node: input_ir::NumberUnit,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl NumberUnitStruct {
@@ -5123,7 +5133,7 @@ pub type StringExpression = Rc<StringExpressionStruct>;
 
 pub struct StringExpressionStruct {
     pub(crate) ir_node: input_ir::StringExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StringExpressionStruct {
@@ -5178,7 +5188,7 @@ pub type YulStatement = Rc<YulStatementStruct>;
 
 pub struct YulStatementStruct {
     pub(crate) ir_node: input_ir::YulStatement,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulStatementStruct {
@@ -5401,7 +5411,7 @@ pub type YulAssignmentOperator = Rc<YulAssignmentOperatorStruct>;
 
 pub struct YulAssignmentOperatorStruct {
     pub(crate) ir_node: input_ir::YulAssignmentOperator,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulAssignmentOperatorStruct {
@@ -5442,7 +5452,7 @@ pub type YulStackAssignmentOperator = Rc<YulStackAssignmentOperatorStruct>;
 
 pub struct YulStackAssignmentOperatorStruct {
     pub(crate) ir_node: input_ir::YulStackAssignmentOperator,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulStackAssignmentOperatorStruct {
@@ -5486,7 +5496,7 @@ pub type YulSwitchCase = Rc<YulSwitchCaseStruct>;
 
 pub struct YulSwitchCaseStruct {
     pub(crate) ir_node: input_ir::YulSwitchCase,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulSwitchCaseStruct {
@@ -5532,7 +5542,7 @@ pub type YulExpression = Rc<YulExpressionStruct>;
 
 pub struct YulExpressionStruct {
     pub(crate) ir_node: input_ir::YulExpression,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulExpressionStruct {
@@ -5593,7 +5603,7 @@ pub type YulLiteral = Rc<YulLiteralStruct>;
 
 pub struct YulLiteralStruct {
     pub(crate) ir_node: input_ir::YulLiteral,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulLiteralStruct {
@@ -5633,7 +5643,7 @@ pub type FunctionKind = Rc<FunctionKindStruct>;
 
 pub struct FunctionKindStruct {
     pub(crate) ir_node: input_ir::FunctionKind,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl FunctionKindStruct {
@@ -5676,7 +5686,7 @@ pub type FunctionVisibility = Rc<FunctionVisibilityStruct>;
 
 pub struct FunctionVisibilityStruct {
     pub(crate) ir_node: input_ir::FunctionVisibility,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl FunctionVisibilityStruct {
@@ -5711,7 +5721,7 @@ pub type FunctionMutability = Rc<FunctionMutabilityStruct>;
 
 pub struct FunctionMutabilityStruct {
     pub(crate) ir_node: input_ir::FunctionMutability,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl FunctionMutabilityStruct {
@@ -5746,7 +5756,7 @@ pub type StateVariableVisibility = Rc<StateVariableVisibilityStruct>;
 
 pub struct StateVariableVisibilityStruct {
     pub(crate) ir_node: input_ir::StateVariableVisibility,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StateVariableVisibilityStruct {
@@ -5777,7 +5787,7 @@ pub type StateVariableMutability = Rc<StateVariableMutabilityStruct>;
 
 pub struct StateVariableMutabilityStruct {
     pub(crate) ir_node: input_ir::StateVariableMutability,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StateVariableMutabilityStruct {
@@ -5812,7 +5822,7 @@ pub type TupleDeconstructionMember = Rc<TupleDeconstructionMemberStruct>;
 
 pub struct TupleDeconstructionMemberStruct {
     pub(crate) ir_node: input_ir::TupleDeconstructionMember,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TupleDeconstructionMemberStruct {
@@ -5874,7 +5884,7 @@ pub type SourceUnitMembers = Rc<SourceUnitMembersStruct>;
 
 pub struct SourceUnitMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::SourceUnitMember>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl SourceUnitMembersStruct {
@@ -5896,7 +5906,7 @@ pub type VersionExpressionSets = Rc<VersionExpressionSetsStruct>;
 
 pub struct VersionExpressionSetsStruct {
     pub(crate) ir_nodes: Vec<input_ir::VersionExpressionSet>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VersionExpressionSetsStruct {
@@ -5918,7 +5928,7 @@ pub type VersionExpressionSet = Rc<VersionExpressionSetStruct>;
 
 pub struct VersionExpressionSetStruct {
     pub(crate) ir_nodes: Vec<input_ir::VersionExpression>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl VersionExpressionSetStruct {
@@ -5940,7 +5950,7 @@ pub type ImportDeconstructionSymbols = Rc<ImportDeconstructionSymbolsStruct>;
 
 pub struct ImportDeconstructionSymbolsStruct {
     pub(crate) ir_nodes: Vec<input_ir::ImportDeconstructionSymbol>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ImportDeconstructionSymbolsStruct {
@@ -5968,7 +5978,7 @@ pub type UsingDeconstructionSymbols = Rc<UsingDeconstructionSymbolsStruct>;
 
 pub struct UsingDeconstructionSymbolsStruct {
     pub(crate) ir_nodes: Vec<input_ir::UsingDeconstructionSymbol>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl UsingDeconstructionSymbolsStruct {
@@ -5996,7 +6006,7 @@ pub type InheritanceTypes = Rc<InheritanceTypesStruct>;
 
 pub struct InheritanceTypesStruct {
     pub(crate) ir_nodes: Vec<input_ir::InheritanceType>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl InheritanceTypesStruct {
@@ -6018,7 +6028,7 @@ pub type ContractMembers = Rc<ContractMembersStruct>;
 
 pub struct ContractMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ContractMembersStruct {
@@ -6040,7 +6050,7 @@ pub type InterfaceMembers = Rc<InterfaceMembersStruct>;
 
 pub struct InterfaceMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl InterfaceMembersStruct {
@@ -6062,7 +6072,7 @@ pub type LibraryMembers = Rc<LibraryMembersStruct>;
 
 pub struct LibraryMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl LibraryMembersStruct {
@@ -6084,7 +6094,7 @@ pub type StructMembers = Rc<StructMembersStruct>;
 
 pub struct StructMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::StructMember>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StructMembersStruct {
@@ -6106,7 +6116,7 @@ pub type EnumMembers = Rc<EnumMembersStruct>;
 
 pub struct EnumMembersStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl EnumMembersStruct {
@@ -6128,7 +6138,7 @@ pub type Parameters = Rc<ParametersStruct>;
 
 pub struct ParametersStruct {
     pub(crate) ir_nodes: Vec<input_ir::Parameter>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ParametersStruct {
@@ -6150,7 +6160,7 @@ pub type OverridePaths = Rc<OverridePathsStruct>;
 
 pub struct OverridePathsStruct {
     pub(crate) ir_nodes: Vec<input_ir::IdentifierPath>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl OverridePathsStruct {
@@ -6172,7 +6182,7 @@ pub type Statements = Rc<StatementsStruct>;
 
 pub struct StatementsStruct {
     pub(crate) ir_nodes: Vec<input_ir::Statement>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl StatementsStruct {
@@ -6194,7 +6204,7 @@ pub type CatchClauses = Rc<CatchClausesStruct>;
 
 pub struct CatchClausesStruct {
     pub(crate) ir_nodes: Vec<input_ir::CatchClause>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl CatchClausesStruct {
@@ -6216,7 +6226,7 @@ pub type PositionalArguments = Rc<PositionalArgumentsStruct>;
 
 pub struct PositionalArgumentsStruct {
     pub(crate) ir_nodes: Vec<input_ir::Expression>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl PositionalArgumentsStruct {
@@ -6238,7 +6248,7 @@ pub type NamedArguments = Rc<NamedArgumentsStruct>;
 
 pub struct NamedArgumentsStruct {
     pub(crate) ir_nodes: Vec<input_ir::NamedArgument>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl NamedArgumentsStruct {
@@ -6260,7 +6270,7 @@ pub type CallOptions = Rc<CallOptionsStruct>;
 
 pub struct CallOptionsStruct {
     pub(crate) ir_nodes: Vec<input_ir::NamedArgument>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl CallOptionsStruct {
@@ -6282,7 +6292,7 @@ pub type TupleValues = Rc<TupleValuesStruct>;
 
 pub struct TupleValuesStruct {
     pub(crate) ir_nodes: Vec<input_ir::TupleValue>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TupleValuesStruct {
@@ -6304,7 +6314,7 @@ pub type ArrayValues = Rc<ArrayValuesStruct>;
 
 pub struct ArrayValuesStruct {
     pub(crate) ir_nodes: Vec<input_ir::Expression>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ArrayValuesStruct {
@@ -6326,7 +6336,7 @@ pub type IdentifierPath = Rc<IdentifierPathStruct>;
 
 pub struct IdentifierPathStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl IdentifierPathStruct {
@@ -6348,7 +6358,7 @@ pub type YulStatements = Rc<YulStatementsStruct>;
 
 pub struct YulStatementsStruct {
     pub(crate) ir_nodes: Vec<input_ir::YulStatement>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulStatementsStruct {
@@ -6370,7 +6380,7 @@ pub type YulParameters = Rc<YulParametersStruct>;
 
 pub struct YulParametersStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulParametersStruct {
@@ -6392,7 +6402,7 @@ pub type YulVariableNames = Rc<YulVariableNamesStruct>;
 
 pub struct YulVariableNamesStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulVariableNamesStruct {
@@ -6414,7 +6424,7 @@ pub type YulSwitchCases = Rc<YulSwitchCasesStruct>;
 
 pub struct YulSwitchCasesStruct {
     pub(crate) ir_nodes: Vec<input_ir::YulSwitchCase>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulSwitchCasesStruct {
@@ -6436,7 +6446,7 @@ pub type YulArguments = Rc<YulArgumentsStruct>;
 
 pub struct YulArgumentsStruct {
     pub(crate) ir_nodes: Vec<input_ir::YulExpression>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulArgumentsStruct {
@@ -6458,7 +6468,7 @@ pub type YulPaths = Rc<YulPathsStruct>;
 
 pub struct YulPathsStruct {
     pub(crate) ir_nodes: Vec<input_ir::YulPath>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulPathsStruct {
@@ -6480,7 +6490,7 @@ pub type YulPath = Rc<YulPathStruct>;
 
 pub struct YulPathStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl YulPathStruct {
@@ -6502,7 +6512,7 @@ pub type ModifierInvocations = Rc<ModifierInvocationsStruct>;
 
 pub struct ModifierInvocationsStruct {
     pub(crate) ir_nodes: Vec<input_ir::ModifierInvocation>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl ModifierInvocationsStruct {
@@ -6524,7 +6534,7 @@ pub type TupleDeconstructionMembers = Rc<TupleDeconstructionMembersStruct>;
 
 pub struct TupleDeconstructionMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::TupleDeconstructionMember>,
-    semantic: Rc<SemanticAnalysis>,
+    pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl TupleDeconstructionMembersStruct {
