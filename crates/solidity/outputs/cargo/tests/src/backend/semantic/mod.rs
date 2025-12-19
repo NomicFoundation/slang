@@ -191,3 +191,72 @@ fn test_get_references() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_get_linearised_state_variables() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("can find Counter contract");
+
+    let state_variables = counter.linearised_state_variables();
+    assert_eq!(state_variables.len(), 4);
+
+    assert_eq!(state_variables[0].name().unparse(), "_owner");
+    assert_eq!(state_variables[1].name().unparse(), "_state");
+    assert_eq!(state_variables[2].name().unparse(), "count");
+    assert_eq!(state_variables[3].name().unparse(), "_clickers");
+
+    Ok(())
+}
+
+#[test]
+fn test_get_linearised_functions() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("can find Counter contract");
+
+    let functions = counter.linearised_functions();
+    assert_eq!(functions.len(), 5);
+
+    assert!(functions[0]
+        .name()
+        .is_some_and(|name| name.unparse() == "click"));
+    assert!(functions[1]
+        .name()
+        .is_some_and(|name| name.unparse() == "disable"));
+    assert!(functions[2]
+        .name()
+        .is_some_and(|name| name.unparse() == "enable"));
+    assert!(functions[3]
+        .name()
+        .is_some_and(|name| name.unparse() == "increment"));
+    assert!(functions[4]
+        .name()
+        .is_some_and(|name| name.unparse() == "isEnabled"));
+
+    Ok(())
+}
+
+#[test]
+fn test_get_constructor_and_modifiers() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("can find Counter contract");
+
+    let constructor = counter.constructor();
+    assert!(constructor.is_some());
+
+    let modifiers = counter.modifiers();
+    assert_eq!(modifiers.len(), 0);
+
+    Ok(())
+}
