@@ -1,7 +1,7 @@
 mod item;
 mod parser_builder;
 
-use language_v2_definition::model::{Identifier, Language};
+use language_v2_definition::model::Language;
 use serde::Serialize;
 
 use crate::lexer::LexerModel;
@@ -12,8 +12,6 @@ use crate::parser::parser_builder::ParserBuilder;
 #[derive(Clone, Debug, Serialize)]
 pub struct ParserModel {
     pub lexer: LexerModel,
-
-    pub root_item: Identifier,
     sections: Vec<ParserSection>,
 }
 
@@ -41,7 +39,6 @@ impl ParserModel {
     pub fn from_language(language: &Language) -> Self {
         Self {
             lexer: LexerModel::from_language(language),
-            root_item: language.root_item.clone(),
             sections: ParserBuilder::new(language).build(),
         }
     }

@@ -46,12 +46,14 @@ RepOne<T>: Vec<'arena, T> = {
     {% for item in topic.items -%}
 
     {% if item.inline %}#[inline]
-    {% endif %}{% if item.name == model.parser.root_item -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }}<'arena> = {
+    {% endif %}{% if item.pubb -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }}<'arena> = {
         {% for option in item.options -%}
             {% for field in option.fields -%}   
                 <{{ field.capturing_name }}: {{ field.rule }}> {{ " " }}
-            {%- endfor %}=> {% if option.forward %}<>{% else -%}
-            new_{{ item.producing_type | snake_case }}{% if option.name %}_{{ option.name | snake_case }}{% endif %}(arena, <>)
+            {%- endfor %}=> {% if option.constructor -%}
+            {{ option.constructor | snake_case }}(arena, <>)
+            {%- else -%}
+            <>
             {%- endif %},
         {% endfor %}
     };
