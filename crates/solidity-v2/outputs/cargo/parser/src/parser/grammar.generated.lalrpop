@@ -5,7 +5,6 @@ use slang_solidity_v2_ast::ast::nodes::*;
 use crate::parser::nodes::*;
 use bumpalo::Bump;
 use bumpalo::collections::Vec;
-use bumpalo::collections::CollectIn;
 
 grammar<'arena, 'source>(arena: &'arena Bump, source: &'source str);
 
@@ -4745,6 +4744,8 @@ extern {
     // A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
     // at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
     // start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
+    //
+    // We use expressions with a trailing block to solve this, and steal the block from there.
     TryStatement: TryStatement<'arena> = {
         <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
             new_try_statement(arena, _try_keyword, _expression, Some(_returns), _body, _catch_clauses)
@@ -4755,38 +4756,26 @@ extern {
         },
     };
 
-
-
-// TODO[4] We remove the TupleDeconstructionStatement sub NonTerminals from here, it's now a ProtoTuple
-// shared with the tuples
-    TupleDeconstructionStatement: TupleDeconstructionStatement<'arena> = {
-            // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
-            <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => new_tuple_deconstruction_statement_from_proto_tuple(arena, <>),
-        
-    };
-
-// ODOT
-
-
-// Tuple expressions and tuple declarations can conflict in some situations, for example if the parser sees `(a, b` 
-// it doesn't know whether it's parsing a tuple expression with two identifiers inside, or a tuple pattern/declaration.
-// We solve this by delaying the decision, and parsing common prefixes as ProtoTuples.
-// ProtoTuples are marked with a boolean generic on whether they are tuples (ie, expressions) or patterns (ie, declarations).
-//
-// Note: One caveat of this is that an assignemnt over a tuple (ie, `(a, b) = foo();`) is parsed as an expression.
-// 
-// Note: the solidity grammar chooses to allow tuple expressions to not have any expressions (ie `(,,)` is valid),
-// and then the difference between an assignemtn with a lhs being a tuple expression and a tuple deconstruction statement
-// is whether it has any declaration within itself.
-// We follow a different path, the reason may make a difference in the future when `var` declarations are allowed
-// (`var (a, b) = foo();`), but for now it's mostly a design choice.
-//
-// TODO: Empty tuples are considered patterns, I'm not sure if that's actually allowed
-// TODO: maybe we could get rid of this if we use a right-recursive rules for tuples, but I'm not 100% sure
+    
+    // Tuple expressions and tuple declarations can conflict in some situations, for example if the parser sees `(a, b` 
+    // it doesn't know whether it's parsing a tuple expression with two identifiers inside, or a tuple pattern/declaration.
+    // We solve this by delaying the decision, and parsing common prefixes as ProtoTuples.
+    // ProtoTuples are marked with a boolean generic on whether they are tuples (ie, expressions) or patterns (ie, declarations).
+    //
+    // Note: One caveat of this is that an assignemnt over a tuple (ie, `(a, b) = foo();`) is parsed as an expression.
+    // 
+    // Note: the solidity grammar chooses to allow tuple expressions to not have any expressions (ie `(,,)` is valid),
+    // and then the difference between an assignemtn with a lhs being a tuple expression and a tuple deconstruction statement
+    // is whether it has any declaration within itself.
+    // We follow a different path, the reason may make a difference in the future when `var` declarations are allowed
+    // (`var (a, b) = foo();`), but for now it's mostly a design choice.
+    //
+    // TODO: Empty tuples are considered patterns, I'm not sure if that's actually allowed
+    // TODO: maybe we could get rid of this if we use a right-recursive rules for tuples, but I'm not 100% sure
     ProtoTuple<Tuple>: ProtoTuple<'arena> = {
         <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(arena, _open_paren, _elements, _close_paren),
     }
-
+    
     ProtoTupleElements<Tuple>: Vec<'arena, ProtoTupleElement<'arena>> = {
         // A single element can be a tuple or a pattern
         <_elem: TupleElementExpression> if Tuple == "True" => bumpalo::vec![in arena; <>],
@@ -4797,37 +4786,42 @@ extern {
             _elems.push(_elem);
             _elems
         },
-
+        
         // But we can mix and match with patterns
         <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
             _elems.push(_elem);
             _elems
         },
-
+        
         <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
             _elems.push(_elem);
             _elems
         },
-
+        
         <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementExpression> if Tuple == "False" => {
             _elems.push(_elem);
             _elems
         },
     };
-
+    
     TupleElementExpression: ProtoTupleElement<'arena> = {
         // A Tuple expression must be present and only be an identifier
         <_name: Expression> => new_proto_tuple_element_expression(arena, _name),
     };
-
+    
     TupleElementPattern: ProtoTupleElement<'arena> = {
         <_decl: VariableDeclaration>  => new_proto_tuple_element_declaration(arena, _decl),
         <_storage_location: StorageLocation> <_name: Identifier>  => new_proto_tuple_element_storage_location(arena, _storage_location, _name),
         () => new_proto_tuple_element_empty(arena),
     };
-        
-
-
+    
+    // TupleDeconstructionStatement uses a ProtoTuple with patterns only
+        TupleDeconstructionStatement: TupleDeconstructionStatement<'arena> = {
+                // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
+                <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => new_tuple_deconstruction_statement_from_proto_tuple(arena, <>),
+        };
+    
+    
 // An IAP that tracks whether it has a trailing identifier path
 IndexAccessPath<TrailingIdent>: IndexAccessPath<'arena> = {
     <iap: IndexAccessPath<"True">> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(arena, <>),
@@ -4848,10 +4842,12 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
         
     };
 
-// TODO[5] Expressions are expanded, this gives us more control
-// Ident is a variable to check whether this expression allows identifier paths or not
-// The problem comes from a.b.c, this can be either an identifier path or a member access, we should
-// always prefer identifier paths
+// Expression has a lot of tricky cases:
+// 1. For primary expressions, we track whether they have a triling IAP and, if so, whether that IAP ends in an identifier path
+//    This is needed to delay reduction of type names and member accesses as long as possible
+// 2. For other expressions, we parametrize over a trailing element, to allow using expressions followed by something
+//    (a block or a contract members construct) that may conflict with other trailing expressions constructs (like
+//    option calls)
 //
 // Note: To simplify my life right now, this is a bit different from what's generated, but we'll get there
     Expression0<TrailingIdent, TrailingIAP>: Expression<'arena> = {
@@ -4870,8 +4866,6 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
             <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(arena, <>),
          
             <_StringExpression: StringExpression>  => new_expression_string_expression(arena, <>),
-         
-            // <_ElementaryType: ElementaryType>  => new_expression_elementary_type(arena, <>),
          
             <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(arena, <>),
          
@@ -4892,12 +4886,6 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
          
             <_Expression: Expression1<"False", "True">>  <_period: Period>  <_member: MemberAccessIdentifier>  => new_expression_member_access_expression(arena, new_member_access_expression(arena, <>)),
          
-         // TODO[6]: enable, doesn't work nicely with try statements
-        // in particular try foo {...} ()
-        // In solidity parser they do two look ahead
-        // https://github.com/argotorg/solidity/blob/0f6d9db4987d91c9ccaf991b6a1a6515655ed745/libsolidity/parsing/Parser.cpp#L2332-L2349
-        // I'm still unsure how to solve this, so not worrying for now
-
             <_Expression: Expression1<"True", "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(arena, new_call_options_expression(arena, <>)),
          
             <_Expression: Expression1<"True", "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(arena, new_function_call_expression(arena, <>)),
@@ -4905,302 +4893,215 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
             <Expression: Expression0<TrailingIdent, TrailingIAP>>  => <>,
         
     };
-    Expression5<Ident>: Expression<'arena> = {
+
+    // Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
+    Expression5<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Ident>>  => new_expression_prefix_expression(arena, new_prefix_expression(arena, <>)),
+            <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Tail>>  => {
+                let (expr, tail) = _Expression;
+                (new_expression_prefix_expression(arena, new_prefix_expression(arena, _Expression_PrefixExpression_Operator, expr)), tail)
+            },
          
-            <Expression: Expression1<"True", Ident>>  => <>,
+            // A tail can appear just after a postfix or primary expression
+            <Expression: Expression1<"True", "True">> <tail: Tail> => {
+                (Expression, tail)
+            },
         
     };
-    Expression6<Ident>: Expression<'arena> = {
+    Expression6<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression6<Ident>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator>  => new_expression_postfix_expression(arena, new_postfix_expression(arena, <>)),
+            // This is the only other postfix expression that can overwrite a trailing element
+            <_Expression: Expression6<EmptyTail>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
+                let (expr, _) = _Expression;
+                (new_expression_postfix_expression(arena, new_postfix_expression(arena, expr, _Expression_PostfixExpression_Operator)), tail)
+            },
          
-            <Expression: Expression5<Ident>>  => <>,
+            <Expression: Expression5<Tail>>  => <>,
         
     };
-    Expression7<Ident>: Expression<'arena> = {
+    Expression7<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression6<"True">>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Ident>>  => new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, <>)),
+            <_Expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, e, _operator, e2)), tail)
+            },
          
-            <Expression: Expression6<Ident>>  => <>,
+            <Expression: Expression6<Tail>>  => <>,
         
     };
-    Expression8<Ident>: Expression<'arena> = {
+    Expression8<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression8<"True">>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Ident>>  => new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, <>)),
+            <_Expression: Expression8<EmptyTail>>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, e, _Expression_MultiplicativeExpression_Operator, e2)), tail)
+            },
          
-            <Expression: Expression7<Ident>>  => <>,
+            <Expression: Expression7<Tail>>  => <>,
         
     };
-    Expression9<Ident>: Expression<'arena> = {
+    Expression9<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression9<"True">>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Ident>>  => new_expression_additive_expression(arena, new_additive_expression(arena, <>)),
+            <_Expression: Expression9<EmptyTail>>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_additive_expression(arena, new_additive_expression(arena, e, _Expression_AdditiveExpression_Operator, e2)), tail)
+            },
          
-            <Expression: Expression8<Ident>>  => <>,
+            <Expression: Expression8<Tail>>  => <>,
         
     };
-    Expression10<Ident>: Expression<'arena> = {
+    Expression10<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression10<"True">>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Ident>>  => new_expression_shift_expression(arena, new_shift_expression(arena, <>)),
+            <_Expression: Expression10<EmptyTail>>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_shift_expression(arena, new_shift_expression(arena, e, _Expression_ShiftExpression_Operator, e2)), tail)
+            },
          
-            <Expression: Expression9<Ident>>  => <>,
+            <Expression: Expression9<Tail>>  => <>,
         
     };
-    Expression11<Ident>: Expression<'arena> = {
+    Expression11<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression11<"True">>  <_operator: Ampersand>  <_Expression_2: Expression10<Ident>>  => new_expression_bitwise_and_expression(arena, new_bitwise_and_expression(arena, <>)),
+            <_Expression: Expression11<EmptyTail>>  <_operator: Ampersand>  <_Expression_2: Expression10<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_bitwise_and_expression(arena, new_bitwise_and_expression(arena, e, _operator, e2)), tail)
+            },
          
-            <Expression: Expression10<Ident>>  => <>,
+            <Expression: Expression10<Tail>>  => <>,
         
     };
-    Expression12<Ident>: Expression<'arena> = {
+    Expression12<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression12<"True">>  <_operator: Caret>  <_Expression_2: Expression11<Ident>>  => new_expression_bitwise_xor_expression(arena, new_bitwise_xor_expression(arena, <>)),
+            <_Expression: Expression12<EmptyTail>>  <_operator: Caret>  <_Expression_2: Expression11<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_bitwise_xor_expression(arena, new_bitwise_xor_expression(arena, e, _operator, e2)), tail)
+            },
          
-            <Expression: Expression11<Ident>>  => <>,
+            <Expression: Expression11<Tail>>  => <>,
         
     };
-    Expression13<Ident>: Expression<'arena> = {
+    Expression13<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression13<"True">>  <_operator: Bar>  <_Expression_2: Expression12<Ident>>  => new_expression_bitwise_or_expression(arena, new_bitwise_or_expression(arena, <>)),
+            <_Expression: Expression13<EmptyTail>>  <_operator: Bar>  <_Expression_2: Expression12<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_bitwise_or_expression(arena, new_bitwise_or_expression(arena, e, _operator, e2)), tail)
+            },
          
-            <Expression: Expression12<Ident>>  => <>,
+            <Expression: Expression12<Tail>>  => <>,
         
     };
-    Expression14<Ident>: Expression<'arena> = {
+    Expression14<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression14<"True">>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Ident>>  => new_expression_inequality_expression(arena, new_inequality_expression(arena, <>)),
+            <_Expression: Expression14<EmptyTail>>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_inequality_expression(arena, new_inequality_expression(arena, e, _Expression_InequalityExpression_Operator, e2)), tail)
+            },
          
-            <Expression: Expression13<Ident>>  => <>,
+            <Expression: Expression13<Tail>>  => <>,
         
     };
-    Expression15<Ident>: Expression<'arena> = {
+    Expression15<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression15<"True">>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Ident>>  => new_expression_equality_expression(arena, new_equality_expression(arena, <>)),
+            <_Expression: Expression15<EmptyTail>>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_equality_expression(arena, new_equality_expression(arena, e, _Expression_EqualityExpression_Operator, e2)), tail)
+            },
          
-            <Expression: Expression14<Ident>>  => <>,
+            <Expression: Expression14<Tail>>  => <>,
         
     };
-    Expression16<Ident>: Expression<'arena> = {
+    Expression16<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression16<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Ident>>  => new_expression_and_expression(arena, new_and_expression(arena, <>)),
+            <_Expression: Expression16<EmptyTail>>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_and_expression(arena, new_and_expression(arena, e, _operator, e2)), tail)
+            },
          
-            <Expression: Expression15<Ident>>  => <>,
+            <Expression: Expression15<Tail>>  => <>,
         
     };
-    Expression17<Ident>: Expression<'arena> = {
+    Expression17<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression17<"True">>  <_operator: BarBar>  <_Expression_2: Expression16<Ident>>  => new_expression_or_expression(arena, new_or_expression(arena, <>)),
+            <_Expression: Expression17<EmptyTail>>  <_operator: BarBar>  <_Expression_2: Expression16<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_or_expression(arena, new_or_expression(arena, e, _operator, e2)), tail)
+            },
          
-            <Expression: Expression16<Ident>>  => <>,
+            <Expression: Expression16<Tail>>  => <>,
         
     };
-    Expression18<Ident>: Expression<'arena> = {
+    Expression18<Tail>: (Expression<'arena>, Tail) = {
+        
         // TODO: Not really sure the associativity is correct, we need to check
+            <_Expression: Expression17<EmptyTail>>  <_question_mark: QuestionMark>  <_true_expression: Expression18<EmptyTail>>  <_colon: Colon>  <_false_expression: Expression18<Tail>>  => {
+                let (cond_expr, _) = _Expression;
+                let (true_expr, _) = _true_expression;
+                let (false_expr, tail) = _false_expression;
+                (new_expression_conditional_expression(arena, new_conditional_expression(arena, cond_expr, _question_mark, true_expr, _colon, false_expr)), tail)
+            },
          
-            <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18<Ident>>  => new_expression_conditional_expression(arena, new_conditional_expression(arena, <>)),
-         
-            <Expression: Expression17<Ident>>  => <>,
+            <Expression: Expression17<Tail>>  => <>,
         
     };
-    Expression19<Ident>: Expression<'arena> = {
+    Expression19<Tail>: (Expression<'arena>, Tail) = {
          
-            <_Expression: Expression19<"True">>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Ident>>  => new_expression_assignment_expression(arena, new_assignment_expression(arena, <>)),
+            <_Expression: Expression19<EmptyTail>>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Tail>>  => {
+                let (e, _) = _Expression;
+                let (e2, tail) = _Expression_2;
+                (new_expression_assignment_expression(arena, new_assignment_expression(arena, e, _Expression_AssignmentExpression_Operator, e2)), tail)
+            },
          
-            <Expression: Expression18<Ident>>  => <>,
+            <Expression: Expression18<Tail>>  => <>,
         
     };
 
     // TODO(v2): We're making this pub to allow testing Expressions
     pub Expression: Expression<'arena> = {
          
-            <Expression: Expression19<"True">>  => <>,
-        
-    };
-// ODOT
-
-
-
-
-
-
-    // We simplifiy all these levels of expressions into a single one, there's no need
-    // for precedence here
-    Expression1DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <Expression: Expression1<"True", "True">> <b: Block>  => {
-                (Expression, b)
-            },
-        
-    };
-    Expression5DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5DB>  => {
-                let (expr, block) = _Expression;
-                (new_expression_prefix_expression(arena, new_prefix_expression(arena, _Expression_PrefixExpression_Operator, expr)), block)
-            },
-         
-            <Expression: Expression1DB>  => <>,
-        
-    };
-    Expression6DB: (Expression<'arena>, Block<'arena>) = {
-         
-            // Not sure what happens here, should I get a block?
-            <_Expression: Expression6<"True">>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <b: Block>  => {
-                (new_expression_postfix_expression(arena, new_postfix_expression(arena, _Expression, _Expression_PostfixExpression_Operator)), b)
-            },
-         
-            <Expression: Expression5DB>  => <>,
-        
-    };
-    Expression7DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression6<"True">>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, _Expression, _operator, e)), db)
-            },
-         
-            <Expression: Expression6DB>  => <>,
-        
-    };
-    Expression8DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression8<"True">>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7DB>  =>  {
-                let (e, db) = _Expression_2;
-                (new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, _Expression, _Expression_MultiplicativeExpression_Operator, e)), db)
-            },
-         
-            <Expression: Expression7DB>  => <>,
-        
-    };
-    Expression9DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression9<"True">>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_additive_expression(arena, new_additive_expression(arena, _Expression, _Expression_AdditiveExpression_Operator, e)), db)
-            },
-         
-            <Expression: Expression8DB>  => <>,
-        
-    };
-    Expression10DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression10<"True">>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_shift_expression(arena, new_shift_expression(arena, _Expression, _Expression_ShiftExpression_Operator, e)), db)
-            },
-         
-            <Expression: Expression9DB>  => <>,
-        
-    };
-    Expression11DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression11<"True">>  <_operator: Ampersand>  <_Expression_2: Expression10DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_bitwise_and_expression(arena, new_bitwise_and_expression(arena, _Expression, _operator, e)), db)
-            },
-         
-            <Expression: Expression10DB>  => <>,
-        
-    };
-    Expression12DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression12<"True">>  <_operator: Caret>  <_Expression_2: Expression11DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_bitwise_xor_expression(arena, new_bitwise_xor_expression(arena, _Expression, _operator, e)), db)
-            },
-         
-            <Expression: Expression11DB>  => <>,
-        
-    };
-    Expression13DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression13<"True">>  <_operator: Bar>  <_Expression_2: Expression12DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_bitwise_or_expression(arena, new_bitwise_or_expression(arena, _Expression, _operator, e)), db)
-            },
-         
-            <Expression: Expression12DB>  => <>,
-        
-    };
-    Expression14DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression14<"True">>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_inequality_expression(arena, new_inequality_expression(arena, _Expression, _Expression_InequalityExpression_Operator, e)), db)
-            },
-         
-            <Expression: Expression13DB>  => <>,
-        
-    };
-    Expression15DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression15<"True">>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_equality_expression(arena, new_equality_expression(arena, _Expression, _Expression_EqualityExpression_Operator, e)), db)
-            },  
-         
-            <Expression: Expression14DB>  => <>,
-        
-    };
-    Expression16DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression16<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_and_expression(arena, new_and_expression(arena, _Expression, _operator, e)), db)
-            },  
-         
-            <Expression: Expression15DB>  => <>,
-        
-    };
-    Expression17DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression17<"True">>  <_operator: BarBar>  <_Expression_2: Expression16DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_or_expression(arena, new_or_expression(arena, _Expression, _operator, e)), db)
-            },
-         
-            <Expression: Expression16DB>  => <>,
-        
-    };
-    
-    Expression18DB: (Expression<'arena>, Block<'arena>) = {
-        // TODO: Not really sure the associativity is correct, we need to check
-         
-            <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18DB>  => {
-                let (e, db) = _false_expression;
-                (new_expression_conditional_expression(arena, new_conditional_expression(arena, _Expression, _question_mark, _true_expression, _colon, e)), db)
-            },  
-         
-            <Expression: Expression17DB>  => <>,
-        
-    };
-    Expression19DB: (Expression<'arena>, Block<'arena>) = {
-         
-            <_Expression: Expression19<"True">>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18DB>  => {
-                let (e, db) = _Expression_2;
-                (new_expression_assignment_expression(arena, new_assignment_expression(arena, _Expression, _Expression_AssignmentExpression_Operator, e)), db)
-            },
-         
-            <Expression: Expression18DB>  => <>,
+            <Expression: Expression19<EmptyTail>>  => Expression.0,
         
     };
 
-    // TODO(v2): We're making this pub to allow testing Expressions
+    // An empty tail is the default behaviour
+    EmptyTail: () = {
+        () => (),
+    };
+
+    // An expression followed by a block
     ExpressionTrailingBlock: (Expression<'arena>, Block<'arena>) = {
          
-            <Expression: Expression19DB>  => <>,
+            <Expression: Expression19<Block>>  => <>,
         
     };
 
+    // An expression followed by contract members
+    ExpressionTrailingMembers: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+            <Expression: Expression19<BracedContractMembers>>  => <>,
+    };
+    BracedContractMembers: (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>) = {
+        <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+            (_open_brace, _members, _close_brace)
+        },
+    };
 
 
-// Disabling for now
-
+    // A ContractDefinition's specifiers can conflict with the trailing block, since a block and an option calls
+    // have the same prefix (an open brace).
+    //
+    // For the case with specifiers, we parse the specifiers first, and steal the members from the last specifier.
     pub ContractDefinition: ContractDefinition<'arena> = {
         <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiers>  => {
-            let (specifiers, _open_brace, _members, _close_brace) = _specifiers;
+            let (specifiers, (_open_brace, _members, _close_brace)) = _specifiers;
             new_contract_definition(arena, _abstract_keyword, _contract_keyword, _name, specifiers, _open_brace, _members, _close_brace)
         },
         <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
@@ -5208,199 +5109,30 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
         },
 
     };
-    ContractSpecifiers: (ContractSpecifiers<'arena>, OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>) = {
+
+    // The specifiers need to be at least one, and the last one must capture the members
+    ContractSpecifiers: (ContractSpecifiers<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
         <mut _ContractSpecifier: Rep<<ContractSpecifier>>> <_tail: ContractSpecifierDM>  => {
-            let (specifier, open_brace, members, close_brace) = _tail;
+            let (specifier, tail) = _tail;
             _ContractSpecifier.push(specifier);
-            (new_contract_specifiers(arena, _ContractSpecifier), open_brace, members, close_brace)
+            (new_contract_specifiers(arena, _ContractSpecifier), tail)
         },
     };
-    ContractSpecifierDM: (ContractSpecifier<'arena>, OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>) = {
+    ContractSpecifierDM: (ContractSpecifier<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
         <_InheritanceSpecifier: InheritanceSpecifier> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
-            (new_contract_specifier_inheritance_specifier(arena, _InheritanceSpecifier), _open_brace, _members, _close_brace)
+            (new_contract_specifier_inheritance_specifier(arena, _InheritanceSpecifier), (_open_brace, _members, _close_brace))
         },
         <_StorageLayoutSpecifier: StorageLayoutSpecifierDM>  => {
-            let (storage_layout_specifier, open_brace, members, close_brace) = _StorageLayoutSpecifier;
-            (new_contract_specifier_storage_layout_specifier(arena, storage_layout_specifier), open_brace, members, close_brace)
+            let (storage_layout_specifier, tail) = _StorageLayoutSpecifier;
+            (new_contract_specifier_storage_layout_specifier(arena, storage_layout_specifier), tail)
         },
     };
 
-    StorageLayoutSpecifierDM: (StorageLayoutSpecifier<'arena>, OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>) = {
-        <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: ExpressionDM>  => {
-            let (expr, open_brace, members, close_brace) = _expression;
-            (new_storage_layout_specifier(arena, _layout_keyword, _at_keyword, expr), open_brace, members, close_brace)
+    StorageLayoutSpecifierDM: (StorageLayoutSpecifier<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
+        <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: ExpressionTrailingMembers>  => {
+            let (expr, tail) = _expression;
+            (new_storage_layout_specifier(arena, _layout_keyword, _at_keyword, expr), tail)
         },
     };
-
-    Expression1DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <Expression: Expression1<"True", "True">> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
-                (Expression, (_open_brace, _members, _close_brace))
-            },
-        
-    };
-    Expression5DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5DM>  => {
-                let (expr, block) = _Expression;
-                (new_expression_prefix_expression(arena, new_prefix_expression(arena, _Expression_PrefixExpression_Operator, expr)), block)
-            },
-         
-            <Expression: Expression1DM>  => <>,
-        
-    };
-    Expression6DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            // Not sure what happens here, should I get a block?
-            <_Expression: Expression6<"True">>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
-                (new_expression_postfix_expression(arena, new_postfix_expression(arena, _Expression, _Expression_PostfixExpression_Operator)), (_open_brace, _members, _close_brace))
-            },
-         
-            <Expression: Expression5DM>  => <>,
-        
-    };
-    Expression7DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression6<"True">>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_exponentiation_expression(arena, new_exponentiation_expression(arena, _Expression, _operator, e)), dM)
-            },
-         
-            <Expression: Expression6DM>  => <>,
-        
-    };
-    Expression8DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression8<"True">>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7DM>  =>  {
-                let (e, dM) = _Expression_2;
-                (new_expression_multiplicative_expression(arena, new_multiplicative_expression(arena, _Expression, _Expression_MultiplicativeExpression_Operator, e)), dM)
-            },
-         
-            <Expression: Expression7DM>  => <>,
-        
-    };
-    Expression9DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression9<"True">>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_additive_expression(arena, new_additive_expression(arena, _Expression, _Expression_AdditiveExpression_Operator, e)), dM)
-            },
-         
-            <Expression: Expression8DM>  => <>,
-        
-    };
-    Expression10DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression10<"True">>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_shift_expression(arena, new_shift_expression(arena, _Expression, _Expression_ShiftExpression_Operator, e)), dM)
-            },
-         
-            <Expression: Expression9DM>  => <>,
-        
-    };
-    Expression11DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression11<"True">>  <_operator: Ampersand>  <_Expression_2: Expression10DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_bitwise_and_expression(arena, new_bitwise_and_expression(arena, _Expression, _operator, e)), dM)
-            },
-         
-            <Expression: Expression10DM>  => <>,
-        
-    };
-    Expression12DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression12<"True">>  <_operator: Caret>  <_Expression_2: Expression11DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_bitwise_xor_expression(arena, new_bitwise_xor_expression(arena, _Expression, _operator, e)), dM)
-            },
-         
-            <Expression: Expression11DM>  => <>,
-        
-    };
-    Expression13DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression13<"True">>  <_operator: Bar>  <_Expression_2: Expression12DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_bitwise_or_expression(arena, new_bitwise_or_expression(arena, _Expression, _operator, e)), dM)
-            },
-         
-            <Expression: Expression12DM>  => <>,
-        
-    };
-    Expression14DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression14<"True">>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_inequality_expression(arena, new_inequality_expression(arena, _Expression, _Expression_InequalityExpression_Operator, e)), dM)
-            },
-         
-            <Expression: Expression13DM>  => <>,
-        
-    };
-    Expression15DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression15<"True">>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_equality_expression(arena, new_equality_expression(arena, _Expression, _Expression_EqualityExpression_Operator, e)), dM)
-            },  
-         
-            <Expression: Expression14DM>  => <>,
-        
-    };
-    Expression16DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression16<"True">>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_and_expression(arena, new_and_expression(arena, _Expression, _operator, e)), dM)
-            },  
-         
-            <Expression: Expression15DM>  => <>,
-        
-    };
-    Expression17DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression17<"True">>  <_operator: BarBar>  <_Expression_2: Expression16DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_or_expression(arena, new_or_expression(arena, _Expression, _operator, e)), dM)
-            },
-         
-            <Expression: Expression16DM>  => <>,
-        
-    };
-    
-    Expression18DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-        // TODO: Not really sure the associativity is correct, we need to check
-         
-            <_Expression: Expression17<"True">>  <_question_mark: QuestionMark>  <_true_expression: Expression18<"True">>  <_colon: Colon>  <_false_expression: Expression18DM>  => {
-                let (e, dM) = _false_expression;
-                (new_expression_conditional_expression(arena, new_conditional_expression(arena, _Expression, _question_mark, _true_expression, _colon, e)), dM)
-            },  
-         
-            <Expression: Expression17DM>  => <>,
-        
-    };
-    Expression19DM: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-         
-            <_Expression: Expression19<"True">>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18DM>  => {
-                let (e, dM) = _Expression_2;
-                (new_expression_assignment_expression(arena, new_assignment_expression(arena, _Expression, _Expression_AssignmentExpression_Operator, e)), dM)
-            },
-         
-            <Expression: Expression18DM>  => <>,
-        
-    };
-
-    ExpressionDM: (Expression<'arena>, OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>) = {
-         
-            <Expression: Expression19DM>  => {
-                let (expr, (open_brace, members, close_brace)) = Expression;
-                (expr, open_brace, members, close_brace)
-            },
-        
-    };
-
-
 
 
