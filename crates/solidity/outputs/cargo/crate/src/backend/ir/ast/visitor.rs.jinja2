@@ -6,8 +6,7 @@ use super::nodes::*;
 use std::rc::Rc;
 use crate::cst::TerminalNode;
 
-use super::input as input_ir;
-use super::{Identifier, YulIdentifier};
+use super::{input as input_ir, Identifier, YulIdentifier};
 
 pub trait Visitor {
   {%- for parent_type, sequence in target.sequences %}
