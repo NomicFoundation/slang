@@ -94,6 +94,8 @@ pub enum LanguageVersion {
     V0_8_29,
     V0_8_30,
     V0_8_31,
+    V0_8_32,
+    V0_8_33,
 }
 
 #[derive(Debug, Error, PartialEq)]
@@ -107,6 +109,7 @@ pub enum FromSemverError {
 impl TryFrom<Version> for LanguageVersion {
     type Error = FromSemverError;
 
+    #[allow(clippy::too_many_lines)]
     fn try_from(version: Version) -> Result<Self, Self::Error> {
         let Version {
             major,
@@ -207,6 +210,8 @@ impl TryFrom<Version> for LanguageVersion {
             (0, 8, 29) => LanguageVersion::V0_8_29,
             (0, 8, 30) => LanguageVersion::V0_8_30,
             (0, 8, 31) => LanguageVersion::V0_8_31,
+            (0, 8, 32) => LanguageVersion::V0_8_32,
+            (0, 8, 33) => LanguageVersion::V0_8_33,
             _ => return Err(FromSemverError::UnsupportedVersion),
         })
     }

@@ -94,13 +94,15 @@ impl LanguageFacts {
         Version::new(0, 8, 29),
         Version::new(0, 8, 30),
         Version::new(0, 8, 31),
+        Version::new(0, 8, 32),
+        Version::new(0, 8, 33),
     ];
 
     /// The earliest version of `Solidity` supported by Slang.
     pub const EARLIEST_VERSION: Version = Version::new(0, 4, 11);
 
     /// The latest version of `Solidity` supported by Slang.
-    pub const LATEST_VERSION: Version = Version::new(0, 8, 31);
+    pub const LATEST_VERSION: Version = Version::new(0, 8, 33);
 
     /// Infer the language versions that are compatible with the provided `Solidity`
     /// source code. The returned iterator will produce all compatible versions in order, starting with
