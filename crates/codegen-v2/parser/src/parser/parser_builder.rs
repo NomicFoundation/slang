@@ -232,7 +232,7 @@ impl<'a> ParserBuilder<'a> {
         for item in &mut items {
             if matches!(
                 item.name.as_str(),
-                "StateVariableAttributes" | "StateVariableAttribute"
+                "StateVariableAttributes" | "StateVariableAttribute" | "RevertStatement"
             ) {
                 item.inline = true;
             }

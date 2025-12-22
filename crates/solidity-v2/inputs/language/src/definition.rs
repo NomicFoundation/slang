@@ -1393,46 +1393,8 @@ language_v2_macros::compile!(Language(
                             name = RevertKeyword,
                             identifier = Identifier,
                             enabled = From("0.8.4"),
-                            // TODO(v2) reserving Revert
-                            // [slang_solidity_v2_parser 1.3.0]   The problem arises after having observed the following symbols in the input:
-                            // [slang_solidity_v2_parser 1.3.0]     L_RevertKeyword_Unreserved
-                            // [slang_solidity_v2_parser 1.3.0]   At that point, if the next token is a `L_AliasKeyword_Unreserved`, then the parser can proceed in two different ways.
-                            // [slang_solidity_v2_parser 1.3.0]
-                            // [slang_solidity_v2_parser 1.3.0]   First, the parser could execute the production at
-                            // [slang_solidity_v2_parser 1.3.0]   /Users/teofr/Documents/Nomic/slang/crates/solidity-v2/outputs/cargo/parser/src/parser/grammar.generated.lalrpop:3121:9: 3121:78, which would consume
-                            // [slang_solidity_v2_parser 1.3.0]   the top 1 token(s) from the stack and produce a `Identifier`. This might then yield a parse tree like
-                            // [slang_solidity_v2_parser 1.3.0]     L_RevertKeyword_Unreserved     ╷ Identifier
-                            // [slang_solidity_v2_parser 1.3.0]     ├─Identifier───────────────────┤          │
-                            // [slang_solidity_v2_parser 1.3.0]     ├─SepOne<Period, <Identifier>>─┤          │
-                            // [slang_solidity_v2_parser 1.3.0]     ├─IdentifierPath───────────────┤          │
-                            // [slang_solidity_v2_parser 1.3.0]     ├─TypeName0<"True">────────────┤          │
-                            // [slang_solidity_v2_parser 1.3.0]     ├─TypeName1<"True">────────────┤          │
-                            // [slang_solidity_v2_parser 1.3.0]     ├─TypeName─────────────────────┤          │
-                            // [slang_solidity_v2_parser 1.3.0]     ├─VariableDeclarationType──────┘          │
-                            // [slang_solidity_v2_parser 1.3.0]     └─VariableDeclaration─────────────────────┘
-                            // [slang_solidity_v2_parser 1.3.0]
-                            // [slang_solidity_v2_parser 1.3.0]   Alternatively, the parser could shift the `L_AliasKeyword_Unreserved` token and later use it to construct a `Identifier`. This might then yield a parse
-                            // [slang_solidity_v2_parser 1.3.0]   tree like
-                            // [slang_solidity_v2_parser 1.3.0]     L_RevertKeyword_Unreserved L_AliasKeyword_Unreserved      ╷ ArgumentsDeclaration L_Semicolon
-                            // [slang_solidity_v2_parser 1.3.0]     │                          ├─Identifier───────────────────┤                                │
-                            // [slang_solidity_v2_parser 1.3.0]     │                          ├─SepOne<Period, <Identifier>>─┤                                │
-                            // [slang_solidity_v2_parser 1.3.0]     │                          └─IdentifierPath───────────────┘                                │
-                            // [slang_solidity_v2_parser 1.3.0]     └─RevertStatement──────────────────────────────────────────────────────────────────────────┘
-                            // [slang_solidity_v2_parser 1.3.0]
-                            // [slang_solidity_v2_parser 1.3.0]   See the LALRPOP manual for advice on making your grammar LR(1).
-                            // [slang_solidity_v2_parser 1.3.0]
-                            //
-                            // A way to solve this would be to track if an identifier and a type are exactly `revert`, and do the distinction at the statement level,
-                            // but that's too much I think.
-                            // solc is weird with this, it doesnt allow variable declarations where the type is called revert (but it does in other places)
-                            // ```
-                            // function info(revert a) public pure {
-                            //  revert foo; // This is an error in solc
-                            // }
-                            // ```
-                            definitions = [KeywordDefinition(
-                                /*reserved = Never,*/ value = Atom("revert")
-                            )]
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("revert"))]
                         ),
                         Keyword(
                             name = SealedKeyword,
@@ -3248,7 +3210,9 @@ language_v2_macros::compile!(Language(
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 revert_keyword = Required(RevertKeyword),
-                                error = Optional(reference = IdentifierPath),
+                                // TODO(v2): check this
+                                // a `revert(...)` should be parsed as a function call
+                                error = Required(IdentifierPath),
                                 arguments = Required(ArgumentsDeclaration),
                                 semicolon = Required(Semicolon)
                             )

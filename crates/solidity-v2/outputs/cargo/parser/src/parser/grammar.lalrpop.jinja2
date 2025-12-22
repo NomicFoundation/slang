@@ -209,9 +209,40 @@ extern {
         <_Block: Block>  => new_statement_block(arena, <>),
         <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(arena, <>),
         <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(arena, <>),
-        <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_statement_variable_declaration_statement(arena, <>),
+        <_VariableDeclarationStatement: VariableDeclarationStatementNoRevert>  => new_statement_variable_declaration_statement(arena, <>),
         <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(arena, <>),
     };
+
+    // A VariableDeclarationStatement that has a `revert` type as a special case, this allows
+    // to disambiguate between a revert statement and a variable declaration with type `revert`
+    //
+    // Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
+    #[inline]
+    VariableDeclarationStatementNoRevert: VariableDeclarationStatement<'arena> = {
+        <_variable_declaration: VariableDeclarationNoRevert>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(arena, <>),
+    };
+    #[inline]
+    VariableDeclarationNoRevert: VariableDeclaration<'arena> = {
+        <_variable_type: VariableDeclarationTypeNoRevert>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(arena, <>),
+    };
+    #[inline]
+    VariableDeclarationTypeNoRevert: VariableDeclarationType<'arena> = {
+        <_TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  => new_variable_declaration_type_type_name(arena, <>),
+        <l:@L> L_RevertKeyword_Unreserved <r:@R> => {
+            let identifier = new_identifier(arena, l, r, source);
+            let iap = new_index_access_path_from_identifier_path(arena, new_identifier_path(arena, identifier, None));
+            let type_name = new_type_name_index_access_path(arena, iap);
+            new_variable_declaration_type_type_name(arena, type_name)
+        }
+    };
+    IdentifierPathNoRevert: IdentifierPath<'arena> = {
+        // We either have any identifier with a tail (ie a period)
+        <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
+        // or a single identifier that is not `revert`
+        <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
+    };
+
+
 
     // By default statements allos dangling `else`s
         Statement = _Statement<"True">;

@@ -205,7 +205,7 @@ pub enum SolidityContext {
     #[regex(r#"relocatable"#, |_| { LexemeKind::RelocatableKeyword_Reserved }, priority = 3000090)]
     #[regex(r#"return"#, |_| { LexemeKind::ReturnKeyword_Reserved }, priority = 3000091)]
     #[regex(r#"returns"#, |_| { LexemeKind::ReturnsKeyword_Reserved }, priority = 3000092)]
-    #[regex(r#"revert"#, |_| { LexemeKind::RevertKeyword_Reserved }, priority = 3000093)]
+    #[regex(r#"revert"#, |_| { LexemeKind::RevertKeyword_Unreserved }, priority = 3000093)]
     #[regex(r#"sealed"#, |lexer| { if LanguageVersion::V0_5_0 <= lexer.extras.language_version { LexemeKind::SealedKeyword_Reserved } else { LexemeKind::SealedKeyword_Unreserved } }, priority = 3000094)]
     #[regex(r#"seconds"#, |_| { LexemeKind::SecondsKeyword_Reserved }, priority = 3000095)]
     #[regex(r#"sizeof"#, |lexer| { if LanguageVersion::V0_5_0 <= lexer.extras.language_version { LexemeKind::SizeOfKeyword_Reserved } else { LexemeKind::SizeOfKeyword_Unreserved } }, priority = 3000096)]

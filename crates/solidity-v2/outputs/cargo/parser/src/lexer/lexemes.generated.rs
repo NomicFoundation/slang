@@ -181,7 +181,7 @@ pub enum LexemeKind {
     RelocatableKeyword_Reserved,
     ReturnKeyword_Reserved,
     ReturnsKeyword_Reserved,
-    RevertKeyword_Reserved,
+    RevertKeyword_Unreserved,
     SMTCheckerKeyword_Unreserved,
     SealedKeyword_Reserved,
     SealedKeyword_Unreserved,

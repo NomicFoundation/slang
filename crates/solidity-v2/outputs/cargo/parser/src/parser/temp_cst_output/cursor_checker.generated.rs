@@ -7667,7 +7667,10 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
         }
 
         // error
-        if let Some(error) = &self.error {
+
+        {
+            let error = &self.error;
+
             // Prepare edge label
 
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
@@ -7678,16 +7681,6 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
             } else {
                 errors.push(NodeCheckerError::new(format!(
                     "Expected error to be present in the CST, but it was not"
-                )));
-            }
-        } else {
-            // If it's not there on the AST, it shouldn't be in the CST
-            if let Some(child) = extract_first(&mut children, |child: &Edge| {
-                child.label == EdgeLabel::Error
-            }) {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected error to not be present in the CST, but it was there: {:#?}",
-                    child
                 )));
             }
         }

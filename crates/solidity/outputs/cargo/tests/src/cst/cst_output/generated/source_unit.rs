@@ -112,6 +112,11 @@ fn pratt_precedence_recovery() -> Result<()> {
 }
 
 #[test]
+fn revert_statement() -> Result<()> {
+    run(T, "revert_statement")
+}
+
+#[test]
 fn safe_math() -> Result<()> {
     run(T, "safe_math")
 }
