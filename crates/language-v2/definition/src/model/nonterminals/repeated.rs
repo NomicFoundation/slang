@@ -12,9 +12,6 @@ pub struct RepeatedItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
-    /// Whether a repeated item is allowed to be empty.
-    ///
-    /// Default: `false`
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_empty: Option<bool>,
 }

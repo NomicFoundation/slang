@@ -110,21 +110,17 @@ impl<'source> Comparator<'source> {
                     let v1_output = format!("{v1_kind:?} @ {v1_range:?}");
                     let v2_output = format!("{v2_kind:?} @ {v2_range:?}");
 
-                    if !Self::match_terminal(v1_kind, v2_kind) {
+                    if !match (v1_kind, v2_kind) {
+                        ("Identifier", v2_kind) if v2_kind.ends_with("_Unreserved") => true,
+                        (v1_kind, v2_kind) if format!("{v1_kind}_Reserved") == v2_kind => true,
+                        (v1_kind, v2_kind) if format!("{v1_kind}_Unreserved") == v2_kind => true,
+                        (v1_kind, v2_kind) if v1_kind == v2_kind => true,
+                        _ => false,
+                    } {
                         self.add_error(format!("V2 lexer produced a lexeme '{v2_output}', but v1 tree has terminal '{v1_output}'"));
                     }
                 }
             },
-        }
-    }
-
-    pub fn match_terminal(v1_kind: &str, v2_kind: &str) -> bool {
-        match (v1_kind, v2_kind) {
-            ("Identifier", v2_kind) if v2_kind.ends_with("_Unreserved") => true,
-            (v1_kind, v2_kind) if format!("{v1_kind}_Reserved") == v2_kind => true,
-            (v1_kind, v2_kind) if format!("{v1_kind}_Unreserved") == v2_kind => true,
-            (v1_kind, v2_kind) if v1_kind == v2_kind => true,
-            _ => false,
         }
     }
 

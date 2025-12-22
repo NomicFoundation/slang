@@ -1605,38 +1605,43 @@ HoursKeyword: HoursKeyword<'arena> = {
         <l:@L> L_HoursKeyword_Reserved <r:@L> => new_hours_keyword(arena, <>, source),
 
 };
-// Making an Identifier inline generates an explosion of states
+#[inline]
 Identifier: Identifier<'arena> = {
+    SomeIdentifier<""> => <>,
+};
 
-        <l:@L> L_ABIEncoderV2Keyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+// Making an Identifier inline generates an explosion of states, so DON't
+SomeIdentifier<Except>: Identifier<'arena> = {
 
-        <l:@L> L_AbicoderKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_ABIEncoderV2Keyword_Unreserved <r:@L> if Except !~ "ABIEncoderV2Keyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_AbicoderV1Keyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_AbicoderKeyword_Unreserved <r:@L> if Except !~ "AbicoderKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_AbicoderV2Keyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_AbicoderV1Keyword_Unreserved <r:@L> if Except !~ "AbicoderV1Keyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_AtKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_AbicoderV2Keyword_Unreserved <r:@L> if Except !~ "AbicoderV2Keyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_AtKeyword_Unreserved <r:@L> if Except !~ "AtKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_FinneyKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> if Except !~ "ExperimentalKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_FromKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_FinneyKeyword_Unreserved <r:@L> if Except !~ "FinneyKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_GlobalKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_FromKeyword_Unreserved <r:@L> if Except !~ "FromKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_Identifier <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_GlobalKeyword_Unreserved <r:@L> if Except !~ "GlobalKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_LayoutKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_Identifier <r:@L> if Except !~ "Identifier" => new_identifier(arena, <>, source),
 
-        <l:@L> L_SMTCheckerKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_LayoutKeyword_Unreserved <r:@L> if Except !~ "LayoutKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_SolidityKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_SMTCheckerKeyword_Unreserved <r:@L> if Except !~ "SMTCheckerKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_SzaboKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_SolidityKeyword_Unreserved <r:@L> if Except !~ "SolidityKeyword_Unreserved" => new_identifier(arena, <>, source),
 
-        <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_identifier(arena, <>, source),
+        <l:@L> L_SzaboKeyword_Unreserved <r:@L> if Except !~ "SzaboKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_TransientKeyword_Unreserved <r:@L> if Except !~ "TransientKeyword_Unreserved" => new_identifier(arena, <>, source),
 
 };
 #[inline]
@@ -3082,7 +3087,6 @@ YulYearsKeyword: YulYearsKeyword<'arena> = {
 
 
 
-
 extern {
     type Location = usize;
     // TODO error recovery
@@ -3531,7 +3535,7 @@ extern {
 // that do not specify a return; and one where only function types without return are allowed.
     StateVariableDefinition: StateVariableDefinition<'arena> = {
         // If we're not using functions without return, then we can have all attributes
-            <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<"True">>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
+            <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPath>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
 
             // If there is no return, then we need a single special attribute to disambiguate and to post process the attributes
             <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
@@ -3573,7 +3577,7 @@ extern {
     };
     TypeName: TypeName<'arena> = {
             // A regular type can have any function type and an IAP
-            <TypeName: TypeName1<FunctionType, IndexAccessPath<"True">>>  => <>,
+            <TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
     };
     #[inline]
     ArrayTypeName: ArrayTypeName<'arena> = {
@@ -3726,13 +3730,16 @@ extern {
     
     
 // An IAP that tracks whether it has a trailing identifier path
-IndexAccessPath<TrailingIdent>: IndexAccessPath<'arena> = {
-    <iap: IndexAccessPath<"True">> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(arena, <>),
-    <IndexAccessPath1<TrailingIdent>>  => <>,
+IndexAccessPath<IdentPathRule>: IndexAccessPath<'arena> = {
+    <iap: IndexAccessPath<IdentifierPath>> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(arena, <>),
+    <IndexAccessPath1<IdentPathRule>>  => <>,
 };
-IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
-    <_Identifier: IdentifierPath> if TrailingIdent == "True" => new_index_access_path_from_identifier_path(arena, <>),
+IndexAccessPath1<IdentPathRule>: IndexAccessPath<'arena> = {
+    <_Identifier: IdentPathRule> => new_index_access_path_from_identifier_path(arena, <>),
     <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(arena, <>),
+};
+
+NoIdentPath: IdentifierPath<'arena> = {
 };
 
 
@@ -3753,8 +3760,8 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
 //    option calls)
 //
 // Note: To simplify my life right now, this is a bit different from what's generated, but we'll get there
-    Expression0<TrailingIdent, TrailingIAP>: Expression<'arena> = {
-            <_IndexAccessPath: IndexAccessPath<TrailingIdent>> if TrailingIAP == "True" => new_expression_index_access_path(arena, <>),
+    Expression0<IdentRule, TrailingIAP>: Expression<'arena> = {
+            <_IndexAccessPath: IndexAccessPath<IdentRule>> if TrailingIAP == "True" => new_expression_index_access_path(arena, <>),
          
             <_NewExpression: NewExpression>  => new_expression_new_expression(arena, <>),
          
@@ -3783,17 +3790,17 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
     };
     // We simplifiy all these levels of expressions into a single one, there's no need
     // for precedence here
-    Expression1<TrailingIdent, TrailingIAP>: Expression<'arena> = {
+    Expression1<IdentRule, TrailingIAP>: Expression<'arena> = {
          
-            <_Expression: Expression1<"False", "False">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(arena, new_index_access_expression(arena, <>)),
+            <_Expression: Expression1<NoIdentPath, "False">>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(arena, new_index_access_expression(arena, <>)),
          
-            <_Expression: Expression1<"False", "True">>  <_period: Period>  <_member: MemberAccessIdentifier>  => new_expression_member_access_expression(arena, new_member_access_expression(arena, <>)),
+            <_Expression: Expression1<NoIdentPath, "True">>  <_period: Period>  <_member: MemberAccessIdentifier>  => new_expression_member_access_expression(arena, new_member_access_expression(arena, <>)),
          
-            <_Expression: Expression1<"True", "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(arena, new_call_options_expression(arena, <>)),
+            <_Expression: Expression1<IdentifierPath, "True">>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(arena, new_call_options_expression(arena, <>)),
          
-            <_Expression: Expression1<"True", "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(arena, new_function_call_expression(arena, <>)),
+            <_Expression: Expression1<IdentifierPath, "True">>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(arena, new_function_call_expression(arena, <>)),
          
-            <Expression: Expression0<TrailingIdent, TrailingIAP>>  => <>,
+            <Expression: Expression0<IdentRule, TrailingIAP>>  => <>,
         
     };
 
@@ -3806,7 +3813,7 @@ IndexAccessPath1<TrailingIdent>: IndexAccessPath<'arena> = {
             },
          
             // A tail can appear just after a postfix or primary expression
-            <Expression: Expression1<"True", "True">> <tail: Tail> => {
+            <Expression: Expression1<IdentifierPath, "True">> <tail: Tail> => {
                 (Expression, tail)
             },
         
