@@ -722,31 +722,7 @@ language_v2_macros::compile!(Language(
                             identifier = Identifier,
                             enabled = From("0.8.4"),
                             definitions =
-                            // TODO(v2) Making it reserved for now
-// [slang_solidity_v2_parser 1.3.0]   The problem arises after having observed the following symbols in the input:
-// [slang_solidity_v2_parser 1.3.0]     L_ErrorKeyword_Unreserved
-// [slang_solidity_v2_parser 1.3.0]   At that point, if the next token is a `L_ABIEncoderV2Keyword_Unreserved`, then the parser can proceed in two different ways.
-// [slang_solidity_v2_parser 1.3.0]
-// [slang_solidity_v2_parser 1.3.0]   First, the parser could execute the production at
-// [slang_solidity_v2_parser 1.3.0]   /Users/teofr/Documents/Nomic/slang/crates/solidity-v2/outputs/cargo/parser/src/parser/grammar.generated.lalrpop:3087:9: 3087:77, which would consume
-// [slang_solidity_v2_parser 1.3.0]   the top 1 token(s) from the stack and produce a `Identifier`. This might then yield a parse tree like
-// [slang_solidity_v2_parser 1.3.0]     L_ErrorKeyword_Unreserved      ╷ StateVariableAttributes Identifier L_Semicolon
-// [slang_solidity_v2_parser 1.3.0]     ├─Identifier───────────────────┤                                              │
-// [slang_solidity_v2_parser 1.3.0]     ├─SepOne<Period, <Identifier>>─┤                                              │
-// [slang_solidity_v2_parser 1.3.0]     ├─IdentifierPath───────────────┤                                              │
-// [slang_solidity_v2_parser 1.3.0]     ├─TypeName0<"False">───────────┤                                              │
-// [slang_solidity_v2_parser 1.3.0]     ├─TypeName1<"False">───────────┘                                              │
-// [slang_solidity_v2_parser 1.3.0]     └─StateVariableDefinition─────────────────────────────────────────────────────┘
-// [slang_solidity_v2_parser 1.3.0]
-// [slang_solidity_v2_parser 1.3.0]   Alternatively, the parser could shift the `L_ABIEncoderV2Keyword_Unreserved` token and later use it to construct a `Identifier`. This might then yield
-// [slang_solidity_v2_parser 1.3.0]   a parse tree like
-// [slang_solidity_v2_parser 1.3.0]     L_ErrorKeyword_Unreserved L_ABIEncoderV2Keyword_Unreserved ErrorParametersDeclaration L_Semicolon
-// [slang_solidity_v2_parser 1.3.0]     │                         └─Identifier───────────────────┘                                      │
-// [slang_solidity_v2_parser 1.3.0]     └─ErrorDefinition───────────────────────────────────────────────────────────────────────────────┘
-
-                                [KeywordDefinition(
-                                    // reserved = Never,
-                                    value = Atom("error"))]
+                                [KeywordDefinition(reserved = Never, value = Atom("error"))]
                         ),
                         Keyword(
                             name = EtherKeyword,

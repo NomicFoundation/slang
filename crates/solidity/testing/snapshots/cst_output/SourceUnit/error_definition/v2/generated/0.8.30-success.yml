@@ -1,0 +1,195 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ErrorDefinition(
+                ErrorDefinitionStruct {
+                    error_keyword: ErrorKeyword {
+                        l: 0,
+                        r: 5,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 6,
+                        r: 13,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ErrorParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 13,
+                            r: 14,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: ErrorParameters {
+                            elements: [
+                                ErrorParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                l: 14,
+                                                r: 21,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            l: 22,
+                                            r: 23,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                },
+                                ErrorParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                l: 25,
+                                                r: 32,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            l: 33,
+                                            r: 34,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            l: 34,
+                            r: 35,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    semicolon: Semicolon {
+                        l: 35,
+                        r: 36,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 38,
+                        r: 46,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 47,
+                        r: 48,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        l: 49,
+                        r: 50,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            ErrorDefinition(
+                                ErrorDefinitionStruct {
+                                    error_keyword: ErrorKeyword {
+                                        l: 53,
+                                        r: 58,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    name: Identifier {
+                                        l: 59,
+                                        r: 71,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    members: ErrorParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            l: 71,
+                                            r: 72,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                        parameters: ErrorParameters {
+                                            elements: [
+                                                ErrorParameterStruct {
+                                                    type_name: ElementaryType(
+                                                        AddressType(
+                                                            AddressTypeStruct {
+                                                                address_keyword: AddressKeyword {
+                                                                    l: 72,
+                                                                    r: 79,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                                payable_keyword: None,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    name: Some(
+                                                        Identifier {
+                                                            l: 80,
+                                                            r: 84,
+                                                            phantom: PhantomData<&()>,
+                                                        },
+                                                    ),
+                                                },
+                                            ],
+                                        },
+                                        close_paren: CloseParen {
+                                            l: 84,
+                                            r: 85,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    },
+                                    semicolon: Semicolon {
+                                        l: 85,
+                                        r: 86,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: IdentifierPath(
+                                        IdentifierPathStruct {
+                                            head: Identifier {
+                                                l: 89,
+                                                r: 94,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            tail: None,
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        l: 95,
+                                        r: 98,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        l: 98,
+                                        r: 99,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        l: 100,
+                        r: 101,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}

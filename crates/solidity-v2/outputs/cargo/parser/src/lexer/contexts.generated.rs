@@ -147,7 +147,7 @@ pub enum SolidityContext {
     #[regex(r#"else"#, |_| { LexemeKind::ElseKeyword_Reserved }, priority = 3000032)]
     #[regex(r#"emit"#, |lexer| { if LanguageVersion::V0_5_0 <= lexer.extras.language_version { LexemeKind::EmitKeyword_Reserved } else { LexemeKind::EmitKeyword_Unreserved } }, priority = 3000033)]
     #[regex(r#"enum"#, |_| { LexemeKind::EnumKeyword_Reserved }, priority = 3000034)]
-    #[regex(r#"error"#, |_| { LexemeKind::ErrorKeyword_Reserved }, priority = 3000035)]
+    #[regex(r#"error"#, |_| { LexemeKind::ErrorKeyword_Unreserved }, priority = 3000035)]
     #[regex(r#"ether"#, |_| { LexemeKind::EtherKeyword_Reserved }, priority = 3000036)]
     #[regex(r#"event"#, |_| { LexemeKind::EventKeyword_Reserved }, priority = 3000037)]
     #[regex(r#"experimental"#, |_| { LexemeKind::ExperimentalKeyword_Unreserved }, priority = 3000038)]

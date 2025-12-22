@@ -527,6 +527,7 @@ RepOne<T>: Vec<'arena, T> = {
     
 
 // Rules for topic Errors
+    #[inline]
     ErrorDefinition: ErrorDefinition<'arena> = {
         <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => new_error_definition(arena, <>),
         
@@ -1465,7 +1466,7 @@ EqualGreaterThan: EqualGreaterThan<'arena> = {
 #[inline]
 ErrorKeyword: ErrorKeyword<'arena> = {
 
-        <l:@L> L_ErrorKeyword_Reserved <r:@L> => new_error_keyword(arena, <>, source),
+        <l:@L> L_ErrorKeyword_Unreserved <r:@L> => new_error_keyword(arena, <>, source),
 
 };
 #[inline]
@@ -1623,6 +1624,8 @@ SomeIdentifier<Except>: Identifier<'arena> = {
         <l:@L> L_AbicoderV2Keyword_Unreserved <r:@L> if Except !~ "AbicoderV2Keyword_Unreserved" => new_identifier(arena, <>, source),
 
         <l:@L> L_AtKeyword_Unreserved <r:@L> if Except !~ "AtKeyword_Unreserved" => new_identifier(arena, <>, source),
+
+        <l:@L> L_ErrorKeyword_Unreserved <r:@L> if Except !~ "ErrorKeyword_Unreserved" => new_identifier(arena, <>, source),
 
         <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> if Except !~ "ExperimentalKeyword_Unreserved" => new_identifier(arena, <>, source),
 
@@ -3167,7 +3170,7 @@ extern {
         L_EqualColon => lexemes::LexemeKind::EqualColon,
         L_EqualEqual => lexemes::LexemeKind::EqualEqual,
         L_EqualGreaterThan => lexemes::LexemeKind::EqualGreaterThan,
-        L_ErrorKeyword_Reserved => lexemes::LexemeKind::ErrorKeyword_Reserved,
+        L_ErrorKeyword_Unreserved => lexemes::LexemeKind::ErrorKeyword_Unreserved,
         L_EtherKeyword_Reserved => lexemes::LexemeKind::EtherKeyword_Reserved,
         L_EventKeyword_Reserved => lexemes::LexemeKind::EventKeyword_Reserved,
         L_ExperimentalKeyword_Unreserved => lexemes::LexemeKind::ExperimentalKeyword_Unreserved,
@@ -3538,7 +3541,15 @@ extern {
 // that do not specify a return; and one where only function types without return are allowed.
     StateVariableDefinition: StateVariableDefinition<'arena> = {
         // If we're not using functions without return, then we can have all attributes
-            <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPath>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
+            <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
+            <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon> => {
+                let identifier = new_identifier(arena, l, r, source);
+                let iap = new_index_access_path_from_identifier_path(arena, new_identifier_path(arena, identifier, None));
+                let type_name = new_type_name_index_access_path(arena, iap);
+
+                new_state_variable_definition(arena, type_name, _attributes, _name, _value, _semicolon)
+            },
+
 
             // If there is no return, then we need a single special attribute to disambiguate and to post process the attributes
             <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
@@ -3550,6 +3561,14 @@ extern {
                 new_state_variable_definition(arena, new_type_name_function_type(arena, function_type), new_state_variable_attributes(arena, extra_attributes), _name, _value, _semicolon)
             },
     };
+
+    IdentifierPathNoError: IdentifierPath<'arena> = {
+        // We either have any identifier with a tail (ie a period)
+        <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
+        // or a single identifier that is not `revert`
+        <_head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
+    };
+
 
     // These are the attributes that can appear in a state variable but not a function,
     // they can work as a limit between these definitions.

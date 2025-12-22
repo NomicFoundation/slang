@@ -57,6 +57,11 @@ fn end_of_file_trivia_unexpected_after() -> Result<()> {
 }
 
 #[test]
+fn error_definition() -> Result<()> {
+    run(T, "error_definition")
+}
+
+#[test]
 fn everything() -> Result<()> {
     run(T, "everything")
 }

@@ -86,7 +86,7 @@ pub enum LexemeKind {
     EqualColon,
     EqualEqual,
     EqualGreaterThan,
-    ErrorKeyword_Reserved,
+    ErrorKeyword_Unreserved,
     EtherKeyword_Reserved,
     EventKeyword_Reserved,
     ExperimentalKeyword_Unreserved,

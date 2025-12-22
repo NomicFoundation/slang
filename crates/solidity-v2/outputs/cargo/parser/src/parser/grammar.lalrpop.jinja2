@@ -118,7 +118,15 @@ extern {
 // that do not specify a return; and one where only function types without return are allowed.
     StateVariableDefinition: StateVariableDefinition<'arena> = {
         // If we're not using functions without return, then we can have all attributes
-            <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPath>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
+            <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(arena, <>),
+            <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon> => {
+                let identifier = new_identifier(arena, l, r, source);
+                let iap = new_index_access_path_from_identifier_path(arena, new_identifier_path(arena, identifier, None));
+                let type_name = new_type_name_index_access_path(arena, iap);
+
+                new_state_variable_definition(arena, type_name, _attributes, _name, _value, _semicolon)
+            },
+
 
             // If there is no return, then we need a single special attribute to disambiguate and to post process the attributes
             <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
@@ -130,6 +138,14 @@ extern {
                 new_state_variable_definition(arena, new_type_name_function_type(arena, function_type), new_state_variable_attributes(arena, extra_attributes), _name, _value, _semicolon)
             },
     };
+
+    IdentifierPathNoError: IdentifierPath<'arena> = {
+        // We either have any identifier with a tail (ie a period)
+        <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
+        // or a single identifier that is not `revert`
+        <_head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
+    };
+
 
     // These are the attributes that can appear in a state variable but not a function,
     // they can work as a limit between these definitions.
