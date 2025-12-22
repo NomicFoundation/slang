@@ -91,3 +91,5 @@ pub(crate) const VERSION_0_8_28: Version = Version::new(0, 8, 28);
 pub(crate) const VERSION_0_8_29: Version = Version::new(0, 8, 29);
 pub(crate) const VERSION_0_8_30: Version = Version::new(0, 8, 30);
 pub(crate) const VERSION_0_8_31: Version = Version::new(0, 8, 31);
+pub(crate) const VERSION_0_8_32: Version = Version::new(0, 8, 32);
+pub(crate) const VERSION_0_8_33: Version = Version::new(0, 8, 33);

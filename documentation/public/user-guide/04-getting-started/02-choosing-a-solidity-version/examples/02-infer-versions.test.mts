@@ -16,5 +16,5 @@ test("infer versions", () => {
   assert(!versions.includes("1.0.0"));
 
   const latest = versions.at(-1);
-  assert(latest == "0.8.31");
+  assert(latest == "0.8.33");
 });
