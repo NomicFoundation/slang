@@ -24,6 +24,14 @@ impl IdentifierStruct {
         self.ir_node.unparse()
     }
 
+    pub fn is_reference(&self) -> bool {
+        self.semantic
+            .binder()
+            .find_reference_by_identifier_node_id(self.ir_node.id())
+            .is_some()
+    }
+
+    // only makes sense if `is_reference()` is true
     pub fn resolve_to_definition(&self) -> Option<Definition> {
         let reference = self
             .semantic
@@ -43,16 +51,69 @@ impl IdentifierStruct {
             .is_some()
     }
 
-    pub fn is_reference(&self) -> bool {
+    // only makes sense if `is_definition()` is true
+    pub fn references(&self) -> Vec<Reference> {
         self.semantic
             .binder()
-            .find_reference_by_identifier_node_id(self.ir_node.id())
-            .is_some()
+            .get_references_by_definition_id(self.ir_node.id())
+            .iter()
+            .filter_map(|node_id| {
+                self.semantic
+                    .binder()
+                    .find_reference_by_identifier_node_id(*node_id)
+                    .and_then(|reference| {
+                        Reference::try_create(&reference.identifier, &self.semantic)
+                    })
+            })
+            .collect()
     }
 }
 
 pub type YulIdentifierStruct = IdentifierStruct;
 pub type YulIdentifier = Rc<YulIdentifierStruct>;
+
+pub enum Reference {
+    Identifier(Identifier),
+    YulIdentifier(YulIdentifier),
+}
+
+impl Reference {
+    pub(crate) fn try_create(
+        node: &Rc<TerminalNode>,
+        semantic: &Rc<SemanticAnalysis>,
+    ) -> Option<Self> {
+        // ensure the terminal node is actually functioning as a reference
+        semantic
+            .binder()
+            .find_reference_by_identifier_node_id(node.id())?;
+
+        match node.kind {
+            TerminalKind::Identifier => Some(Reference::Identifier(Rc::new(
+                IdentifierStruct::create(node, semantic),
+            ))),
+            TerminalKind::YulIdentifier => Some(Reference::YulIdentifier(Rc::new(
+                YulIdentifierStruct::create(node, semantic),
+            ))),
+            _ => None,
+        }
+    }
+
+    pub fn unparse(&self) -> String {
+        match self {
+            Reference::Identifier(identifier) | Reference::YulIdentifier(identifier) => {
+                identifier.unparse()
+            }
+        }
+    }
+
+    pub fn resolve_to_definition(&self) -> Option<Definition> {
+        match self {
+            Reference::Identifier(identifier) | Reference::YulIdentifier(identifier) => {
+                identifier.resolve_to_definition()
+            }
+        }
+    }
+}
 
 impl IdentifierPathStruct {
     pub fn unparse(&self) -> String {

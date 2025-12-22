@@ -14,7 +14,7 @@ use super::super::nodes::{
     VariableDeclarationStatement, VariableDeclarationStatementStruct, YulFunctionDefinition,
     YulFunctionDefinitionStruct, YulLabel, YulLabelStruct,
 };
-use super::{Identifier, IdentifierStruct};
+use super::{Identifier, IdentifierStruct, Reference};
 use crate::backend::{binder, SemanticAnalysis};
 use crate::cst::NodeId;
 
@@ -100,4 +100,63 @@ impl DefinitionStruct {
     define_variant!(YulLabel, YulLabel);
     define_variant!(YulParameter, Identifier);
     define_variant!(YulVariable, Identifier);
+
+    pub fn references(&self) -> Vec<Reference> {
+        self.semantic
+            .binder()
+            .get_references_by_definition_id(self.definition_id)
+            .iter()
+            .filter_map(|node_id| {
+                self.semantic
+                    .binder()
+                    .find_reference_by_identifier_node_id(*node_id)
+                    .and_then(|reference| {
+                        Reference::try_create(&reference.identifier, &self.semantic)
+                    })
+            })
+            .collect()
+    }
 }
+
+macro_rules! definition_to_references {
+    ($type:ident) => {
+        paste! {
+            impl [<$type Struct>] {
+                pub fn references(&self) -> Vec<Reference> {
+                    self.semantic
+                        .binder()
+                        .get_references_by_definition_id(self.ir_node.node_id)
+                        .iter()
+                        .filter_map(|node_id| {
+                            self.semantic
+                                .binder()
+                                .find_reference_by_identifier_node_id(*node_id)
+                                .and_then(|reference| {
+                                    Reference::try_create(&reference.identifier, &self.semantic)
+                                })
+                        })
+                        .collect()
+                }
+            }
+        }
+    };
+}
+
+definition_to_references!(ConstantDefinition);
+definition_to_references!(ContractDefinition);
+definition_to_references!(EnumDefinition);
+definition_to_references!(ErrorDefinition);
+definition_to_references!(EventDefinition);
+definition_to_references!(FunctionDefinition);
+definition_to_references!(ImportDeconstructionSymbol);
+definition_to_references!(InterfaceDefinition);
+definition_to_references!(LibraryDefinition);
+definition_to_references!(Parameter);
+definition_to_references!(PathImport);
+definition_to_references!(StateVariableDefinition);
+definition_to_references!(StructDefinition);
+definition_to_references!(StructMember);
+definition_to_references!(UserDefinedValueTypeDefinition);
+definition_to_references!(VariableDeclarationStatement);
+definition_to_references!(YulLabel);
+definition_to_references!(YulFunctionDefinition);

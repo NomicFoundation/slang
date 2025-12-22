@@ -142,3 +142,43 @@ fn test_get_linearised_contract_bases() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_get_references() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let ownable = semantic
+        .find_contract_by_name("Ownable")
+        .expect("can find Ownable contract");
+
+    // find the `onlyOwner` modifier defined in the `Ownable` contract
+    let only_owner = ownable
+        .members()
+        .iter()
+        .find_map(|member| {
+            member.as_function_definition().and_then(|function| {
+                if function.kind().is_modifier()
+                    && function
+                        .name()
+                        .is_some_and(|name| name.unparse() == "onlyOwner")
+                {
+                    Some(function)
+                } else {
+                    None
+                }
+            })
+        })
+        .expect("can find onlyOwner modifier");
+
+    let references = only_owner.references();
+    assert_eq!(references.len(), 3);
+    assert!(references.iter().all(|reference| reference
+        .resolve_to_definition()
+        .and_then(|definition| definition.as_modifier())
+        .is_some_and(|modifier| modifier
+            .name()
+            .is_some_and(|name| name.unparse() == "onlyOwner"))));
+
+    Ok(())
+}

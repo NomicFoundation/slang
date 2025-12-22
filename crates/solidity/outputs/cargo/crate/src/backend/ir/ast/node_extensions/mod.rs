@@ -10,7 +10,9 @@ mod definitions;
 pub use definitions::{Definition, DefinitionStruct};
 
 mod identifiers;
-pub use identifiers::{Identifier, IdentifierStruct, YulIdentifier, YulIdentifierStruct};
+pub use identifiers::{
+    Identifier, IdentifierStruct, Reference, YulIdentifier, YulIdentifierStruct,
+};
 
 impl SourceUnitStruct {
     pub fn file_id(&self) -> String {
