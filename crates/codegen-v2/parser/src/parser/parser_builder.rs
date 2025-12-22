@@ -1,13 +1,14 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use language_v2_definition::model::{
-    Field, Identifier, Item as LanguageItem, Language, Section, Topic,
+    Field, Identifier, Item as LanguageItem, Language, Section, Topic, VersionSpecifier,
 };
 
+use crate::lexer::{Lexeme, LexerModel};
 use crate::parser::item::{
     enum_item_to_lalrpop_items, keyword_item_to_lalrpop_items, precedence_item_to_lalrpop_items,
     repeated_item_to_lalrpop_items, separated_item_to_lalrpop_items, struct_item_to_lalrpop_items,
-    LALRPOPItem,
+    LALRPOPItem, VERSION,
 };
 use crate::parser::{ParserSection, ParserTopic};
 
@@ -148,8 +149,8 @@ impl<'a> ParserBuilder<'a> {
             LanguageItem::Separated { item } => separated_item_to_lalrpop_items(item),
             LanguageItem::Precedence { item } => precedence_item_to_lalrpop_items(item),
             // Actually, trivia, keyword, and token should translate to references
-            LanguageItem::Keyword { item } => keyword_item_to_lalrpop_items(item),
-            LanguageItem::Trivia { .. }
+            LanguageItem::Keyword { .. }
+            | LanguageItem::Trivia { .. }
             | LanguageItem::Token { .. }
             // I don't think we care about fragments at all
             // ... but we'll see once versioning comes in place
@@ -246,5 +247,56 @@ impl<'a> ParserBuilder<'a> {
         //         item.inline = true;
         //     }
         // }
+    }
+
+    pub(crate) fn collect_terminals(lexer: &LexerModel) -> BTreeMap<String, BTreeSet<String>> {
+        let mut terminals: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+
+        for context in &lexer.contexts {
+            for lexeme in &context.lexemes {
+                match lexeme {
+                    Lexeme::Trivia { kind, .. } => {
+                        terminals
+                            .entry(kind.clone())
+                            .or_default()
+                            .insert(kind.clone());
+                    }
+                    Lexeme::Token { kind, .. } => {
+                        terminals
+                            .entry(kind.clone())
+                            .or_default()
+                            .insert(kind.clone());
+                    }
+                    Lexeme::Keyword {
+                        kind,
+                        identifier,
+                        reserved,
+                        ..
+                    } => {
+                        if match reserved {
+                            None => true,
+                            Some(spec) => spec.contains(&VERSION),
+                        } {
+                            terminals
+                                .entry(kind.clone())
+                                .or_default()
+                                .insert(format!("{kind}_Reserved"));
+                        }
+
+                        if reserved.as_ref().is_some_and(|rng| !rng.contains(&VERSION)) {
+                            terminals
+                                .entry(identifier.clone())
+                                .or_default()
+                                .insert(format!("{kind}_Unreserved"));
+                            terminals
+                                .entry(kind.clone())
+                                .or_default()
+                                .insert(format!("{kind}_Unreserved"));
+                        }
+                    }
+                }
+            }
+        }
+        terminals
     }
 }

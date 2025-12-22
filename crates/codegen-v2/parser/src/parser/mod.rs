@@ -1,6 +1,8 @@
 mod item;
 mod parser_builder;
 
+use std::collections::{BTreeMap, BTreeSet};
+
 use language_v2_definition::model::Language;
 use serde::Serialize;
 
@@ -12,6 +14,7 @@ use crate::parser::parser_builder::ParserBuilder;
 #[derive(Clone, Debug, Serialize)]
 pub struct ParserModel {
     pub lexer: LexerModel,
+    terminals: BTreeMap<String, BTreeSet<String>>,
     sections: Vec<ParserSection>,
 }
 
@@ -37,9 +40,12 @@ struct ParserTopic {
 impl ParserModel {
     /// Creates a parser model from a language.
     pub fn from_language(language: &Language) -> Self {
+        let lexer = LexerModel::from_language(language);
+        let terminals = ParserBuilder::collect_terminals(&lexer);
         Self {
-            lexer: LexerModel::from_language(language),
+            lexer,
             sections: ParserBuilder::new(language).build(),
+            terminals,
         }
     }
 }

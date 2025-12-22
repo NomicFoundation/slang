@@ -32,7 +32,7 @@ struct LALRPOPField {
 }
 
 // Fixing ourselves to this version for now
-const VERSION: Version = Version::new(0, 8, 30);
+pub const VERSION: Version = Version::new(0, 8, 30);
 
 fn is_enabled(enabled: &Option<VersionSpecifier>) -> bool {
     enabled.as_ref().is_none_or(|v| v.contains(&VERSION))

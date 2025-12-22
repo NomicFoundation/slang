@@ -65,18 +65,17 @@ RepOne<T>: Vec<'arena, T> = {
 {% endfor %}
 
 // Lexemes formatting
-{% for kind in model.parser.lexer.lexeme_kinds -%}
-{% if kind.1 != "Identifier" %}#[inline]{% endif %}
-{{ kind.0 }}: {{ kind.1 }}<'arena> = {
-    <l:@L> L_{{ kind.0 }} <r:@L> => new_{{kind.1 | snake_case}}(arena, <>, source),
-    {%- if kind.1 == "Identifier" %}
-// TODO: The identifier should also consider unreserved keywords
-     {% for kw in model.parser.lexer.unreserved_keywords %} 
-        <l:@L> L_{{ kw }} <r:@L> => new_identifier(arena, <>, source),
-    {% endfor %}
-// ODOT
-    {% endif %}
-}
+{% for id, lexemes in model.parser.terminals -%}
+{% if id != "Identifier" -%}
+#[inline]
+{%- else -%}
+// Making an Identifier inline generates an explosion of states
+{%- endif %}
+{{ id }}: {{ id }}<'arena> = {
+{% for lexeme in lexemes %}
+        <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(arena, <>, source),
+{% endfor %}
+};
 {% endfor %}
 
 
@@ -87,7 +86,7 @@ extern {
 
     enum lexemes::LexemeKind {
         {% for kind in model.parser.lexer.lexeme_kinds -%}
-            L_{{ kind.0 }} => lexemes::LexemeKind::{{ kind.0 }},
+            L_{{ kind }} => lexemes::LexemeKind::{{ kind }},
         {% endfor %}
     }
 }
