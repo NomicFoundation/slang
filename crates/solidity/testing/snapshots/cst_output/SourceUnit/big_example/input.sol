@@ -2496,14 +2496,14 @@ library ECDSA {
         InvalidSignatureV // Deprecated in v4.8
     }
 
-    function _throwError(RecoverError error2) private pure {
-        if (error2 == RecoverError.NoError) {
-            return; // no error2: do nothing
-        } else if (error2 == RecoverError.InvalidSignature) {
+    function _throwError(RecoverError error) private pure {
+        if (error == RecoverError.NoError) {
+            return; // no error: do nothing
+        } else if (error == RecoverError.InvalidSignature) {
             revert("ECDSA: invalid signature");
-        } else if (error2 == RecoverError.InvalidSignatureLength) {
+        } else if (error == RecoverError.InvalidSignatureLength) {
             revert("ECDSA: invalid signature length");
-        } else if (error2 == RecoverError.InvalidSignatureS) {
+        } else if (error == RecoverError.InvalidSignatureS) {
             revert("ECDSA: invalid signature 's' value");
         }
     }
@@ -2559,8 +2559,8 @@ library ECDSA {
      * be too long), and then calling {toEthSignedMessageHash} on it.
      */
     function recover(bytes32 hash, bytes memory signature) internal pure returns(address) {
-        (address recovered, RecoverError error2) = tryRecover(hash, signature);
-        _throwError(error2);
+        (address recovered, RecoverError error) = tryRecover(hash, signature);
+        _throwError(error);
         return recovered;
     }
 
@@ -2591,8 +2591,8 @@ library ECDSA {
         bytes32 r,
         bytes32 vs
     ) internal pure returns(address) {
-        (address recovered, RecoverError error2) = tryRecover(hash, r, vs);
-        _throwError(error2);
+        (address recovered, RecoverError error) = tryRecover(hash, r, vs);
+        _throwError(error);
         return recovered;
     }
 
@@ -2640,8 +2640,8 @@ library ECDSA {
         bytes32 r,
         bytes32 s
     ) internal pure returns(address) {
-        (address recovered, RecoverError error2) = tryRecover(hash, v, r, s);
-        _throwError(error2);
+        (address recovered, RecoverError error) = tryRecover(hash, v, r, s);
+        _throwError(error);
         return recovered;
     }
 
