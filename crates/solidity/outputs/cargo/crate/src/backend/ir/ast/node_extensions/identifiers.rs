@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use super::{Definition, DefinitionStruct, IdentifierPathStruct};
 use crate::backend::SemanticAnalysis;
-use crate::cst::{TerminalKind, TerminalNode};
+use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
 pub type Identifier = Rc<IdentifierStruct>;
 
@@ -53,19 +53,7 @@ impl IdentifierStruct {
 
     // only makes sense if `is_definition()` is true
     pub fn references(&self) -> Vec<Reference> {
-        self.semantic
-            .binder()
-            .get_references_by_definition_id(self.ir_node.id())
-            .iter()
-            .filter_map(|node_id| {
-                self.semantic
-                    .binder()
-                    .find_reference_by_identifier_node_id(*node_id)
-                    .and_then(|reference| {
-                        Reference::try_create(&reference.identifier, &self.semantic)
-                    })
-            })
-            .collect()
+        self.semantic.references_binding_to(self.ir_node.id())
     }
 }
 
@@ -112,6 +100,21 @@ impl Reference {
                 identifier.resolve_to_definition()
             }
         }
+    }
+}
+
+impl SemanticAnalysis {
+    pub(crate) fn references_binding_to(self: &Rc<Self>, node_id: NodeId) -> Vec<Reference> {
+        let node_ids = self.binder().get_references_by_definition_id(node_id);
+
+        node_ids
+            .iter()
+            .filter_map(|node_id| {
+                self.binder()
+                    .find_reference_by_identifier_node_id(*node_id)
+                    .and_then(|reference| Reference::try_create(&reference.identifier, self))
+            })
+            .collect()
     }
 }
 

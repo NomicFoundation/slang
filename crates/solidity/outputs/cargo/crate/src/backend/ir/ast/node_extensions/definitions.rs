@@ -102,61 +102,37 @@ impl DefinitionStruct {
     define_variant!(YulVariable, Identifier);
 
     pub fn references(&self) -> Vec<Reference> {
-        self.semantic
-            .binder()
-            .get_references_by_definition_id(self.definition_id)
-            .iter()
-            .filter_map(|node_id| {
-                self.semantic
-                    .binder()
-                    .find_reference_by_identifier_node_id(*node_id)
-                    .and_then(|reference| {
-                        Reference::try_create(&reference.identifier, &self.semantic)
-                    })
-            })
-            .collect()
+        self.semantic.references_binding_to(self.definition_id)
     }
 }
 
-macro_rules! definition_to_references {
+macro_rules! define_references_method {
     ($type:ident) => {
         paste! {
             impl [<$type Struct>] {
                 pub fn references(&self) -> Vec<Reference> {
-                    self.semantic
-                        .binder()
-                        .get_references_by_definition_id(self.ir_node.node_id)
-                        .iter()
-                        .filter_map(|node_id| {
-                            self.semantic
-                                .binder()
-                                .find_reference_by_identifier_node_id(*node_id)
-                                .and_then(|reference| {
-                                    Reference::try_create(&reference.identifier, &self.semantic)
-                                })
-                        })
-                        .collect()
+                    self.semantic.references_binding_to(self.ir_node.node_id)
                 }
             }
         }
     };
 }
 
-definition_to_references!(ConstantDefinition);
-definition_to_references!(ContractDefinition);
-definition_to_references!(EnumDefinition);
-definition_to_references!(ErrorDefinition);
-definition_to_references!(EventDefinition);
-definition_to_references!(FunctionDefinition);
-definition_to_references!(ImportDeconstructionSymbol);
-definition_to_references!(InterfaceDefinition);
-definition_to_references!(LibraryDefinition);
-definition_to_references!(Parameter);
-definition_to_references!(PathImport);
-definition_to_references!(StateVariableDefinition);
-definition_to_references!(StructDefinition);
-definition_to_references!(StructMember);
-definition_to_references!(UserDefinedValueTypeDefinition);
-definition_to_references!(VariableDeclarationStatement);
-definition_to_references!(YulLabel);
-definition_to_references!(YulFunctionDefinition);
+define_references_method!(ConstantDefinition);
+define_references_method!(ContractDefinition);
+define_references_method!(EnumDefinition);
+define_references_method!(ErrorDefinition);
+define_references_method!(EventDefinition);
+define_references_method!(FunctionDefinition);
+define_references_method!(ImportDeconstructionSymbol);
+define_references_method!(InterfaceDefinition);
+define_references_method!(LibraryDefinition);
+define_references_method!(Parameter);
+define_references_method!(PathImport);
+define_references_method!(StateVariableDefinition);
+define_references_method!(StructDefinition);
+define_references_method!(StructMember);
+define_references_method!(UserDefinedValueTypeDefinition);
+define_references_method!(VariableDeclarationStatement);
+define_references_method!(YulLabel);
+define_references_method!(YulFunctionDefinition);
