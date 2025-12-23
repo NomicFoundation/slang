@@ -12,6 +12,12 @@ use crate::compilation::File;
 use crate::cst::{Cursor, NodeId, NonterminalNode};
 use crate::parser::ParseError;
 
+// TODO(v2): Unify with `File` as follows
+// (see https://github.com/NomicFoundation/slang/pull/1477#discussion_r2633584612):
+// 1. Rename `File` to a `FileBuilder`, which will contain the CST root.
+// 2. Rename this `SemanticFile` to `File`, which will contain both the CST root and the AST root.
+// 3. When user calls `CompilationBuilder::build()`, we can convert 1. to 2. while
+//    running the backend passes.
 #[derive(Clone)]
 pub struct SemanticFile {
     file: Rc<File>,
