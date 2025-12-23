@@ -113,3 +113,12 @@ pub fn build_compilation_unit() -> Result<Rc<CompilationUnit>> {
 
     Ok(Rc::new(builder.build()))
 }
+
+#[test]
+fn test_backend_pipeline() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic_analysis = unit.semantic_analysis();
+    assert_eq!(3, semantic_analysis.files().len());
+
+    Ok(())
+}
