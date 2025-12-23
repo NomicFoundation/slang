@@ -7,7 +7,7 @@ mod contracts;
 pub use contracts::ContractBase;
 
 mod definitions;
-pub use definitions::{Definition, DefinitionStruct};
+pub use definitions::Definition;
 
 mod identifiers;
 pub use identifiers::{

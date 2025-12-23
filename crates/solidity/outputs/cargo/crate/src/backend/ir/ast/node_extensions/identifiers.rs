@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use super::{Definition, DefinitionStruct, IdentifierPathStruct};
+use super::{Definition, IdentifierPathStruct};
 use crate::backend::SemanticAnalysis;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -38,10 +38,7 @@ impl IdentifierStruct {
             .binder()
             .find_reference_by_identifier_node_id(self.ir_node.id())?;
         let definition_id = reference.resolution.as_definition_id()?;
-        Some(Rc::new(DefinitionStruct::create(
-            definition_id,
-            &self.semantic,
-        )))
+        Some(Definition::create(definition_id, &self.semantic))
     }
 
     pub fn is_definition(&self) -> bool {
@@ -134,9 +131,6 @@ impl IdentifierPathStruct {
             .binder()
             .find_reference_by_identifier_node_id(ir_node.id())?;
         let definition_id = reference.resolution.as_definition_id()?;
-        Some(Rc::new(DefinitionStruct::create(
-            definition_id,
-            &self.semantic,
-        )))
+        Some(Definition::create(definition_id, &self.semantic))
     }
 }

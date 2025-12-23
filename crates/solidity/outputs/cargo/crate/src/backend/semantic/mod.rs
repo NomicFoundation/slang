@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use self::ast::{ContractDefinition, ContractDefinitionStruct, Definition, DefinitionStruct};
+use self::ast::{ContractDefinition, ContractDefinitionStruct, Definition};
 use crate::backend::binder::Binder;
 pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
 use crate::backend::types::TypeRegistry;
@@ -138,7 +138,7 @@ impl SemanticAnalysis {
         self.binder
             .definitions()
             .values()
-            .map(|definition| Rc::new(DefinitionStruct::create(definition.node_id(), self)))
+            .map(|definition| Definition::create(definition.node_id(), self))
     }
 
     pub fn find_contract_by_name(self: &Rc<Self>, name: &str) -> Option<ContractDefinition> {

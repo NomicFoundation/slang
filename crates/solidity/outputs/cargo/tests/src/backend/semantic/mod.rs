@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity::backend::ir::ast::ContractBase;
+use slang_solidity::backend::ir::ast::{ContractBase, Definition};
 
 use super::sample::build_compilation_unit;
 
@@ -40,20 +40,22 @@ fn test_semantic_analysis_and_ast_tree() -> Result<()> {
         .iter()
         .collect::<Vec<_>>();
 
-    let activatable_contract = counter_bases[0]
+    let Definition::Contract(activatable_contract) = counter_bases[0]
         .type_name()
         .resolve_to_definition()
         .expect("Counter base is resolved")
-        .as_contract()
-        .expect("Counter base is a contract");
+    else {
+        panic!("Counter base is a contract");
+    };
     assert_eq!(activatable_contract.name().unparse(), "Ownable");
 
-    let ownable_contract = counter_bases[1]
+    let Definition::Contract(ownable_contract) = counter_bases[1]
         .type_name()
         .resolve_to_definition()
         .expect("Counter base is resolved")
-        .as_contract()
-        .expect("Counter base is a contract");
+    else {
+        panic!("Counter base is a contract");
+    };
     assert_eq!(ownable_contract.name().unparse(), "Activatable");
 
     Ok(())
@@ -175,7 +177,13 @@ fn test_get_references() -> Result<()> {
     assert_eq!(references.len(), 3);
     assert!(references.iter().all(|reference| reference
         .resolve_to_definition()
-        .and_then(|definition| definition.as_modifier())
+        .and_then(|definition| {
+            if let Definition::Modifier(modifier) = definition {
+                Some(modifier)
+            } else {
+                None
+            }
+        })
         .is_some_and(|modifier| modifier
             .name()
             .is_some_and(|name| name.unparse() == "onlyOwner"))));

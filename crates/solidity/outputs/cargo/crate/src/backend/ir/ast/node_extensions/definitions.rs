@@ -14,95 +14,170 @@ use super::super::nodes::{
     VariableDeclarationStatement, VariableDeclarationStatementStruct, YulFunctionDefinition,
     YulFunctionDefinitionStruct, YulLabel, YulLabelStruct,
 };
-use super::{Identifier, IdentifierStruct, Reference};
+use super::{Identifier, IdentifierStruct, Reference, YulIdentifier, YulIdentifierStruct};
 use crate::backend::{binder, SemanticAnalysis};
 use crate::cst::NodeId;
 
-pub type Definition = Rc<DefinitionStruct>;
-
-pub struct DefinitionStruct {
-    definition_id: NodeId,
-    semantic: Rc<SemanticAnalysis>,
+pub enum Definition {
+    Constant(ConstantDefinition),
+    Contract(ContractDefinition),
+    Enum(EnumDefinition),
+    EnumMember(Identifier),
+    Error(ErrorDefinition),
+    Event(EventDefinition),
+    Function(FunctionDefinition),
+    Import(PathImport),
+    ImportedSymbol(ImportDeconstructionSymbol),
+    Interface(InterfaceDefinition),
+    Library(LibraryDefinition),
+    Modifier(FunctionDefinition),
+    Parameter(Parameter),
+    StateVariable(StateVariableDefinition),
+    Struct(StructDefinition),
+    StructMember(StructMember),
+    TypeParameter(Parameter),
+    UserDefinedValueType(UserDefinedValueTypeDefinition),
+    Variable(VariableDeclarationStatement),
+    YulFunction(YulFunctionDefinition),
+    YulLabel(YulLabel),
+    YulParameter(YulIdentifier),
+    YulVariable(YulIdentifier),
 }
 
-macro_rules! define_variant {
-    ($variant:ident) => {
-        paste! {
-            pub fn [<is_ $variant:snake:lower>](&self) -> bool {
-                matches!(self.internal_definition(), binder::Definition::$variant(_))
-            }
-
-            pub fn [<as_ $variant:snake:lower>](&self) -> Option<[<$variant Definition>]> {
-                if let binder::Definition::$variant(variant) = self.internal_definition() {
-                    Some(Rc::new([<$variant DefinitionStruct>]::create(&variant.ir_node, &self.semantic)))
-                } else {
-                    None
-                }
-            }
-        }
-    };
-    ($variant:ident, $deftype:ident) => {
-        paste! {
-            pub fn [<is_ $variant:snake:lower>](&self) -> bool {
-                matches!(self.internal_definition(), binder::Definition::$variant(_))
-            }
-
-            pub fn [<as_ $variant:snake:lower>](&self) -> Option<$deftype> {
-                if let binder::Definition::$variant(variant) = self.internal_definition() {
-                    Some(Rc::new([<$deftype Struct>]::create(&variant.ir_node, &self.semantic)))
-                } else {
-                    None
-                }
-            }
-        }
-    };
-}
-
-impl DefinitionStruct {
+impl Definition {
     pub(crate) fn create(definition_id: NodeId, semantic: &Rc<SemanticAnalysis>) -> Self {
-        assert!(semantic
+        let definition = semantic
             .binder()
             .find_definition_by_id(definition_id)
-            .is_some());
-        Self {
-            definition_id,
-            semantic: Rc::clone(semantic),
+            .expect("definition_id references a definition node");
+
+        match definition {
+            binder::Definition::Constant(constant_definition) => Self::Constant(Rc::new(
+                ConstantDefinitionStruct::create(&constant_definition.ir_node, semantic),
+            )),
+            binder::Definition::Contract(contract_definition) => Self::Contract(Rc::new(
+                ContractDefinitionStruct::create(&contract_definition.ir_node, semantic),
+            )),
+            binder::Definition::Enum(enum_definition) => Self::Enum(Rc::new(
+                EnumDefinitionStruct::create(&enum_definition.ir_node, semantic),
+            )),
+            binder::Definition::EnumMember(enum_member_definition) => Self::EnumMember(Rc::new(
+                IdentifierStruct::create(&enum_member_definition.ir_node, semantic),
+            )),
+            binder::Definition::Error(error_definition) => Self::Error(Rc::new(
+                ErrorDefinitionStruct::create(&error_definition.ir_node, semantic),
+            )),
+            binder::Definition::Event(event_definition) => Self::Event(Rc::new(
+                EventDefinitionStruct::create(&event_definition.ir_node, semantic),
+            )),
+            binder::Definition::Function(function_definition) => Self::Function(Rc::new(
+                FunctionDefinitionStruct::create(&function_definition.ir_node, semantic),
+            )),
+            binder::Definition::Import(import_definition) => Self::Import(Rc::new(
+                PathImportStruct::create(&import_definition.ir_node, semantic),
+            )),
+            binder::Definition::ImportedSymbol(imported_symbol_definition) => {
+                Self::ImportedSymbol(Rc::new(ImportDeconstructionSymbolStruct::create(
+                    &imported_symbol_definition.ir_node,
+                    semantic,
+                )))
+            }
+            binder::Definition::Interface(interface_definition) => Self::Interface(Rc::new(
+                InterfaceDefinitionStruct::create(&interface_definition.ir_node, semantic),
+            )),
+            binder::Definition::Library(library_definition) => Self::Library(Rc::new(
+                LibraryDefinitionStruct::create(&library_definition.ir_node, semantic),
+            )),
+            binder::Definition::Modifier(modifier_definition) => Self::Modifier(Rc::new(
+                FunctionDefinitionStruct::create(&modifier_definition.ir_node, semantic),
+            )),
+            binder::Definition::Parameter(parameter_definition) => Self::Parameter(Rc::new(
+                ParameterStruct::create(&parameter_definition.ir_node, semantic),
+            )),
+            binder::Definition::StateVariable(state_variable_definition) => {
+                Self::StateVariable(Rc::new(StateVariableDefinitionStruct::create(
+                    &state_variable_definition.ir_node,
+                    semantic,
+                )))
+            }
+            binder::Definition::Struct(struct_definition) => Self::Struct(Rc::new(
+                StructDefinitionStruct::create(&struct_definition.ir_node, semantic),
+            )),
+            binder::Definition::StructMember(struct_member_definition) => {
+                Self::StructMember(Rc::new(StructMemberStruct::create(
+                    &struct_member_definition.ir_node,
+                    semantic,
+                )))
+            }
+            binder::Definition::TypeParameter(type_parameter_definition) => {
+                Self::TypeParameter(Rc::new(ParameterStruct::create(
+                    &type_parameter_definition.ir_node,
+                    semantic,
+                )))
+            }
+            binder::Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                Self::UserDefinedValueType(Rc::new(UserDefinedValueTypeDefinitionStruct::create(
+                    &user_defined_value_type_definition.ir_node,
+                    semantic,
+                )))
+            }
+            binder::Definition::Variable(variable_definition) => Self::Variable(Rc::new(
+                VariableDeclarationStatementStruct::create(&variable_definition.ir_node, semantic),
+            )),
+            binder::Definition::YulFunction(yul_function_definition) => Self::YulFunction(Rc::new(
+                YulFunctionDefinitionStruct::create(&yul_function_definition.ir_node, semantic),
+            )),
+            binder::Definition::YulLabel(yul_label_definition) => Self::YulLabel(Rc::new(
+                YulLabelStruct::create(&yul_label_definition.ir_node, semantic),
+            )),
+            binder::Definition::YulParameter(yul_parameter_definition) => {
+                Self::YulParameter(Rc::new(YulIdentifierStruct::create(
+                    &yul_parameter_definition.ir_node,
+                    semantic,
+                )))
+            }
+            binder::Definition::YulVariable(yul_variable_definition) => Self::YulVariable(Rc::new(
+                YulIdentifierStruct::create(&yul_variable_definition.ir_node, semantic),
+            )),
         }
     }
 
-    fn internal_definition(&self) -> &binder::Definition {
-        self.semantic
-            .binder()
-            .find_definition_by_id(self.definition_id)
-            .unwrap()
-    }
-
-    define_variant!(Constant);
-    define_variant!(Contract);
-    define_variant!(Enum);
-    define_variant!(EnumMember, Identifier);
-    define_variant!(Error);
-    define_variant!(Event);
-    define_variant!(Function);
-    define_variant!(Import, PathImport);
-    define_variant!(ImportedSymbol, ImportDeconstructionSymbol);
-    define_variant!(Interface);
-    define_variant!(Library);
-    define_variant!(Modifier, FunctionDefinition);
-    define_variant!(Parameter, Parameter);
-    define_variant!(StateVariable);
-    define_variant!(Struct);
-    define_variant!(StructMember, StructMember);
-    define_variant!(TypeParameter, Parameter);
-    define_variant!(UserDefinedValueType);
-    define_variant!(Variable, VariableDeclarationStatement);
-    define_variant!(YulFunction);
-    define_variant!(YulLabel, YulLabel);
-    define_variant!(YulParameter, Identifier);
-    define_variant!(YulVariable, Identifier);
-
     pub fn references(&self) -> Vec<Reference> {
-        self.semantic.references_binding_to(self.definition_id)
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.references(),
+            Definition::Contract(contract_definition) => contract_definition.references(),
+            Definition::Enum(enum_definition) => enum_definition.references(),
+            Definition::EnumMember(identifier) => identifier.references(),
+            Definition::Error(error_definition) => error_definition.references(),
+            Definition::Event(event_definition) => event_definition.references(),
+            Definition::Function(function_definition) => function_definition.references(),
+            Definition::Import(path_import) => path_import.references(),
+            Definition::ImportedSymbol(import_deconstruction_symbol) => {
+                import_deconstruction_symbol.references()
+            }
+            Definition::Interface(interface_definition) => interface_definition.references(),
+            Definition::Library(library_definition) => library_definition.references(),
+            Definition::Modifier(function_definition) => function_definition.references(),
+            Definition::Parameter(parameter) => parameter.references(),
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.references()
+            }
+            Definition::Struct(struct_definition) => struct_definition.references(),
+            Definition::StructMember(struct_member) => struct_member.references(),
+            Definition::TypeParameter(parameter) => parameter.references(),
+            Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                user_defined_value_type_definition.references()
+            }
+            Definition::Variable(variable_declaration_statement) => {
+                variable_declaration_statement.references()
+            }
+            Definition::YulFunction(yul_function_definition) => {
+                yul_function_definition.references()
+            }
+            Definition::YulLabel(yul_label) => yul_label.references(),
+            Definition::YulParameter(identifier) => identifier.references(),
+            Definition::YulVariable(identifier) => identifier.references(),
+        }
     }
 }
 

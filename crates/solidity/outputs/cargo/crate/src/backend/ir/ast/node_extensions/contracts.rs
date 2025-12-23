@@ -1,8 +1,6 @@
 use std::rc::Rc;
 
-use super::{
-    ContractDefinition, ContractDefinitionStruct, Definition, DefinitionStruct, InterfaceDefinition,
-};
+use super::{ContractDefinition, ContractDefinitionStruct, Definition, InterfaceDefinition};
 
 pub enum ContractBase {
     Contract(ContractDefinition),
@@ -11,10 +9,11 @@ pub enum ContractBase {
 
 impl ContractBase {
     fn from_definition(definition: &Definition) -> Option<Self> {
-        definition
-            .as_contract()
-            .map(Self::Contract)
-            .or_else(|| definition.as_interface().map(Self::Interface))
+        match definition {
+            Definition::Contract(contract) => Some(Self::Contract(Rc::clone(contract))),
+            Definition::Interface(interface) => Some(Self::Interface(Rc::clone(interface))),
+            _ => None,
+        }
     }
 }
 
@@ -43,7 +42,7 @@ impl ContractDefinitionStruct {
         base_node_ids
             .iter()
             .map(|node_id| {
-                let base_definition = Rc::new(DefinitionStruct::create(*node_id, &self.semantic));
+                let base_definition = Rc::new(Definition::create(*node_id, &self.semantic));
                 ContractBase::from_definition(&base_definition)
                     .expect("Linearised base is either a contract or interface")
             })
