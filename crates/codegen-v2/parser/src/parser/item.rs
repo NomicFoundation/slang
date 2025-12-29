@@ -183,6 +183,8 @@ pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRP
     }]
 }
 
+// TODO: This is unused, but we may need it
+#[allow(dead_code)]
 pub(crate) fn keyword_item_to_lalrpop_items(item: &KeywordItem) -> Vec<LALRPOPItem> {
     let capturing_name = format!("_{}", item.name);
     let keyword_option = |reserved: bool| LALRPOPOption {

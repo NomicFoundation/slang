@@ -4,7 +4,7 @@ use indexmap::IndexMap;
 use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Field, FieldsErrorRecovery, Identifier, VersionSpecifier};
+use crate::model::{Field, FieldsErrorRecovery, Identifier, ParserOptions, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
@@ -16,6 +16,9 @@ pub struct PrecedenceItem {
 
     pub precedence_expressions: Vec<Rc<PrecedenceExpression>>,
     pub primary_expressions: Vec<PrimaryExpression>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parser_options: Option<ParserOptions>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

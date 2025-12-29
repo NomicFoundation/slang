@@ -1,14 +1,13 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use language_v2_definition::model::{
-    Field, Identifier, Item as LanguageItem, Language, Section, Topic, VersionSpecifier,
+    Field, Identifier, Item as LanguageItem, Language, Section, Topic,
 };
 
 use crate::lexer::{Lexeme, LexerModel};
 use crate::parser::item::{
-    enum_item_to_lalrpop_items, keyword_item_to_lalrpop_items, precedence_item_to_lalrpop_items,
-    repeated_item_to_lalrpop_items, separated_item_to_lalrpop_items, struct_item_to_lalrpop_items,
-    LALRPOPItem, VERSION,
+    enum_item_to_lalrpop_items, precedence_item_to_lalrpop_items, repeated_item_to_lalrpop_items,
+    separated_item_to_lalrpop_items, struct_item_to_lalrpop_items, LALRPOPItem, VERSION,
 };
 use crate::parser::{ParserSection, ParserTopic};
 
@@ -157,6 +156,23 @@ impl<'a> ParserBuilder<'a> {
             | LanguageItem::Fragment { .. } => vec![],
         };
 
+        let parser_options = match item {
+            LanguageItem::Struct { item } => &item.parser_options,
+            LanguageItem::Enum { item } => &item.parser_options,
+            LanguageItem::Repeated { item } => &item.parser_options,
+            LanguageItem::Separated { item } => &item.parser_options,
+            LanguageItem::Precedence { item } => &item.parser_options,
+            _ => &None,
+        };
+
+        if let Some(parser_options) = parser_options {
+            if parser_options.inline {
+                for item in &mut items {
+                    item.inline = true;
+                }
+            }
+        }
+
         // Remove all rules that we generate by hand, a bit hacky
         const EXCLUDED_ITEMS: [&str; 64] = [
             "ContractSpecifiers",
@@ -226,20 +242,6 @@ impl<'a> ParserBuilder<'a> {
         ];
 
         items.retain(|item| !EXCLUDED_ITEMS.contains(&(*item.name).as_str()));
-
-        // These need to be inlined to avoid conflicts with using `transient` as an attribute or
-        // an identifier
-        for item in &mut items {
-            if matches!(
-                item.name.as_str(),
-                "StateVariableAttributes"
-                    | "StateVariableAttribute"
-                    | "RevertStatement"
-                    | "ErrorDefinition"
-            ) {
-                item.inline = true;
-            }
-        }
 
         items
 

@@ -497,7 +497,7 @@ language_v2_macros::compile!(Language(
                             identifier = Identifier,
                             definitions =
                             // TODO(v2): I made it reserved, in an attempt to find errors with using these as identifiers:
-                            // 
+                            //
                             // I think this is only not a keyword since it can be used as a member access, maybe a special case there is better?
                                 [KeywordDefinition(value = Atom("address"))]
                         ),
@@ -2306,7 +2306,8 @@ language_v2_macros::compile!(Language(
                         Repeated(
                             name = StateVariableAttributes,
                             reference = StateVariableAttribute,
-                            allow_empty = true
+                            allow_empty = true,
+                            parser_options = ParserOptions(inline = true)
                         ),
                         Enum(
                             name = StateVariableAttribute,
@@ -2318,7 +2319,8 @@ language_v2_macros::compile!(Language(
                                 EnumVariant(reference = PublicKeyword),
                                 EnumVariant(reference = ImmutableKeyword, enabled = From("0.6.5")),
                                 EnumVariant(reference = TransientKeyword, enabled = From("0.8.27"))
-                            ]
+                            ],
+                            parser_options = ParserOptions(inline = true)
                         )
                     ]
                 ),
@@ -2670,7 +2672,8 @@ language_v2_macros::compile!(Language(
                                 name = Required(Identifier),
                                 members = Required(ErrorParametersDeclaration),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = true)
                         ),
                         Struct(
                             name = ErrorParametersDeclaration,
@@ -3191,7 +3194,8 @@ language_v2_macros::compile!(Language(
                                 error = Required(IdentifierPath),
                                 arguments = Required(ArgumentsDeclaration),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = true)
                         ),
                         Struct(
                             name = ThrowStatement,
