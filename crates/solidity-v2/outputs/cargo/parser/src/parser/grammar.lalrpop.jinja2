@@ -45,6 +45,11 @@ RepOne<T>: Vec<'arena, T> = {
     // Rules for topic {{ topic.title }}
     {% for item in topic.items -%}
 
+    {%- if item.type == "Verbatim" %}
+    {{ item.content }}
+    {% else -%}
+
+    {%- for item in item.content -%}
     {% if item.inline %}#[inline]
     {% endif %}{% if item.pubb -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }}<'arena> = {
         {% for option in item.options -%}
@@ -58,6 +63,9 @@ RepOne<T>: Vec<'arena, T> = {
         {% endfor %}
     };
     {% endfor %}
+    {%- endif -%}
+
+    {%- endfor %}
 
 {% endfor %}
 

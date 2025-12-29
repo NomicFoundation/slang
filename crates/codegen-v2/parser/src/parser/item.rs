@@ -10,7 +10,14 @@ use serde::Serialize;
 struct RustCode(String);
 
 #[derive(Clone, Debug, Serialize)]
-pub(crate) struct LALRPOPItem {
+#[serde(tag = "type", content = "content")]
+pub(crate) enum LALRPOPItem {
+    Verbatim(String),
+    Items(Vec<LALRPOPItemInner>),
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub(crate) struct LALRPOPItemInner {
     pub name: Identifier,
     pub producing_type: Identifier,
     pub options: Vec<LALRPOPOption>,
@@ -76,7 +83,7 @@ fn variant_constructor(id: &Identifier, variant: &Identifier) -> RustCode {
     RustCode(format!("new_{}_{}", *id, *variant))
 }
 
-pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPItem> {
+pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPItemInner> {
     if !is_enabled(&item.enabled) {
         return vec![];
     }
@@ -90,7 +97,7 @@ pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPItem
         constructor: Some(constructor(&item.name)),
     };
 
-    vec![LALRPOPItem {
+    vec![LALRPOPItemInner {
         name: item.name.clone(),
         producing_type: item.name.clone(),
         options: vec![option],
@@ -99,7 +106,7 @@ pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPItem
     }]
 }
 
-pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPItem> {
+pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPItemInner> {
     if !is_enabled(&item.enabled) {
         return vec![];
     }
@@ -120,7 +127,7 @@ pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPItem> {
         })
         .collect();
 
-    vec![LALRPOPItem {
+    vec![LALRPOPItemInner {
         name: item.name.clone(),
         producing_type: item.name.clone(),
         options,
@@ -129,7 +136,7 @@ pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPItem> {
     }]
 }
 
-pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOPItem> {
+pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOPItemInner> {
     if !is_enabled(&item.enabled) {
         return vec![];
     }
@@ -146,7 +153,7 @@ pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOP
         constructor: Some(constructor(&item.name)),
     };
 
-    vec![LALRPOPItem {
+    vec![LALRPOPItemInner {
         name: item.name.clone(),
         producing_type: item.name.clone(),
         options: vec![option],
@@ -155,7 +162,7 @@ pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOP
     }]
 }
 
-pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRPOPItem> {
+pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRPOPItemInner> {
     if !is_enabled(&item.enabled) {
         return vec![];
     }
@@ -174,7 +181,7 @@ pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRP
         constructor: Some(constructor(&item.name)),
     };
 
-    vec![LALRPOPItem {
+    vec![LALRPOPItemInner {
         name: item.name.clone(),
         producing_type: item.name.clone(),
         options: vec![option],
@@ -185,7 +192,7 @@ pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRP
 
 // TODO: This is unused, but we may need it
 #[allow(dead_code)]
-pub(crate) fn keyword_item_to_lalrpop_items(item: &KeywordItem) -> Vec<LALRPOPItem> {
+pub(crate) fn keyword_item_to_lalrpop_items(item: &KeywordItem) -> Vec<LALRPOPItemInner> {
     let capturing_name = format!("_{}", item.name);
     let keyword_option = |reserved: bool| LALRPOPOption {
         fields: vec![LALRPOPField {
@@ -214,7 +221,7 @@ pub(crate) fn keyword_item_to_lalrpop_items(item: &KeywordItem) -> Vec<LALRPOPIt
         options.push(keyword_option(false));
     }
 
-    vec![LALRPOPItem {
+    vec![LALRPOPItemInner {
         name: item.name.clone(),
         producing_type: item.name.clone(),
         options,
@@ -238,7 +245,7 @@ fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> Option<LALRPOPFie
     }
 }
 
-pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LALRPOPItem> {
+pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LALRPOPItemInner> {
     if !is_enabled(&item.enabled) {
         return vec![];
     }
@@ -262,7 +269,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
 
     let mut prec_counter = 0;
 
-    ans.push(LALRPOPItem {
+    ans.push(LALRPOPItemInner {
         name: format!("{}{}", item.name, prec_counter).into(),
         producing_type: item.name.clone(),
         options: primaries,
@@ -316,7 +323,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 })
                 .collect();
 
-            ans.push(LALRPOPItem {
+            ans.push(LALRPOPItemInner {
                 name: operator_ident.clone(),
                 producing_type: operator_ident.clone(),
                 options,
@@ -378,7 +385,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 }
             };
 
-            ans.push(LALRPOPItem {
+            ans.push(LALRPOPItemInner {
                 name: prec.name.clone(),
                 producing_type: prec.name.clone(),
                 options: vec![LALRPOPOption {
@@ -411,7 +418,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
             },
         ];
 
-        ans.push(LALRPOPItem {
+        ans.push(LALRPOPItemInner {
             name: format!("{}{}", item.name, prec_counter).into(),
             producing_type: item.name.clone(),
             options: options,
@@ -421,7 +428,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
     }
 
     // Adding the entry case
-    ans.push(LALRPOPItem {
+    ans.push(LALRPOPItemInner {
         name: item.name.clone(),
         producing_type: item.name.clone(),
         options: vec![LALRPOPOption {

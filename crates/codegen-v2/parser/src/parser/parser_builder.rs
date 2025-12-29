@@ -123,20 +123,12 @@ impl<'a> ParserBuilder<'a> {
             items: topic
                 .items
                 .iter()
-                .flat_map(|item| self.language_item_to_lalrpop_item(item))
-                .map(|item| {
-                    if item.name == self.language.root_item {
-                        // Make the root item public
-                        LALRPOPItem { pubb: true, ..item }
-                    } else {
-                        item
-                    }
-                })
+                .map(|item| self.language_item_to_lalrpop_item(item))
                 .collect(),
         }
     }
 
-    fn language_item_to_lalrpop_item(&self, item: &LanguageItem) -> Vec<LALRPOPItem> {
+    fn language_item_to_lalrpop_item(&self, item: &LanguageItem) -> LALRPOPItem {
         // TODO: we're ignoring versions for now
 
         // TODO: use an actual type rather than string
@@ -170,6 +162,16 @@ impl<'a> ParserBuilder<'a> {
                 for item in &mut items {
                     item.inline = true;
                 }
+            }
+
+            if parser_options.pubb {
+                for item in &mut items {
+                    item.pubb = true;
+                }
+            }
+
+            if let Some(verbatim) = &parser_options.verbatim {
+                return LALRPOPItem::Verbatim(verbatim.clone());
             }
         }
 
@@ -243,7 +245,7 @@ impl<'a> ParserBuilder<'a> {
 
         items.retain(|item| !EXCLUDED_ITEMS.contains(&(*item.name).as_str()));
 
-        items
+        LALRPOPItem::Items(items)
 
         // This ended up making compilation slower, it may be worth checking the parser performance in the future with
         // this enabled

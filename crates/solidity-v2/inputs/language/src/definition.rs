@@ -39,7 +39,8 @@ language_v2_macros::compile!(Language(
                     items = [
                         Struct(
                             name = SourceUnit,
-                            fields = (members = Required(SourceUnitMembers))
+                            fields = (members = Required(SourceUnitMembers)),
+                            parser_options = ParserOptions(inline = false, pubb = true)
                         ),
                         Repeated(
                             name = SourceUnitMembers,
@@ -2307,7 +2308,7 @@ language_v2_macros::compile!(Language(
                             name = StateVariableAttributes,
                             reference = StateVariableAttribute,
                             allow_empty = true,
-                            parser_options = ParserOptions(inline = true)
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Enum(
                             name = StateVariableAttribute,
@@ -2320,7 +2321,7 @@ language_v2_macros::compile!(Language(
                                 EnumVariant(reference = ImmutableKeyword, enabled = From("0.6.5")),
                                 EnumVariant(reference = TransientKeyword, enabled = From("0.8.27"))
                             ],
-                            parser_options = ParserOptions(inline = true)
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         )
                     ]
                 ),
@@ -2673,7 +2674,7 @@ language_v2_macros::compile!(Language(
                                 members = Required(ErrorParametersDeclaration),
                                 semicolon = Required(Semicolon)
                             ),
-                            parser_options = ParserOptions(inline = true)
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Struct(
                             name = ErrorParametersDeclaration,
@@ -3195,7 +3196,7 @@ language_v2_macros::compile!(Language(
                                 arguments = Required(ArgumentsDeclaration),
                                 semicolon = Required(Semicolon)
                             ),
-                            parser_options = ParserOptions(inline = true)
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Struct(
                             name = ThrowStatement,
