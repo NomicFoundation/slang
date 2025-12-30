@@ -33,7 +33,6 @@ struct ParserSection {
 #[derive(Clone, Debug, Serialize)]
 struct ParserTopic {
     pub title: String,
-    // Still missing producing type, and so on
     pub items: Vec<LALRPOPItem>,
 }
 
