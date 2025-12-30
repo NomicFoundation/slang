@@ -176,21 +176,7 @@ impl<'a> ParserBuilder<'a> {
         }
 
         // Remove all rules that we generate by hand, a bit hacky
-        const EXCLUDED_ITEMS: [&str; 34] = [
-            "Statement",
-            "TupleDeconstructionStatement",
-            "TupleDeconstructionElements",
-            "TupleDeconstructionElement",
-            "TupleMember",
-            "TypedTupleMember",
-            "UntypedTupleMember",
-            "IfStatement",
-            "ElseBranch",
-            "ForStatement",
-            "WhileStatement",
-            "TupleExpression",
-            "TupleValues",
-            "TupleValue",
+        const EXCLUDED_ITEMS: [&str; 19] = [
             "IndexAccessExpression",
             "MemberAccessExpression",
             "CallOptionsExpression",
@@ -210,7 +196,6 @@ impl<'a> ParserBuilder<'a> {
             "OrExpression",
             "ConditionalExpression",
             "AssignmentExpression",
-            "TryStatement",
         ];
 
         items.retain(|item| !EXCLUDED_ITEMS.contains(&(*item.name).as_str()));

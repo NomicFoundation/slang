@@ -132,160 +132,15 @@ extern {
 
 
 
-    // This is a common problem in grammars[1]. To not reinvent the wheel we follow advice from
-    // LALRPOP community[2].
-    // Briefly, we parametrize statements on whether they allow a trailing else or not, forcing `else`s to attach to
-    // the innermost `if`` possible.
-    //
-    // [1]: https://en.wikipedia.org/wiki/Dangling_else
-    // [2]: https://github.com/lalrpop/lalrpop/issues/67#issuecomment-188951041
-    _Statement<TrailingElse>: Statement<'arena> = {
-        <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(arena, <>),
-        <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(arena, <>),
-        <_WhileStatement: WhileStatement<TrailingElse>>  => new_statement_while_statement(arena, <>),
-        <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(arena, <>),
-        <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(arena, <>),
-        <_BreakStatement: BreakStatement>  => new_statement_break_statement(arena, <>),
-        <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(arena, <>),
-        <_EmitStatement: EmitStatement>  => new_statement_emit_statement(arena, <>),
-        <_TryStatement: TryStatement>  => new_statement_try_statement(arena, <>),
-        <_RevertStatement: RevertStatement>  => new_statement_revert_statement(arena, <>),
-        <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(arena, <>),
-        <_Block: Block>  => new_statement_block(arena, <>),
-        <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(arena, <>),
-        <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(arena, <>),
-        <_VariableDeclarationStatement: VariableDeclarationStatementNoRevert>  => new_statement_variable_declaration_statement(arena, <>),
-        <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(arena, <>),
-    };
-
-    // A VariableDeclarationStatement that has a `revert` type as a special case, this allows
-    // to disambiguate between a revert statement and a variable declaration with type `revert`
-    //
-    // Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
-    #[inline]
-    VariableDeclarationStatementNoRevert: VariableDeclarationStatement<'arena> = {
-        <_variable_declaration: VariableDeclarationNoRevert>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(arena, <>),
-    };
-    #[inline]
-    VariableDeclarationNoRevert: VariableDeclaration<'arena> = {
-        <_variable_type: VariableDeclarationTypeNoRevert>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(arena, <>),
-    };
-    #[inline]
-    VariableDeclarationTypeNoRevert: VariableDeclarationType<'arena> = {
-        <_TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  => new_variable_declaration_type_type_name(arena, <>),
-        <l:@L> L_RevertKeyword_Unreserved <r:@R> => {
-            let identifier = new_identifier(arena, l, r, source);
-            let iap = new_index_access_path_from_identifier_path(arena, new_identifier_path(arena, identifier, None));
-            let type_name = new_type_name_index_access_path(arena, iap);
-            new_variable_declaration_type_type_name(arena, type_name)
-        }
-    };
-    IdentifierPathNoRevert: IdentifierPath<'arena> = {
-        // We either have any identifier with a tail (ie a period)
-        <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
-        // or a single identifier that is not `revert`
-        <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
-    };
 
 
 
-    // By default statements allos dangling `else`s
-        Statement = _Statement<"True">;
 
-        IfStatement<TrailingElse>: IfStatement<'arena> = {
-            // IfStatement only allows dangling `if`s (ie without an else) if TrailingElse == "True"
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(arena, <>, None),
-            // If there is an `else` branch, then the `if` statemente cannot have dangling `if`s
-            <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<TrailingElse>>  => new_if_statement(arena, _if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(arena, _else_keyword, _else_branch))),
-    };
 
-    ForStatement<TrailingElse>: ForStatement<'arena> = {
-            <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_for_statement(arena, <>),
-    };
 
-    WhileStatement<TrailingElse>: WhileStatement<'arena> = {
-            <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_while_statement(arena, <>),
-    };
 
-    // A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
-    // at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
-    // start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
-    //
-    // We use expressions with a trailing block to solve this, and steal the block from there.
-    TryStatement: TryStatement<'arena> = {
-        <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: (ReturnsDeclaration)>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
-            new_try_statement(arena, _try_keyword, _expression, Some(_returns), _body, _catch_clauses)
-        },
-        <_try_keyword: TryKeyword>  <_expression: ExpressionTrailingBlock>   <_catch_clauses: CatchClauses>  => {
-            let (expr, body) = _expression;
-            new_try_statement(arena, _try_keyword, expr, None, body, _catch_clauses)
-        },
-    };
 
-    
-    // Tuple expressions and tuple declarations can conflict in some situations, for example if the parser sees `(a, b` 
-    // it doesn't know whether it's parsing a tuple expression with two identifiers inside, or a tuple pattern/declaration.
-    // We solve this by delaying the decision, and parsing common prefixes as ProtoTuples.
-    // ProtoTuples are marked with a boolean generic on whether they are tuples (ie, expressions) or patterns (ie, declarations).
-    //
-    // Note: One caveat of this is that an assignemnt over a tuple (ie, `(a, b) = foo();`) is parsed as an expression.
-    // 
-    // Note: the solidity grammar chooses to allow tuple expressions to not have any expressions (ie `(,,)` is valid),
-    // and then the difference between an assignemtn with a lhs being a tuple expression and a tuple deconstruction statement
-    // is whether it has any declaration within itself.
-    // We follow a different path, the reason may make a difference in the future when `var` declarations are allowed
-    // (`var (a, b) = foo();`), but for now it's mostly a design choice.
-    //
-    // TODO: Empty tuples are considered patterns, I'm not sure if that's actually allowed
-    // TODO: maybe we could get rid of this if we use a right-recursive rules for tuples, but I'm not 100% sure
-    ProtoTuple<Tuple>: ProtoTuple<'arena> = {
-        <_open_paren: OpenParen>  <_elements: ProtoTupleElements<Tuple>>  <_close_paren: CloseParen>  => new_proto_tuple(arena, _open_paren, _elements, _close_paren),
-    }
-    
-    ProtoTupleElements<Tuple>: Vec<'arena, ProtoTupleElement<'arena>> = {
-        // A single element can be a tuple or a pattern
-        <_elem: TupleElementExpression> if Tuple == "True" => bumpalo::vec![in arena; <>],
-        <_elem: TupleElementPattern> if Tuple == "False" => bumpalo::vec![in arena; <>],
-        
-        // A ProtoTuple only ProtoTupleElements<True> is a Tuple expression
-        <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementExpression> if Tuple == "True" => {
-            _elems.push(_elem);
-            _elems
-        },
-        
-        // But we can mix and match with patterns
-        <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
-            _elems.push(_elem);
-            _elems
-        },
-        
-        <mut _elems: ProtoTupleElements<"True">> Comma <_elem: TupleElementPattern> if Tuple == "False" => {
-            _elems.push(_elem);
-            _elems
-        },
-        
-        <mut _elems: ProtoTupleElements<"False">> Comma <_elem: TupleElementExpression> if Tuple == "False" => {
-            _elems.push(_elem);
-            _elems
-        },
-    };
-    
-    TupleElementExpression: ProtoTupleElement<'arena> = {
-        // A Tuple expression must be present and only be an identifier
-        <_name: Expression> => new_proto_tuple_element_expression(arena, _name),
-    };
-    
-    TupleElementPattern: ProtoTupleElement<'arena> = {
-        <_decl: VariableDeclaration>  => new_proto_tuple_element_declaration(arena, _decl),
-        <_storage_location: StorageLocation> <_name: Identifier>  => new_proto_tuple_element_storage_location(arena, _storage_location, _name),
-        () => new_proto_tuple_element_empty(arena),
-    };
-    
-    // TupleDeconstructionStatement uses a ProtoTuple with patterns only
-        TupleDeconstructionStatement: TupleDeconstructionStatement<'arena> = {
-                // Note: Sort of annoying, but a deconstruction statement like `(a, b) = c` is parsed as an assignment over a tuple
-                <_tuple: ProtoTuple<"False">> <_equal: Equal>  <_expression: Expression>  <_semicolon: Semicolon>  => new_tuple_deconstruction_statement_from_proto_tuple(arena, <>),
-        };
+ 
     
     
 // An IAP that tracks whether it has a trailing identifier path
@@ -303,22 +158,7 @@ NoIdentPath: IdentifierPath<'arena> = {
 
 
 
-    // An expression followed by a block
-    ExpressionTrailingBlock: (Expression<'arena>, Block<'arena>) = {
-         
-            <Expression: Expression19<Block>>  => <>,
-        
-    };
 
-    // An expression followed by contract members
-    ExpressionTrailingMembers: (Expression<'arena>, (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>)) = {
-            <Expression: Expression19<BracedContractMembers>>  => <>,
-    };
-    BracedContractMembers: (OpenBrace<'arena>, ContractMembers<'arena>, CloseBrace<'arena>) = {
-        <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
-            (_open_brace, _members, _close_brace)
-        },
-    };
 
 
 
