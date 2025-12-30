@@ -26,6 +26,7 @@ use crate::backend::ir::ast::{
 use crate::backend::{binder, SemanticAnalysis};
 use crate::cst::NodeId;
 
+// __SLANG_DEFINITION_TYPES__ keep in sync with binder
 pub enum Definition {
     Constant(ConstantDefinition),
     Contract(ContractDefinition),
