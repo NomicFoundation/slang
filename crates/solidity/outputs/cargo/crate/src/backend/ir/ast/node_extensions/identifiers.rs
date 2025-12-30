@@ -1,10 +1,22 @@
 use std::rc::Rc;
 
-use super::{Definition, IdentifierPathStruct};
+use super::super::IdentifierPathStruct;
+use super::Definition;
 use crate::backend::SemanticAnalysis;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
 pub type Identifier = Rc<IdentifierStruct>;
+
+pub(crate) fn create_identifier(
+    ir_node: &Rc<TerminalNode>,
+    semantic: &Rc<SemanticAnalysis>,
+) -> Identifier {
+    assert!(ir_node.kind == TerminalKind::Identifier);
+    Rc::new(IdentifierStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct IdentifierStruct {
     ir_node: Rc<TerminalNode>,
@@ -12,14 +24,6 @@ pub struct IdentifierStruct {
 }
 
 impl IdentifierStruct {
-    pub(crate) fn create(ir_node: &Rc<TerminalNode>, semantic: &Rc<SemanticAnalysis>) -> Self {
-        assert!(ir_node.kind == TerminalKind::Identifier);
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn unparse(&self) -> String {
         self.ir_node.unparse()
     }
@@ -57,6 +61,17 @@ impl IdentifierStruct {
 pub type YulIdentifierStruct = IdentifierStruct;
 pub type YulIdentifier = Rc<YulIdentifierStruct>;
 
+pub(crate) fn create_yul_identifier(
+    ir_node: &Rc<TerminalNode>,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulIdentifier {
+    assert!(ir_node.kind == TerminalKind::YulIdentifier);
+    Rc::new(YulIdentifierStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
 pub enum Reference {
     Identifier(Identifier),
     YulIdentifier(YulIdentifier),
@@ -73,11 +88,11 @@ impl Reference {
             .find_reference_by_identifier_node_id(node.id())?;
 
         match node.kind {
-            TerminalKind::Identifier => Some(Reference::Identifier(Rc::new(
-                IdentifierStruct::create(node, semantic),
-            ))),
-            TerminalKind::YulIdentifier => Some(Reference::YulIdentifier(Rc::new(
-                YulIdentifierStruct::create(node, semantic),
+            TerminalKind::Identifier => {
+                Some(Reference::Identifier(create_identifier(node, semantic)))
+            }
+            TerminalKind::YulIdentifier => Some(Reference::YulIdentifier(create_yul_identifier(
+                node, semantic,
             ))),
             _ => None,
         }

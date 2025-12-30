@@ -1,7 +1,4 @@
-use super::nodes::{
-    ContractDefinition, ContractDefinitionStruct, IdentifierPathStruct, InterfaceDefinition,
-    SourceUnitStruct,
-};
+use super::{ContractDefinition, SourceUnitMember, SourceUnitStruct};
 
 mod contracts;
 pub use contracts::ContractBase;
@@ -10,6 +7,7 @@ mod definitions;
 pub use definitions::Definition;
 
 mod identifiers;
+pub(crate) use identifiers::{create_identifier, create_yul_identifier};
 pub use identifiers::{
     Identifier, IdentifierStruct, Reference, YulIdentifier, YulIdentifierStruct,
 };
@@ -24,7 +22,13 @@ impl SourceUnitStruct {
     pub fn contracts(&self) -> Vec<ContractDefinition> {
         self.members()
             .iter()
-            .filter_map(|member| member.as_contract_definition())
+            .filter_map(|member| {
+                if let SourceUnitMember::ContractDefinition(contract) = member {
+                    Some(contract)
+                } else {
+                    None
+                }
+            })
             .collect()
     }
 }

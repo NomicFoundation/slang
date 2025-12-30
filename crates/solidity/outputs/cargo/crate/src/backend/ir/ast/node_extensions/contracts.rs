@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use super::{ContractDefinition, ContractDefinitionStruct, Definition, InterfaceDefinition};
+use super::super::{ContractDefinition, ContractDefinitionStruct, Definition, InterfaceDefinition};
 
 pub enum ContractBase {
     Contract(ContractDefinition),

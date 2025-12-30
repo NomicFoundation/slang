@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use self::ast::{ContractDefinition, ContractDefinitionStruct, Definition};
+use self::ast::{create_contract_definition, create_source_unit, ContractDefinition, Definition};
 use crate::backend::binder::Binder;
 pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
 use crate::backend::types::TypeRegistry;
@@ -130,7 +130,7 @@ impl SemanticAnalysis {
     pub fn get_file_ast_root(self: &Rc<Self>, file_id: &str) -> Option<ast::SourceUnit> {
         self.files
             .get(file_id)
-            .map(|file| Rc::new(ast::SourceUnitStruct::create(file.ir_root(), self)))
+            .map(|file| create_source_unit(file.ir_root(), self))
     }
 
     pub(crate) fn node_id_to_file_id(&self, node_id: NodeId) -> Option<String> {
@@ -161,6 +161,6 @@ impl SemanticAnalysis {
                     None
                 }
             })
-            .map(|contract| Rc::new(ContractDefinitionStruct::create(&contract.ir_node, self)))
+            .map(|contract| create_contract_definition(&contract.ir_node, self))
     }
 }

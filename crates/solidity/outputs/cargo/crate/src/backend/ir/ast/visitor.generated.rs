@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
-use super::{input as input_ir, Identifier, YulIdentifier};
+use super::{Identifier, YulIdentifier};
 use crate::cst::TerminalNode;
 
 pub trait Visitor {
@@ -1875,48 +1875,45 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::SourceUnitMember::PragmaDirective(_) => {
-            accept_pragma_directive(&node.as_pragma_directive().unwrap(), visitor);
+    match node {
+        SourceUnitMember::PragmaDirective(variant) => {
+            accept_pragma_directive(variant, visitor);
         }
-        input_ir::SourceUnitMember::ContractDefinition(_) => {
-            accept_contract_definition(&node.as_contract_definition().unwrap(), visitor);
+        SourceUnitMember::ContractDefinition(variant) => {
+            accept_contract_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::InterfaceDefinition(_) => {
-            accept_interface_definition(&node.as_interface_definition().unwrap(), visitor);
+        SourceUnitMember::InterfaceDefinition(variant) => {
+            accept_interface_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::LibraryDefinition(_) => {
-            accept_library_definition(&node.as_library_definition().unwrap(), visitor);
+        SourceUnitMember::LibraryDefinition(variant) => {
+            accept_library_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::StructDefinition(_) => {
-            accept_struct_definition(&node.as_struct_definition().unwrap(), visitor);
+        SourceUnitMember::StructDefinition(variant) => {
+            accept_struct_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::EnumDefinition(_) => {
-            accept_enum_definition(&node.as_enum_definition().unwrap(), visitor);
+        SourceUnitMember::EnumDefinition(variant) => {
+            accept_enum_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::FunctionDefinition(_) => {
-            accept_function_definition(&node.as_function_definition().unwrap(), visitor);
+        SourceUnitMember::FunctionDefinition(variant) => {
+            accept_function_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::ErrorDefinition(_) => {
-            accept_error_definition(&node.as_error_definition().unwrap(), visitor);
+        SourceUnitMember::ErrorDefinition(variant) => {
+            accept_error_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::UserDefinedValueTypeDefinition(_) => {
-            accept_user_defined_value_type_definition(
-                &node.as_user_defined_value_type_definition().unwrap(),
-                visitor,
-            );
+        SourceUnitMember::UserDefinedValueTypeDefinition(variant) => {
+            accept_user_defined_value_type_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::UsingDirective(_) => {
-            accept_using_directive(&node.as_using_directive().unwrap(), visitor);
+        SourceUnitMember::UsingDirective(variant) => {
+            accept_using_directive(variant, visitor);
         }
-        input_ir::SourceUnitMember::EventDefinition(_) => {
-            accept_event_definition(&node.as_event_definition().unwrap(), visitor);
+        SourceUnitMember::EventDefinition(variant) => {
+            accept_event_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::ConstantDefinition(_) => {
-            accept_constant_definition(&node.as_constant_definition().unwrap(), visitor);
+        SourceUnitMember::ConstantDefinition(variant) => {
+            accept_constant_definition(variant, visitor);
         }
-        input_ir::SourceUnitMember::ImportClause(_) => {
-            accept_import_clause(&node.as_import_clause().unwrap(), visitor);
+        SourceUnitMember::ImportClause(variant) => {
+            accept_import_clause(variant, visitor);
         }
     }
     visitor.leave_source_unit_member(node);
@@ -1929,15 +1926,15 @@ pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::Pragma::VersionPragma(_) => {
-            accept_version_pragma(&node.as_version_pragma().unwrap(), visitor);
+    match node {
+        Pragma::VersionPragma(variant) => {
+            accept_version_pragma(variant, visitor);
         }
-        input_ir::Pragma::AbicoderPragma(_) => {
-            accept_abicoder_pragma(&node.as_abicoder_pragma().unwrap(), visitor);
+        Pragma::AbicoderPragma(variant) => {
+            accept_abicoder_pragma(variant, visitor);
         }
-        input_ir::Pragma::ExperimentalPragma(_) => {
-            accept_experimental_pragma(&node.as_experimental_pragma().unwrap(), visitor);
+        Pragma::ExperimentalPragma(variant) => {
+            accept_experimental_pragma(variant, visitor);
         }
     }
     visitor.leave_pragma(node);
@@ -1952,8 +1949,9 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::ExperimentalFeature::StringLiteral(_) => {}
+    match node {
+        ExperimentalFeature::StringLiteral(_) => {}
+
         _ => {}
     }
     visitor.leave_experimental_feature(node);
@@ -1966,12 +1964,12 @@ pub fn accept_version_expression(node: &VersionExpression, visitor: &mut impl Vi
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::VersionExpression::VersionRange(_) => {
-            accept_version_range(&node.as_version_range().unwrap(), visitor);
+    match node {
+        VersionExpression::VersionRange(variant) => {
+            accept_version_range(variant, visitor);
         }
-        input_ir::VersionExpression::VersionTerm(_) => {
-            accept_version_term(&node.as_version_term().unwrap(), visitor);
+        VersionExpression::VersionTerm(variant) => {
+            accept_version_term(variant, visitor);
         }
     }
     visitor.leave_version_expression(node);
@@ -1986,10 +1984,14 @@ pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor)
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::VersionLiteral::SimpleVersionLiteral(_) => {}
-        input_ir::VersionLiteral::SingleQuotedVersionLiteral(_) => {}
-        input_ir::VersionLiteral::DoubleQuotedVersionLiteral(_) => {}
+    match node {
+        VersionLiteral::SimpleVersionLiteral(variant) => {
+            accept_simple_version_literal(variant, visitor);
+        }
+
+        VersionLiteral::SingleQuotedVersionLiteral(_) => {}
+
+        VersionLiteral::DoubleQuotedVersionLiteral(_) => {}
     }
     visitor.leave_version_literal(node);
 }
@@ -2001,12 +2003,12 @@ pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::ImportClause::PathImport(_) => {
-            accept_path_import(&node.as_path_import().unwrap(), visitor);
+    match node {
+        ImportClause::PathImport(variant) => {
+            accept_path_import(variant, visitor);
         }
-        input_ir::ImportClause::ImportDeconstruction(_) => {
-            accept_import_deconstruction(&node.as_import_deconstruction().unwrap(), visitor);
+        ImportClause::ImportDeconstruction(variant) => {
+            accept_import_deconstruction(variant, visitor);
         }
     }
     visitor.leave_import_clause(node);
@@ -2019,12 +2021,12 @@ pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::UsingClause::IdentifierPath(_) => {
-            accept_identifier_path(&node.as_identifier_path().unwrap(), visitor);
+    match node {
+        UsingClause::IdentifierPath(variant) => {
+            accept_identifier_path(variant, visitor);
         }
-        input_ir::UsingClause::UsingDeconstruction(_) => {
-            accept_using_deconstruction(&node.as_using_deconstruction().unwrap(), visitor);
+        UsingClause::UsingDeconstruction(variant) => {
+            accept_using_deconstruction(variant, visitor);
         }
     }
     visitor.leave_using_clause(node);
@@ -2039,9 +2041,9 @@ pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::UsingTarget::TypeName(_) => {
-            accept_type_name(&node.as_type_name().unwrap(), visitor);
+    match node {
+        UsingTarget::TypeName(variant) => {
+            accept_type_name(variant, visitor);
         }
 
         _ => {}
@@ -2056,39 +2058,33 @@ pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor)
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::ContractMember::UsingDirective(_) => {
-            accept_using_directive(&node.as_using_directive().unwrap(), visitor);
+    match node {
+        ContractMember::UsingDirective(variant) => {
+            accept_using_directive(variant, visitor);
         }
-        input_ir::ContractMember::FunctionDefinition(_) => {
-            accept_function_definition(&node.as_function_definition().unwrap(), visitor);
+        ContractMember::FunctionDefinition(variant) => {
+            accept_function_definition(variant, visitor);
         }
-        input_ir::ContractMember::StructDefinition(_) => {
-            accept_struct_definition(&node.as_struct_definition().unwrap(), visitor);
+        ContractMember::StructDefinition(variant) => {
+            accept_struct_definition(variant, visitor);
         }
-        input_ir::ContractMember::EnumDefinition(_) => {
-            accept_enum_definition(&node.as_enum_definition().unwrap(), visitor);
+        ContractMember::EnumDefinition(variant) => {
+            accept_enum_definition(variant, visitor);
         }
-        input_ir::ContractMember::EventDefinition(_) => {
-            accept_event_definition(&node.as_event_definition().unwrap(), visitor);
+        ContractMember::EventDefinition(variant) => {
+            accept_event_definition(variant, visitor);
         }
-        input_ir::ContractMember::ErrorDefinition(_) => {
-            accept_error_definition(&node.as_error_definition().unwrap(), visitor);
+        ContractMember::ErrorDefinition(variant) => {
+            accept_error_definition(variant, visitor);
         }
-        input_ir::ContractMember::UserDefinedValueTypeDefinition(_) => {
-            accept_user_defined_value_type_definition(
-                &node.as_user_defined_value_type_definition().unwrap(),
-                visitor,
-            );
+        ContractMember::UserDefinedValueTypeDefinition(variant) => {
+            accept_user_defined_value_type_definition(variant, visitor);
         }
-        input_ir::ContractMember::StateVariableDefinition(_) => {
-            accept_state_variable_definition(
-                &node.as_state_variable_definition().unwrap(),
-                visitor,
-            );
+        ContractMember::StateVariableDefinition(variant) => {
+            accept_state_variable_definition(variant, visitor);
         }
-        input_ir::ContractMember::ConstantDefinition(_) => {
-            accept_constant_definition(&node.as_constant_definition().unwrap(), visitor);
+        ContractMember::ConstantDefinition(variant) => {
+            accept_constant_definition(variant, visitor);
         }
     }
     visitor.leave_contract_member(node);
@@ -2101,21 +2097,21 @@ pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::TypeName::ArrayTypeName(_) => {
-            accept_array_type_name(&node.as_array_type_name().unwrap(), visitor);
+    match node {
+        TypeName::ArrayTypeName(variant) => {
+            accept_array_type_name(variant, visitor);
         }
-        input_ir::TypeName::FunctionType(_) => {
-            accept_function_type(&node.as_function_type().unwrap(), visitor);
+        TypeName::FunctionType(variant) => {
+            accept_function_type(variant, visitor);
         }
-        input_ir::TypeName::MappingType(_) => {
-            accept_mapping_type(&node.as_mapping_type().unwrap(), visitor);
+        TypeName::MappingType(variant) => {
+            accept_mapping_type(variant, visitor);
         }
-        input_ir::TypeName::ElementaryType(_) => {
-            accept_elementary_type(&node.as_elementary_type().unwrap(), visitor);
+        TypeName::ElementaryType(variant) => {
+            accept_elementary_type(variant, visitor);
         }
-        input_ir::TypeName::IdentifierPath(_) => {
-            accept_identifier_path(&node.as_identifier_path().unwrap(), visitor);
+        TypeName::IdentifierPath(variant) => {
+            accept_identifier_path(variant, visitor);
         }
     }
     visitor.leave_type_name(node);
@@ -2128,15 +2124,21 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::ElementaryType::AddressType(_) => {
-            accept_address_type(&node.as_address_type().unwrap(), visitor);
+    match node {
+        ElementaryType::AddressType(variant) => {
+            accept_address_type(variant, visitor);
         }
-        input_ir::ElementaryType::BytesKeyword(_) => {}
-        input_ir::ElementaryType::IntKeyword(_) => {}
-        input_ir::ElementaryType::UintKeyword(_) => {}
-        input_ir::ElementaryType::FixedKeyword(_) => {}
-        input_ir::ElementaryType::UfixedKeyword(_) => {}
+
+        ElementaryType::BytesKeyword(_) => {}
+
+        ElementaryType::IntKeyword(_) => {}
+
+        ElementaryType::UintKeyword(_) => {}
+
+        ElementaryType::FixedKeyword(_) => {}
+
+        ElementaryType::UfixedKeyword(_) => {}
+
         _ => {}
     }
     visitor.leave_elementary_type(node);
@@ -2149,63 +2151,57 @@ pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::Statement::IfStatement(_) => {
-            accept_if_statement(&node.as_if_statement().unwrap(), visitor);
+    match node {
+        Statement::IfStatement(variant) => {
+            accept_if_statement(variant, visitor);
         }
-        input_ir::Statement::ForStatement(_) => {
-            accept_for_statement(&node.as_for_statement().unwrap(), visitor);
+        Statement::ForStatement(variant) => {
+            accept_for_statement(variant, visitor);
         }
-        input_ir::Statement::WhileStatement(_) => {
-            accept_while_statement(&node.as_while_statement().unwrap(), visitor);
+        Statement::WhileStatement(variant) => {
+            accept_while_statement(variant, visitor);
         }
-        input_ir::Statement::DoWhileStatement(_) => {
-            accept_do_while_statement(&node.as_do_while_statement().unwrap(), visitor);
+        Statement::DoWhileStatement(variant) => {
+            accept_do_while_statement(variant, visitor);
         }
-        input_ir::Statement::ContinueStatement(_) => {
-            accept_continue_statement(&node.as_continue_statement().unwrap(), visitor);
+        Statement::ContinueStatement(variant) => {
+            accept_continue_statement(variant, visitor);
         }
-        input_ir::Statement::BreakStatement(_) => {
-            accept_break_statement(&node.as_break_statement().unwrap(), visitor);
+        Statement::BreakStatement(variant) => {
+            accept_break_statement(variant, visitor);
         }
-        input_ir::Statement::ReturnStatement(_) => {
-            accept_return_statement(&node.as_return_statement().unwrap(), visitor);
+        Statement::ReturnStatement(variant) => {
+            accept_return_statement(variant, visitor);
         }
-        input_ir::Statement::ThrowStatement(_) => {
-            accept_throw_statement(&node.as_throw_statement().unwrap(), visitor);
+        Statement::ThrowStatement(variant) => {
+            accept_throw_statement(variant, visitor);
         }
-        input_ir::Statement::EmitStatement(_) => {
-            accept_emit_statement(&node.as_emit_statement().unwrap(), visitor);
+        Statement::EmitStatement(variant) => {
+            accept_emit_statement(variant, visitor);
         }
-        input_ir::Statement::TryStatement(_) => {
-            accept_try_statement(&node.as_try_statement().unwrap(), visitor);
+        Statement::TryStatement(variant) => {
+            accept_try_statement(variant, visitor);
         }
-        input_ir::Statement::RevertStatement(_) => {
-            accept_revert_statement(&node.as_revert_statement().unwrap(), visitor);
+        Statement::RevertStatement(variant) => {
+            accept_revert_statement(variant, visitor);
         }
-        input_ir::Statement::AssemblyStatement(_) => {
-            accept_assembly_statement(&node.as_assembly_statement().unwrap(), visitor);
+        Statement::AssemblyStatement(variant) => {
+            accept_assembly_statement(variant, visitor);
         }
-        input_ir::Statement::Block(_) => {
-            accept_block(&node.as_block().unwrap(), visitor);
+        Statement::Block(variant) => {
+            accept_block(variant, visitor);
         }
-        input_ir::Statement::UncheckedBlock(_) => {
-            accept_unchecked_block(&node.as_unchecked_block().unwrap(), visitor);
+        Statement::UncheckedBlock(variant) => {
+            accept_unchecked_block(variant, visitor);
         }
-        input_ir::Statement::TupleDeconstructionStatement(_) => {
-            accept_tuple_deconstruction_statement(
-                &node.as_tuple_deconstruction_statement().unwrap(),
-                visitor,
-            );
+        Statement::TupleDeconstructionStatement(variant) => {
+            accept_tuple_deconstruction_statement(variant, visitor);
         }
-        input_ir::Statement::VariableDeclarationStatement(_) => {
-            accept_variable_declaration_statement(
-                &node.as_variable_declaration_statement().unwrap(),
-                visitor,
-            );
+        Statement::VariableDeclarationStatement(variant) => {
+            accept_variable_declaration_statement(variant, visitor);
         }
-        input_ir::Statement::ExpressionStatement(_) => {
-            accept_expression_statement(&node.as_expression_statement().unwrap(), visitor);
+        Statement::ExpressionStatement(variant) => {
+            accept_expression_statement(variant, visitor);
         }
     }
     visitor.leave_statement(node);
@@ -2223,21 +2219,15 @@ pub fn accept_for_statement_initialization(
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::ForStatementInitialization::TupleDeconstructionStatement(_) => {
-            accept_tuple_deconstruction_statement(
-                &node.as_tuple_deconstruction_statement().unwrap(),
-                visitor,
-            );
+    match node {
+        ForStatementInitialization::TupleDeconstructionStatement(variant) => {
+            accept_tuple_deconstruction_statement(variant, visitor);
         }
-        input_ir::ForStatementInitialization::VariableDeclarationStatement(_) => {
-            accept_variable_declaration_statement(
-                &node.as_variable_declaration_statement().unwrap(),
-                visitor,
-            );
+        ForStatementInitialization::VariableDeclarationStatement(variant) => {
+            accept_variable_declaration_statement(variant, visitor);
         }
-        input_ir::ForStatementInitialization::ExpressionStatement(_) => {
-            accept_expression_statement(&node.as_expression_statement().unwrap(), visitor);
+        ForStatementInitialization::ExpressionStatement(variant) => {
+            accept_expression_statement(variant, visitor);
         }
 
         _ => {}
@@ -2252,9 +2242,9 @@ pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mu
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::ForStatementCondition::ExpressionStatement(_) => {
-            accept_expression_statement(&node.as_expression_statement().unwrap(), visitor);
+    match node {
+        ForStatementCondition::ExpressionStatement(variant) => {
+            accept_expression_statement(variant, visitor);
         }
 
         _ => {}
@@ -2269,100 +2259,93 @@ pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::Expression::AssignmentExpression(_) => {
-            accept_assignment_expression(&node.as_assignment_expression().unwrap(), visitor);
+    match node {
+        Expression::AssignmentExpression(variant) => {
+            accept_assignment_expression(variant, visitor);
         }
-        input_ir::Expression::ConditionalExpression(_) => {
-            accept_conditional_expression(&node.as_conditional_expression().unwrap(), visitor);
+        Expression::ConditionalExpression(variant) => {
+            accept_conditional_expression(variant, visitor);
         }
-        input_ir::Expression::OrExpression(_) => {
-            accept_or_expression(&node.as_or_expression().unwrap(), visitor);
+        Expression::OrExpression(variant) => {
+            accept_or_expression(variant, visitor);
         }
-        input_ir::Expression::AndExpression(_) => {
-            accept_and_expression(&node.as_and_expression().unwrap(), visitor);
+        Expression::AndExpression(variant) => {
+            accept_and_expression(variant, visitor);
         }
-        input_ir::Expression::EqualityExpression(_) => {
-            accept_equality_expression(&node.as_equality_expression().unwrap(), visitor);
+        Expression::EqualityExpression(variant) => {
+            accept_equality_expression(variant, visitor);
         }
-        input_ir::Expression::InequalityExpression(_) => {
-            accept_inequality_expression(&node.as_inequality_expression().unwrap(), visitor);
+        Expression::InequalityExpression(variant) => {
+            accept_inequality_expression(variant, visitor);
         }
-        input_ir::Expression::BitwiseOrExpression(_) => {
-            accept_bitwise_or_expression(&node.as_bitwise_or_expression().unwrap(), visitor);
+        Expression::BitwiseOrExpression(variant) => {
+            accept_bitwise_or_expression(variant, visitor);
         }
-        input_ir::Expression::BitwiseXorExpression(_) => {
-            accept_bitwise_xor_expression(&node.as_bitwise_xor_expression().unwrap(), visitor);
+        Expression::BitwiseXorExpression(variant) => {
+            accept_bitwise_xor_expression(variant, visitor);
         }
-        input_ir::Expression::BitwiseAndExpression(_) => {
-            accept_bitwise_and_expression(&node.as_bitwise_and_expression().unwrap(), visitor);
+        Expression::BitwiseAndExpression(variant) => {
+            accept_bitwise_and_expression(variant, visitor);
         }
-        input_ir::Expression::ShiftExpression(_) => {
-            accept_shift_expression(&node.as_shift_expression().unwrap(), visitor);
+        Expression::ShiftExpression(variant) => {
+            accept_shift_expression(variant, visitor);
         }
-        input_ir::Expression::AdditiveExpression(_) => {
-            accept_additive_expression(&node.as_additive_expression().unwrap(), visitor);
+        Expression::AdditiveExpression(variant) => {
+            accept_additive_expression(variant, visitor);
         }
-        input_ir::Expression::MultiplicativeExpression(_) => {
-            accept_multiplicative_expression(
-                &node.as_multiplicative_expression().unwrap(),
-                visitor,
-            );
+        Expression::MultiplicativeExpression(variant) => {
+            accept_multiplicative_expression(variant, visitor);
         }
-        input_ir::Expression::ExponentiationExpression(_) => {
-            accept_exponentiation_expression(
-                &node.as_exponentiation_expression().unwrap(),
-                visitor,
-            );
+        Expression::ExponentiationExpression(variant) => {
+            accept_exponentiation_expression(variant, visitor);
         }
-        input_ir::Expression::PostfixExpression(_) => {
-            accept_postfix_expression(&node.as_postfix_expression().unwrap(), visitor);
+        Expression::PostfixExpression(variant) => {
+            accept_postfix_expression(variant, visitor);
         }
-        input_ir::Expression::PrefixExpression(_) => {
-            accept_prefix_expression(&node.as_prefix_expression().unwrap(), visitor);
+        Expression::PrefixExpression(variant) => {
+            accept_prefix_expression(variant, visitor);
         }
-        input_ir::Expression::FunctionCallExpression(_) => {
-            accept_function_call_expression(&node.as_function_call_expression().unwrap(), visitor);
+        Expression::FunctionCallExpression(variant) => {
+            accept_function_call_expression(variant, visitor);
         }
-        input_ir::Expression::CallOptionsExpression(_) => {
-            accept_call_options_expression(&node.as_call_options_expression().unwrap(), visitor);
+        Expression::CallOptionsExpression(variant) => {
+            accept_call_options_expression(variant, visitor);
         }
-        input_ir::Expression::MemberAccessExpression(_) => {
-            accept_member_access_expression(&node.as_member_access_expression().unwrap(), visitor);
+        Expression::MemberAccessExpression(variant) => {
+            accept_member_access_expression(variant, visitor);
         }
-        input_ir::Expression::IndexAccessExpression(_) => {
-            accept_index_access_expression(&node.as_index_access_expression().unwrap(), visitor);
+        Expression::IndexAccessExpression(variant) => {
+            accept_index_access_expression(variant, visitor);
         }
-        input_ir::Expression::NewExpression(_) => {
-            accept_new_expression(&node.as_new_expression().unwrap(), visitor);
+        Expression::NewExpression(variant) => {
+            accept_new_expression(variant, visitor);
         }
-        input_ir::Expression::TupleExpression(_) => {
-            accept_tuple_expression(&node.as_tuple_expression().unwrap(), visitor);
+        Expression::TupleExpression(variant) => {
+            accept_tuple_expression(variant, visitor);
         }
-        input_ir::Expression::TypeExpression(_) => {
-            accept_type_expression(&node.as_type_expression().unwrap(), visitor);
+        Expression::TypeExpression(variant) => {
+            accept_type_expression(variant, visitor);
         }
-        input_ir::Expression::ArrayExpression(_) => {
-            accept_array_expression(&node.as_array_expression().unwrap(), visitor);
+        Expression::ArrayExpression(variant) => {
+            accept_array_expression(variant, visitor);
         }
-        input_ir::Expression::HexNumberExpression(_) => {
-            accept_hex_number_expression(&node.as_hex_number_expression().unwrap(), visitor);
+        Expression::HexNumberExpression(variant) => {
+            accept_hex_number_expression(variant, visitor);
         }
-        input_ir::Expression::DecimalNumberExpression(_) => {
-            accept_decimal_number_expression(
-                &node.as_decimal_number_expression().unwrap(),
-                visitor,
-            );
+        Expression::DecimalNumberExpression(variant) => {
+            accept_decimal_number_expression(variant, visitor);
         }
-        input_ir::Expression::StringExpression(_) => {
-            accept_string_expression(&node.as_string_expression().unwrap(), visitor);
+        Expression::StringExpression(variant) => {
+            accept_string_expression(variant, visitor);
         }
-        input_ir::Expression::ElementaryType(_) => {
-            accept_elementary_type(&node.as_elementary_type().unwrap(), visitor);
+        Expression::ElementaryType(variant) => {
+            accept_elementary_type(variant, visitor);
         }
-        input_ir::Expression::Identifier(_) => {
-            accept_identifier(&node.as_identifier().unwrap(), visitor);
+
+        Expression::Identifier(variant) => {
+            accept_identifier(variant, visitor);
         }
+
         _ => {}
     }
     visitor.leave_expression(node);
@@ -2375,12 +2358,12 @@ pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut i
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::ArgumentsDeclaration::PositionalArguments(_) => {
-            accept_positional_arguments(&node.as_positional_arguments().unwrap(), visitor);
+    match node {
+        ArgumentsDeclaration::PositionalArguments(variant) => {
+            accept_positional_arguments(variant, visitor);
         }
-        input_ir::ArgumentsDeclaration::NamedArguments(_) => {
-            accept_named_arguments(&node.as_named_arguments().unwrap(), visitor);
+        ArgumentsDeclaration::NamedArguments(variant) => {
+            accept_named_arguments(variant, visitor);
         }
     }
     visitor.leave_arguments_declaration(node);
@@ -2395,10 +2378,16 @@ pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visi
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::StringExpression::Strings(_) => {}
-        input_ir::StringExpression::HexStrings(_) => {}
-        input_ir::StringExpression::UnicodeStrings(_) => {}
+    match node {
+        StringExpression::Strings(variant) => {
+            accept_strings(variant, visitor);
+        }
+        StringExpression::HexStrings(variant) => {
+            accept_hex_strings(variant, visitor);
+        }
+        StringExpression::UnicodeStrings(variant) => {
+            accept_unicode_strings(variant, visitor);
+        }
     }
     visitor.leave_string_expression(node);
 }
@@ -2410,54 +2399,45 @@ pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::YulStatement::YulBlock(_) => {
-            accept_yul_block(&node.as_yul_block().unwrap(), visitor);
+    match node {
+        YulStatement::YulBlock(variant) => {
+            accept_yul_block(variant, visitor);
         }
-        input_ir::YulStatement::YulFunctionDefinition(_) => {
-            accept_yul_function_definition(&node.as_yul_function_definition().unwrap(), visitor);
+        YulStatement::YulFunctionDefinition(variant) => {
+            accept_yul_function_definition(variant, visitor);
         }
-        input_ir::YulStatement::YulStackAssignmentStatement(_) => {
-            accept_yul_stack_assignment_statement(
-                &node.as_yul_stack_assignment_statement().unwrap(),
-                visitor,
-            );
+        YulStatement::YulStackAssignmentStatement(variant) => {
+            accept_yul_stack_assignment_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulIfStatement(_) => {
-            accept_yul_if_statement(&node.as_yul_if_statement().unwrap(), visitor);
+        YulStatement::YulIfStatement(variant) => {
+            accept_yul_if_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulForStatement(_) => {
-            accept_yul_for_statement(&node.as_yul_for_statement().unwrap(), visitor);
+        YulStatement::YulForStatement(variant) => {
+            accept_yul_for_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulSwitchStatement(_) => {
-            accept_yul_switch_statement(&node.as_yul_switch_statement().unwrap(), visitor);
+        YulStatement::YulSwitchStatement(variant) => {
+            accept_yul_switch_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulLeaveStatement(_) => {
-            accept_yul_leave_statement(&node.as_yul_leave_statement().unwrap(), visitor);
+        YulStatement::YulLeaveStatement(variant) => {
+            accept_yul_leave_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulBreakStatement(_) => {
-            accept_yul_break_statement(&node.as_yul_break_statement().unwrap(), visitor);
+        YulStatement::YulBreakStatement(variant) => {
+            accept_yul_break_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulContinueStatement(_) => {
-            accept_yul_continue_statement(&node.as_yul_continue_statement().unwrap(), visitor);
+        YulStatement::YulContinueStatement(variant) => {
+            accept_yul_continue_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulVariableAssignmentStatement(_) => {
-            accept_yul_variable_assignment_statement(
-                &node.as_yul_variable_assignment_statement().unwrap(),
-                visitor,
-            );
+        YulStatement::YulVariableAssignmentStatement(variant) => {
+            accept_yul_variable_assignment_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulLabel(_) => {
-            accept_yul_label(&node.as_yul_label().unwrap(), visitor);
+        YulStatement::YulLabel(variant) => {
+            accept_yul_label(variant, visitor);
         }
-        input_ir::YulStatement::YulVariableDeclarationStatement(_) => {
-            accept_yul_variable_declaration_statement(
-                &node.as_yul_variable_declaration_statement().unwrap(),
-                visitor,
-            );
+        YulStatement::YulVariableDeclarationStatement(variant) => {
+            accept_yul_variable_declaration_statement(variant, visitor);
         }
-        input_ir::YulStatement::YulExpression(_) => {
-            accept_yul_expression(&node.as_yul_expression().unwrap(), visitor);
+        YulStatement::YulExpression(variant) => {
+            accept_yul_expression(variant, visitor);
         }
     }
     visitor.leave_yul_statement(node);
@@ -2470,9 +2450,9 @@ pub fn accept_yul_assignment_operator(node: &YulAssignmentOperator, visitor: &mu
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::YulAssignmentOperator::YulColonAndEqual(_) => {
-            accept_yul_colon_and_equal(&node.as_yul_colon_and_equal().unwrap(), visitor);
+    match node {
+        YulAssignmentOperator::YulColonAndEqual(variant) => {
+            accept_yul_colon_and_equal(variant, visitor);
         }
 
         _ => {}
@@ -2490,9 +2470,9 @@ pub fn accept_yul_stack_assignment_operator(
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::YulStackAssignmentOperator::YulEqualAndColon(_) => {
-            accept_yul_equal_and_colon(&node.as_yul_equal_and_colon().unwrap(), visitor);
+    match node {
+        YulStackAssignmentOperator::YulEqualAndColon(variant) => {
+            accept_yul_equal_and_colon(variant, visitor);
         }
 
         _ => {}
@@ -2507,12 +2487,12 @@ pub fn accept_yul_switch_case(node: &YulSwitchCase, visitor: &mut impl Visitor) 
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::YulSwitchCase::YulDefaultCase(_) => {
-            accept_yul_default_case(&node.as_yul_default_case().unwrap(), visitor);
+    match node {
+        YulSwitchCase::YulDefaultCase(variant) => {
+            accept_yul_default_case(variant, visitor);
         }
-        input_ir::YulSwitchCase::YulValueCase(_) => {
-            accept_yul_value_case(&node.as_yul_value_case().unwrap(), visitor);
+        YulSwitchCase::YulValueCase(variant) => {
+            accept_yul_value_case(variant, visitor);
         }
     }
     visitor.leave_yul_switch_case(node);
@@ -2525,18 +2505,15 @@ pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::YulExpression::YulFunctionCallExpression(_) => {
-            accept_yul_function_call_expression(
-                &node.as_yul_function_call_expression().unwrap(),
-                visitor,
-            );
+    match node {
+        YulExpression::YulFunctionCallExpression(variant) => {
+            accept_yul_function_call_expression(variant, visitor);
         }
-        input_ir::YulExpression::YulLiteral(_) => {
-            accept_yul_literal(&node.as_yul_literal().unwrap(), visitor);
+        YulExpression::YulLiteral(variant) => {
+            accept_yul_literal(variant, visitor);
         }
-        input_ir::YulExpression::YulPath(_) => {
-            accept_yul_path(&node.as_yul_path().unwrap(), visitor);
+        YulExpression::YulPath(variant) => {
+            accept_yul_path(variant, visitor);
         }
     }
     visitor.leave_yul_expression(node);
@@ -2549,11 +2526,15 @@ pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::YulLiteral::YulDecimalLiteral(_) => {}
-        input_ir::YulLiteral::YulHexLiteral(_) => {}
-        input_ir::YulLiteral::StringLiteral(_) => {}
-        input_ir::YulLiteral::HexStringLiteral(_) => {}
+    match node {
+        YulLiteral::YulDecimalLiteral(_) => {}
+
+        YulLiteral::YulHexLiteral(_) => {}
+
+        YulLiteral::StringLiteral(_) => {}
+
+        YulLiteral::HexStringLiteral(_) => {}
+
         _ => {}
     }
     visitor.leave_yul_literal(node);
@@ -2587,16 +2568,15 @@ pub fn accept_tuple_deconstruction_member(
     }
     #[allow(clippy::single_match)]
     #[allow(clippy::match_wildcard_for_single_variants)]
-    match &node.ir_node {
-        input_ir::TupleDeconstructionMember::VariableDeclarationStatement(_) => {
-            accept_variable_declaration_statement(
-                &node.as_variable_declaration_statement().unwrap(),
-                visitor,
-            );
+    match node {
+        TupleDeconstructionMember::VariableDeclarationStatement(variant) => {
+            accept_variable_declaration_statement(variant, visitor);
         }
-        input_ir::TupleDeconstructionMember::Identifier(_) => {
-            accept_identifier(&node.as_identifier().unwrap(), visitor);
+
+        TupleDeconstructionMember::Identifier(variant) => {
+            accept_identifier(variant, visitor);
         }
+
         _ => {}
     }
     visitor.leave_tuple_deconstruction_member(node);

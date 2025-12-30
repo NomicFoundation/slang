@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity::backend::ir::ast::{ContractBase, Definition};
+use slang_solidity::backend::ir::ast::{ContractBase, ContractMember, Definition, FunctionKind};
 
 use super::sample::build_compilation_unit;
 
@@ -159,17 +159,18 @@ fn test_get_references() -> Result<()> {
         .members()
         .iter()
         .find_map(|member| {
-            member.as_function_definition().and_then(|function| {
-                if function.kind().is_modifier()
-                    && function
-                        .name()
-                        .is_some_and(|name| name.unparse() == "onlyOwner")
-                {
-                    Some(function)
-                } else {
-                    None
-                }
-            })
+            let ContractMember::FunctionDefinition(function) = member else {
+                return None;
+            };
+            if matches!(function.kind(), FunctionKind::Modifier)
+                && function
+                    .name()
+                    .is_some_and(|name| name.unparse() == "onlyOwner")
+            {
+                Some(function)
+            } else {
+                None
+            }
         })
         .expect("can find onlyOwner modifier");
 

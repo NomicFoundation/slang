@@ -6,7 +6,10 @@ use std::rc::Rc;
 use paste::paste;
 
 use super::input as input_ir;
-use super::node_extensions::{Identifier, IdentifierStruct, YulIdentifier, YulIdentifierStruct};
+use super::node_extensions::{
+    create_identifier, create_yul_identifier, Identifier, IdentifierStruct, YulIdentifier,
+    YulIdentifierStruct,
+};
 use crate::backend::{binder, SemanticAnalysis};
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -21,19 +24,19 @@ pub struct SourceUnitStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl SourceUnitStruct {
-    pub(crate) fn create(ir_node: &input_ir::SourceUnit, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_source_unit(
+    ir_node: &input_ir::SourceUnit,
+    semantic: &Rc<SemanticAnalysis>,
+) -> SourceUnit {
+    Rc::new(SourceUnitStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl SourceUnitStruct {
     pub fn members(&self) -> SourceUnitMembers {
-        Rc::new(SourceUnitMembersStruct::create(
-            &self.ir_node.members,
-            &self.semantic,
-        ))
+        create_source_unit_members(&self.ir_node.members, &self.semantic)
     }
 }
 
@@ -44,19 +47,19 @@ pub struct PragmaDirectiveStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl PragmaDirectiveStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::PragmaDirective,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_pragma_directive(
+    ir_node: &input_ir::PragmaDirective,
+    semantic: &Rc<SemanticAnalysis>,
+) -> PragmaDirective {
+    Rc::new(PragmaDirectiveStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl PragmaDirectiveStruct {
     pub fn pragma(&self) -> Pragma {
-        Rc::new(PragmaStruct::create(&self.ir_node.pragma, &self.semantic))
+        create_pragma(&self.ir_node.pragma, &self.semantic)
     }
 }
 
@@ -67,22 +70,19 @@ pub struct AbicoderPragmaStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl AbicoderPragmaStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::AbicoderPragma,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_abicoder_pragma(
+    ir_node: &input_ir::AbicoderPragma,
+    semantic: &Rc<SemanticAnalysis>,
+) -> AbicoderPragma {
+    Rc::new(AbicoderPragmaStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl AbicoderPragmaStruct {
     pub fn version(&self) -> AbicoderVersion {
-        Rc::new(AbicoderVersionStruct::create(
-            &self.ir_node.version,
-            &self.semantic,
-        ))
+        create_abicoder_version(&self.ir_node.version, &self.semantic)
     }
 }
 
@@ -93,22 +93,19 @@ pub struct ExperimentalPragmaStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ExperimentalPragmaStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ExperimentalPragma,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_experimental_pragma(
+    ir_node: &input_ir::ExperimentalPragma,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ExperimentalPragma {
+    Rc::new(ExperimentalPragmaStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ExperimentalPragmaStruct {
     pub fn feature(&self) -> ExperimentalFeature {
-        Rc::new(ExperimentalFeatureStruct::create(
-            &self.ir_node.feature,
-            &self.semantic,
-        ))
+        create_experimental_feature(&self.ir_node.feature, &self.semantic)
     }
 }
 
@@ -119,22 +116,19 @@ pub struct VersionPragmaStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl VersionPragmaStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::VersionPragma,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_version_pragma(
+    ir_node: &input_ir::VersionPragma,
+    semantic: &Rc<SemanticAnalysis>,
+) -> VersionPragma {
+    Rc::new(VersionPragmaStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl VersionPragmaStruct {
     pub fn sets(&self) -> VersionExpressionSets {
-        Rc::new(VersionExpressionSetsStruct::create(
-            &self.ir_node.sets,
-            &self.semantic,
-        ))
+        create_version_expression_sets(&self.ir_node.sets, &self.semantic)
     }
 }
 
@@ -145,29 +139,23 @@ pub struct VersionRangeStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl VersionRangeStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::VersionRange,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_version_range(
+    ir_node: &input_ir::VersionRange,
+    semantic: &Rc<SemanticAnalysis>,
+) -> VersionRange {
+    Rc::new(VersionRangeStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl VersionRangeStruct {
     pub fn start(&self) -> VersionLiteral {
-        Rc::new(VersionLiteralStruct::create(
-            &self.ir_node.start,
-            &self.semantic,
-        ))
+        create_version_literal(&self.ir_node.start, &self.semantic)
     }
 
     pub fn end(&self) -> VersionLiteral {
-        Rc::new(VersionLiteralStruct::create(
-            &self.ir_node.end,
-            &self.semantic,
-        ))
+        create_version_literal(&self.ir_node.end, &self.semantic)
     }
 }
 
@@ -178,26 +166,26 @@ pub struct VersionTermStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl VersionTermStruct {
-    pub(crate) fn create(ir_node: &input_ir::VersionTerm, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_version_term(
+    ir_node: &input_ir::VersionTerm,
+    semantic: &Rc<SemanticAnalysis>,
+) -> VersionTerm {
+    Rc::new(VersionTermStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl VersionTermStruct {
     pub fn operator(&self) -> Option<VersionOperator> {
         self.ir_node
             .operator
             .as_ref()
-            .map(|ir_node| Rc::new(VersionOperatorStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_version_operator(ir_node, &self.semantic))
     }
 
     pub fn literal(&self) -> VersionLiteral {
-        Rc::new(VersionLiteralStruct::create(
-            &self.ir_node.literal,
-            &self.semantic,
-        ))
+        create_version_literal(&self.ir_node.literal, &self.semantic)
     }
 }
 
@@ -208,19 +196,22 @@ pub struct PathImportStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl PathImportStruct {
-    pub(crate) fn create(ir_node: &input_ir::PathImport, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_path_import(
+    ir_node: &input_ir::PathImport,
+    semantic: &Rc<SemanticAnalysis>,
+) -> PathImport {
+    Rc::new(PathImportStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl PathImportStruct {
     pub fn alias(&self) -> Option<Identifier> {
         self.ir_node
             .alias
             .as_ref()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 
     pub fn path(&self) -> Rc<TerminalNode> {
@@ -235,22 +226,19 @@ pub struct ImportDeconstructionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ImportDeconstructionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ImportDeconstruction,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_import_deconstruction(
+    ir_node: &input_ir::ImportDeconstruction,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ImportDeconstruction {
+    Rc::new(ImportDeconstructionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ImportDeconstructionStruct {
     pub fn symbols(&self) -> ImportDeconstructionSymbols {
-        Rc::new(ImportDeconstructionSymbolsStruct::create(
-            &self.ir_node.symbols,
-            &self.semantic,
-        ))
+        create_import_deconstruction_symbols(&self.ir_node.symbols, &self.semantic)
     }
 
     pub fn path(&self) -> Rc<TerminalNode> {
@@ -265,26 +253,26 @@ pub struct ImportDeconstructionSymbolStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ImportDeconstructionSymbolStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ImportDeconstructionSymbol,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_import_deconstruction_symbol(
+    ir_node: &input_ir::ImportDeconstructionSymbol,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ImportDeconstructionSymbol {
+    Rc::new(ImportDeconstructionSymbolStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ImportDeconstructionSymbolStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn alias(&self) -> Option<Identifier> {
         self.ir_node
             .alias
             .as_ref()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 }
 
@@ -295,29 +283,23 @@ pub struct UsingDirectiveStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl UsingDirectiveStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::UsingDirective,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_using_directive(
+    ir_node: &input_ir::UsingDirective,
+    semantic: &Rc<SemanticAnalysis>,
+) -> UsingDirective {
+    Rc::new(UsingDirectiveStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl UsingDirectiveStruct {
     pub fn clause(&self) -> UsingClause {
-        Rc::new(UsingClauseStruct::create(
-            &self.ir_node.clause,
-            &self.semantic,
-        ))
+        create_using_clause(&self.ir_node.clause, &self.semantic)
     }
 
     pub fn target(&self) -> UsingTarget {
-        Rc::new(UsingTargetStruct::create(
-            &self.ir_node.target,
-            &self.semantic,
-        ))
+        create_using_target(&self.ir_node.target, &self.semantic)
     }
 
     pub fn global_keyword(&self) -> bool {
@@ -332,22 +314,19 @@ pub struct UsingDeconstructionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl UsingDeconstructionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::UsingDeconstruction,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_using_deconstruction(
+    ir_node: &input_ir::UsingDeconstruction,
+    semantic: &Rc<SemanticAnalysis>,
+) -> UsingDeconstruction {
+    Rc::new(UsingDeconstructionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl UsingDeconstructionStruct {
     pub fn symbols(&self) -> UsingDeconstructionSymbols {
-        Rc::new(UsingDeconstructionSymbolsStruct::create(
-            &self.ir_node.symbols,
-            &self.semantic,
-        ))
+        create_using_deconstruction_symbols(&self.ir_node.symbols, &self.semantic)
     }
 }
 
@@ -358,29 +337,26 @@ pub struct UsingDeconstructionSymbolStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl UsingDeconstructionSymbolStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::UsingDeconstructionSymbol,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_using_deconstruction_symbol(
+    ir_node: &input_ir::UsingDeconstructionSymbol,
+    semantic: &Rc<SemanticAnalysis>,
+) -> UsingDeconstructionSymbol {
+    Rc::new(UsingDeconstructionSymbolStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl UsingDeconstructionSymbolStruct {
     pub fn name(&self) -> IdentifierPath {
-        Rc::new(IdentifierPathStruct::create(
-            &self.ir_node.name,
-            &self.semantic,
-        ))
+        create_identifier_path(&self.ir_node.name, &self.semantic)
     }
 
     pub fn alias(&self) -> Option<UsingOperator> {
         self.ir_node
             .alias
             .as_ref()
-            .map(|ir_node| Rc::new(UsingOperatorStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_using_operator(ir_node, &self.semantic))
     }
 }
 
@@ -391,44 +367,38 @@ pub struct ContractDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ContractDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ContractDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_contract_definition(
+    ir_node: &input_ir::ContractDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ContractDefinition {
+    Rc::new(ContractDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ContractDefinitionStruct {
     pub fn abstract_keyword(&self) -> bool {
         self.ir_node.abstract_keyword
     }
 
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn members(&self) -> ContractMembers {
-        Rc::new(ContractMembersStruct::create(
-            &self.ir_node.members,
-            &self.semantic,
-        ))
+        create_contract_members(&self.ir_node.members, &self.semantic)
     }
 
     pub fn inheritance_types(&self) -> InheritanceTypes {
-        Rc::new(InheritanceTypesStruct::create(
-            &self.ir_node.inheritance_types,
-            &self.semantic,
-        ))
+        create_inheritance_types(&self.ir_node.inheritance_types, &self.semantic)
     }
 
     pub fn storage_layout(&self) -> Option<Expression> {
         self.ir_node
             .storage_layout
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 }
 
@@ -439,29 +409,26 @@ pub struct InheritanceTypeStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl InheritanceTypeStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::InheritanceType,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_inheritance_type(
+    ir_node: &input_ir::InheritanceType,
+    semantic: &Rc<SemanticAnalysis>,
+) -> InheritanceType {
+    Rc::new(InheritanceTypeStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl InheritanceTypeStruct {
     pub fn type_name(&self) -> IdentifierPath {
-        Rc::new(IdentifierPathStruct::create(
-            &self.ir_node.type_name,
-            &self.semantic,
-        ))
+        create_identifier_path(&self.ir_node.type_name, &self.semantic)
     }
 
     pub fn arguments(&self) -> Option<ArgumentsDeclaration> {
         self.ir_node
             .arguments
             .as_ref()
-            .map(|ir_node| Rc::new(ArgumentsDeclarationStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_arguments_declaration(ir_node, &self.semantic))
     }
 }
 
@@ -472,33 +439,30 @@ pub struct InterfaceDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl InterfaceDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::InterfaceDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_interface_definition(
+    ir_node: &input_ir::InterfaceDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> InterfaceDefinition {
+    Rc::new(InterfaceDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl InterfaceDefinitionStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn inheritance(&self) -> Option<InheritanceTypes> {
         self.ir_node
             .inheritance
             .as_ref()
-            .map(|ir_node| Rc::new(InheritanceTypesStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_inheritance_types(ir_node, &self.semantic))
     }
 
     pub fn members(&self) -> InterfaceMembers {
-        Rc::new(InterfaceMembersStruct::create(
-            &self.ir_node.members,
-            &self.semantic,
-        ))
+        create_interface_members(&self.ir_node.members, &self.semantic)
     }
 }
 
@@ -509,26 +473,23 @@ pub struct LibraryDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl LibraryDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::LibraryDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_library_definition(
+    ir_node: &input_ir::LibraryDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> LibraryDefinition {
+    Rc::new(LibraryDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl LibraryDefinitionStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn members(&self) -> LibraryMembers {
-        Rc::new(LibraryMembersStruct::create(
-            &self.ir_node.members,
-            &self.semantic,
-        ))
+        create_library_members(&self.ir_node.members, &self.semantic)
     }
 }
 
@@ -539,26 +500,23 @@ pub struct StructDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl StructDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::StructDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_struct_definition(
+    ir_node: &input_ir::StructDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> StructDefinition {
+    Rc::new(StructDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl StructDefinitionStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn members(&self) -> StructMembers {
-        Rc::new(StructMembersStruct::create(
-            &self.ir_node.members,
-            &self.semantic,
-        ))
+        create_struct_members(&self.ir_node.members, &self.semantic)
     }
 }
 
@@ -569,26 +527,23 @@ pub struct StructMemberStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl StructMemberStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::StructMember,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_struct_member(
+    ir_node: &input_ir::StructMember,
+    semantic: &Rc<SemanticAnalysis>,
+) -> StructMember {
+    Rc::new(StructMemberStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl StructMemberStruct {
     pub fn type_name(&self) -> TypeName {
-        Rc::new(TypeNameStruct::create(
-            &self.ir_node.type_name,
-            &self.semantic,
-        ))
+        create_type_name(&self.ir_node.type_name, &self.semantic)
     }
 
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 }
 
@@ -599,26 +554,23 @@ pub struct EnumDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl EnumDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::EnumDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_enum_definition(
+    ir_node: &input_ir::EnumDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> EnumDefinition {
+    Rc::new(EnumDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl EnumDefinitionStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn members(&self) -> EnumMembers {
-        Rc::new(EnumMembersStruct::create(
-            &self.ir_node.members,
-            &self.semantic,
-        ))
+        create_enum_members(&self.ir_node.members, &self.semantic)
     }
 }
 
@@ -629,42 +581,37 @@ pub struct ConstantDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ConstantDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ConstantDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_constant_definition(
+    ir_node: &input_ir::ConstantDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ConstantDefinition {
+    Rc::new(ConstantDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ConstantDefinitionStruct {
     pub fn type_name(&self) -> TypeName {
-        Rc::new(TypeNameStruct::create(
-            &self.ir_node.type_name,
-            &self.semantic,
-        ))
+        create_type_name(&self.ir_node.type_name, &self.semantic)
     }
 
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn visibility(&self) -> Option<StateVariableVisibility> {
-        self.ir_node.visibility.as_ref().map(|ir_node| {
-            Rc::new(StateVariableVisibilityStruct::create(
-                ir_node,
-                &self.semantic,
-            ))
-        })
+        self.ir_node
+            .visibility
+            .as_ref()
+            .map(|ir_node| create_state_variable_visibility(ir_node, &self.semantic))
     }
 
     pub fn value(&self) -> Option<Expression> {
         self.ir_node
             .value
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 }
 
@@ -675,54 +622,45 @@ pub struct StateVariableDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl StateVariableDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::StateVariableDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_state_variable_definition(
+    ir_node: &input_ir::StateVariableDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> StateVariableDefinition {
+    Rc::new(StateVariableDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl StateVariableDefinitionStruct {
     pub fn type_name(&self) -> TypeName {
-        Rc::new(TypeNameStruct::create(
-            &self.ir_node.type_name,
-            &self.semantic,
-        ))
+        create_type_name(&self.ir_node.type_name, &self.semantic)
     }
 
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn value(&self) -> Option<Expression> {
         self.ir_node
             .value
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 
     pub fn visibility(&self) -> StateVariableVisibility {
-        Rc::new(StateVariableVisibilityStruct::create(
-            &self.ir_node.visibility,
-            &self.semantic,
-        ))
+        create_state_variable_visibility(&self.ir_node.visibility, &self.semantic)
     }
 
     pub fn mutability(&self) -> StateVariableMutability {
-        Rc::new(StateVariableMutabilityStruct::create(
-            &self.ir_node.mutability,
-            &self.semantic,
-        ))
+        create_state_variable_mutability(&self.ir_node.mutability, &self.semantic)
     }
 
     pub fn override_specifier(&self) -> Option<OverridePaths> {
         self.ir_node
             .override_specifier
             .as_ref()
-            .map(|ir_node| Rc::new(OverridePathsStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_override_paths(ir_node, &self.semantic))
     }
 }
 
@@ -733,64 +671,52 @@ pub struct FunctionDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl FunctionDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::FunctionDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_function_definition(
+    ir_node: &input_ir::FunctionDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> FunctionDefinition {
+    Rc::new(FunctionDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl FunctionDefinitionStruct {
     pub fn parameters(&self) -> Parameters {
-        Rc::new(ParametersStruct::create(
-            &self.ir_node.parameters,
-            &self.semantic,
-        ))
+        create_parameters(&self.ir_node.parameters, &self.semantic)
     }
 
     pub fn returns(&self) -> Option<Parameters> {
         self.ir_node
             .returns
             .as_ref()
-            .map(|ir_node| Rc::new(ParametersStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_parameters(ir_node, &self.semantic))
     }
 
     pub fn kind(&self) -> FunctionKind {
-        Rc::new(FunctionKindStruct::create(
-            &self.ir_node.kind,
-            &self.semantic,
-        ))
+        create_function_kind(&self.ir_node.kind, &self.semantic)
     }
 
     pub fn name(&self) -> Option<Identifier> {
         self.ir_node
             .name
             .as_ref()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> Option<Block> {
         self.ir_node
             .body
             .as_ref()
-            .map(|ir_node| Rc::new(BlockStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_block(ir_node, &self.semantic))
     }
 
     pub fn visibility(&self) -> FunctionVisibility {
-        Rc::new(FunctionVisibilityStruct::create(
-            &self.ir_node.visibility,
-            &self.semantic,
-        ))
+        create_function_visibility(&self.ir_node.visibility, &self.semantic)
     }
 
     pub fn mutability(&self) -> FunctionMutability {
-        Rc::new(FunctionMutabilityStruct::create(
-            &self.ir_node.mutability,
-            &self.semantic,
-        ))
+        create_function_mutability(&self.ir_node.mutability, &self.semantic)
     }
 
     pub fn virtual_keyword(&self) -> bool {
@@ -801,14 +727,11 @@ impl FunctionDefinitionStruct {
         self.ir_node
             .override_specifier
             .as_ref()
-            .map(|ir_node| Rc::new(OverridePathsStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_override_paths(ir_node, &self.semantic))
     }
 
     pub fn modifier_invocations(&self) -> ModifierInvocations {
-        Rc::new(ModifierInvocationsStruct::create(
-            &self.ir_node.modifier_invocations,
-            &self.semantic,
-        ))
+        create_modifier_invocations(&self.ir_node.modifier_invocations, &self.semantic)
     }
 }
 
@@ -819,33 +742,33 @@ pub struct ParameterStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ParameterStruct {
-    pub(crate) fn create(ir_node: &input_ir::Parameter, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_parameter(
+    ir_node: &input_ir::Parameter,
+    semantic: &Rc<SemanticAnalysis>,
+) -> Parameter {
+    Rc::new(ParameterStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ParameterStruct {
     pub fn type_name(&self) -> TypeName {
-        Rc::new(TypeNameStruct::create(
-            &self.ir_node.type_name,
-            &self.semantic,
-        ))
+        create_type_name(&self.ir_node.type_name, &self.semantic)
     }
 
     pub fn storage_location(&self) -> Option<StorageLocation> {
         self.ir_node
             .storage_location
             .as_ref()
-            .map(|ir_node| Rc::new(StorageLocationStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_storage_location(ir_node, &self.semantic))
     }
 
     pub fn name(&self) -> Option<Identifier> {
         self.ir_node
             .name
             .as_ref()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 
     pub fn indexed(&self) -> bool {
@@ -860,22 +783,22 @@ pub struct OverrideSpecifierStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl OverrideSpecifierStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::OverrideSpecifier,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_override_specifier(
+    ir_node: &input_ir::OverrideSpecifier,
+    semantic: &Rc<SemanticAnalysis>,
+) -> OverrideSpecifier {
+    Rc::new(OverrideSpecifierStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl OverrideSpecifierStruct {
     pub fn overridden(&self) -> Option<OverridePaths> {
         self.ir_node
             .overridden
             .as_ref()
-            .map(|ir_node| Rc::new(OverridePathsStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_override_paths(ir_node, &self.semantic))
     }
 }
 
@@ -886,29 +809,26 @@ pub struct ModifierInvocationStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ModifierInvocationStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ModifierInvocation,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_modifier_invocation(
+    ir_node: &input_ir::ModifierInvocation,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ModifierInvocation {
+    Rc::new(ModifierInvocationStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ModifierInvocationStruct {
     pub fn name(&self) -> IdentifierPath {
-        Rc::new(IdentifierPathStruct::create(
-            &self.ir_node.name,
-            &self.semantic,
-        ))
+        create_identifier_path(&self.ir_node.name, &self.semantic)
     }
 
     pub fn arguments(&self) -> Option<ArgumentsDeclaration> {
         self.ir_node
             .arguments
             .as_ref()
-            .map(|ir_node| Rc::new(ArgumentsDeclarationStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_arguments_declaration(ir_node, &self.semantic))
     }
 }
 
@@ -919,19 +839,19 @@ pub struct EventDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl EventDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::EventDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_event_definition(
+    ir_node: &input_ir::EventDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> EventDefinition {
+    Rc::new(EventDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl EventDefinitionStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn anonymous_keyword(&self) -> bool {
@@ -939,10 +859,7 @@ impl EventDefinitionStruct {
     }
 
     pub fn parameters(&self) -> Parameters {
-        Rc::new(ParametersStruct::create(
-            &self.ir_node.parameters,
-            &self.semantic,
-        ))
+        create_parameters(&self.ir_node.parameters, &self.semantic)
     }
 }
 
@@ -953,26 +870,23 @@ pub struct UserDefinedValueTypeDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl UserDefinedValueTypeDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::UserDefinedValueTypeDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_user_defined_value_type_definition(
+    ir_node: &input_ir::UserDefinedValueTypeDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> UserDefinedValueTypeDefinition {
+    Rc::new(UserDefinedValueTypeDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl UserDefinedValueTypeDefinitionStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn value_type(&self) -> ElementaryType {
-        Rc::new(ElementaryTypeStruct::create(
-            &self.ir_node.value_type,
-            &self.semantic,
-        ))
+        create_elementary_type(&self.ir_node.value_type, &self.semantic)
     }
 }
 
@@ -983,26 +897,23 @@ pub struct ErrorDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ErrorDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ErrorDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_error_definition(
+    ir_node: &input_ir::ErrorDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ErrorDefinition {
+    Rc::new(ErrorDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ErrorDefinitionStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn parameters(&self) -> Parameters {
-        Rc::new(ParametersStruct::create(
-            &self.ir_node.parameters,
-            &self.semantic,
-        ))
+        create_parameters(&self.ir_node.parameters, &self.semantic)
     }
 }
 
@@ -1013,29 +924,26 @@ pub struct ArrayTypeNameStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ArrayTypeNameStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ArrayTypeName,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_array_type_name(
+    ir_node: &input_ir::ArrayTypeName,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ArrayTypeName {
+    Rc::new(ArrayTypeNameStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ArrayTypeNameStruct {
     pub fn operand(&self) -> TypeName {
-        Rc::new(TypeNameStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_type_name(&self.ir_node.operand, &self.semantic)
     }
 
     pub fn index(&self) -> Option<Expression> {
         self.ir_node
             .index
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 }
 
@@ -1046,43 +954,34 @@ pub struct FunctionTypeStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl FunctionTypeStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::FunctionType,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_function_type(
+    ir_node: &input_ir::FunctionType,
+    semantic: &Rc<SemanticAnalysis>,
+) -> FunctionType {
+    Rc::new(FunctionTypeStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl FunctionTypeStruct {
     pub fn parameters(&self) -> Parameters {
-        Rc::new(ParametersStruct::create(
-            &self.ir_node.parameters,
-            &self.semantic,
-        ))
+        create_parameters(&self.ir_node.parameters, &self.semantic)
     }
 
     pub fn returns(&self) -> Option<Parameters> {
         self.ir_node
             .returns
             .as_ref()
-            .map(|ir_node| Rc::new(ParametersStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_parameters(ir_node, &self.semantic))
     }
 
     pub fn visibility(&self) -> FunctionVisibility {
-        Rc::new(FunctionVisibilityStruct::create(
-            &self.ir_node.visibility,
-            &self.semantic,
-        ))
+        create_function_visibility(&self.ir_node.visibility, &self.semantic)
     }
 
     pub fn mutability(&self) -> FunctionMutability {
-        Rc::new(FunctionMutabilityStruct::create(
-            &self.ir_node.mutability,
-            &self.semantic,
-        ))
+        create_function_mutability(&self.ir_node.mutability, &self.semantic)
     }
 }
 
@@ -1093,26 +992,23 @@ pub struct MappingTypeStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl MappingTypeStruct {
-    pub(crate) fn create(ir_node: &input_ir::MappingType, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_mapping_type(
+    ir_node: &input_ir::MappingType,
+    semantic: &Rc<SemanticAnalysis>,
+) -> MappingType {
+    Rc::new(MappingTypeStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl MappingTypeStruct {
     pub fn key_type(&self) -> Parameter {
-        Rc::new(ParameterStruct::create(
-            &self.ir_node.key_type,
-            &self.semantic,
-        ))
+        create_parameter(&self.ir_node.key_type, &self.semantic)
     }
 
     pub fn value_type(&self) -> Parameter {
-        Rc::new(ParameterStruct::create(
-            &self.ir_node.value_type,
-            &self.semantic,
-        ))
+        create_parameter(&self.ir_node.value_type, &self.semantic)
     }
 }
 
@@ -1123,14 +1019,17 @@ pub struct AddressTypeStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl AddressTypeStruct {
-    pub(crate) fn create(ir_node: &input_ir::AddressType, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_address_type(
+    ir_node: &input_ir::AddressType,
+    semantic: &Rc<SemanticAnalysis>,
+) -> AddressType {
+    Rc::new(AddressTypeStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl AddressTypeStruct {
     pub fn payable_keyword(&self) -> bool {
         self.ir_node.payable_keyword
     }
@@ -1143,19 +1042,16 @@ pub struct BlockStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl BlockStruct {
-    pub(crate) fn create(ir_node: &input_ir::Block, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_block(ir_node: &input_ir::Block, semantic: &Rc<SemanticAnalysis>) -> Block {
+    Rc::new(BlockStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl BlockStruct {
     pub fn statements(&self) -> Statements {
-        Rc::new(StatementsStruct::create(
-            &self.ir_node.statements,
-            &self.semantic,
-        ))
+        create_statements(&self.ir_node.statements, &self.semantic)
     }
 }
 
@@ -1166,19 +1062,19 @@ pub struct UncheckedBlockStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl UncheckedBlockStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::UncheckedBlock,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_unchecked_block(
+    ir_node: &input_ir::UncheckedBlock,
+    semantic: &Rc<SemanticAnalysis>,
+) -> UncheckedBlock {
+    Rc::new(UncheckedBlockStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl UncheckedBlockStruct {
     pub fn block(&self) -> Block {
-        Rc::new(BlockStruct::create(&self.ir_node.block, &self.semantic))
+        create_block(&self.ir_node.block, &self.semantic)
     }
 }
 
@@ -1189,22 +1085,19 @@ pub struct ExpressionStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ExpressionStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ExpressionStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_expression_statement(
+    ir_node: &input_ir::ExpressionStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ExpressionStatement {
+    Rc::new(ExpressionStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ExpressionStatementStruct {
     pub fn expression(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.expression,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.expression, &self.semantic)
     }
 }
 
@@ -1215,19 +1108,19 @@ pub struct AssemblyStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl AssemblyStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::AssemblyStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_assembly_statement(
+    ir_node: &input_ir::AssemblyStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> AssemblyStatement {
+    Rc::new(AssemblyStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl AssemblyStatementStruct {
     pub fn body(&self) -> YulBlock {
-        Rc::new(YulBlockStruct::create(&self.ir_node.body, &self.semantic))
+        create_yul_block(&self.ir_node.body, &self.semantic)
     }
 
     pub fn flags(&self) -> Vec<Rc<TerminalNode>> {
@@ -1246,29 +1139,23 @@ pub struct TupleDeconstructionStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl TupleDeconstructionStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::TupleDeconstructionStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_tuple_deconstruction_statement(
+    ir_node: &input_ir::TupleDeconstructionStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> TupleDeconstructionStatement {
+    Rc::new(TupleDeconstructionStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl TupleDeconstructionStatementStruct {
     pub fn expression(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.expression,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.expression, &self.semantic)
     }
 
     pub fn members(&self) -> TupleDeconstructionMembers {
-        Rc::new(TupleDeconstructionMembersStruct::create(
-            &self.ir_node.members,
-            &self.semantic,
-        ))
+        create_tuple_deconstruction_members(&self.ir_node.members, &self.semantic)
     }
 }
 
@@ -1279,40 +1166,40 @@ pub struct VariableDeclarationStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl VariableDeclarationStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::VariableDeclarationStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_variable_declaration_statement(
+    ir_node: &input_ir::VariableDeclarationStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> VariableDeclarationStatement {
+    Rc::new(VariableDeclarationStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl VariableDeclarationStatementStruct {
     pub fn storage_location(&self) -> Option<StorageLocation> {
         self.ir_node
             .storage_location
             .as_ref()
-            .map(|ir_node| Rc::new(StorageLocationStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_storage_location(ir_node, &self.semantic))
     }
 
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn value(&self) -> Option<Expression> {
         self.ir_node
             .value
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 
     pub fn type_name(&self) -> Option<TypeName> {
         self.ir_node
             .type_name
             .as_ref()
-            .map(|ir_node| Rc::new(TypeNameStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_type_name(ir_node, &self.semantic))
     }
 }
 
@@ -1323,30 +1210,30 @@ pub struct IfStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl IfStatementStruct {
-    pub(crate) fn create(ir_node: &input_ir::IfStatement, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_if_statement(
+    ir_node: &input_ir::IfStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> IfStatement {
+    Rc::new(IfStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl IfStatementStruct {
     pub fn condition(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.condition,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.condition, &self.semantic)
     }
 
     pub fn body(&self) -> Statement {
-        Rc::new(StatementStruct::create(&self.ir_node.body, &self.semantic))
+        create_statement(&self.ir_node.body, &self.semantic)
     }
 
     pub fn else_branch(&self) -> Option<Statement> {
         self.ir_node
             .else_branch
             .as_ref()
-            .map(|ir_node| Rc::new(StatementStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_statement(ir_node, &self.semantic))
     }
 }
 
@@ -1357,40 +1244,34 @@ pub struct ForStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ForStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ForStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_for_statement(
+    ir_node: &input_ir::ForStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ForStatement {
+    Rc::new(ForStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ForStatementStruct {
     pub fn initialization(&self) -> ForStatementInitialization {
-        Rc::new(ForStatementInitializationStruct::create(
-            &self.ir_node.initialization,
-            &self.semantic,
-        ))
+        create_for_statement_initialization(&self.ir_node.initialization, &self.semantic)
     }
 
     pub fn condition(&self) -> ForStatementCondition {
-        Rc::new(ForStatementConditionStruct::create(
-            &self.ir_node.condition,
-            &self.semantic,
-        ))
+        create_for_statement_condition(&self.ir_node.condition, &self.semantic)
     }
 
     pub fn iterator(&self) -> Option<Expression> {
         self.ir_node
             .iterator
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> Statement {
-        Rc::new(StatementStruct::create(&self.ir_node.body, &self.semantic))
+        create_statement(&self.ir_node.body, &self.semantic)
     }
 }
 
@@ -1401,26 +1282,23 @@ pub struct WhileStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl WhileStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::WhileStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_while_statement(
+    ir_node: &input_ir::WhileStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> WhileStatement {
+    Rc::new(WhileStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl WhileStatementStruct {
     pub fn condition(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.condition,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.condition, &self.semantic)
     }
 
     pub fn body(&self) -> Statement {
-        Rc::new(StatementStruct::create(&self.ir_node.body, &self.semantic))
+        create_statement(&self.ir_node.body, &self.semantic)
     }
 }
 
@@ -1431,26 +1309,23 @@ pub struct DoWhileStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl DoWhileStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::DoWhileStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_do_while_statement(
+    ir_node: &input_ir::DoWhileStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> DoWhileStatement {
+    Rc::new(DoWhileStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl DoWhileStatementStruct {
     pub fn body(&self) -> Statement {
-        Rc::new(StatementStruct::create(&self.ir_node.body, &self.semantic))
+        create_statement(&self.ir_node.body, &self.semantic)
     }
 
     pub fn condition(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.condition,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.condition, &self.semantic)
     }
 }
 
@@ -1461,17 +1336,17 @@ pub struct ContinueStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ContinueStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ContinueStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_continue_statement(
+    ir_node: &input_ir::ContinueStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ContinueStatement {
+    Rc::new(ContinueStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
 }
+
+impl ContinueStatementStruct {}
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
 
@@ -1480,17 +1355,17 @@ pub struct BreakStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl BreakStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::BreakStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_break_statement(
+    ir_node: &input_ir::BreakStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> BreakStatement {
+    Rc::new(BreakStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
 }
+
+impl BreakStatementStruct {}
 
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
@@ -1499,22 +1374,22 @@ pub struct ReturnStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ReturnStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ReturnStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_return_statement(
+    ir_node: &input_ir::ReturnStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ReturnStatement {
+    Rc::new(ReturnStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ReturnStatementStruct {
     pub fn expression(&self) -> Option<Expression> {
         self.ir_node
             .expression
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 }
 
@@ -1525,29 +1400,23 @@ pub struct EmitStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl EmitStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::EmitStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_emit_statement(
+    ir_node: &input_ir::EmitStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> EmitStatement {
+    Rc::new(EmitStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl EmitStatementStruct {
     pub fn event(&self) -> IdentifierPath {
-        Rc::new(IdentifierPathStruct::create(
-            &self.ir_node.event,
-            &self.semantic,
-        ))
+        create_identifier_path(&self.ir_node.event, &self.semantic)
     }
 
     pub fn arguments(&self) -> ArgumentsDeclaration {
-        Rc::new(ArgumentsDeclarationStruct::create(
-            &self.ir_node.arguments,
-            &self.semantic,
-        ))
+        create_arguments_declaration(&self.ir_node.arguments, &self.semantic)
     }
 }
 
@@ -1558,40 +1427,34 @@ pub struct TryStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl TryStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::TryStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_try_statement(
+    ir_node: &input_ir::TryStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> TryStatement {
+    Rc::new(TryStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl TryStatementStruct {
     pub fn expression(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.expression,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.expression, &self.semantic)
     }
 
     pub fn returns(&self) -> Option<Parameters> {
         self.ir_node
             .returns
             .as_ref()
-            .map(|ir_node| Rc::new(ParametersStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_parameters(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> Block {
-        Rc::new(BlockStruct::create(&self.ir_node.body, &self.semantic))
+        create_block(&self.ir_node.body, &self.semantic)
     }
 
     pub fn catch_clauses(&self) -> CatchClauses {
-        Rc::new(CatchClausesStruct::create(
-            &self.ir_node.catch_clauses,
-            &self.semantic,
-        ))
+        create_catch_clauses(&self.ir_node.catch_clauses, &self.semantic)
     }
 }
 
@@ -1602,23 +1465,26 @@ pub struct CatchClauseStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl CatchClauseStruct {
-    pub(crate) fn create(ir_node: &input_ir::CatchClause, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_catch_clause(
+    ir_node: &input_ir::CatchClause,
+    semantic: &Rc<SemanticAnalysis>,
+) -> CatchClause {
+    Rc::new(CatchClauseStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl CatchClauseStruct {
     pub fn error(&self) -> Option<CatchClauseError> {
         self.ir_node
             .error
             .as_ref()
-            .map(|ir_node| Rc::new(CatchClauseErrorStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_catch_clause_error(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> Block {
-        Rc::new(BlockStruct::create(&self.ir_node.body, &self.semantic))
+        create_block(&self.ir_node.body, &self.semantic)
     }
 }
 
@@ -1629,29 +1495,26 @@ pub struct CatchClauseErrorStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl CatchClauseErrorStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::CatchClauseError,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_catch_clause_error(
+    ir_node: &input_ir::CatchClauseError,
+    semantic: &Rc<SemanticAnalysis>,
+) -> CatchClauseError {
+    Rc::new(CatchClauseErrorStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl CatchClauseErrorStruct {
     pub fn name(&self) -> Option<Identifier> {
         self.ir_node
             .name
             .as_ref()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 
     pub fn parameters(&self) -> Parameters {
-        Rc::new(ParametersStruct::create(
-            &self.ir_node.parameters,
-            &self.semantic,
-        ))
+        create_parameters(&self.ir_node.parameters, &self.semantic)
     }
 }
 
@@ -1662,29 +1525,26 @@ pub struct RevertStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl RevertStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::RevertStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_revert_statement(
+    ir_node: &input_ir::RevertStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> RevertStatement {
+    Rc::new(RevertStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl RevertStatementStruct {
     pub fn error(&self) -> Option<IdentifierPath> {
         self.ir_node
             .error
             .as_ref()
-            .map(|ir_node| Rc::new(IdentifierPathStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier_path(ir_node, &self.semantic))
     }
 
     pub fn arguments(&self) -> ArgumentsDeclaration {
-        Rc::new(ArgumentsDeclarationStruct::create(
-            &self.ir_node.arguments,
-            &self.semantic,
-        ))
+        create_arguments_declaration(&self.ir_node.arguments, &self.semantic)
     }
 }
 
@@ -1695,17 +1555,17 @@ pub struct ThrowStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ThrowStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ThrowStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_throw_statement(
+    ir_node: &input_ir::ThrowStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ThrowStatement {
+    Rc::new(ThrowStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
 }
+
+impl ThrowStatementStruct {}
 
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
@@ -1714,22 +1574,19 @@ pub struct AssignmentExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl AssignmentExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::AssignmentExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_assignment_expression(
+    ir_node: &input_ir::AssignmentExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> AssignmentExpression {
+    Rc::new(AssignmentExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl AssignmentExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn operator(&self) -> Rc<TerminalNode> {
@@ -1737,10 +1594,7 @@ impl AssignmentExpressionStruct {
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -1751,36 +1605,27 @@ pub struct ConditionalExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ConditionalExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ConditionalExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_conditional_expression(
+    ir_node: &input_ir::ConditionalExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ConditionalExpression {
+    Rc::new(ConditionalExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ConditionalExpressionStruct {
     pub fn operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.operand, &self.semantic)
     }
 
     pub fn true_expression(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.true_expression,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.true_expression, &self.semantic)
     }
 
     pub fn false_expression(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.false_expression,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.false_expression, &self.semantic)
     }
 }
 
@@ -1791,29 +1636,23 @@ pub struct OrExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl OrExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::OrExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_or_expression(
+    ir_node: &input_ir::OrExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> OrExpression {
+    Rc::new(OrExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl OrExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -1824,29 +1663,23 @@ pub struct AndExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl AndExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::AndExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_and_expression(
+    ir_node: &input_ir::AndExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> AndExpression {
+    Rc::new(AndExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl AndExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -1857,22 +1690,19 @@ pub struct EqualityExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl EqualityExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::EqualityExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_equality_expression(
+    ir_node: &input_ir::EqualityExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> EqualityExpression {
+    Rc::new(EqualityExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl EqualityExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn operator(&self) -> Rc<TerminalNode> {
@@ -1880,10 +1710,7 @@ impl EqualityExpressionStruct {
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -1894,22 +1721,19 @@ pub struct InequalityExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl InequalityExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::InequalityExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_inequality_expression(
+    ir_node: &input_ir::InequalityExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> InequalityExpression {
+    Rc::new(InequalityExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl InequalityExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn operator(&self) -> Rc<TerminalNode> {
@@ -1917,10 +1741,7 @@ impl InequalityExpressionStruct {
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -1931,29 +1752,23 @@ pub struct BitwiseOrExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl BitwiseOrExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::BitwiseOrExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_bitwise_or_expression(
+    ir_node: &input_ir::BitwiseOrExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> BitwiseOrExpression {
+    Rc::new(BitwiseOrExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl BitwiseOrExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -1964,29 +1779,23 @@ pub struct BitwiseXorExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl BitwiseXorExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::BitwiseXorExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_bitwise_xor_expression(
+    ir_node: &input_ir::BitwiseXorExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> BitwiseXorExpression {
+    Rc::new(BitwiseXorExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl BitwiseXorExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -1997,29 +1806,23 @@ pub struct BitwiseAndExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl BitwiseAndExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::BitwiseAndExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_bitwise_and_expression(
+    ir_node: &input_ir::BitwiseAndExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> BitwiseAndExpression {
+    Rc::new(BitwiseAndExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl BitwiseAndExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -2030,22 +1833,19 @@ pub struct ShiftExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ShiftExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ShiftExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_shift_expression(
+    ir_node: &input_ir::ShiftExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ShiftExpression {
+    Rc::new(ShiftExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ShiftExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn operator(&self) -> Rc<TerminalNode> {
@@ -2053,10 +1853,7 @@ impl ShiftExpressionStruct {
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -2067,22 +1864,19 @@ pub struct AdditiveExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl AdditiveExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::AdditiveExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_additive_expression(
+    ir_node: &input_ir::AdditiveExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> AdditiveExpression {
+    Rc::new(AdditiveExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl AdditiveExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn operator(&self) -> Rc<TerminalNode> {
@@ -2090,10 +1884,7 @@ impl AdditiveExpressionStruct {
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -2104,22 +1895,19 @@ pub struct MultiplicativeExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl MultiplicativeExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::MultiplicativeExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_multiplicative_expression(
+    ir_node: &input_ir::MultiplicativeExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> MultiplicativeExpression {
+    Rc::new(MultiplicativeExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl MultiplicativeExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn operator(&self) -> Rc<TerminalNode> {
@@ -2127,10 +1915,7 @@ impl MultiplicativeExpressionStruct {
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -2141,22 +1926,19 @@ pub struct ExponentiationExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ExponentiationExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ExponentiationExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_exponentiation_expression(
+    ir_node: &input_ir::ExponentiationExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ExponentiationExpression {
+    Rc::new(ExponentiationExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ExponentiationExpressionStruct {
     pub fn left_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.left_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
     pub fn operator(&self) -> Rc<TerminalNode> {
@@ -2164,10 +1946,7 @@ impl ExponentiationExpressionStruct {
     }
 
     pub fn right_operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.right_operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.right_operand, &self.semantic)
     }
 }
 
@@ -2178,22 +1957,19 @@ pub struct PostfixExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl PostfixExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::PostfixExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_postfix_expression(
+    ir_node: &input_ir::PostfixExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> PostfixExpression {
+    Rc::new(PostfixExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl PostfixExpressionStruct {
     pub fn operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.operand, &self.semantic)
     }
 
     pub fn operator(&self) -> Rc<TerminalNode> {
@@ -2208,26 +1984,23 @@ pub struct PrefixExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl PrefixExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::PrefixExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_prefix_expression(
+    ir_node: &input_ir::PrefixExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> PrefixExpression {
+    Rc::new(PrefixExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl PrefixExpressionStruct {
     pub fn operator(&self) -> Rc<TerminalNode> {
         Rc::clone(&self.ir_node.operator)
     }
 
     pub fn operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.operand, &self.semantic)
     }
 }
 
@@ -2238,29 +2011,23 @@ pub struct FunctionCallExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl FunctionCallExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::FunctionCallExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_function_call_expression(
+    ir_node: &input_ir::FunctionCallExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> FunctionCallExpression {
+    Rc::new(FunctionCallExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl FunctionCallExpressionStruct {
     pub fn operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.operand, &self.semantic)
     }
 
     pub fn arguments(&self) -> ArgumentsDeclaration {
-        Rc::new(ArgumentsDeclarationStruct::create(
-            &self.ir_node.arguments,
-            &self.semantic,
-        ))
+        create_arguments_declaration(&self.ir_node.arguments, &self.semantic)
     }
 }
 
@@ -2271,29 +2038,23 @@ pub struct CallOptionsExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl CallOptionsExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::CallOptionsExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_call_options_expression(
+    ir_node: &input_ir::CallOptionsExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> CallOptionsExpression {
+    Rc::new(CallOptionsExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl CallOptionsExpressionStruct {
     pub fn operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.operand, &self.semantic)
     }
 
     pub fn options(&self) -> CallOptions {
-        Rc::new(CallOptionsStruct::create(
-            &self.ir_node.options,
-            &self.semantic,
-        ))
+        create_call_options(&self.ir_node.options, &self.semantic)
     }
 }
 
@@ -2304,29 +2065,23 @@ pub struct MemberAccessExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl MemberAccessExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::MemberAccessExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_member_access_expression(
+    ir_node: &input_ir::MemberAccessExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> MemberAccessExpression {
+    Rc::new(MemberAccessExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl MemberAccessExpressionStruct {
     pub fn operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.operand, &self.semantic)
     }
 
     pub fn member(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(
-            &self.ir_node.member,
-            &self.semantic,
-        ))
+        create_identifier(&self.ir_node.member, &self.semantic)
     }
 }
 
@@ -2337,36 +2092,33 @@ pub struct IndexAccessExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl IndexAccessExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::IndexAccessExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_index_access_expression(
+    ir_node: &input_ir::IndexAccessExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> IndexAccessExpression {
+    Rc::new(IndexAccessExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl IndexAccessExpressionStruct {
     pub fn operand(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.operand, &self.semantic)
     }
 
     pub fn start(&self) -> Option<Expression> {
         self.ir_node
             .start
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 
     pub fn end(&self) -> Option<Expression> {
         self.ir_node
             .end
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 }
 
@@ -2377,26 +2129,23 @@ pub struct NamedArgumentStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl NamedArgumentStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::NamedArgument,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_named_argument(
+    ir_node: &input_ir::NamedArgument,
+    semantic: &Rc<SemanticAnalysis>,
+) -> NamedArgument {
+    Rc::new(NamedArgumentStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl NamedArgumentStruct {
     pub fn name(&self) -> Identifier {
-        Rc::new(IdentifierStruct::create(&self.ir_node.name, &self.semantic))
+        create_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn value(&self) -> Expression {
-        Rc::new(ExpressionStruct::create(
-            &self.ir_node.value,
-            &self.semantic,
-        ))
+        create_expression(&self.ir_node.value, &self.semantic)
     }
 }
 
@@ -2407,22 +2156,19 @@ pub struct TypeExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl TypeExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::TypeExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_type_expression(
+    ir_node: &input_ir::TypeExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> TypeExpression {
+    Rc::new(TypeExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl TypeExpressionStruct {
     pub fn type_name(&self) -> TypeName {
-        Rc::new(TypeNameStruct::create(
-            &self.ir_node.type_name,
-            &self.semantic,
-        ))
+        create_type_name(&self.ir_node.type_name, &self.semantic)
     }
 }
 
@@ -2433,22 +2179,19 @@ pub struct NewExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl NewExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::NewExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_new_expression(
+    ir_node: &input_ir::NewExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> NewExpression {
+    Rc::new(NewExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl NewExpressionStruct {
     pub fn type_name(&self) -> TypeName {
-        Rc::new(TypeNameStruct::create(
-            &self.ir_node.type_name,
-            &self.semantic,
-        ))
+        create_type_name(&self.ir_node.type_name, &self.semantic)
     }
 }
 
@@ -2459,22 +2202,19 @@ pub struct TupleExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl TupleExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::TupleExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_tuple_expression(
+    ir_node: &input_ir::TupleExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> TupleExpression {
+    Rc::new(TupleExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl TupleExpressionStruct {
     pub fn items(&self) -> TupleValues {
-        Rc::new(TupleValuesStruct::create(
-            &self.ir_node.items,
-            &self.semantic,
-        ))
+        create_tuple_values(&self.ir_node.items, &self.semantic)
     }
 }
 
@@ -2485,19 +2225,22 @@ pub struct TupleValueStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl TupleValueStruct {
-    pub(crate) fn create(ir_node: &input_ir::TupleValue, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_tuple_value(
+    ir_node: &input_ir::TupleValue,
+    semantic: &Rc<SemanticAnalysis>,
+) -> TupleValue {
+    Rc::new(TupleValueStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl TupleValueStruct {
     pub fn expression(&self) -> Option<Expression> {
         self.ir_node
             .expression
             .as_ref()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 }
 
@@ -2508,22 +2251,19 @@ pub struct ArrayExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl ArrayExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ArrayExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_array_expression(
+    ir_node: &input_ir::ArrayExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ArrayExpression {
+    Rc::new(ArrayExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl ArrayExpressionStruct {
     pub fn items(&self) -> ArrayValues {
-        Rc::new(ArrayValuesStruct::create(
-            &self.ir_node.items,
-            &self.semantic,
-        ))
+        create_array_values(&self.ir_node.items, &self.semantic)
     }
 }
 
@@ -2534,17 +2274,17 @@ pub struct HexNumberExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl HexNumberExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::HexNumberExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_hex_number_expression(
+    ir_node: &input_ir::HexNumberExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> HexNumberExpression {
+    Rc::new(HexNumberExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl HexNumberExpressionStruct {
     pub fn literal(&self) -> Rc<TerminalNode> {
         Rc::clone(&self.ir_node.literal)
     }
@@ -2553,7 +2293,7 @@ impl HexNumberExpressionStruct {
         self.ir_node
             .unit
             .as_ref()
-            .map(|ir_node| Rc::new(NumberUnitStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_number_unit(ir_node, &self.semantic))
     }
 }
 
@@ -2564,17 +2304,17 @@ pub struct DecimalNumberExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl DecimalNumberExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::DecimalNumberExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_decimal_number_expression(
+    ir_node: &input_ir::DecimalNumberExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> DecimalNumberExpression {
+    Rc::new(DecimalNumberExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl DecimalNumberExpressionStruct {
     pub fn literal(&self) -> Rc<TerminalNode> {
         Rc::clone(&self.ir_node.literal)
     }
@@ -2583,7 +2323,7 @@ impl DecimalNumberExpressionStruct {
         self.ir_node
             .unit
             .as_ref()
-            .map(|ir_node| Rc::new(NumberUnitStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_number_unit(ir_node, &self.semantic))
     }
 }
 
@@ -2594,19 +2334,19 @@ pub struct YulBlockStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulBlockStruct {
-    pub(crate) fn create(ir_node: &input_ir::YulBlock, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_block(
+    ir_node: &input_ir::YulBlock,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulBlock {
+    Rc::new(YulBlockStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulBlockStruct {
     pub fn statements(&self) -> YulStatements {
-        Rc::new(YulStatementsStruct::create(
-            &self.ir_node.statements,
-            &self.semantic,
-        ))
+        create_yul_statements(&self.ir_node.statements, &self.semantic)
     }
 }
 
@@ -2617,40 +2357,34 @@ pub struct YulFunctionDefinitionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulFunctionDefinitionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulFunctionDefinition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_function_definition(
+    ir_node: &input_ir::YulFunctionDefinition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulFunctionDefinition {
+    Rc::new(YulFunctionDefinitionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulFunctionDefinitionStruct {
     pub fn name(&self) -> YulIdentifier {
-        Rc::new(YulIdentifierStruct::create(
-            &self.ir_node.name,
-            &self.semantic,
-        ))
+        create_yul_identifier(&self.ir_node.name, &self.semantic)
     }
 
     pub fn parameters(&self) -> YulParameters {
-        Rc::new(YulParametersStruct::create(
-            &self.ir_node.parameters,
-            &self.semantic,
-        ))
+        create_yul_parameters(&self.ir_node.parameters, &self.semantic)
     }
 
     pub fn returns(&self) -> Option<YulVariableNames> {
         self.ir_node
             .returns
             .as_ref()
-            .map(|ir_node| Rc::new(YulVariableNamesStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_yul_variable_names(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> YulBlock {
-        Rc::new(YulBlockStruct::create(&self.ir_node.body, &self.semantic))
+        create_yul_block(&self.ir_node.body, &self.semantic)
     }
 }
 
@@ -2661,31 +2395,26 @@ pub struct YulVariableDeclarationStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulVariableDeclarationStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulVariableDeclarationStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_variable_declaration_statement(
+    ir_node: &input_ir::YulVariableDeclarationStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulVariableDeclarationStatement {
+    Rc::new(YulVariableDeclarationStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulVariableDeclarationStatementStruct {
     pub fn variables(&self) -> YulVariableNames {
-        Rc::new(YulVariableNamesStruct::create(
-            &self.ir_node.variables,
-            &self.semantic,
-        ))
+        create_yul_variable_names(&self.ir_node.variables, &self.semantic)
     }
 
     pub fn value(&self) -> Option<YulVariableDeclarationValue> {
-        self.ir_node.value.as_ref().map(|ir_node| {
-            Rc::new(YulVariableDeclarationValueStruct::create(
-                ir_node,
-                &self.semantic,
-            ))
-        })
+        self.ir_node
+            .value
+            .as_ref()
+            .map(|ir_node| create_yul_variable_declaration_value(ir_node, &self.semantic))
     }
 }
 
@@ -2696,29 +2425,23 @@ pub struct YulVariableDeclarationValueStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulVariableDeclarationValueStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulVariableDeclarationValue,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_variable_declaration_value(
+    ir_node: &input_ir::YulVariableDeclarationValue,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulVariableDeclarationValue {
+    Rc::new(YulVariableDeclarationValueStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulVariableDeclarationValueStruct {
     pub fn assignment(&self) -> YulAssignmentOperator {
-        Rc::new(YulAssignmentOperatorStruct::create(
-            &self.ir_node.assignment,
-            &self.semantic,
-        ))
+        create_yul_assignment_operator(&self.ir_node.assignment, &self.semantic)
     }
 
     pub fn expression(&self) -> YulExpression {
-        Rc::new(YulExpressionStruct::create(
-            &self.ir_node.expression,
-            &self.semantic,
-        ))
+        create_yul_expression(&self.ir_node.expression, &self.semantic)
     }
 }
 
@@ -2729,36 +2452,27 @@ pub struct YulVariableAssignmentStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulVariableAssignmentStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulVariableAssignmentStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_variable_assignment_statement(
+    ir_node: &input_ir::YulVariableAssignmentStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulVariableAssignmentStatement {
+    Rc::new(YulVariableAssignmentStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulVariableAssignmentStatementStruct {
     pub fn variables(&self) -> YulPaths {
-        Rc::new(YulPathsStruct::create(
-            &self.ir_node.variables,
-            &self.semantic,
-        ))
+        create_yul_paths(&self.ir_node.variables, &self.semantic)
     }
 
     pub fn assignment(&self) -> YulAssignmentOperator {
-        Rc::new(YulAssignmentOperatorStruct::create(
-            &self.ir_node.assignment,
-            &self.semantic,
-        ))
+        create_yul_assignment_operator(&self.ir_node.assignment, &self.semantic)
     }
 
     pub fn expression(&self) -> YulExpression {
-        Rc::new(YulExpressionStruct::create(
-            &self.ir_node.expression,
-            &self.semantic,
-        ))
+        create_yul_expression(&self.ir_node.expression, &self.semantic)
     }
 }
 
@@ -2769,17 +2483,17 @@ pub struct YulColonAndEqualStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulColonAndEqualStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulColonAndEqual,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_colon_and_equal(
+    ir_node: &input_ir::YulColonAndEqual,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulColonAndEqual {
+    Rc::new(YulColonAndEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
 }
+
+impl YulColonAndEqualStruct {}
 
 pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
@@ -2788,29 +2502,23 @@ pub struct YulStackAssignmentStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulStackAssignmentStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulStackAssignmentStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_stack_assignment_statement(
+    ir_node: &input_ir::YulStackAssignmentStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulStackAssignmentStatement {
+    Rc::new(YulStackAssignmentStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulStackAssignmentStatementStruct {
     pub fn assignment(&self) -> YulStackAssignmentOperator {
-        Rc::new(YulStackAssignmentOperatorStruct::create(
-            &self.ir_node.assignment,
-            &self.semantic,
-        ))
+        create_yul_stack_assignment_operator(&self.ir_node.assignment, &self.semantic)
     }
 
     pub fn variable(&self) -> YulIdentifier {
-        Rc::new(YulIdentifierStruct::create(
-            &self.ir_node.variable,
-            &self.semantic,
-        ))
+        create_yul_identifier(&self.ir_node.variable, &self.semantic)
     }
 }
 
@@ -2821,17 +2529,17 @@ pub struct YulEqualAndColonStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulEqualAndColonStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulEqualAndColon,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_equal_and_colon(
+    ir_node: &input_ir::YulEqualAndColon,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulEqualAndColon {
+    Rc::new(YulEqualAndColonStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
 }
+
+impl YulEqualAndColonStruct {}
 
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
@@ -2840,26 +2548,23 @@ pub struct YulIfStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulIfStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulIfStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_if_statement(
+    ir_node: &input_ir::YulIfStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulIfStatement {
+    Rc::new(YulIfStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulIfStatementStruct {
     pub fn condition(&self) -> YulExpression {
-        Rc::new(YulExpressionStruct::create(
-            &self.ir_node.condition,
-            &self.semantic,
-        ))
+        create_yul_expression(&self.ir_node.condition, &self.semantic)
     }
 
     pub fn body(&self) -> YulBlock {
-        Rc::new(YulBlockStruct::create(&self.ir_node.body, &self.semantic))
+        create_yul_block(&self.ir_node.body, &self.semantic)
     }
 }
 
@@ -2870,40 +2575,31 @@ pub struct YulForStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulForStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulForStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_for_statement(
+    ir_node: &input_ir::YulForStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulForStatement {
+    Rc::new(YulForStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulForStatementStruct {
     pub fn initialization(&self) -> YulBlock {
-        Rc::new(YulBlockStruct::create(
-            &self.ir_node.initialization,
-            &self.semantic,
-        ))
+        create_yul_block(&self.ir_node.initialization, &self.semantic)
     }
 
     pub fn condition(&self) -> YulExpression {
-        Rc::new(YulExpressionStruct::create(
-            &self.ir_node.condition,
-            &self.semantic,
-        ))
+        create_yul_expression(&self.ir_node.condition, &self.semantic)
     }
 
     pub fn iterator(&self) -> YulBlock {
-        Rc::new(YulBlockStruct::create(
-            &self.ir_node.iterator,
-            &self.semantic,
-        ))
+        create_yul_block(&self.ir_node.iterator, &self.semantic)
     }
 
     pub fn body(&self) -> YulBlock {
-        Rc::new(YulBlockStruct::create(&self.ir_node.body, &self.semantic))
+        create_yul_block(&self.ir_node.body, &self.semantic)
     }
 }
 
@@ -2914,29 +2610,23 @@ pub struct YulSwitchStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulSwitchStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulSwitchStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_switch_statement(
+    ir_node: &input_ir::YulSwitchStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulSwitchStatement {
+    Rc::new(YulSwitchStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulSwitchStatementStruct {
     pub fn expression(&self) -> YulExpression {
-        Rc::new(YulExpressionStruct::create(
-            &self.ir_node.expression,
-            &self.semantic,
-        ))
+        create_yul_expression(&self.ir_node.expression, &self.semantic)
     }
 
     pub fn cases(&self) -> YulSwitchCases {
-        Rc::new(YulSwitchCasesStruct::create(
-            &self.ir_node.cases,
-            &self.semantic,
-        ))
+        create_yul_switch_cases(&self.ir_node.cases, &self.semantic)
     }
 }
 
@@ -2947,19 +2637,19 @@ pub struct YulDefaultCaseStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulDefaultCaseStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulDefaultCase,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_default_case(
+    ir_node: &input_ir::YulDefaultCase,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulDefaultCase {
+    Rc::new(YulDefaultCaseStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulDefaultCaseStruct {
     pub fn body(&self) -> YulBlock {
-        Rc::new(YulBlockStruct::create(&self.ir_node.body, &self.semantic))
+        create_yul_block(&self.ir_node.body, &self.semantic)
     }
 }
 
@@ -2970,26 +2660,23 @@ pub struct YulValueCaseStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulValueCaseStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulValueCase,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_value_case(
+    ir_node: &input_ir::YulValueCase,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulValueCase {
+    Rc::new(YulValueCaseStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulValueCaseStruct {
     pub fn value(&self) -> YulLiteral {
-        Rc::new(YulLiteralStruct::create(
-            &self.ir_node.value,
-            &self.semantic,
-        ))
+        create_yul_literal(&self.ir_node.value, &self.semantic)
     }
 
     pub fn body(&self) -> YulBlock {
-        Rc::new(YulBlockStruct::create(&self.ir_node.body, &self.semantic))
+        create_yul_block(&self.ir_node.body, &self.semantic)
     }
 }
 
@@ -3000,17 +2687,17 @@ pub struct YulLeaveStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulLeaveStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulLeaveStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_leave_statement(
+    ir_node: &input_ir::YulLeaveStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulLeaveStatement {
+    Rc::new(YulLeaveStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
 }
+
+impl YulLeaveStatementStruct {}
 
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
@@ -3019,17 +2706,17 @@ pub struct YulBreakStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulBreakStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulBreakStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_break_statement(
+    ir_node: &input_ir::YulBreakStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulBreakStatement {
+    Rc::new(YulBreakStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
 }
+
+impl YulBreakStatementStruct {}
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
@@ -3038,17 +2725,17 @@ pub struct YulContinueStatementStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulContinueStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulContinueStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_continue_statement(
+    ir_node: &input_ir::YulContinueStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulContinueStatement {
+    Rc::new(YulContinueStatementStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
 }
+
+impl YulContinueStatementStruct {}
 
 pub type YulLabel = Rc<YulLabelStruct>;
 
@@ -3057,19 +2744,19 @@ pub struct YulLabelStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulLabelStruct {
-    pub(crate) fn create(ir_node: &input_ir::YulLabel, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_label(
+    ir_node: &input_ir::YulLabel,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulLabel {
+    Rc::new(YulLabelStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulLabelStruct {
     pub fn label(&self) -> YulIdentifier {
-        Rc::new(YulIdentifierStruct::create(
-            &self.ir_node.label,
-            &self.semantic,
-        ))
+        create_yul_identifier(&self.ir_node.label, &self.semantic)
     }
 }
 
@@ -3080,29 +2767,23 @@ pub struct YulFunctionCallExpressionStruct {
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
-impl YulFunctionCallExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulFunctionCallExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: Rc::clone(ir_node),
-            semantic: Rc::clone(semantic),
-        }
-    }
+pub(crate) fn create_yul_function_call_expression(
+    ir_node: &input_ir::YulFunctionCallExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulFunctionCallExpression {
+    Rc::new(YulFunctionCallExpressionStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
 
+impl YulFunctionCallExpressionStruct {
     pub fn operand(&self) -> YulExpression {
-        Rc::new(YulExpressionStruct::create(
-            &self.ir_node.operand,
-            &self.semantic,
-        ))
+        create_yul_expression(&self.ir_node.operand, &self.semantic)
     }
 
     pub fn arguments(&self) -> YulArguments {
-        Rc::new(YulArgumentsStruct::create(
-            &self.ir_node.arguments,
-            &self.semantic,
-        ))
+        create_yul_arguments(&self.ir_node.arguments, &self.semantic)
     }
 }
 
@@ -3110,2768 +2791,1098 @@ impl YulFunctionCallExpressionStruct {
 // Choices:
 //
 
-pub type SourceUnitMember = Rc<SourceUnitMemberStruct>;
-
-pub struct SourceUnitMemberStruct {
-    pub(crate) ir_node: input_ir::SourceUnitMember,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl SourceUnitMemberStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::SourceUnitMember,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_pragma_directive(&self) -> bool {
-        matches!(self.ir_node, input_ir::SourceUnitMember::PragmaDirective(_))
-    }
-
-    pub fn as_pragma_directive(&self) -> Option<PragmaDirective> {
-        if let input_ir::SourceUnitMember::PragmaDirective(variant) = &self.ir_node {
-            Some(Rc::new(PragmaDirectiveStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_contract_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::SourceUnitMember::ContractDefinition(_)
-        )
-    }
-
-    pub fn as_contract_definition(&self) -> Option<ContractDefinition> {
-        if let input_ir::SourceUnitMember::ContractDefinition(variant) = &self.ir_node {
-            Some(Rc::new(ContractDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_interface_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::SourceUnitMember::InterfaceDefinition(_)
-        )
-    }
-
-    pub fn as_interface_definition(&self) -> Option<InterfaceDefinition> {
-        if let input_ir::SourceUnitMember::InterfaceDefinition(variant) = &self.ir_node {
-            Some(Rc::new(InterfaceDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_library_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::SourceUnitMember::LibraryDefinition(_)
-        )
-    }
-
-    pub fn as_library_definition(&self) -> Option<LibraryDefinition> {
-        if let input_ir::SourceUnitMember::LibraryDefinition(variant) = &self.ir_node {
-            Some(Rc::new(LibraryDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_struct_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::SourceUnitMember::StructDefinition(_)
-        )
-    }
-
-    pub fn as_struct_definition(&self) -> Option<StructDefinition> {
-        if let input_ir::SourceUnitMember::StructDefinition(variant) = &self.ir_node {
-            Some(Rc::new(StructDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_enum_definition(&self) -> bool {
-        matches!(self.ir_node, input_ir::SourceUnitMember::EnumDefinition(_))
-    }
-
-    pub fn as_enum_definition(&self) -> Option<EnumDefinition> {
-        if let input_ir::SourceUnitMember::EnumDefinition(variant) = &self.ir_node {
-            Some(Rc::new(EnumDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_function_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::SourceUnitMember::FunctionDefinition(_)
-        )
-    }
-
-    pub fn as_function_definition(&self) -> Option<FunctionDefinition> {
-        if let input_ir::SourceUnitMember::FunctionDefinition(variant) = &self.ir_node {
-            Some(Rc::new(FunctionDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_error_definition(&self) -> bool {
-        matches!(self.ir_node, input_ir::SourceUnitMember::ErrorDefinition(_))
-    }
-
-    pub fn as_error_definition(&self) -> Option<ErrorDefinition> {
-        if let input_ir::SourceUnitMember::ErrorDefinition(variant) = &self.ir_node {
-            Some(Rc::new(ErrorDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_user_defined_value_type_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::SourceUnitMember::UserDefinedValueTypeDefinition(_)
-        )
-    }
-
-    pub fn as_user_defined_value_type_definition(&self) -> Option<UserDefinedValueTypeDefinition> {
-        if let input_ir::SourceUnitMember::UserDefinedValueTypeDefinition(variant) = &self.ir_node {
-            Some(Rc::new(UserDefinedValueTypeDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_using_directive(&self) -> bool {
-        matches!(self.ir_node, input_ir::SourceUnitMember::UsingDirective(_))
-    }
-
-    pub fn as_using_directive(&self) -> Option<UsingDirective> {
-        if let input_ir::SourceUnitMember::UsingDirective(variant) = &self.ir_node {
-            Some(Rc::new(UsingDirectiveStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_event_definition(&self) -> bool {
-        matches!(self.ir_node, input_ir::SourceUnitMember::EventDefinition(_))
-    }
-
-    pub fn as_event_definition(&self) -> Option<EventDefinition> {
-        if let input_ir::SourceUnitMember::EventDefinition(variant) = &self.ir_node {
-            Some(Rc::new(EventDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_constant_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::SourceUnitMember::ConstantDefinition(_)
-        )
-    }
-
-    pub fn as_constant_definition(&self) -> Option<ConstantDefinition> {
-        if let input_ir::SourceUnitMember::ConstantDefinition(variant) = &self.ir_node {
-            Some(Rc::new(ConstantDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_import_clause(&self) -> bool {
-        matches!(self.ir_node, input_ir::SourceUnitMember::ImportClause(_))
-    }
-
-    pub fn as_import_clause(&self) -> Option<ImportClause> {
-        if let input_ir::SourceUnitMember::ImportClause(variant) = &self.ir_node {
-            Some(Rc::new(ImportClauseStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-}
-
-pub type Pragma = Rc<PragmaStruct>;
-
-pub struct PragmaStruct {
-    pub(crate) ir_node: input_ir::Pragma,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl PragmaStruct {
-    pub(crate) fn create(ir_node: &input_ir::Pragma, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_version_pragma(&self) -> bool {
-        matches!(self.ir_node, input_ir::Pragma::VersionPragma(_))
-    }
-
-    pub fn as_version_pragma(&self) -> Option<VersionPragma> {
-        if let input_ir::Pragma::VersionPragma(variant) = &self.ir_node {
-            Some(Rc::new(VersionPragmaStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_abicoder_pragma(&self) -> bool {
-        matches!(self.ir_node, input_ir::Pragma::AbicoderPragma(_))
-    }
-
-    pub fn as_abicoder_pragma(&self) -> Option<AbicoderPragma> {
-        if let input_ir::Pragma::AbicoderPragma(variant) = &self.ir_node {
-            Some(Rc::new(AbicoderPragmaStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_experimental_pragma(&self) -> bool {
-        matches!(self.ir_node, input_ir::Pragma::ExperimentalPragma(_))
-    }
-
-    pub fn as_experimental_pragma(&self) -> Option<ExperimentalPragma> {
-        if let input_ir::Pragma::ExperimentalPragma(variant) = &self.ir_node {
-            Some(Rc::new(ExperimentalPragmaStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-}
-
-pub type AbicoderVersion = Rc<AbicoderVersionStruct>;
-
-pub struct AbicoderVersionStruct {
-    pub(crate) ir_node: input_ir::AbicoderVersion,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl AbicoderVersionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::AbicoderVersion,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_abicoder_v1_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::AbicoderVersion::AbicoderV1Keyword)
-    }
-
-    pub fn is_abicoder_v2_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::AbicoderVersion::AbicoderV2Keyword)
-    }
-}
-
-pub type ExperimentalFeature = Rc<ExperimentalFeatureStruct>;
-
-pub struct ExperimentalFeatureStruct {
-    pub(crate) ir_node: input_ir::ExperimentalFeature,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl ExperimentalFeatureStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ExperimentalFeature,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_abi_encoder_v2_keyword(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ExperimentalFeature::ABIEncoderV2Keyword
-        )
-    }
-
-    pub fn is_smt_checker_keyword(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ExperimentalFeature::SMTCheckerKeyword
-        )
-    }
-
-    pub fn is_string_literal(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ExperimentalFeature::StringLiteral(_)
-        )
-    }
-}
-
-pub type VersionExpression = Rc<VersionExpressionStruct>;
-
-pub struct VersionExpressionStruct {
-    pub(crate) ir_node: input_ir::VersionExpression,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl VersionExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::VersionExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_version_range(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionExpression::VersionRange(_))
-    }
-
-    pub fn as_version_range(&self) -> Option<VersionRange> {
-        if let input_ir::VersionExpression::VersionRange(variant) = &self.ir_node {
-            Some(Rc::new(VersionRangeStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_version_term(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionExpression::VersionTerm(_))
-    }
-
-    pub fn as_version_term(&self) -> Option<VersionTerm> {
-        if let input_ir::VersionExpression::VersionTerm(variant) = &self.ir_node {
-            Some(Rc::new(VersionTermStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-}
-
-pub type VersionOperator = Rc<VersionOperatorStruct>;
-
-pub struct VersionOperatorStruct {
-    pub(crate) ir_node: input_ir::VersionOperator,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl VersionOperatorStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::VersionOperator,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_caret(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionOperator::Caret)
-    }
-
-    pub fn is_tilde(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionOperator::Tilde)
-    }
-
-    pub fn is_equal(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionOperator::Equal)
-    }
-
-    pub fn is_less_than(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionOperator::LessThan)
-    }
-
-    pub fn is_greater_than(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionOperator::GreaterThan)
-    }
-
-    pub fn is_less_than_equal(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionOperator::LessThanEqual)
-    }
-
-    pub fn is_greater_than_equal(&self) -> bool {
-        matches!(self.ir_node, input_ir::VersionOperator::GreaterThanEqual)
-    }
-}
-
-pub type VersionLiteral = Rc<VersionLiteralStruct>;
-
-pub struct VersionLiteralStruct {
-    pub(crate) ir_node: input_ir::VersionLiteral,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl VersionLiteralStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::VersionLiteral,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_simple_version_literal(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::VersionLiteral::SimpleVersionLiteral(_)
-        )
-    }
-
-    pub fn as_simple_version_literal(&self) -> Option<Vec<Rc<TerminalNode>>> {
-        if let input_ir::VersionLiteral::SimpleVersionLiteral(variant) = &self.ir_node {
-            Some(variant.clone())
-        } else {
-            None
-        }
-    }
-
-    pub fn is_single_quoted_version_literal(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::VersionLiteral::SingleQuotedVersionLiteral(_)
-        )
-    }
-
-    pub fn is_double_quoted_version_literal(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::VersionLiteral::DoubleQuotedVersionLiteral(_)
-        )
-    }
-}
-
-pub type ImportClause = Rc<ImportClauseStruct>;
-
-pub struct ImportClauseStruct {
-    pub(crate) ir_node: input_ir::ImportClause,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl ImportClauseStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ImportClause,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_path_import(&self) -> bool {
-        matches!(self.ir_node, input_ir::ImportClause::PathImport(_))
-    }
-
-    pub fn as_path_import(&self) -> Option<PathImport> {
-        if let input_ir::ImportClause::PathImport(variant) = &self.ir_node {
-            Some(Rc::new(PathImportStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_import_deconstruction(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ImportClause::ImportDeconstruction(_)
-        )
-    }
-
-    pub fn as_import_deconstruction(&self) -> Option<ImportDeconstruction> {
-        if let input_ir::ImportClause::ImportDeconstruction(variant) = &self.ir_node {
-            Some(Rc::new(ImportDeconstructionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-}
-
-pub type UsingClause = Rc<UsingClauseStruct>;
-
-pub struct UsingClauseStruct {
-    pub(crate) ir_node: input_ir::UsingClause,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl UsingClauseStruct {
-    pub(crate) fn create(ir_node: &input_ir::UsingClause, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_identifier_path(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingClause::IdentifierPath(_))
-    }
-
-    pub fn as_identifier_path(&self) -> Option<IdentifierPath> {
-        if let input_ir::UsingClause::IdentifierPath(variant) = &self.ir_node {
-            Some(Rc::new(IdentifierPathStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_using_deconstruction(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingClause::UsingDeconstruction(_))
-    }
-
-    pub fn as_using_deconstruction(&self) -> Option<UsingDeconstruction> {
-        if let input_ir::UsingClause::UsingDeconstruction(variant) = &self.ir_node {
-            Some(Rc::new(UsingDeconstructionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-}
-
-pub type UsingOperator = Rc<UsingOperatorStruct>;
-
-pub struct UsingOperatorStruct {
-    pub(crate) ir_node: input_ir::UsingOperator,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl UsingOperatorStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::UsingOperator,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_ampersand(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Ampersand)
-    }
-
-    pub fn is_asterisk(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Asterisk)
-    }
-
-    pub fn is_bang_equal(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::BangEqual)
-    }
-
-    pub fn is_bar(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Bar)
-    }
-
-    pub fn is_caret(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Caret)
-    }
-
-    pub fn is_equal_equal(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::EqualEqual)
-    }
-
-    pub fn is_greater_than(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::GreaterThan)
-    }
-
-    pub fn is_greater_than_equal(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::GreaterThanEqual)
-    }
-
-    pub fn is_less_than(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::LessThan)
-    }
-
-    pub fn is_less_than_equal(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::LessThanEqual)
-    }
-
-    pub fn is_minus(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Minus)
-    }
-
-    pub fn is_percent(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Percent)
-    }
-
-    pub fn is_plus(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Plus)
-    }
-
-    pub fn is_slash(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Slash)
-    }
-
-    pub fn is_tilde(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingOperator::Tilde)
-    }
-}
-
-pub type UsingTarget = Rc<UsingTargetStruct>;
-
-pub struct UsingTargetStruct {
-    pub(crate) ir_node: input_ir::UsingTarget,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl UsingTargetStruct {
-    pub(crate) fn create(ir_node: &input_ir::UsingTarget, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_type_name(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingTarget::TypeName(_))
-    }
-
-    pub fn as_type_name(&self) -> Option<TypeName> {
-        if let input_ir::UsingTarget::TypeName(variant) = &self.ir_node {
-            Some(Rc::new(TypeNameStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_asterisk(&self) -> bool {
-        matches!(self.ir_node, input_ir::UsingTarget::Asterisk)
-    }
-}
-
-pub type ContractMember = Rc<ContractMemberStruct>;
-
-pub struct ContractMemberStruct {
-    pub(crate) ir_node: input_ir::ContractMember,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl ContractMemberStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ContractMember,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_using_directive(&self) -> bool {
-        matches!(self.ir_node, input_ir::ContractMember::UsingDirective(_))
-    }
-
-    pub fn as_using_directive(&self) -> Option<UsingDirective> {
-        if let input_ir::ContractMember::UsingDirective(variant) = &self.ir_node {
-            Some(Rc::new(UsingDirectiveStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_function_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ContractMember::FunctionDefinition(_)
-        )
-    }
-
-    pub fn as_function_definition(&self) -> Option<FunctionDefinition> {
-        if let input_ir::ContractMember::FunctionDefinition(variant) = &self.ir_node {
-            Some(Rc::new(FunctionDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_struct_definition(&self) -> bool {
-        matches!(self.ir_node, input_ir::ContractMember::StructDefinition(_))
-    }
-
-    pub fn as_struct_definition(&self) -> Option<StructDefinition> {
-        if let input_ir::ContractMember::StructDefinition(variant) = &self.ir_node {
-            Some(Rc::new(StructDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_enum_definition(&self) -> bool {
-        matches!(self.ir_node, input_ir::ContractMember::EnumDefinition(_))
-    }
-
-    pub fn as_enum_definition(&self) -> Option<EnumDefinition> {
-        if let input_ir::ContractMember::EnumDefinition(variant) = &self.ir_node {
-            Some(Rc::new(EnumDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_event_definition(&self) -> bool {
-        matches!(self.ir_node, input_ir::ContractMember::EventDefinition(_))
-    }
-
-    pub fn as_event_definition(&self) -> Option<EventDefinition> {
-        if let input_ir::ContractMember::EventDefinition(variant) = &self.ir_node {
-            Some(Rc::new(EventDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_error_definition(&self) -> bool {
-        matches!(self.ir_node, input_ir::ContractMember::ErrorDefinition(_))
-    }
-
-    pub fn as_error_definition(&self) -> Option<ErrorDefinition> {
-        if let input_ir::ContractMember::ErrorDefinition(variant) = &self.ir_node {
-            Some(Rc::new(ErrorDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_user_defined_value_type_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ContractMember::UserDefinedValueTypeDefinition(_)
-        )
-    }
-
-    pub fn as_user_defined_value_type_definition(&self) -> Option<UserDefinedValueTypeDefinition> {
-        if let input_ir::ContractMember::UserDefinedValueTypeDefinition(variant) = &self.ir_node {
-            Some(Rc::new(UserDefinedValueTypeDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_state_variable_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ContractMember::StateVariableDefinition(_)
-        )
-    }
-
-    pub fn as_state_variable_definition(&self) -> Option<StateVariableDefinition> {
-        if let input_ir::ContractMember::StateVariableDefinition(variant) = &self.ir_node {
-            Some(Rc::new(StateVariableDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_constant_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ContractMember::ConstantDefinition(_)
-        )
-    }
-
-    pub fn as_constant_definition(&self) -> Option<ConstantDefinition> {
-        if let input_ir::ContractMember::ConstantDefinition(variant) = &self.ir_node {
-            Some(Rc::new(ConstantDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-}
-
-pub type TypeName = Rc<TypeNameStruct>;
-
-pub struct TypeNameStruct {
-    pub(crate) ir_node: input_ir::TypeName,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl TypeNameStruct {
-    pub(crate) fn create(ir_node: &input_ir::TypeName, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_array_type_name(&self) -> bool {
-        matches!(self.ir_node, input_ir::TypeName::ArrayTypeName(_))
-    }
-
-    pub fn as_array_type_name(&self) -> Option<ArrayTypeName> {
-        if let input_ir::TypeName::ArrayTypeName(variant) = &self.ir_node {
-            Some(Rc::new(ArrayTypeNameStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_function_type(&self) -> bool {
-        matches!(self.ir_node, input_ir::TypeName::FunctionType(_))
-    }
-
-    pub fn as_function_type(&self) -> Option<FunctionType> {
-        if let input_ir::TypeName::FunctionType(variant) = &self.ir_node {
-            Some(Rc::new(FunctionTypeStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_mapping_type(&self) -> bool {
-        matches!(self.ir_node, input_ir::TypeName::MappingType(_))
-    }
-
-    pub fn as_mapping_type(&self) -> Option<MappingType> {
-        if let input_ir::TypeName::MappingType(variant) = &self.ir_node {
-            Some(Rc::new(MappingTypeStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_elementary_type(&self) -> bool {
-        matches!(self.ir_node, input_ir::TypeName::ElementaryType(_))
-    }
-
-    pub fn as_elementary_type(&self) -> Option<ElementaryType> {
-        if let input_ir::TypeName::ElementaryType(variant) = &self.ir_node {
-            Some(Rc::new(ElementaryTypeStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_identifier_path(&self) -> bool {
-        matches!(self.ir_node, input_ir::TypeName::IdentifierPath(_))
-    }
-
-    pub fn as_identifier_path(&self) -> Option<IdentifierPath> {
-        if let input_ir::TypeName::IdentifierPath(variant) = &self.ir_node {
-            Some(Rc::new(IdentifierPathStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-}
-
-pub type ElementaryType = Rc<ElementaryTypeStruct>;
-
-pub struct ElementaryTypeStruct {
-    pub(crate) ir_node: input_ir::ElementaryType,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl ElementaryTypeStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ElementaryType,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_bool_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::BoolKeyword)
-    }
-
-    pub fn is_byte_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::ByteKeyword)
-    }
-
-    pub fn is_string_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::StringKeyword)
-    }
-
-    pub fn is_address_type(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::AddressType(_))
-    }
-
-    pub fn as_address_type(&self) -> Option<AddressType> {
-        if let input_ir::ElementaryType::AddressType(variant) = &self.ir_node {
-            Some(Rc::new(AddressTypeStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_bytes_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::BytesKeyword(_))
-    }
-
-    pub fn is_int_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::IntKeyword(_))
-    }
-
-    pub fn is_uint_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::UintKeyword(_))
-    }
-
-    pub fn is_fixed_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::FixedKeyword(_))
-    }
-
-    pub fn is_ufixed_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::ElementaryType::UfixedKeyword(_))
-    }
-}
-
-pub type Statement = Rc<StatementStruct>;
-
-pub struct StatementStruct {
-    pub(crate) ir_node: input_ir::Statement,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl StatementStruct {
-    pub(crate) fn create(ir_node: &input_ir::Statement, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_if_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::IfStatement(_))
-    }
-
-    pub fn as_if_statement(&self) -> Option<IfStatement> {
-        if let input_ir::Statement::IfStatement(variant) = &self.ir_node {
-            Some(Rc::new(IfStatementStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_for_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::ForStatement(_))
-    }
-
-    pub fn as_for_statement(&self) -> Option<ForStatement> {
-        if let input_ir::Statement::ForStatement(variant) = &self.ir_node {
-            Some(Rc::new(ForStatementStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_while_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::WhileStatement(_))
-    }
-
-    pub fn as_while_statement(&self) -> Option<WhileStatement> {
-        if let input_ir::Statement::WhileStatement(variant) = &self.ir_node {
-            Some(Rc::new(WhileStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_do_while_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::DoWhileStatement(_))
-    }
-
-    pub fn as_do_while_statement(&self) -> Option<DoWhileStatement> {
-        if let input_ir::Statement::DoWhileStatement(variant) = &self.ir_node {
-            Some(Rc::new(DoWhileStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_continue_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::ContinueStatement(_))
-    }
-
-    pub fn as_continue_statement(&self) -> Option<ContinueStatement> {
-        if let input_ir::Statement::ContinueStatement(variant) = &self.ir_node {
-            Some(Rc::new(ContinueStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_break_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::BreakStatement(_))
-    }
-
-    pub fn as_break_statement(&self) -> Option<BreakStatement> {
-        if let input_ir::Statement::BreakStatement(variant) = &self.ir_node {
-            Some(Rc::new(BreakStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_return_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::ReturnStatement(_))
-    }
-
-    pub fn as_return_statement(&self) -> Option<ReturnStatement> {
-        if let input_ir::Statement::ReturnStatement(variant) = &self.ir_node {
-            Some(Rc::new(ReturnStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_throw_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::ThrowStatement(_))
-    }
-
-    pub fn as_throw_statement(&self) -> Option<ThrowStatement> {
-        if let input_ir::Statement::ThrowStatement(variant) = &self.ir_node {
-            Some(Rc::new(ThrowStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_emit_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::EmitStatement(_))
-    }
-
-    pub fn as_emit_statement(&self) -> Option<EmitStatement> {
-        if let input_ir::Statement::EmitStatement(variant) = &self.ir_node {
-            Some(Rc::new(EmitStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_try_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::TryStatement(_))
-    }
-
-    pub fn as_try_statement(&self) -> Option<TryStatement> {
-        if let input_ir::Statement::TryStatement(variant) = &self.ir_node {
-            Some(Rc::new(TryStatementStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_revert_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::RevertStatement(_))
-    }
-
-    pub fn as_revert_statement(&self) -> Option<RevertStatement> {
-        if let input_ir::Statement::RevertStatement(variant) = &self.ir_node {
-            Some(Rc::new(RevertStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_assembly_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::AssemblyStatement(_))
-    }
-
-    pub fn as_assembly_statement(&self) -> Option<AssemblyStatement> {
-        if let input_ir::Statement::AssemblyStatement(variant) = &self.ir_node {
-            Some(Rc::new(AssemblyStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_block(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::Block(_))
-    }
-
-    pub fn as_block(&self) -> Option<Block> {
-        if let input_ir::Statement::Block(variant) = &self.ir_node {
-            Some(Rc::new(BlockStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_unchecked_block(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::UncheckedBlock(_))
-    }
-
-    pub fn as_unchecked_block(&self) -> Option<UncheckedBlock> {
-        if let input_ir::Statement::UncheckedBlock(variant) = &self.ir_node {
-            Some(Rc::new(UncheckedBlockStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_tuple_deconstruction_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::Statement::TupleDeconstructionStatement(_)
-        )
-    }
-
-    pub fn as_tuple_deconstruction_statement(&self) -> Option<TupleDeconstructionStatement> {
-        if let input_ir::Statement::TupleDeconstructionStatement(variant) = &self.ir_node {
-            Some(Rc::new(TupleDeconstructionStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_variable_declaration_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::Statement::VariableDeclarationStatement(_)
-        )
-    }
-
-    pub fn as_variable_declaration_statement(&self) -> Option<VariableDeclarationStatement> {
-        if let input_ir::Statement::VariableDeclarationStatement(variant) = &self.ir_node {
-            Some(Rc::new(VariableDeclarationStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_expression_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::Statement::ExpressionStatement(_))
-    }
-
-    pub fn as_expression_statement(&self) -> Option<ExpressionStatement> {
-        if let input_ir::Statement::ExpressionStatement(variant) = &self.ir_node {
-            Some(Rc::new(ExpressionStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-}
-
-pub type StorageLocation = Rc<StorageLocationStruct>;
-
-pub struct StorageLocationStruct {
-    pub(crate) ir_node: input_ir::StorageLocation,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl StorageLocationStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::StorageLocation,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_memory_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::StorageLocation::MemoryKeyword)
-    }
-
-    pub fn is_storage_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::StorageLocation::StorageKeyword)
-    }
-
-    pub fn is_call_data_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::StorageLocation::CallDataKeyword)
-    }
+pub enum SourceUnitMember {
+    PragmaDirective(PragmaDirective),
+    ContractDefinition(ContractDefinition),
+    InterfaceDefinition(InterfaceDefinition),
+    LibraryDefinition(LibraryDefinition),
+    StructDefinition(StructDefinition),
+    EnumDefinition(EnumDefinition),
+    FunctionDefinition(FunctionDefinition),
+    ErrorDefinition(ErrorDefinition),
+    UserDefinedValueTypeDefinition(UserDefinedValueTypeDefinition),
+    UsingDirective(UsingDirective),
+    EventDefinition(EventDefinition),
+    ConstantDefinition(ConstantDefinition),
+    ImportClause(ImportClause),
 }
-
-pub type ForStatementInitialization = Rc<ForStatementInitializationStruct>;
-
-pub struct ForStatementInitializationStruct {
-    pub(crate) ir_node: input_ir::ForStatementInitialization,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl ForStatementInitializationStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ForStatementInitialization,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_tuple_deconstruction_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ForStatementInitialization::TupleDeconstructionStatement(_)
-        )
-    }
-
-    pub fn as_tuple_deconstruction_statement(&self) -> Option<TupleDeconstructionStatement> {
-        if let input_ir::ForStatementInitialization::TupleDeconstructionStatement(variant) =
-            &self.ir_node
-        {
-            Some(Rc::new(TupleDeconstructionStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_variable_declaration_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ForStatementInitialization::VariableDeclarationStatement(_)
-        )
-    }
-
-    pub fn as_variable_declaration_statement(&self) -> Option<VariableDeclarationStatement> {
-        if let input_ir::ForStatementInitialization::VariableDeclarationStatement(variant) =
-            &self.ir_node
-        {
-            Some(Rc::new(VariableDeclarationStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_expression_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ForStatementInitialization::ExpressionStatement(_)
-        )
-    }
-
-    pub fn as_expression_statement(&self) -> Option<ExpressionStatement> {
-        if let input_ir::ForStatementInitialization::ExpressionStatement(variant) = &self.ir_node {
-            Some(Rc::new(ExpressionStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_semicolon(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ForStatementInitialization::Semicolon
-        )
-    }
-}
-
-pub type ForStatementCondition = Rc<ForStatementConditionStruct>;
-
-pub struct ForStatementConditionStruct {
-    pub(crate) ir_node: input_ir::ForStatementCondition,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl ForStatementConditionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ForStatementCondition,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_expression_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ForStatementCondition::ExpressionStatement(_)
-        )
-    }
-
-    pub fn as_expression_statement(&self) -> Option<ExpressionStatement> {
-        if let input_ir::ForStatementCondition::ExpressionStatement(variant) = &self.ir_node {
-            Some(Rc::new(ExpressionStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_semicolon(&self) -> bool {
-        matches!(self.ir_node, input_ir::ForStatementCondition::Semicolon)
-    }
-}
-
-pub type Expression = Rc<ExpressionStruct>;
-
-pub struct ExpressionStruct {
-    pub(crate) ir_node: input_ir::Expression,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl ExpressionStruct {
-    pub(crate) fn create(ir_node: &input_ir::Expression, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_assignment_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::AssignmentExpression(_))
-    }
-
-    pub fn as_assignment_expression(&self) -> Option<AssignmentExpression> {
-        if let input_ir::Expression::AssignmentExpression(variant) = &self.ir_node {
-            Some(Rc::new(AssignmentExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_conditional_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::ConditionalExpression(_))
-    }
-
-    pub fn as_conditional_expression(&self) -> Option<ConditionalExpression> {
-        if let input_ir::Expression::ConditionalExpression(variant) = &self.ir_node {
-            Some(Rc::new(ConditionalExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_or_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::OrExpression(_))
-    }
-
-    pub fn as_or_expression(&self) -> Option<OrExpression> {
-        if let input_ir::Expression::OrExpression(variant) = &self.ir_node {
-            Some(Rc::new(OrExpressionStruct::create(variant, &self.semantic)))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_and_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::AndExpression(_))
-    }
-
-    pub fn as_and_expression(&self) -> Option<AndExpression> {
-        if let input_ir::Expression::AndExpression(variant) = &self.ir_node {
-            Some(Rc::new(AndExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
 
-    pub fn is_equality_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::EqualityExpression(_))
-    }
-
-    pub fn as_equality_expression(&self) -> Option<EqualityExpression> {
-        if let input_ir::Expression::EqualityExpression(variant) = &self.ir_node {
-            Some(Rc::new(EqualityExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_inequality_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::InequalityExpression(_))
-    }
-
-    pub fn as_inequality_expression(&self) -> Option<InequalityExpression> {
-        if let input_ir::Expression::InequalityExpression(variant) = &self.ir_node {
-            Some(Rc::new(InequalityExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_bitwise_or_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::BitwiseOrExpression(_))
-    }
-
-    pub fn as_bitwise_or_expression(&self) -> Option<BitwiseOrExpression> {
-        if let input_ir::Expression::BitwiseOrExpression(variant) = &self.ir_node {
-            Some(Rc::new(BitwiseOrExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_bitwise_xor_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::BitwiseXorExpression(_))
-    }
-
-    pub fn as_bitwise_xor_expression(&self) -> Option<BitwiseXorExpression> {
-        if let input_ir::Expression::BitwiseXorExpression(variant) = &self.ir_node {
-            Some(Rc::new(BitwiseXorExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_bitwise_and_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::BitwiseAndExpression(_))
-    }
-
-    pub fn as_bitwise_and_expression(&self) -> Option<BitwiseAndExpression> {
-        if let input_ir::Expression::BitwiseAndExpression(variant) = &self.ir_node {
-            Some(Rc::new(BitwiseAndExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_shift_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::ShiftExpression(_))
-    }
-
-    pub fn as_shift_expression(&self) -> Option<ShiftExpression> {
-        if let input_ir::Expression::ShiftExpression(variant) = &self.ir_node {
-            Some(Rc::new(ShiftExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_additive_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::AdditiveExpression(_))
-    }
-
-    pub fn as_additive_expression(&self) -> Option<AdditiveExpression> {
-        if let input_ir::Expression::AdditiveExpression(variant) = &self.ir_node {
-            Some(Rc::new(AdditiveExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_multiplicative_expression(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::Expression::MultiplicativeExpression(_)
-        )
-    }
-
-    pub fn as_multiplicative_expression(&self) -> Option<MultiplicativeExpression> {
-        if let input_ir::Expression::MultiplicativeExpression(variant) = &self.ir_node {
-            Some(Rc::new(MultiplicativeExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_exponentiation_expression(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::Expression::ExponentiationExpression(_)
-        )
-    }
-
-    pub fn as_exponentiation_expression(&self) -> Option<ExponentiationExpression> {
-        if let input_ir::Expression::ExponentiationExpression(variant) = &self.ir_node {
-            Some(Rc::new(ExponentiationExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_postfix_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::PostfixExpression(_))
-    }
-
-    pub fn as_postfix_expression(&self) -> Option<PostfixExpression> {
-        if let input_ir::Expression::PostfixExpression(variant) = &self.ir_node {
-            Some(Rc::new(PostfixExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_prefix_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::PrefixExpression(_))
-    }
-
-    pub fn as_prefix_expression(&self) -> Option<PrefixExpression> {
-        if let input_ir::Expression::PrefixExpression(variant) = &self.ir_node {
-            Some(Rc::new(PrefixExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_function_call_expression(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::Expression::FunctionCallExpression(_)
-        )
-    }
-
-    pub fn as_function_call_expression(&self) -> Option<FunctionCallExpression> {
-        if let input_ir::Expression::FunctionCallExpression(variant) = &self.ir_node {
-            Some(Rc::new(FunctionCallExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_call_options_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::CallOptionsExpression(_))
-    }
-
-    pub fn as_call_options_expression(&self) -> Option<CallOptionsExpression> {
-        if let input_ir::Expression::CallOptionsExpression(variant) = &self.ir_node {
-            Some(Rc::new(CallOptionsExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_member_access_expression(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::Expression::MemberAccessExpression(_)
-        )
-    }
-
-    pub fn as_member_access_expression(&self) -> Option<MemberAccessExpression> {
-        if let input_ir::Expression::MemberAccessExpression(variant) = &self.ir_node {
-            Some(Rc::new(MemberAccessExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_index_access_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::IndexAccessExpression(_))
-    }
-
-    pub fn as_index_access_expression(&self) -> Option<IndexAccessExpression> {
-        if let input_ir::Expression::IndexAccessExpression(variant) = &self.ir_node {
-            Some(Rc::new(IndexAccessExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_source_unit_member(
+    ir_node: &input_ir::SourceUnitMember,
+    semantic: &Rc<SemanticAnalysis>,
+) -> SourceUnitMember {
+    match ir_node {
+        input_ir::SourceUnitMember::PragmaDirective(variant) => {
+            SourceUnitMember::PragmaDirective(create_pragma_directive(variant, semantic))
         }
-    }
-
-    pub fn is_new_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::NewExpression(_))
-    }
-
-    pub fn as_new_expression(&self) -> Option<NewExpression> {
-        if let input_ir::Expression::NewExpression(variant) = &self.ir_node {
-            Some(Rc::new(NewExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
-    }
-
-    pub fn is_tuple_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::TupleExpression(_))
-    }
-
-    pub fn as_tuple_expression(&self) -> Option<TupleExpression> {
-        if let input_ir::Expression::TupleExpression(variant) = &self.ir_node {
-            Some(Rc::new(TupleExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::ContractDefinition(variant) => {
+            SourceUnitMember::ContractDefinition(create_contract_definition(variant, semantic))
         }
-    }
-
-    pub fn is_type_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::TypeExpression(_))
-    }
-
-    pub fn as_type_expression(&self) -> Option<TypeExpression> {
-        if let input_ir::Expression::TypeExpression(variant) = &self.ir_node {
-            Some(Rc::new(TypeExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::InterfaceDefinition(variant) => {
+            SourceUnitMember::InterfaceDefinition(create_interface_definition(variant, semantic))
         }
-    }
-
-    pub fn is_array_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::ArrayExpression(_))
-    }
-
-    pub fn as_array_expression(&self) -> Option<ArrayExpression> {
-        if let input_ir::Expression::ArrayExpression(variant) = &self.ir_node {
-            Some(Rc::new(ArrayExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::LibraryDefinition(variant) => {
+            SourceUnitMember::LibraryDefinition(create_library_definition(variant, semantic))
         }
-    }
-
-    pub fn is_hex_number_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::HexNumberExpression(_))
-    }
-
-    pub fn as_hex_number_expression(&self) -> Option<HexNumberExpression> {
-        if let input_ir::Expression::HexNumberExpression(variant) = &self.ir_node {
-            Some(Rc::new(HexNumberExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::StructDefinition(variant) => {
+            SourceUnitMember::StructDefinition(create_struct_definition(variant, semantic))
         }
-    }
-
-    pub fn is_decimal_number_expression(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::Expression::DecimalNumberExpression(_)
-        )
-    }
-
-    pub fn as_decimal_number_expression(&self) -> Option<DecimalNumberExpression> {
-        if let input_ir::Expression::DecimalNumberExpression(variant) = &self.ir_node {
-            Some(Rc::new(DecimalNumberExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::EnumDefinition(variant) => {
+            SourceUnitMember::EnumDefinition(create_enum_definition(variant, semantic))
         }
-    }
-
-    pub fn is_string_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::StringExpression(_))
-    }
-
-    pub fn as_string_expression(&self) -> Option<StringExpression> {
-        if let input_ir::Expression::StringExpression(variant) = &self.ir_node {
-            Some(Rc::new(StringExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::FunctionDefinition(variant) => {
+            SourceUnitMember::FunctionDefinition(create_function_definition(variant, semantic))
         }
-    }
-
-    pub fn is_elementary_type(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::ElementaryType(_))
-    }
-
-    pub fn as_elementary_type(&self) -> Option<ElementaryType> {
-        if let input_ir::Expression::ElementaryType(variant) = &self.ir_node {
-            Some(Rc::new(ElementaryTypeStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::ErrorDefinition(variant) => {
+            SourceUnitMember::ErrorDefinition(create_error_definition(variant, semantic))
         }
-    }
-
-    pub fn is_payable_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::PayableKeyword)
-    }
-
-    pub fn is_this_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::ThisKeyword)
-    }
-
-    pub fn is_super_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::SuperKeyword)
-    }
-
-    pub fn is_true_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::TrueKeyword)
-    }
-
-    pub fn is_false_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::FalseKeyword)
-    }
-
-    pub fn is_identifier(&self) -> bool {
-        matches!(self.ir_node, input_ir::Expression::Identifier(_))
-    }
-
-    pub fn as_identifier(&self) -> Option<Identifier> {
-        if let input_ir::Expression::Identifier(variant) = &self.ir_node {
-            Some(Rc::new(IdentifierStruct::create(variant, &self.semantic)))
-        } else {
-            None
+        input_ir::SourceUnitMember::UserDefinedValueTypeDefinition(variant) => {
+            SourceUnitMember::UserDefinedValueTypeDefinition(
+                create_user_defined_value_type_definition(variant, semantic),
+            )
         }
-    }
-}
-
-pub type ArgumentsDeclaration = Rc<ArgumentsDeclarationStruct>;
-
-pub struct ArgumentsDeclarationStruct {
-    pub(crate) ir_node: input_ir::ArgumentsDeclaration,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
-}
-
-impl ArgumentsDeclarationStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::ArgumentsDeclaration,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+        input_ir::SourceUnitMember::UsingDirective(variant) => {
+            SourceUnitMember::UsingDirective(create_using_directive(variant, semantic))
         }
-    }
-
-    pub fn is_positional_arguments(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ArgumentsDeclaration::PositionalArguments(_)
-        )
-    }
-
-    pub fn as_positional_arguments(&self) -> Option<PositionalArguments> {
-        if let input_ir::ArgumentsDeclaration::PositionalArguments(variant) = &self.ir_node {
-            Some(Rc::new(PositionalArgumentsStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::EventDefinition(variant) => {
+            SourceUnitMember::EventDefinition(create_event_definition(variant, semantic))
         }
-    }
-
-    pub fn is_named_arguments(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::ArgumentsDeclaration::NamedArguments(_)
-        )
-    }
-
-    pub fn as_named_arguments(&self) -> Option<NamedArguments> {
-        if let input_ir::ArgumentsDeclaration::NamedArguments(variant) = &self.ir_node {
-            Some(Rc::new(NamedArgumentsStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::SourceUnitMember::ConstantDefinition(variant) => {
+            SourceUnitMember::ConstantDefinition(create_constant_definition(variant, semantic))
         }
+        input_ir::SourceUnitMember::ImportClause(variant) => {
+            SourceUnitMember::ImportClause(create_import_clause(variant, semantic))
+        }
     }
 }
-
-pub type NumberUnit = Rc<NumberUnitStruct>;
 
-pub struct NumberUnitStruct {
-    pub(crate) ir_node: input_ir::NumberUnit,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum Pragma {
+    VersionPragma(VersionPragma),
+    AbicoderPragma(AbicoderPragma),
+    ExperimentalPragma(ExperimentalPragma),
 }
 
-impl NumberUnitStruct {
-    pub(crate) fn create(ir_node: &input_ir::NumberUnit, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_pragma(ir_node: &input_ir::Pragma, semantic: &Rc<SemanticAnalysis>) -> Pragma {
+    match ir_node {
+        input_ir::Pragma::VersionPragma(variant) => {
+            Pragma::VersionPragma(create_version_pragma(variant, semantic))
         }
-    }
-
-    pub fn is_wei_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::WeiKeyword)
-    }
-
-    pub fn is_gwei_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::GweiKeyword)
-    }
-
-    pub fn is_szabo_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::SzaboKeyword)
+        input_ir::Pragma::AbicoderPragma(variant) => {
+            Pragma::AbicoderPragma(create_abicoder_pragma(variant, semantic))
+        }
+        input_ir::Pragma::ExperimentalPragma(variant) => {
+            Pragma::ExperimentalPragma(create_experimental_pragma(variant, semantic))
+        }
     }
+}
 
-    pub fn is_finney_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::FinneyKeyword)
-    }
+pub enum AbicoderVersion {
+    AbicoderV1Keyword,
+    AbicoderV2Keyword,
+}
 
-    pub fn is_ether_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::EtherKeyword)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_abicoder_version(
+    ir_node: &input_ir::AbicoderVersion,
+    semantic: &Rc<SemanticAnalysis>,
+) -> AbicoderVersion {
+    match ir_node {
+        input_ir::AbicoderVersion::AbicoderV1Keyword => AbicoderVersion::AbicoderV1Keyword,
+        input_ir::AbicoderVersion::AbicoderV2Keyword => AbicoderVersion::AbicoderV2Keyword,
     }
+}
 
-    pub fn is_seconds_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::SecondsKeyword)
-    }
+pub enum ExperimentalFeature {
+    ABIEncoderV2Keyword,
+    SMTCheckerKeyword,
+    StringLiteral(Rc<TerminalNode>),
+}
 
-    pub fn is_minutes_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::MinutesKeyword)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_experimental_feature(
+    ir_node: &input_ir::ExperimentalFeature,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ExperimentalFeature {
+    match ir_node {
+        input_ir::ExperimentalFeature::ABIEncoderV2Keyword => {
+            ExperimentalFeature::ABIEncoderV2Keyword
+        }
+        input_ir::ExperimentalFeature::SMTCheckerKeyword => ExperimentalFeature::SMTCheckerKeyword,
+        input_ir::ExperimentalFeature::StringLiteral(node) => {
+            ExperimentalFeature::StringLiteral(Rc::clone(node))
+        }
     }
+}
 
-    pub fn is_hours_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::HoursKeyword)
-    }
+pub enum VersionExpression {
+    VersionRange(VersionRange),
+    VersionTerm(VersionTerm),
+}
 
-    pub fn is_days_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::DaysKeyword)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_version_expression(
+    ir_node: &input_ir::VersionExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> VersionExpression {
+    match ir_node {
+        input_ir::VersionExpression::VersionRange(variant) => {
+            VersionExpression::VersionRange(create_version_range(variant, semantic))
+        }
+        input_ir::VersionExpression::VersionTerm(variant) => {
+            VersionExpression::VersionTerm(create_version_term(variant, semantic))
+        }
     }
+}
 
-    pub fn is_weeks_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::WeeksKeyword)
-    }
+pub enum VersionOperator {
+    Caret,
+    Tilde,
+    Equal,
+    LessThan,
+    GreaterThan,
+    LessThanEqual,
+    GreaterThanEqual,
+}
 
-    pub fn is_years_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::NumberUnit::YearsKeyword)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_version_operator(
+    ir_node: &input_ir::VersionOperator,
+    semantic: &Rc<SemanticAnalysis>,
+) -> VersionOperator {
+    match ir_node {
+        input_ir::VersionOperator::Caret => VersionOperator::Caret,
+        input_ir::VersionOperator::Tilde => VersionOperator::Tilde,
+        input_ir::VersionOperator::Equal => VersionOperator::Equal,
+        input_ir::VersionOperator::LessThan => VersionOperator::LessThan,
+        input_ir::VersionOperator::GreaterThan => VersionOperator::GreaterThan,
+        input_ir::VersionOperator::LessThanEqual => VersionOperator::LessThanEqual,
+        input_ir::VersionOperator::GreaterThanEqual => VersionOperator::GreaterThanEqual,
     }
 }
 
-pub type StringExpression = Rc<StringExpressionStruct>;
-
-pub struct StringExpressionStruct {
-    pub(crate) ir_node: input_ir::StringExpression,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum VersionLiteral {
+    SimpleVersionLiteral(Vec<Rc<TerminalNode>>),
+    SingleQuotedVersionLiteral(Rc<TerminalNode>),
+    DoubleQuotedVersionLiteral(Rc<TerminalNode>),
 }
 
-impl StringExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::StringExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_version_literal(
+    ir_node: &input_ir::VersionLiteral,
+    semantic: &Rc<SemanticAnalysis>,
+) -> VersionLiteral {
+    match ir_node {
+        input_ir::VersionLiteral::SimpleVersionLiteral(nodes) => {
+            VersionLiteral::SimpleVersionLiteral(nodes.clone())
         }
-    }
 
-    pub fn is_strings(&self) -> bool {
-        matches!(self.ir_node, input_ir::StringExpression::Strings(_))
-    }
-
-    pub fn as_strings(&self) -> Option<Vec<Rc<TerminalNode>>> {
-        if let input_ir::StringExpression::Strings(variant) = &self.ir_node {
-            Some(variant.clone())
-        } else {
-            None
+        input_ir::VersionLiteral::SingleQuotedVersionLiteral(node) => {
+            VersionLiteral::SingleQuotedVersionLiteral(Rc::clone(node))
         }
-    }
-
-    pub fn is_hex_strings(&self) -> bool {
-        matches!(self.ir_node, input_ir::StringExpression::HexStrings(_))
-    }
-
-    pub fn as_hex_strings(&self) -> Option<Vec<Rc<TerminalNode>>> {
-        if let input_ir::StringExpression::HexStrings(variant) = &self.ir_node {
-            Some(variant.clone())
-        } else {
-            None
+        input_ir::VersionLiteral::DoubleQuotedVersionLiteral(node) => {
+            VersionLiteral::DoubleQuotedVersionLiteral(Rc::clone(node))
         }
     }
+}
 
-    pub fn is_unicode_strings(&self) -> bool {
-        matches!(self.ir_node, input_ir::StringExpression::UnicodeStrings(_))
-    }
+pub enum ImportClause {
+    PathImport(PathImport),
+    ImportDeconstruction(ImportDeconstruction),
+}
 
-    pub fn as_unicode_strings(&self) -> Option<Vec<Rc<TerminalNode>>> {
-        if let input_ir::StringExpression::UnicodeStrings(variant) = &self.ir_node {
-            Some(variant.clone())
-        } else {
-            None
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_import_clause(
+    ir_node: &input_ir::ImportClause,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ImportClause {
+    match ir_node {
+        input_ir::ImportClause::PathImport(variant) => {
+            ImportClause::PathImport(create_path_import(variant, semantic))
+        }
+        input_ir::ImportClause::ImportDeconstruction(variant) => {
+            ImportClause::ImportDeconstruction(create_import_deconstruction(variant, semantic))
         }
     }
 }
 
-pub type YulStatement = Rc<YulStatementStruct>;
-
-pub struct YulStatementStruct {
-    pub(crate) ir_node: input_ir::YulStatement,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum UsingClause {
+    IdentifierPath(IdentifierPath),
+    UsingDeconstruction(UsingDeconstruction),
 }
 
-impl YulStatementStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulStatement,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_using_clause(
+    ir_node: &input_ir::UsingClause,
+    semantic: &Rc<SemanticAnalysis>,
+) -> UsingClause {
+    match ir_node {
+        input_ir::UsingClause::IdentifierPath(nodes) => {
+            UsingClause::IdentifierPath(create_identifier_path(nodes, semantic))
         }
-    }
 
-    pub fn is_yul_block(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulStatement::YulBlock(_))
-    }
-
-    pub fn as_yul_block(&self) -> Option<YulBlock> {
-        if let input_ir::YulStatement::YulBlock(variant) = &self.ir_node {
-            Some(Rc::new(YulBlockStruct::create(variant, &self.semantic)))
-        } else {
-            None
+        input_ir::UsingClause::UsingDeconstruction(variant) => {
+            UsingClause::UsingDeconstruction(create_using_deconstruction(variant, semantic))
         }
     }
+}
 
-    pub fn is_yul_function_definition(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulStatement::YulFunctionDefinition(_)
-        )
-    }
+pub enum UsingOperator {
+    Ampersand,
+    Asterisk,
+    BangEqual,
+    Bar,
+    Caret,
+    EqualEqual,
+    GreaterThan,
+    GreaterThanEqual,
+    LessThan,
+    LessThanEqual,
+    Minus,
+    Percent,
+    Plus,
+    Slash,
+    Tilde,
+}
 
-    pub fn as_yul_function_definition(&self) -> Option<YulFunctionDefinition> {
-        if let input_ir::YulStatement::YulFunctionDefinition(variant) = &self.ir_node {
-            Some(Rc::new(YulFunctionDefinitionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
-        }
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_using_operator(
+    ir_node: &input_ir::UsingOperator,
+    semantic: &Rc<SemanticAnalysis>,
+) -> UsingOperator {
+    match ir_node {
+        input_ir::UsingOperator::Ampersand => UsingOperator::Ampersand,
+        input_ir::UsingOperator::Asterisk => UsingOperator::Asterisk,
+        input_ir::UsingOperator::BangEqual => UsingOperator::BangEqual,
+        input_ir::UsingOperator::Bar => UsingOperator::Bar,
+        input_ir::UsingOperator::Caret => UsingOperator::Caret,
+        input_ir::UsingOperator::EqualEqual => UsingOperator::EqualEqual,
+        input_ir::UsingOperator::GreaterThan => UsingOperator::GreaterThan,
+        input_ir::UsingOperator::GreaterThanEqual => UsingOperator::GreaterThanEqual,
+        input_ir::UsingOperator::LessThan => UsingOperator::LessThan,
+        input_ir::UsingOperator::LessThanEqual => UsingOperator::LessThanEqual,
+        input_ir::UsingOperator::Minus => UsingOperator::Minus,
+        input_ir::UsingOperator::Percent => UsingOperator::Percent,
+        input_ir::UsingOperator::Plus => UsingOperator::Plus,
+        input_ir::UsingOperator::Slash => UsingOperator::Slash,
+        input_ir::UsingOperator::Tilde => UsingOperator::Tilde,
     }
+}
 
-    pub fn is_yul_stack_assignment_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulStatement::YulStackAssignmentStatement(_)
-        )
-    }
+pub enum UsingTarget {
+    TypeName(TypeName),
+    Asterisk,
+}
 
-    pub fn as_yul_stack_assignment_statement(&self) -> Option<YulStackAssignmentStatement> {
-        if let input_ir::YulStatement::YulStackAssignmentStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulStackAssignmentStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_using_target(
+    ir_node: &input_ir::UsingTarget,
+    semantic: &Rc<SemanticAnalysis>,
+) -> UsingTarget {
+    match ir_node {
+        input_ir::UsingTarget::TypeName(variant) => {
+            UsingTarget::TypeName(create_type_name(variant, semantic))
         }
+        input_ir::UsingTarget::Asterisk => UsingTarget::Asterisk,
     }
+}
 
-    pub fn is_yul_if_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulStatement::YulIfStatement(_))
-    }
+pub enum ContractMember {
+    UsingDirective(UsingDirective),
+    FunctionDefinition(FunctionDefinition),
+    StructDefinition(StructDefinition),
+    EnumDefinition(EnumDefinition),
+    EventDefinition(EventDefinition),
+    ErrorDefinition(ErrorDefinition),
+    UserDefinedValueTypeDefinition(UserDefinedValueTypeDefinition),
+    StateVariableDefinition(StateVariableDefinition),
+    ConstantDefinition(ConstantDefinition),
+}
 
-    pub fn as_yul_if_statement(&self) -> Option<YulIfStatement> {
-        if let input_ir::YulStatement::YulIfStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulIfStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_contract_member(
+    ir_node: &input_ir::ContractMember,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ContractMember {
+    match ir_node {
+        input_ir::ContractMember::UsingDirective(variant) => {
+            ContractMember::UsingDirective(create_using_directive(variant, semantic))
         }
-    }
-
-    pub fn is_yul_for_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulStatement::YulForStatement(_))
-    }
-
-    pub fn as_yul_for_statement(&self) -> Option<YulForStatement> {
-        if let input_ir::YulStatement::YulForStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulForStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::ContractMember::FunctionDefinition(variant) => {
+            ContractMember::FunctionDefinition(create_function_definition(variant, semantic))
         }
-    }
-
-    pub fn is_yul_switch_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulStatement::YulSwitchStatement(_))
-    }
-
-    pub fn as_yul_switch_statement(&self) -> Option<YulSwitchStatement> {
-        if let input_ir::YulStatement::YulSwitchStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulSwitchStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::ContractMember::StructDefinition(variant) => {
+            ContractMember::StructDefinition(create_struct_definition(variant, semantic))
         }
-    }
-
-    pub fn is_yul_leave_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulStatement::YulLeaveStatement(_))
-    }
-
-    pub fn as_yul_leave_statement(&self) -> Option<YulLeaveStatement> {
-        if let input_ir::YulStatement::YulLeaveStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulLeaveStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::ContractMember::EnumDefinition(variant) => {
+            ContractMember::EnumDefinition(create_enum_definition(variant, semantic))
         }
-    }
-
-    pub fn is_yul_break_statement(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulStatement::YulBreakStatement(_))
-    }
-
-    pub fn as_yul_break_statement(&self) -> Option<YulBreakStatement> {
-        if let input_ir::YulStatement::YulBreakStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulBreakStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::ContractMember::EventDefinition(variant) => {
+            ContractMember::EventDefinition(create_event_definition(variant, semantic))
         }
-    }
-
-    pub fn is_yul_continue_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulStatement::YulContinueStatement(_)
-        )
-    }
-
-    pub fn as_yul_continue_statement(&self) -> Option<YulContinueStatement> {
-        if let input_ir::YulStatement::YulContinueStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulContinueStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::ContractMember::ErrorDefinition(variant) => {
+            ContractMember::ErrorDefinition(create_error_definition(variant, semantic))
         }
-    }
-
-    pub fn is_yul_variable_assignment_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulStatement::YulVariableAssignmentStatement(_)
-        )
-    }
-
-    pub fn as_yul_variable_assignment_statement(&self) -> Option<YulVariableAssignmentStatement> {
-        if let input_ir::YulStatement::YulVariableAssignmentStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulVariableAssignmentStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::ContractMember::UserDefinedValueTypeDefinition(variant) => {
+            ContractMember::UserDefinedValueTypeDefinition(
+                create_user_defined_value_type_definition(variant, semantic),
+            )
         }
-    }
-
-    pub fn is_yul_label(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulStatement::YulLabel(_))
-    }
-
-    pub fn as_yul_label(&self) -> Option<YulLabel> {
-        if let input_ir::YulStatement::YulLabel(variant) = &self.ir_node {
-            Some(Rc::new(YulLabelStruct::create(variant, &self.semantic)))
-        } else {
-            None
+        input_ir::ContractMember::StateVariableDefinition(variant) => {
+            ContractMember::StateVariableDefinition(create_state_variable_definition(
+                variant, semantic,
+            ))
         }
-    }
-
-    pub fn is_yul_variable_declaration_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulStatement::YulVariableDeclarationStatement(_)
-        )
-    }
-
-    pub fn as_yul_variable_declaration_statement(&self) -> Option<YulVariableDeclarationStatement> {
-        if let input_ir::YulStatement::YulVariableDeclarationStatement(variant) = &self.ir_node {
-            Some(Rc::new(YulVariableDeclarationStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::ContractMember::ConstantDefinition(variant) => {
+            ContractMember::ConstantDefinition(create_constant_definition(variant, semantic))
         }
     }
+}
 
-    pub fn is_yul_expression(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulStatement::YulExpression(_))
-    }
+pub enum TypeName {
+    ArrayTypeName(ArrayTypeName),
+    FunctionType(FunctionType),
+    MappingType(MappingType),
+    ElementaryType(ElementaryType),
+    IdentifierPath(IdentifierPath),
+}
 
-    pub fn as_yul_expression(&self) -> Option<YulExpression> {
-        if let input_ir::YulStatement::YulExpression(variant) = &self.ir_node {
-            Some(Rc::new(YulExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_type_name(
+    ir_node: &input_ir::TypeName,
+    semantic: &Rc<SemanticAnalysis>,
+) -> TypeName {
+    match ir_node {
+        input_ir::TypeName::ArrayTypeName(variant) => {
+            TypeName::ArrayTypeName(create_array_type_name(variant, semantic))
+        }
+        input_ir::TypeName::FunctionType(variant) => {
+            TypeName::FunctionType(create_function_type(variant, semantic))
         }
+        input_ir::TypeName::MappingType(variant) => {
+            TypeName::MappingType(create_mapping_type(variant, semantic))
+        }
+        input_ir::TypeName::ElementaryType(variant) => {
+            TypeName::ElementaryType(create_elementary_type(variant, semantic))
+        }
+        input_ir::TypeName::IdentifierPath(nodes) => {
+            TypeName::IdentifierPath(create_identifier_path(nodes, semantic))
+        }
     }
 }
-
-pub type YulAssignmentOperator = Rc<YulAssignmentOperatorStruct>;
 
-pub struct YulAssignmentOperatorStruct {
-    pub(crate) ir_node: input_ir::YulAssignmentOperator,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum ElementaryType {
+    BoolKeyword,
+    ByteKeyword,
+    StringKeyword,
+    AddressType(AddressType),
+    BytesKeyword(Rc<TerminalNode>),
+    IntKeyword(Rc<TerminalNode>),
+    UintKeyword(Rc<TerminalNode>),
+    FixedKeyword(Rc<TerminalNode>),
+    UfixedKeyword(Rc<TerminalNode>),
 }
 
-impl YulAssignmentOperatorStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulAssignmentOperator,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_elementary_type(
+    ir_node: &input_ir::ElementaryType,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ElementaryType {
+    match ir_node {
+        input_ir::ElementaryType::BoolKeyword => ElementaryType::BoolKeyword,
+        input_ir::ElementaryType::ByteKeyword => ElementaryType::ByteKeyword,
+        input_ir::ElementaryType::StringKeyword => ElementaryType::StringKeyword,
+        input_ir::ElementaryType::AddressType(variant) => {
+            ElementaryType::AddressType(create_address_type(variant, semantic))
         }
-    }
-
-    pub fn is_colon_equal(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulAssignmentOperator::ColonEqual)
-    }
-
-    pub fn is_yul_colon_and_equal(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulAssignmentOperator::YulColonAndEqual(_)
-        )
-    }
-
-    pub fn as_yul_colon_and_equal(&self) -> Option<YulColonAndEqual> {
-        if let input_ir::YulAssignmentOperator::YulColonAndEqual(variant) = &self.ir_node {
-            Some(Rc::new(YulColonAndEqualStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::ElementaryType::BytesKeyword(node) => {
+            ElementaryType::BytesKeyword(Rc::clone(node))
+        }
+        input_ir::ElementaryType::IntKeyword(node) => ElementaryType::IntKeyword(Rc::clone(node)),
+        input_ir::ElementaryType::UintKeyword(node) => ElementaryType::UintKeyword(Rc::clone(node)),
+        input_ir::ElementaryType::FixedKeyword(node) => {
+            ElementaryType::FixedKeyword(Rc::clone(node))
+        }
+        input_ir::ElementaryType::UfixedKeyword(node) => {
+            ElementaryType::UfixedKeyword(Rc::clone(node))
         }
     }
 }
 
-pub type YulStackAssignmentOperator = Rc<YulStackAssignmentOperatorStruct>;
-
-pub struct YulStackAssignmentOperatorStruct {
-    pub(crate) ir_node: input_ir::YulStackAssignmentOperator,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum Statement {
+    IfStatement(IfStatement),
+    ForStatement(ForStatement),
+    WhileStatement(WhileStatement),
+    DoWhileStatement(DoWhileStatement),
+    ContinueStatement(ContinueStatement),
+    BreakStatement(BreakStatement),
+    ReturnStatement(ReturnStatement),
+    ThrowStatement(ThrowStatement),
+    EmitStatement(EmitStatement),
+    TryStatement(TryStatement),
+    RevertStatement(RevertStatement),
+    AssemblyStatement(AssemblyStatement),
+    Block(Block),
+    UncheckedBlock(UncheckedBlock),
+    TupleDeconstructionStatement(TupleDeconstructionStatement),
+    VariableDeclarationStatement(VariableDeclarationStatement),
+    ExpressionStatement(ExpressionStatement),
 }
 
-impl YulStackAssignmentOperatorStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulStackAssignmentOperator,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_statement(
+    ir_node: &input_ir::Statement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> Statement {
+    match ir_node {
+        input_ir::Statement::IfStatement(variant) => {
+            Statement::IfStatement(create_if_statement(variant, semantic))
         }
-    }
-
-    pub fn is_equal_colon(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulStackAssignmentOperator::EqualColon
-        )
-    }
-
-    pub fn is_yul_equal_and_colon(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulStackAssignmentOperator::YulEqualAndColon(_)
-        )
-    }
-
-    pub fn as_yul_equal_and_colon(&self) -> Option<YulEqualAndColon> {
-        if let input_ir::YulStackAssignmentOperator::YulEqualAndColon(variant) = &self.ir_node {
-            Some(Rc::new(YulEqualAndColonStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::Statement::ForStatement(variant) => {
+            Statement::ForStatement(create_for_statement(variant, semantic))
+        }
+        input_ir::Statement::WhileStatement(variant) => {
+            Statement::WhileStatement(create_while_statement(variant, semantic))
         }
+        input_ir::Statement::DoWhileStatement(variant) => {
+            Statement::DoWhileStatement(create_do_while_statement(variant, semantic))
+        }
+        input_ir::Statement::ContinueStatement(variant) => {
+            Statement::ContinueStatement(create_continue_statement(variant, semantic))
+        }
+        input_ir::Statement::BreakStatement(variant) => {
+            Statement::BreakStatement(create_break_statement(variant, semantic))
+        }
+        input_ir::Statement::ReturnStatement(variant) => {
+            Statement::ReturnStatement(create_return_statement(variant, semantic))
+        }
+        input_ir::Statement::ThrowStatement(variant) => {
+            Statement::ThrowStatement(create_throw_statement(variant, semantic))
+        }
+        input_ir::Statement::EmitStatement(variant) => {
+            Statement::EmitStatement(create_emit_statement(variant, semantic))
+        }
+        input_ir::Statement::TryStatement(variant) => {
+            Statement::TryStatement(create_try_statement(variant, semantic))
+        }
+        input_ir::Statement::RevertStatement(variant) => {
+            Statement::RevertStatement(create_revert_statement(variant, semantic))
+        }
+        input_ir::Statement::AssemblyStatement(variant) => {
+            Statement::AssemblyStatement(create_assembly_statement(variant, semantic))
+        }
+        input_ir::Statement::Block(variant) => Statement::Block(create_block(variant, semantic)),
+        input_ir::Statement::UncheckedBlock(variant) => {
+            Statement::UncheckedBlock(create_unchecked_block(variant, semantic))
+        }
+        input_ir::Statement::TupleDeconstructionStatement(variant) => {
+            Statement::TupleDeconstructionStatement(create_tuple_deconstruction_statement(
+                variant, semantic,
+            ))
+        }
+        input_ir::Statement::VariableDeclarationStatement(variant) => {
+            Statement::VariableDeclarationStatement(create_variable_declaration_statement(
+                variant, semantic,
+            ))
+        }
+        input_ir::Statement::ExpressionStatement(variant) => {
+            Statement::ExpressionStatement(create_expression_statement(variant, semantic))
+        }
     }
 }
-
-pub type YulSwitchCase = Rc<YulSwitchCaseStruct>;
 
-pub struct YulSwitchCaseStruct {
-    pub(crate) ir_node: input_ir::YulSwitchCase,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum StorageLocation {
+    MemoryKeyword,
+    StorageKeyword,
+    CallDataKeyword,
 }
 
-impl YulSwitchCaseStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulSwitchCase,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_storage_location(
+    ir_node: &input_ir::StorageLocation,
+    semantic: &Rc<SemanticAnalysis>,
+) -> StorageLocation {
+    match ir_node {
+        input_ir::StorageLocation::MemoryKeyword => StorageLocation::MemoryKeyword,
+        input_ir::StorageLocation::StorageKeyword => StorageLocation::StorageKeyword,
+        input_ir::StorageLocation::CallDataKeyword => StorageLocation::CallDataKeyword,
     }
+}
 
-    pub fn is_yul_default_case(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulSwitchCase::YulDefaultCase(_))
-    }
+pub enum ForStatementInitialization {
+    TupleDeconstructionStatement(TupleDeconstructionStatement),
+    VariableDeclarationStatement(VariableDeclarationStatement),
+    ExpressionStatement(ExpressionStatement),
+    Semicolon,
+}
 
-    pub fn as_yul_default_case(&self) -> Option<YulDefaultCase> {
-        if let input_ir::YulSwitchCase::YulDefaultCase(variant) = &self.ir_node {
-            Some(Rc::new(YulDefaultCaseStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_for_statement_initialization(
+    ir_node: &input_ir::ForStatementInitialization,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ForStatementInitialization {
+    match ir_node {
+        input_ir::ForStatementInitialization::TupleDeconstructionStatement(variant) => {
+            ForStatementInitialization::TupleDeconstructionStatement(
+                create_tuple_deconstruction_statement(variant, semantic),
+            )
         }
-    }
-
-    pub fn is_yul_value_case(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulSwitchCase::YulValueCase(_))
-    }
-
-    pub fn as_yul_value_case(&self) -> Option<YulValueCase> {
-        if let input_ir::YulSwitchCase::YulValueCase(variant) = &self.ir_node {
-            Some(Rc::new(YulValueCaseStruct::create(variant, &self.semantic)))
-        } else {
-            None
+        input_ir::ForStatementInitialization::VariableDeclarationStatement(variant) => {
+            ForStatementInitialization::VariableDeclarationStatement(
+                create_variable_declaration_statement(variant, semantic),
+            )
         }
+        input_ir::ForStatementInitialization::ExpressionStatement(variant) => {
+            ForStatementInitialization::ExpressionStatement(create_expression_statement(
+                variant, semantic,
+            ))
+        }
+        input_ir::ForStatementInitialization::Semicolon => ForStatementInitialization::Semicolon,
     }
 }
-
-pub type YulExpression = Rc<YulExpressionStruct>;
 
-pub struct YulExpressionStruct {
-    pub(crate) ir_node: input_ir::YulExpression,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum ForStatementCondition {
+    ExpressionStatement(ExpressionStatement),
+    Semicolon,
 }
 
-impl YulExpressionStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::YulExpression,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_for_statement_condition(
+    ir_node: &input_ir::ForStatementCondition,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ForStatementCondition {
+    match ir_node {
+        input_ir::ForStatementCondition::ExpressionStatement(variant) => {
+            ForStatementCondition::ExpressionStatement(create_expression_statement(
+                variant, semantic,
+            ))
         }
+        input_ir::ForStatementCondition::Semicolon => ForStatementCondition::Semicolon,
     }
+}
 
-    pub fn is_yul_function_call_expression(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::YulExpression::YulFunctionCallExpression(_)
-        )
-    }
+pub enum Expression {
+    AssignmentExpression(AssignmentExpression),
+    ConditionalExpression(ConditionalExpression),
+    OrExpression(OrExpression),
+    AndExpression(AndExpression),
+    EqualityExpression(EqualityExpression),
+    InequalityExpression(InequalityExpression),
+    BitwiseOrExpression(BitwiseOrExpression),
+    BitwiseXorExpression(BitwiseXorExpression),
+    BitwiseAndExpression(BitwiseAndExpression),
+    ShiftExpression(ShiftExpression),
+    AdditiveExpression(AdditiveExpression),
+    MultiplicativeExpression(MultiplicativeExpression),
+    ExponentiationExpression(ExponentiationExpression),
+    PostfixExpression(PostfixExpression),
+    PrefixExpression(PrefixExpression),
+    FunctionCallExpression(FunctionCallExpression),
+    CallOptionsExpression(CallOptionsExpression),
+    MemberAccessExpression(MemberAccessExpression),
+    IndexAccessExpression(IndexAccessExpression),
+    NewExpression(NewExpression),
+    TupleExpression(TupleExpression),
+    TypeExpression(TypeExpression),
+    ArrayExpression(ArrayExpression),
+    HexNumberExpression(HexNumberExpression),
+    DecimalNumberExpression(DecimalNumberExpression),
+    StringExpression(StringExpression),
+    ElementaryType(ElementaryType),
+    PayableKeyword,
+    ThisKeyword,
+    SuperKeyword,
+    TrueKeyword,
+    FalseKeyword,
+    Identifier(Identifier),
+}
 
-    pub fn as_yul_function_call_expression(&self) -> Option<YulFunctionCallExpression> {
-        if let input_ir::YulExpression::YulFunctionCallExpression(variant) = &self.ir_node {
-            Some(Rc::new(YulFunctionCallExpressionStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_expression(
+    ir_node: &input_ir::Expression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> Expression {
+    match ir_node {
+        input_ir::Expression::AssignmentExpression(variant) => {
+            Expression::AssignmentExpression(create_assignment_expression(variant, semantic))
         }
-    }
-
-    pub fn is_yul_literal(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulExpression::YulLiteral(_))
-    }
-
-    pub fn as_yul_literal(&self) -> Option<YulLiteral> {
-        if let input_ir::YulExpression::YulLiteral(variant) = &self.ir_node {
-            Some(Rc::new(YulLiteralStruct::create(variant, &self.semantic)))
-        } else {
-            None
+        input_ir::Expression::ConditionalExpression(variant) => {
+            Expression::ConditionalExpression(create_conditional_expression(variant, semantic))
         }
-    }
-
-    pub fn is_yul_path(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulExpression::YulPath(_))
-    }
-
-    pub fn as_yul_path(&self) -> Option<YulPath> {
-        if let input_ir::YulExpression::YulPath(variant) = &self.ir_node {
-            Some(Rc::new(YulPathStruct::create(variant, &self.semantic)))
-        } else {
-            None
+        input_ir::Expression::OrExpression(variant) => {
+            Expression::OrExpression(create_or_expression(variant, semantic))
+        }
+        input_ir::Expression::AndExpression(variant) => {
+            Expression::AndExpression(create_and_expression(variant, semantic))
+        }
+        input_ir::Expression::EqualityExpression(variant) => {
+            Expression::EqualityExpression(create_equality_expression(variant, semantic))
+        }
+        input_ir::Expression::InequalityExpression(variant) => {
+            Expression::InequalityExpression(create_inequality_expression(variant, semantic))
+        }
+        input_ir::Expression::BitwiseOrExpression(variant) => {
+            Expression::BitwiseOrExpression(create_bitwise_or_expression(variant, semantic))
+        }
+        input_ir::Expression::BitwiseXorExpression(variant) => {
+            Expression::BitwiseXorExpression(create_bitwise_xor_expression(variant, semantic))
+        }
+        input_ir::Expression::BitwiseAndExpression(variant) => {
+            Expression::BitwiseAndExpression(create_bitwise_and_expression(variant, semantic))
+        }
+        input_ir::Expression::ShiftExpression(variant) => {
+            Expression::ShiftExpression(create_shift_expression(variant, semantic))
+        }
+        input_ir::Expression::AdditiveExpression(variant) => {
+            Expression::AdditiveExpression(create_additive_expression(variant, semantic))
+        }
+        input_ir::Expression::MultiplicativeExpression(variant) => {
+            Expression::MultiplicativeExpression(create_multiplicative_expression(
+                variant, semantic,
+            ))
+        }
+        input_ir::Expression::ExponentiationExpression(variant) => {
+            Expression::ExponentiationExpression(create_exponentiation_expression(
+                variant, semantic,
+            ))
+        }
+        input_ir::Expression::PostfixExpression(variant) => {
+            Expression::PostfixExpression(create_postfix_expression(variant, semantic))
+        }
+        input_ir::Expression::PrefixExpression(variant) => {
+            Expression::PrefixExpression(create_prefix_expression(variant, semantic))
+        }
+        input_ir::Expression::FunctionCallExpression(variant) => {
+            Expression::FunctionCallExpression(create_function_call_expression(variant, semantic))
         }
+        input_ir::Expression::CallOptionsExpression(variant) => {
+            Expression::CallOptionsExpression(create_call_options_expression(variant, semantic))
+        }
+        input_ir::Expression::MemberAccessExpression(variant) => {
+            Expression::MemberAccessExpression(create_member_access_expression(variant, semantic))
+        }
+        input_ir::Expression::IndexAccessExpression(variant) => {
+            Expression::IndexAccessExpression(create_index_access_expression(variant, semantic))
+        }
+        input_ir::Expression::NewExpression(variant) => {
+            Expression::NewExpression(create_new_expression(variant, semantic))
+        }
+        input_ir::Expression::TupleExpression(variant) => {
+            Expression::TupleExpression(create_tuple_expression(variant, semantic))
+        }
+        input_ir::Expression::TypeExpression(variant) => {
+            Expression::TypeExpression(create_type_expression(variant, semantic))
+        }
+        input_ir::Expression::ArrayExpression(variant) => {
+            Expression::ArrayExpression(create_array_expression(variant, semantic))
+        }
+        input_ir::Expression::HexNumberExpression(variant) => {
+            Expression::HexNumberExpression(create_hex_number_expression(variant, semantic))
+        }
+        input_ir::Expression::DecimalNumberExpression(variant) => {
+            Expression::DecimalNumberExpression(create_decimal_number_expression(variant, semantic))
+        }
+        input_ir::Expression::StringExpression(variant) => {
+            Expression::StringExpression(create_string_expression(variant, semantic))
+        }
+        input_ir::Expression::ElementaryType(variant) => {
+            Expression::ElementaryType(create_elementary_type(variant, semantic))
+        }
+        input_ir::Expression::PayableKeyword => Expression::PayableKeyword,
+        input_ir::Expression::ThisKeyword => Expression::ThisKeyword,
+        input_ir::Expression::SuperKeyword => Expression::SuperKeyword,
+        input_ir::Expression::TrueKeyword => Expression::TrueKeyword,
+        input_ir::Expression::FalseKeyword => Expression::FalseKeyword,
+        input_ir::Expression::Identifier(variant) => {
+            Expression::Identifier(create_identifier(variant, semantic))
+        }
     }
 }
 
-pub type YulLiteral = Rc<YulLiteralStruct>;
-
-pub struct YulLiteralStruct {
-    pub(crate) ir_node: input_ir::YulLiteral,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum ArgumentsDeclaration {
+    PositionalArguments(PositionalArguments),
+    NamedArguments(NamedArguments),
 }
 
-impl YulLiteralStruct {
-    pub(crate) fn create(ir_node: &input_ir::YulLiteral, semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_arguments_declaration(
+    ir_node: &input_ir::ArgumentsDeclaration,
+    semantic: &Rc<SemanticAnalysis>,
+) -> ArgumentsDeclaration {
+    match ir_node {
+        input_ir::ArgumentsDeclaration::PositionalArguments(nodes) => {
+            ArgumentsDeclaration::PositionalArguments(create_positional_arguments(nodes, semantic))
         }
-    }
-
-    pub fn is_yul_true_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulLiteral::YulTrueKeyword)
-    }
 
-    pub fn is_yul_false_keyword(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulLiteral::YulFalseKeyword)
-    }
-
-    pub fn is_yul_decimal_literal(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulLiteral::YulDecimalLiteral(_))
-    }
-
-    pub fn is_yul_hex_literal(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulLiteral::YulHexLiteral(_))
-    }
-
-    pub fn is_string_literal(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulLiteral::StringLiteral(_))
-    }
-
-    pub fn is_hex_string_literal(&self) -> bool {
-        matches!(self.ir_node, input_ir::YulLiteral::HexStringLiteral(_))
+        input_ir::ArgumentsDeclaration::NamedArguments(nodes) => {
+            ArgumentsDeclaration::NamedArguments(create_named_arguments(nodes, semantic))
+        }
     }
 }
-
-pub type FunctionKind = Rc<FunctionKindStruct>;
 
-pub struct FunctionKindStruct {
-    pub(crate) ir_node: input_ir::FunctionKind,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum NumberUnit {
+    WeiKeyword,
+    GweiKeyword,
+    SzaboKeyword,
+    FinneyKeyword,
+    EtherKeyword,
+    SecondsKeyword,
+    MinutesKeyword,
+    HoursKeyword,
+    DaysKeyword,
+    WeeksKeyword,
+    YearsKeyword,
 }
-
-impl FunctionKindStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::FunctionKind,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
-    pub fn is_regular(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionKind::Regular)
-    }
 
-    pub fn is_constructor(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionKind::Constructor)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_number_unit(
+    ir_node: &input_ir::NumberUnit,
+    semantic: &Rc<SemanticAnalysis>,
+) -> NumberUnit {
+    match ir_node {
+        input_ir::NumberUnit::WeiKeyword => NumberUnit::WeiKeyword,
+        input_ir::NumberUnit::GweiKeyword => NumberUnit::GweiKeyword,
+        input_ir::NumberUnit::SzaboKeyword => NumberUnit::SzaboKeyword,
+        input_ir::NumberUnit::FinneyKeyword => NumberUnit::FinneyKeyword,
+        input_ir::NumberUnit::EtherKeyword => NumberUnit::EtherKeyword,
+        input_ir::NumberUnit::SecondsKeyword => NumberUnit::SecondsKeyword,
+        input_ir::NumberUnit::MinutesKeyword => NumberUnit::MinutesKeyword,
+        input_ir::NumberUnit::HoursKeyword => NumberUnit::HoursKeyword,
+        input_ir::NumberUnit::DaysKeyword => NumberUnit::DaysKeyword,
+        input_ir::NumberUnit::WeeksKeyword => NumberUnit::WeeksKeyword,
+        input_ir::NumberUnit::YearsKeyword => NumberUnit::YearsKeyword,
     }
+}
 
-    pub fn is_unnamed(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionKind::Unnamed)
-    }
+pub enum StringExpression {
+    Strings(Vec<Rc<TerminalNode>>),
+    HexStrings(Vec<Rc<TerminalNode>>),
+    UnicodeStrings(Vec<Rc<TerminalNode>>),
+}
 
-    pub fn is_fallback(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionKind::Fallback)
-    }
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_string_expression(
+    ir_node: &input_ir::StringExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> StringExpression {
+    match ir_node {
+        input_ir::StringExpression::Strings(nodes) => StringExpression::Strings(nodes.clone()),
 
-    pub fn is_receive(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionKind::Receive)
-    }
+        input_ir::StringExpression::HexStrings(nodes) => {
+            StringExpression::HexStrings(nodes.clone())
+        }
 
-    pub fn is_modifier(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionKind::Modifier)
+        input_ir::StringExpression::UnicodeStrings(nodes) => {
+            StringExpression::UnicodeStrings(nodes.clone())
+        }
     }
 }
 
-pub type FunctionVisibility = Rc<FunctionVisibilityStruct>;
-
-pub struct FunctionVisibilityStruct {
-    pub(crate) ir_node: input_ir::FunctionVisibility,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum YulStatement {
+    YulBlock(YulBlock),
+    YulFunctionDefinition(YulFunctionDefinition),
+    YulStackAssignmentStatement(YulStackAssignmentStatement),
+    YulIfStatement(YulIfStatement),
+    YulForStatement(YulForStatement),
+    YulSwitchStatement(YulSwitchStatement),
+    YulLeaveStatement(YulLeaveStatement),
+    YulBreakStatement(YulBreakStatement),
+    YulContinueStatement(YulContinueStatement),
+    YulVariableAssignmentStatement(YulVariableAssignmentStatement),
+    YulLabel(YulLabel),
+    YulVariableDeclarationStatement(YulVariableDeclarationStatement),
+    YulExpression(YulExpression),
 }
 
-impl FunctionVisibilityStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::FunctionVisibility,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_yul_statement(
+    ir_node: &input_ir::YulStatement,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulStatement {
+    match ir_node {
+        input_ir::YulStatement::YulBlock(variant) => {
+            YulStatement::YulBlock(create_yul_block(variant, semantic))
         }
-    }
-
-    pub fn is_public(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionVisibility::Public)
-    }
-
-    pub fn is_private(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionVisibility::Private)
+        input_ir::YulStatement::YulFunctionDefinition(variant) => {
+            YulStatement::YulFunctionDefinition(create_yul_function_definition(variant, semantic))
+        }
+        input_ir::YulStatement::YulStackAssignmentStatement(variant) => {
+            YulStatement::YulStackAssignmentStatement(create_yul_stack_assignment_statement(
+                variant, semantic,
+            ))
+        }
+        input_ir::YulStatement::YulIfStatement(variant) => {
+            YulStatement::YulIfStatement(create_yul_if_statement(variant, semantic))
+        }
+        input_ir::YulStatement::YulForStatement(variant) => {
+            YulStatement::YulForStatement(create_yul_for_statement(variant, semantic))
+        }
+        input_ir::YulStatement::YulSwitchStatement(variant) => {
+            YulStatement::YulSwitchStatement(create_yul_switch_statement(variant, semantic))
+        }
+        input_ir::YulStatement::YulLeaveStatement(variant) => {
+            YulStatement::YulLeaveStatement(create_yul_leave_statement(variant, semantic))
+        }
+        input_ir::YulStatement::YulBreakStatement(variant) => {
+            YulStatement::YulBreakStatement(create_yul_break_statement(variant, semantic))
+        }
+        input_ir::YulStatement::YulContinueStatement(variant) => {
+            YulStatement::YulContinueStatement(create_yul_continue_statement(variant, semantic))
+        }
+        input_ir::YulStatement::YulVariableAssignmentStatement(variant) => {
+            YulStatement::YulVariableAssignmentStatement(create_yul_variable_assignment_statement(
+                variant, semantic,
+            ))
+        }
+        input_ir::YulStatement::YulLabel(variant) => {
+            YulStatement::YulLabel(create_yul_label(variant, semantic))
+        }
+        input_ir::YulStatement::YulVariableDeclarationStatement(variant) => {
+            YulStatement::YulVariableDeclarationStatement(
+                create_yul_variable_declaration_statement(variant, semantic),
+            )
+        }
+        input_ir::YulStatement::YulExpression(variant) => {
+            YulStatement::YulExpression(create_yul_expression(variant, semantic))
+        }
     }
+}
 
-    pub fn is_internal(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionVisibility::Internal)
-    }
+pub enum YulAssignmentOperator {
+    ColonEqual,
+    YulColonAndEqual(YulColonAndEqual),
+}
 
-    pub fn is_external(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionVisibility::External)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_yul_assignment_operator(
+    ir_node: &input_ir::YulAssignmentOperator,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulAssignmentOperator {
+    match ir_node {
+        input_ir::YulAssignmentOperator::ColonEqual => YulAssignmentOperator::ColonEqual,
+        input_ir::YulAssignmentOperator::YulColonAndEqual(variant) => {
+            YulAssignmentOperator::YulColonAndEqual(create_yul_colon_and_equal(variant, semantic))
+        }
     }
 }
-
-pub type FunctionMutability = Rc<FunctionMutabilityStruct>;
 
-pub struct FunctionMutabilityStruct {
-    pub(crate) ir_node: input_ir::FunctionMutability,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum YulStackAssignmentOperator {
+    EqualColon,
+    YulEqualAndColon(YulEqualAndColon),
 }
 
-impl FunctionMutabilityStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::FunctionMutability,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_yul_stack_assignment_operator(
+    ir_node: &input_ir::YulStackAssignmentOperator,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulStackAssignmentOperator {
+    match ir_node {
+        input_ir::YulStackAssignmentOperator::EqualColon => YulStackAssignmentOperator::EqualColon,
+        input_ir::YulStackAssignmentOperator::YulEqualAndColon(variant) => {
+            YulStackAssignmentOperator::YulEqualAndColon(create_yul_equal_and_colon(
+                variant, semantic,
+            ))
         }
     }
+}
 
-    pub fn is_pure(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionMutability::Pure)
-    }
+pub enum YulSwitchCase {
+    YulDefaultCase(YulDefaultCase),
+    YulValueCase(YulValueCase),
+}
 
-    pub fn is_view(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionMutability::View)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_yul_switch_case(
+    ir_node: &input_ir::YulSwitchCase,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulSwitchCase {
+    match ir_node {
+        input_ir::YulSwitchCase::YulDefaultCase(variant) => {
+            YulSwitchCase::YulDefaultCase(create_yul_default_case(variant, semantic))
+        }
+        input_ir::YulSwitchCase::YulValueCase(variant) => {
+            YulSwitchCase::YulValueCase(create_yul_value_case(variant, semantic))
+        }
     }
+}
 
-    pub fn is_non_payable(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionMutability::NonPayable)
-    }
+pub enum YulExpression {
+    YulFunctionCallExpression(YulFunctionCallExpression),
+    YulLiteral(YulLiteral),
+    YulPath(YulPath),
+}
 
-    pub fn is_payable(&self) -> bool {
-        matches!(self.ir_node, input_ir::FunctionMutability::Payable)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_yul_expression(
+    ir_node: &input_ir::YulExpression,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulExpression {
+    match ir_node {
+        input_ir::YulExpression::YulFunctionCallExpression(variant) => {
+            YulExpression::YulFunctionCallExpression(create_yul_function_call_expression(
+                variant, semantic,
+            ))
+        }
+        input_ir::YulExpression::YulLiteral(variant) => {
+            YulExpression::YulLiteral(create_yul_literal(variant, semantic))
+        }
+        input_ir::YulExpression::YulPath(nodes) => {
+            YulExpression::YulPath(create_yul_path(nodes, semantic))
+        }
     }
 }
-
-pub type StateVariableVisibility = Rc<StateVariableVisibilityStruct>;
 
-pub struct StateVariableVisibilityStruct {
-    pub(crate) ir_node: input_ir::StateVariableVisibility,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum YulLiteral {
+    YulTrueKeyword,
+    YulFalseKeyword,
+    YulDecimalLiteral(Rc<TerminalNode>),
+    YulHexLiteral(Rc<TerminalNode>),
+    StringLiteral(Rc<TerminalNode>),
+    HexStringLiteral(Rc<TerminalNode>),
 }
 
-impl StateVariableVisibilityStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::StateVariableVisibility,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_yul_literal(
+    ir_node: &input_ir::YulLiteral,
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulLiteral {
+    match ir_node {
+        input_ir::YulLiteral::YulTrueKeyword => YulLiteral::YulTrueKeyword,
+        input_ir::YulLiteral::YulFalseKeyword => YulLiteral::YulFalseKeyword,
+        input_ir::YulLiteral::YulDecimalLiteral(node) => {
+            YulLiteral::YulDecimalLiteral(Rc::clone(node))
         }
-    }
-
-    pub fn is_public(&self) -> bool {
-        matches!(self.ir_node, input_ir::StateVariableVisibility::Public)
+        input_ir::YulLiteral::YulHexLiteral(node) => YulLiteral::YulHexLiteral(Rc::clone(node)),
+        input_ir::YulLiteral::StringLiteral(node) => YulLiteral::StringLiteral(Rc::clone(node)),
+        input_ir::YulLiteral::HexStringLiteral(node) => {
+            YulLiteral::HexStringLiteral(Rc::clone(node))
+        }
     }
+}
 
-    pub fn is_private(&self) -> bool {
-        matches!(self.ir_node, input_ir::StateVariableVisibility::Private)
-    }
+pub enum FunctionKind {
+    Regular,
+    Constructor,
+    Unnamed,
+    Fallback,
+    Receive,
+    Modifier,
+}
 
-    pub fn is_internal(&self) -> bool {
-        matches!(self.ir_node, input_ir::StateVariableVisibility::Internal)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_function_kind(
+    ir_node: &input_ir::FunctionKind,
+    semantic: &Rc<SemanticAnalysis>,
+) -> FunctionKind {
+    match ir_node {
+        input_ir::FunctionKind::Regular => FunctionKind::Regular,
+        input_ir::FunctionKind::Constructor => FunctionKind::Constructor,
+        input_ir::FunctionKind::Unnamed => FunctionKind::Unnamed,
+        input_ir::FunctionKind::Fallback => FunctionKind::Fallback,
+        input_ir::FunctionKind::Receive => FunctionKind::Receive,
+        input_ir::FunctionKind::Modifier => FunctionKind::Modifier,
     }
 }
 
-pub type StateVariableMutability = Rc<StateVariableMutabilityStruct>;
-
-pub struct StateVariableMutabilityStruct {
-    pub(crate) ir_node: input_ir::StateVariableMutability,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum FunctionVisibility {
+    Public,
+    Private,
+    Internal,
+    External,
 }
 
-impl StateVariableMutabilityStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::StateVariableMutability,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_function_visibility(
+    ir_node: &input_ir::FunctionVisibility,
+    semantic: &Rc<SemanticAnalysis>,
+) -> FunctionVisibility {
+    match ir_node {
+        input_ir::FunctionVisibility::Public => FunctionVisibility::Public,
+        input_ir::FunctionVisibility::Private => FunctionVisibility::Private,
+        input_ir::FunctionVisibility::Internal => FunctionVisibility::Internal,
+        input_ir::FunctionVisibility::External => FunctionVisibility::External,
     }
+}
 
-    pub fn is_mutable(&self) -> bool {
-        matches!(self.ir_node, input_ir::StateVariableMutability::Mutable)
-    }
+pub enum FunctionMutability {
+    Pure,
+    View,
+    NonPayable,
+    Payable,
+}
 
-    pub fn is_constant(&self) -> bool {
-        matches!(self.ir_node, input_ir::StateVariableMutability::Constant)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_function_mutability(
+    ir_node: &input_ir::FunctionMutability,
+    semantic: &Rc<SemanticAnalysis>,
+) -> FunctionMutability {
+    match ir_node {
+        input_ir::FunctionMutability::Pure => FunctionMutability::Pure,
+        input_ir::FunctionMutability::View => FunctionMutability::View,
+        input_ir::FunctionMutability::NonPayable => FunctionMutability::NonPayable,
+        input_ir::FunctionMutability::Payable => FunctionMutability::Payable,
     }
+}
 
-    pub fn is_immutable(&self) -> bool {
-        matches!(self.ir_node, input_ir::StateVariableMutability::Immutable)
-    }
+pub enum StateVariableVisibility {
+    Public,
+    Private,
+    Internal,
+}
 
-    pub fn is_transient(&self) -> bool {
-        matches!(self.ir_node, input_ir::StateVariableMutability::Transient)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_state_variable_visibility(
+    ir_node: &input_ir::StateVariableVisibility,
+    semantic: &Rc<SemanticAnalysis>,
+) -> StateVariableVisibility {
+    match ir_node {
+        input_ir::StateVariableVisibility::Public => StateVariableVisibility::Public,
+        input_ir::StateVariableVisibility::Private => StateVariableVisibility::Private,
+        input_ir::StateVariableVisibility::Internal => StateVariableVisibility::Internal,
     }
 }
 
-pub type TupleDeconstructionMember = Rc<TupleDeconstructionMemberStruct>;
-
-pub struct TupleDeconstructionMemberStruct {
-    pub(crate) ir_node: input_ir::TupleDeconstructionMember,
-    pub(crate) semantic: Rc<SemanticAnalysis>,
+pub enum StateVariableMutability {
+    Mutable,
+    Constant,
+    Immutable,
+    Transient,
 }
-
-impl TupleDeconstructionMemberStruct {
-    pub(crate) fn create(
-        ir_node: &input_ir::TupleDeconstructionMember,
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_node: ir_node.clone(),
-            semantic: Rc::clone(semantic),
-        }
-    }
 
-    pub fn is_none(&self) -> bool {
-        matches!(self.ir_node, input_ir::TupleDeconstructionMember::None)
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_state_variable_mutability(
+    ir_node: &input_ir::StateVariableMutability,
+    semantic: &Rc<SemanticAnalysis>,
+) -> StateVariableMutability {
+    match ir_node {
+        input_ir::StateVariableMutability::Mutable => StateVariableMutability::Mutable,
+        input_ir::StateVariableMutability::Constant => StateVariableMutability::Constant,
+        input_ir::StateVariableMutability::Immutable => StateVariableMutability::Immutable,
+        input_ir::StateVariableMutability::Transient => StateVariableMutability::Transient,
     }
+}
 
-    pub fn is_identifier(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::TupleDeconstructionMember::Identifier(_)
-        )
-    }
+pub enum TupleDeconstructionMember {
+    None,
+    Identifier(Identifier),
+    VariableDeclarationStatement(VariableDeclarationStatement),
+}
 
-    pub fn as_identifier(&self) -> Option<Identifier> {
-        if let input_ir::TupleDeconstructionMember::Identifier(variant) = &self.ir_node {
-            Some(Rc::new(IdentifierStruct::create(variant, &self.semantic)))
-        } else {
-            None
+#[allow(clippy::too_many_lines)]
+pub(crate) fn create_tuple_deconstruction_member(
+    ir_node: &input_ir::TupleDeconstructionMember,
+    semantic: &Rc<SemanticAnalysis>,
+) -> TupleDeconstructionMember {
+    match ir_node {
+        input_ir::TupleDeconstructionMember::None => TupleDeconstructionMember::None,
+        input_ir::TupleDeconstructionMember::Identifier(variant) => {
+            TupleDeconstructionMember::Identifier(create_identifier(variant, semantic))
         }
-    }
-
-    pub fn is_variable_declaration_statement(&self) -> bool {
-        matches!(
-            self.ir_node,
-            input_ir::TupleDeconstructionMember::VariableDeclarationStatement(_)
-        )
-    }
-
-    pub fn as_variable_declaration_statement(&self) -> Option<VariableDeclarationStatement> {
-        if let input_ir::TupleDeconstructionMember::VariableDeclarationStatement(variant) =
-            &self.ir_node
-        {
-            Some(Rc::new(VariableDeclarationStatementStruct::create(
-                variant,
-                &self.semantic,
-            )))
-        } else {
-            None
+        input_ir::TupleDeconstructionMember::VariableDeclarationStatement(variant) => {
+            TupleDeconstructionMember::VariableDeclarationStatement(
+                create_variable_declaration_statement(variant, semantic),
+            )
         }
     }
 }
@@ -5882,27 +3893,40 @@ impl TupleDeconstructionMemberStruct {
 
 pub type SourceUnitMembers = Rc<SourceUnitMembersStruct>;
 
+pub(crate) fn create_source_unit_members(
+    nodes: &[input_ir::SourceUnitMember],
+    semantic: &Rc<SemanticAnalysis>,
+) -> SourceUnitMembers {
+    Rc::new(SourceUnitMembersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
 pub struct SourceUnitMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::SourceUnitMember>,
     pub(crate) semantic: Rc<SemanticAnalysis>,
 }
 
 impl SourceUnitMembersStruct {
-    fn create(nodes: &[input_ir::SourceUnitMember], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = SourceUnitMember> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(SourceUnitMemberStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_source_unit_member(ir_node, &self.semantic))
     }
 }
 
 pub type VersionExpressionSets = Rc<VersionExpressionSetsStruct>;
+
+pub(crate) fn create_version_expression_sets(
+    nodes: &[input_ir::VersionExpressionSet],
+    semantic: &Rc<SemanticAnalysis>,
+) -> VersionExpressionSets {
+    Rc::new(VersionExpressionSetsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct VersionExpressionSetsStruct {
     pub(crate) ir_nodes: Vec<input_ir::VersionExpressionSet>,
@@ -5910,21 +3934,24 @@ pub struct VersionExpressionSetsStruct {
 }
 
 impl VersionExpressionSetsStruct {
-    fn create(nodes: &[input_ir::VersionExpressionSet], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = VersionExpressionSet> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(VersionExpressionSetStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_version_expression_set(ir_node, &self.semantic))
     }
 }
 
 pub type VersionExpressionSet = Rc<VersionExpressionSetStruct>;
+
+pub(crate) fn create_version_expression_set(
+    nodes: &[input_ir::VersionExpression],
+    semantic: &Rc<SemanticAnalysis>,
+) -> VersionExpressionSet {
+    Rc::new(VersionExpressionSetStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct VersionExpressionSetStruct {
     pub(crate) ir_nodes: Vec<input_ir::VersionExpression>,
@@ -5932,21 +3959,24 @@ pub struct VersionExpressionSetStruct {
 }
 
 impl VersionExpressionSetStruct {
-    fn create(nodes: &[input_ir::VersionExpression], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = VersionExpression> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(VersionExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_version_expression(ir_node, &self.semantic))
     }
 }
 
 pub type ImportDeconstructionSymbols = Rc<ImportDeconstructionSymbolsStruct>;
+
+pub(crate) fn create_import_deconstruction_symbols(
+    nodes: &[input_ir::ImportDeconstructionSymbol],
+    semantic: &Rc<SemanticAnalysis>,
+) -> ImportDeconstructionSymbols {
+    Rc::new(ImportDeconstructionSymbolsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct ImportDeconstructionSymbolsStruct {
     pub(crate) ir_nodes: Vec<input_ir::ImportDeconstructionSymbol>,
@@ -5954,27 +3984,24 @@ pub struct ImportDeconstructionSymbolsStruct {
 }
 
 impl ImportDeconstructionSymbolsStruct {
-    fn create(
-        nodes: &[input_ir::ImportDeconstructionSymbol],
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = ImportDeconstructionSymbol> + use<'_> {
-        self.ir_nodes.iter().map(|ir_node| {
-            Rc::new(ImportDeconstructionSymbolStruct::create(
-                ir_node,
-                &self.semantic,
-            ))
-        })
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_import_deconstruction_symbol(ir_node, &self.semantic))
     }
 }
 
 pub type UsingDeconstructionSymbols = Rc<UsingDeconstructionSymbolsStruct>;
+
+pub(crate) fn create_using_deconstruction_symbols(
+    nodes: &[input_ir::UsingDeconstructionSymbol],
+    semantic: &Rc<SemanticAnalysis>,
+) -> UsingDeconstructionSymbols {
+    Rc::new(UsingDeconstructionSymbolsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct UsingDeconstructionSymbolsStruct {
     pub(crate) ir_nodes: Vec<input_ir::UsingDeconstructionSymbol>,
@@ -5982,27 +4009,24 @@ pub struct UsingDeconstructionSymbolsStruct {
 }
 
 impl UsingDeconstructionSymbolsStruct {
-    fn create(
-        nodes: &[input_ir::UsingDeconstructionSymbol],
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = UsingDeconstructionSymbol> + use<'_> {
-        self.ir_nodes.iter().map(|ir_node| {
-            Rc::new(UsingDeconstructionSymbolStruct::create(
-                ir_node,
-                &self.semantic,
-            ))
-        })
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_using_deconstruction_symbol(ir_node, &self.semantic))
     }
 }
 
 pub type InheritanceTypes = Rc<InheritanceTypesStruct>;
+
+pub(crate) fn create_inheritance_types(
+    nodes: &[input_ir::InheritanceType],
+    semantic: &Rc<SemanticAnalysis>,
+) -> InheritanceTypes {
+    Rc::new(InheritanceTypesStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct InheritanceTypesStruct {
     pub(crate) ir_nodes: Vec<input_ir::InheritanceType>,
@@ -6010,21 +4034,24 @@ pub struct InheritanceTypesStruct {
 }
 
 impl InheritanceTypesStruct {
-    fn create(nodes: &[input_ir::InheritanceType], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = InheritanceType> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(InheritanceTypeStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_inheritance_type(ir_node, &self.semantic))
     }
 }
 
 pub type ContractMembers = Rc<ContractMembersStruct>;
+
+pub(crate) fn create_contract_members(
+    nodes: &[input_ir::ContractMember],
+    semantic: &Rc<SemanticAnalysis>,
+) -> ContractMembers {
+    Rc::new(ContractMembersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct ContractMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
@@ -6032,21 +4059,24 @@ pub struct ContractMembersStruct {
 }
 
 impl ContractMembersStruct {
-    fn create(nodes: &[input_ir::ContractMember], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(ContractMemberStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
 }
 
 pub type InterfaceMembers = Rc<InterfaceMembersStruct>;
+
+pub(crate) fn create_interface_members(
+    nodes: &[input_ir::ContractMember],
+    semantic: &Rc<SemanticAnalysis>,
+) -> InterfaceMembers {
+    Rc::new(InterfaceMembersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct InterfaceMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
@@ -6054,21 +4084,24 @@ pub struct InterfaceMembersStruct {
 }
 
 impl InterfaceMembersStruct {
-    fn create(nodes: &[input_ir::ContractMember], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(ContractMemberStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
 }
 
 pub type LibraryMembers = Rc<LibraryMembersStruct>;
+
+pub(crate) fn create_library_members(
+    nodes: &[input_ir::ContractMember],
+    semantic: &Rc<SemanticAnalysis>,
+) -> LibraryMembers {
+    Rc::new(LibraryMembersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct LibraryMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::ContractMember>,
@@ -6076,21 +4109,24 @@ pub struct LibraryMembersStruct {
 }
 
 impl LibraryMembersStruct {
-    fn create(nodes: &[input_ir::ContractMember], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = ContractMember> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(ContractMemberStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
 }
 
 pub type StructMembers = Rc<StructMembersStruct>;
+
+pub(crate) fn create_struct_members(
+    nodes: &[input_ir::StructMember],
+    semantic: &Rc<SemanticAnalysis>,
+) -> StructMembers {
+    Rc::new(StructMembersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct StructMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::StructMember>,
@@ -6098,21 +4134,24 @@ pub struct StructMembersStruct {
 }
 
 impl StructMembersStruct {
-    fn create(nodes: &[input_ir::StructMember], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = StructMember> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(StructMemberStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_struct_member(ir_node, &self.semantic))
     }
 }
 
 pub type EnumMembers = Rc<EnumMembersStruct>;
+
+pub(crate) fn create_enum_members(
+    nodes: &[Rc<TerminalNode>],
+    semantic: &Rc<SemanticAnalysis>,
+) -> EnumMembers {
+    Rc::new(EnumMembersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct EnumMembersStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
@@ -6120,21 +4159,24 @@ pub struct EnumMembersStruct {
 }
 
 impl EnumMembersStruct {
-    fn create(nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = Identifier> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 }
 
 pub type Parameters = Rc<ParametersStruct>;
+
+pub(crate) fn create_parameters(
+    nodes: &[input_ir::Parameter],
+    semantic: &Rc<SemanticAnalysis>,
+) -> Parameters {
+    Rc::new(ParametersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct ParametersStruct {
     pub(crate) ir_nodes: Vec<input_ir::Parameter>,
@@ -6142,21 +4184,24 @@ pub struct ParametersStruct {
 }
 
 impl ParametersStruct {
-    fn create(nodes: &[input_ir::Parameter], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = Parameter> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(ParameterStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_parameter(ir_node, &self.semantic))
     }
 }
 
 pub type OverridePaths = Rc<OverridePathsStruct>;
+
+pub(crate) fn create_override_paths(
+    nodes: &[input_ir::IdentifierPath],
+    semantic: &Rc<SemanticAnalysis>,
+) -> OverridePaths {
+    Rc::new(OverridePathsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct OverridePathsStruct {
     pub(crate) ir_nodes: Vec<input_ir::IdentifierPath>,
@@ -6164,21 +4209,24 @@ pub struct OverridePathsStruct {
 }
 
 impl OverridePathsStruct {
-    fn create(nodes: &[input_ir::IdentifierPath], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = IdentifierPath> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(IdentifierPathStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier_path(ir_node, &self.semantic))
     }
 }
 
 pub type Statements = Rc<StatementsStruct>;
+
+pub(crate) fn create_statements(
+    nodes: &[input_ir::Statement],
+    semantic: &Rc<SemanticAnalysis>,
+) -> Statements {
+    Rc::new(StatementsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct StatementsStruct {
     pub(crate) ir_nodes: Vec<input_ir::Statement>,
@@ -6186,21 +4234,24 @@ pub struct StatementsStruct {
 }
 
 impl StatementsStruct {
-    fn create(nodes: &[input_ir::Statement], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = Statement> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(StatementStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_statement(ir_node, &self.semantic))
     }
 }
 
 pub type CatchClauses = Rc<CatchClausesStruct>;
+
+pub(crate) fn create_catch_clauses(
+    nodes: &[input_ir::CatchClause],
+    semantic: &Rc<SemanticAnalysis>,
+) -> CatchClauses {
+    Rc::new(CatchClausesStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct CatchClausesStruct {
     pub(crate) ir_nodes: Vec<input_ir::CatchClause>,
@@ -6208,21 +4259,24 @@ pub struct CatchClausesStruct {
 }
 
 impl CatchClausesStruct {
-    fn create(nodes: &[input_ir::CatchClause], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = CatchClause> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(CatchClauseStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_catch_clause(ir_node, &self.semantic))
     }
 }
 
 pub type PositionalArguments = Rc<PositionalArgumentsStruct>;
+
+pub(crate) fn create_positional_arguments(
+    nodes: &[input_ir::Expression],
+    semantic: &Rc<SemanticAnalysis>,
+) -> PositionalArguments {
+    Rc::new(PositionalArgumentsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct PositionalArgumentsStruct {
     pub(crate) ir_nodes: Vec<input_ir::Expression>,
@@ -6230,21 +4284,24 @@ pub struct PositionalArgumentsStruct {
 }
 
 impl PositionalArgumentsStruct {
-    fn create(nodes: &[input_ir::Expression], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = Expression> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 }
 
 pub type NamedArguments = Rc<NamedArgumentsStruct>;
+
+pub(crate) fn create_named_arguments(
+    nodes: &[input_ir::NamedArgument],
+    semantic: &Rc<SemanticAnalysis>,
+) -> NamedArguments {
+    Rc::new(NamedArgumentsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct NamedArgumentsStruct {
     pub(crate) ir_nodes: Vec<input_ir::NamedArgument>,
@@ -6252,21 +4309,24 @@ pub struct NamedArgumentsStruct {
 }
 
 impl NamedArgumentsStruct {
-    fn create(nodes: &[input_ir::NamedArgument], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = NamedArgument> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(NamedArgumentStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_named_argument(ir_node, &self.semantic))
     }
 }
 
 pub type CallOptions = Rc<CallOptionsStruct>;
+
+pub(crate) fn create_call_options(
+    nodes: &[input_ir::NamedArgument],
+    semantic: &Rc<SemanticAnalysis>,
+) -> CallOptions {
+    Rc::new(CallOptionsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct CallOptionsStruct {
     pub(crate) ir_nodes: Vec<input_ir::NamedArgument>,
@@ -6274,21 +4334,24 @@ pub struct CallOptionsStruct {
 }
 
 impl CallOptionsStruct {
-    fn create(nodes: &[input_ir::NamedArgument], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = NamedArgument> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(NamedArgumentStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_named_argument(ir_node, &self.semantic))
     }
 }
 
 pub type TupleValues = Rc<TupleValuesStruct>;
+
+pub(crate) fn create_tuple_values(
+    nodes: &[input_ir::TupleValue],
+    semantic: &Rc<SemanticAnalysis>,
+) -> TupleValues {
+    Rc::new(TupleValuesStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct TupleValuesStruct {
     pub(crate) ir_nodes: Vec<input_ir::TupleValue>,
@@ -6296,21 +4359,24 @@ pub struct TupleValuesStruct {
 }
 
 impl TupleValuesStruct {
-    fn create(nodes: &[input_ir::TupleValue], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = TupleValue> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(TupleValueStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_tuple_value(ir_node, &self.semantic))
     }
 }
 
 pub type ArrayValues = Rc<ArrayValuesStruct>;
+
+pub(crate) fn create_array_values(
+    nodes: &[input_ir::Expression],
+    semantic: &Rc<SemanticAnalysis>,
+) -> ArrayValues {
+    Rc::new(ArrayValuesStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct ArrayValuesStruct {
     pub(crate) ir_nodes: Vec<input_ir::Expression>,
@@ -6318,21 +4384,24 @@ pub struct ArrayValuesStruct {
 }
 
 impl ArrayValuesStruct {
-    fn create(nodes: &[input_ir::Expression], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = Expression> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(ExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 }
 
 pub type IdentifierPath = Rc<IdentifierPathStruct>;
+
+pub(crate) fn create_identifier_path(
+    nodes: &[Rc<TerminalNode>],
+    semantic: &Rc<SemanticAnalysis>,
+) -> IdentifierPath {
+    Rc::new(IdentifierPathStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct IdentifierPathStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
@@ -6340,21 +4409,24 @@ pub struct IdentifierPathStruct {
 }
 
 impl IdentifierPathStruct {
-    fn create(nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = Identifier> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(IdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 }
 
 pub type YulStatements = Rc<YulStatementsStruct>;
+
+pub(crate) fn create_yul_statements(
+    nodes: &[input_ir::YulStatement],
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulStatements {
+    Rc::new(YulStatementsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct YulStatementsStruct {
     pub(crate) ir_nodes: Vec<input_ir::YulStatement>,
@@ -6362,21 +4434,24 @@ pub struct YulStatementsStruct {
 }
 
 impl YulStatementsStruct {
-    fn create(nodes: &[input_ir::YulStatement], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = YulStatement> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(YulStatementStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_yul_statement(ir_node, &self.semantic))
     }
 }
 
 pub type YulParameters = Rc<YulParametersStruct>;
+
+pub(crate) fn create_yul_parameters(
+    nodes: &[Rc<TerminalNode>],
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulParameters {
+    Rc::new(YulParametersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct YulParametersStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
@@ -6384,21 +4459,24 @@ pub struct YulParametersStruct {
 }
 
 impl YulParametersStruct {
-    fn create(nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = YulIdentifier> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(YulIdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_yul_identifier(ir_node, &self.semantic))
     }
 }
 
 pub type YulVariableNames = Rc<YulVariableNamesStruct>;
+
+pub(crate) fn create_yul_variable_names(
+    nodes: &[Rc<TerminalNode>],
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulVariableNames {
+    Rc::new(YulVariableNamesStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct YulVariableNamesStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
@@ -6406,21 +4484,24 @@ pub struct YulVariableNamesStruct {
 }
 
 impl YulVariableNamesStruct {
-    fn create(nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = YulIdentifier> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(YulIdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_yul_identifier(ir_node, &self.semantic))
     }
 }
 
 pub type YulSwitchCases = Rc<YulSwitchCasesStruct>;
+
+pub(crate) fn create_yul_switch_cases(
+    nodes: &[input_ir::YulSwitchCase],
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulSwitchCases {
+    Rc::new(YulSwitchCasesStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct YulSwitchCasesStruct {
     pub(crate) ir_nodes: Vec<input_ir::YulSwitchCase>,
@@ -6428,21 +4509,24 @@ pub struct YulSwitchCasesStruct {
 }
 
 impl YulSwitchCasesStruct {
-    fn create(nodes: &[input_ir::YulSwitchCase], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = YulSwitchCase> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(YulSwitchCaseStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_yul_switch_case(ir_node, &self.semantic))
     }
 }
 
 pub type YulArguments = Rc<YulArgumentsStruct>;
+
+pub(crate) fn create_yul_arguments(
+    nodes: &[input_ir::YulExpression],
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulArguments {
+    Rc::new(YulArgumentsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct YulArgumentsStruct {
     pub(crate) ir_nodes: Vec<input_ir::YulExpression>,
@@ -6450,21 +4534,24 @@ pub struct YulArgumentsStruct {
 }
 
 impl YulArgumentsStruct {
-    fn create(nodes: &[input_ir::YulExpression], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = YulExpression> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(YulExpressionStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_yul_expression(ir_node, &self.semantic))
     }
 }
 
 pub type YulPaths = Rc<YulPathsStruct>;
+
+pub(crate) fn create_yul_paths(
+    nodes: &[input_ir::YulPath],
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulPaths {
+    Rc::new(YulPathsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct YulPathsStruct {
     pub(crate) ir_nodes: Vec<input_ir::YulPath>,
@@ -6472,21 +4559,24 @@ pub struct YulPathsStruct {
 }
 
 impl YulPathsStruct {
-    fn create(nodes: &[input_ir::YulPath], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = YulPath> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(YulPathStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_yul_path(ir_node, &self.semantic))
     }
 }
 
 pub type YulPath = Rc<YulPathStruct>;
+
+pub(crate) fn create_yul_path(
+    nodes: &[Rc<TerminalNode>],
+    semantic: &Rc<SemanticAnalysis>,
+) -> YulPath {
+    Rc::new(YulPathStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct YulPathStruct {
     pub(crate) ir_nodes: Vec<Rc<TerminalNode>>,
@@ -6494,21 +4584,24 @@ pub struct YulPathStruct {
 }
 
 impl YulPathStruct {
-    fn create(nodes: &[Rc<TerminalNode>], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = YulIdentifier> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(YulIdentifierStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_yul_identifier(ir_node, &self.semantic))
     }
 }
 
 pub type ModifierInvocations = Rc<ModifierInvocationsStruct>;
+
+pub(crate) fn create_modifier_invocations(
+    nodes: &[input_ir::ModifierInvocation],
+    semantic: &Rc<SemanticAnalysis>,
+) -> ModifierInvocations {
+    Rc::new(ModifierInvocationsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct ModifierInvocationsStruct {
     pub(crate) ir_nodes: Vec<input_ir::ModifierInvocation>,
@@ -6516,21 +4609,24 @@ pub struct ModifierInvocationsStruct {
 }
 
 impl ModifierInvocationsStruct {
-    fn create(nodes: &[input_ir::ModifierInvocation], semantic: &Rc<SemanticAnalysis>) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = ModifierInvocation> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| Rc::new(ModifierInvocationStruct::create(ir_node, &self.semantic)))
+            .map(|ir_node| create_modifier_invocation(ir_node, &self.semantic))
     }
 }
 
 pub type TupleDeconstructionMembers = Rc<TupleDeconstructionMembersStruct>;
+
+pub(crate) fn create_tuple_deconstruction_members(
+    nodes: &[input_ir::TupleDeconstructionMember],
+    semantic: &Rc<SemanticAnalysis>,
+) -> TupleDeconstructionMembers {
+    Rc::new(TupleDeconstructionMembersStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
 
 pub struct TupleDeconstructionMembersStruct {
     pub(crate) ir_nodes: Vec<input_ir::TupleDeconstructionMember>,
@@ -6538,22 +4634,9 @@ pub struct TupleDeconstructionMembersStruct {
 }
 
 impl TupleDeconstructionMembersStruct {
-    fn create(
-        nodes: &[input_ir::TupleDeconstructionMember],
-        semantic: &Rc<SemanticAnalysis>,
-    ) -> Self {
-        Self {
-            ir_nodes: nodes.to_vec(),
-            semantic: Rc::clone(semantic),
-        }
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = TupleDeconstructionMember> + use<'_> {
-        self.ir_nodes.iter().map(|ir_node| {
-            Rc::new(TupleDeconstructionMemberStruct::create(
-                ir_node,
-                &self.semantic,
-            ))
-        })
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_tuple_deconstruction_member(ir_node, &self.semantic))
     }
 }

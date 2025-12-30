@@ -6,7 +6,7 @@ use super::nodes::*;
 use std::rc::Rc;
 use crate::cst::TerminalNode;
 
-use super::{input as input_ir, Identifier, YulIdentifier};
+use super::{Identifier, YulIdentifier};
 
 pub trait Visitor {
   {%- for parent_type, sequence in target.sequences %}
@@ -71,13 +71,6 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
 // Choices:
 //
 
-{% macro render_accept_variant(variant) %}
-  accept_{{ variant.name | snake_case }}(
-    &node.as_{{ variant.name | snake_case }}().unwrap(),
-    visitor,
-  );
-{% endmacro render_accept_variant %}
-
 {% for parent_type, choice in target.choices %}
   {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
   {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
@@ -93,27 +86,20 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
       }
       #[allow(clippy::single_match)]
       #[allow(clippy::match_wildcard_for_single_variants)]
-      match &node.ir_node {
+      match node {
         {% for nonterminal in nonterminals -%}
-          input_ir::{{ parent_type }}::{{ nonterminal.name }}(_) => {
-            {%- if custom_types is containing(nonterminal.name) or
-                   target.sequences is containing(nonterminal.name) or
-                   target.choices is containing(nonterminal.name) -%}
-              {{ self::render_accept_variant(variant = nonterminal) }}
-            {%- elif target.collections is containing(nonterminal.name) -%}
-              {%- set item_type = target.collections[nonterminal.name].item_type -%}
-              {% if custom_types is containing(item_type.name) or not item_type.is_terminal %}
-                {{ self::render_accept_variant(variant = nonterminal) }}
-              {% endif %}
-            {%- endif -%}
+          {{ parent_type }}::{{ nonterminal.name }}(variant) => {
+            accept_{{ nonterminal.name | snake_case }}(variant, visitor);
           }
         {%- endfor %}
         {% for terminal in non_unique_terminals -%}
-          input_ir::{{ parent_type }}::{{ terminal.name }}(_) => {
-            {%- if custom_types is containing(terminal.name) %}
-              {{ self::render_accept_variant(variant = terminal) }}
-            {%- endif %}
-          }
+          {% if custom_types is containing(terminal.name) %}
+            {{ parent_type }}::{{ terminal.name }}(variant) => {
+              accept_{{ terminal.name | snake_case }}(variant, visitor);
+            }
+          {% else %}
+            {{ parent_type }}::{{ terminal.name }}(_) => {},
+          {% endif %}
         {%- endfor %}
         {%- if unique_terminals | length > 0 %}
           _ => {}
