@@ -27,7 +27,7 @@ categories = [
 [features]
 default = []
 __private_ariadne_errors = ["dep:ariadne"]
-__private_backend_api = ["dep:indexmap"]
+__private_backend_api = ["dep:indexmap", "dep:paste"]
 __private_wasm_apis = []
 __private_testing_utils = ["metaslang_bindings/__private_testing_utils"]
 
@@ -36,6 +36,7 @@ ariadne = { workspace = true, optional = true }
 indexmap = { workspace = true, optional = true }
 metaslang_bindings = { workspace = true }
 metaslang_cst = { workspace = true }
+paste = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
 strum = { workspace = true }

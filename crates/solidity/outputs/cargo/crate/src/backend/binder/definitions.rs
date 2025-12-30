@@ -8,6 +8,7 @@ use crate::cst::{NodeId, TerminalNode};
 //////////////////////////////////////////////////////////////////////////////
 // Definitions
 
+// __SLANG_DEFINITION_TYPES__ keep in sync with AST type
 #[derive(Debug)]
 pub enum Definition {
     Constant(ConstantDefinition),

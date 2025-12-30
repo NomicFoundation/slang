@@ -109,6 +109,8 @@ pub struct Binder {
     /// Linearisations, as a vector of definitions, indexed by the
     /// contract/interface definition's `NodeId`
     linearisations: HashMap<NodeId, Vec<NodeId>>,
+    /// Reverse mapping from definition `NodeId` to the set of references that bind to it
+    definitions_to_references: HashMap<NodeId, Vec<NodeId>>,
 }
 
 /// This controls visibility filtering and how to use the linearisation when
@@ -141,6 +143,7 @@ impl Binder {
             references: HashMap::new(),
             node_typing: HashMap::new(),
             linearisations: HashMap::new(),
+            definitions_to_references: HashMap::new(),
         }
     }
 
@@ -260,6 +263,31 @@ impl Binder {
 
     pub fn references(&self) -> &HashMap<NodeId, Reference> {
         &self.references
+    }
+
+    pub(crate) fn update_definitions_to_references_index(&mut self) {
+        // Build reverse mapping from definitions to references
+        let mut definitions: HashMap<NodeId, Vec<NodeId>> = HashMap::new();
+        for (reference_id, reference) in &self.references {
+            match &reference.resolution {
+                Resolution::Definition(node_id) => {
+                    if let Some(references) = definitions.get_mut(node_id) {
+                        references.push(*reference_id);
+                    } else {
+                        definitions.insert(*node_id, vec![*reference_id]);
+                    }
+                }
+                Resolution::Ambiguous(_) | Resolution::BuiltIn(_) | Resolution::Unresolved => {}
+            }
+        }
+        self.definitions_to_references = definitions;
+    }
+
+    pub fn get_references_by_definition_id(&self, node_id: NodeId) -> Vec<NodeId> {
+        self.definitions_to_references
+            .get(&node_id)
+            .cloned()
+            .unwrap_or_default()
     }
 
     pub(crate) fn insert_using_directive_in_scope(

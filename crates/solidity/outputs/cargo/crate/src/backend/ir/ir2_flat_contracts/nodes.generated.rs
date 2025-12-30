@@ -898,7 +898,7 @@ pub struct YulFunctionCallExpressionStruct {
 // Choices:
 //
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ContractDefinition(ContractDefinition),
@@ -915,33 +915,33 @@ pub enum SourceUnitMember {
     ImportClause(ImportClause),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ExperimentalFeature {
     StringLiteral(Rc<TerminalNode>),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionOperator {
     Caret,
     Tilde,
@@ -952,26 +952,26 @@ pub enum VersionOperator {
     GreaterThanEqual,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     SingleQuotedVersionLiteral(Rc<TerminalNode>),
     DoubleQuotedVersionLiteral(Rc<TerminalNode>),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ImportClause {
     PathImport(PathImport),
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -990,13 +990,13 @@ pub enum UsingOperator {
     Tilde,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -1009,7 +1009,7 @@ pub enum ContractMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -1018,7 +1018,7 @@ pub enum TypeName {
     IdentifierPath(IdentifierPath),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ElementaryType {
     AddressType(AddressType),
     BytesKeyword(Rc<TerminalNode>),
@@ -1031,7 +1031,7 @@ pub enum ElementaryType {
     StringKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -1052,14 +1052,14 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
     CallDataKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ForStatementInitialization {
     TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
@@ -1067,13 +1067,13 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -1110,13 +1110,13 @@ pub enum Expression {
     FalseKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -1131,14 +1131,14 @@ pub enum NumberUnit {
     YearsKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StringExpression {
     Strings(Strings),
     HexStrings(HexStrings),
     UnicodeStrings(UnicodeStrings),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -1155,32 +1155,32 @@ pub enum YulStatement {
     YulExpression(YulExpression),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulAssignmentOperator {
     YulColonAndEqual(YulColonAndEqual),
     ColonEqual,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulStackAssignmentOperator {
     YulEqualAndColon(YulEqualAndColon),
     EqualColon,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
     YulPath(YulPath),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulLiteral {
     YulDecimalLiteral(Rc<TerminalNode>),
     YulHexLiteral(Rc<TerminalNode>),
@@ -1190,7 +1190,7 @@ pub enum YulLiteral {
     YulFalseKeyword,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionKind {
     Regular,
     Constructor,
@@ -1200,7 +1200,7 @@ pub enum FunctionKind {
     Modifier,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -1208,7 +1208,7 @@ pub enum FunctionVisibility {
     External,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -1216,14 +1216,14 @@ pub enum FunctionMutability {
     Payable,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StateVariableVisibility {
     Public,
     Private,
     Internal,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
@@ -1231,7 +1231,7 @@ pub enum StateVariableMutability {
     Transient,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum TupleDeconstructionMember {
     VariableDeclarationStatement(VariableDeclarationStatement),
     Identifier(Rc<TerminalNode>),

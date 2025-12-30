@@ -26,6 +26,10 @@ pub fn run(semantic_analysis: &mut SemanticAnalysis) {
     for semantic_file in semantic_analysis.files.values() {
         pass.visit_file(semantic_file.ir_root());
     }
+    // update definition->references reverse mapping
+    semantic_analysis
+        .binder
+        .update_definitions_to_references_index();
 }
 
 struct ScopeFrame {
