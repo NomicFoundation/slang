@@ -100,7 +100,7 @@ SomeIdentifier<Except>: {{ id }}<'arena> = {
 
 extern {
     type Location = usize;
-    // TODO error recovery
+    // TODO(v2): error recovery
     type Error = ();
 
     enum lexemes::LexemeKind {
@@ -109,57 +109,3 @@ extern {
         {% endfor %}
     }
 }
-
-{% raw %}
-// Manually added rules
-
-    IdentifierPathNoError: IdentifierPath<'arena> = {
-        // We either have any identifier with a tail (ie a period)
-        <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(arena, _head, Some(_tail)),
-        // or a single identifier that is not `revert`
-        <_head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(arena, _head, None),
-    };
-
-
-    // These are the attributes that can appear in a state variable but not a function,
-    // they can work as a limit between these definitions.
-    #[inline]
-    SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
-            <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(arena, <>),
-            <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(arena, <>),
-            <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(arena, <>),
-    };
-
-
-
-
-
-
-
-
-
-
-
- 
-    
-    
-// An IAP that tracks whether it has a trailing identifier path
-IndexAccessPath<IdentPathRule>: IndexAccessPath<'arena> = {
-    <iap: IndexAccessPath<IdentifierPath>> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(arena, <>),
-    <IndexAccessPath1<IdentPathRule>>  => <>,
-};
-IndexAccessPath1<IdentPathRule>: IndexAccessPath<'arena> = {
-    <_Identifier: IdentPathRule> => new_index_access_path_from_identifier_path(arena, <>),
-    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(arena, <>),
-};
-
-NoIdentPath: IdentifierPath<'arena> = {
-};
-
-
-
-
-
-
-
-{% endraw %}

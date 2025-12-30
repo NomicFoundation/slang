@@ -158,47 +158,15 @@ impl<'a> ParserBuilder<'a> {
         };
 
         if let Some(parser_options) = parser_options {
-            if parser_options.inline {
-                for item in &mut items {
-                    item.inline = true;
-                }
-            }
-
-            if parser_options.pubb {
-                for item in &mut items {
-                    item.pubb = true;
-                }
+            for item in &mut items {
+                item.inline = parser_options.inline;
+                item.pubb = parser_options.pubb;
             }
 
             if let Some(verbatim) = &parser_options.verbatim {
                 return LALRPOPItem::Verbatim(verbatim.clone());
             }
         }
-
-        // Remove all rules that we generate by hand, a bit hacky
-        const EXCLUDED_ITEMS: [&str; 19] = [
-            "IndexAccessExpression",
-            "MemberAccessExpression",
-            "CallOptionsExpression",
-            "FunctionCallExpression",
-            "PrefixExpression",
-            "PostfixExpression",
-            "ExponentiationExpression",
-            "MultiplicativeExpression",
-            "AdditiveExpression",
-            "ShiftExpression",
-            "BitwiseAndExpression",
-            "BitwiseXorExpression",
-            "BitwiseOrExpression",
-            "InequalityExpression",
-            "EqualityExpression",
-            "AndExpression",
-            "OrExpression",
-            "ConditionalExpression",
-            "AssignmentExpression",
-        ];
-
-        items.retain(|item| !EXCLUDED_ITEMS.contains(&(*item.name).as_str()));
 
         LALRPOPItem::Items(items)
 
