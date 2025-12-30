@@ -4250,7 +4250,7 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath<'arena> = {
                                     FieldDelimiters(open = open_paren, close = close_paren)
                             ),
                             // We need this to be required, otherwise it's just an unnamed argument group
-                            // TODO double check
+                            // TODO(v2): double check
                             fields = (
                                 open_paren = Required(OpenParen),
                                 arguments = Required(NamedArgumentGroup),
@@ -4316,7 +4316,7 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath<'arena> = {
                             fields = (
                                 new_keyword = Required(NewKeyword),
                                 type_name = Required(TypeName),
-                                // TODO: This is a hack to avoid some grammar ambiguities
+                                // TODO(v2): This disallows some grammar ambiguities, we should double check it's ok
                                 options =
                                     Optional(reference = CallOptionsNew, enabled = From("0.6.2")),
                                 arguments = Required(ArgumentsDeclaration)

@@ -1,37 +1,39 @@
+//! This module contains certain nodes and functions used internally by the parser.
+//!
+//! They shouldn't be used outside of the parser, and should be transformed into AST nodes.
+
 use bumpalo::boxed::Box;
 use bumpalo::collections::{CollectIn, Vec};
 use bumpalo::Bump;
-///! This module contains certain nodes and functions used internally by the parser.
 use slang_solidity_v2_ast::ast::nodes::*;
 
-// Special cases
-
-// An IndexAccessPath represents a path or elementary type followed by
-// zero or more index accesses, e.g. foo.bar[0][1:3] or uint256[5][]
-//
-// It's heavily inspired by solc
-// https://github.com/argotorg/solidity/blob/194b114664c7daebc2ff68af3c573272f5d28913/libsolidity/parsing/Parser.h#L198-L209
+/// An IndexAccessPath represents a path or elementary type followed by
+/// zero or more index accesses, e.g. foo.bar[0][1:3] or uint256[5][]
+///
+/// It's heavily inspired by solc
+/// https://github.com/argotorg/solidity/blob/194b114664c7daebc2ff68af3c573272f5d28913/libsolidity/parsing/Parser.h#L198-L209
 #[derive(Debug)]
-pub struct IndexAccessPath<'arena> {
+pub(crate) struct IndexAccessPath<'arena> {
     pub path: Path<'arena>,
     pub indices: Vec<'arena, Index<'arena>>,
 }
 
 #[derive(Debug)]
-pub enum Path<'arena> {
+pub(crate) enum Path<'arena> {
     IdentifierPath(IdentifierPath<'arena>),
     ElementaryType(ElementaryType<'arena>),
 }
 
 #[derive(Debug)]
-pub struct Index<'arena> {
+pub(crate) struct Index<'arena> {
     pub open_bracket: OpenBracket<'arena>,
     pub start: Option<Expression<'arena>>,
     pub end: Option<IndexAccessEnd<'arena>>,
     pub close_bracket: CloseBracket<'arena>,
 }
 
-pub fn index_access_path_add_index<'arena>(
+/// Given an IAP it adds a new index to it
+pub(crate) fn index_access_path_add_index<'arena>(
     _arena: &'arena Bump,
     mut iap: IndexAccessPath<'arena>,
     open_bracket: OpenBracket<'arena>,
@@ -48,7 +50,8 @@ pub fn index_access_path_add_index<'arena>(
     iap
 }
 
-pub fn new_index_access_path_from_identifier_path<'arena>(
+/// Creates an IAP from an identifier path
+pub(crate) fn new_index_access_path_from_identifier_path<'arena>(
     arena: &'arena Bump,
     identifier_path: IdentifierPath<'arena>,
 ) -> IndexAccessPath<'arena> {
@@ -58,7 +61,8 @@ pub fn new_index_access_path_from_identifier_path<'arena>(
     }
 }
 
-pub fn new_index_access_path_from_elementary_type<'arena>(
+/// Creates a new IAP from an elementary type
+pub(crate) fn new_index_access_path_from_elementary_type<'arena>(
     arena: &'arena Bump,
     elementary_type: ElementaryType<'arena>,
 ) -> IndexAccessPath<'arena> {
@@ -68,16 +72,19 @@ pub fn new_index_access_path_from_elementary_type<'arena>(
     }
 }
 
-pub fn new_type_name_index_access_path<'arena>(
+/// Consumes an IAP and creates a TypeName
+///
+/// TODO(v2): Return an error if any index has slicing rather than panicing
+pub(crate) fn new_type_name_index_access_path<'arena>(
     arena: &'arena Bump,
     index_access_path: IndexAccessPath<'arena>,
 ) -> TypeName<'arena> {
     let IndexAccessPath { path, indices } = index_access_path;
 
-    let mut type_name = Some(match path {
+    let mut type_name = match path {
         Path::IdentifierPath(path) => new_type_name_identifier_path(arena, path),
         Path::ElementaryType(elem_type) => new_type_name_elementary_type(arena, elem_type),
-    });
+    };
 
     for index in indices.into_iter() {
         assert!(
@@ -86,59 +93,53 @@ pub fn new_type_name_index_access_path<'arena>(
         );
         let array_type = new_array_type_name(
             arena,
-            type_name
-                .take()
-                .expect("There surely is something in there"),
+            type_name,
             index.open_bracket,
             index.start,
             index.close_bracket,
         );
-        type_name = Some(new_type_name_array_type_name(arena, array_type));
+        type_name = new_type_name_array_type_name(arena, array_type);
     }
 
-    type_name.expect("There surely is something in there")
+    type_name
 }
 
-pub fn new_expression_index_access_path<'arena>(
+/// Consumes an IAP and returns an Expression
+pub(crate) fn new_expression_index_access_path<'arena>(
     arena: &'arena Bump,
     index_access_path: IndexAccessPath<'arena>,
 ) -> Expression<'arena> {
     let IndexAccessPath { path, indices } = index_access_path;
 
-    let mut expression = Some(match path {
+    let mut expression = match path {
         Path::IdentifierPath(path) => new_expression_identifier_path(arena, path),
         Path::ElementaryType(elem_type) => new_expression_elementary_type(arena, elem_type),
-    });
+    };
 
     for index in indices.into_iter() {
         let array_expression = new_index_access_expression(
             arena,
-            expression
-                .take()
-                .expect("There surely is something in there"),
+            expression,
             index.open_bracket,
             index.start,
             index.end,
             index.close_bracket,
         );
-        expression = Some(new_expression_index_access_expression(
-            arena,
-            array_expression,
-        ));
+        expression = new_expression_index_access_expression(arena, array_expression);
     }
 
-    expression.expect("There surely is something in there")
+    expression
 }
 
 #[derive(Debug)]
-pub struct ProtoTuple<'arena> {
+pub(crate) struct ProtoTuple<'arena> {
     // Do we care about range in source code?
     pub _open_paren: OpenParen<'arena>,
     pub _elements: Vec<'arena, ProtoTupleElement<'arena>>,
     pub _close_paren: CloseParen<'arena>,
 }
 
-pub fn new_proto_tuple<'arena>(
+pub(crate) fn new_proto_tuple<'arena>(
     _arena: &'arena Bump,
     _open_paren: OpenParen<'arena>,
     _elements: Vec<'arena, ProtoTupleElement<'arena>>,
@@ -151,7 +152,7 @@ pub fn new_proto_tuple<'arena>(
     }
 }
 
-pub fn new_tuple_expression_from_proto_tuple<'arena>(
+pub(crate) fn new_tuple_expression_from_proto_tuple<'arena>(
     arena: &'arena Bump,
     proto_tuple: ProtoTuple<'arena>,
 ) -> TupleExpression<'arena> {
@@ -175,7 +176,7 @@ pub fn new_tuple_expression_from_proto_tuple<'arena>(
     )
 }
 
-pub fn new_tuple_deconstruction_statement_from_proto_tuple<'arena>(
+pub(crate) fn new_tuple_deconstruction_statement_from_proto_tuple<'arena>(
     arena: &'arena Bump,
     proto_tuple: ProtoTuple<'arena>,
     equal: Equal<'arena>,
@@ -243,28 +244,28 @@ pub fn new_tuple_deconstruction_statement_from_proto_tuple<'arena>(
 }
 
 #[derive(Debug)]
-pub enum ProtoTupleElement<'arena> {
+pub(crate) enum ProtoTupleElement<'arena> {
     Expression(Expression<'arena>),
     Declaration(VariableDeclaration<'arena>),
     StorageLocation(StorageLocation<'arena>, Identifier<'arena>),
     Empty,
 }
 
-pub fn new_proto_tuple_element_expression<'arena>(
+pub(crate) fn new_proto_tuple_element_expression<'arena>(
     _arena: &'arena Bump,
     name: Expression<'arena>,
 ) -> ProtoTupleElement<'arena> {
     ProtoTupleElement::Expression(name)
 }
 
-pub fn new_proto_tuple_element_declaration<'arena>(
+pub(crate) fn new_proto_tuple_element_declaration<'arena>(
     _arena: &'arena Bump,
     decl: VariableDeclaration<'arena>,
 ) -> ProtoTupleElement<'arena> {
     ProtoTupleElement::Declaration(decl)
 }
 
-pub fn new_proto_tuple_element_storage_location<'arena>(
+pub(crate) fn new_proto_tuple_element_storage_location<'arena>(
     _arena: &'arena Bump,
     storage_location: StorageLocation<'arena>,
     name: Identifier<'arena>,
@@ -272,11 +273,13 @@ pub fn new_proto_tuple_element_storage_location<'arena>(
     ProtoTupleElement::StorageLocation(storage_location, name)
 }
 
-pub fn new_proto_tuple_element_empty<'arena>(_arena: &'arena Bump) -> ProtoTupleElement<'arena> {
+pub(crate) fn new_proto_tuple_element_empty<'arena>(
+    _arena: &'arena Bump,
+) -> ProtoTupleElement<'arena> {
     ProtoTupleElement::Empty
 }
 
-pub fn new_expression_identifier_path<'arena>(
+pub(crate) fn new_expression_identifier_path<'arena>(
     arena: &'arena Bump,
     identifier_path: IdentifierPath<'arena>,
 ) -> Expression<'arena> {
@@ -314,7 +317,7 @@ pub fn new_expression_identifier_path<'arena>(
 /// We use this function to share attributes between a state variable that has a function type.
 /// We find and split the attributes from the function type as needed
 /// TODO(v2) fail gracefully if a wrong attribute is found
-pub fn extract_extra_attributes<'arena>(
+pub(crate) fn extract_extra_attributes<'arena>(
     arena: &'arena Bump,
     mut fun_type: FunctionType<'arena>,
 ) -> (

@@ -6,15 +6,16 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use crate::lexer::contexts::ContextKind;
 use crate::lexer::definition::Lexer;
 
-pub mod nodes;
+pub(crate) mod nodes;
 
 lalrpop_mod!(
     #[allow(non_snake_case)]
-    pub grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
+    pub(crate) grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
 
 #[cfg(test)]
 mod tests;
 
+// TODO(v2): This is temporary and it's used to compare against V1
 pub mod temp_cst_output;
 
 /// A Solidity Parser
@@ -35,7 +36,10 @@ impl Parser {
         input: &str,
         version: LanguageVersion,
     ) -> Result<SourceUnit<'arena>, String> {
-        assert!(version == LanguageVersion::V0_8_30);
+        assert!(
+            version == LanguageVersion::V0_8_30,
+            "Only 0.8.30 is currently supported by the V2 parser"
+        );
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::SourceUnitParser::new();
@@ -50,7 +54,10 @@ impl Parser {
         input: &str,
         version: LanguageVersion,
     ) -> Result<Expression<'arena>, String> {
-        assert!(version == LanguageVersion::V0_8_30);
+        assert!(
+            version == LanguageVersion::V0_8_30,
+            "Only 0.8.30 is currently supported by the V2 parser"
+        );
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::ExpressionParser::new();
@@ -65,7 +72,10 @@ impl Parser {
         input: &str,
         version: LanguageVersion,
     ) -> Result<ContractDefinition<'arena>, String> {
-        assert!(version == LanguageVersion::V0_8_30);
+        assert!(
+            version == LanguageVersion::V0_8_30,
+            "Only 0.8.30 is currently supported by the V2 parser"
+        );
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::ContractDefinitionParser::new();
