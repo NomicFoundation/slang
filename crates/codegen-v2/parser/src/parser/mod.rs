@@ -14,6 +14,10 @@ use crate::parser::parser_builder::ParserBuilder;
 #[derive(Clone, Debug, Serialize)]
 pub struct ParserModel {
     pub lexer: LexerModel,
+
+    /// For each terminal we map the lexemes that can construct it
+    ///
+    /// We need this mapping since unreserved keywords can be parsed as other terminals
     terminals: BTreeMap<String, BTreeSet<String>>,
     sections: Vec<ParserSection>,
 }

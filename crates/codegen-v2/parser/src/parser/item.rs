@@ -9,14 +9,26 @@ use serde::Serialize;
 #[derive(Serialize, Debug, Clone)]
 struct RustCode(String);
 
+// TODO(v2): Support multiple versions
+pub const VERSION: Version = Version::new(0, 8, 30);
+
 #[derive(Clone, Debug, Serialize)]
 #[serde(tag = "type", content = "content")]
+/// An Item can be a manually written rule or a collection of items
 pub(crate) enum LALRPOPItem {
     Verbatim(String),
     Items(Vec<LALRPOPItemInner>),
 }
 
 #[derive(Clone, Debug, Serialize)]
+/// An `LALRPOPItemInner` represents a single LALRPOP rule, for example:
+///
+/// ```rust
+/// ModifierAttribute: ModifierAttribute<'arena> = {
+///     <_OverrideSpecifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(arena, <>),
+///     <_VirtualKeyword: VirtualKeyword>  => new_modifier_attribute_virtual_keyword(arena, <>),
+/// };
+/// ```
 pub(crate) struct LALRPOPItemInner {
     pub name: Identifier,
     pub producing_type: Identifier,
@@ -26,6 +38,11 @@ pub(crate) struct LALRPOPItemInner {
 }
 
 #[derive(Clone, Debug, Serialize)]
+/// An `LALRPOPOption` represents a single option within a rule, for example:
+///
+/// ```rust
+///     <_OverrideSpecifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(arena, <>),
+/// ```
 struct LALRPOPOption {
     fields: Vec<LALRPOPField>,
     // If none, then the match is forwarded
@@ -33,22 +50,28 @@ struct LALRPOPOption {
 }
 
 #[derive(Clone, Debug, Serialize)]
+/// An `LALRPOPField` represents a single matching field within an option:
+///
+/// ```rust
+///     <_OverrideSpecifier: OverrideSpecifier>
+/// ```
 struct LALRPOPField {
     capturing_name: Option<Identifier>,
     rule: RustCode,
 }
 
-// Fixing ourselves to this version for now
-pub const VERSION: Version = Version::new(0, 8, 30);
-
 fn is_enabled(enabled: &Option<VersionSpecifier>) -> bool {
     enabled.as_ref().is_none_or(|v| v.contains(&VERSION))
 }
 
+// Helper rules for LALRPOP matching rules
+
+/// Given a rule `X`, return the optional matching rule `(X)?`
 fn optional(rule: RustCode) -> RustCode {
     RustCode(format!("({})?", rule.0))
 }
 
+/// Given a rule `X`, return the, maybe empty, repeating rule `Rep<X>`
 fn repeated(rule: RustCode, allow_empty: bool) -> RustCode {
     if allow_empty {
         RustCode(format!("Rep<{}>", rule.0))
@@ -57,11 +80,7 @@ fn repeated(rule: RustCode, allow_empty: bool) -> RustCode {
     }
 }
 
-/// anonymous capture inside LALRPOP macros
-fn capture(rule: RustCode) -> RustCode {
-    RustCode(format!("<{}>", rule.0))
-}
-
+/// Given rules `X` and `Y`, return the, maybe empty, separated rule `Sep<X, Y>`
 fn separated(rule: RustCode, separator: RustCode, allow_empty: bool) -> RustCode {
     if allow_empty {
         RustCode(format!("Sep<{}, {}>", separator.0, rule.0))
@@ -70,15 +89,26 @@ fn separated(rule: RustCode, separator: RustCode, allow_empty: bool) -> RustCode
     }
 }
 
+/// anonymous capture inside LALRPOP macros, this is needed when capturing inside other rules
+fn capture(rule: RustCode) -> RustCode {
+    RustCode(format!("<{}>", rule.0))
+}
+
+/// Match against an identifier
 fn simple_match(id: &Identifier) -> RustCode {
     RustCode(format!("{}", *id))
 }
 
-// TODO transform to snake case?
+/// Get the constructor for `Identifier` `id`
+///
+/// Note: See the `slang_solidity_v2_ast::ast::nodes` module for details
 fn constructor(id: &Identifier) -> RustCode {
     RustCode(format!("new_{}", *id))
 }
 
+/// Get the constructor for the variant `variant` from the enum `id`
+///
+/// Note: See the `slang_solidity_v2_ast::ast::nodes` module for details
 fn variant_constructor(id: &Identifier, variant: &Identifier) -> RustCode {
     RustCode(format!("new_{}_{}", *id, *variant))
 }
@@ -245,37 +275,31 @@ fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> Option<LALRPOPFie
     }
 }
 
+/// Given a precedence item we produce multiple rules to match it, and a single entry rule
+/// with `item.name` as its name.
+///
+/// Since this is the most complex rule we explain, all other rules are easy compares to it:
+///
+/// A PrecedenceItem contains a collection of primary expressions (ie the base of the recursion)
+/// and a, sorted, collection of precedence expressions.
+/// Each precedence expression contains a collection of operators, where each of them has
+/// an `OperatorModel` (Prefix, Postfix, BinaryLeftAssociative, BinaryRightAssociative)
+/// and some named fields.
+///
+/// TODO(v2): We're assuming that Precedence Items follow a strict shape, in particular that Binary Operators
+/// have a single required field called `operator` and that prefix and postfix operator with mutiple
+/// operators follow the same rule.
 pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LALRPOPItemInner> {
     if !is_enabled(&item.enabled) {
         return vec![];
     }
+    // The final items
     let mut ans = Vec::new();
 
-    let primaries: Vec<LALRPOPOption> = item
-        .primary_expressions
-        .iter()
-        .filter(|exp| is_enabled(&exp.enabled))
-        .map(|exp| {
-            let capturing_name = format!("_{}", exp.reference);
-            LALRPOPOption {
-                fields: vec![LALRPOPField {
-                    capturing_name: Some(capturing_name.clone().into()),
-                    rule: simple_match(&exp.reference),
-                }],
-                constructor: Some(variant_constructor(&item.name, &exp.reference)),
-            }
-        })
-        .collect();
-
+    // A counter, for all the rules.
     let mut prec_counter = 0;
 
-    ans.push(LALRPOPItemInner {
-        name: format!("{}{}", item.name, prec_counter).into(),
-        producing_type: item.name.clone(),
-        options: primaries,
-        inline: false,
-        pubb: false,
-    });
+    ans.push(collect_primaries(item, prec_counter));
 
     for prec in item.precedence_expressions.iter().rev() {
         let prev_name = format!("{}{}", item.name, prec_counter);
@@ -284,7 +308,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
 
         // Pre-process fields for operators
         let mut pre_processed_fields = if prec.operators.len() == 1 {
-            // If there's a single operator, we use its fields directly, there may be many fields
+            // If there's a single operator, we use its fields directly
             let op = &prec.operators[0];
             if is_enabled(&op.enabled) {
                 op.fields
@@ -295,7 +319,14 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 vec![]
             }
         } else {
-            // If there are multiple operators, we create a choice between them
+            // If there are multiple operators, we create a choice between them as a new rule, for example:
+            // ```rust
+            // Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator<'arena> = {
+            //    <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(arena, <>),
+            //    <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(arena, <>),
+            //};
+            // ```
+            // And the pre_processed_fields refer to the new rule alone (ie `Expression_PostfixExpression_Operator`)
             let operator_ident = Identifier::from(format!("{}_{}_Operator", item.name, prec.name));
             let options = prec
                 .operators
@@ -331,7 +362,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 pubb: false,
             });
 
-            // And the single field now references this choice
+            // And then the single field references this new rule
             let capturing_name = format!("_{}", operator_ident);
             vec![LALRPOPField {
                 capturing_name: Some(capturing_name.clone().into()),
@@ -339,10 +370,12 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
             }]
         };
 
-        // Now, we always have a single option, since we're common eliminating some choices
+        // Now, we always have a single option, since alternatives are tucked away in their own rule
         let option = {
             let capturing_name = format!("_{}", item.name);
 
+            // The fields of this option depend on the operaot model, within a given precedence expression
+            // all operators should have the same model, therefore we match against the first one
             let fields = match prec.operators[0].model {
                 OperatorModel::Prefix => {
                     let mut fields = pre_processed_fields;
@@ -385,6 +418,8 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 }
             };
 
+            // At this point we create a rule with the single option and the processed fields,
+            // accounting also for associativity
             ans.push(LALRPOPItemInner {
                 name: prec.name.clone(),
                 producing_type: prec.name.clone(),
@@ -396,7 +431,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
                 pubb: false,
             });
 
-            // And we reference it from the single field
+            // And we reference it from the single option
             LALRPOPOption {
                 fields: vec![LALRPOPField {
                     capturing_name: Some(capturing_name.clone().into()),
@@ -406,7 +441,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
             }
         };
 
-        // Add recursive case
+        // Add the recursive case to the options
         let options = vec![
             option,
             LALRPOPOption {
@@ -418,6 +453,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
             },
         ];
 
+        // And append the given item
         ans.push(LALRPOPItemInner {
             name: format!("{}{}", item.name, prec_counter).into(),
             producing_type: item.name.clone(),
@@ -427,7 +463,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
         });
     }
 
-    // Adding the entry case
+    // The entry case points to the latest item
     ans.push(LALRPOPItemInner {
         name: item.name.clone(),
         producing_type: item.name.clone(),
@@ -443,4 +479,42 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
     });
 
     ans
+}
+
+/// Given a prec_counter and a PrecedenceItem, create an `LALRPOPItemInner` parsing the primary expressions.
+///
+/// For each primary expression create an alternative matching against its reference, and constructing
+/// an instance of the resulting variant.
+///
+/// For example:
+/// ```rust
+/// YulExpression0: YulExpression<'arena> = {
+///     <_YulLiteral: YulLiteral>  => new_yul_expression_yul_literal(arena, <>),
+///     <_YulPath: YulPath>  => new_yul_expression_yul_path(arena, <>),
+/// };
+/// ```
+fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPItemInner {
+    let primaries: Vec<LALRPOPOption> = item
+        .primary_expressions
+        .iter()
+        .filter(|exp| is_enabled(&exp.enabled))
+        .map(|exp| {
+            let capturing_name = format!("_{}", exp.reference);
+            LALRPOPOption {
+                fields: vec![LALRPOPField {
+                    capturing_name: Some(capturing_name.clone().into()),
+                    rule: simple_match(&exp.reference),
+                }],
+                constructor: Some(variant_constructor(&item.name, &exp.reference)),
+            }
+        })
+        .collect();
+
+    LALRPOPItemInner {
+        name: format!("{}{}", item.name, prec_counter).into(),
+        producing_type: item.name.clone(),
+        options: primaries,
+        inline: false,
+        pubb: false,
+    }
 }

@@ -55,25 +55,7 @@ impl<'a> ParserBuilder<'a> {
     }
 
     fn language_item_to_lalrpop_item(&self, item: &LanguageItem) -> LALRPOPItem {
-        // TODO: we're ignoring versions for now
-
-        // TODO: use an actual type rather than string
-
-        let mut items = match item {
-            LanguageItem::Struct { item } => struct_item_to_lalrpop_items(item),
-            LanguageItem::Enum { item } => enum_item_to_lalrpop_items(item),
-            LanguageItem::Repeated { item } => repeated_item_to_lalrpop_items(item),
-            LanguageItem::Separated { item } => separated_item_to_lalrpop_items(item),
-            LanguageItem::Precedence { item } => precedence_item_to_lalrpop_items(item),
-            // Actually, trivia, keyword, and token should translate to references
-            LanguageItem::Keyword { .. }
-            | LanguageItem::Trivia { .. }
-            | LanguageItem::Token { .. }
-            // I don't think we care about fragments at all
-            // ... but we'll see once versioning comes in place
-            | LanguageItem::Fragment { .. } => vec![],
-        };
-
+        // Apply manual parser options
         let parser_options = match item {
             LanguageItem::Struct { item } => &item.parser_options,
             LanguageItem::Enum { item } => &item.parser_options,
@@ -84,13 +66,30 @@ impl<'a> ParserBuilder<'a> {
         };
 
         if let Some(parser_options) = parser_options {
+            // If there's a verbatim rule, then skip generating the rules
+            if let Some(verbatim) = &parser_options.verbatim {
+                return LALRPOPItem::Verbatim(verbatim.clone());
+            }
+        }
+
+        let mut items = match item {
+            LanguageItem::Struct { item } => struct_item_to_lalrpop_items(item),
+            LanguageItem::Enum { item } => enum_item_to_lalrpop_items(item),
+            LanguageItem::Repeated { item } => repeated_item_to_lalrpop_items(item),
+            LanguageItem::Separated { item } => separated_item_to_lalrpop_items(item),
+            LanguageItem::Precedence { item } => precedence_item_to_lalrpop_items(item),
+            LanguageItem::Keyword { .. }
+            | LanguageItem::Trivia { .. }
+            | LanguageItem::Token { .. }
+            // I don't think we care about fragments at all
+            // ... but we'll see once versioning comes in place
+            | LanguageItem::Fragment { .. } => vec![],
+        };
+
+        if let Some(parser_options) = parser_options {
             for item in &mut items {
                 item.inline = parser_options.inline;
                 item.pubb = parser_options.pubb;
-            }
-
-            if let Some(verbatim) = &parser_options.verbatim {
-                return LALRPOPItem::Verbatim(verbatim.clone());
             }
         }
 
