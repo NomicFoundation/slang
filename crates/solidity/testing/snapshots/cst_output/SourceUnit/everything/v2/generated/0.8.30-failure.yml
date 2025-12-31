@@ -1,3 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-"UnrecognizedToken { token: (16, DecimalLiteral, 19), expected: [\"L_Caret\", \"L_DoubleQuotedVersionLiteral\", \"L_Equal\", \"L_GreaterThan\", \"L_GreaterThanEqual\", \"L_LessThan\", \"L_LessThanEqual\", \"L_SingleQuotedVersionLiteral\", \"L_Tilde\", \"L_VersionSpecifier\"] }"

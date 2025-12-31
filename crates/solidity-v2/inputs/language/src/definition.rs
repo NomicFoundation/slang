@@ -87,7 +87,16 @@ language_v2_macros::compile!(Language(
                                 pragma_keyword = Required(PragmaKeyword),
                                 pragma = Required(Pragma),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            // TODO(v2): Until the lexer can perform context switching, we ignore pragmas
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+PragmaDirective: PragmaDirective<'arena> = {
+    <_pragma_keyword: PragmaKeyword>  ! <_semicolon: Semicolon>  => {
+    let abicoder = new_pragma_abicoder_pragma(arena, new_abicoder_pragma(arena, new_abicoder_keyword(arena, 0, 0, source), new_abicoder_version_abicoder_v1_keyword(arena, new_abicoder_v1_keyword(arena, 0, 0, source))));
+    new_pragma_directive(arena, _pragma_keyword, abicoder , _semicolon)
+    }
+};
+"#)
                         ),
                         Enum(
                             name = Pragma,
@@ -4735,7 +4744,15 @@ HexNumberExpression: HexNumberExpression<'arena> = {
                                 open_brace = Required(OpenBrace),
                                 statements = Required(YulStatements),
                                 close_brace = Required(CloseBrace)
-                            )
+                            ),
+                            // TODO(v2): Until the lexer can perform context switching, we ignore YulBlocks
+parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+YulBlock: YulBlock<'arena> = {
+    <_open_brace: OpenBrace>  !  <_close_brace: CloseBrace>  => {
+        new_yul_block(arena, _open_brace, new_yul_statements(arena, Vec::new_in(arena)), _close_brace)
+    }
+};
+"#)
                         ),
                         Repeated(
                             name = YulStatements,

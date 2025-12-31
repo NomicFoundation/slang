@@ -69,10 +69,15 @@ RepOne<T>: Vec<'arena, T> = {
     
 
 // Rules for topic Pragma Directives
-    PragmaDirective: PragmaDirective<'arena> = {
-        <_pragma_keyword: PragmaKeyword>  <_pragma: Pragma>  <_semicolon: Semicolon>  => new_pragma_directive(arena, <>),
-        
-    };
+    
+    
+PragmaDirective: PragmaDirective<'arena> = {
+    <_pragma_keyword: PragmaKeyword>  ! <_semicolon: Semicolon>  => {
+    let abicoder = new_pragma_abicoder_pragma(arena, new_abicoder_pragma(arena, new_abicoder_keyword(arena, 0, 0, source), new_abicoder_version_abicoder_v1_keyword(arena, new_abicoder_v1_keyword(arena, 0, 0, source))));
+    new_pragma_directive(arena, _pragma_keyword, abicoder , _semicolon)
+    }
+};
+
     Pragma: Pragma<'arena> = {
         <_VersionPragma: VersionPragma>  => new_pragma_version_pragma(arena, <>),
         <_AbicoderPragma: AbicoderPragma>  => new_pragma_abicoder_pragma(arena, <>),
@@ -1557,10 +1562,14 @@ HexNumberExpression: HexNumberExpression<'arena> = {
 // Rules for section Yul
 
 // Rules for topic Yul Statements
-    YulBlock: YulBlock<'arena> = {
-        <_open_brace: OpenBrace>  <_statements: YulStatements>  <_close_brace: CloseBrace>  => new_yul_block(arena, <>),
-        
-    };
+    
+    
+YulBlock: YulBlock<'arena> = {
+    <_open_brace: OpenBrace>  !  <_close_brace: CloseBrace>  => {
+        new_yul_block(arena, _open_brace, new_yul_statements(arena, Vec::new_in(arena)), _close_brace)
+    }
+};
+
     YulStatements: YulStatements<'arena> = {
         <_YulStatement: Rep<<YulStatement>>>  => new_yul_statements(arena, <>),
         

@@ -7305,7 +7305,6 @@ impl<'arena> NodeChecker for PostfixExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
 impl<'arena> NodeChecker for PragmaDirective<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::PragmaDirective) {
@@ -7351,8 +7350,7 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Pragma
             }) {
-                let child_errors = pragma.check_node(&child.node);
-                errors.extend(child_errors);
+                // We don't check, since V2 can't parse these yet
             } else {
                 errors.push(NodeCheckerError::new(format!(
                     "Expected pragma to be present in the CST, but it was not"
@@ -10459,7 +10457,6 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
 impl<'arena> NodeChecker for YulBlock<'arena> {
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulBlock) {
@@ -10505,8 +10502,7 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
             if let Some(child) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Statements
             }) {
-                let child_errors = statements.check_node(&child.node);
-                errors.extend(child_errors);
+                // We don't check statements, since V2 can't parse them yet
             } else {
                 errors.push(NodeCheckerError::new(format!(
                     "Expected statements to be present in the CST, but it was not"

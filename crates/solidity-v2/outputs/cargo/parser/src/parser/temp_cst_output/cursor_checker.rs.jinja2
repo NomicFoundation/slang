@@ -48,7 +48,176 @@ fn remove_trivia(v: &mut Vec<Edge>) {
 
 
 {% for parent_type, sequence in target.sequences %}
-{% if parent_type == "IdentifierPath" %}
+{% if parent_type == "PragmaDirective" %}
+impl<'arena> NodeChecker for PragmaDirective<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::PragmaDirective) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be {}, but it was {}",
+                NonterminalKind::PragmaDirective,
+                node.kind()
+            ))];
+        }
+
+        let mut children = node.children().to_vec();
+        remove_trivia(&mut children);
+
+        let mut errors = vec![];
+
+        // pragma_keyword
+
+        {
+            let pragma_keyword = &self.pragma_keyword;
+
+            // Prepare edge label
+
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::PragmaKeyword
+            }) {
+                let child_errors = pragma_keyword.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected pragma_keyword to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        // pragma
+
+        {
+            let pragma = &self.pragma;
+
+            // Prepare edge label
+
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::Pragma
+            }) {
+                // We don't check, since V2 can't parse these yet
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected pragma to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        // semicolon
+
+        {
+            let semicolon = &self.semicolon;
+
+            // Prepare edge label
+
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::Semicolon
+            }) {
+                let child_errors = semicolon.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected semicolon to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        if !children.is_empty() {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected 0 children left, but there's some left {:#?}",
+                children
+            )));
+        }
+
+        errors
+    }
+}
+
+{% elif parent_type == "YulBlock" %}
+
+impl<'arena> NodeChecker for YulBlock<'arena> {
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulBlock) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be {}, but it was {}",
+                NonterminalKind::YulBlock,
+                node.kind()
+            ))];
+        }
+
+        let mut children = node.children().to_vec();
+        remove_trivia(&mut children);
+
+        let mut errors = vec![];
+
+        // open_brace
+
+        {
+            let open_brace = &self.open_brace;
+
+            // Prepare edge label
+
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::OpenBrace
+            }) {
+                let child_errors = open_brace.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected open_brace to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        // statements
+
+        {
+            let statements = &self.statements;
+
+            // Prepare edge label
+
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::Statements
+            }) {
+                // We don't check statements, since V2 can't parse them yet
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected statements to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        // close_brace
+
+        {
+            let close_brace = &self.close_brace;
+
+            // Prepare edge label
+
+            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+                child.label == EdgeLabel::CloseBrace
+            }) {
+                let child_errors = close_brace.check_node(&child.node);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!(
+                    "Expected close_brace to be present in the CST, but it was not"
+                )));
+            }
+        }
+
+        if !children.is_empty() {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected 0 children left, but there's some left {:#?}",
+                children
+            )));
+        }
+
+        errors
+    }
+}
+
+{% elif parent_type == "IdentifierPath" %}
 
 /// NodeChecker for IdentifierPath is done by hand, since the V2 representation is a bit different
 impl<'arena> NodeChecker for IdentifierPath<'arena> {

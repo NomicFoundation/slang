@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
+pragma solidity 0.8.19;
 
 // OpenZeppelin Contracts (last updated v4.8.0) (access/Ownable2Step.sol)
 
@@ -554,6 +555,8 @@ library Address {
             // The easiest way to bubble the revert reason is using memory via assembly
             /// @solidity memory-safe-assembly
             assembly {
+                let returndata_size:= mload(returndata)
+                revert(add(32, returndata), returndata_size)
             }
         } else {
             revert(errorMessage);
@@ -2156,6 +2159,9 @@ library Math {
             uint256 prod0; // Least significant 256 bits of the product
             uint256 prod1; // Most significant 256 bits of the product
             assembly {
+                let mm:= mulmod(x, y, not(0))
+                prod0:= mul(x, y)
+                prod1:= sub(sub(mm, prod0), lt(mm, prod0))
             }
 
             // Handle non-overflow cases, 256 by 256 division.
@@ -2173,6 +2179,12 @@ library Math {
             // Make division exact by subtracting the remainder from [prod1 prod0].
             uint256 remainder;
             assembly {
+                // Compute remainder using mulmod.
+                remainder:= mulmod(x, y, denominator)
+
+                // Subtract 256 bit number from 512 bit number.
+                prod1:= sub(prod1, gt(remainder, prod0))
+                prod0:= sub(prod0, remainder)
             }
 
             // Factor powers of two out of denominator and compute largest power of two divisor of denominator. Always >= 1.
@@ -2181,6 +2193,14 @@ library Math {
             // Does not overflow because the denominator cannot be zero at this stage in the function.
             uint256 twos = denominator & (~denominator + 1);
             assembly {
+                // Divide denominator by twos.
+                denominator:= div(denominator, twos)
+
+                // Divide [prod1 prod0] by twos.
+                prod0:= div(prod0, twos)
+
+                // Flip twos such that it is 2^256 / twos. If twos is zero, then it becomes one.
+                twos:= add(div(sub(0, twos), twos), 1)
             }
 
             // Shift in bits from prod1 into prod0.
@@ -2436,11 +2456,13 @@ library Strings {
             uint256 ptr;
             /// @solidity memory-safe-assembly
             assembly {
+                ptr:= add(buffer, add(32, length))
             }
             while (true) {
                 ptr--;
                 /// @solidity memory-safe-assembly
                 assembly {
+                    mstore8(ptr, byte(mod(value, 10), _SYMBOLS))
                 }
                 value /= 10;
                 if (value == 0) break;
@@ -2537,6 +2559,9 @@ library ECDSA {
             // currently is to use assembly.
             /// @solidity memory-safe-assembly
             assembly {
+                r:= mload(add(signature, 0x20))
+                s:= mload(add(signature, 0x40))
+                v:= byte(0, mload(add(signature, 0x60)))
             }
             return tryRecover(hash, v, r, s);
         } else {
