@@ -1,16 +1,12 @@
-use std::fmt::Debug;
 use std::str::FromStr;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use semver::Version;
-use slang_solidity::cst::{Node, NonterminalKind};
+use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
-use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::temp_cst_output::cursor_checker::NodeChecker;
-use slang_solidity_v2_parser::Parser as ParserV2;
+use slang_solidity_v2_parser::temp_cst_output::compare_with_v1_output;
 use strum_macros::Display;
 
 use crate::cst::cst_output::renderer::render;
@@ -22,10 +18,6 @@ enum TestStatus {
     Success,
     Failure,
 }
-
-trait NodeCheckerDebug: NodeChecker + Debug {}
-
-impl<T> NodeCheckerDebug for T where T: NodeChecker + Debug {}
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
@@ -92,83 +84,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     }
 
     // Checking V2
-    // for now we only check that either both fail or both succeed, and we write the debug output
-    // TODO(v2): Check the cursor and the tree are equivalent
-    // TODO(v2): We only check 0.8.30 for now, we should eventually check all versions
-    {
-        // Get V1 output for 0.8.30
-        let version = Version::new(0, 8, 30);
-        let tested_kind = NonterminalKind::from_str(parser_name)
-            .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
-        let output = Parser::create(version)?.parse_nonterminal(tested_kind, &source);
-
-        let parser = ParserV2::new();
-        let parsed: Result<Box<dyn NodeCheckerDebug>, _> = match parser_name {
-            // For now we only have a SourceUnit parser, having all parsers with LALRPOP is expensive
-            "SourceUnit" => parser
-                .parse(&source, LanguageVersion::V0_8_30)
-                .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
-            "Expression" => parser
-                .parse_expression(&source, LanguageVersion::V0_8_30)
-                .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
-            "ContractDefinition" => parser
-                .parse_contract_definition(&source, LanguageVersion::V0_8_30)
-                .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
-            _ => {
-                // Ignore everything else
-                return Ok(());
-            }
-        };
-
-        let status: TestStatus = if parsed.is_ok() {
-            TestStatus::Success
-        } else {
-            TestStatus::Failure
-        };
-
-        let snapshot_path = test_dir
-            .join("v2/generated")
-            .join(format!("0.8.30-{status}.yml"));
-
-        match parsed {
-            Ok(parsed_checker) => {
-                let mut s = String::new();
-
-                // Print output
-                s.push_str(&format!("{parsed_checker:#?}"));
-
-                // check V1 validity
-                if output.is_valid() {
-                    let checked =
-                        parsed_checker.check_node(&Node::Nonterminal(output.tree().clone()));
-                    if !checked.is_empty() {
-                        s.push_str(&"\n----------------\n");
-                        for err in &checked {
-                            s.push_str(&format!("{}\n\n", err.err));
-                        }
-                    }
-                    fs.write_file_raw(&snapshot_path, s)?;
-                    assert!(
-                        checked.is_empty(),
-                        "The AST is different between both parsers",
-                    );
-                } else {
-                    s.push_str(&"\n----------------\n");
-                    s.push_str("\nV1 Parser: Invalid\n");
-                    fs.write_file_raw(&snapshot_path, s)?;
-                    assert!(
-                        output.is_valid(),
-                        "V1 parser is not valid, but V2 Parser is"
-                    );
-                }
-            }
-            Err(err) => {
-                // We don't care about the errors for now, we just write them
-                fs.write_file_raw(&snapshot_path, format!("{err:#?}"))?;
-                assert!(!output.is_valid(), "V1 parser is valid, but V2 is not");
-            }
-        }
-    }
+    compare_with_v1_output(parser_name, test_dir, fs, source)?;
 
     Ok(())
 }

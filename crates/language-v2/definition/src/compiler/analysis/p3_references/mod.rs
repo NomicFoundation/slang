@@ -123,8 +123,9 @@ fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablemen
     let SpannedRepeatedItem {
         name,
         reference,
+        allow_empty: _,
         enabled,
-        ..
+        parser_options: _,
     } = item;
 
     let enablement = update_enablement(analysis, enablement, enabled.as_ref());

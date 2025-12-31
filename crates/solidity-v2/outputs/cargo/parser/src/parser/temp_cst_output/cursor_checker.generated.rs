@@ -7343,11 +7343,9 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
         // pragma
 
         {
-            let pragma = &self.pragma;
-
             // Prepare edge label
 
-            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+            if let Some(_) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Pragma
             }) {
                 // We don't check, since V2 can't parse these yet
@@ -10495,11 +10493,9 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
         // statements
 
         {
-            let statements = &self.statements;
-
             // Prepare edge label
 
-            if let Some(child) = extract_first(&mut children, |child: &Edge| {
+            if let Some(_) = extract_first(&mut children, |child: &Edge| {
                 child.label == EdgeLabel::Statements
             }) {
                 // We don't check statements, since V2 can't parse them yet

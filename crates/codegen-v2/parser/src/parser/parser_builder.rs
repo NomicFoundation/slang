@@ -1,8 +1,6 @@
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet};
 
-use language_v2_definition::model::{
-    Field, Identifier, Item as LanguageItem, Language, Section, Topic,
-};
+use language_v2_definition::model::{Item as LanguageItem, Language, Section, Topic};
 
 use crate::lexer::{Lexeme, LexerModel};
 use crate::parser::item::{
@@ -20,7 +18,7 @@ impl<'a> ParserBuilder<'a> {
         Self { language }
     }
 
-    pub fn build(mut self) -> Vec<ParserSection> {
+    pub fn build(self) -> Vec<ParserSection> {
         self.collect_sections()
     }
 
