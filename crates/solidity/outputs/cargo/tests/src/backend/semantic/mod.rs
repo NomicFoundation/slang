@@ -1,13 +1,13 @@
 use anyhow::Result;
 use slang_solidity::backend::ir::ast::{ContractBase, ContractMember, Definition, FunctionKind};
 
-use super::sample::build_compilation_unit;
+use crate::backend::fixtures;
 
 mod ast;
 
 #[test]
 fn test_semantic_analysis_and_ast_tree() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     assert_eq!(unit.files().len(), semantic.files().len());
@@ -63,7 +63,7 @@ fn test_semantic_analysis_and_ast_tree() -> Result<()> {
 
 #[test]
 fn test_get_all_definitions() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     assert_eq!(semantic.all_definitions().count(), 22);
@@ -73,7 +73,7 @@ fn test_get_all_definitions() -> Result<()> {
 
 #[test]
 fn test_find_contract_by_name() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
@@ -97,7 +97,7 @@ fn test_find_contract_by_name() -> Result<()> {
 
 #[test]
 fn test_get_direct_contract_bases() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
@@ -120,7 +120,7 @@ fn test_get_direct_contract_bases() -> Result<()> {
 
 #[test]
 fn test_get_linearised_contract_bases() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
@@ -147,7 +147,7 @@ fn test_get_linearised_contract_bases() -> Result<()> {
 
 #[test]
 fn test_get_references() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let ownable = semantic
@@ -194,7 +194,7 @@ fn test_get_references() -> Result<()> {
 
 #[test]
 fn test_get_linearised_state_variables() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
@@ -214,7 +214,7 @@ fn test_get_linearised_state_variables() -> Result<()> {
 
 #[test]
 fn test_get_linearised_functions() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
@@ -245,7 +245,7 @@ fn test_get_linearised_functions() -> Result<()> {
 
 #[test]
 fn test_get_constructor_and_modifiers() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
@@ -257,6 +257,29 @@ fn test_get_constructor_and_modifiers() -> Result<()> {
 
     let modifiers = counter.modifiers();
     assert_eq!(modifiers.len(), 0);
+
+    Ok(())
+}
+
+#[test]
+fn test_get_linearised_function_with_overrides() -> Result<()> {
+    let unit = fixtures::Overrides::build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let inherited = semantic
+        .find_contract_by_name("Inherited")
+        .expect("can find contract");
+    let functions = inherited.linearised_functions();
+    assert_eq!(functions.len(), 3);
+    assert!(functions[0]
+        .name()
+        .is_some_and(|name| name.unparse() == "in_base"));
+    assert!(functions[1]
+        .name()
+        .is_some_and(|name| name.unparse() == "in_middle"));
+    assert!(functions[2]
+        .name()
+        .is_some_and(|name| name.unparse() == "override_me"));
 
     Ok(())
 }
