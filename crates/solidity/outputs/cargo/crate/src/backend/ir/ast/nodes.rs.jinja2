@@ -200,6 +200,12 @@ use super::node_extensions::{create_identifier, create_yul_identifier};
             .iter()
             .map(|ir_node| create_{{ collection.item_type.name | snake_case }}(ir_node, &self.semantic))
       }
+      pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+      }
+      pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+      }
     }
   {% endif -%}
 {% endfor -%}

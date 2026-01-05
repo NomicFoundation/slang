@@ -1,9 +1,11 @@
-use std::{cmp::Ordering, rc::Rc};
+use std::cmp::Ordering;
+use std::rc::Rc;
 
 use super::super::{
     ContractDefinition, ContractDefinitionStruct, ContractMember, ContractMembersStruct,
     Definition, FunctionDefinition, FunctionKind, InterfaceDefinition, StateVariableDefinition,
 };
+use crate::backend::ir::ast::FunctionDefinitionStruct;
 
 pub enum ContractBase {
     Contract(ContractDefinition),
@@ -31,6 +33,9 @@ impl ContractDefinitionStruct {
             .collect()
     }
 
+    /// Returns the list of contracts/interfaces in the hierarchy (including
+    /// self) in the order given by the C3 linearisation, with self contract
+    /// always first
     pub fn linearised_bases(&self) -> Vec<ContractBase> {
         let Some(base_node_ids) = self
             .semantic
@@ -100,7 +105,7 @@ impl ContractDefinitionStruct {
     /// Returns the list of functions defined in all the hierarchy of the
     /// contract, in alphabetical order
     pub fn linearised_functions(&self) -> Vec<FunctionDefinition> {
-        let mut functions = Vec::new();
+        let mut functions: Vec<FunctionDefinition> = Vec::new();
         let bases = self.linearised_bases();
         for base in &bases {
             // TODO(validation): we don't pick up functions defined in
@@ -109,9 +114,25 @@ impl ContractDefinitionStruct {
             let ContractBase::Contract(contract) = base else {
                 continue;
             };
-            // FIXME: handle function overriding
-            functions.extend(contract.functions());
+
+            // Handle function overriding
+            let contract_functions = contract
+                .functions()
+                .into_iter()
+                .filter(|function| {
+                    // check the existing functions and remove any duplicates
+                    // because they should be overridden by them
+                    let existing = functions
+                        .iter()
+                        .any(|linearised_function| linearised_function.overrides(function));
+                    !existing
+                })
+                .collect::<Vec<_>>();
+
+            functions.extend(contract_functions);
         }
+
+        // sort returned functions by name
         functions.sort_by(|a, b| match (a.name(), b.name()) {
             (None, None) => Ordering::Equal,
             (None, Some(_)) => Ordering::Less,
@@ -145,5 +166,38 @@ impl ContractMembersStruct {
                 None
             }
         })
+    }
+}
+
+impl FunctionDefinitionStruct {
+    pub(crate) fn overrides(&self, other: &FunctionDefinition) -> bool {
+        let name_matches = match (self.name(), other.name()) {
+            (None, None) => true,
+            (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
+            _ => false,
+        };
+        if !name_matches {
+            return false;
+        }
+        let type_id = self
+            .semantic
+            .binder()
+            .node_typing(self.ir_node.node_id)
+            .as_type_id();
+        let other_type_id = self
+            .semantic
+            .binder()
+            .node_typing(other.ir_node.node_id)
+            .as_type_id();
+
+        match (type_id, other_type_id) {
+            (Some(type_id), Some(other_type_id)) => self
+                .semantic
+                .types()
+                .type_id_is_function_and_overrides(type_id, other_type_id),
+            _ => false,
+        }
+
+        // TODO(validation): check also that the function mutability is stricter than other's
     }
 }
