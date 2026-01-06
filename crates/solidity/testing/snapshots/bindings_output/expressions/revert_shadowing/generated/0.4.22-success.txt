@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function testBuiltIn() public pure {
+    │              ─────┬─────  
+    │                   ╰─────── name: 2
+  3 │         revert("error");
+    │         ───┬──  
+    │            ╰──── refs: built-in, built-in
+    │ 
+  6 │     function testShadowed() public pure {
+    │              ──────┬─────  
+    │                    ╰─────── name: 3
+  7 │         function(string memory) pure revert = customRevert;
+    │                                      ───┬──   ──────┬─────  
+    │                                         ╰─────────────────── name: 4
+    │                                                     │       
+    │                                                     ╰─────── ref: 5
+  8 │         revert("error");
+    │         ───┬──  
+    │            ╰──── ref: 4
+    │ 
+ 11 │     function customRevert(string memory) internal pure {}
+    │              ──────┬─────  
+    │                    ╰─────── name: 5
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ──▶ contract Test {
+  2 │ │   ╭───▶     function testBuiltIn() public pure {
+    ┆ ┆   ┆     
+  4 │ │ │ ├───▶     }
+    │ │ │ │             
+    │ │ │ ╰───────────── definiens: 2
+  5 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+  7 │ │ │               function(string memory) pure revert = customRevert;
+    │ │ │       ──────────────────────────────┬─────────────────────────────  
+    │ │ │                                     ╰─────────────────────────────── definiens: 4
+    ┆ ┆ ┆       
+  9 │ │ ├───│ ▶     }
+    │ │ │   │           
+    │ │ ╰─────────────── definiens: 3
+ 10 │ │     ╭─▶ 
+ 11 │ │     ├─▶     function customRevert(string memory) internal pure {}
+    │ │     │                                                               
+    │ │     ╰─────────────────────────────────────────────────────────────── definiens: 5
+ 12 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 1
+────╯

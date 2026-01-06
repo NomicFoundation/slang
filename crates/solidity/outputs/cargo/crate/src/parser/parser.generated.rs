@@ -4667,10 +4667,7 @@ impl Parser {
                             TerminalKind::RevertKeyword,
                         ),
                     )?;
-                    seq.elem_labeled(
-                        EdgeLabel::Error,
-                        OptionalHelper::transform(self.identifier_path(input)),
-                    )?;
+                    seq.elem_labeled(EdgeLabel::Error, self.identifier_path(input))?;
                     seq.elem_labeled(EdgeLabel::Arguments, self.arguments_declaration(input))?;
                     seq.finish()
                 }) {
