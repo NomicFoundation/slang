@@ -3632,6 +3632,7 @@ dependencies = [
  "semver 1.0.26",
  "slang_solidity",
  "slang_solidity_v2_common",
+ "slang_solidity_v2_cst",
  "strum_macros 0.26.4",
 ]
 
