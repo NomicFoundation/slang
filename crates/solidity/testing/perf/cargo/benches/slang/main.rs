@@ -3,7 +3,7 @@
 use std::hint::black_box;
 use std::rc::Rc;
 
-use iai_callgrind::{
+use gungraun::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };

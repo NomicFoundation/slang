@@ -4,7 +4,7 @@ pub mod dataset;
 pub mod tests;
 
 mod __dependencies_used_in_benches__ {
-    use {iai_callgrind as _, infra_utils as _, paste as _};
+    use {gungraun as _, infra_utils as _, paste as _};
 }
 
 #[cfg(test)]
