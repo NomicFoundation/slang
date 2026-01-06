@@ -1,7 +1,10 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+#![allow(clippy::too_many_lines)]
+
 use slang_solidity::cst::{Edge, EdgeLabel, Node, NodeKind, NonterminalKind, TextIndex, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
+#[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 
 /// An error found when checking a node
@@ -70,7 +73,7 @@ fn children_with_offsets(node: &Node, text_offset: TextIndex) -> Vec<(Edge, Text
 
     for child in node.children() {
         let child_offset = current_offset;
-        current_offset = current_offset + child.node.text_len();
+        current_offset += child.node.text_len();
 
         // Skip trivia and separators (V2 doesn't parse them)
         if child.node.is_trivia() || child.label == EdgeLabel::Separator {
@@ -87,8 +90,8 @@ fn children_with_offsets(node: &Node, text_offset: TextIndex) -> Vec<(Edge, Text
 // Sequences:
 //
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for AbicoderPragma<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for AbicoderPragma<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -125,7 +128,8 @@ impl<'arena> NodeChecker for AbicoderPragma<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected abicoder_keyword to be present in the CST, but it was not"),
+                    "Expected abicoder_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -147,7 +151,7 @@ impl<'arena> NodeChecker for AbicoderPragma<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected version to be present in the CST, but it was not"),
+                    "Expected version to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -155,10 +159,7 @@ impl<'arena> NodeChecker for AbicoderPragma<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -167,8 +168,8 @@ impl<'arena> NodeChecker for AbicoderPragma<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for AdditiveExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for AdditiveExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -204,7 +205,7 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -229,7 +230,7 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_AdditiveExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_AdditiveExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
@@ -249,7 +250,7 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -257,10 +258,7 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -269,8 +267,8 @@ impl<'arena> NodeChecker for AdditiveExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for AddressType<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for AddressType<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -307,7 +305,7 @@ impl<'arena> NodeChecker for AddressType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected address_keyword to be present in the CST, but it was not"),
+                    "Expected address_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -327,7 +325,7 @@ impl<'arena> NodeChecker for AddressType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected payable_keyword to be present in the CST, but it was not"),
+                    "Expected payable_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -338,16 +336,13 @@ impl<'arena> NodeChecker for AddressType<'arena> {
                     child.label == EdgeLabel::PayableKeyword
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected payable_keyword to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected payable_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -356,8 +351,8 @@ impl<'arena> NodeChecker for AddressType<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for AndExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for AndExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -393,7 +388,7 @@ impl<'arena> NodeChecker for AndExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -415,7 +410,7 @@ impl<'arena> NodeChecker for AndExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operator to be present in the CST, but it was not"),
+                    "Expected operator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -437,7 +432,7 @@ impl<'arena> NodeChecker for AndExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -445,10 +440,7 @@ impl<'arena> NodeChecker for AndExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -457,8 +449,8 @@ impl<'arena> NodeChecker for AndExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ArrayExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ArrayExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -494,7 +486,7 @@ impl<'arena> NodeChecker for ArrayExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_bracket to be present in the CST, but it was not"),
+                    "Expected open_bracket to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -516,7 +508,7 @@ impl<'arena> NodeChecker for ArrayExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected items to be present in the CST, but it was not"),
+                    "Expected items to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -538,7 +530,7 @@ impl<'arena> NodeChecker for ArrayExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_bracket to be present in the CST, but it was not"),
+                    "Expected close_bracket to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -546,10 +538,7 @@ impl<'arena> NodeChecker for ArrayExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -558,8 +547,8 @@ impl<'arena> NodeChecker for ArrayExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ArrayTypeName<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ArrayTypeName<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -595,7 +584,7 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -617,7 +606,7 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_bracket to be present in the CST, but it was not"),
+                    "Expected open_bracket to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -636,7 +625,7 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected index to be present in the CST, but it was not"),
+                    "Expected index to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -649,8 +638,7 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected index to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected index to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -673,7 +661,7 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_bracket to be present in the CST, but it was not"),
+                    "Expected close_bracket to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -681,10 +669,7 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -693,8 +678,8 @@ impl<'arena> NodeChecker for ArrayTypeName<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for AssemblyFlagsDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -730,7 +715,7 @@ impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -752,7 +737,7 @@ impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected flags to be present in the CST, but it was not"),
+                    "Expected flags to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -774,7 +759,7 @@ impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -782,10 +767,7 @@ impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -794,8 +776,8 @@ impl<'arena> NodeChecker for AssemblyFlagsDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for AssemblyStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for AssemblyStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -832,7 +814,8 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected assembly_keyword to be present in the CST, but it was not"),
+                    "Expected assembly_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -851,7 +834,7 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected label to be present in the CST, but it was not"),
+                    "Expected label to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -864,8 +847,7 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected label to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected label to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -885,7 +867,7 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected flags to be present in the CST, but it was not"),
+                    "Expected flags to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -898,8 +880,7 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected flags to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected flags to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -922,7 +903,7 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -930,10 +911,7 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -942,8 +920,8 @@ impl<'arena> NodeChecker for AssemblyStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for AssignmentExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for AssignmentExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -979,7 +957,7 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1004,7 +982,7 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_AssignmentExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_AssignmentExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
@@ -1024,7 +1002,7 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1032,10 +1010,7 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1044,8 +1019,8 @@ impl<'arena> NodeChecker for AssignmentExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for BitwiseAndExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1081,7 +1056,7 @@ impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1103,7 +1078,7 @@ impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operator to be present in the CST, but it was not"),
+                    "Expected operator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1125,7 +1100,7 @@ impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1133,10 +1108,7 @@ impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1145,8 +1117,8 @@ impl<'arena> NodeChecker for BitwiseAndExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for BitwiseOrExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1182,7 +1154,7 @@ impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1204,7 +1176,7 @@ impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operator to be present in the CST, but it was not"),
+                    "Expected operator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1226,7 +1198,7 @@ impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1234,10 +1206,7 @@ impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1246,8 +1215,8 @@ impl<'arena> NodeChecker for BitwiseOrExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for BitwiseXorExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1283,7 +1252,7 @@ impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1305,7 +1274,7 @@ impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operator to be present in the CST, but it was not"),
+                    "Expected operator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1327,7 +1296,7 @@ impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1335,10 +1304,7 @@ impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1347,8 +1313,8 @@ impl<'arena> NodeChecker for BitwiseXorExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for Block<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for Block<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1384,7 +1350,7 @@ impl<'arena> NodeChecker for Block<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1406,7 +1372,7 @@ impl<'arena> NodeChecker for Block<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected statements to be present in the CST, but it was not"),
+                    "Expected statements to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1428,7 +1394,7 @@ impl<'arena> NodeChecker for Block<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1436,10 +1402,7 @@ impl<'arena> NodeChecker for Block<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1448,8 +1411,8 @@ impl<'arena> NodeChecker for Block<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for BreakStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for BreakStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1485,7 +1448,7 @@ impl<'arena> NodeChecker for BreakStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected break_keyword to be present in the CST, but it was not"),
+                    "Expected break_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1507,7 +1470,7 @@ impl<'arena> NodeChecker for BreakStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1515,10 +1478,7 @@ impl<'arena> NodeChecker for BreakStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1527,8 +1487,8 @@ impl<'arena> NodeChecker for BreakStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for CallOptionsExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1564,7 +1524,7 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1586,7 +1546,7 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1608,7 +1568,7 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected options to be present in the CST, but it was not"),
+                    "Expected options to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1630,7 +1590,7 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1638,10 +1598,7 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1650,8 +1607,8 @@ impl<'arena> NodeChecker for CallOptionsExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for CatchClause<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for CatchClause<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1687,7 +1644,7 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected catch_keyword to be present in the CST, but it was not"),
+                    "Expected catch_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1706,7 +1663,7 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected error to be present in the CST, but it was not"),
+                    "Expected error to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1719,8 +1676,7 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected error to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected error to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -1743,7 +1699,7 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1751,10 +1707,7 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1763,8 +1716,8 @@ impl<'arena> NodeChecker for CatchClause<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for CatchClauseError<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for CatchClauseError<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1797,7 +1750,7 @@ impl<'arena> NodeChecker for CatchClauseError<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1810,8 +1763,7 @@ impl<'arena> NodeChecker for CatchClauseError<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected name to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected name to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -1834,7 +1786,7 @@ impl<'arena> NodeChecker for CatchClauseError<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1842,10 +1794,7 @@ impl<'arena> NodeChecker for CatchClauseError<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -1854,8 +1803,8 @@ impl<'arena> NodeChecker for CatchClauseError<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ConditionalExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ConditionalExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1891,7 +1840,7 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1913,7 +1862,7 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected question_mark to be present in the CST, but it was not"),
+                    "Expected question_mark to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1936,7 +1885,7 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected true_expression to be present in the CST, but it was not"),
+                    "Expected true_expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1958,7 +1907,7 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected colon to be present in the CST, but it was not"),
+                    "Expected colon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1981,7 +1930,8 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected false_expression to be present in the CST, but it was not"),
+                    "Expected false_expression to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -1989,10 +1939,7 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -2001,8 +1948,8 @@ impl<'arena> NodeChecker for ConditionalExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ConstantDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ConstantDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2038,7 +1985,7 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2061,7 +2008,8 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected constant_keyword to be present in the CST, but it was not"),
+                    "Expected constant_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2083,7 +2031,7 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2105,7 +2053,7 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected equal to be present in the CST, but it was not"),
+                    "Expected equal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2127,7 +2075,7 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value to be present in the CST, but it was not"),
+                    "Expected value to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2149,7 +2097,7 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2157,10 +2105,7 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -2169,8 +2114,8 @@ impl<'arena> NodeChecker for ConstantDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ConstructorDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2207,9 +2152,8 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected constructor_keyword to be present in the CST, but it was not"
-                    ),
+                    "Expected constructor_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2231,7 +2175,7 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2253,7 +2197,7 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected attributes to be present in the CST, but it was not"),
+                    "Expected attributes to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2275,7 +2219,7 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2283,10 +2227,7 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -2295,8 +2236,8 @@ impl<'arena> NodeChecker for ConstructorDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ContinueStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ContinueStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2333,7 +2274,8 @@ impl<'arena> NodeChecker for ContinueStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected continue_keyword to be present in the CST, but it was not"),
+                    "Expected continue_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2355,7 +2297,7 @@ impl<'arena> NodeChecker for ContinueStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2363,10 +2305,7 @@ impl<'arena> NodeChecker for ContinueStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -2375,8 +2314,8 @@ impl<'arena> NodeChecker for ContinueStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ContractDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ContractDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2410,7 +2349,8 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected abstract_keyword to be present in the CST, but it was not"),
+                    "Expected abstract_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2421,7 +2361,7 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
                     child.label == EdgeLabel::AbstractKeyword
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected abstract_keyword to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected abstract_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -2442,7 +2382,8 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected contract_keyword to be present in the CST, but it was not"),
+                    "Expected contract_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2464,7 +2405,7 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2486,7 +2427,7 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected specifiers to be present in the CST, but it was not"),
+                    "Expected specifiers to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2508,7 +2449,7 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2530,7 +2471,7 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected members to be present in the CST, but it was not"),
+                    "Expected members to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2552,7 +2493,7 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2560,10 +2501,7 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -2572,8 +2510,8 @@ impl<'arena> NodeChecker for ContractDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for DecimalNumberExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2609,7 +2547,7 @@ impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected literal to be present in the CST, but it was not"),
+                    "Expected literal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2628,7 +2566,7 @@ impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected unit to be present in the CST, but it was not"),
+                    "Expected unit to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2641,8 +2579,7 @@ impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected unit to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected unit to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -2651,10 +2588,7 @@ impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -2663,8 +2597,8 @@ impl<'arena> NodeChecker for DecimalNumberExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for DoWhileStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for DoWhileStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2700,7 +2634,7 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected do_keyword to be present in the CST, but it was not"),
+                    "Expected do_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2722,7 +2656,7 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2744,7 +2678,7 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected while_keyword to be present in the CST, but it was not"),
+                    "Expected while_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2766,7 +2700,7 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2788,7 +2722,7 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected condition to be present in the CST, but it was not"),
+                    "Expected condition to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2810,7 +2744,7 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2832,7 +2766,7 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2840,10 +2774,7 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -2852,8 +2783,8 @@ impl<'arena> NodeChecker for DoWhileStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ElseBranch<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ElseBranch<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2889,7 +2820,7 @@ impl<'arena> NodeChecker for ElseBranch<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected else_keyword to be present in the CST, but it was not"),
+                    "Expected else_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2911,7 +2842,7 @@ impl<'arena> NodeChecker for ElseBranch<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2919,10 +2850,7 @@ impl<'arena> NodeChecker for ElseBranch<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -2931,8 +2859,8 @@ impl<'arena> NodeChecker for ElseBranch<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for EmitStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for EmitStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2968,7 +2896,7 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected emit_keyword to be present in the CST, but it was not"),
+                    "Expected emit_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -2990,7 +2918,7 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected event to be present in the CST, but it was not"),
+                    "Expected event to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3012,7 +2940,7 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3034,7 +2962,7 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3042,10 +2970,7 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3054,8 +2979,8 @@ impl<'arena> NodeChecker for EmitStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for EnumDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for EnumDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3091,7 +3016,7 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected enum_keyword to be present in the CST, but it was not"),
+                    "Expected enum_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3113,7 +3038,7 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3135,7 +3060,7 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3157,7 +3082,7 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected members to be present in the CST, but it was not"),
+                    "Expected members to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3179,7 +3104,7 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3187,10 +3112,7 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3199,8 +3121,8 @@ impl<'arena> NodeChecker for EnumDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for EqualityExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for EqualityExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3236,7 +3158,7 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3261,7 +3183,7 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_EqualityExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_EqualityExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
@@ -3281,7 +3203,7 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3289,10 +3211,7 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3301,8 +3220,8 @@ impl<'arena> NodeChecker for EqualityExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ErrorDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ErrorDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3338,7 +3257,7 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected error_keyword to be present in the CST, but it was not"),
+                    "Expected error_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3360,7 +3279,7 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3382,7 +3301,7 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected members to be present in the CST, but it was not"),
+                    "Expected members to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3404,7 +3323,7 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3412,10 +3331,7 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3424,8 +3340,8 @@ impl<'arena> NodeChecker for ErrorDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ErrorParameter<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ErrorParameter<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3461,7 +3377,7 @@ impl<'arena> NodeChecker for ErrorParameter<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3480,7 +3396,7 @@ impl<'arena> NodeChecker for ErrorParameter<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3493,8 +3409,7 @@ impl<'arena> NodeChecker for ErrorParameter<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected name to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected name to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -3503,10 +3418,7 @@ impl<'arena> NodeChecker for ErrorParameter<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3515,8 +3427,8 @@ impl<'arena> NodeChecker for ErrorParameter<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ErrorParametersDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3552,7 +3464,7 @@ impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3574,7 +3486,7 @@ impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3596,7 +3508,7 @@ impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3604,10 +3516,7 @@ impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3616,8 +3525,8 @@ impl<'arena> NodeChecker for ErrorParametersDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for EventDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for EventDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3653,7 +3562,7 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected event_keyword to be present in the CST, but it was not"),
+                    "Expected event_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3675,7 +3584,7 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3697,7 +3606,7 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3717,7 +3626,8 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected anonymous_keyword to be present in the CST, but it was not"),
+                    "Expected anonymous_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3728,7 +3638,7 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
                     child.label == EdgeLabel::AnonymousKeyword
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected anonymous_keyword to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected anonymous_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -3748,7 +3658,7 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3756,10 +3666,7 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3768,8 +3675,8 @@ impl<'arena> NodeChecker for EventDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for EventParameter<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for EventParameter<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3805,7 +3712,7 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3825,7 +3732,7 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected indexed_keyword to be present in the CST, but it was not"),
+                    "Expected indexed_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3836,7 +3743,7 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
                     child.label == EdgeLabel::IndexedKeyword
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected indexed_keyword to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected indexed_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -3853,7 +3760,7 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3866,8 +3773,7 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected name to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected name to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -3876,10 +3782,7 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3888,8 +3791,8 @@ impl<'arena> NodeChecker for EventParameter<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for EventParametersDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3925,7 +3828,7 @@ impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3947,7 +3850,7 @@ impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3969,7 +3872,7 @@ impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -3977,10 +3880,7 @@ impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -3989,8 +3889,8 @@ impl<'arena> NodeChecker for EventParametersDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ExperimentalPragma<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ExperimentalPragma<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4027,9 +3927,8 @@ impl<'arena> NodeChecker for ExperimentalPragma<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected experimental_keyword to be present in the CST, but it was not"
-                    ),
+                    "Expected experimental_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4051,7 +3950,7 @@ impl<'arena> NodeChecker for ExperimentalPragma<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected feature to be present in the CST, but it was not"),
+                    "Expected feature to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4059,10 +3958,7 @@ impl<'arena> NodeChecker for ExperimentalPragma<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -4071,8 +3967,8 @@ impl<'arena> NodeChecker for ExperimentalPragma<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ExponentiationExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4108,7 +4004,7 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4133,7 +4029,7 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_ExponentiationExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_ExponentiationExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
@@ -4153,7 +4049,7 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4161,10 +4057,7 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -4173,8 +4066,8 @@ impl<'arena> NodeChecker for ExponentiationExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ExpressionStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ExpressionStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4210,7 +4103,7 @@ impl<'arena> NodeChecker for ExpressionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4232,7 +4125,7 @@ impl<'arena> NodeChecker for ExpressionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4240,10 +4133,7 @@ impl<'arena> NodeChecker for ExpressionStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -4252,8 +4142,8 @@ impl<'arena> NodeChecker for ExpressionStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for FallbackFunctionDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4290,7 +4180,8 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected fallback_keyword to be present in the CST, but it was not"),
+                    "Expected fallback_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4312,7 +4203,7 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4334,7 +4225,7 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected attributes to be present in the CST, but it was not"),
+                    "Expected attributes to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4353,7 +4244,7 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected returns to be present in the CST, but it was not"),
+                    "Expected returns to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4364,13 +4255,7 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
                     child.label == EdgeLabel::Returns
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected returns to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -4390,7 +4275,7 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4398,10 +4283,7 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -4410,8 +4292,8 @@ impl<'arena> NodeChecker for FallbackFunctionDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ForStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ForStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4447,7 +4329,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected for_keyword to be present in the CST, but it was not"),
+                    "Expected for_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4469,7 +4351,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4491,7 +4373,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected initialization to be present in the CST, but it was not"),
+                    "Expected initialization to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4513,7 +4395,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected condition to be present in the CST, but it was not"),
+                    "Expected condition to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4532,7 +4414,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected iterator to be present in the CST, but it was not"),
+                    "Expected iterator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4543,13 +4425,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
                     child.label == EdgeLabel::Iterator
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected iterator to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected iterator to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -4569,7 +4445,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4591,7 +4467,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4599,10 +4475,7 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -4611,8 +4484,8 @@ impl<'arena> NodeChecker for ForStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for FunctionCallExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for FunctionCallExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4648,7 +4521,7 @@ impl<'arena> NodeChecker for FunctionCallExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4670,7 +4543,7 @@ impl<'arena> NodeChecker for FunctionCallExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4678,10 +4551,7 @@ impl<'arena> NodeChecker for FunctionCallExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -4690,8 +4560,8 @@ impl<'arena> NodeChecker for FunctionCallExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for FunctionDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for FunctionDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4728,7 +4598,8 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected function_keyword to be present in the CST, but it was not"),
+                    "Expected function_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4750,7 +4621,7 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4772,7 +4643,7 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4794,7 +4665,7 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected attributes to be present in the CST, but it was not"),
+                    "Expected attributes to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4813,7 +4684,7 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected returns to be present in the CST, but it was not"),
+                    "Expected returns to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4824,13 +4695,7 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
                     child.label == EdgeLabel::Returns
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected returns to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -4850,7 +4715,7 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4858,10 +4723,7 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -4870,8 +4732,8 @@ impl<'arena> NodeChecker for FunctionDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for FunctionType<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for FunctionType<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4908,7 +4770,8 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected function_keyword to be present in the CST, but it was not"),
+                    "Expected function_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4930,7 +4793,7 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4952,7 +4815,7 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected attributes to be present in the CST, but it was not"),
+                    "Expected attributes to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4971,7 +4834,7 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected returns to be present in the CST, but it was not"),
+                    "Expected returns to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -4982,22 +4845,13 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
                     child.label == EdgeLabel::Returns
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected returns to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5006,8 +4860,8 @@ impl<'arena> NodeChecker for FunctionType<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for HexNumberExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for HexNumberExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5043,7 +4897,7 @@ impl<'arena> NodeChecker for HexNumberExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected literal to be present in the CST, but it was not"),
+                    "Expected literal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5062,7 +4916,7 @@ impl<'arena> NodeChecker for HexNumberExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected unit to be present in the CST, but it was not"),
+                    "Expected unit to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5075,8 +4929,7 @@ impl<'arena> NodeChecker for HexNumberExpression<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected unit to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected unit to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -5085,10 +4938,7 @@ impl<'arena> NodeChecker for HexNumberExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5097,8 +4947,8 @@ impl<'arena> NodeChecker for HexNumberExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for IfStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for IfStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5134,7 +4984,7 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected if_keyword to be present in the CST, but it was not"),
+                    "Expected if_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5156,7 +5006,7 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5178,7 +5028,7 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected condition to be present in the CST, but it was not"),
+                    "Expected condition to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5200,7 +5050,7 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5222,7 +5072,7 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5241,7 +5091,7 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected else_branch to be present in the CST, but it was not"),
+                    "Expected else_branch to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5252,16 +5102,13 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
                     child.label == EdgeLabel::ElseBranch
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected else_branch to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected else_branch to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5270,8 +5117,8 @@ impl<'arena> NodeChecker for IfStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ImportAlias<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ImportAlias<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5307,7 +5154,7 @@ impl<'arena> NodeChecker for ImportAlias<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected as_keyword to be present in the CST, but it was not"),
+                    "Expected as_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5329,7 +5176,7 @@ impl<'arena> NodeChecker for ImportAlias<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected identifier to be present in the CST, but it was not"),
+                    "Expected identifier to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5337,10 +5184,7 @@ impl<'arena> NodeChecker for ImportAlias<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5349,8 +5193,8 @@ impl<'arena> NodeChecker for ImportAlias<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ImportDeconstruction<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5386,7 +5230,7 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5408,7 +5252,7 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected symbols to be present in the CST, but it was not"),
+                    "Expected symbols to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5430,7 +5274,7 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5452,7 +5296,7 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected from_keyword to be present in the CST, but it was not"),
+                    "Expected from_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5474,7 +5318,7 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected path to be present in the CST, but it was not"),
+                    "Expected path to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5482,10 +5326,7 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5494,8 +5335,8 @@ impl<'arena> NodeChecker for ImportDeconstruction<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ImportDeconstructionSymbol<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5531,7 +5372,7 @@ impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5550,7 +5391,7 @@ impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected alias to be present in the CST, but it was not"),
+                    "Expected alias to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5563,8 +5404,7 @@ impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected alias to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected alias to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -5573,10 +5413,7 @@ impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5585,8 +5422,8 @@ impl<'arena> NodeChecker for ImportDeconstructionSymbol<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ImportDirective<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ImportDirective<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5622,7 +5459,7 @@ impl<'arena> NodeChecker for ImportDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected import_keyword to be present in the CST, but it was not"),
+                    "Expected import_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5644,7 +5481,7 @@ impl<'arena> NodeChecker for ImportDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected clause to be present in the CST, but it was not"),
+                    "Expected clause to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5666,7 +5503,7 @@ impl<'arena> NodeChecker for ImportDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5674,10 +5511,7 @@ impl<'arena> NodeChecker for ImportDirective<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5686,8 +5520,8 @@ impl<'arena> NodeChecker for ImportDirective<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for IndexAccessEnd<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5723,7 +5557,7 @@ impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected colon to be present in the CST, but it was not"),
+                    "Expected colon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5742,7 +5576,7 @@ impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected end to be present in the CST, but it was not"),
+                    "Expected end to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5755,8 +5589,7 @@ impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected end to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected end to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -5765,10 +5598,7 @@ impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5777,8 +5607,8 @@ impl<'arena> NodeChecker for IndexAccessEnd<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for IndexAccessExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5814,7 +5644,7 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5836,7 +5666,7 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_bracket to be present in the CST, but it was not"),
+                    "Expected open_bracket to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5855,7 +5685,7 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected start to be present in the CST, but it was not"),
+                    "Expected start to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5868,8 +5698,7 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected start to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected start to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -5889,7 +5718,7 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected end to be present in the CST, but it was not"),
+                    "Expected end to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5902,8 +5731,7 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected end to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected end to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -5926,7 +5754,7 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_bracket to be present in the CST, but it was not"),
+                    "Expected close_bracket to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -5934,10 +5762,7 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -5946,8 +5771,8 @@ impl<'arena> NodeChecker for IndexAccessExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for InequalityExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for InequalityExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5983,7 +5808,7 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6008,7 +5833,7 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_InequalityExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_InequalityExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
@@ -6028,7 +5853,7 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6036,10 +5861,7 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6048,8 +5870,8 @@ impl<'arena> NodeChecker for InequalityExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for InheritanceSpecifier<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for InheritanceSpecifier<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6085,7 +5907,7 @@ impl<'arena> NodeChecker for InheritanceSpecifier<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected is_keyword to be present in the CST, but it was not"),
+                    "Expected is_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6107,7 +5929,7 @@ impl<'arena> NodeChecker for InheritanceSpecifier<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected types to be present in the CST, but it was not"),
+                    "Expected types to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6115,10 +5937,7 @@ impl<'arena> NodeChecker for InheritanceSpecifier<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6127,8 +5946,8 @@ impl<'arena> NodeChecker for InheritanceSpecifier<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for InheritanceType<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for InheritanceType<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6164,7 +5983,7 @@ impl<'arena> NodeChecker for InheritanceType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6183,7 +6002,7 @@ impl<'arena> NodeChecker for InheritanceType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6194,22 +6013,13 @@ impl<'arena> NodeChecker for InheritanceType<'arena> {
                     child.label == EdgeLabel::Arguments
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected arguments to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected arguments to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6218,8 +6028,8 @@ impl<'arena> NodeChecker for InheritanceType<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for InterfaceDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6256,7 +6066,8 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected interface_keyword to be present in the CST, but it was not"),
+                    "Expected interface_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6278,7 +6089,7 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6297,7 +6108,7 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected inheritance to be present in the CST, but it was not"),
+                    "Expected inheritance to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6308,7 +6119,7 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
                     child.label == EdgeLabel::Inheritance
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected inheritance to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected inheritance to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -6328,7 +6139,7 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6350,7 +6161,7 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected members to be present in the CST, but it was not"),
+                    "Expected members to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6372,7 +6183,7 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6380,10 +6191,7 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6392,8 +6200,8 @@ impl<'arena> NodeChecker for InterfaceDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for LibraryDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for LibraryDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6430,7 +6238,7 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected library_keyword to be present in the CST, but it was not"),
+                    "Expected library_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6452,7 +6260,7 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6474,7 +6282,7 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6496,7 +6304,7 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected members to be present in the CST, but it was not"),
+                    "Expected members to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6518,7 +6326,7 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6526,10 +6334,7 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6538,8 +6343,8 @@ impl<'arena> NodeChecker for LibraryDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for MappingKey<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for MappingKey<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6575,7 +6380,7 @@ impl<'arena> NodeChecker for MappingKey<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected key_type to be present in the CST, but it was not"),
+                    "Expected key_type to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6594,7 +6399,7 @@ impl<'arena> NodeChecker for MappingKey<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6607,8 +6412,7 @@ impl<'arena> NodeChecker for MappingKey<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected name to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected name to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -6617,10 +6421,7 @@ impl<'arena> NodeChecker for MappingKey<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6629,8 +6430,8 @@ impl<'arena> NodeChecker for MappingKey<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for MappingType<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for MappingType<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6667,7 +6468,7 @@ impl<'arena> NodeChecker for MappingType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected mapping_keyword to be present in the CST, but it was not"),
+                    "Expected mapping_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6689,7 +6490,7 @@ impl<'arena> NodeChecker for MappingType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6711,7 +6512,7 @@ impl<'arena> NodeChecker for MappingType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected key_type to be present in the CST, but it was not"),
+                    "Expected key_type to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6734,7 +6535,8 @@ impl<'arena> NodeChecker for MappingType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected equal_greater_than to be present in the CST, but it was not"),
+                    "Expected equal_greater_than to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6756,7 +6558,7 @@ impl<'arena> NodeChecker for MappingType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value_type to be present in the CST, but it was not"),
+                    "Expected value_type to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6778,7 +6580,7 @@ impl<'arena> NodeChecker for MappingType<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6786,10 +6588,7 @@ impl<'arena> NodeChecker for MappingType<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6798,8 +6597,8 @@ impl<'arena> NodeChecker for MappingType<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for MappingValue<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for MappingValue<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6835,7 +6634,7 @@ impl<'arena> NodeChecker for MappingValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6854,7 +6653,7 @@ impl<'arena> NodeChecker for MappingValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6867,8 +6666,7 @@ impl<'arena> NodeChecker for MappingValue<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected name to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected name to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -6877,10 +6675,7 @@ impl<'arena> NodeChecker for MappingValue<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6889,8 +6684,8 @@ impl<'arena> NodeChecker for MappingValue<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for MemberAccessExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6926,7 +6721,7 @@ impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6948,7 +6743,7 @@ impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected period to be present in the CST, but it was not"),
+                    "Expected period to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6970,7 +6765,7 @@ impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected member to be present in the CST, but it was not"),
+                    "Expected member to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -6978,10 +6773,7 @@ impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -6990,8 +6782,8 @@ impl<'arena> NodeChecker for MemberAccessExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ModifierDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ModifierDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7028,7 +6820,8 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected modifier_keyword to be present in the CST, but it was not"),
+                    "Expected modifier_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7050,7 +6843,7 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7069,7 +6862,7 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7080,13 +6873,7 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
                     child.label == EdgeLabel::Parameters
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected parameters to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected parameters to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -7106,7 +6893,7 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected attributes to be present in the CST, but it was not"),
+                    "Expected attributes to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7128,7 +6915,7 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7136,10 +6923,7 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7148,8 +6932,8 @@ impl<'arena> NodeChecker for ModifierDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ModifierInvocation<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ModifierInvocation<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7185,7 +6969,7 @@ impl<'arena> NodeChecker for ModifierInvocation<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7204,7 +6988,7 @@ impl<'arena> NodeChecker for ModifierInvocation<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7215,22 +6999,13 @@ impl<'arena> NodeChecker for ModifierInvocation<'arena> {
                     child.label == EdgeLabel::Arguments
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected arguments to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected arguments to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7239,8 +7014,8 @@ impl<'arena> NodeChecker for ModifierInvocation<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for MultiplicativeExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7276,7 +7051,7 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7301,7 +7076,7 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_MultiplicativeExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_MultiplicativeExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
@@ -7321,7 +7096,7 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7329,10 +7104,7 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7341,8 +7113,8 @@ impl<'arena> NodeChecker for MultiplicativeExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for NamedArgument<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for NamedArgument<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7378,7 +7150,7 @@ impl<'arena> NodeChecker for NamedArgument<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7400,7 +7172,7 @@ impl<'arena> NodeChecker for NamedArgument<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected colon to be present in the CST, but it was not"),
+                    "Expected colon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7422,7 +7194,7 @@ impl<'arena> NodeChecker for NamedArgument<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value to be present in the CST, but it was not"),
+                    "Expected value to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7430,10 +7202,7 @@ impl<'arena> NodeChecker for NamedArgument<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7442,8 +7211,8 @@ impl<'arena> NodeChecker for NamedArgument<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for NamedArgumentGroup<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7479,7 +7248,7 @@ impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7501,7 +7270,7 @@ impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7523,7 +7292,7 @@ impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7531,10 +7300,7 @@ impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7543,8 +7309,8 @@ impl<'arena> NodeChecker for NamedArgumentGroup<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for NamedArgumentsDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7580,7 +7346,7 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7599,7 +7365,7 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7610,13 +7376,7 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
                     child.label == EdgeLabel::Arguments
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected arguments to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected arguments to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -7636,7 +7396,7 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7644,10 +7404,7 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7656,8 +7413,8 @@ impl<'arena> NodeChecker for NamedArgumentsDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for NamedImport<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for NamedImport<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7693,7 +7450,7 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected asterisk to be present in the CST, but it was not"),
+                    "Expected asterisk to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7715,7 +7472,7 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected alias to be present in the CST, but it was not"),
+                    "Expected alias to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7737,7 +7494,7 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected from_keyword to be present in the CST, but it was not"),
+                    "Expected from_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7759,7 +7516,7 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected path to be present in the CST, but it was not"),
+                    "Expected path to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7767,10 +7524,7 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7779,8 +7533,8 @@ impl<'arena> NodeChecker for NamedImport<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for NewExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for NewExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7816,7 +7570,7 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected new_keyword to be present in the CST, but it was not"),
+                    "Expected new_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7838,7 +7592,7 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7846,10 +7600,7 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7858,8 +7609,8 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for OrExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for OrExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7895,7 +7646,7 @@ impl<'arena> NodeChecker for OrExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7917,7 +7668,7 @@ impl<'arena> NodeChecker for OrExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operator to be present in the CST, but it was not"),
+                    "Expected operator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7939,7 +7690,7 @@ impl<'arena> NodeChecker for OrExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7947,10 +7698,7 @@ impl<'arena> NodeChecker for OrExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -7959,8 +7707,8 @@ impl<'arena> NodeChecker for OrExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for OverridePathsDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7996,7 +7744,7 @@ impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8018,7 +7766,7 @@ impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected paths to be present in the CST, but it was not"),
+                    "Expected paths to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8040,7 +7788,7 @@ impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8048,10 +7796,7 @@ impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8060,8 +7805,8 @@ impl<'arena> NodeChecker for OverridePathsDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for OverrideSpecifier<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for OverrideSpecifier<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8098,7 +7843,8 @@ impl<'arena> NodeChecker for OverrideSpecifier<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected override_keyword to be present in the CST, but it was not"),
+                    "Expected override_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8117,7 +7863,7 @@ impl<'arena> NodeChecker for OverrideSpecifier<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected overridden to be present in the CST, but it was not"),
+                    "Expected overridden to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8128,22 +7874,13 @@ impl<'arena> NodeChecker for OverrideSpecifier<'arena> {
                     child.label == EdgeLabel::Overridden
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected overridden to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected overridden to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8152,8 +7889,8 @@ impl<'arena> NodeChecker for OverrideSpecifier<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for Parameter<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for Parameter<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8189,7 +7926,7 @@ impl<'arena> NodeChecker for Parameter<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8209,7 +7946,8 @@ impl<'arena> NodeChecker for Parameter<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected storage_location to be present in the CST, but it was not"),
+                    "Expected storage_location to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8220,7 +7958,7 @@ impl<'arena> NodeChecker for Parameter<'arena> {
                     child.label == EdgeLabel::StorageLocation
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -8237,7 +7975,7 @@ impl<'arena> NodeChecker for Parameter<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8250,8 +7988,7 @@ impl<'arena> NodeChecker for Parameter<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected name to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected name to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -8260,10 +7997,7 @@ impl<'arena> NodeChecker for Parameter<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8272,8 +8006,8 @@ impl<'arena> NodeChecker for Parameter<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ParametersDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8309,7 +8043,7 @@ impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8331,7 +8065,7 @@ impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8353,7 +8087,7 @@ impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8361,10 +8095,7 @@ impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8373,8 +8104,8 @@ impl<'arena> NodeChecker for ParametersDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for PathImport<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for PathImport<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8410,7 +8141,7 @@ impl<'arena> NodeChecker for PathImport<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected path to be present in the CST, but it was not"),
+                    "Expected path to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8429,7 +8160,7 @@ impl<'arena> NodeChecker for PathImport<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected alias to be present in the CST, but it was not"),
+                    "Expected alias to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8442,8 +8173,7 @@ impl<'arena> NodeChecker for PathImport<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected alias to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected alias to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -8452,10 +8182,7 @@ impl<'arena> NodeChecker for PathImport<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8464,8 +8191,8 @@ impl<'arena> NodeChecker for PathImport<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for PositionalArgumentsDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8501,7 +8228,7 @@ impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8523,7 +8250,7 @@ impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8545,7 +8272,7 @@ impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8553,10 +8280,7 @@ impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8565,8 +8289,8 @@ impl<'arena> NodeChecker for PositionalArgumentsDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for PostfixExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for PostfixExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8602,7 +8326,7 @@ impl<'arena> NodeChecker for PostfixExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8627,16 +8351,13 @@ impl<'arena> NodeChecker for PostfixExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_PostfixExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_PostfixExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8645,8 +8366,8 @@ impl<'arena> NodeChecker for PostfixExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for PragmaDirective<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for PragmaDirective<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8682,7 +8403,7 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected pragma_keyword to be present in the CST, but it was not"),
+                    "Expected pragma_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8704,7 +8425,7 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected pragma to be present in the CST, but it was not"),
+                    "Expected pragma to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8726,7 +8447,7 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8734,10 +8455,7 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8746,8 +8464,8 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for PrefixExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for PrefixExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8785,7 +8503,7 @@ impl<'arena> NodeChecker for PrefixExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_PrefixExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_PrefixExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
@@ -8805,7 +8523,7 @@ impl<'arena> NodeChecker for PrefixExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8813,10 +8531,7 @@ impl<'arena> NodeChecker for PrefixExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8825,8 +8540,8 @@ impl<'arena> NodeChecker for PrefixExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ReceiveFunctionDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8863,7 +8578,7 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected receive_keyword to be present in the CST, but it was not"),
+                    "Expected receive_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8885,7 +8600,7 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8907,7 +8622,7 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected attributes to be present in the CST, but it was not"),
+                    "Expected attributes to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8929,7 +8644,7 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -8937,10 +8652,7 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -8949,8 +8661,8 @@ impl<'arena> NodeChecker for ReceiveFunctionDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ReturnStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ReturnStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8986,7 +8698,7 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected return_keyword to be present in the CST, but it was not"),
+                    "Expected return_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9005,7 +8717,7 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9016,13 +8728,7 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
                     child.label == EdgeLabel::Expression
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected expression to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected expression to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -9042,7 +8748,7 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9050,10 +8756,7 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9062,8 +8765,8 @@ impl<'arena> NodeChecker for ReturnStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ReturnsDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ReturnsDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9100,7 +8803,7 @@ impl<'arena> NodeChecker for ReturnsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected returns_keyword to be present in the CST, but it was not"),
+                    "Expected returns_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9122,7 +8825,7 @@ impl<'arena> NodeChecker for ReturnsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected variables to be present in the CST, but it was not"),
+                    "Expected variables to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9130,10 +8833,7 @@ impl<'arena> NodeChecker for ReturnsDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9142,8 +8842,8 @@ impl<'arena> NodeChecker for ReturnsDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for RevertStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for RevertStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9179,7 +8879,7 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected revert_keyword to be present in the CST, but it was not"),
+                    "Expected revert_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9198,7 +8898,7 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected error to be present in the CST, but it was not"),
+                    "Expected error to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9211,8 +8911,7 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected error to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected error to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -9235,7 +8934,7 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9257,7 +8956,7 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9265,10 +8964,7 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9277,8 +8973,8 @@ impl<'arena> NodeChecker for RevertStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ShiftExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ShiftExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9314,7 +9010,7 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected left_operand to be present in the CST, but it was not"),
+                    "Expected left_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9338,7 +9034,7 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
                     .check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!("Expected Expression_ShiftExpression_Operator to be present in the CST, but it was not"), node_range.clone()));
+                errors.push(NodeCheckerError::new("Expected Expression_ShiftExpression_Operator to be present in the CST, but it was not".to_string(), node_range.clone()));
             }
         }
 
@@ -9358,7 +9054,7 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected right_operand to be present in the CST, but it was not"),
+                    "Expected right_operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9366,10 +9062,7 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9378,8 +9071,8 @@ impl<'arena> NodeChecker for ShiftExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for SourceUnit<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for SourceUnit<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9415,7 +9108,7 @@ impl<'arena> NodeChecker for SourceUnit<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected members to be present in the CST, but it was not"),
+                    "Expected members to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9423,10 +9116,7 @@ impl<'arena> NodeChecker for SourceUnit<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9435,8 +9125,8 @@ impl<'arena> NodeChecker for SourceUnit<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for StateVariableDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9472,7 +9162,7 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9494,7 +9184,7 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected attributes to be present in the CST, but it was not"),
+                    "Expected attributes to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9516,7 +9206,7 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9535,7 +9225,7 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value to be present in the CST, but it was not"),
+                    "Expected value to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9548,8 +9238,7 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected value to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected value to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -9572,7 +9261,7 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9580,10 +9269,7 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9592,8 +9278,8 @@ impl<'arena> NodeChecker for StateVariableDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for StateVariableDefinitionValue<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for StateVariableDefinitionValue<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9629,7 +9315,7 @@ impl<'arena> NodeChecker for StateVariableDefinitionValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected equal to be present in the CST, but it was not"),
+                    "Expected equal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9651,7 +9337,7 @@ impl<'arena> NodeChecker for StateVariableDefinitionValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value to be present in the CST, but it was not"),
+                    "Expected value to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9659,10 +9345,7 @@ impl<'arena> NodeChecker for StateVariableDefinitionValue<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9671,8 +9354,8 @@ impl<'arena> NodeChecker for StateVariableDefinitionValue<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for StorageLayoutSpecifier<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9708,7 +9391,7 @@ impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected layout_keyword to be present in the CST, but it was not"),
+                    "Expected layout_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9730,7 +9413,7 @@ impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected at_keyword to be present in the CST, but it was not"),
+                    "Expected at_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9752,7 +9435,7 @@ impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9760,10 +9443,7 @@ impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9772,8 +9452,8 @@ impl<'arena> NodeChecker for StorageLayoutSpecifier<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for StructDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for StructDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9809,7 +9489,7 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected struct_keyword to be present in the CST, but it was not"),
+                    "Expected struct_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9831,7 +9511,7 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9853,7 +9533,7 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9875,7 +9555,7 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected members to be present in the CST, but it was not"),
+                    "Expected members to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9897,7 +9577,7 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9905,10 +9585,7 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -9917,8 +9594,8 @@ impl<'arena> NodeChecker for StructDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for StructMember<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for StructMember<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9954,7 +9631,7 @@ impl<'arena> NodeChecker for StructMember<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9976,7 +9653,7 @@ impl<'arena> NodeChecker for StructMember<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -9998,7 +9675,7 @@ impl<'arena> NodeChecker for StructMember<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10006,10 +9683,7 @@ impl<'arena> NodeChecker for StructMember<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10018,8 +9692,8 @@ impl<'arena> NodeChecker for StructMember<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for ThrowStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for ThrowStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10055,7 +9729,7 @@ impl<'arena> NodeChecker for ThrowStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected throw_keyword to be present in the CST, but it was not"),
+                    "Expected throw_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10077,7 +9751,7 @@ impl<'arena> NodeChecker for ThrowStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10085,10 +9759,7 @@ impl<'arena> NodeChecker for ThrowStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10097,8 +9768,8 @@ impl<'arena> NodeChecker for ThrowStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for TryStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for TryStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10134,7 +9805,7 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected try_keyword to be present in the CST, but it was not"),
+                    "Expected try_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10156,7 +9827,7 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10175,7 +9846,7 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected returns to be present in the CST, but it was not"),
+                    "Expected returns to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10186,13 +9857,7 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
                     child.label == EdgeLabel::Returns
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected returns to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -10212,7 +9877,7 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10234,7 +9899,7 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected catch_clauses to be present in the CST, but it was not"),
+                    "Expected catch_clauses to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10242,10 +9907,7 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10254,8 +9916,8 @@ impl<'arena> NodeChecker for TryStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for TupleDeconstructionElement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for TupleDeconstructionElement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10288,7 +9950,7 @@ impl<'arena> NodeChecker for TupleDeconstructionElement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected member to be present in the CST, but it was not"),
+                    "Expected member to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10299,22 +9961,13 @@ impl<'arena> NodeChecker for TupleDeconstructionElement<'arena> {
                     child.label == EdgeLabel::Member
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected member to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected member to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10323,8 +9976,8 @@ impl<'arena> NodeChecker for TupleDeconstructionElement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for TupleDeconstructionStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10357,7 +10010,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected var_keyword to be present in the CST, but it was not"),
+                    "Expected var_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10368,7 +10021,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
                     child.label == EdgeLabel::VarKeyword
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected var_keyword to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected var_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -10388,7 +10041,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10410,7 +10063,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected elements to be present in the CST, but it was not"),
+                    "Expected elements to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10432,7 +10085,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10454,7 +10107,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected equal to be present in the CST, but it was not"),
+                    "Expected equal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10476,7 +10129,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10498,7 +10151,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10506,10 +10159,7 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10518,8 +10168,8 @@ impl<'arena> NodeChecker for TupleDeconstructionStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for TupleExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for TupleExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10555,7 +10205,7 @@ impl<'arena> NodeChecker for TupleExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10577,7 +10227,7 @@ impl<'arena> NodeChecker for TupleExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected items to be present in the CST, but it was not"),
+                    "Expected items to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10599,7 +10249,7 @@ impl<'arena> NodeChecker for TupleExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10607,10 +10257,7 @@ impl<'arena> NodeChecker for TupleExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10619,8 +10266,8 @@ impl<'arena> NodeChecker for TupleExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for TupleValue<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for TupleValue<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10653,7 +10300,7 @@ impl<'arena> NodeChecker for TupleValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10664,22 +10311,13 @@ impl<'arena> NodeChecker for TupleValue<'arena> {
                     child.label == EdgeLabel::Expression
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected expression to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected expression to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10688,8 +10326,8 @@ impl<'arena> NodeChecker for TupleValue<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for TypeExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for TypeExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10725,7 +10363,7 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_keyword to be present in the CST, but it was not"),
+                    "Expected type_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10747,7 +10385,7 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10769,7 +10407,7 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10791,7 +10429,7 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10799,10 +10437,7 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10811,8 +10446,8 @@ impl<'arena> NodeChecker for TypeExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for TypedTupleMember<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for TypedTupleMember<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10848,7 +10483,7 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_name to be present in the CST, but it was not"),
+                    "Expected type_name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10868,7 +10503,8 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected storage_location to be present in the CST, but it was not"),
+                    "Expected storage_location to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10879,7 +10515,7 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
                     child.label == EdgeLabel::StorageLocation
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -10899,7 +10535,7 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10907,10 +10543,7 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10919,8 +10552,8 @@ impl<'arena> NodeChecker for TypedTupleMember<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for UncheckedBlock<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for UncheckedBlock<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10957,7 +10590,8 @@ impl<'arena> NodeChecker for UncheckedBlock<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected unchecked_keyword to be present in the CST, but it was not"),
+                    "Expected unchecked_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10979,7 +10613,7 @@ impl<'arena> NodeChecker for UncheckedBlock<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected block to be present in the CST, but it was not"),
+                    "Expected block to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -10987,10 +10621,7 @@ impl<'arena> NodeChecker for UncheckedBlock<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -10999,8 +10630,8 @@ impl<'arena> NodeChecker for UncheckedBlock<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for UnnamedFunctionDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11037,7 +10668,8 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected function_keyword to be present in the CST, but it was not"),
+                    "Expected function_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11059,7 +10691,7 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11081,7 +10713,7 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected attributes to be present in the CST, but it was not"),
+                    "Expected attributes to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11103,7 +10735,7 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11111,10 +10743,7 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11123,8 +10752,8 @@ impl<'arena> NodeChecker for UnnamedFunctionDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for UntypedTupleMember<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11158,7 +10787,8 @@ impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected storage_location to be present in the CST, but it was not"),
+                    "Expected storage_location to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11169,7 +10799,7 @@ impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
                     child.label == EdgeLabel::StorageLocation
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -11189,7 +10819,7 @@ impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11197,10 +10827,7 @@ impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11209,8 +10836,8 @@ impl<'arena> NodeChecker for UntypedTupleMember<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for UserDefinedValueTypeDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11246,7 +10873,7 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected type_keyword to be present in the CST, but it was not"),
+                    "Expected type_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11268,7 +10895,7 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11290,7 +10917,7 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected is_keyword to be present in the CST, but it was not"),
+                    "Expected is_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11312,7 +10939,7 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value_type to be present in the CST, but it was not"),
+                    "Expected value_type to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11334,7 +10961,7 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11342,10 +10969,7 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11354,8 +10978,8 @@ impl<'arena> NodeChecker for UserDefinedValueTypeDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for UsingAlias<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for UsingAlias<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11391,7 +11015,7 @@ impl<'arena> NodeChecker for UsingAlias<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected as_keyword to be present in the CST, but it was not"),
+                    "Expected as_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11413,7 +11037,7 @@ impl<'arena> NodeChecker for UsingAlias<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operator to be present in the CST, but it was not"),
+                    "Expected operator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11421,10 +11045,7 @@ impl<'arena> NodeChecker for UsingAlias<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11433,8 +11054,8 @@ impl<'arena> NodeChecker for UsingAlias<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for UsingDeconstruction<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11470,7 +11091,7 @@ impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11492,7 +11113,7 @@ impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected symbols to be present in the CST, but it was not"),
+                    "Expected symbols to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11514,7 +11135,7 @@ impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11522,10 +11143,7 @@ impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11534,8 +11152,8 @@ impl<'arena> NodeChecker for UsingDeconstruction<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for UsingDeconstructionSymbol<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11571,7 +11189,7 @@ impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11590,7 +11208,7 @@ impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected alias to be present in the CST, but it was not"),
+                    "Expected alias to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11603,8 +11221,7 @@ impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected alias to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected alias to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -11613,10 +11230,7 @@ impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11625,8 +11239,8 @@ impl<'arena> NodeChecker for UsingDeconstructionSymbol<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for UsingDirective<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for UsingDirective<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11662,7 +11276,7 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected using_keyword to be present in the CST, but it was not"),
+                    "Expected using_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11684,7 +11298,7 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected clause to be present in the CST, but it was not"),
+                    "Expected clause to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11706,7 +11320,7 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected for_keyword to be present in the CST, but it was not"),
+                    "Expected for_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11728,7 +11342,7 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected target to be present in the CST, but it was not"),
+                    "Expected target to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11747,7 +11361,7 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected global_keyword to be present in the CST, but it was not"),
+                    "Expected global_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11758,7 +11372,7 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
                     child.label == EdgeLabel::GlobalKeyword
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected global_keyword to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected global_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -11778,7 +11392,7 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11786,10 +11400,7 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11798,8 +11409,8 @@ impl<'arena> NodeChecker for UsingDirective<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for VariableDeclarationStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11835,7 +11446,7 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected variable_type to be present in the CST, but it was not"),
+                    "Expected variable_type to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11855,7 +11466,8 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected storage_location to be present in the CST, but it was not"),
+                    "Expected storage_location to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11866,7 +11478,7 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
                     child.label == EdgeLabel::StorageLocation
                 })
             {
-                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -11886,7 +11498,7 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11905,7 +11517,7 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value to be present in the CST, but it was not"),
+                    "Expected value to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11918,8 +11530,7 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected value to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected value to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -11942,7 +11553,7 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11950,10 +11561,7 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11962,8 +11570,8 @@ impl<'arena> NodeChecker for VariableDeclarationStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for VariableDeclarationValue<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for VariableDeclarationValue<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11999,7 +11607,7 @@ impl<'arena> NodeChecker for VariableDeclarationValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected equal to be present in the CST, but it was not"),
+                    "Expected equal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12021,7 +11629,7 @@ impl<'arena> NodeChecker for VariableDeclarationValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12029,10 +11637,7 @@ impl<'arena> NodeChecker for VariableDeclarationValue<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12041,8 +11646,8 @@ impl<'arena> NodeChecker for VariableDeclarationValue<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for VersionPragma<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for VersionPragma<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12079,7 +11684,8 @@ impl<'arena> NodeChecker for VersionPragma<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected solidity_keyword to be present in the CST, but it was not"),
+                    "Expected solidity_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12101,7 +11707,7 @@ impl<'arena> NodeChecker for VersionPragma<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected sets to be present in the CST, but it was not"),
+                    "Expected sets to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12109,10 +11715,7 @@ impl<'arena> NodeChecker for VersionPragma<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12121,8 +11724,8 @@ impl<'arena> NodeChecker for VersionPragma<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for VersionRange<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for VersionRange<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12158,7 +11761,7 @@ impl<'arena> NodeChecker for VersionRange<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected start to be present in the CST, but it was not"),
+                    "Expected start to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12180,7 +11783,7 @@ impl<'arena> NodeChecker for VersionRange<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected minus to be present in the CST, but it was not"),
+                    "Expected minus to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12202,7 +11805,7 @@ impl<'arena> NodeChecker for VersionRange<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected end to be present in the CST, but it was not"),
+                    "Expected end to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12210,10 +11813,7 @@ impl<'arena> NodeChecker for VersionRange<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12222,8 +11822,8 @@ impl<'arena> NodeChecker for VersionRange<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for VersionTerm<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for VersionTerm<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12256,7 +11856,7 @@ impl<'arena> NodeChecker for VersionTerm<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operator to be present in the CST, but it was not"),
+                    "Expected operator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12267,13 +11867,7 @@ impl<'arena> NodeChecker for VersionTerm<'arena> {
                     child.label == EdgeLabel::Operator
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected operator to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected operator to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -12293,7 +11887,7 @@ impl<'arena> NodeChecker for VersionTerm<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected literal to be present in the CST, but it was not"),
+                    "Expected literal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12301,10 +11895,7 @@ impl<'arena> NodeChecker for VersionTerm<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12313,8 +11904,8 @@ impl<'arena> NodeChecker for VersionTerm<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for WhileStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for WhileStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12350,7 +11941,7 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected while_keyword to be present in the CST, but it was not"),
+                    "Expected while_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12372,7 +11963,7 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12394,7 +11985,7 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected condition to be present in the CST, but it was not"),
+                    "Expected condition to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12416,7 +12007,7 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12438,7 +12029,7 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12446,10 +12037,7 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12458,8 +12046,8 @@ impl<'arena> NodeChecker for WhileStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulBlock<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulBlock<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12495,7 +12083,7 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12517,7 +12105,7 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected statements to be present in the CST, but it was not"),
+                    "Expected statements to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12539,7 +12127,7 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12547,10 +12135,7 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12559,8 +12144,8 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulBreakStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulBreakStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12596,7 +12181,7 @@ impl<'arena> NodeChecker for YulBreakStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected break_keyword to be present in the CST, but it was not"),
+                    "Expected break_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12604,10 +12189,7 @@ impl<'arena> NodeChecker for YulBreakStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12616,8 +12198,8 @@ impl<'arena> NodeChecker for YulBreakStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulColonAndEqual<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulColonAndEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12653,7 +12235,7 @@ impl<'arena> NodeChecker for YulColonAndEqual<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected colon to be present in the CST, but it was not"),
+                    "Expected colon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12675,7 +12257,7 @@ impl<'arena> NodeChecker for YulColonAndEqual<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected equal to be present in the CST, but it was not"),
+                    "Expected equal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12683,10 +12265,7 @@ impl<'arena> NodeChecker for YulColonAndEqual<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12695,8 +12274,8 @@ impl<'arena> NodeChecker for YulColonAndEqual<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulContinueStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulContinueStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12733,7 +12312,8 @@ impl<'arena> NodeChecker for YulContinueStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected continue_keyword to be present in the CST, but it was not"),
+                    "Expected continue_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12741,10 +12321,7 @@ impl<'arena> NodeChecker for YulContinueStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12753,8 +12330,8 @@ impl<'arena> NodeChecker for YulContinueStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulDefaultCase<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulDefaultCase<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12791,7 +12368,7 @@ impl<'arena> NodeChecker for YulDefaultCase<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected default_keyword to be present in the CST, but it was not"),
+                    "Expected default_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12813,7 +12390,7 @@ impl<'arena> NodeChecker for YulDefaultCase<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12821,10 +12398,7 @@ impl<'arena> NodeChecker for YulDefaultCase<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12833,8 +12407,8 @@ impl<'arena> NodeChecker for YulDefaultCase<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulEqualAndColon<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulEqualAndColon<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12870,7 +12444,7 @@ impl<'arena> NodeChecker for YulEqualAndColon<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected equal to be present in the CST, but it was not"),
+                    "Expected equal to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12892,7 +12466,7 @@ impl<'arena> NodeChecker for YulEqualAndColon<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected colon to be present in the CST, but it was not"),
+                    "Expected colon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12900,10 +12474,7 @@ impl<'arena> NodeChecker for YulEqualAndColon<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -12912,8 +12483,8 @@ impl<'arena> NodeChecker for YulEqualAndColon<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulForStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulForStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12949,7 +12520,7 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected for_keyword to be present in the CST, but it was not"),
+                    "Expected for_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12971,7 +12542,7 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected initialization to be present in the CST, but it was not"),
+                    "Expected initialization to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -12993,7 +12564,7 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected condition to be present in the CST, but it was not"),
+                    "Expected condition to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13015,7 +12586,7 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected iterator to be present in the CST, but it was not"),
+                    "Expected iterator to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13037,7 +12608,7 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13045,10 +12616,7 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13057,8 +12625,8 @@ impl<'arena> NodeChecker for YulForStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulFunctionCallExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13094,7 +12662,7 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected operand to be present in the CST, but it was not"),
+                    "Expected operand to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13116,7 +12684,7 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13138,7 +12706,7 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected arguments to be present in the CST, but it was not"),
+                    "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13160,7 +12728,7 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13168,10 +12736,7 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13180,8 +12745,8 @@ impl<'arena> NodeChecker for YulFunctionCallExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulFunctionDefinition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13218,7 +12783,8 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected function_keyword to be present in the CST, but it was not"),
+                    "Expected function_keyword to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13240,7 +12806,7 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected name to be present in the CST, but it was not"),
+                    "Expected name to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13262,7 +12828,7 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13281,7 +12847,7 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected returns to be present in the CST, but it was not"),
+                    "Expected returns to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13292,13 +12858,7 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
                     child.label == EdgeLabel::Returns
                 })
             {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected returns to not be present in the CST, but it was there: {:#?}",
-                        child
-                    ),
-                    node_range.clone(),
-                ));
+                errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -13318,7 +12878,7 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13326,10 +12886,7 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13338,8 +12895,8 @@ impl<'arena> NodeChecker for YulFunctionDefinition<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulIfStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulIfStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13375,7 +12932,7 @@ impl<'arena> NodeChecker for YulIfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected if_keyword to be present in the CST, but it was not"),
+                    "Expected if_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13397,7 +12954,7 @@ impl<'arena> NodeChecker for YulIfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected condition to be present in the CST, but it was not"),
+                    "Expected condition to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13419,7 +12976,7 @@ impl<'arena> NodeChecker for YulIfStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13427,10 +12984,7 @@ impl<'arena> NodeChecker for YulIfStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13439,8 +12993,8 @@ impl<'arena> NodeChecker for YulIfStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulLabel<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulLabel<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13476,7 +13030,7 @@ impl<'arena> NodeChecker for YulLabel<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected label to be present in the CST, but it was not"),
+                    "Expected label to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13498,7 +13052,7 @@ impl<'arena> NodeChecker for YulLabel<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected colon to be present in the CST, but it was not"),
+                    "Expected colon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13506,10 +13060,7 @@ impl<'arena> NodeChecker for YulLabel<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13518,8 +13069,8 @@ impl<'arena> NodeChecker for YulLabel<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulLeaveStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulLeaveStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13555,7 +13106,7 @@ impl<'arena> NodeChecker for YulLeaveStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected leave_keyword to be present in the CST, but it was not"),
+                    "Expected leave_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13563,10 +13114,7 @@ impl<'arena> NodeChecker for YulLeaveStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13575,8 +13123,8 @@ impl<'arena> NodeChecker for YulLeaveStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulParametersDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13612,7 +13160,7 @@ impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_paren to be present in the CST, but it was not"),
+                    "Expected open_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13634,7 +13182,7 @@ impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected parameters to be present in the CST, but it was not"),
+                    "Expected parameters to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13656,7 +13204,7 @@ impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_paren to be present in the CST, but it was not"),
+                    "Expected close_paren to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13664,10 +13212,7 @@ impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13676,8 +13221,8 @@ impl<'arena> NodeChecker for YulParametersDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulReturnsDeclaration<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulReturnsDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13714,7 +13259,8 @@ impl<'arena> NodeChecker for YulReturnsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected minus_greater_than to be present in the CST, but it was not"),
+                    "Expected minus_greater_than to be present in the CST, but it was not"
+                        .to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13736,7 +13282,7 @@ impl<'arena> NodeChecker for YulReturnsDeclaration<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected variables to be present in the CST, but it was not"),
+                    "Expected variables to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13744,10 +13290,7 @@ impl<'arena> NodeChecker for YulReturnsDeclaration<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13756,8 +13299,8 @@ impl<'arena> NodeChecker for YulReturnsDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulStackAssignmentStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulStackAssignmentStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13793,7 +13336,7 @@ impl<'arena> NodeChecker for YulStackAssignmentStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected assignment to be present in the CST, but it was not"),
+                    "Expected assignment to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13815,7 +13358,7 @@ impl<'arena> NodeChecker for YulStackAssignmentStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected variable to be present in the CST, but it was not"),
+                    "Expected variable to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13823,10 +13366,7 @@ impl<'arena> NodeChecker for YulStackAssignmentStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13835,8 +13375,8 @@ impl<'arena> NodeChecker for YulStackAssignmentStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulSwitchStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13872,7 +13412,7 @@ impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected switch_keyword to be present in the CST, but it was not"),
+                    "Expected switch_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13894,7 +13434,7 @@ impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13916,7 +13456,7 @@ impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected cases to be present in the CST, but it was not"),
+                    "Expected cases to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13924,10 +13464,7 @@ impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -13936,8 +13473,8 @@ impl<'arena> NodeChecker for YulSwitchStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulValueCase<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulValueCase<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13973,7 +13510,7 @@ impl<'arena> NodeChecker for YulValueCase<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected case_keyword to be present in the CST, but it was not"),
+                    "Expected case_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -13995,7 +13532,7 @@ impl<'arena> NodeChecker for YulValueCase<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value to be present in the CST, but it was not"),
+                    "Expected value to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14017,7 +13554,7 @@ impl<'arena> NodeChecker for YulValueCase<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected body to be present in the CST, but it was not"),
+                    "Expected body to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14025,10 +13562,7 @@ impl<'arena> NodeChecker for YulValueCase<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -14037,8 +13571,8 @@ impl<'arena> NodeChecker for YulValueCase<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulVariableAssignmentStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14074,7 +13608,7 @@ impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected variables to be present in the CST, but it was not"),
+                    "Expected variables to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14096,7 +13630,7 @@ impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected assignment to be present in the CST, but it was not"),
+                    "Expected assignment to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14118,7 +13652,7 @@ impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14126,10 +13660,7 @@ impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -14138,8 +13669,8 @@ impl<'arena> NodeChecker for YulVariableAssignmentStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulVariableDeclarationStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14175,7 +13706,7 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected let_keyword to be present in the CST, but it was not"),
+                    "Expected let_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14197,7 +13728,7 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected variables to be present in the CST, but it was not"),
+                    "Expected variables to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14216,7 +13747,7 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected value to be present in the CST, but it was not"),
+                    "Expected value to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14229,8 +13760,7 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
             {
                 errors.push(NodeCheckerError::new(
                     format!(
-                        "Expected value to not be present in the CST, but it was there: {:#?}",
-                        child
+                        "Expected value to not be present in the CST, but it was there: {child:#?}"
                     ),
                     node_range.clone(),
                 ));
@@ -14239,10 +13769,7 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -14251,8 +13778,8 @@ impl<'arena> NodeChecker for YulVariableDeclarationStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for sequences
-impl<'arena> NodeChecker for YulVariableDeclarationValue<'arena> {
+/// Generic `NodeChecker` for sequences
+impl NodeChecker for YulVariableDeclarationValue<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14288,7 +13815,7 @@ impl<'arena> NodeChecker for YulVariableDeclarationValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected assignment to be present in the CST, but it was not"),
+                    "Expected assignment to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14310,7 +13837,7 @@ impl<'arena> NodeChecker for YulVariableDeclarationValue<'arena> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected expression to be present in the CST, but it was not"),
+                    "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14318,10 +13845,7 @@ impl<'arena> NodeChecker for YulVariableDeclarationValue<'arena> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -14334,8 +13858,8 @@ impl<'arena> NodeChecker for YulVariableDeclarationValue<'arena> {
 // Choices:
 //
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for AbicoderVersion<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for AbicoderVersion<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14356,9 +13880,8 @@ impl<'arena> NodeChecker for AbicoderVersion<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::AbicoderVersion,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::AbicoderVersion
                 ),
                 node_range,
             )];
@@ -14393,8 +13916,8 @@ impl<'arena> NodeChecker for AbicoderVersion<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ArgumentsDeclaration<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ArgumentsDeclaration<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14415,9 +13938,8 @@ impl<'arena> NodeChecker for ArgumentsDeclaration<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ArgumentsDeclaration,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ArgumentsDeclaration
                 ),
                 node_range,
             )];
@@ -14452,8 +13974,8 @@ impl<'arena> NodeChecker for ArgumentsDeclaration<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ConstructorAttribute<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ConstructorAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14474,9 +13996,8 @@ impl<'arena> NodeChecker for ConstructorAttribute<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ConstructorAttribute,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ConstructorAttribute
                 ),
                 node_range,
             )];
@@ -14527,8 +14048,8 @@ impl<'arena> NodeChecker for ConstructorAttribute<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ContractMember<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ContractMember<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14549,9 +14070,8 @@ impl<'arena> NodeChecker for ContractMember<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ContractMember,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ContractMember
                 ),
                 node_range,
             )];
@@ -14630,8 +14150,8 @@ impl<'arena> NodeChecker for ContractMember<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ContractSpecifier<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ContractSpecifier<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14652,9 +14172,8 @@ impl<'arena> NodeChecker for ContractSpecifier<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ContractSpecifier,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ContractSpecifier
                 ),
                 node_range,
             )];
@@ -14689,8 +14208,8 @@ impl<'arena> NodeChecker for ContractSpecifier<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ElementaryType<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ElementaryType<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14711,9 +14230,8 @@ impl<'arena> NodeChecker for ElementaryType<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ElementaryType,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ElementaryType
                 ),
                 node_range,
             )];
@@ -14776,8 +14294,8 @@ impl<'arena> NodeChecker for ElementaryType<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ExperimentalFeature<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ExperimentalFeature<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14798,9 +14316,8 @@ impl<'arena> NodeChecker for ExperimentalFeature<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ExperimentalFeature,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ExperimentalFeature
                 ),
                 node_range,
             )];
@@ -14839,8 +14356,8 @@ impl<'arena> NodeChecker for ExperimentalFeature<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for Expression<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for Expression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14861,9 +14378,8 @@ impl<'arena> NodeChecker for Expression<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::Expression,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::Expression
                 ),
                 node_range,
             )];
@@ -15023,7 +14539,7 @@ impl<'arena> NodeChecker for Expression<'arena> {
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_AdditiveExpression_Operator<'arena> {
+impl NodeChecker for Expression_AdditiveExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::Minus(element) => element.check_node_with_offset(node, text_offset),
@@ -15034,7 +14550,7 @@ impl<'arena> NodeChecker for Expression_AdditiveExpression_Operator<'arena> {
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_AssignmentExpression_Operator<'arena> {
+impl NodeChecker for Expression_AssignmentExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::AmpersandEqual(element) => element.check_node_with_offset(node, text_offset),
@@ -15071,7 +14587,7 @@ impl<'arena> NodeChecker for Expression_AssignmentExpression_Operator<'arena> {
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_EqualityExpression_Operator<'arena> {
+impl NodeChecker for Expression_EqualityExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::BangEqual(element) => element.check_node_with_offset(node, text_offset),
@@ -15082,7 +14598,7 @@ impl<'arena> NodeChecker for Expression_EqualityExpression_Operator<'arena> {
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_ExponentiationExpression_Operator<'arena> {
+impl NodeChecker for Expression_ExponentiationExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::AsteriskAsterisk(element) => element.check_node_with_offset(node, text_offset),
@@ -15091,7 +14607,7 @@ impl<'arena> NodeChecker for Expression_ExponentiationExpression_Operator<'arena
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_InequalityExpression_Operator<'arena> {
+impl NodeChecker for Expression_InequalityExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::GreaterThan(element) => element.check_node_with_offset(node, text_offset),
@@ -15106,7 +14622,7 @@ impl<'arena> NodeChecker for Expression_InequalityExpression_Operator<'arena> {
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_MultiplicativeExpression_Operator<'arena> {
+impl NodeChecker for Expression_MultiplicativeExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::Asterisk(element) => element.check_node_with_offset(node, text_offset),
@@ -15119,7 +14635,7 @@ impl<'arena> NodeChecker for Expression_MultiplicativeExpression_Operator<'arena
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_PostfixExpression_Operator<'arena> {
+impl NodeChecker for Expression_PostfixExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::MinusMinus(element) => element.check_node_with_offset(node, text_offset),
@@ -15130,7 +14646,7 @@ impl<'arena> NodeChecker for Expression_PostfixExpression_Operator<'arena> {
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_PrefixExpression_Operator<'arena> {
+impl NodeChecker for Expression_PrefixExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::Bang(element) => element.check_node_with_offset(node, text_offset),
@@ -15151,7 +14667,7 @@ impl<'arena> NodeChecker for Expression_PrefixExpression_Operator<'arena> {
 }
 
 // Special case for operator choices that are merged together
-impl<'arena> NodeChecker for Expression_ShiftExpression_Operator<'arena> {
+impl NodeChecker for Expression_ShiftExpression_Operator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::GreaterThanGreaterThan(element) => {
@@ -15167,8 +14683,8 @@ impl<'arena> NodeChecker for Expression_ShiftExpression_Operator<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for FallbackFunctionAttribute<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for FallbackFunctionAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15189,9 +14705,8 @@ impl<'arena> NodeChecker for FallbackFunctionAttribute<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::FallbackFunctionAttribute,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::FallbackFunctionAttribute
                 ),
                 node_range,
             )];
@@ -15246,8 +14761,8 @@ impl<'arena> NodeChecker for FallbackFunctionAttribute<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ForStatementCondition<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ForStatementCondition<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15268,9 +14783,8 @@ impl<'arena> NodeChecker for ForStatementCondition<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ForStatementCondition,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ForStatementCondition
                 ),
                 node_range,
             )];
@@ -15305,8 +14819,8 @@ impl<'arena> NodeChecker for ForStatementCondition<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ForStatementInitialization<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ForStatementInitialization<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15327,9 +14841,8 @@ impl<'arena> NodeChecker for ForStatementInitialization<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ForStatementInitialization,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ForStatementInitialization
                 ),
                 node_range,
             )];
@@ -15372,8 +14885,8 @@ impl<'arena> NodeChecker for ForStatementInitialization<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for FunctionAttribute<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for FunctionAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15394,9 +14907,8 @@ impl<'arena> NodeChecker for FunctionAttribute<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::FunctionAttribute,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::FunctionAttribute
                 ),
                 node_range,
             )];
@@ -15467,8 +14979,8 @@ impl<'arena> NodeChecker for FunctionAttribute<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for FunctionBody<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for FunctionBody<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15489,9 +15001,8 @@ impl<'arena> NodeChecker for FunctionBody<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::FunctionBody,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::FunctionBody
                 ),
                 node_range,
             )];
@@ -15526,8 +15037,8 @@ impl<'arena> NodeChecker for FunctionBody<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for FunctionName<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for FunctionName<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15548,9 +15059,8 @@ impl<'arena> NodeChecker for FunctionName<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::FunctionName,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::FunctionName
                 ),
                 node_range,
             )];
@@ -15589,8 +15099,8 @@ impl<'arena> NodeChecker for FunctionName<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for FunctionTypeAttribute<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for FunctionTypeAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15611,9 +15121,8 @@ impl<'arena> NodeChecker for FunctionTypeAttribute<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::FunctionTypeAttribute,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::FunctionTypeAttribute
                 ),
                 node_range,
             )];
@@ -15672,8 +15181,8 @@ impl<'arena> NodeChecker for FunctionTypeAttribute<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for HexStringLiteral<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for HexStringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15694,9 +15203,8 @@ impl<'arena> NodeChecker for HexStringLiteral<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::HexStringLiteral,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::HexStringLiteral
                 ),
                 node_range,
             )];
@@ -15731,8 +15239,8 @@ impl<'arena> NodeChecker for HexStringLiteral<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ImportClause<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ImportClause<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15753,9 +15261,8 @@ impl<'arena> NodeChecker for ImportClause<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ImportClause,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ImportClause
                 ),
                 node_range,
             )];
@@ -15794,8 +15301,8 @@ impl<'arena> NodeChecker for ImportClause<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for MappingKeyType<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for MappingKeyType<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15816,9 +15323,8 @@ impl<'arena> NodeChecker for MappingKeyType<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::MappingKeyType,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::MappingKeyType
                 ),
                 node_range,
             )];
@@ -15853,8 +15359,8 @@ impl<'arena> NodeChecker for MappingKeyType<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ModifierAttribute<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ModifierAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15875,9 +15381,8 @@ impl<'arena> NodeChecker for ModifierAttribute<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ModifierAttribute,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ModifierAttribute
                 ),
                 node_range,
             )];
@@ -15912,8 +15417,8 @@ impl<'arena> NodeChecker for ModifierAttribute<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for NumberUnit<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for NumberUnit<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15934,9 +15439,8 @@ impl<'arena> NodeChecker for NumberUnit<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::NumberUnit,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::NumberUnit
                 ),
                 node_range,
             )];
@@ -16007,8 +15511,8 @@ impl<'arena> NodeChecker for NumberUnit<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for Pragma<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for Pragma<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16029,9 +15533,8 @@ impl<'arena> NodeChecker for Pragma<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::Pragma,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::Pragma
                 ),
                 node_range,
             )];
@@ -16070,8 +15573,8 @@ impl<'arena> NodeChecker for Pragma<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for ReceiveFunctionAttribute<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for ReceiveFunctionAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16092,9 +15595,8 @@ impl<'arena> NodeChecker for ReceiveFunctionAttribute<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::ReceiveFunctionAttribute,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::ReceiveFunctionAttribute
                 ),
                 node_range,
             )];
@@ -16141,8 +15643,8 @@ impl<'arena> NodeChecker for ReceiveFunctionAttribute<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for SourceUnitMember<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for SourceUnitMember<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16163,9 +15665,8 @@ impl<'arena> NodeChecker for SourceUnitMember<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::SourceUnitMember,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::SourceUnitMember
                 ),
                 node_range,
             )];
@@ -16244,8 +15745,8 @@ impl<'arena> NodeChecker for SourceUnitMember<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for StateVariableAttribute<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for StateVariableAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16266,9 +15767,8 @@ impl<'arena> NodeChecker for StateVariableAttribute<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::StateVariableAttribute,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::StateVariableAttribute
                 ),
                 node_range,
             )];
@@ -16323,8 +15823,8 @@ impl<'arena> NodeChecker for StateVariableAttribute<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for Statement<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for Statement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16345,9 +15845,8 @@ impl<'arena> NodeChecker for Statement<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::Statement,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::Statement
                 ),
                 node_range,
             )];
@@ -16442,8 +15941,8 @@ impl<'arena> NodeChecker for Statement<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for StorageLocation<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for StorageLocation<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16464,9 +15963,8 @@ impl<'arena> NodeChecker for StorageLocation<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::StorageLocation,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::StorageLocation
                 ),
                 node_range,
             )];
@@ -16505,8 +16003,8 @@ impl<'arena> NodeChecker for StorageLocation<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for StringExpression<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for StringExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16527,9 +16025,8 @@ impl<'arena> NodeChecker for StringExpression<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::StringExpression,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::StringExpression
                 ),
                 node_range,
             )];
@@ -16576,8 +16073,8 @@ impl<'arena> NodeChecker for StringExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for StringLiteral<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for StringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16598,9 +16095,8 @@ impl<'arena> NodeChecker for StringLiteral<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::StringLiteral,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::StringLiteral
                 ),
                 node_range,
             )];
@@ -16635,8 +16131,8 @@ impl<'arena> NodeChecker for StringLiteral<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for TupleMember<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for TupleMember<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16657,9 +16153,8 @@ impl<'arena> NodeChecker for TupleMember<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::TupleMember,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::TupleMember
                 ),
                 node_range,
             )];
@@ -16694,8 +16189,8 @@ impl<'arena> NodeChecker for TupleMember<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for TypeName<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for TypeName<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16716,9 +16211,8 @@ impl<'arena> NodeChecker for TypeName<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::TypeName,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::TypeName
                 ),
                 node_range,
             )];
@@ -16765,8 +16259,8 @@ impl<'arena> NodeChecker for TypeName<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for UnicodeStringLiteral<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for UnicodeStringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16787,9 +16281,8 @@ impl<'arena> NodeChecker for UnicodeStringLiteral<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::UnicodeStringLiteral,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::UnicodeStringLiteral
                 ),
                 node_range,
             )];
@@ -16824,8 +16317,8 @@ impl<'arena> NodeChecker for UnicodeStringLiteral<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for UnnamedFunctionAttribute<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for UnnamedFunctionAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16846,9 +16339,8 @@ impl<'arena> NodeChecker for UnnamedFunctionAttribute<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::UnnamedFunctionAttribute,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::UnnamedFunctionAttribute
                 ),
                 node_range,
             )];
@@ -16911,8 +16403,8 @@ impl<'arena> NodeChecker for UnnamedFunctionAttribute<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for UsingClause<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for UsingClause<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16933,9 +16425,8 @@ impl<'arena> NodeChecker for UsingClause<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::UsingClause,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::UsingClause
                 ),
                 node_range,
             )];
@@ -16970,8 +16461,8 @@ impl<'arena> NodeChecker for UsingClause<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for UsingOperator<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for UsingOperator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16992,9 +16483,8 @@ impl<'arena> NodeChecker for UsingOperator<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::UsingOperator,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::UsingOperator
                 ),
                 node_range,
             )];
@@ -17081,8 +16571,8 @@ impl<'arena> NodeChecker for UsingOperator<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for UsingTarget<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for UsingTarget<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17103,9 +16593,8 @@ impl<'arena> NodeChecker for UsingTarget<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::UsingTarget,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::UsingTarget
                 ),
                 node_range,
             )];
@@ -17140,8 +16629,8 @@ impl<'arena> NodeChecker for UsingTarget<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for VariableDeclarationType<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for VariableDeclarationType<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17162,9 +16651,8 @@ impl<'arena> NodeChecker for VariableDeclarationType<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::VariableDeclarationType,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::VariableDeclarationType
                 ),
                 node_range,
             )];
@@ -17199,8 +16687,8 @@ impl<'arena> NodeChecker for VariableDeclarationType<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for VersionExpression<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for VersionExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17221,9 +16709,8 @@ impl<'arena> NodeChecker for VersionExpression<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::VersionExpression,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::VersionExpression
                 ),
                 node_range,
             )];
@@ -17258,8 +16745,8 @@ impl<'arena> NodeChecker for VersionExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for VersionLiteral<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for VersionLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17280,9 +16767,8 @@ impl<'arena> NodeChecker for VersionLiteral<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::VersionLiteral,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::VersionLiteral
                 ),
                 node_range,
             )];
@@ -17321,8 +16807,8 @@ impl<'arena> NodeChecker for VersionLiteral<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for VersionOperator<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for VersionOperator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17343,9 +16829,8 @@ impl<'arena> NodeChecker for VersionOperator<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::VersionOperator,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::VersionOperator
                 ),
                 node_range,
             )];
@@ -17400,8 +16885,8 @@ impl<'arena> NodeChecker for VersionOperator<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for YulAssignmentOperator<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for YulAssignmentOperator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17422,9 +16907,8 @@ impl<'arena> NodeChecker for YulAssignmentOperator<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::YulAssignmentOperator,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::YulAssignmentOperator
                 ),
                 node_range,
             )];
@@ -17459,8 +16943,8 @@ impl<'arena> NodeChecker for YulAssignmentOperator<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for YulExpression<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for YulExpression<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17481,9 +16965,8 @@ impl<'arena> NodeChecker for YulExpression<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::YulExpression,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::YulExpression
                 ),
                 node_range,
             )];
@@ -17522,8 +17005,8 @@ impl<'arena> NodeChecker for YulExpression<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for YulLiteral<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for YulLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17544,9 +17027,8 @@ impl<'arena> NodeChecker for YulLiteral<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::YulLiteral,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::YulLiteral
                 ),
                 node_range,
             )];
@@ -17597,8 +17079,8 @@ impl<'arena> NodeChecker for YulLiteral<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for YulStackAssignmentOperator<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for YulStackAssignmentOperator<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17619,9 +17101,8 @@ impl<'arena> NodeChecker for YulStackAssignmentOperator<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::YulStackAssignmentOperator,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::YulStackAssignmentOperator
                 ),
                 node_range,
             )];
@@ -17656,8 +17137,8 @@ impl<'arena> NodeChecker for YulStackAssignmentOperator<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for YulStatement<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for YulStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17678,9 +17159,8 @@ impl<'arena> NodeChecker for YulStatement<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::YulStatement,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::YulStatement
                 ),
                 node_range,
             )];
@@ -17759,8 +17239,8 @@ impl<'arena> NodeChecker for YulStatement<'arena> {
     }
 }
 
-/// Generic NodeChecker for choices
-impl<'arena> NodeChecker for YulSwitchCase<'arena> {
+/// Generic `NodeChecker` for choices
+impl NodeChecker for YulSwitchCase<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17781,9 +17261,8 @@ impl<'arena> NodeChecker for YulSwitchCase<'arena> {
         if children.len() != 1 {
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected exactly one child for {}, but got: {:#?}",
-                    NonterminalKind::YulSwitchCase,
-                    children
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::YulSwitchCase
                 ),
                 node_range,
             )];
@@ -17822,9 +17301,8 @@ impl<'arena> NodeChecker for YulSwitchCase<'arena> {
 // Repeated & Separated
 //
 
-/// Generic NodeChecker for repeated and separated`
-
-impl<'arena> NodeChecker for ArrayValues<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for ArrayValues<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17863,7 +17341,8 @@ impl<'arena> NodeChecker for ArrayValues<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for AssemblyFlags<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for AssemblyFlags<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17902,7 +17381,8 @@ impl<'arena> NodeChecker for AssemblyFlags<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for CallOptions<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for CallOptions<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17941,7 +17421,8 @@ impl<'arena> NodeChecker for CallOptions<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for CatchClauses<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for CatchClauses<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17980,7 +17461,8 @@ impl<'arena> NodeChecker for CatchClauses<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for ConstructorAttributes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for ConstructorAttributes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18019,7 +17501,8 @@ impl<'arena> NodeChecker for ConstructorAttributes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for ContractMembers<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for ContractMembers<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18058,7 +17541,8 @@ impl<'arena> NodeChecker for ContractMembers<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for ContractSpecifiers<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for ContractSpecifiers<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18097,7 +17581,8 @@ impl<'arena> NodeChecker for ContractSpecifiers<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for EnumMembers<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for EnumMembers<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18136,7 +17621,8 @@ impl<'arena> NodeChecker for EnumMembers<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for ErrorParameters<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for ErrorParameters<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18175,7 +17661,8 @@ impl<'arena> NodeChecker for ErrorParameters<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for EventParameters<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for EventParameters<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18214,7 +17701,8 @@ impl<'arena> NodeChecker for EventParameters<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for FallbackFunctionAttributes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for FallbackFunctionAttributes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18253,7 +17741,8 @@ impl<'arena> NodeChecker for FallbackFunctionAttributes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for FunctionAttributes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for FunctionAttributes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18292,7 +17781,8 @@ impl<'arena> NodeChecker for FunctionAttributes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for FunctionTypeAttributes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for FunctionTypeAttributes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18331,7 +17821,8 @@ impl<'arena> NodeChecker for FunctionTypeAttributes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for HexStringLiterals<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for HexStringLiterals<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18370,7 +17861,8 @@ impl<'arena> NodeChecker for HexStringLiterals<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for IdentifierPath<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for IdentifierPath<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18409,7 +17901,8 @@ impl<'arena> NodeChecker for IdentifierPath<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for ImportDeconstructionSymbols<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for ImportDeconstructionSymbols<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18448,7 +17941,8 @@ impl<'arena> NodeChecker for ImportDeconstructionSymbols<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for InheritanceTypes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for InheritanceTypes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18487,7 +17981,8 @@ impl<'arena> NodeChecker for InheritanceTypes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for InterfaceMembers<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for InterfaceMembers<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18526,7 +18021,8 @@ impl<'arena> NodeChecker for InterfaceMembers<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for LibraryMembers<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for LibraryMembers<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18565,7 +18061,8 @@ impl<'arena> NodeChecker for LibraryMembers<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for ModifierAttributes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for ModifierAttributes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18604,7 +18101,8 @@ impl<'arena> NodeChecker for ModifierAttributes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for NamedArguments<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for NamedArguments<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18643,7 +18141,8 @@ impl<'arena> NodeChecker for NamedArguments<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for OverridePaths<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for OverridePaths<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18682,7 +18181,8 @@ impl<'arena> NodeChecker for OverridePaths<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for Parameters<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for Parameters<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18721,7 +18221,8 @@ impl<'arena> NodeChecker for Parameters<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for PositionalArguments<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for PositionalArguments<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18760,7 +18261,8 @@ impl<'arena> NodeChecker for PositionalArguments<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for ReceiveFunctionAttributes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for ReceiveFunctionAttributes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18799,7 +18301,8 @@ impl<'arena> NodeChecker for ReceiveFunctionAttributes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for SimpleVersionLiteral<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for SimpleVersionLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18838,7 +18341,8 @@ impl<'arena> NodeChecker for SimpleVersionLiteral<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for SourceUnitMembers<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for SourceUnitMembers<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18877,7 +18381,8 @@ impl<'arena> NodeChecker for SourceUnitMembers<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for StateVariableAttributes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for StateVariableAttributes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18916,7 +18421,8 @@ impl<'arena> NodeChecker for StateVariableAttributes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for Statements<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for Statements<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18955,7 +18461,8 @@ impl<'arena> NodeChecker for Statements<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for StringLiterals<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for StringLiterals<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18994,7 +18501,8 @@ impl<'arena> NodeChecker for StringLiterals<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for StructMembers<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for StructMembers<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19033,7 +18541,8 @@ impl<'arena> NodeChecker for StructMembers<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for TupleDeconstructionElements<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for TupleDeconstructionElements<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19072,7 +18581,8 @@ impl<'arena> NodeChecker for TupleDeconstructionElements<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for TupleValues<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for TupleValues<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19111,7 +18621,8 @@ impl<'arena> NodeChecker for TupleValues<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for UnicodeStringLiterals<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for UnicodeStringLiterals<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19150,7 +18661,8 @@ impl<'arena> NodeChecker for UnicodeStringLiterals<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for UnnamedFunctionAttributes<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for UnnamedFunctionAttributes<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19189,7 +18701,8 @@ impl<'arena> NodeChecker for UnnamedFunctionAttributes<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for UsingDeconstructionSymbols<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for UsingDeconstructionSymbols<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19228,7 +18741,8 @@ impl<'arena> NodeChecker for UsingDeconstructionSymbols<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for VersionExpressionSet<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for VersionExpressionSet<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19267,7 +18781,8 @@ impl<'arena> NodeChecker for VersionExpressionSet<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for VersionExpressionSets<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for VersionExpressionSets<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19306,7 +18821,8 @@ impl<'arena> NodeChecker for VersionExpressionSets<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for YulArguments<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for YulArguments<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19345,7 +18861,8 @@ impl<'arena> NodeChecker for YulArguments<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for YulParameters<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for YulParameters<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19384,7 +18901,8 @@ impl<'arena> NodeChecker for YulParameters<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for YulPath<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for YulPath<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19423,7 +18941,8 @@ impl<'arena> NodeChecker for YulPath<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for YulPaths<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for YulPaths<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19462,7 +18981,8 @@ impl<'arena> NodeChecker for YulPaths<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for YulStatements<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for YulStatements<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19501,7 +19021,8 @@ impl<'arena> NodeChecker for YulStatements<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for YulSwitchCases<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for YulSwitchCases<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19540,7 +19061,8 @@ impl<'arena> NodeChecker for YulSwitchCases<'arena> {
     }
 }
 
-impl<'arena> NodeChecker for YulVariableNames<'arena> {
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for YulVariableNames<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -19581,8 +19103,8 @@ impl<'arena> NodeChecker for YulVariableNames<'arena> {
 
 // Terminals
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ABIEncoderV2Keyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ABIEncoderV2Keyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19592,10 +19114,7 @@ impl<'arena> NodeChecker for ABIEncoderV2Keyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19608,12 +19127,12 @@ impl<'arena> NodeChecker for ABIEncoderV2Keyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AbicoderKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AbicoderKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19623,10 +19142,7 @@ impl<'arena> NodeChecker for AbicoderKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19639,12 +19155,12 @@ impl<'arena> NodeChecker for AbicoderKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AbicoderV1Keyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AbicoderV1Keyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19654,10 +19170,7 @@ impl<'arena> NodeChecker for AbicoderV1Keyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19670,12 +19183,12 @@ impl<'arena> NodeChecker for AbicoderV1Keyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AbicoderV2Keyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AbicoderV2Keyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19685,10 +19198,7 @@ impl<'arena> NodeChecker for AbicoderV2Keyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19701,12 +19211,12 @@ impl<'arena> NodeChecker for AbicoderV2Keyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AbstractKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AbstractKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19716,10 +19226,7 @@ impl<'arena> NodeChecker for AbstractKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19732,12 +19239,12 @@ impl<'arena> NodeChecker for AbstractKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AddressKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AddressKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19747,10 +19254,7 @@ impl<'arena> NodeChecker for AddressKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19763,12 +19267,12 @@ impl<'arena> NodeChecker for AddressKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AfterKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AfterKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19778,10 +19282,7 @@ impl<'arena> NodeChecker for AfterKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19794,12 +19295,12 @@ impl<'arena> NodeChecker for AfterKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AliasKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AliasKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19809,10 +19310,7 @@ impl<'arena> NodeChecker for AliasKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19825,12 +19323,12 @@ impl<'arena> NodeChecker for AliasKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Ampersand<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Ampersand<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19840,10 +19338,7 @@ impl<'arena> NodeChecker for Ampersand<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19856,12 +19351,12 @@ impl<'arena> NodeChecker for Ampersand<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AmpersandAmpersand<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AmpersandAmpersand<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19871,10 +19366,7 @@ impl<'arena> NodeChecker for AmpersandAmpersand<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19887,12 +19379,12 @@ impl<'arena> NodeChecker for AmpersandAmpersand<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AmpersandEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AmpersandEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19902,10 +19394,7 @@ impl<'arena> NodeChecker for AmpersandEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19918,12 +19407,12 @@ impl<'arena> NodeChecker for AmpersandEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AnonymousKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AnonymousKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19933,10 +19422,7 @@ impl<'arena> NodeChecker for AnonymousKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19949,12 +19435,12 @@ impl<'arena> NodeChecker for AnonymousKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ApplyKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ApplyKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19964,10 +19450,7 @@ impl<'arena> NodeChecker for ApplyKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -19980,12 +19463,12 @@ impl<'arena> NodeChecker for ApplyKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19995,10 +19478,7 @@ impl<'arena> NodeChecker for AsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20011,12 +19491,12 @@ impl<'arena> NodeChecker for AsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AssemblyKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AssemblyKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20026,10 +19506,7 @@ impl<'arena> NodeChecker for AssemblyKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20042,12 +19519,12 @@ impl<'arena> NodeChecker for AssemblyKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Asterisk<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Asterisk<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20057,10 +19534,7 @@ impl<'arena> NodeChecker for Asterisk<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20073,12 +19547,12 @@ impl<'arena> NodeChecker for Asterisk<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AsteriskAsterisk<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AsteriskAsterisk<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20088,10 +19562,7 @@ impl<'arena> NodeChecker for AsteriskAsterisk<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20104,12 +19575,12 @@ impl<'arena> NodeChecker for AsteriskAsterisk<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AsteriskEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AsteriskEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20119,10 +19590,7 @@ impl<'arena> NodeChecker for AsteriskEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20135,12 +19603,12 @@ impl<'arena> NodeChecker for AsteriskEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AtKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AtKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20150,10 +19618,7 @@ impl<'arena> NodeChecker for AtKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20166,12 +19631,12 @@ impl<'arena> NodeChecker for AtKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for AutoKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for AutoKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20181,10 +19646,7 @@ impl<'arena> NodeChecker for AutoKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20197,12 +19659,12 @@ impl<'arena> NodeChecker for AutoKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Bang<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Bang<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20212,10 +19674,7 @@ impl<'arena> NodeChecker for Bang<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20228,12 +19687,12 @@ impl<'arena> NodeChecker for Bang<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for BangEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for BangEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20243,10 +19702,7 @@ impl<'arena> NodeChecker for BangEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20259,12 +19715,12 @@ impl<'arena> NodeChecker for BangEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Bar<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Bar<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20274,10 +19730,7 @@ impl<'arena> NodeChecker for Bar<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20290,12 +19743,12 @@ impl<'arena> NodeChecker for Bar<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for BarBar<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for BarBar<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20305,10 +19758,7 @@ impl<'arena> NodeChecker for BarBar<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20321,12 +19771,12 @@ impl<'arena> NodeChecker for BarBar<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for BarEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for BarEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20336,10 +19786,7 @@ impl<'arena> NodeChecker for BarEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20352,12 +19799,12 @@ impl<'arena> NodeChecker for BarEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for BoolKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for BoolKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20367,10 +19814,7 @@ impl<'arena> NodeChecker for BoolKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20383,12 +19827,12 @@ impl<'arena> NodeChecker for BoolKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for BreakKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for BreakKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20398,10 +19842,7 @@ impl<'arena> NodeChecker for BreakKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20414,12 +19855,12 @@ impl<'arena> NodeChecker for BreakKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ByteKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ByteKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20429,10 +19870,7 @@ impl<'arena> NodeChecker for ByteKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20445,12 +19883,12 @@ impl<'arena> NodeChecker for ByteKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for BytesKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for BytesKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20460,10 +19898,7 @@ impl<'arena> NodeChecker for BytesKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20476,12 +19911,12 @@ impl<'arena> NodeChecker for BytesKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for CallDataKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for CallDataKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20491,10 +19926,7 @@ impl<'arena> NodeChecker for CallDataKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20507,12 +19939,12 @@ impl<'arena> NodeChecker for CallDataKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Caret<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Caret<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20522,10 +19954,7 @@ impl<'arena> NodeChecker for Caret<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20538,12 +19967,12 @@ impl<'arena> NodeChecker for Caret<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for CaretEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for CaretEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20553,10 +19982,7 @@ impl<'arena> NodeChecker for CaretEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20569,12 +19995,12 @@ impl<'arena> NodeChecker for CaretEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for CaseKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for CaseKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20584,10 +20010,7 @@ impl<'arena> NodeChecker for CaseKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20600,12 +20023,12 @@ impl<'arena> NodeChecker for CaseKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for CatchKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for CatchKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20615,10 +20038,7 @@ impl<'arena> NodeChecker for CatchKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20631,12 +20051,12 @@ impl<'arena> NodeChecker for CatchKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for CloseBrace<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for CloseBrace<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20646,10 +20066,7 @@ impl<'arena> NodeChecker for CloseBrace<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20662,12 +20079,12 @@ impl<'arena> NodeChecker for CloseBrace<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for CloseBracket<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for CloseBracket<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20677,10 +20094,7 @@ impl<'arena> NodeChecker for CloseBracket<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20693,12 +20107,12 @@ impl<'arena> NodeChecker for CloseBracket<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for CloseParen<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for CloseParen<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20708,10 +20122,7 @@ impl<'arena> NodeChecker for CloseParen<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20724,12 +20135,12 @@ impl<'arena> NodeChecker for CloseParen<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Colon<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Colon<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20739,10 +20150,7 @@ impl<'arena> NodeChecker for Colon<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20755,12 +20163,12 @@ impl<'arena> NodeChecker for Colon<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ColonEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ColonEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20770,10 +20178,7 @@ impl<'arena> NodeChecker for ColonEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20786,12 +20191,12 @@ impl<'arena> NodeChecker for ColonEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Comma<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Comma<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20801,10 +20206,7 @@ impl<'arena> NodeChecker for Comma<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20817,12 +20219,12 @@ impl<'arena> NodeChecker for Comma<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ConstantKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ConstantKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20832,10 +20234,7 @@ impl<'arena> NodeChecker for ConstantKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20848,12 +20247,12 @@ impl<'arena> NodeChecker for ConstantKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ConstructorKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ConstructorKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20863,10 +20262,7 @@ impl<'arena> NodeChecker for ConstructorKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20879,12 +20275,12 @@ impl<'arena> NodeChecker for ConstructorKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ContinueKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ContinueKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20894,10 +20290,7 @@ impl<'arena> NodeChecker for ContinueKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20910,12 +20303,12 @@ impl<'arena> NodeChecker for ContinueKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ContractKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ContractKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20925,10 +20318,7 @@ impl<'arena> NodeChecker for ContractKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20941,12 +20331,12 @@ impl<'arena> NodeChecker for ContractKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for CopyOfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for CopyOfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20956,10 +20346,7 @@ impl<'arena> NodeChecker for CopyOfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -20972,12 +20359,12 @@ impl<'arena> NodeChecker for CopyOfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DaysKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DaysKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20987,10 +20374,7 @@ impl<'arena> NodeChecker for DaysKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21003,12 +20387,12 @@ impl<'arena> NodeChecker for DaysKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DecimalLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DecimalLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21018,10 +20402,7 @@ impl<'arena> NodeChecker for DecimalLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21034,12 +20415,12 @@ impl<'arena> NodeChecker for DecimalLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DefaultKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DefaultKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21049,10 +20430,7 @@ impl<'arena> NodeChecker for DefaultKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21065,12 +20443,12 @@ impl<'arena> NodeChecker for DefaultKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DefineKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DefineKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21080,10 +20458,7 @@ impl<'arena> NodeChecker for DefineKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21096,12 +20471,12 @@ impl<'arena> NodeChecker for DefineKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DeleteKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DeleteKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21111,10 +20486,7 @@ impl<'arena> NodeChecker for DeleteKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21127,12 +20499,12 @@ impl<'arena> NodeChecker for DeleteKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DoKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DoKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21142,10 +20514,7 @@ impl<'arena> NodeChecker for DoKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21158,12 +20527,12 @@ impl<'arena> NodeChecker for DoKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DoubleQuotedHexStringLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DoubleQuotedHexStringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21173,10 +20542,7 @@ impl<'arena> NodeChecker for DoubleQuotedHexStringLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21189,12 +20555,12 @@ impl<'arena> NodeChecker for DoubleQuotedHexStringLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DoubleQuotedStringLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DoubleQuotedStringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21204,10 +20570,7 @@ impl<'arena> NodeChecker for DoubleQuotedStringLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21220,12 +20583,12 @@ impl<'arena> NodeChecker for DoubleQuotedStringLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DoubleQuotedUnicodeStringLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DoubleQuotedUnicodeStringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21235,10 +20598,7 @@ impl<'arena> NodeChecker for DoubleQuotedUnicodeStringLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21251,12 +20611,12 @@ impl<'arena> NodeChecker for DoubleQuotedUnicodeStringLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for DoubleQuotedVersionLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for DoubleQuotedVersionLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21266,10 +20626,7 @@ impl<'arena> NodeChecker for DoubleQuotedVersionLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21282,12 +20639,12 @@ impl<'arena> NodeChecker for DoubleQuotedVersionLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ElseKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ElseKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21297,10 +20654,7 @@ impl<'arena> NodeChecker for ElseKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21313,12 +20667,12 @@ impl<'arena> NodeChecker for ElseKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for EmitKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for EmitKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21328,10 +20682,7 @@ impl<'arena> NodeChecker for EmitKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21344,12 +20695,12 @@ impl<'arena> NodeChecker for EmitKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for EndOfLine<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for EndOfLine<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21359,10 +20710,7 @@ impl<'arena> NodeChecker for EndOfLine<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21375,12 +20723,12 @@ impl<'arena> NodeChecker for EndOfLine<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for EnumKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for EnumKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21390,10 +20738,7 @@ impl<'arena> NodeChecker for EnumKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21406,12 +20751,12 @@ impl<'arena> NodeChecker for EnumKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Equal<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Equal<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21421,10 +20766,7 @@ impl<'arena> NodeChecker for Equal<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21437,12 +20779,12 @@ impl<'arena> NodeChecker for Equal<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for EqualColon<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for EqualColon<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21452,10 +20794,7 @@ impl<'arena> NodeChecker for EqualColon<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21468,12 +20807,12 @@ impl<'arena> NodeChecker for EqualColon<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for EqualEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for EqualEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21483,10 +20822,7 @@ impl<'arena> NodeChecker for EqualEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21499,12 +20835,12 @@ impl<'arena> NodeChecker for EqualEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for EqualGreaterThan<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for EqualGreaterThan<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21514,10 +20850,7 @@ impl<'arena> NodeChecker for EqualGreaterThan<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21530,12 +20863,12 @@ impl<'arena> NodeChecker for EqualGreaterThan<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ErrorKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ErrorKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21545,10 +20878,7 @@ impl<'arena> NodeChecker for ErrorKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21561,12 +20891,12 @@ impl<'arena> NodeChecker for ErrorKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for EtherKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for EtherKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21576,10 +20906,7 @@ impl<'arena> NodeChecker for EtherKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21592,12 +20919,12 @@ impl<'arena> NodeChecker for EtherKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for EventKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for EventKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21607,10 +20934,7 @@ impl<'arena> NodeChecker for EventKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21623,12 +20947,12 @@ impl<'arena> NodeChecker for EventKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ExperimentalKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ExperimentalKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21638,10 +20962,7 @@ impl<'arena> NodeChecker for ExperimentalKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21654,12 +20975,12 @@ impl<'arena> NodeChecker for ExperimentalKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ExternalKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ExternalKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21669,10 +20990,7 @@ impl<'arena> NodeChecker for ExternalKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21685,12 +21003,12 @@ impl<'arena> NodeChecker for ExternalKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for FallbackKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for FallbackKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21700,10 +21018,7 @@ impl<'arena> NodeChecker for FallbackKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21716,12 +21031,12 @@ impl<'arena> NodeChecker for FallbackKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for FalseKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for FalseKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21731,10 +21046,7 @@ impl<'arena> NodeChecker for FalseKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21747,12 +21059,12 @@ impl<'arena> NodeChecker for FalseKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for FinalKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for FinalKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21762,10 +21074,7 @@ impl<'arena> NodeChecker for FinalKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21778,12 +21087,12 @@ impl<'arena> NodeChecker for FinalKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for FinneyKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for FinneyKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21793,10 +21102,7 @@ impl<'arena> NodeChecker for FinneyKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21809,12 +21115,12 @@ impl<'arena> NodeChecker for FinneyKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for FixedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for FixedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21824,10 +21130,7 @@ impl<'arena> NodeChecker for FixedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21840,12 +21143,12 @@ impl<'arena> NodeChecker for FixedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ForKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ForKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21855,10 +21158,7 @@ impl<'arena> NodeChecker for ForKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21871,12 +21171,12 @@ impl<'arena> NodeChecker for ForKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for FromKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for FromKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21886,10 +21186,7 @@ impl<'arena> NodeChecker for FromKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21902,12 +21199,12 @@ impl<'arena> NodeChecker for FromKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for FunctionKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for FunctionKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21917,10 +21214,7 @@ impl<'arena> NodeChecker for FunctionKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21933,12 +21227,12 @@ impl<'arena> NodeChecker for FunctionKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for GlobalKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for GlobalKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21948,10 +21242,7 @@ impl<'arena> NodeChecker for GlobalKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21964,12 +21255,12 @@ impl<'arena> NodeChecker for GlobalKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for GreaterThan<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for GreaterThan<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21979,10 +21270,7 @@ impl<'arena> NodeChecker for GreaterThan<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -21995,12 +21283,12 @@ impl<'arena> NodeChecker for GreaterThan<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for GreaterThanEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for GreaterThanEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22010,10 +21298,7 @@ impl<'arena> NodeChecker for GreaterThanEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22026,12 +21311,12 @@ impl<'arena> NodeChecker for GreaterThanEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for GreaterThanGreaterThan<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for GreaterThanGreaterThan<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22041,10 +21326,7 @@ impl<'arena> NodeChecker for GreaterThanGreaterThan<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22057,12 +21339,12 @@ impl<'arena> NodeChecker for GreaterThanGreaterThan<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for GreaterThanGreaterThanEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for GreaterThanGreaterThanEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22072,10 +21354,7 @@ impl<'arena> NodeChecker for GreaterThanGreaterThanEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22088,12 +21367,12 @@ impl<'arena> NodeChecker for GreaterThanGreaterThanEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for GreaterThanGreaterThanGreaterThan<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for GreaterThanGreaterThanGreaterThan<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22103,10 +21382,7 @@ impl<'arena> NodeChecker for GreaterThanGreaterThanGreaterThan<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22119,12 +21395,12 @@ impl<'arena> NodeChecker for GreaterThanGreaterThanGreaterThan<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for GreaterThanGreaterThanGreaterThanEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for GreaterThanGreaterThanGreaterThanEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22134,10 +21410,7 @@ impl<'arena> NodeChecker for GreaterThanGreaterThanGreaterThanEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22150,12 +21423,12 @@ impl<'arena> NodeChecker for GreaterThanGreaterThanGreaterThanEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for GweiKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for GweiKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22165,10 +21438,7 @@ impl<'arena> NodeChecker for GweiKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22181,12 +21451,12 @@ impl<'arena> NodeChecker for GweiKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for HexKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for HexKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22196,10 +21466,7 @@ impl<'arena> NodeChecker for HexKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22212,12 +21479,12 @@ impl<'arena> NodeChecker for HexKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for HexLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for HexLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22227,10 +21494,7 @@ impl<'arena> NodeChecker for HexLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22243,12 +21507,12 @@ impl<'arena> NodeChecker for HexLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for HoursKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for HoursKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22258,10 +21522,7 @@ impl<'arena> NodeChecker for HoursKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22274,12 +21535,12 @@ impl<'arena> NodeChecker for HoursKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Identifier<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Identifier<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22289,10 +21550,7 @@ impl<'arena> NodeChecker for Identifier<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22305,12 +21563,12 @@ impl<'arena> NodeChecker for Identifier<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for IfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for IfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22320,10 +21578,7 @@ impl<'arena> NodeChecker for IfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22336,12 +21591,12 @@ impl<'arena> NodeChecker for IfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ImmutableKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ImmutableKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22351,10 +21606,7 @@ impl<'arena> NodeChecker for ImmutableKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22367,12 +21619,12 @@ impl<'arena> NodeChecker for ImmutableKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ImplementsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ImplementsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22382,10 +21634,7 @@ impl<'arena> NodeChecker for ImplementsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22398,12 +21647,12 @@ impl<'arena> NodeChecker for ImplementsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ImportKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ImportKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22413,10 +21662,7 @@ impl<'arena> NodeChecker for ImportKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22429,12 +21675,12 @@ impl<'arena> NodeChecker for ImportKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for InKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for InKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22444,10 +21690,7 @@ impl<'arena> NodeChecker for InKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22460,12 +21703,12 @@ impl<'arena> NodeChecker for InKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for IndexedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for IndexedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22475,10 +21718,7 @@ impl<'arena> NodeChecker for IndexedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22491,12 +21731,12 @@ impl<'arena> NodeChecker for IndexedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for InlineKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for InlineKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22506,10 +21746,7 @@ impl<'arena> NodeChecker for InlineKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22522,12 +21759,12 @@ impl<'arena> NodeChecker for InlineKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for IntKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for IntKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22537,10 +21774,7 @@ impl<'arena> NodeChecker for IntKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22553,12 +21787,12 @@ impl<'arena> NodeChecker for IntKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for InterfaceKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for InterfaceKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22568,10 +21802,7 @@ impl<'arena> NodeChecker for InterfaceKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22584,12 +21815,12 @@ impl<'arena> NodeChecker for InterfaceKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for InternalKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for InternalKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22599,10 +21830,7 @@ impl<'arena> NodeChecker for InternalKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22615,12 +21843,12 @@ impl<'arena> NodeChecker for InternalKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for IsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for IsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22630,10 +21858,7 @@ impl<'arena> NodeChecker for IsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22646,12 +21871,12 @@ impl<'arena> NodeChecker for IsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for LayoutKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for LayoutKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22661,10 +21886,7 @@ impl<'arena> NodeChecker for LayoutKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22677,12 +21899,12 @@ impl<'arena> NodeChecker for LayoutKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for LessThan<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for LessThan<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22692,10 +21914,7 @@ impl<'arena> NodeChecker for LessThan<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22708,12 +21927,12 @@ impl<'arena> NodeChecker for LessThan<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for LessThanEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for LessThanEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22723,10 +21942,7 @@ impl<'arena> NodeChecker for LessThanEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22739,12 +21955,12 @@ impl<'arena> NodeChecker for LessThanEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for LessThanLessThan<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for LessThanLessThan<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22754,10 +21970,7 @@ impl<'arena> NodeChecker for LessThanLessThan<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22770,12 +21983,12 @@ impl<'arena> NodeChecker for LessThanLessThan<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for LessThanLessThanEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for LessThanLessThanEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22785,10 +21998,7 @@ impl<'arena> NodeChecker for LessThanLessThanEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22801,12 +22011,12 @@ impl<'arena> NodeChecker for LessThanLessThanEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for LetKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for LetKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22816,10 +22026,7 @@ impl<'arena> NodeChecker for LetKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22832,12 +22039,12 @@ impl<'arena> NodeChecker for LetKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for LibraryKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for LibraryKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22847,10 +22054,7 @@ impl<'arena> NodeChecker for LibraryKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22863,12 +22067,12 @@ impl<'arena> NodeChecker for LibraryKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MacroKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MacroKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22878,10 +22082,7 @@ impl<'arena> NodeChecker for MacroKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22894,12 +22095,12 @@ impl<'arena> NodeChecker for MacroKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MappingKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MappingKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22909,10 +22110,7 @@ impl<'arena> NodeChecker for MappingKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22925,12 +22123,12 @@ impl<'arena> NodeChecker for MappingKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MatchKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MatchKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22940,10 +22138,7 @@ impl<'arena> NodeChecker for MatchKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22956,12 +22151,12 @@ impl<'arena> NodeChecker for MatchKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MemoryKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MemoryKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22971,10 +22166,7 @@ impl<'arena> NodeChecker for MemoryKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -22987,12 +22179,12 @@ impl<'arena> NodeChecker for MemoryKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Minus<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Minus<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23002,10 +22194,7 @@ impl<'arena> NodeChecker for Minus<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23018,12 +22207,12 @@ impl<'arena> NodeChecker for Minus<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MinusEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MinusEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23033,10 +22222,7 @@ impl<'arena> NodeChecker for MinusEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23049,12 +22235,12 @@ impl<'arena> NodeChecker for MinusEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MinusGreaterThan<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MinusGreaterThan<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23064,10 +22250,7 @@ impl<'arena> NodeChecker for MinusGreaterThan<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23080,12 +22263,12 @@ impl<'arena> NodeChecker for MinusGreaterThan<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MinusMinus<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MinusMinus<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23095,10 +22278,7 @@ impl<'arena> NodeChecker for MinusMinus<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23111,12 +22291,12 @@ impl<'arena> NodeChecker for MinusMinus<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MinutesKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MinutesKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23126,10 +22306,7 @@ impl<'arena> NodeChecker for MinutesKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23142,12 +22319,12 @@ impl<'arena> NodeChecker for MinutesKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ModifierKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ModifierKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23157,10 +22334,7 @@ impl<'arena> NodeChecker for ModifierKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23173,12 +22347,12 @@ impl<'arena> NodeChecker for ModifierKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MultiLineComment<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MultiLineComment<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23188,10 +22362,7 @@ impl<'arena> NodeChecker for MultiLineComment<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23204,12 +22375,12 @@ impl<'arena> NodeChecker for MultiLineComment<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MultiLineNatSpecComment<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MultiLineNatSpecComment<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23219,10 +22390,7 @@ impl<'arena> NodeChecker for MultiLineNatSpecComment<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23235,12 +22403,12 @@ impl<'arena> NodeChecker for MultiLineNatSpecComment<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for MutableKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for MutableKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23250,10 +22418,7 @@ impl<'arena> NodeChecker for MutableKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23266,12 +22431,12 @@ impl<'arena> NodeChecker for MutableKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for NewKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for NewKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23281,10 +22446,7 @@ impl<'arena> NodeChecker for NewKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23297,12 +22459,12 @@ impl<'arena> NodeChecker for NewKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for NullKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for NullKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23312,10 +22474,7 @@ impl<'arena> NodeChecker for NullKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23328,12 +22487,12 @@ impl<'arena> NodeChecker for NullKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for OfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for OfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23343,10 +22502,7 @@ impl<'arena> NodeChecker for OfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23359,12 +22515,12 @@ impl<'arena> NodeChecker for OfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for OpenBrace<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for OpenBrace<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23374,10 +22530,7 @@ impl<'arena> NodeChecker for OpenBrace<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23390,12 +22543,12 @@ impl<'arena> NodeChecker for OpenBrace<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for OpenBracket<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for OpenBracket<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23405,10 +22558,7 @@ impl<'arena> NodeChecker for OpenBracket<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23421,12 +22571,12 @@ impl<'arena> NodeChecker for OpenBracket<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for OpenParen<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for OpenParen<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23436,10 +22586,7 @@ impl<'arena> NodeChecker for OpenParen<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23452,12 +22599,12 @@ impl<'arena> NodeChecker for OpenParen<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for OverrideKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for OverrideKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23467,10 +22614,7 @@ impl<'arena> NodeChecker for OverrideKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23483,12 +22627,12 @@ impl<'arena> NodeChecker for OverrideKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PartialKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PartialKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23498,10 +22642,7 @@ impl<'arena> NodeChecker for PartialKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23514,12 +22655,12 @@ impl<'arena> NodeChecker for PartialKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PayableKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PayableKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23529,10 +22670,7 @@ impl<'arena> NodeChecker for PayableKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23545,12 +22683,12 @@ impl<'arena> NodeChecker for PayableKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Percent<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Percent<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23560,10 +22698,7 @@ impl<'arena> NodeChecker for Percent<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23576,12 +22711,12 @@ impl<'arena> NodeChecker for Percent<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PercentEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PercentEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23591,10 +22726,7 @@ impl<'arena> NodeChecker for PercentEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23607,12 +22739,12 @@ impl<'arena> NodeChecker for PercentEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Period<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Period<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23622,10 +22754,7 @@ impl<'arena> NodeChecker for Period<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23638,12 +22767,12 @@ impl<'arena> NodeChecker for Period<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Plus<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Plus<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23653,10 +22782,7 @@ impl<'arena> NodeChecker for Plus<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23669,12 +22795,12 @@ impl<'arena> NodeChecker for Plus<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PlusEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PlusEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23684,10 +22810,7 @@ impl<'arena> NodeChecker for PlusEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23700,12 +22823,12 @@ impl<'arena> NodeChecker for PlusEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PlusPlus<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PlusPlus<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23715,10 +22838,7 @@ impl<'arena> NodeChecker for PlusPlus<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23731,12 +22851,12 @@ impl<'arena> NodeChecker for PlusPlus<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PragmaKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PragmaKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23746,10 +22866,7 @@ impl<'arena> NodeChecker for PragmaKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23762,12 +22879,12 @@ impl<'arena> NodeChecker for PragmaKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PrivateKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PrivateKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23777,10 +22894,7 @@ impl<'arena> NodeChecker for PrivateKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23793,12 +22907,12 @@ impl<'arena> NodeChecker for PrivateKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PromiseKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PromiseKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23808,10 +22922,7 @@ impl<'arena> NodeChecker for PromiseKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23824,12 +22935,12 @@ impl<'arena> NodeChecker for PromiseKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PublicKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PublicKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23839,10 +22950,7 @@ impl<'arena> NodeChecker for PublicKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23855,12 +22963,12 @@ impl<'arena> NodeChecker for PublicKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for PureKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PureKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23870,10 +22978,7 @@ impl<'arena> NodeChecker for PureKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23886,12 +22991,12 @@ impl<'arena> NodeChecker for PureKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for QuestionMark<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for QuestionMark<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23901,10 +23006,7 @@ impl<'arena> NodeChecker for QuestionMark<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23917,12 +23019,12 @@ impl<'arena> NodeChecker for QuestionMark<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ReceiveKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ReceiveKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23932,10 +23034,7 @@ impl<'arena> NodeChecker for ReceiveKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23948,12 +23047,12 @@ impl<'arena> NodeChecker for ReceiveKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ReferenceKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ReferenceKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23963,10 +23062,7 @@ impl<'arena> NodeChecker for ReferenceKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -23979,12 +23075,12 @@ impl<'arena> NodeChecker for ReferenceKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for RelocatableKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for RelocatableKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23994,10 +23090,7 @@ impl<'arena> NodeChecker for RelocatableKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24010,12 +23103,12 @@ impl<'arena> NodeChecker for RelocatableKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ReturnKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ReturnKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24025,10 +23118,7 @@ impl<'arena> NodeChecker for ReturnKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24041,12 +23131,12 @@ impl<'arena> NodeChecker for ReturnKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ReturnsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ReturnsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24056,10 +23146,7 @@ impl<'arena> NodeChecker for ReturnsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24072,12 +23159,12 @@ impl<'arena> NodeChecker for ReturnsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for RevertKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for RevertKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24087,10 +23174,7 @@ impl<'arena> NodeChecker for RevertKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24103,12 +23187,12 @@ impl<'arena> NodeChecker for RevertKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SMTCheckerKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SMTCheckerKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24118,10 +23202,7 @@ impl<'arena> NodeChecker for SMTCheckerKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24134,12 +23215,12 @@ impl<'arena> NodeChecker for SMTCheckerKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SealedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SealedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24149,10 +23230,7 @@ impl<'arena> NodeChecker for SealedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24165,12 +23243,12 @@ impl<'arena> NodeChecker for SealedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SecondsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SecondsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24180,10 +23258,7 @@ impl<'arena> NodeChecker for SecondsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24196,12 +23271,12 @@ impl<'arena> NodeChecker for SecondsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Semicolon<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Semicolon<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24211,10 +23286,7 @@ impl<'arena> NodeChecker for Semicolon<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24227,12 +23299,12 @@ impl<'arena> NodeChecker for Semicolon<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SingleLineComment<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SingleLineComment<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24242,10 +23314,7 @@ impl<'arena> NodeChecker for SingleLineComment<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24258,12 +23327,12 @@ impl<'arena> NodeChecker for SingleLineComment<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SingleLineNatSpecComment<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SingleLineNatSpecComment<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24273,10 +23342,7 @@ impl<'arena> NodeChecker for SingleLineNatSpecComment<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24289,12 +23355,12 @@ impl<'arena> NodeChecker for SingleLineNatSpecComment<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SingleQuotedHexStringLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SingleQuotedHexStringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24304,10 +23370,7 @@ impl<'arena> NodeChecker for SingleQuotedHexStringLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24320,12 +23383,12 @@ impl<'arena> NodeChecker for SingleQuotedHexStringLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SingleQuotedStringLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SingleQuotedStringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24335,10 +23398,7 @@ impl<'arena> NodeChecker for SingleQuotedStringLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24351,12 +23411,12 @@ impl<'arena> NodeChecker for SingleQuotedStringLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SingleQuotedUnicodeStringLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SingleQuotedUnicodeStringLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24366,10 +23426,7 @@ impl<'arena> NodeChecker for SingleQuotedUnicodeStringLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24382,12 +23439,12 @@ impl<'arena> NodeChecker for SingleQuotedUnicodeStringLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SingleQuotedVersionLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SingleQuotedVersionLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24397,10 +23454,7 @@ impl<'arena> NodeChecker for SingleQuotedVersionLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24413,12 +23467,12 @@ impl<'arena> NodeChecker for SingleQuotedVersionLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SizeOfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SizeOfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24428,10 +23482,7 @@ impl<'arena> NodeChecker for SizeOfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24444,12 +23495,12 @@ impl<'arena> NodeChecker for SizeOfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Slash<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Slash<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24459,10 +23510,7 @@ impl<'arena> NodeChecker for Slash<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24475,12 +23523,12 @@ impl<'arena> NodeChecker for Slash<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SlashEqual<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SlashEqual<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24490,10 +23538,7 @@ impl<'arena> NodeChecker for SlashEqual<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24506,12 +23551,12 @@ impl<'arena> NodeChecker for SlashEqual<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SolidityKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SolidityKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24521,10 +23566,7 @@ impl<'arena> NodeChecker for SolidityKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24537,12 +23579,12 @@ impl<'arena> NodeChecker for SolidityKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for StaticKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for StaticKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24552,10 +23594,7 @@ impl<'arena> NodeChecker for StaticKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24568,12 +23607,12 @@ impl<'arena> NodeChecker for StaticKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for StorageKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for StorageKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24583,10 +23622,7 @@ impl<'arena> NodeChecker for StorageKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24599,12 +23635,12 @@ impl<'arena> NodeChecker for StorageKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for StringKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for StringKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24614,10 +23650,7 @@ impl<'arena> NodeChecker for StringKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24630,12 +23663,12 @@ impl<'arena> NodeChecker for StringKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for StructKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for StructKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24645,10 +23678,7 @@ impl<'arena> NodeChecker for StructKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24661,12 +23691,12 @@ impl<'arena> NodeChecker for StructKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SuperKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SuperKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24676,10 +23706,7 @@ impl<'arena> NodeChecker for SuperKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24692,12 +23719,12 @@ impl<'arena> NodeChecker for SuperKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SupportsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SupportsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24707,10 +23734,7 @@ impl<'arena> NodeChecker for SupportsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24723,12 +23747,12 @@ impl<'arena> NodeChecker for SupportsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SwitchKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SwitchKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24738,10 +23762,7 @@ impl<'arena> NodeChecker for SwitchKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24754,12 +23775,12 @@ impl<'arena> NodeChecker for SwitchKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for SzaboKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for SzaboKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24769,10 +23790,7 @@ impl<'arena> NodeChecker for SzaboKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24785,12 +23803,12 @@ impl<'arena> NodeChecker for SzaboKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ThisKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ThisKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24800,10 +23818,7 @@ impl<'arena> NodeChecker for ThisKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24816,12 +23831,12 @@ impl<'arena> NodeChecker for ThisKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ThrowKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ThrowKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24831,10 +23846,7 @@ impl<'arena> NodeChecker for ThrowKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24847,12 +23859,12 @@ impl<'arena> NodeChecker for ThrowKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Tilde<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Tilde<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24862,10 +23874,7 @@ impl<'arena> NodeChecker for Tilde<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24878,12 +23887,12 @@ impl<'arena> NodeChecker for Tilde<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for TransientKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for TransientKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24893,10 +23902,7 @@ impl<'arena> NodeChecker for TransientKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24909,12 +23915,12 @@ impl<'arena> NodeChecker for TransientKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for TrueKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for TrueKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24924,10 +23930,7 @@ impl<'arena> NodeChecker for TrueKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24940,12 +23943,12 @@ impl<'arena> NodeChecker for TrueKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for TryKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for TryKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24955,10 +23958,7 @@ impl<'arena> NodeChecker for TryKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -24971,12 +23971,12 @@ impl<'arena> NodeChecker for TryKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for TypeDefKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for TypeDefKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24986,10 +23986,7 @@ impl<'arena> NodeChecker for TypeDefKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25002,12 +23999,12 @@ impl<'arena> NodeChecker for TypeDefKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for TypeKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for TypeKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25017,10 +24014,7 @@ impl<'arena> NodeChecker for TypeKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25033,12 +24027,12 @@ impl<'arena> NodeChecker for TypeKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for TypeOfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for TypeOfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25048,10 +24042,7 @@ impl<'arena> NodeChecker for TypeOfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25064,12 +24055,12 @@ impl<'arena> NodeChecker for TypeOfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for UfixedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for UfixedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25079,10 +24070,7 @@ impl<'arena> NodeChecker for UfixedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25095,12 +24083,12 @@ impl<'arena> NodeChecker for UfixedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for UintKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for UintKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25110,10 +24098,7 @@ impl<'arena> NodeChecker for UintKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25126,12 +24111,12 @@ impl<'arena> NodeChecker for UintKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for UncheckedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for UncheckedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25141,10 +24126,7 @@ impl<'arena> NodeChecker for UncheckedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25157,12 +24139,12 @@ impl<'arena> NodeChecker for UncheckedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for UsingKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for UsingKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25172,10 +24154,7 @@ impl<'arena> NodeChecker for UsingKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25188,12 +24167,12 @@ impl<'arena> NodeChecker for UsingKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for VarKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for VarKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25203,10 +24182,7 @@ impl<'arena> NodeChecker for VarKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25219,12 +24195,12 @@ impl<'arena> NodeChecker for VarKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for VersionSpecifier<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for VersionSpecifier<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25234,10 +24210,7 @@ impl<'arena> NodeChecker for VersionSpecifier<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25250,12 +24223,12 @@ impl<'arena> NodeChecker for VersionSpecifier<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for ViewKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for ViewKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25265,10 +24238,7 @@ impl<'arena> NodeChecker for ViewKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25281,12 +24251,12 @@ impl<'arena> NodeChecker for ViewKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for VirtualKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for VirtualKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25296,10 +24266,7 @@ impl<'arena> NodeChecker for VirtualKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25312,12 +24279,12 @@ impl<'arena> NodeChecker for VirtualKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for WeeksKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for WeeksKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25327,10 +24294,7 @@ impl<'arena> NodeChecker for WeeksKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25343,12 +24307,12 @@ impl<'arena> NodeChecker for WeeksKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for WeiKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for WeiKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25358,10 +24322,7 @@ impl<'arena> NodeChecker for WeiKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25374,12 +24335,12 @@ impl<'arena> NodeChecker for WeiKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for WhileKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for WhileKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25389,10 +24350,7 @@ impl<'arena> NodeChecker for WhileKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25405,12 +24363,12 @@ impl<'arena> NodeChecker for WhileKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for Whitespace<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for Whitespace<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25420,10 +24378,7 @@ impl<'arena> NodeChecker for Whitespace<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25436,12 +24391,12 @@ impl<'arena> NodeChecker for Whitespace<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YearsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YearsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25451,10 +24406,7 @@ impl<'arena> NodeChecker for YearsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25467,12 +24419,12 @@ impl<'arena> NodeChecker for YearsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulAbstractKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulAbstractKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25482,10 +24434,7 @@ impl<'arena> NodeChecker for YulAbstractKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25498,12 +24447,12 @@ impl<'arena> NodeChecker for YulAbstractKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulAfterKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulAfterKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25513,10 +24462,7 @@ impl<'arena> NodeChecker for YulAfterKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25529,12 +24475,12 @@ impl<'arena> NodeChecker for YulAfterKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulAliasKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulAliasKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25544,10 +24490,7 @@ impl<'arena> NodeChecker for YulAliasKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25560,12 +24503,12 @@ impl<'arena> NodeChecker for YulAliasKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulAnonymousKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulAnonymousKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25575,10 +24518,7 @@ impl<'arena> NodeChecker for YulAnonymousKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25591,12 +24531,12 @@ impl<'arena> NodeChecker for YulAnonymousKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulApplyKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulApplyKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25606,10 +24546,7 @@ impl<'arena> NodeChecker for YulApplyKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25622,12 +24559,12 @@ impl<'arena> NodeChecker for YulApplyKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulAsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulAsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25637,10 +24574,7 @@ impl<'arena> NodeChecker for YulAsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25653,12 +24587,12 @@ impl<'arena> NodeChecker for YulAsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulAssemblyKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulAssemblyKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25668,10 +24602,7 @@ impl<'arena> NodeChecker for YulAssemblyKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25684,12 +24615,12 @@ impl<'arena> NodeChecker for YulAssemblyKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulAutoKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulAutoKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25699,10 +24630,7 @@ impl<'arena> NodeChecker for YulAutoKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25715,12 +24643,12 @@ impl<'arena> NodeChecker for YulAutoKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulBoolKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulBoolKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25730,10 +24658,7 @@ impl<'arena> NodeChecker for YulBoolKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25746,12 +24671,12 @@ impl<'arena> NodeChecker for YulBoolKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulBreakKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulBreakKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25761,10 +24686,7 @@ impl<'arena> NodeChecker for YulBreakKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25777,12 +24699,12 @@ impl<'arena> NodeChecker for YulBreakKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulBytesKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulBytesKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25792,10 +24714,7 @@ impl<'arena> NodeChecker for YulBytesKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25808,12 +24727,12 @@ impl<'arena> NodeChecker for YulBytesKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulCallDataKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulCallDataKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25823,10 +24742,7 @@ impl<'arena> NodeChecker for YulCallDataKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25839,12 +24755,12 @@ impl<'arena> NodeChecker for YulCallDataKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulCaseKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulCaseKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25854,10 +24770,7 @@ impl<'arena> NodeChecker for YulCaseKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25870,12 +24783,12 @@ impl<'arena> NodeChecker for YulCaseKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulCatchKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulCatchKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25885,10 +24798,7 @@ impl<'arena> NodeChecker for YulCatchKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25901,12 +24811,12 @@ impl<'arena> NodeChecker for YulCatchKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulConstantKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulConstantKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25916,10 +24826,7 @@ impl<'arena> NodeChecker for YulConstantKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25932,12 +24839,12 @@ impl<'arena> NodeChecker for YulConstantKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulConstructorKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulConstructorKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25947,10 +24854,7 @@ impl<'arena> NodeChecker for YulConstructorKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25963,12 +24867,12 @@ impl<'arena> NodeChecker for YulConstructorKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulContinueKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulContinueKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25978,10 +24882,7 @@ impl<'arena> NodeChecker for YulContinueKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -25994,12 +24895,12 @@ impl<'arena> NodeChecker for YulContinueKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulContractKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulContractKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26009,10 +24910,7 @@ impl<'arena> NodeChecker for YulContractKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26025,12 +24923,12 @@ impl<'arena> NodeChecker for YulContractKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulCopyOfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulCopyOfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26040,10 +24938,7 @@ impl<'arena> NodeChecker for YulCopyOfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26056,12 +24951,12 @@ impl<'arena> NodeChecker for YulCopyOfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulDaysKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulDaysKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26071,10 +24966,7 @@ impl<'arena> NodeChecker for YulDaysKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26087,12 +24979,12 @@ impl<'arena> NodeChecker for YulDaysKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulDecimalLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulDecimalLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26102,10 +24994,7 @@ impl<'arena> NodeChecker for YulDecimalLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26118,12 +25007,12 @@ impl<'arena> NodeChecker for YulDecimalLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulDefaultKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulDefaultKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26133,10 +25022,7 @@ impl<'arena> NodeChecker for YulDefaultKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26149,12 +25035,12 @@ impl<'arena> NodeChecker for YulDefaultKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulDefineKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulDefineKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26164,10 +25050,7 @@ impl<'arena> NodeChecker for YulDefineKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26180,12 +25063,12 @@ impl<'arena> NodeChecker for YulDefineKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulDeleteKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulDeleteKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26195,10 +25078,7 @@ impl<'arena> NodeChecker for YulDeleteKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26211,12 +25091,12 @@ impl<'arena> NodeChecker for YulDeleteKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulDoKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulDoKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26226,10 +25106,7 @@ impl<'arena> NodeChecker for YulDoKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26242,12 +25119,12 @@ impl<'arena> NodeChecker for YulDoKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulElseKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulElseKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26257,10 +25134,7 @@ impl<'arena> NodeChecker for YulElseKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26273,12 +25147,12 @@ impl<'arena> NodeChecker for YulElseKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulEmitKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulEmitKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26288,10 +25162,7 @@ impl<'arena> NodeChecker for YulEmitKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26304,12 +25175,12 @@ impl<'arena> NodeChecker for YulEmitKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulEnumKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulEnumKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26319,10 +25190,7 @@ impl<'arena> NodeChecker for YulEnumKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26335,12 +25203,12 @@ impl<'arena> NodeChecker for YulEnumKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulEtherKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulEtherKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26350,10 +25218,7 @@ impl<'arena> NodeChecker for YulEtherKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26366,12 +25231,12 @@ impl<'arena> NodeChecker for YulEtherKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulEventKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulEventKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26381,10 +25246,7 @@ impl<'arena> NodeChecker for YulEventKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26397,12 +25259,12 @@ impl<'arena> NodeChecker for YulEventKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulExternalKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulExternalKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26412,10 +25274,7 @@ impl<'arena> NodeChecker for YulExternalKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26428,12 +25287,12 @@ impl<'arena> NodeChecker for YulExternalKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulFallbackKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulFallbackKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26443,10 +25302,7 @@ impl<'arena> NodeChecker for YulFallbackKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26459,12 +25315,12 @@ impl<'arena> NodeChecker for YulFallbackKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulFalseKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulFalseKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26474,10 +25330,7 @@ impl<'arena> NodeChecker for YulFalseKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26490,12 +25343,12 @@ impl<'arena> NodeChecker for YulFalseKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulFinalKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulFinalKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26505,10 +25358,7 @@ impl<'arena> NodeChecker for YulFinalKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26521,12 +25371,12 @@ impl<'arena> NodeChecker for YulFinalKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulFinneyKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulFinneyKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26536,10 +25386,7 @@ impl<'arena> NodeChecker for YulFinneyKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26552,12 +25399,12 @@ impl<'arena> NodeChecker for YulFinneyKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulFixedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulFixedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26567,10 +25414,7 @@ impl<'arena> NodeChecker for YulFixedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26583,12 +25427,12 @@ impl<'arena> NodeChecker for YulFixedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulForKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulForKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26598,10 +25442,7 @@ impl<'arena> NodeChecker for YulForKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26614,12 +25455,12 @@ impl<'arena> NodeChecker for YulForKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulFunctionKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulFunctionKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26629,10 +25470,7 @@ impl<'arena> NodeChecker for YulFunctionKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26645,12 +25483,12 @@ impl<'arena> NodeChecker for YulFunctionKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulGweiKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulGweiKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26660,10 +25498,7 @@ impl<'arena> NodeChecker for YulGweiKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26676,12 +25511,12 @@ impl<'arena> NodeChecker for YulGweiKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulHexKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulHexKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26691,10 +25526,7 @@ impl<'arena> NodeChecker for YulHexKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26707,12 +25539,12 @@ impl<'arena> NodeChecker for YulHexKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulHexLiteral<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulHexLiteral<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26722,10 +25554,7 @@ impl<'arena> NodeChecker for YulHexLiteral<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26738,12 +25567,12 @@ impl<'arena> NodeChecker for YulHexLiteral<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulHoursKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulHoursKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26753,10 +25582,7 @@ impl<'arena> NodeChecker for YulHoursKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26769,12 +25595,12 @@ impl<'arena> NodeChecker for YulHoursKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulIdentifier<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulIdentifier<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26784,10 +25610,7 @@ impl<'arena> NodeChecker for YulIdentifier<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26800,12 +25623,12 @@ impl<'arena> NodeChecker for YulIdentifier<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulIfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulIfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26815,10 +25638,7 @@ impl<'arena> NodeChecker for YulIfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26831,12 +25651,12 @@ impl<'arena> NodeChecker for YulIfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulImmutableKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulImmutableKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26846,10 +25666,7 @@ impl<'arena> NodeChecker for YulImmutableKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26862,12 +25679,12 @@ impl<'arena> NodeChecker for YulImmutableKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulImplementsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulImplementsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26877,10 +25694,7 @@ impl<'arena> NodeChecker for YulImplementsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26893,12 +25707,12 @@ impl<'arena> NodeChecker for YulImplementsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulImportKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulImportKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26908,10 +25722,7 @@ impl<'arena> NodeChecker for YulImportKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26924,12 +25735,12 @@ impl<'arena> NodeChecker for YulImportKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulInKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulInKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26939,10 +25750,7 @@ impl<'arena> NodeChecker for YulInKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26955,12 +25763,12 @@ impl<'arena> NodeChecker for YulInKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulIndexedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulIndexedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26970,10 +25778,7 @@ impl<'arena> NodeChecker for YulIndexedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -26986,12 +25791,12 @@ impl<'arena> NodeChecker for YulIndexedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulInlineKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulInlineKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27001,10 +25806,7 @@ impl<'arena> NodeChecker for YulInlineKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27017,12 +25819,12 @@ impl<'arena> NodeChecker for YulInlineKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulIntKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulIntKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27032,10 +25834,7 @@ impl<'arena> NodeChecker for YulIntKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27048,12 +25847,12 @@ impl<'arena> NodeChecker for YulIntKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulInterfaceKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulInterfaceKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27063,10 +25862,7 @@ impl<'arena> NodeChecker for YulInterfaceKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27079,12 +25875,12 @@ impl<'arena> NodeChecker for YulInterfaceKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulInternalKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulInternalKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27094,10 +25890,7 @@ impl<'arena> NodeChecker for YulInternalKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27110,12 +25903,12 @@ impl<'arena> NodeChecker for YulInternalKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulIsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulIsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27125,10 +25918,7 @@ impl<'arena> NodeChecker for YulIsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27141,12 +25931,12 @@ impl<'arena> NodeChecker for YulIsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulLeaveKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulLeaveKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27156,10 +25946,7 @@ impl<'arena> NodeChecker for YulLeaveKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27172,12 +25959,12 @@ impl<'arena> NodeChecker for YulLeaveKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulLetKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulLetKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27187,10 +25974,7 @@ impl<'arena> NodeChecker for YulLetKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27203,12 +25987,12 @@ impl<'arena> NodeChecker for YulLetKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulLibraryKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulLibraryKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27218,10 +26002,7 @@ impl<'arena> NodeChecker for YulLibraryKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27234,12 +26015,12 @@ impl<'arena> NodeChecker for YulLibraryKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulMacroKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulMacroKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27249,10 +26030,7 @@ impl<'arena> NodeChecker for YulMacroKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27265,12 +26043,12 @@ impl<'arena> NodeChecker for YulMacroKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulMappingKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulMappingKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27280,10 +26058,7 @@ impl<'arena> NodeChecker for YulMappingKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27296,12 +26071,12 @@ impl<'arena> NodeChecker for YulMappingKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulMatchKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulMatchKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27311,10 +26086,7 @@ impl<'arena> NodeChecker for YulMatchKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27327,12 +26099,12 @@ impl<'arena> NodeChecker for YulMatchKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulMemoryKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulMemoryKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27342,10 +26114,7 @@ impl<'arena> NodeChecker for YulMemoryKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27358,12 +26127,12 @@ impl<'arena> NodeChecker for YulMemoryKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulMinutesKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulMinutesKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27373,10 +26142,7 @@ impl<'arena> NodeChecker for YulMinutesKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27389,12 +26155,12 @@ impl<'arena> NodeChecker for YulMinutesKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulModifierKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulModifierKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27404,10 +26170,7 @@ impl<'arena> NodeChecker for YulModifierKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27420,12 +26183,12 @@ impl<'arena> NodeChecker for YulModifierKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulMutableKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulMutableKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27435,10 +26198,7 @@ impl<'arena> NodeChecker for YulMutableKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27451,12 +26211,12 @@ impl<'arena> NodeChecker for YulMutableKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulNewKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulNewKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27466,10 +26226,7 @@ impl<'arena> NodeChecker for YulNewKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27482,12 +26239,12 @@ impl<'arena> NodeChecker for YulNewKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulNullKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulNullKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27497,10 +26254,7 @@ impl<'arena> NodeChecker for YulNullKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27513,12 +26267,12 @@ impl<'arena> NodeChecker for YulNullKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulOfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulOfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27528,10 +26282,7 @@ impl<'arena> NodeChecker for YulOfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27544,12 +26295,12 @@ impl<'arena> NodeChecker for YulOfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulOverrideKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulOverrideKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27559,10 +26310,7 @@ impl<'arena> NodeChecker for YulOverrideKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27575,12 +26323,12 @@ impl<'arena> NodeChecker for YulOverrideKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulPartialKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulPartialKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27590,10 +26338,7 @@ impl<'arena> NodeChecker for YulPartialKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27606,12 +26351,12 @@ impl<'arena> NodeChecker for YulPartialKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulPayableKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulPayableKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27621,10 +26366,7 @@ impl<'arena> NodeChecker for YulPayableKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27637,12 +26379,12 @@ impl<'arena> NodeChecker for YulPayableKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulPragmaKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulPragmaKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27652,10 +26394,7 @@ impl<'arena> NodeChecker for YulPragmaKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27668,12 +26407,12 @@ impl<'arena> NodeChecker for YulPragmaKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulPrivateKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulPrivateKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27683,10 +26422,7 @@ impl<'arena> NodeChecker for YulPrivateKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27699,12 +26435,12 @@ impl<'arena> NodeChecker for YulPrivateKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulPromiseKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulPromiseKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27714,10 +26450,7 @@ impl<'arena> NodeChecker for YulPromiseKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27730,12 +26463,12 @@ impl<'arena> NodeChecker for YulPromiseKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulPublicKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulPublicKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27745,10 +26478,7 @@ impl<'arena> NodeChecker for YulPublicKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27761,12 +26491,12 @@ impl<'arena> NodeChecker for YulPublicKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulPureKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulPureKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27776,10 +26506,7 @@ impl<'arena> NodeChecker for YulPureKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27792,12 +26519,12 @@ impl<'arena> NodeChecker for YulPureKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulReceiveKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulReceiveKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27807,10 +26534,7 @@ impl<'arena> NodeChecker for YulReceiveKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27823,12 +26547,12 @@ impl<'arena> NodeChecker for YulReceiveKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulReferenceKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulReferenceKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27838,10 +26562,7 @@ impl<'arena> NodeChecker for YulReferenceKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27854,12 +26575,12 @@ impl<'arena> NodeChecker for YulReferenceKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulRelocatableKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulRelocatableKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27869,10 +26590,7 @@ impl<'arena> NodeChecker for YulRelocatableKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27885,12 +26603,12 @@ impl<'arena> NodeChecker for YulRelocatableKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulReturnsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulReturnsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27900,10 +26618,7 @@ impl<'arena> NodeChecker for YulReturnsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27916,12 +26631,12 @@ impl<'arena> NodeChecker for YulReturnsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulSealedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSealedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27931,10 +26646,7 @@ impl<'arena> NodeChecker for YulSealedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27947,12 +26659,12 @@ impl<'arena> NodeChecker for YulSealedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulSecondsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSecondsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27962,10 +26674,7 @@ impl<'arena> NodeChecker for YulSecondsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -27978,12 +26687,12 @@ impl<'arena> NodeChecker for YulSecondsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulSizeOfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSizeOfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -27993,10 +26702,7 @@ impl<'arena> NodeChecker for YulSizeOfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28009,12 +26715,12 @@ impl<'arena> NodeChecker for YulSizeOfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulStaticKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulStaticKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28024,10 +26730,7 @@ impl<'arena> NodeChecker for YulStaticKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28040,12 +26743,12 @@ impl<'arena> NodeChecker for YulStaticKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulStorageKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulStorageKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28055,10 +26758,7 @@ impl<'arena> NodeChecker for YulStorageKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28071,12 +26771,12 @@ impl<'arena> NodeChecker for YulStorageKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulStringKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulStringKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28086,10 +26786,7 @@ impl<'arena> NodeChecker for YulStringKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28102,12 +26799,12 @@ impl<'arena> NodeChecker for YulStringKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulStructKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulStructKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28117,10 +26814,7 @@ impl<'arena> NodeChecker for YulStructKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28133,12 +26827,12 @@ impl<'arena> NodeChecker for YulStructKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulSuperKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSuperKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28148,10 +26842,7 @@ impl<'arena> NodeChecker for YulSuperKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28164,12 +26855,12 @@ impl<'arena> NodeChecker for YulSuperKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulSupportsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSupportsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28179,10 +26870,7 @@ impl<'arena> NodeChecker for YulSupportsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28195,12 +26883,12 @@ impl<'arena> NodeChecker for YulSupportsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulSwitchKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSwitchKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28210,10 +26898,7 @@ impl<'arena> NodeChecker for YulSwitchKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28226,12 +26911,12 @@ impl<'arena> NodeChecker for YulSwitchKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulSzaboKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSzaboKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28241,10 +26926,7 @@ impl<'arena> NodeChecker for YulSzaboKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28257,12 +26939,12 @@ impl<'arena> NodeChecker for YulSzaboKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulThisKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulThisKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28272,10 +26954,7 @@ impl<'arena> NodeChecker for YulThisKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28288,12 +26967,12 @@ impl<'arena> NodeChecker for YulThisKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulThrowKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulThrowKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28303,10 +26982,7 @@ impl<'arena> NodeChecker for YulThrowKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28319,12 +26995,12 @@ impl<'arena> NodeChecker for YulThrowKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulTrueKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulTrueKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28334,10 +27010,7 @@ impl<'arena> NodeChecker for YulTrueKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28350,12 +27023,12 @@ impl<'arena> NodeChecker for YulTrueKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulTryKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulTryKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28365,10 +27038,7 @@ impl<'arena> NodeChecker for YulTryKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28381,12 +27051,12 @@ impl<'arena> NodeChecker for YulTryKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulTypeDefKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulTypeDefKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28396,10 +27066,7 @@ impl<'arena> NodeChecker for YulTypeDefKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28412,12 +27079,12 @@ impl<'arena> NodeChecker for YulTypeDefKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulTypeKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulTypeKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28427,10 +27094,7 @@ impl<'arena> NodeChecker for YulTypeKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28443,12 +27107,12 @@ impl<'arena> NodeChecker for YulTypeKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulTypeOfKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulTypeOfKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28458,10 +27122,7 @@ impl<'arena> NodeChecker for YulTypeOfKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28474,12 +27135,12 @@ impl<'arena> NodeChecker for YulTypeOfKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulUfixedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulUfixedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28489,10 +27150,7 @@ impl<'arena> NodeChecker for YulUfixedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28505,12 +27163,12 @@ impl<'arena> NodeChecker for YulUfixedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulUintKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulUintKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28520,10 +27178,7 @@ impl<'arena> NodeChecker for YulUintKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28536,12 +27191,12 @@ impl<'arena> NodeChecker for YulUintKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulUncheckedKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulUncheckedKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28551,10 +27206,7 @@ impl<'arena> NodeChecker for YulUncheckedKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28567,12 +27219,12 @@ impl<'arena> NodeChecker for YulUncheckedKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulUsingKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulUsingKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28582,10 +27234,7 @@ impl<'arena> NodeChecker for YulUsingKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28598,12 +27247,12 @@ impl<'arena> NodeChecker for YulUsingKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulVarKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulVarKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28613,10 +27262,7 @@ impl<'arena> NodeChecker for YulVarKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28629,12 +27275,12 @@ impl<'arena> NodeChecker for YulVarKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulViewKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulViewKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28644,10 +27290,7 @@ impl<'arena> NodeChecker for YulViewKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28660,12 +27303,12 @@ impl<'arena> NodeChecker for YulViewKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulVirtualKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulVirtualKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28675,10 +27318,7 @@ impl<'arena> NodeChecker for YulVirtualKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28691,12 +27331,12 @@ impl<'arena> NodeChecker for YulVirtualKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulWeeksKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulWeeksKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28706,10 +27346,7 @@ impl<'arena> NodeChecker for YulWeeksKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28722,12 +27359,12 @@ impl<'arena> NodeChecker for YulWeeksKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulWeiKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulWeiKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28737,10 +27374,7 @@ impl<'arena> NodeChecker for YulWeiKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28753,12 +27387,12 @@ impl<'arena> NodeChecker for YulWeiKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulWhileKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulWhileKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28768,10 +27402,7 @@ impl<'arena> NodeChecker for YulWhileKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28784,12 +27415,12 @@ impl<'arena> NodeChecker for YulWhileKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
 
-/// Generic NodeChecker for terminals
-impl<'arena> NodeChecker for YulYearsKeyword<'arena> {
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulYearsKeyword<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -28799,10 +27430,7 @@ impl<'arena> NodeChecker for YulYearsKeyword<'arena> {
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected node kind to be {}, but it was {}",
-                        v2_kind, v1_kind
-                    ),
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
                     node_range,
                 ));
             }
@@ -28815,6 +27443,6 @@ impl<'arena> NodeChecker for YulYearsKeyword<'arena> {
                 node_range,
             ));
         }
-        return errors;
+        errors
     }
 }
