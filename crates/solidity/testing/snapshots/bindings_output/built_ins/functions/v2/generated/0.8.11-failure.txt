@@ -29,8 +29,9 @@ Definitions (25):
 
 ------------------------------------------------------------------------
 
-References (36):
+References (37):
 - Ref: ["require" @ input.sol:3:9] -> built-in
+- Ref: ["revert" @ input.sol:7:9] -> built-in
 - Ref: ["assert" @ input.sol:11:9] -> built-in
 - Ref: ["addmod" @ input.sol:17:19] -> built-in
 - Ref: ["blockhash" @ input.sol:18:22] -> built-in
@@ -89,6 +90,9 @@ Bindings:
   6 │     function testRevert() public {
     │              ─────┬────  
     │                   ╰────── name: 3
+  7 │         revert("testing revert");
+    │         ───┬──  
+    │            ╰──── built-in
     │ 
  10 │     function testAssert() public {
     │              ─────┬────  

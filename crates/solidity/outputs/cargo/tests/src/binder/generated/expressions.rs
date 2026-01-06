@@ -152,6 +152,11 @@ fn revert_named_args() -> Result<()> {
 }
 
 #[test]
+fn revert_shadowing() -> Result<()> {
+    run(T, "revert_shadowing")
+}
+
+#[test]
 fn type_expr() -> Result<()> {
     run(T, "type_expr")
 }

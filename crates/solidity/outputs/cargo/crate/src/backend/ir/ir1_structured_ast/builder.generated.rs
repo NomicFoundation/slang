@@ -1542,9 +1542,7 @@ pub fn build_revert_statement(node: &Rc<NonterminalNode>) -> Option<RevertStatem
     assert_nonterminal_kind(node, NonterminalKind::RevertStatement);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::RevertKeyword)?;
-    let error = helper
-        .accept_label(EdgeLabel::Error)
-        .and_then(|node| build_identifier_path(nonterminal_node(node)));
+    let error = build_identifier_path(nonterminal_node(helper.accept_label(EdgeLabel::Error)?))?;
     let arguments =
         build_arguments_declaration(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;

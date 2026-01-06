@@ -4530,7 +4530,7 @@
                   "error_recovery": { "terminator": "semicolon" },
                   "fields": [
                     ["revert_keyword", { "Required": { "reference": "RevertKeyword" } }],
-                    ["error", { "Optional": { "reference": "IdentifierPath" } }],
+                    ["error", { "Required": { "reference": "IdentifierPath" } }],
                     ["arguments", { "Required": { "reference": "ArgumentsDeclaration" } }],
                     ["semicolon", { "Required": { "reference": "Semicolon" } }]
                   ]
