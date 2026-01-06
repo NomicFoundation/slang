@@ -13,8 +13,9 @@ pub struct FieldsErrorRecovery {
     ///
     /// For example `PragmaDirective` has a `Semicolon` terminator, that could
     /// be used to recover from an wrong pragma directive like
-    /// `padme solidity ^0.8.0;`
-    ///  ~~~~~ -> This should be `pragma`
+    /// ```
+    /// pragma soldity ^0.8.0;
+    /// ```
     #[serde(skip_serializing_if = "Option::is_none")]
     pub terminator: Option<Identifier>,
 
