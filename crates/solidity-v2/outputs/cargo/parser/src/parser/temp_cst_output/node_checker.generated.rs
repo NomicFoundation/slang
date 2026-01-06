@@ -1,7 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use std::marker::PhantomData;
-
 use slang_solidity::cst::{Edge, EdgeLabel, Node, NodeKind, NonterminalKind, TextIndex, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity_v2_cst::structured_cst::nodes::*;
@@ -47,6 +45,7 @@ pub trait NodeChecker {
     /// Check whether self matches the given CST node.
     ///
     /// Returns a vector of errors found, empty if no errors.
+    #[allow(dead_code)]
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         self.check_node_with_offset(node, TextIndex::ZERO)
     }
