@@ -3175,7 +3175,7 @@ language_v2_macros::compile!(Language(
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 revert_keyword = Required(RevertKeyword),
-                                error = Optional(reference = IdentifierPath),
+                                error = Required(IdentifierPath),
                                 arguments = Required(ArgumentsDeclaration),
                                 semicolon = Required(Semicolon)
                             )
