@@ -263,6 +263,7 @@ fn check_version_specifier(
     };
 
     match &**specifier {
+        SpannedVersionSpecifier::Always => {}
         SpannedVersionSpecifier::Never => {}
         SpannedVersionSpecifier::From { from } => {
             check_version(analysis, from);
