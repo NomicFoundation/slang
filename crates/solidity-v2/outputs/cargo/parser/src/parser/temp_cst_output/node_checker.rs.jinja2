@@ -1,0 +1,278 @@
+{%- set target = model.ir_model -%}
+
+use slang_solidity_v2_cst::structured_cst::nodes::*;
+use slang_solidity::cst::{NonterminalKind, NodeKind, Node, EdgeLabel, Edge, TextRange, TextIndex};
+use slang_solidity::diagnostic::{Diagnostic, Severity};
+use std::marker::PhantomData;
+
+/// An error found when checking a node
+#[derive(Clone, Debug)]
+pub struct NodeCheckerError {
+    pub err: String,
+    pub text_range: TextRange,
+
+}
+
+impl Diagnostic for NodeCheckerError {
+    fn text_range(&self) -> TextRange {
+        self.text_range.clone()
+    }
+
+    fn severity(&self) -> Severity {
+        Severity::Error
+    }
+
+    fn message(&self) -> String {
+        self.err.clone()
+    }
+}
+
+impl NodeCheckerError {
+    pub(crate) fn new(err: String, text_range: TextRange) -> NodeCheckerError {
+        NodeCheckerError { err, text_range }
+    }
+}
+
+/// A trait that checks whether a CST node (V1) matches the structure of the AST node (V2).
+pub trait NodeChecker {
+    /// Check whether self matches the given CST node, tracking text offset.
+    ///
+    /// Returns a vector of errors found, empty if no errors.
+    ///
+    /// Note: The text offset calculating and tracking seems to reinvent a lot of the logic behind the Cursor,
+    /// but it's simple enough that we can do it here. Using a cursor makes it more difficult to compare both
+    /// trees, since we'd need to keep track of which children we've seen.
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError>;
+
+    /// Check whether self matches the given CST node.
+    ///
+    /// Returns a vector of errors found, empty if no errors.
+    fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
+        self.check_node_with_offset(node, TextIndex::ZERO)
+    }
+}
+
+/// Extract the first element that satisfies the predicate, and remove it from the vector.
+fn extract_first<T>(v: &mut Vec<T>, finder: impl Fn(&T) -> bool) -> Option<T> {
+    if let Some(idx) = v.iter().position(finder) {
+        return Some(v.remove(idx));
+    }
+    None
+}
+
+/// Compute children with their text offsets, filtering out trivia and separators.
+///
+/// This computes offsets BEFORE filtering so that offsets remain accurate.
+///
+/// TODO: At some point we may need to check the trivia as well
+fn children_with_offsets(node: &Node, text_offset: TextIndex) -> Vec<(Edge, TextIndex)> {
+    let mut result = vec![];
+    let mut current_offset = text_offset;
+
+    for child in node.children() {
+        let child_offset = current_offset;
+        current_offset = current_offset + child.node.text_len();
+
+        // Skip trivia and separators (V2 doesn't parse them)
+        if child.node.is_trivia() || child.label == EdgeLabel::Separator {
+            continue;
+        }
+
+        result.push((child.clone(), child_offset));
+    }
+
+    result
+}
+
+//
+// Sequences:
+//
+
+
+{% for parent_type, sequence in target.sequences %}
+/// Generic NodeChecker for sequences
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ parent_type }}, node.kind()), node_range)];
+        }
+
+        let mut children = children_with_offsets(node, text_offset);
+
+        let mut errors = vec![];
+
+        {% for field in sequence.fields %}
+        // {{ field.label }}
+        {% if field.is_optional -%}
+        if let Some({{ field.label | snake_case }}) = &self.{{ field.label | snake_case }}
+        {
+        {% else %}
+        {
+        let {{ field.label | snake_case }} = &self.{{ field.label | snake_case }};
+        {%- endif %}
+
+            // Prepare edge label
+            {% if field.label == "Expression_InequalityExpression_Operator"
+            or field.label == "Expression_EqualityExpression_Operator"
+            or field.label == "Expression_ShiftExpression_Operator"
+            or field.label == "Expression_AdditiveExpression_Operator"
+            or field.label == "Expression_MultiplicativeExpression_Operator"
+            or field.label == "Expression_AssignmentExpression_Operator"
+            or field.label == "Expression_ExponentiationExpression_Operator"
+            or field.label == "Expression_PrefixExpression_Operator"
+            or field.label == "Expression_PostfixExpression_Operator" %}
+            // Special case for operator fields that are merged together
+                {% set edge_label = "Operator" %}
+            {% else %}
+                {% set edge_label = field.label | pascal_case %}
+            {% endif %}
+
+            if let Some((child, child_offset)) = extract_first(&mut children, |(child, _): &(Edge, TextIndex)| child.label == EdgeLabel::{{ edge_label }}) {
+                let child_errors = {{ field.label | snake_case }}.check_node_with_offset(&child.node, child_offset);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(format!("Expected {{ field.label }} to be present in the CST, but it was not"), node_range.clone()));
+            }
+        } {% if field.is_optional -%}
+        else {
+            // If it's not there on the AST, it shouldn't be in the CST
+            if let Some((child, _)) = extract_first(&mut children, |(child, _): &(Edge, TextIndex)| child.label == EdgeLabel::{{ edge_label }}) {
+                errors.push(NodeCheckerError::new(format!("Expected {{ field.label }} to not be present in the CST, but it was there: {:#?}", child), node_range.clone()));
+            }
+        }
+        {%- endif %}
+        {% endfor %}
+
+        if !children.is_empty() {
+            errors.push(NodeCheckerError::new(format!("Expected 0 children left, but there's some left {:#?}", children), node_range));
+        }
+
+        errors
+    }
+}
+{% endfor %}
+
+
+//
+// Choices:
+//
+
+
+{% for parent_type, choice in target.choices %}
+{% if parent_type == "Expression_InequalityExpression_Operator"
+or parent_type == "Expression_EqualityExpression_Operator"
+or parent_type == "Expression_ShiftExpression_Operator"
+or parent_type == "Expression_AdditiveExpression_Operator"
+or parent_type == "Expression_MultiplicativeExpression_Operator"
+or parent_type == "Expression_AssignmentExpression_Operator"
+or parent_type == "Expression_ExponentiationExpression_Operator"
+or parent_type == "Expression_PrefixExpression_Operator"
+or parent_type == "Expression_PostfixExpression_Operator" %}
+// Special case for operator choices that are merged together
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        match self {
+            {% for variant in choice.variants %}
+            Self::{{ variant.name }}(element) => element.check_node_with_offset(node, text_offset),
+            {% endfor %}
+        }
+    }
+}
+{% else %}
+/// Generic NodeChecker for choices
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ parent_type }}, node.kind()), node_range)];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(format!("Expected exactly one child for {}, but got: {:#?}", NonterminalKind::{{ parent_type }}, children), node_range)];
+        }
+
+        let (child, child_offset) = &children[0];
+
+        if child.label != EdgeLabel::Variant {
+            let child_range = *child_offset..(*child_offset + child.node.text_len());
+            return vec![NodeCheckerError::new(format!("Expected child to be of variant type, but it was {}", child.label), child_range)];
+        }
+
+        let mut errors = vec![];
+
+        match self {
+            {% for variant in choice.variants %}
+            Self::{{ variant.name }}(element) => {
+                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+            }
+            {% endfor %}
+        }
+
+        errors
+    }
+}
+{% endif %}
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+/// Generic NodeChecker for repeated and separated`
+{% for parent_type, collection in target.collections %}
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ parent_type }}, node.kind()), node_range)];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != self.elements.len() {
+            return vec![NodeCheckerError::new(format!("Expected {} elements, but got: {:#?}", self.elements.len(), children), node_range)];
+        }
+
+        let mut errors = vec![];
+
+        for (i, (child, child_offset)) in children.iter().enumerate() {
+            let element = &self.elements[i];
+            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+        }
+        errors
+    }
+}
+{% endfor %}
+
+
+// Terminals
+
+{% for parent_type, unique in target.terminals %}
+/// Generic NodeChecker for terminals
+impl<'arena> NodeChecker for {{ parent_type }}<'arena> {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "{{ parent_type }}";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", v2_kind, v1_kind), node_range));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(format!("Expected node kind to be a terminal, but it was {}", node.kind()), node_range));
+        }
+        return errors;
+    }
+}
+{% endfor %}
