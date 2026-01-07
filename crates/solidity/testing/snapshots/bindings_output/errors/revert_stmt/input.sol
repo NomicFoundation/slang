@@ -9,6 +9,16 @@ contract Test {
         int code = 10;
         revert Utils.GenericError(code);
     }
+
+    function revertFunction() public {
+        revert("error");
+    }
+
+
+    function revertFunctionInCondition() public {
+        if (revert("error")) {}
+    }
+
 }
 
 library Utils {

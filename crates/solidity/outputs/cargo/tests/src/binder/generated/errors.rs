@@ -22,6 +22,11 @@ fn named_args() -> Result<()> {
 }
 
 #[test]
+fn revert_shadowing() -> Result<()> {
+    run(T, "revert_shadowing")
+}
+
+#[test]
 fn revert_stmt() -> Result<()> {
     run(T, "revert_stmt")
 }
