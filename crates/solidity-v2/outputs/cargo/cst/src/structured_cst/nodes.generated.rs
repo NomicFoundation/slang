@@ -1754,7 +1754,7 @@ pub type NewExpression<'arena> = Box<'arena, NewExpressionStruct<'arena>>;
 pub struct NewExpressionStruct<'arena> {
     pub new_keyword: NewKeyword<'arena>,
     pub type_name: TypeName<'arena>,
-    pub options: Option<CallOptionsNew<'arena>>,
+    pub options: Option<MultipleCallOptionsNew<'arena>>,
     pub arguments: ArgumentsDeclaration<'arena>,
 }
 
@@ -1762,7 +1762,7 @@ pub fn new_new_expression<'arena>(
     arena: &'arena Bump,
     new_keyword: NewKeyword<'arena>,
     type_name: TypeName<'arena>,
-    options: Option<CallOptionsNew<'arena>>,
+    options: Option<MultipleCallOptionsNew<'arena>>,
     arguments: ArgumentsDeclaration<'arena>,
 ) -> NewExpression<'arena> {
     Box::new_in(
@@ -6141,6 +6141,18 @@ pub fn new_modifier_attributes<'arena>(
     elements: Vec<'arena, ModifierAttribute<'arena>>,
 ) -> ModifierAttributes<'arena> {
     ModifierAttributes { elements }
+}
+
+#[derive(Debug)]
+pub struct MultipleCallOptionsNew<'arena> {
+    pub elements: Vec<'arena, CallOptionsNew<'arena>>,
+}
+
+pub fn new_multiple_call_options_new<'arena>(
+    arena: &'arena Bump,
+    elements: Vec<'arena, CallOptionsNew<'arena>>,
+) -> MultipleCallOptionsNew<'arena> {
+    MultipleCallOptionsNew { elements }
 }
 
 #[derive(Debug)]

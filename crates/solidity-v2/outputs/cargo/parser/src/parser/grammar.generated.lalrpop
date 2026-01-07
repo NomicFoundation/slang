@@ -1450,7 +1450,11 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath<'arena> = {
         
     };
     NewExpression: NewExpression<'arena> = {
-        <_new_keyword: NewKeyword>  <_type_name: TypeName>  <_options: (CallOptionsNew)?>  <_arguments: ArgumentsDeclaration>  => new_new_expression(arena, <>),
+        <_new_keyword: NewKeyword>  <_type_name: TypeName>  <_options: (MultipleCallOptionsNew)?>  <_arguments: ArgumentsDeclaration>  => new_new_expression(arena, <>),
+        
+    };
+    MultipleCallOptionsNew: MultipleCallOptionsNew<'arena> = {
+        <_CallOptionsNew: RepOne<<CallOptionsNew>>>  => new_multiple_call_options_new(arena, <>),
         
     };
     CallOptionsNew: CallOptionsNew<'arena> = {

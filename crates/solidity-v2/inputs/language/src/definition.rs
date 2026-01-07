@@ -4327,9 +4327,14 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath<'arena> = {
                                 type_name = Required(TypeName),
                                 // TODO(v2): This disallows some grammar ambiguities, we should double check it's ok
                                 options =
-                                    Optional(reference = CallOptionsNew, enabled = From("0.6.2")),
+                                    Optional(reference = MultipleCallOptionsNew, enabled = From("0.6.2")),
                                 arguments = Required(ArgumentsDeclaration)
                             )
+                        ),
+                        Repeated(
+                            name = MultipleCallOptionsNew,
+                            reference = CallOptionsNew,
+                            enabled = From("0.6.2")
                         ),
                         Struct(
                             name = CallOptionsNew,
