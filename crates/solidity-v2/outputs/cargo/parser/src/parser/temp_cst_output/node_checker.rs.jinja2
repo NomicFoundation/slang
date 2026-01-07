@@ -63,6 +63,11 @@ fn extract_first<T>(v: &mut Vec<T>, finder: impl Fn(&T) -> bool) -> Option<T> {
     None
 }
 
+/// Extract the first edge with the given label, and remove it from the vector.
+fn extract_first_with_label(v: &mut Vec<(Edge, TextIndex)>, label: EdgeLabel) -> Option<(Edge, TextIndex)> {
+    extract_first(v, |(child, _): &(Edge, TextIndex)| child.label == label)
+}
+
 /// Compute children with their text offsets, filtering out trivia and separators.
 ///
 /// This computes offsets BEFORE filtering so that offsets remain accurate.
@@ -114,8 +119,8 @@ impl NodeChecker for {{ parent_type }}<'_> {
         {
         {% else %}
         {
-        let {{ field.label | snake_case }} = &self.{{ field.label | snake_case }};
-        {%- endif %}
+            let {{ field.label | snake_case }} = &self.{{ field.label | snake_case }};
+            {%- endif %}
 
             // Prepare edge label
             {% if field.label == "Expression_InequalityExpression_Operator"
@@ -133,7 +138,7 @@ impl NodeChecker for {{ parent_type }}<'_> {
                 {% set edge_label = field.label | pascal_case %}
             {% endif %}
 
-            if let Some((child, child_offset)) = extract_first(&mut children, |(child, _): &(Edge, TextIndex)| child.label == EdgeLabel::{{ edge_label }}) {
+            if let Some((child, child_offset)) = extract_first_with_label(&mut children, EdgeLabel::{{ edge_label }}) {
                 let child_errors = {{ field.label | snake_case }}.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
@@ -142,7 +147,7 @@ impl NodeChecker for {{ parent_type }}<'_> {
         } {% if field.is_optional -%}
         else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first(&mut children, |(child, _): &(Edge, TextIndex)| child.label == EdgeLabel::{{ edge_label }}) {
+            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::{{ edge_label }}) {
                 errors.push(NodeCheckerError::new(format!("Expected {{ field.label }} to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
