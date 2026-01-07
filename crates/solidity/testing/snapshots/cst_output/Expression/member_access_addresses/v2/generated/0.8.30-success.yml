@@ -1,0 +1,114 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ArrayExpression(
+    ArrayExpressionStruct {
+        open_bracket: OpenBracket {
+            l: 0,
+            r: 1,
+            phantom: PhantomData<&()>,
+        },
+        items: ArrayValues {
+            elements: [
+                MemberAccessExpression(
+                    MemberAccessExpressionStruct {
+                        operand: IndexAccessExpression(
+                            IndexAccessExpressionStruct {
+                                operand: Identifier(
+                                    Identifier {
+                                        l: 6,
+                                        r: 7,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                ),
+                                open_bracket: OpenBracket {
+                                    l: 7,
+                                    r: 8,
+                                    phantom: PhantomData<&()>,
+                                },
+                                start: Some(
+                                    DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                l: 8,
+                                                r: 9,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                ),
+                                end: None,
+                                close_bracket: CloseBracket {
+                                    l: 9,
+                                    r: 10,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                        ),
+                        period: Period {
+                            l: 10,
+                            r: 11,
+                            phantom: PhantomData<&()>,
+                        },
+                        member: AddressKeyword(
+                            AddressKeyword {
+                                l: 11,
+                                r: 18,
+                                phantom: PhantomData<&()>,
+                            },
+                        ),
+                    },
+                ),
+                MemberAccessExpression(
+                    MemberAccessExpressionStruct {
+                        operand: FunctionCallExpression(
+                            FunctionCallExpressionStruct {
+                                operand: Identifier(
+                                    Identifier {
+                                        l: 24,
+                                        r: 25,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                ),
+                                arguments: PositionalArgumentsDeclaration(
+                                    PositionalArgumentsDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            l: 25,
+                                            r: 26,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                        arguments: PositionalArguments {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            l: 26,
+                                            r: 27,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    },
+                                ),
+                            },
+                        ),
+                        period: Period {
+                            l: 27,
+                            r: 28,
+                            phantom: PhantomData<&()>,
+                        },
+                        member: AddressKeyword(
+                            AddressKeyword {
+                                l: 28,
+                                r: 35,
+                                phantom: PhantomData<&()>,
+                            },
+                        ),
+                    },
+                ),
+            ],
+        },
+        close_bracket: CloseBracket {
+            l: 36,
+            r: 37,
+            phantom: PhantomData<&()>,
+        },
+    },
+)

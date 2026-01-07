@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: Identifier(
+            Identifier {
+                l: 0,
+                r: 13,
+                phantom: PhantomData<&()>,
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    l: 13,
+                    r: 14,
+                    phantom: PhantomData<&()>,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        Identifier(
+                            Identifier {
+                                l: 14,
+                                r: 19,
+                                phantom: PhantomData<&()>,
+                            },
+                        ),
+                    ],
+                },
+                close_paren: CloseParen {
+                    l: 19,
+                    r: 20,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+    },
+)

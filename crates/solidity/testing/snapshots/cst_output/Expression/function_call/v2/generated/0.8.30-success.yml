@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: Identifier(
+            Identifier {
+                l: 0,
+                r: 1,
+                phantom: PhantomData<&()>,
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    l: 1,
+                    r: 2,
+                    phantom: PhantomData<&()>,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        DecimalNumberExpression(
+                            DecimalNumberExpressionStruct {
+                                literal: DecimalLiteral {
+                                    l: 2,
+                                    r: 3,
+                                    phantom: PhantomData<&()>,
+                                },
+                                unit: None,
+                            },
+                        ),
+                        DecimalNumberExpression(
+                            DecimalNumberExpressionStruct {
+                                literal: DecimalLiteral {
+                                    l: 5,
+                                    r: 6,
+                                    phantom: PhantomData<&()>,
+                                },
+                                unit: None,
+                            },
+                        ),
+                    ],
+                },
+                close_paren: CloseParen {
+                    l: 6,
+                    r: 7,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+    },
+)

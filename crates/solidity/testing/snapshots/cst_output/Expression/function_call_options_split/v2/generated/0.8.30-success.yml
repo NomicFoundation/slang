@@ -1,0 +1,142 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: CallOptionsExpression(
+            CallOptionsExpressionStruct {
+                operand: CallOptionsExpression(
+                    CallOptionsExpressionStruct {
+                        operand: MemberAccessExpression(
+                            MemberAccessExpressionStruct {
+                                operand: Identifier(
+                                    Identifier {
+                                        l: 0,
+                                        r: 1,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                ),
+                                period: Period {
+                                    l: 0,
+                                    r: 0,
+                                    phantom: PhantomData<&()>,
+                                },
+                                member: Identifier(
+                                    Identifier {
+                                        l: 2,
+                                        r: 3,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                ),
+                            },
+                        ),
+                        open_brace: OpenBrace {
+                            l: 3,
+                            r: 4,
+                            phantom: PhantomData<&()>,
+                        },
+                        options: CallOptions {
+                            elements: [
+                                NamedArgumentStruct {
+                                    name: Identifier {
+                                        l: 4,
+                                        r: 9,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    colon: Colon {
+                                        l: 9,
+                                        r: 10,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    value: DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                l: 11,
+                                                r: 12,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_brace: CloseBrace {
+                            l: 12,
+                            r: 13,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                ),
+                open_brace: OpenBrace {
+                    l: 13,
+                    r: 14,
+                    phantom: PhantomData<&()>,
+                },
+                options: CallOptions {
+                    elements: [
+                        NamedArgumentStruct {
+                            name: Identifier {
+                                l: 14,
+                                r: 17,
+                                phantom: PhantomData<&()>,
+                            },
+                            colon: Colon {
+                                l: 17,
+                                r: 18,
+                                phantom: PhantomData<&()>,
+                            },
+                            value: DecimalNumberExpression(
+                                DecimalNumberExpressionStruct {
+                                    literal: DecimalLiteral {
+                                        l: 19,
+                                        r: 20,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    unit: None,
+                                },
+                            ),
+                        },
+                    ],
+                },
+                close_brace: CloseBrace {
+                    l: 20,
+                    r: 21,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    l: 21,
+                    r: 22,
+                    phantom: PhantomData<&()>,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        StringExpression(
+                            StringLiterals(
+                                StringLiterals {
+                                    elements: [
+                                        DoubleQuotedStringLiteral(
+                                            DoubleQuotedStringLiteral {
+                                                l: 22,
+                                                r: 24,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ],
+                                },
+                            ),
+                        ),
+                    ],
+                },
+                close_paren: CloseParen {
+                    l: 24,
+                    r: 25,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+    },
+)

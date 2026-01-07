@@ -1,0 +1,440 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        l: 0,
+                        r: 7,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 8,
+                        r: 16,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 17,
+                        r: 18,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: LibraryMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        l: 21,
+                                        r: 29,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            l: 30,
+                                            r: 36,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            l: 36,
+                                            r: 37,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [
+                                                ParameterStruct {
+                                                    type_name: ElementaryType(
+                                                        UintKeyword(
+                                                            UintKeyword {
+                                                                l: 37,
+                                                                r: 44,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    storage_location: None,
+                                                    name: Some(
+                                                        Identifier {
+                                                            l: 45,
+                                                            r: 46,
+                                                            phantom: PhantomData<&()>,
+                                                        },
+                                                    ),
+                                                },
+                                                ParameterStruct {
+                                                    type_name: ElementaryType(
+                                                        UintKeyword(
+                                                            UintKeyword {
+                                                                l: 48,
+                                                                r: 55,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    storage_location: None,
+                                                    name: Some(
+                                                        Identifier {
+                                                            l: 56,
+                                                            r: 57,
+                                                            phantom: PhantomData<&()>,
+                                                        },
+                                                    ),
+                                                },
+                                            ],
+                                        },
+                                        close_paren: CloseParen {
+                                            l: 57,
+                                            r: 58,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    l: 59,
+                                                    r: 67,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                            PureKeyword(
+                                                PureKeyword {
+                                                    l: 68,
+                                                    r: 72,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: Some(
+                                        ReturnsDeclarationStruct {
+                                            returns_keyword: ReturnsKeyword {
+                                                l: 73,
+                                                r: 80,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            variables: ParametersDeclarationStruct {
+                                                open_paren: OpenParen {
+                                                    l: 81,
+                                                    r: 82,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                                parameters: Parameters {
+                                                    elements: [
+                                                        ParameterStruct {
+                                                            type_name: ElementaryType(
+                                                                BoolKeyword(
+                                                                    BoolKeyword {
+                                                                        l: 82,
+                                                                        r: 86,
+                                                                        phantom: PhantomData<&()>,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            storage_location: None,
+                                                            name: None,
+                                                        },
+                                                        ParameterStruct {
+                                                            type_name: ElementaryType(
+                                                                UintKeyword(
+                                                                    UintKeyword {
+                                                                        l: 88,
+                                                                        r: 95,
+                                                                        phantom: PhantomData<&()>,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            storage_location: None,
+                                                            name: None,
+                                                        },
+                                                    ],
+                                                },
+                                                close_paren: CloseParen {
+                                                    l: 95,
+                                                    r: 96,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            },
+                                        },
+                                    ),
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                l: 97,
+                                                r: 98,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    UncheckedBlock(
+                                                        UncheckedBlockStruct {
+                                                            unchecked_keyword: UncheckedKeyword {
+                                                                l: 103,
+                                                                r: 112,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                            block: BlockStruct {
+                                                                open_brace: OpenBrace {
+                                                                    l: 113,
+                                                                    r: 114,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                                statements: Statements {
+                                                                    elements: [
+                                                                        VariableDeclarationStatement(
+                                                                            VariableDeclarationStatementStruct {
+                                                                                variable_declaration: VariableDeclarationStruct {
+                                                                                    variable_type: TypeName(
+                                                                                        ElementaryType(
+                                                                                            UintKeyword(
+                                                                                                UintKeyword {
+                                                                                                    l: 121,
+                                                                                                    r: 128,
+                                                                                                    phantom: PhantomData<&()>,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                    ),
+                                                                                    storage_location: None,
+                                                                                    name: Identifier {
+                                                                                        l: 129,
+                                                                                        r: 130,
+                                                                                        phantom: PhantomData<&()>,
+                                                                                    },
+                                                                                },
+                                                                                value: Some(
+                                                                                    VariableDeclarationValueStruct {
+                                                                                        equal: Equal {
+                                                                                            l: 131,
+                                                                                            r: 132,
+                                                                                            phantom: PhantomData<&()>,
+                                                                                        },
+                                                                                        expression: AdditiveExpression(
+                                                                                            AdditiveExpressionStruct {
+                                                                                                left_operand: Identifier(
+                                                                                                    Identifier {
+                                                                                                        l: 133,
+                                                                                                        r: 134,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                ),
+                                                                                                expression_additive_expression_operator: Plus(
+                                                                                                    Plus {
+                                                                                                        l: 135,
+                                                                                                        r: 136,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                ),
+                                                                                                right_operand: Identifier(
+                                                                                                    Identifier {
+                                                                                                        l: 137,
+                                                                                                        r: 138,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                ),
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                semicolon: Semicolon {
+                                                                                    l: 138,
+                                                                                    r: 139,
+                                                                                    phantom: PhantomData<&()>,
+                                                                                },
+                                                                            },
+                                                                        ),
+                                                                        IfStatement(
+                                                                            IfStatementStruct {
+                                                                                if_keyword: IfKeyword {
+                                                                                    l: 146,
+                                                                                    r: 148,
+                                                                                    phantom: PhantomData<&()>,
+                                                                                },
+                                                                                open_paren: OpenParen {
+                                                                                    l: 149,
+                                                                                    r: 150,
+                                                                                    phantom: PhantomData<&()>,
+                                                                                },
+                                                                                condition: InequalityExpression(
+                                                                                    InequalityExpressionStruct {
+                                                                                        left_operand: Identifier(
+                                                                                            Identifier {
+                                                                                                l: 150,
+                                                                                                r: 151,
+                                                                                                phantom: PhantomData<&()>,
+                                                                                            },
+                                                                                        ),
+                                                                                        expression_inequality_expression_operator: LessThan(
+                                                                                            LessThan {
+                                                                                                l: 152,
+                                                                                                r: 153,
+                                                                                                phantom: PhantomData<&()>,
+                                                                                            },
+                                                                                        ),
+                                                                                        right_operand: Identifier(
+                                                                                            Identifier {
+                                                                                                l: 154,
+                                                                                                r: 155,
+                                                                                                phantom: PhantomData<&()>,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                close_paren: CloseParen {
+                                                                                    l: 155,
+                                                                                    r: 156,
+                                                                                    phantom: PhantomData<&()>,
+                                                                                },
+                                                                                body: ReturnStatement(
+                                                                                    ReturnStatementStruct {
+                                                                                        return_keyword: ReturnKeyword {
+                                                                                            l: 157,
+                                                                                            r: 163,
+                                                                                            phantom: PhantomData<&()>,
+                                                                                        },
+                                                                                        expression: Some(
+                                                                                            TupleExpression(
+                                                                                                TupleExpressionStruct {
+                                                                                                    open_paren: OpenParen {
+                                                                                                        l: 164,
+                                                                                                        r: 165,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                    items: TupleValues {
+                                                                                                        elements: [
+                                                                                                            TupleValueStruct {
+                                                                                                                expression: Some(
+                                                                                                                    FalseKeyword(
+                                                                                                                        FalseKeyword {
+                                                                                                                            l: 165,
+                                                                                                                            r: 170,
+                                                                                                                            phantom: PhantomData<&()>,
+                                                                                                                        },
+                                                                                                                    ),
+                                                                                                                ),
+                                                                                                            },
+                                                                                                            TupleValueStruct {
+                                                                                                                expression: Some(
+                                                                                                                    DecimalNumberExpression(
+                                                                                                                        DecimalNumberExpressionStruct {
+                                                                                                                            literal: DecimalLiteral {
+                                                                                                                                l: 172,
+                                                                                                                                r: 173,
+                                                                                                                                phantom: PhantomData<&()>,
+                                                                                                                            },
+                                                                                                                            unit: None,
+                                                                                                                        },
+                                                                                                                    ),
+                                                                                                                ),
+                                                                                                            },
+                                                                                                        ],
+                                                                                                    },
+                                                                                                    close_paren: CloseParen {
+                                                                                                        l: 173,
+                                                                                                        r: 174,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        semicolon: Semicolon {
+                                                                                            l: 174,
+                                                                                            r: 175,
+                                                                                            phantom: PhantomData<&()>,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                                else_branch: None,
+                                                                            },
+                                                                        ),
+                                                                        ReturnStatement(
+                                                                            ReturnStatementStruct {
+                                                                                return_keyword: ReturnKeyword {
+                                                                                    l: 182,
+                                                                                    r: 188,
+                                                                                    phantom: PhantomData<&()>,
+                                                                                },
+                                                                                expression: Some(
+                                                                                    TupleExpression(
+                                                                                        TupleExpressionStruct {
+                                                                                            open_paren: OpenParen {
+                                                                                                l: 189,
+                                                                                                r: 190,
+                                                                                                phantom: PhantomData<&()>,
+                                                                                            },
+                                                                                            items: TupleValues {
+                                                                                                elements: [
+                                                                                                    TupleValueStruct {
+                                                                                                        expression: Some(
+                                                                                                            TrueKeyword(
+                                                                                                                TrueKeyword {
+                                                                                                                    l: 190,
+                                                                                                                    r: 194,
+                                                                                                                    phantom: PhantomData<&()>,
+                                                                                                                },
+                                                                                                            ),
+                                                                                                        ),
+                                                                                                    },
+                                                                                                    TupleValueStruct {
+                                                                                                        expression: Some(
+                                                                                                            Identifier(
+                                                                                                                Identifier {
+                                                                                                                    l: 196,
+                                                                                                                    r: 197,
+                                                                                                                    phantom: PhantomData<&()>,
+                                                                                                                },
+                                                                                                            ),
+                                                                                                        ),
+                                                                                                    },
+                                                                                                ],
+                                                                                            },
+                                                                                            close_paren: CloseParen {
+                                                                                                l: 197,
+                                                                                                r: 198,
+                                                                                                phantom: PhantomData<&()>,
+                                                                                            },
+                                                                                        },
+                                                                                    ),
+                                                                                ),
+                                                                                semicolon: Semicolon {
+                                                                                    l: 198,
+                                                                                    r: 199,
+                                                                                    phantom: PhantomData<&()>,
+                                                                                },
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                },
+                                                                close_brace: CloseBrace {
+                                                                    l: 204,
+                                                                    r: 205,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                l: 208,
+                                                r: 209,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        l: 210,
+                        r: 211,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}

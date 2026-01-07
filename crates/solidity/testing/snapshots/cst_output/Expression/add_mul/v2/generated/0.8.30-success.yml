@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+AdditiveExpression(
+    AdditiveExpressionStruct {
+        left_operand: MultiplicativeExpression(
+            MultiplicativeExpressionStruct {
+                left_operand: Identifier(
+                    Identifier {
+                        l: 0,
+                        r: 1,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                expression_multiplicative_expression_operator: Asterisk(
+                    Asterisk {
+                        l: 2,
+                        r: 3,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                right_operand: Identifier(
+                    Identifier {
+                        l: 4,
+                        r: 5,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+            },
+        ),
+        expression_additive_expression_operator: Plus(
+            Plus {
+                l: 6,
+                r: 7,
+                phantom: PhantomData<&()>,
+            },
+        ),
+        right_operand: MultiplicativeExpression(
+            MultiplicativeExpressionStruct {
+                left_operand: Identifier(
+                    Identifier {
+                        l: 8,
+                        r: 9,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                expression_multiplicative_expression_operator: Asterisk(
+                    Asterisk {
+                        l: 10,
+                        r: 11,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                right_operand: Identifier(
+                    Identifier {
+                        l: 12,
+                        r: 13,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+            },
+        ),
+    },
+)

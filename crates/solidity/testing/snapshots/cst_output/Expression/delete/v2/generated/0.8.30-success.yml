@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+PrefixExpression(
+    PrefixExpressionStruct {
+        expression_prefix_expression_operator: DeleteKeyword(
+            DeleteKeyword {
+                l: 0,
+                r: 6,
+                phantom: PhantomData<&()>,
+            },
+        ),
+        operand: IndexAccessExpression(
+            IndexAccessExpressionStruct {
+                operand: Identifier(
+                    Identifier {
+                        l: 7,
+                        r: 10,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                open_bracket: OpenBracket {
+                    l: 10,
+                    r: 11,
+                    phantom: PhantomData<&()>,
+                },
+                start: Some(
+                    Identifier(
+                        Identifier {
+                            l: 11,
+                            r: 15,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                ),
+                end: None,
+                close_bracket: CloseBracket {
+                    l: 15,
+                    r: 16,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+    },
+)

@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+StringExpression(
+    UnicodeStringLiterals(
+        UnicodeStringLiterals {
+            elements: [
+                DoubleQuotedUnicodeStringLiteral(
+                    DoubleQuotedUnicodeStringLiteral {
+                        l: 0,
+                        r: 25,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+            ],
+        },
+    ),
+)

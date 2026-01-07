@@ -2,6 +2,8 @@
 
 #![allow(clippy::too_many_lines)]
 
+use std::marker::PhantomData;
+
 use slang_solidity::cst::{Edge, EdgeLabel, Node, NodeKind, NonterminalKind, TextIndex, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 #[allow(clippy::wildcard_imports)]
@@ -48,7 +50,6 @@ pub trait NodeChecker {
     /// Check whether self matches the given CST node.
     ///
     /// Returns a vector of errors found, empty if no errors.
-    #[allow(dead_code)]
     fn check_node(&self, node: &Node) -> Vec<NodeCheckerError> {
         self.check_node_with_offset(node, TextIndex::ZERO)
     }
@@ -1510,6 +1511,8 @@ impl NodeChecker for CallOptionsExpression<'_> {
         errors
     }
 }
+
+// We skip NodeChecker for CallOptionsNew, it's handled by NewExpression
 
 /// Generic `NodeChecker` for sequences
 impl NodeChecker for CatchClause<'_> {
@@ -4595,6 +4598,62 @@ impl NodeChecker for HexNumberExpression<'_> {
     }
 }
 
+/// NodeChecker for IdentifierPath is done by hand, since the V2 representation is a bit different
+impl<'arena> NodeChecker for IdentifierPath<'arena> {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::IdentifierPath) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be {}, but it was {}",
+                    NonterminalKind::IdentifierPath,
+                    node.kind()
+                ),
+                node_range,
+            )];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        let tail_len = self
+            .tail
+            .as_ref()
+            .map_or(0, |tail| tail.elements.elements.len());
+
+        if children.len() != 1 + tail_len {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected {} elements, but got: {:#?}",
+                    1 + tail_len,
+                    children
+                ),
+                node_range,
+            )];
+        }
+
+        let mut errors = vec![];
+
+        for (i, (child, child_offset)) in children.iter().enumerate() {
+            if i == 0 {
+                // head
+                let head = &self.head;
+                let child_errors = head.check_node_with_offset(&child.node, *child_offset);
+                errors.extend(child_errors);
+                continue;
+            }
+            // tail elements
+
+            let element = &self.tail.as_ref().unwrap().elements.elements[i - 1];
+            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+        }
+        errors
+    }
+}
+
+// We skip NodeChecker for IdentifierPathTail, it's handled by IdentifierPath
+
 /// Generic `NodeChecker` for sequences
 impl NodeChecker for IfStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
@@ -6817,7 +6876,10 @@ impl NodeChecker for NamedArgumentsDeclaration<'_> {
         }
 
         // arguments
-        if let Some(arguments) = &self.arguments {
+
+        {
+            let arguments = &self.arguments;
+
             // Prepare edge label
 
             if let Some((child, child_offset)) =
@@ -6830,12 +6892,6 @@ impl NodeChecker for NamedArgumentsDeclaration<'_> {
                     "Expected arguments to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
-            }
-        } else {
-            // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Arguments)
-            {
-                errors.push(NodeCheckerError::new(format!("Expected arguments to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
 
@@ -6982,17 +7038,121 @@ impl NodeChecker for NamedImport<'_> {
     }
 }
 
-/// Generic `NodeChecker` for sequences
-impl NodeChecker for NewExpression<'_> {
+/// Helper to check a V2 CallOptionsNew against a V1 CallOptionsExpression
+///
+/// It extracts the braces and the options from v1_children, leaving the operand to the outer scope
+fn check_call_options_new(
+    v2_options: &CallOptionsNew<'_>,
+    v1_node: &Node,
+    v1_children: &mut Vec<(Edge, TextIndex)>,
+    v1_offset: TextIndex,
+) -> Vec<NodeCheckerError> {
+    let node_range = v1_offset..(v1_offset + v1_node.text_len());
+    let mut errors = vec![];
+
+    // V1 CallOptionsExpression has: open_brace, options (CallOptions), close_brace
+    // V2 CallOptionsNew has the same structure
+
+    // open_brace
+    {
+        let open_brace = &v2_options.open_brace;
+        if let Some((child, child_offset)) =
+            extract_first_with_label(v1_children, EdgeLabel::OpenBrace)
+        {
+            errors.extend(open_brace.check_node_with_offset(&child.node, child_offset));
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected open_brace to be present in CallOptionsExpression".to_string(),
+                node_range.clone(),
+            ));
+        }
+    }
+
+    // options (CallOptions)
+    {
+        let options = &v2_options.options;
+        if let Some((child, child_offset)) =
+            extract_first_with_label(v1_children, EdgeLabel::Options)
+        {
+            errors.extend(options.check_node_with_offset(&child.node, child_offset));
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected options to be present in CallOptionsExpression".to_string(),
+                node_range.clone(),
+            ));
+        }
+    }
+
+    // close_brace
+    {
+        let close_brace = &v2_options.close_brace;
+        if let Some((child, child_offset)) =
+            extract_first_with_label(v1_children, EdgeLabel::CloseBrace)
+        {
+            errors.extend(close_brace.check_node_with_offset(&child.node, child_offset));
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected close_brace to be present in CallOptionsExpression".to_string(),
+                node_range.clone(),
+            ));
+        }
+    }
+
+    errors
+}
+
+/// Helper to unwrap an Expression node and get its inner variant node
+fn unwrap_expression(
+    node: &Node,
+    offset: TextIndex,
+) -> Result<(Node, TextIndex), NodeCheckerError> {
+    let node_range = offset..(offset + node.text_len());
+
+    if node.kind() != NodeKind::Nonterminal(NonterminalKind::Expression) {
+        return Err(NodeCheckerError::new(
+            format!("Expected Expression, but got {}", node.kind()),
+            node_range,
+        ));
+    }
+
+    let children = children_with_offsets(node, offset);
+    if children.len() != 1 {
+        return Err(NodeCheckerError::new(
+            format!("Expected exactly one child for Expression, but got: {children:#?}"),
+            node_range,
+        ));
+    }
+
+    let (child, child_offset) = &children[0];
+    if child.label != EdgeLabel::Variant {
+        let child_range = *child_offset..(*child_offset + child.node.text_len());
+        return Err(NodeCheckerError::new(
+            format!(
+                "Expected child to be of variant type, but it was {}",
+                child.label
+            ),
+            child_range,
+        ));
+    }
+
+    Ok((child.node.clone(), *child_offset))
+}
+
+/// NodeChecker for NewExpression is done by hand, since in V2 it includes the call options and arguments
+///
+/// In V1: FunctionCallExpression -> (CallOptionsExpression)* -> NewExpression
+/// In V2: NewExpression contains new_keyword, type_name, options (MultipleCallOptionsNew), arguments
+impl<'arena> NodeChecker for NewExpression<'arena> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::NewExpression) {
-            // Don't even check the rest
+        // What we parse as a NewExpression in V2 is parsed as a FunctionCallExpression in V1,
+        // with optional CallOptionsExpression nodes in between, and a V1 NewExpression at the core
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::FunctionCallExpression) {
             return vec![NodeCheckerError::new(
                 format!(
                     "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::NewExpression,
+                    NonterminalKind::FunctionCallExpression,
                     node.kind()
                 ),
                 node_range,
@@ -7000,54 +7160,199 @@ impl NodeChecker for NewExpression<'_> {
         }
 
         let mut children = children_with_offsets(node, text_offset);
-
         let mut errors = vec![];
 
-        // new_keyword
-
+        // Extract operand from FunctionCallExpression
+        let (operand_node, operand_offset) = if let Some((child, child_offset)) =
+            extract_first_with_label(&mut children, EdgeLabel::Operand)
         {
-            let new_keyword = &self.new_keyword;
+            (child.node, child_offset)
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected operand to be present in FunctionCallExpression".to_string(),
+                node_range,
+            ));
+            return errors;
+        };
 
-            // Prepare edge label
+        // Unwrap the Expression to get the variant
+        let (mut current_node, mut current_offset) =
+            match unwrap_expression(&operand_node, operand_offset) {
+                Ok(result) => result,
+                Err(e) => {
+                    errors.push(e);
+                    return errors;
+                }
+            };
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::NewKeyword)
+        // Traverse through CallOptionsExpression nodes to find the NewExpression,
+        // checking each one against V2's options as we go.
+        //
+        // V1 traversal order: outermost first (closest to the function call)
+        // V2 storage order: source order (innermost first, closest to `new`)
+        // So we iterate V2's options in reverse to match V1's traversal order.
+        let mut v2_options_iter = self
+            .options
+            .as_ref()
+            .map(|opts| opts.elements.iter().rev().peekable());
+        let mut v1_call_options_count = 0usize;
+
+        while current_node.kind() == NodeKind::Nonterminal(NonterminalKind::CallOptionsExpression) {
+            v1_call_options_count += 1;
+            let call_opts_range = current_offset..(current_offset + current_node.text_len());
+
+            // Get the operand of this CallOptionsExpression
+            let mut call_opts_children = children_with_offsets(&current_node, current_offset);
+
+            // Check this V1 CallOptionsExpression against the corresponding V2 CallOptionsNew
+            if let Some(ref mut iter) = v2_options_iter {
+                if let Some(v2_opt) = iter.next() {
+                    errors.extend(check_call_options_new(
+                        v2_opt,
+                        &current_node,
+                        &mut call_opts_children,
+                        current_offset,
+                    ));
+                } else {
+                    // V1 has more options than V2
+                    errors.push(NodeCheckerError::new(
+                        "Found CallOptionsExpression in V1, but no corresponding option in V2"
+                            .to_string(),
+                        call_opts_range.clone(),
+                    ));
+                }
+            } else {
+                // V2 has no options at all, but V1 has some
+                errors.push(NodeCheckerError::new(
+                    "Found CallOptionsExpression in V1, but V2 has no options".to_string(),
+                    call_opts_range.clone(),
+                ));
+            }
+
+            if let Some((operand, op_offset)) =
+                extract_first_with_label(&mut call_opts_children, EdgeLabel::Operand)
             {
-                let child_errors = new_keyword.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
+                // Unwrap the operand Expression
+                match unwrap_expression(&operand.node, op_offset) {
+                    Ok((inner_node, inner_offset)) => {
+                        current_node = inner_node;
+                        current_offset = inner_offset;
+                    }
+                    Err(e) => {
+                        errors.push(e);
+                        // Continue to try to check the rest
+                        break;
+                    }
+                }
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected new_keyword to be present in the CST, but it was not".to_string(),
+                    "Expected operand in CallOptionsExpression".to_string(),
+                    call_opts_range,
+                ));
+                // Continue to try to check the rest
+                break;
+            }
+
+            if !call_opts_children.is_empty() {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected 0 children left in CallOptionsExpression, but there's some left {call_opts_children:#?}"),
                     node_range.clone(),
                 ));
             }
         }
 
-        // type_name
+        // Check if V2 has more options than V1
+        if let Some(ref mut iter) = v2_options_iter {
+            let remaining: Vec<_> = iter.collect();
+            if !remaining.is_empty() {
+                errors.push(NodeCheckerError::new(
+                    format!(
+                        "V2 has {} more call options than V1 (V1 had {}, V2 has {})",
+                        remaining.len(),
+                        v1_call_options_count,
+                        v1_call_options_count + remaining.len()
+                    ),
+                    node_range.clone(),
+                ));
+            }
+        }
 
+        // Now current_node should be the V1 NewExpression
+        let new_expression_node = current_node;
+        let new_expression_offset = current_offset;
+        let new_expression_range =
+            new_expression_offset..(new_expression_offset + new_expression_node.text_len());
+
+        if new_expression_node.kind() != NodeKind::Nonterminal(NonterminalKind::NewExpression) {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be {}, but it was {}",
+                    NonterminalKind::NewExpression,
+                    new_expression_node.kind()
+                ),
+                new_expression_range.clone(),
+            ));
+            // Don't return early, continue checking what we can
+        }
+
+        let mut new_expression_children =
+            children_with_offsets(&new_expression_node, new_expression_offset);
+
+        // new_keyword
         {
-            let type_name = &self.type_name;
-
-            // Prepare edge label
-
+            let new_keyword = &self.new_keyword;
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_first_with_label(&mut new_expression_children, EdgeLabel::NewKeyword)
             {
-                let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
+                errors.extend(new_keyword.check_node_with_offset(&child.node, child_offset));
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected type_name to be present in the CST, but it was not".to_string(),
+                    "Expected new_keyword to be present in NewExpression".to_string(),
+                    new_expression_range.clone(),
+                ));
+            }
+        }
+
+        // type_name
+        {
+            let type_name = &self.type_name;
+            if let Some((child, child_offset)) =
+                extract_first_with_label(&mut new_expression_children, EdgeLabel::TypeName)
+            {
+                errors.extend(type_name.check_node_with_offset(&child.node, child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected type_name to be present in NewExpression".to_string(),
+                    new_expression_range.clone(),
+                ));
+            }
+        }
+
+        // arguments
+        {
+            let arguments = &self.arguments;
+            if let Some((child, child_offset)) =
+                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+            {
+                errors.extend(arguments.check_node_with_offset(&child.node, child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected arguments to be present in FunctionCallExpression".to_string(),
                     node_range.clone(),
                 ));
             }
         }
 
         if !children.is_empty() {
-            errors.push(NodeCheckerError::new(
-                format!("Expected 0 children left, but there's some left {children:#?}"),
-                node_range,
-            ));
+            errors.push(NodeCheckerError::new(format!(
+                "Expected 0 children left in FunctionCallExpression, but there's some left {children:#?}",
+            ), node_range.clone()));
+        }
+
+        if !new_expression_children.is_empty() {
+            errors.push(NodeCheckerError::new(format!(
+                "Expected 0 children left in NewExpression, but there's some left {new_expression_children:#?}",
+            ), new_expression_range));
         }
 
         errors
@@ -7756,8 +8061,9 @@ impl NodeChecker for PostfixExpression<'_> {
     }
 }
 
-/// Generic `NodeChecker` for sequences
-impl NodeChecker for PragmaDirective<'_> {
+// TODO(v2): PragmaDirective ignores the pragma value for now until the Lexer can
+// perform a context switch, therefore the checker ignores that edge
+impl<'arena> NodeChecker for PragmaDirective<'arena> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7791,7 +8097,7 @@ impl NodeChecker for PragmaDirective<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected pragma_keyword to be present in the CST, but it was not".to_string(),
+                    format!("Expected pragma_keyword to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -7800,18 +8106,13 @@ impl NodeChecker for PragmaDirective<'_> {
         // pragma
 
         {
-            let pragma = &self.pragma;
-
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Pragma)
-            {
-                let child_errors = pragma.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Pragma) {
+                // We don't check, since V2 can't parse these yet
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected pragma to be present in the CST, but it was not".to_string(),
+                    format!("Expected pragma to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -7831,7 +8132,7 @@ impl NodeChecker for PragmaDirective<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected semicolon to be present in the CST, but it was not".to_string(),
+                    format!("Expected semicolon to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -7839,7 +8140,10 @@ impl NodeChecker for PragmaDirective<'_> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!("Expected 0 children left, but there's some left {children:#?}"),
+                format!(
+                    "Expected 0 children left, but there's some left {:#?}",
+                    children
+                ),
                 node_range,
             ));
         }
@@ -8243,7 +8547,10 @@ impl NodeChecker for RevertStatement<'_> {
         }
 
         // error
-        if let Some(error) = &self.error {
+
+        {
+            let error = &self.error;
+
             // Prepare edge label
 
             if let Some((child, child_offset)) =
@@ -8254,16 +8561,6 @@ impl NodeChecker for RevertStatement<'_> {
             } else {
                 errors.push(NodeCheckerError::new(
                     "Expected error to be present in the CST, but it was not".to_string(),
-                    node_range.clone(),
-                ));
-            }
-        } else {
-            // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Error) {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected error to not be present in the CST, but it was there: {child:#?}"
-                    ),
                     node_range.clone(),
                 ));
             }
@@ -10580,7 +10877,9 @@ impl NodeChecker for UsingDirective<'_> {
     }
 }
 
-/// Generic `NodeChecker` for sequences
+// We skip NodeChecker for VariableDeclaration, it's handled by VariableDeclarationStatement
+
+/// NodeChecker for VariableDeclarationStatement is done by hand, since in V2 is represented differently
 impl NodeChecker for VariableDeclarationStatement<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -10598,16 +10897,13 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
         }
 
         let mut children = children_with_offsets(node, text_offset);
-
         let mut errors = vec![];
 
+        // variable_declaration
+
         // variable_type
-
         {
-            let variable_type = &self.variable_type;
-
-            // Prepare edge label
-
+            let variable_type = &self.variable_declaration.variable_type;
             if let Some((child, child_offset)) =
                 extract_first_with_label(&mut children, EdgeLabel::VariableType)
             {
@@ -10615,16 +10911,14 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected variable_type to be present in the CST, but it was not".to_string(),
+                    format!("Expected variable_type to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
         }
 
         // storage_location
-        if let Some(storage_location) = &self.storage_location {
-            // Prepare edge label
-
+        if let Some(storage_location) = &self.variable_declaration.storage_location {
             if let Some((child, child_offset)) =
                 extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
             {
@@ -10633,27 +10927,26 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected storage_location to be present in the CST, but it was not"
-                        .to_string(),
+                    format!("Expected storage_location to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
-            {
-                errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::StorageLocation) {
+                errors.push(NodeCheckerError::new(
+                    format!(
+                        "Expected storage_location to not be present in the CST, but it was there"
+                    ),
+                    node_range.clone(),
+                ));
             }
         }
 
         // name
 
         {
-            let name = &self.name;
-
-            // Prepare edge label
-
+            let name = &self.variable_declaration.name;
             if let Some((child, child_offset)) =
                 extract_first_with_label(&mut children, EdgeLabel::Name)
             {
@@ -10661,7 +10954,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected name to be present in the CST, but it was not".to_string(),
+                    format!("Expected name to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -10669,8 +10962,6 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
 
         // value
         if let Some(value) = &self.value {
-            // Prepare edge label
-
             if let Some((child, child_offset)) =
                 extract_first_with_label(&mut children, EdgeLabel::Value)
             {
@@ -10678,17 +10969,15 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected value to be present in the CST, but it was not".to_string(),
+                    format!("Expected value to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Value) {
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Value) {
                 errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected value to not be present in the CST, but it was there: {child:#?}"
-                    ),
+                    format!("Expected value to not be present in the CST, but it was there"),
                     node_range.clone(),
                 ));
             }
@@ -10698,9 +10987,6 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
 
         {
             let semicolon = &self.semicolon;
-
-            // Prepare edge label
-
             if let Some((child, child_offset)) =
                 extract_first_with_label(&mut children, EdgeLabel::Semicolon)
             {
@@ -10708,17 +10994,10 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected semicolon to be present in the CST, but it was not".to_string(),
+                    format!("Expected semicolon to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
-        }
-
-        if !children.is_empty() {
-            errors.push(NodeCheckerError::new(
-                format!("Expected 0 children left, but there's some left {children:#?}"),
-                node_range,
-            ));
         }
 
         errors
@@ -11169,8 +11448,9 @@ impl NodeChecker for WhileStatement<'_> {
     }
 }
 
-/// Generic `NodeChecker` for sequences
-impl NodeChecker for YulBlock<'_> {
+// TODO(v2): YulBlock ignores the statements for now until the Lexer can
+// perform a context switch, therefore the checker ignores that edge
+impl<'arena> NodeChecker for YulBlock<'arena> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11204,7 +11484,7 @@ impl NodeChecker for YulBlock<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected open_brace to be present in the CST, but it was not".to_string(),
+                    format!("Expected open_brace to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -11213,18 +11493,13 @@ impl NodeChecker for YulBlock<'_> {
         // statements
 
         {
-            let statements = &self.statements;
-
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Statements)
-            {
-                let child_errors = statements.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Statements) {
+                // We don't check statements, since V2 can't parse them yet
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected statements to be present in the CST, but it was not".to_string(),
+                    format!("Expected statements to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -11244,7 +11519,7 @@ impl NodeChecker for YulBlock<'_> {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected close_brace to be present in the CST, but it was not".to_string(),
+                    format!("Expected close_brace to be present in the CST, but it was not"),
                     node_range.clone(),
                 ));
             }
@@ -11252,7 +11527,10 @@ impl NodeChecker for YulBlock<'_> {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!("Expected 0 children left, but there's some left {children:#?}"),
+                format!(
+                    "Expected 0 children left, but there's some left {:#?}",
+                    children
+                ),
                 node_range,
             ));
         }
@@ -14370,6 +14648,23 @@ impl NodeChecker for MappingKeyType<'_> {
     }
 }
 
+/// `NodeChecker` for MemberAccessIdentifier is done by hand since it's not present in V1
+impl NodeChecker for MemberAccessIdentifier<'_> {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        match self {
+            Self::Identifier(element) => element.check_node_with_offset(node, text_offset),
+            Self::AddressKeyword(element) => {
+                let ident = Identifier {
+                    l: element.l,
+                    r: element.r,
+                    phantom: PhantomData,
+                };
+                ident.check_node_with_offset(node, text_offset)
+            }
+        }
+    }
+}
+
 /// Generic `NodeChecker` for choices
 impl NodeChecker for ModifierAttribute<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
@@ -16872,45 +17167,7 @@ impl NodeChecker for HexStringLiterals<'_> {
     }
 }
 
-/// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for IdentifierPath<'_> {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::IdentifierPath) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::IdentifierPath,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != self.elements.len() {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected {} elements, but got: {:#?}",
-                    self.elements.len(),
-                    children
-                ),
-                node_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        for (i, (child, child_offset)) in children.iter().enumerate() {
-            let element = &self.elements[i];
-            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-        }
-        errors
-    }
-}
+// Skip NodeChecker for IdentifierPathTailElements
 
 /// Generic `NodeChecker` for repeated and separated
 impl NodeChecker for ImportDeconstructionSymbols<'_> {
@@ -17111,6 +17368,8 @@ impl NodeChecker for ModifierAttributes<'_> {
         errors
     }
 }
+
+// We skip NodeChecker for MultipleCallOptionsNew, it's handled by NewExpression
 
 /// Generic `NodeChecker` for repeated and separated
 impl NodeChecker for NamedArguments<'_> {

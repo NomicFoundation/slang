@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 98,
+                        r: 106,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 107,
+                        r: 110,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        l: 111,
+                        r: 112,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 120,
+                        r: 121,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,82 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 0,
+        r: 8,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 9,
+        r: 15,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        l: 16,
+        r: 17,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [
+            ConstructorDefinition(
+                ConstructorDefinitionStruct {
+                    constructor_keyword: ConstructorKeyword {
+                        l: 20,
+                        r: 31,
+                        phantom: PhantomData<&()>,
+                    },
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 31,
+                            r: 32,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            l: 32,
+                            r: 33,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    attributes: ConstructorAttributes {
+                        elements: [
+                            PublicKeyword(
+                                PublicKeyword {
+                                    l: 34,
+                                    r: 40,
+                                    phantom: PhantomData<&()>,
+                                },
+                            ),
+                        ],
+                    },
+                    body: BlockStruct {
+                        open_brace: OpenBrace {
+                            l: 41,
+                            r: 42,
+                            phantom: PhantomData<&()>,
+                        },
+                        statements: Statements {
+                            elements: [],
+                        },
+                        close_brace: CloseBrace {
+                            l: 45,
+                            r: 46,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        l: 47,
+        r: 48,
+        phantom: PhantomData<&()>,
+    },
+}

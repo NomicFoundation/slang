@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+PrefixExpression(
+    PrefixExpressionStruct {
+        expression_prefix_expression_operator: MinusMinus(
+            MinusMinus {
+                l: 0,
+                r: 2,
+                phantom: PhantomData<&()>,
+            },
+        ),
+        operand: Identifier(
+            Identifier {
+                l: 2,
+                r: 5,
+                phantom: PhantomData<&()>,
+            },
+        ),
+    },
+)

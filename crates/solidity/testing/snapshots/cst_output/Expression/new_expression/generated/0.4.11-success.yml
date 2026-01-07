@@ -1,14 +1,19 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ new Foo                                                                          │ 0..7
+  1  │ new Foo()                                                                        │ 0..9
 
 Errors: []
 
 Tree:
-  - (root꞉ Expression) ► (variant꞉ NewExpression): # "new Foo\n" (0..8)
-      - (new_keyword꞉ NewKeyword): "new" # (0..3)
-      - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo\n" (3..8)
-          - (leading_trivia꞉ Whitespace): " " # (3..4)
-          - (item꞉ Identifier): "Foo" # (4..7)
-          - (trailing_trivia꞉ EndOfLine): "\n" # (7..8)
+  - (root꞉ Expression) ► (variant꞉ FunctionCallExpression): # "new Foo()\n" (0..10)
+      - (operand꞉ Expression) ► (variant꞉ NewExpression): # "new Foo" (0..7)
+          - (new_keyword꞉ NewKeyword): "new" # (0..3)
+          - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo" (3..7)
+              - (leading_trivia꞉ Whitespace): " " # (3..4)
+              - (item꞉ Identifier): "Foo" # (4..7)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()\n" (7..10)
+          - (open_paren꞉ OpenParen): "(" # (7..8)
+          - (arguments꞉ PositionalArguments): [] # (8..8)
+          - (close_paren꞉ CloseParen): ")" # (8..9)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (9..10)

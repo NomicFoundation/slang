@@ -1,23 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ new Foo{value: 10}                                                               │ 0..18
+  1  │ new Foo{value: 10}{gas: 100}(123)                                                │ 0..33
 
 Errors: # 1 total
   - >
     Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Slash or SlashEqual.
        ╭─[crates/solidity/testing/snapshots/cst_output/Expression/new_expression_options/input.sol:1:8]
        │
-     1 │ new Foo{value: 10}
-       │        ──────┬─────  
-       │              ╰─────── Error occurred here.
+     1 │ new Foo{value: 10}{gas: 100}(123)
+       │        ─────────────┬─────────────  
+       │                     ╰─────────────── Error occurred here.
     ───╯
 
 Tree:
-  - (root꞉ Expression): # "new Foo{value: 10}\n" (0..19)
+  - (root꞉ Expression): # "new Foo{value: 10}{gas: 100}(123)\n" (0..34)
       - (variant꞉ NewExpression): # "new Foo" (0..7)
           - (new_keyword꞉ NewKeyword): "new" # (0..3)
           - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo" (3..7)
               - (leading_trivia꞉ Whitespace): " " # (3..4)
               - (item꞉ Identifier): "Foo" # (4..7)
-      - (unrecognized꞉ UNRECOGNIZED): "{value: 10}\n" # (7..19)
+      - (unrecognized꞉ UNRECOGNIZED): "{value: 10}{gas: 100}(123)\n" # (7..34)

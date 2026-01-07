@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: MemberAccessExpression(
+            MemberAccessExpressionStruct {
+                operand: DecimalNumberExpression(
+                    DecimalNumberExpressionStruct {
+                        literal: DecimalLiteral {
+                            l: 0,
+                            r: 1,
+                            phantom: PhantomData<&()>,
+                        },
+                        unit: None,
+                    },
+                ),
+                period: Period {
+                    l: 1,
+                    r: 2,
+                    phantom: PhantomData<&()>,
+                },
+                member: Identifier(
+                    Identifier {
+                        l: 2,
+                        r: 10,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    l: 10,
+                    r: 11,
+                    phantom: PhantomData<&()>,
+                },
+                arguments: PositionalArguments {
+                    elements: [],
+                },
+                close_paren: CloseParen {
+                    l: 11,
+                    r: 12,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+    },
+)

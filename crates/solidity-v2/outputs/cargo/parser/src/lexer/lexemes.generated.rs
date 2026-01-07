@@ -20,7 +20,7 @@ pub enum LexemeKind {
     AbicoderV1Keyword_Unreserved,
     AbicoderV2Keyword_Unreserved,
     AbstractKeyword_Reserved,
-    AddressKeyword_Unreserved,
+    AddressKeyword_Reserved,
     AfterKeyword_Reserved,
     AliasKeyword_Reserved,
     AliasKeyword_Unreserved,

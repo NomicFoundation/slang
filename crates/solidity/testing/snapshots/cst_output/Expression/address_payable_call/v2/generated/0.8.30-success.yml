@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: ElementaryType(
+            AddressType(
+                AddressTypeStruct {
+                    address_keyword: AddressKeyword {
+                        l: 0,
+                        r: 7,
+                        phantom: PhantomData<&()>,
+                    },
+                    payable_keyword: Some(
+                        PayableKeyword {
+                            l: 8,
+                            r: 15,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                },
+            ),
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    l: 15,
+                    r: 16,
+                    phantom: PhantomData<&()>,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        Identifier(
+                            Identifier {
+                                l: 16,
+                                r: 21,
+                                phantom: PhantomData<&()>,
+                            },
+                        ),
+                    ],
+                },
+                close_paren: CloseParen {
+                    l: 21,
+                    r: 22,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+    },
+)

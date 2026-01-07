@@ -1,0 +1,70 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 0,
+                        r: 8,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 9,
+                        r: 10,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        l: 11,
+                        r: 12,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 12,
+                        r: 13,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 33,
+                        r: 41,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 42,
+                        r: 43,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        l: 44,
+                        r: 45,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 45,
+                        r: 46,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}
