@@ -23,16 +23,16 @@ Error: Expected Equal or Semicolon.
     │                              ╰─────────── Error occurred here.
 ────╯
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:15:23]
+    ╭─[input.sol:25:23]
     │
- 15 │     error GenericError(int code);
+ 25 │     error GenericError(int code);
     │                       ─────┬────  
     │                            ╰────── Error occurred here.
 ────╯
 
 ------------------------------------------------------------------------
 
-Definitions (9):
+Definitions (11):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["InvalidState" @ input.sol:2:11] (state var, type: unresolved)
 - Def: #3 ["testRevert" @ input.sol:4:14] (function, type: function () returns void)
@@ -40,16 +40,20 @@ Definitions (9):
 - Def: #5 ["testOtherRevert" @ input.sol:8:14] (function, type: function () returns void)
 - Def: #6 ["code" @ input.sol:9:13] (variable, type: int256)
 - Def: #7 ["Utils" @ input.sol:10:16] (variable, type: unresolved)
-- Def: #8 ["Utils" @ input.sol:14:9] (library)
-- Def: #9 ["GenericError" @ input.sol:15:11] (state var, type: unresolved)
+- Def: #8 ["revertFunction" @ input.sol:13:14] (function, type: function () returns void)
+- Def: #9 ["revertFunctionInCondition" @ input.sol:18:14] (function, type: function () returns void)
+- Def: #10 ["Utils" @ input.sol:24:9] (library)
+- Def: #11 ["GenericError" @ input.sol:25:11] (state var, type: unresolved)
 
 ------------------------------------------------------------------------
 
-References (4):
+References (6):
 - Ref: ["error" @ input.sol:2:5] -> unresolved
 - Ref: ["revert" @ input.sol:5:9] -> unresolved
 - Ref: ["revert" @ input.sol:10:9] -> unresolved
-- Ref: ["error" @ input.sol:15:5] -> unresolved
+- Ref: ["revert" @ input.sol:14:9] -> built-in
+- Ref: ["revert" @ input.sol:19:13] -> built-in
+- Ref: ["error" @ input.sol:25:5] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -90,12 +94,26 @@ Bindings:
     │                  │    
     │                  ╰──── name: 7
     │ 
- 14 │ library Utils {
+ 13 │     function revertFunction() public {
+    │              ───────┬──────  
+    │                     ╰──────── name: 8
+ 14 │         revert("error");
+    │         ───┬──  
+    │            ╰──── built-in
+    │ 
+ 18 │     function revertFunctionInCondition() public {
+    │              ────────────┬────────────  
+    │                          ╰────────────── name: 9
+ 19 │         if (revert("error")) {}
+    │             ───┬──  
+    │                ╰──── built-in
+    │ 
+ 24 │ library Utils {
     │         ──┬──  
-    │           ╰──── name: 8
- 15 │     error GenericError(int code);
+    │           ╰──── name: 10
+ 25 │     error GenericError(int code);
     │     ──┬── ──────┬─────  
     │       ╰───────────────── unresolved
     │                 │       
-    │                 ╰─────── name: 9
+    │                 ╰─────── name: 11
 ────╯
