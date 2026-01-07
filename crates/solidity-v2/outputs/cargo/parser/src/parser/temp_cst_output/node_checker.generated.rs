@@ -17369,6 +17369,8 @@ impl NodeChecker for ModifierAttributes<'_> {
     }
 }
 
+// We skip NodeChecker for MultipleCallOptionsNew, it's handled by NewExpression
+
 /// Generic `NodeChecker` for repeated and separated
 impl NodeChecker for NamedArguments<'_> {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
