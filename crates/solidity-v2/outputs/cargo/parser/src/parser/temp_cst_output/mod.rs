@@ -11,7 +11,7 @@ use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRange};
 use slang_solidity::parser::Parser;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::temp_cst_output::cursor_checker::{NodeChecker, NodeCheckerError};
+use crate::temp_cst_output::node_checker::{NodeChecker, NodeCheckerError};
 use crate::Parser as ParserV2;
 
 /// We use this trait only to combine Debug and NodeChecker
