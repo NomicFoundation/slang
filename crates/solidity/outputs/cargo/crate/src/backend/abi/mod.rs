@@ -1,7 +1,10 @@
+use std::ops::Div;
+
 use super::binder::Definition;
 use super::ir::ast::{
     ContractDefinitionStruct, FunctionDefinitionStruct, FunctionKind, FunctionMutability,
-    FunctionVisibility, ParametersStruct, StateVariableDefinitionStruct, StateVariableVisibility,
+    FunctionVisibility, ParametersStruct, StateVariableDefinitionStruct, StateVariableMutability,
+    StateVariableVisibility,
 };
 use super::types::{Type, TypeId};
 use super::SemanticAnalysis;
@@ -39,47 +42,94 @@ pub struct Slot {
 }
 
 impl ContractDefinitionStruct {
-    pub(crate) fn abi_with_file_id(&self, file_id: &str) -> ContractAbi {
+    pub(crate) fn abi_with_file_id(&self, file_id: &str) -> Option<ContractAbi> {
         let name = self.name().unparse();
-        let functions = self.abi_functions();
-        ContractAbi {
+        let functions = self.abi_functions()?;
+        let storage_layout = self.compute_storage_layout()?;
+        Some(ContractAbi {
             node_id: self.ir_node.node_id,
             name,
             file_id: file_id.to_string(),
             functions,
-            storage_layout: Vec::new(), // TODO
-        }
+            storage_layout,
+        })
     }
 
-    fn abi_functions(&self) -> Vec<FunctionAbi> {
+    fn abi_functions(&self) -> Option<Vec<FunctionAbi>> {
         let mut functions = Vec::new();
         if let Some(constructor) = self.constructor() {
-            if let Some(abi_function) = constructor.abi() {
-                functions.push(abi_function);
-            }
+            functions.push(constructor.abi()?);
         }
         for function in &self.linearised_functions() {
-            if let Some(abi_function) = function.abi() {
-                functions.push(abi_function);
+            if function.is_public() {
+                functions.push(function.abi()?);
             }
         }
         for state_variable in &self.linearised_state_variables() {
-            if let Some(abi_function) = state_variable.abi() {
-                functions.push(abi_function);
+            if state_variable.is_public() {
+                functions.push(state_variable.abi()?);
             }
         }
 
         functions.sort_by(|a, b| a.name.cmp(&b.name));
-        functions
+        Some(functions)
+    }
+
+    fn compute_storage_layout(&self) -> Option<Vec<Slot>> {
+        let mut storage_layout = Vec::new();
+        // TODO: if the contract has a specific storage layout specifier, we
+        // need to compute its value and use it as the base
+        let mut ptr: usize = 0;
+        for state_variable in &self.linearised_state_variables() {
+            let node_id = state_variable.ir_node.node_id;
+            // skip constants and immutable variables, since they are not placed in storage
+            // TODO: also, transient storage is laid out separately and we need
+            // to support that as well
+            if !matches!(
+                state_variable.mutability(),
+                StateVariableMutability::Mutable
+            ) {
+                continue;
+            }
+
+            let variable_type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
+            let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
+
+            // check if we can pack the variable in the previous slot
+            let remaining_bytes = SemanticAnalysis::SLOT_SIZE - (ptr % SemanticAnalysis::SLOT_SIZE);
+            if variable_size >= remaining_bytes {
+                ptr += remaining_bytes;
+            }
+
+            let label = state_variable.name().unparse();
+            let slot = ptr.div(SemanticAnalysis::SLOT_SIZE);
+            let offset = ptr % SemanticAnalysis::SLOT_SIZE;
+            let r#type = self.semantic.type_canonical_name(variable_type_id);
+            storage_layout.push(Slot {
+                node_id,
+                label,
+                slot,
+                offset,
+                r#type,
+            });
+
+            // ready pointer for the next variable
+            ptr += variable_size;
+        }
+        Some(storage_layout)
     }
 }
 
 impl FunctionDefinitionStruct {
-    pub(crate) fn abi(&self) -> Option<FunctionAbi> {
-        if !matches!(
+    pub(crate) fn is_public(&self) -> bool {
+        matches!(
             self.visibility(),
             FunctionVisibility::Public | FunctionVisibility::External
-        ) {
+        )
+    }
+
+    pub(crate) fn abi(&self) -> Option<FunctionAbi> {
+        if !self.is_public() {
             return None;
         }
         let inputs = self.parameters().abi()?;
@@ -120,8 +170,12 @@ impl ParametersStruct {
 }
 
 impl StateVariableDefinitionStruct {
+    pub(crate) fn is_public(&self) -> bool {
+        matches!(self.visibility(), StateVariableVisibility::Public)
+    }
+
     pub(crate) fn abi(&self) -> Option<FunctionAbi> {
-        if !matches!(self.visibility(), StateVariableVisibility::Public) {
+        if !self.is_public() {
             return None;
         }
         let Some(Definition::StateVariable(definition)) = self

@@ -205,7 +205,11 @@ impl SemanticAnalysis {
                 if contract.abstract_keyword() {
                     continue;
                 }
-                let contract = contract.abi_with_file_id(file.id());
+                let Some(contract) = contract.abi_with_file_id(file.id()) else {
+                    // TODO(validation): report the user that a contract's ABI
+                    // could not be computed
+                    continue;
+                };
                 contracts.push(contract);
             }
         }
@@ -274,8 +278,8 @@ impl SemanticAnalysis {
         }
     }
 
-    const SLOT_SIZE: usize = 32;
-    const ADDRESS_BYTE_SIZE: usize = 20;
+    pub const SLOT_SIZE: usize = 32;
+    pub const ADDRESS_BYTE_SIZE: usize = 20;
 
     pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<usize> {
         match self.types.get_type_by_id(type_id) {
