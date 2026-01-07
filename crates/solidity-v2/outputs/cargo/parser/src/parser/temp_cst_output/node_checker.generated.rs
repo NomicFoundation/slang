@@ -7057,9 +7057,7 @@ fn check_call_options_new(
     {
         let open_brace = &v2_options.open_brace;
         if let Some((child, child_offset)) =
-            extract_first(v1_children, |(child, _): &(Edge, TextIndex)| {
-                child.label == EdgeLabel::OpenBrace
-            })
+            extract_first_with_label(v1_children, EdgeLabel::OpenBrace)
         {
             errors.extend(open_brace.check_node_with_offset(&child.node, child_offset));
         } else {
@@ -7074,9 +7072,7 @@ fn check_call_options_new(
     {
         let options = &v2_options.options;
         if let Some((child, child_offset)) =
-            extract_first(v1_children, |(child, _): &(Edge, TextIndex)| {
-                child.label == EdgeLabel::Options
-            })
+            extract_first_with_label(v1_children, EdgeLabel::Options)
         {
             errors.extend(options.check_node_with_offset(&child.node, child_offset));
         } else {
@@ -7091,9 +7087,7 @@ fn check_call_options_new(
     {
         let close_brace = &v2_options.close_brace;
         if let Some((child, child_offset)) =
-            extract_first(v1_children, |(child, _): &(Edge, TextIndex)| {
-                child.label == EdgeLabel::CloseBrace
-            })
+            extract_first_with_label(v1_children, EdgeLabel::CloseBrace)
         {
             errors.extend(close_brace.check_node_with_offset(&child.node, child_offset));
         } else {
@@ -7170,9 +7164,8 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
 
         // Extract operand from FunctionCallExpression
         let (operand_node, operand_offset) = if let Some((child, child_offset)) =
-            extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                child.label == EdgeLabel::Operand
-            }) {
+            extract_first_with_label(&mut children, EdgeLabel::Operand)
+        {
             (child.node, child_offset)
         } else {
             errors.push(NodeCheckerError::new(
@@ -7237,9 +7230,7 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
             }
 
             if let Some((operand, op_offset)) =
-                extract_first(&mut call_opts_children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::Operand
-                })
+                extract_first_with_label(&mut call_opts_children, EdgeLabel::Operand)
             {
                 // Unwrap the operand Expression
                 match unwrap_expression(&operand.node, op_offset) {
@@ -7310,10 +7301,9 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
         // new_keyword
         {
             let new_keyword = &self.new_keyword;
-            if let Some((child, child_offset)) = extract_first(
-                &mut new_expression_children,
-                |(child, _): &(Edge, TextIndex)| child.label == EdgeLabel::NewKeyword,
-            ) {
+            if let Some((child, child_offset)) =
+                extract_first_with_label(&mut new_expression_children, EdgeLabel::NewKeyword)
+            {
                 errors.extend(new_keyword.check_node_with_offset(&child.node, child_offset));
             } else {
                 errors.push(NodeCheckerError::new(
@@ -7326,10 +7316,9 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
         // type_name
         {
             let type_name = &self.type_name;
-            if let Some((child, child_offset)) = extract_first(
-                &mut new_expression_children,
-                |(child, _): &(Edge, TextIndex)| child.label == EdgeLabel::TypeName,
-            ) {
+            if let Some((child, child_offset)) =
+                extract_first_with_label(&mut new_expression_children, EdgeLabel::TypeName)
+            {
                 errors.extend(type_name.check_node_with_offset(&child.node, child_offset));
             } else {
                 errors.push(NodeCheckerError::new(
@@ -7343,9 +7332,7 @@ impl<'arena> NodeChecker for NewExpression<'arena> {
         {
             let arguments = &self.arguments;
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::Arguments
-                })
+                extract_first_with_label(&mut children, EdgeLabel::Arguments)
             {
                 errors.extend(arguments.check_node_with_offset(&child.node, child_offset));
             } else {
@@ -8104,9 +8091,7 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::PragmaKeyword
-                })
+                extract_first_with_label(&mut children, EdgeLabel::PragmaKeyword)
             {
                 let child_errors = pragma_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8123,9 +8108,7 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
         {
             // Prepare edge label
 
-            if let Some(_) = extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                child.label == EdgeLabel::Pragma
-            }) {
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Pragma) {
                 // We don't check, since V2 can't parse these yet
             } else {
                 errors.push(NodeCheckerError::new(
@@ -8143,9 +8126,7 @@ impl<'arena> NodeChecker for PragmaDirective<'arena> {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::Semicolon
-                })
+                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10924,9 +10905,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
         {
             let variable_type = &self.variable_declaration.variable_type;
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::VariableType
-                })
+                extract_first_with_label(&mut children, EdgeLabel::VariableType)
             {
                 let child_errors = variable_type.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10941,9 +10920,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
         // storage_location
         if let Some(storage_location) = &self.variable_declaration.storage_location {
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::StorageLocation
-                })
+                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 let child_errors =
                     storage_location.check_node_with_offset(&child.node, child_offset);
@@ -10956,9 +10933,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some(_) = extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                child.label == EdgeLabel::StorageLocation
-            }) {
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::StorageLocation) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected storage_location to not be present in the CST, but it was there"
@@ -10973,9 +10948,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
         {
             let name = &self.variable_declaration.name;
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::Name
-                })
+                extract_first_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10990,9 +10963,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
         // value
         if let Some(value) = &self.value {
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::Value
-                })
+                extract_first_with_label(&mut children, EdgeLabel::Value)
             {
                 let child_errors = value.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11004,9 +10975,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some(_) = extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                child.label == EdgeLabel::Value
-            }) {
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Value) {
                 errors.push(NodeCheckerError::new(
                     format!("Expected value to not be present in the CST, but it was there"),
                     node_range.clone(),
@@ -11019,9 +10988,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
         {
             let semicolon = &self.semicolon;
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::Semicolon
-                })
+                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11511,9 +11478,7 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::OpenBrace
-                })
+                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11530,9 +11495,7 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
         {
             // Prepare edge label
 
-            if let Some(_) = extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                child.label == EdgeLabel::Statements
-            }) {
+            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Statements) {
                 // We don't check statements, since V2 can't parse them yet
             } else {
                 errors.push(NodeCheckerError::new(
@@ -11550,9 +11513,7 @@ impl<'arena> NodeChecker for YulBlock<'arena> {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first(&mut children, |(child, _): &(Edge, TextIndex)| {
-                    child.label == EdgeLabel::CloseBrace
-                })
+                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
