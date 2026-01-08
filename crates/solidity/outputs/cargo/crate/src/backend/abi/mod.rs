@@ -42,7 +42,10 @@ pub struct Slot {
 }
 
 impl ContractDefinitionStruct {
-    pub(crate) fn abi_with_file_id(&self, file_id: &str) -> Option<ContractAbi> {
+    // TODO: ideally the user wouldn't need to provide the file_id and we should
+    // be able to obtain it here, but for that we need bi-directional tree
+    // navigation
+    pub fn abi_with_file_id(&self, file_id: &str) -> Option<ContractAbi> {
         let name = self.name().unparse();
         let functions = self.abi_functions()?;
         let storage_layout = self.compute_storage_layout()?;
@@ -97,7 +100,7 @@ impl ContractDefinitionStruct {
 
             // check if we can pack the variable in the previous slot
             let remaining_bytes = SemanticAnalysis::SLOT_SIZE - (ptr % SemanticAnalysis::SLOT_SIZE);
-            if variable_size >= remaining_bytes {
+            if variable_size > remaining_bytes {
                 ptr += remaining_bytes;
             }
 
@@ -121,14 +124,14 @@ impl ContractDefinitionStruct {
 }
 
 impl FunctionDefinitionStruct {
-    pub(crate) fn is_public(&self) -> bool {
+    pub fn is_public(&self) -> bool {
         matches!(
             self.visibility(),
             FunctionVisibility::Public | FunctionVisibility::External
         )
     }
 
-    pub(crate) fn abi(&self) -> Option<FunctionAbi> {
+    pub fn abi(&self) -> Option<FunctionAbi> {
         if !self.is_public() {
             return None;
         }
@@ -170,11 +173,11 @@ impl ParametersStruct {
 }
 
 impl StateVariableDefinitionStruct {
-    pub(crate) fn is_public(&self) -> bool {
+    pub fn is_public(&self) -> bool {
         matches!(self.visibility(), StateVariableVisibility::Public)
     }
 
-    pub(crate) fn abi(&self) -> Option<FunctionAbi> {
+    pub fn abi(&self) -> Option<FunctionAbi> {
         if !self.is_public() {
             return None;
         }
