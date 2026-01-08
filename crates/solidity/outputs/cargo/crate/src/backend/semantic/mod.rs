@@ -280,6 +280,7 @@ impl SemanticAnalysis {
 
     pub const SLOT_SIZE: usize = 32;
     pub const ADDRESS_BYTE_SIZE: usize = 20;
+    pub const SELECTOR_SIZE: usize = 4;
 
     pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<usize> {
         match self.types.get_type_by_id(type_id) {
@@ -300,7 +301,7 @@ impl SemanticAnalysis {
 
             Type::Function(function_type) => {
                 if function_type.external {
-                    Some(24)
+                    Some(Self::ADDRESS_BYTE_SIZE + Self::SELECTOR_SIZE)
                 } else {
                     // NOTE: an internal function ref type is 8 bytes long, it's
                     // opaque and its meaning not documented
