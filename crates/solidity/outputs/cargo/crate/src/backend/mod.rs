@@ -1,5 +1,6 @@
 #![allow(missing_docs)]
 
+pub mod abi;
 pub mod binder;
 pub mod built_ins;
 pub mod ir;
