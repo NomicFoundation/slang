@@ -239,7 +239,7 @@ impl SQLiteWriter {
         Ok(count)
     }
 
-    /// Clean file or directory data from the database.  Data for all decendants of the given path
+    /// Clean file or directory data from the database.  Data for all descendants of the given path
     /// is cleaned.
     pub fn clean_file_or_directory(&mut self, file_or_directory: &Path) -> Result<usize> {
         let tx = self.conn.transaction()?;
@@ -248,7 +248,7 @@ impl SQLiteWriter {
         Ok(count)
     }
 
-    /// Clean file or directory data from the database.  Data for all decendants of the given path
+    /// Clean file or directory data from the database.  Data for all descendants of the given path
     /// is cleaned.
     ///
     /// This is an inner method, which does not wrap individual SQL statements in a transaction.

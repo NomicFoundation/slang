@@ -33,7 +33,7 @@ impl<'tree> ParseError<'tree> {
 
     /// Return the tree and the first parse error in the given tree, if it exists.
     /// This returns a type, combining the tree and the error, that can be moved safely,
-    /// which is not possible with a seperate tree and error.
+    /// which is not possible with a separate tree and error.
     pub fn into_first(tree: Tree) -> TreeWithParseErrorOption {
         TreeWithParseErrorOption::into_first(tree)
     }
@@ -47,7 +47,7 @@ impl<'tree> ParseError<'tree> {
 
     /// Return the tree and all parse errors in the given tree.
     /// This returns a type, combining the tree and the errors, that can be moved safely,
-    /// which is not possible with a seperate tree and errors.
+    /// which is not possible with a separate tree and errors.
     pub fn into_all(tree: Tree) -> TreeWithParseErrorVec {
         TreeWithParseErrorVec::into_all(tree)
     }
