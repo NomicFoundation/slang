@@ -95,3 +95,34 @@ fn test_storage_layout() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_function_selector() -> Result<()> {
+    let compilation_unit = fixtures::Counter::build_compilation_unit()?;
+    let semantic_analysis = compilation_unit.semantic_analysis();
+
+    let counter = semantic_analysis
+        .find_contract_by_name("Counter")
+        .expect("contract can be found");
+
+    let functions = counter.linearised_functions();
+    assert_eq!(functions.len(), 5);
+
+    // all the functions in the contract are public
+    assert_eq!(functions[0].selector(), Some(0x7d55_923d_u32)); // click()
+    assert_eq!(functions[1].selector(), Some(0x2f27_70db_u32)); // disable()
+    assert_eq!(functions[2].selector(), Some(0xa390_7d71_u32)); // enable()
+    assert_eq!(functions[3].selector(), Some(0x7cf5_dab0_u32)); // increment(uint256)
+    assert_eq!(functions[4].selector(), Some(0x6aa6_33b6_u32)); // isEnabled()
+
+    let state_variables = counter.linearised_state_variables();
+    assert_eq!(state_variables.len(), 4);
+
+    // for state variables, selectors only make sense for public getters
+    assert_eq!(state_variables[0].selector(), None); // _owner
+    assert_eq!(state_variables[1].selector(), None); // _state
+    assert_eq!(state_variables[2].selector(), Some(0x0666_1abd_u32)); // count()
+    assert_eq!(state_variables[3].selector(), None); // _clickers
+
+    Ok(())
+}

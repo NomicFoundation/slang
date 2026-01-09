@@ -1,5 +1,7 @@
 use std::ops::Div;
 
+use sha3::{Digest, Keccak256};
+
 use super::binder::Definition;
 use super::ir::ast::{
     ContractDefinitionStruct, FunctionDefinitionStruct, FunctionKind, FunctionMutability,
@@ -151,6 +153,20 @@ impl FunctionDefinitionStruct {
             state_mutability: self.mutability(),
         })
     }
+
+    pub fn selector(&self) -> Option<u32> {
+        if !self.is_public() {
+            return None;
+        }
+        let name = self.name()?;
+        let signature = format!(
+            "{name}({parameters})",
+            name = name.unparse(),
+            parameters = self.parameters().canonical_signature()?,
+        );
+
+        Some(selector_from_signature(&signature))
+    }
 }
 
 impl ParametersStruct {
@@ -169,6 +185,17 @@ impl ParametersStruct {
             });
         }
         Some(result)
+    }
+
+    pub(crate) fn canonical_signature(&self) -> Option<String> {
+        let mut result = Vec::new();
+        for parameter in &self.ir_nodes {
+            let node_id = parameter.node_id;
+            // Bail out with `None` if any of the parameters fails typing
+            let type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
+            result.push(self.semantic.type_canonical_name(type_id));
+        }
+        Some(result.join(","))
     }
 }
 
@@ -201,6 +228,34 @@ impl StateVariableDefinitionStruct {
             state_mutability: FunctionMutability::View,
         })
     }
+
+    pub fn selector(&self) -> Option<u32> {
+        if !self.is_public() {
+            return None;
+        }
+        let Some(Definition::StateVariable(definition)) = self
+            .semantic
+            .binder
+            .find_definition_by_id(self.ir_node.node_id)
+        else {
+            return None;
+        };
+        let (inputs, _) = self
+            .semantic
+            .extract_function_type_parameters_abi(definition.getter_type_id?)?;
+
+        let signature = format!(
+            "{name}({parameters})",
+            name = self.name().unparse(),
+            parameters = inputs
+                .into_iter()
+                .map(|parameter| parameter.r#type)
+                .collect::<Vec<_>>()
+                .join(","),
+        );
+
+        Some(selector_from_signature(&signature))
+    }
 }
 
 impl SemanticAnalysis {
@@ -227,4 +282,13 @@ impl SemanticAnalysis {
         }];
         Some((inputs, outputs))
     }
+}
+
+fn selector_from_signature(signature: &str) -> u32 {
+    let mut hasher = Keccak256::new();
+    hasher.update(signature.as_bytes());
+    let result = hasher.finalize();
+
+    let selector_bytes: [u8; 4] = result[0..4].try_into().unwrap();
+    u32::from_be_bytes(selector_bytes)
 }
