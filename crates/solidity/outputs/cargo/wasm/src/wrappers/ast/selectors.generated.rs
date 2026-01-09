@@ -1010,7 +1010,7 @@ impl Helper {
     fn revert_statement_sequence(&mut self) -> Result<Vec<Option<Node>>> {
         Ok(vec![
             Some(self.select(EdgeLabel::RevertKeyword)?),
-            self.try_select(EdgeLabel::Error),
+            Some(self.select(EdgeLabel::Error)?),
             Some(self.select(EdgeLabel::Arguments)?),
             Some(self.select(EdgeLabel::Semicolon)?),
         ])

@@ -22,6 +22,11 @@ fn named_args() -> Result<()> {
 }
 
 #[test]
+fn revert_as_function() -> Result<()> {
+    run(T, "revert_as_function")
+}
+
+#[test]
 fn revert_stmt() -> Result<()> {
     run(T, "revert_stmt")
 }

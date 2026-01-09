@@ -16,6 +16,9 @@ References and definitions:
   6 │     function testRevert() public {
     │              ─────┬────  
     │                   ╰────── name: 3
+  7 │         revert("testing revert");
+    │         ───┬──  
+    │            ╰──── refs: built-in, built-in
     │ 
  10 │     function testAssert() public {
     │              ─────┬────  

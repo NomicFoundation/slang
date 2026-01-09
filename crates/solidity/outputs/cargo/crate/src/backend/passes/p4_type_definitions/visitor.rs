@@ -415,17 +415,13 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_revert_statement(&mut self, node: &input_ir::RevertStatement) -> bool {
-        if let Some(identifier_path) = &node.error {
-            self.resolve_identifier_path(identifier_path);
-        }
+        self.resolve_identifier_path(&node.error);
         true
     }
 
     fn leave_revert_statement(&mut self, node: &input_ir::RevertStatement) {
-        if let Some(identifier_path) = &node.error {
-            let type_id = self.type_of_identifier_path(identifier_path, None);
-            self.binder.set_node_type(node.node_id, type_id);
-        }
+        let type_id = self.type_of_identifier_path(&node.error, None);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn enter_emit_statement(&mut self, node: &input_ir::EmitStatement) -> bool {
