@@ -9,8 +9,6 @@ contract Test {
         int code = 10;
         revert Utils.GenericError(code);
     }
-
-
 }
 
 library Utils {
