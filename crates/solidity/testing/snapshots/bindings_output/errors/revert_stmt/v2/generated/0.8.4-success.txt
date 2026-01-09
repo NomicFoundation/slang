@@ -6,9 +6,9 @@ Definitions (8):
 - Def: #3 ["testRevert" @ input.sol:4:14] (function, type: function () returns void)
 - Def: #4 ["testOtherRevert" @ input.sol:8:14] (function, type: function () returns void)
 - Def: #5 ["code" @ input.sol:9:13] (variable, type: int256)
-- Def: #6 ["Utils" @ input.sol:16:9] (library)
-- Def: #7 ["GenericError" @ input.sol:17:11] (error)
-- Def: #8 ["code" @ input.sol:17:28] (parameter, type: int256)
+- Def: #6 ["Utils" @ input.sol:14:9] (library)
+- Def: #7 ["GenericError" @ input.sol:15:11] (error)
+- Def: #8 ["code" @ input.sol:15:28] (parameter, type: int256)
 
 ------------------------------------------------------------------------
 
@@ -55,10 +55,10 @@ Bindings:
     │                                     │   
     │                                     ╰─── ref: 5
     │ 
- 16 │ library Utils {
+ 14 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 6
- 17 │     error GenericError(int code);
+ 15 │     error GenericError(int code);
     │           ──────┬─────     ──┬─  
     │                 ╰──────────────── name: 7
     │                              │   

@@ -31,10 +31,10 @@ References and definitions:
     │                                     │   
     │                                     ╰─── ref: 5
     │ 
- 16 │ library Utils {
+ 14 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 6
- 17 │     error GenericError(int code);
+ 15 │     error GenericError(int code);
     │           ──────┬─────     ──┬─  
     │                 ╰──────────────── name: 7
     │                              │   
@@ -61,18 +61,17 @@ Definiens:
  11 │ │ ├─────▶     }
     │ │ │               
     │ │ ╰─────────────── definiens: 4
-    ┆ ┆         
- 14 │ ├─────│ ▶ }
+ 12 │ ├─────│ ▶ }
     │ │     │       
     │ ╰───────────── definiens: 1
- 15 │       ╭─▶ 
+ 13 │       ╭─▶ 
     ┆       ┆   
- 17 │       │       error GenericError(int code);
+ 15 │       │       error GenericError(int code);
     │       │   ─────────────────┬─────────┬──────  
     │       │                    ╰────────────────── definiens: 7
     │       │                              │        
     │       │                              ╰──────── definiens: 8
- 18 │       ├─▶ }
+ 16 │       ├─▶ }
     │       │       
     │       ╰─────── definiens: 6
 ────╯
