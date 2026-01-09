@@ -12,8 +12,6 @@ pub struct StructItem {
     pub name: Identifier,
 
     /// Whether the struct is enabled
-    ///
-    /// Defaults to `Always`
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
