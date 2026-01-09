@@ -45,7 +45,7 @@ pub struct FieldDelimiters {
     pub terminals_matched_acceptance_threshold: Option<u8>,
 }
 
-/// A `Field` is a field of a nonterminal that can be either required or optional.
+/// A `Field` of a nonterminal that can be either required or optional.
 ///
 /// Note: `Optional` fields are versioned, `Required` fields are not.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
