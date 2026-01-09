@@ -12,7 +12,7 @@ pub struct FieldsErrorRecovery {
     /// Error recovery happens at a terminator.
     ///
     /// For example `PragmaDirective` has a `Semicolon` terminator, that could
-    /// be used to recover from an wrong pragma directive like
+    /// be used to recover from an invalid `pragma` directive like
     /// ```
     /// pragma soldity ^0.8.0;
     /// ```
