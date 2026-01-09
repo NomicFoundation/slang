@@ -23,9 +23,9 @@ Error: Expected Equal or Semicolon.
     │                              ╰─────────── Error occurred here.
 ────╯
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:25:23]
+    ╭─[input.sol:17:23]
     │
- 25 │     error GenericError(int code);
+ 17 │     error GenericError(int code);
     │                       ─────┬────  
     │                            ╰────── Error occurred here.
 ────╯
@@ -62,75 +62,51 @@ References and definitions:
     │                  │    
     │                  ╰──── name: 7
     │ 
- 13 │     function revertFunction() public {
-    │              ───────┬──────  
-    │                     ╰──────── name: 8
- 14 │         revert("error");
-    │         ───┬──  
-    │            ╰──── ref: built-in
-    │ 
- 18 │     function revertFunctionInCondition() public {
-    │              ────────────┬────────────  
-    │                          ╰────────────── name: 9
- 19 │         if (revert("error")) {}
-    │             ───┬──  
-    │                ╰──── ref: built-in
-    │ 
- 24 │ library Utils {
+ 16 │ library Utils {
     │         ──┬──  
-    │           ╰──── name: 10
- 25 │     error GenericError(int code);
+    │           ╰──── name: 8
+ 17 │     error GenericError(int code);
     │     ──┬── ──────┬─────  
     │       ╰───────────────── unresolved
     │                 │       
-    │                 ╰─────── name: 11
+    │                 ╰─────── name: 9
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]
     │
-  1 │ ╭───────────▶ contract Test {
-  2 │ │     │           error InvalidState();
-    │ │     │       ─────────────┬────────────  
-    │ │     │                    ╰────────────── definiens: 2
-  3 │ │     ╭─────▶ 
-    ┆ ┆     ┆       
-  5 │ │     │               revert InvalidState();
-    │ │     │       ───────────────┬───────────────  
-    │ │     │                      ╰───────────────── definiens: 4
-  6 │ │ │   ├─────▶     }
-    │ │ │   │               
-    │ │ │   ╰─────────────── definiens: 3
-  7 │ │ ╭─────────▶ 
-    ┆ ┆ ┆           
-  9 │ │ │                   int code = 10;
-    │ │ │           ───────────┬───────────  
-    │ │ │                      ╰───────────── definiens: 6
- 10 │ │ │                   revert Utils.GenericError(code);
-    │ │ │           ────────────────────┬────────────────────  
-    │ │ │                               ╰────────────────────── definiens: 7
- 11 │ │ ├─────│ ──▶     }
-    │ │ │     │             
-    │ │ ╰─────────────────── definiens: 5
- 12 │ │       ╭───▶ 
-    ┆ ┆       ┆     
- 15 │ │   │   ├───▶     }
-    │ │   │   │             
-    │ │   │   ╰───────────── definiens: 8
- 16 │ │   ╭───────▶ 
-    ┆ ┆   ┆         
- 20 │ │   ├───────▶     }
-    │ │   │                 
-    │ │   ╰───────────────── definiens: 9
-    ┆ ┆             
- 22 │ ├─────────│ ▶ }
-    │ │         │       
-    │ ╰───────────────── definiens: 1
- 23 │           ╭─▶ 
-    ┆           ┆   
- 25 │           │       error GenericError(int code);
-    │           │   ─────────────────┬────────────────  
-    │           │                    ╰────────────────── definiens: 11
- 26 │           ├─▶ }
-    │           │       
-    │           ╰─────── definiens: 10
+  1 │ ╭───────▶ contract Test {
+  2 │ │   │         error InvalidState();
+    │ │   │     ─────────────┬────────────  
+    │ │   │                  ╰────────────── definiens: 2
+  3 │ │   ╭───▶ 
+    ┆ ┆   ┆     
+  5 │ │   │             revert InvalidState();
+    │ │   │     ───────────────┬───────────────  
+    │ │   │                    ╰───────────────── definiens: 4
+  6 │ │ │ ├───▶     }
+    │ │ │ │             
+    │ │ │ ╰───────────── definiens: 3
+  7 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+  9 │ │ │               int code = 10;
+    │ │ │       ───────────┬───────────  
+    │ │ │                  ╰───────────── definiens: 6
+ 10 │ │ │               revert Utils.GenericError(code);
+    │ │ │       ────────────────────┬────────────────────  
+    │ │ │                           ╰────────────────────── definiens: 7
+ 11 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 5
+    ┆ ┆         
+ 14 │ ├─────│ ▶ }
+    │ │     │       
+    │ ╰───────────── definiens: 1
+ 15 │       ╭─▶ 
+    ┆       ┆   
+ 17 │       │       error GenericError(int code);
+    │       │   ─────────────────┬────────────────  
+    │       │                    ╰────────────────── definiens: 9
+ 18 │       ├─▶ }
+    │       │       
+    │       ╰─────── definiens: 8
 ────╯

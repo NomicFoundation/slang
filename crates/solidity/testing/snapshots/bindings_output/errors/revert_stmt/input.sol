@@ -10,14 +10,6 @@ contract Test {
         revert Utils.GenericError(code);
     }
 
-    function revertFunction() public {
-        revert("error");
-    }
-
-
-    function revertFunctionInCondition() public {
-        if (revert("error")) {}
-    }
 
 }
 

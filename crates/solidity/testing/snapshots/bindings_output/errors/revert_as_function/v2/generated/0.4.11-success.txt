@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["testBuiltIn" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["testBuiltInInCondition" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #4 ["testRevertCanBeShadowed" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #5 ["revert" @ input.sol:11:33] (variable, type: function (string memory) returns void)
+- Def: #6 ["customRevert" @ input.sol:15:14] (function, type: function (string memory) returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["revert" @ input.sol:3:9] -> built-in
+- Ref: ["revert" @ input.sol:7:13] -> built-in
+- Ref: ["customRevert" @ input.sol:11:42] -> #6
+- Ref: ["revert" @ input.sol:12:9] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function testBuiltIn() public {
+    │              ─────┬─────  
+    │                   ╰─────── name: 2
+  3 │         revert("error");
+    │         ───┬──  
+    │            ╰──── built-in
+    │ 
+  6 │     function testBuiltInInCondition() public {
+    │              ───────────┬──────────  
+    │                         ╰──────────── name: 3
+  7 │         if (revert("error")) {}
+    │             ───┬──  
+    │                ╰──── built-in
+    │ 
+ 10 │     function testRevertCanBeShadowed() public {
+    │              ───────────┬───────────  
+    │                         ╰───────────── name: 4
+ 11 │         function(string memory) revert = customRevert;
+    │                                 ───┬──   ──────┬─────  
+    │                                    ╰─────────────────── name: 5
+    │                                                │       
+    │                                                ╰─────── ref: 6
+ 12 │         revert("error");
+    │         ───┬──  
+    │            ╰──── ref: 5
+    │ 
+ 15 │     function customRevert(string memory) internal {}
+    │              ──────┬─────  
+    │                    ╰─────── name: 6
+────╯
