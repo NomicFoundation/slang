@@ -16,7 +16,7 @@ pub struct Language {
     /// The name of the language
     pub name: Identifier,
 
-    /// The path to the file containing the grammar rules
+    /// The path to the file containing the name binding rules
     ///
     /// Note: This will be deprecated in the near future
     pub binding_rules_file: PathBuf,
