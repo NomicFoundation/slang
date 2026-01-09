@@ -17,7 +17,7 @@ pub struct StructItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
-    /// Whether this struct supports error recovery
+    /// Error recovery information if this struct supports it
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error_recovery: Option<FieldsErrorRecovery>,
 
