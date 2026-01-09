@@ -633,10 +633,9 @@ impl Visitor for Pass<'_> {
     fn leave_revert_statement(&mut self, node: &input_ir::RevertStatement) {
         if let input_ir::ArgumentsDeclaration::NamedArguments(named_arguments) = &node.arguments {
             let definition_id = {
-                let reference = self
-                    .binder
-                    .find_reference_by_identifier_node_id(node.error.last().unwrap().id());
-                reference.and_then(|reference| reference.resolution.as_definition_id())
+                self.binder
+                    .find_reference_by_identifier_node_id(node.error.last().unwrap().id())
+                    .and_then(|reference| reference.resolution.as_definition_id())
             };
             self.resolve_named_arguments(named_arguments, definition_id);
         }

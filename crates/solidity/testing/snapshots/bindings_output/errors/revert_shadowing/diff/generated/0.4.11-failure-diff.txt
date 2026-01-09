@@ -1,5 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-definition `testBuiltIn` at input.sol:2:14 not found in new binder output
-
-Definitions and/or references from binding graph and new binder DIFFER
