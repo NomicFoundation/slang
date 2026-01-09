@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::{Field, FieldsErrorRecovery, Identifier, VersionSpecifier};
 
 /// A `StructItem` is a nonterminal that can have fields.
-/// It roughly corresponds to a sequend of `Item`s.
+/// It roughly corresponds to a sequence of `Item`s.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct StructItem {
