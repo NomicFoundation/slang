@@ -22,7 +22,7 @@ pub struct FieldsErrorRecovery {
     /// Error recovery happens at delimiters.
     ///
     /// For example `TupleExpression` has a `OpenParen` and `CloseParen` delimiters,
-    /// that could be used to recover from wrong tuple like
+    /// that could be used to recover from an invalid tuple like
     /// `(pragma, bar)`
     ///   ~~~~~ -> This is not a valid expression
     #[serde(skip_serializing_if = "Option::is_none")]
