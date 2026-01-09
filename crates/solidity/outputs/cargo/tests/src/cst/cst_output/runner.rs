@@ -4,6 +4,7 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
+use semver::Version;
 use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
 use slang_solidity_v2_parser::temp_cst_output::compare_with_v1_output;
@@ -84,7 +85,14 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     }
 
     // Checking V2
-    compare_with_v1_output(parser_name, test_dir, fs, source)?;
+    let mut valid = true;
+    for version in VERSION_BREAKS {
+        if version >= Version::new(0, 7, 0) && version < Version::new(0, 9, 0) {
+            valid &= compare_with_v1_output(parser_name, &test_dir, &mut fs, &source, version)?;
+        }
+    }
+
+    assert!(valid, "One or more versions failed V1 comparison.");
 
     Ok(())
 }

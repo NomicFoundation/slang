@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 0,
+        r: 8,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 9,
+        r: 15,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        l: 16,
+        r: 17,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [
+            UserDefinedValueTypeDefinition(
+                UserDefinedValueTypeDefinitionStruct {
+                    type_keyword: TypeKeyword {
+                        l: 20,
+                        r: 24,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 25,
+                        r: 28,
+                        phantom: PhantomData<&()>,
+                    },
+                    is_keyword: IsKeyword {
+                        l: 29,
+                        r: 31,
+                        phantom: PhantomData<&()>,
+                    },
+                    value_type: BoolKeyword(
+                        BoolKeyword {
+                            l: 32,
+                            r: 36,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        l: 36,
+                        r: 37,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        l: 38,
+        r: 39,
+        phantom: PhantomData<&()>,
+    },
+}
+----------------
+
+V1 Parser: Invalid

@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+PostfixExpression(
+    PostfixExpressionStruct {
+        operand: Identifier(
+            Identifier {
+                l: 0,
+                r: 3,
+                phantom: PhantomData<&()>,
+            },
+        ),
+        expression_postfix_expression_operator: MinusMinus(
+            MinusMinus {
+                l: 3,
+                r: 5,
+                phantom: PhantomData<&()>,
+            },
+        ),
+    },
+)

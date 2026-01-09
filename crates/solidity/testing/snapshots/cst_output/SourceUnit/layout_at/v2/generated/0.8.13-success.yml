@@ -1,0 +1,308 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 0,
+                        r: 8,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 9,
+                        r: 17,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        l: 18,
+                                        r: 24,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        l: 25,
+                                        r: 27,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    expression: DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                l: 28,
+                                                r: 31,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        l: 33,
+                        r: 34,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 35,
+                        r: 36,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 39,
+                        r: 47,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 48,
+                        r: 56,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        l: 57,
+                                        r: 63,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        l: 64,
+                                        r: 66,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    expression: CallOptionsExpression(
+                                        CallOptionsExpressionStruct {
+                                            operand: Identifier(
+                                                Identifier {
+                                                    l: 67,
+                                                    r: 70,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                            open_brace: OpenBrace {
+                                                l: 70,
+                                                r: 71,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            options: CallOptions {
+                                                elements: [
+                                                    NamedArgumentStruct {
+                                                        name: Identifier {
+                                                            l: 71,
+                                                            r: 74,
+                                                            phantom: PhantomData<&()>,
+                                                        },
+                                                        colon: Colon {
+                                                            l: 74,
+                                                            r: 75,
+                                                            phantom: PhantomData<&()>,
+                                                        },
+                                                        value: DecimalNumberExpression(
+                                                            DecimalNumberExpressionStruct {
+                                                                literal: DecimalLiteral {
+                                                                    l: 75,
+                                                                    r: 78,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                                unit: None,
+                                                            },
+                                                        ),
+                                                    },
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                l: 78,
+                                                r: 79,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        l: 81,
+                        r: 82,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 83,
+                        r: 84,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 87,
+                        r: 95,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 96,
+                        r: 104,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        l: 105,
+                                        r: 111,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        l: 112,
+                                        r: 114,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    expression: FunctionCallExpression(
+                                        FunctionCallExpressionStruct {
+                                            operand: Identifier(
+                                                Identifier {
+                                                    l: 115,
+                                                    r: 118,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                            arguments: PositionalArgumentsDeclaration(
+                                                PositionalArgumentsDeclarationStruct {
+                                                    open_paren: OpenParen {
+                                                        l: 118,
+                                                        r: 119,
+                                                        phantom: PhantomData<&()>,
+                                                    },
+                                                    arguments: PositionalArguments {
+                                                        elements: [],
+                                                    },
+                                                    close_paren: CloseParen {
+                                                        l: 119,
+                                                        r: 120,
+                                                        phantom: PhantomData<&()>,
+                                                    },
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        l: 122,
+                        r: 123,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 124,
+                        r: 125,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 127,
+                        r: 135,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 136,
+                        r: 144,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        l: 145,
+                                        r: 151,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        l: 152,
+                                        r: 154,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    expression: AdditiveExpression(
+                                        AdditiveExpressionStruct {
+                                            left_operand: DecimalNumberExpression(
+                                                DecimalNumberExpressionStruct {
+                                                    literal: DecimalLiteral {
+                                                        l: 155,
+                                                        r: 158,
+                                                        phantom: PhantomData<&()>,
+                                                    },
+                                                    unit: None,
+                                                },
+                                            ),
+                                            expression_additive_expression_operator: Plus(
+                                                Plus {
+                                                    l: 159,
+                                                    r: 160,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                            right_operand: Identifier(
+                                                Identifier {
+                                                    l: 161,
+                                                    r: 164,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        l: 166,
+                        r: 167,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 168,
+                        r: 169,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}
+----------------
+
+V1 Parser: Invalid

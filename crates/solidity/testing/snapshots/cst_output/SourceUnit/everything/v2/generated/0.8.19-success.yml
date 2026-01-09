@@ -1,0 +1,485 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            PragmaDirective(
+                PragmaDirectiveStruct {
+                    pragma_keyword: PragmaKeyword {
+                        l: 0,
+                        r: 6,
+                        phantom: PhantomData<&()>,
+                    },
+                    pragma: AbicoderPragma(
+                        AbicoderPragmaStruct {
+                            abicoder_keyword: AbicoderKeyword {
+                                l: 0,
+                                r: 0,
+                                phantom: PhantomData<&()>,
+                            },
+                            version: AbicoderV1Keyword(
+                                AbicoderV1Keyword {
+                                    l: 0,
+                                    r: 0,
+                                    phantom: PhantomData<&()>,
+                                },
+                            ),
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        l: 21,
+                        r: 22,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            ImportDirective(
+                ImportDirectiveStruct {
+                    import_keyword: ImportKeyword {
+                        l: 24,
+                        r: 30,
+                        phantom: PhantomData<&()>,
+                    },
+                    clause: PathImport(
+                        PathImportStruct {
+                            path: DoubleQuotedStringLiteral(
+                                DoubleQuotedStringLiteral {
+                                    l: 31,
+                                    r: 40,
+                                    phantom: PhantomData<&()>,
+                                },
+                            ),
+                            alias: None,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        l: 40,
+                        r: 41,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        l: 43,
+                        r: 48,
+                        phantom: PhantomData<&()>,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPathStruct {
+                            head: Identifier {
+                                l: 49,
+                                r: 50,
+                                phantom: PhantomData<&()>,
+                            },
+                            tail: None,
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        l: 51,
+                        r: 54,
+                        phantom: PhantomData<&()>,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPathStruct {
+                                head: Identifier {
+                                    l: 55,
+                                    r: 56,
+                                    phantom: PhantomData<&()>,
+                                },
+                                tail: None,
+                            },
+                        ),
+                    ),
+                    global_keyword: None,
+                    semicolon: Semicolon {
+                        l: 56,
+                        r: 57,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 59,
+                        r: 67,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 68,
+                        r: 69,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        l: 70,
+                        r: 71,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 72,
+                        r: 73,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            InterfaceDefinition(
+                InterfaceDefinitionStruct {
+                    interface_keyword: InterfaceKeyword {
+                        l: 75,
+                        r: 84,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 85,
+                        r: 86,
+                        phantom: PhantomData<&()>,
+                    },
+                    inheritance: None,
+                    open_brace: OpenBrace {
+                        l: 87,
+                        r: 88,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: InterfaceMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 89,
+                        r: 90,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        l: 92,
+                        r: 99,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 100,
+                        r: 101,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 102,
+                        r: 103,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: LibraryMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 104,
+                        r: 105,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            StructDefinition(
+                StructDefinitionStruct {
+                    struct_keyword: StructKeyword {
+                        l: 107,
+                        r: 113,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 114,
+                        r: 115,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 116,
+                        r: 117,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: StructMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 118,
+                        r: 119,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            EnumDefinition(
+                EnumDefinitionStruct {
+                    enum_keyword: EnumKeyword {
+                        l: 121,
+                        r: 125,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 126,
+                        r: 127,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 128,
+                        r: 129,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: EnumMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        l: 130,
+                        r: 131,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            ConstantDefinition(
+                ConstantDefinitionStruct {
+                    type_name: ElementaryType(
+                        UintKeyword(
+                            UintKeyword {
+                                l: 133,
+                                r: 139,
+                                phantom: PhantomData<&()>,
+                            },
+                        ),
+                    ),
+                    constant_keyword: ConstantKeyword {
+                        l: 140,
+                        r: 148,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 149,
+                        r: 150,
+                        phantom: PhantomData<&()>,
+                    },
+                    equal: Equal {
+                        l: 151,
+                        r: 152,
+                        phantom: PhantomData<&()>,
+                    },
+                    value: DecimalNumberExpression(
+                        DecimalNumberExpressionStruct {
+                            literal: DecimalLiteral {
+                                l: 153,
+                                r: 154,
+                                phantom: PhantomData<&()>,
+                            },
+                            unit: None,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        l: 154,
+                        r: 155,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        l: 157,
+                        r: 165,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            l: 166,
+                            r: 167,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 167,
+                            r: 168,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            l: 168,
+                            r: 169,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [
+                            PublicKeyword(
+                                PublicKeyword {
+                                    l: 170,
+                                    r: 176,
+                                    phantom: PhantomData<&()>,
+                                },
+                            ),
+                        ],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                l: 177,
+                                r: 178,
+                                phantom: PhantomData<&()>,
+                            },
+                            statements: Statements {
+                                elements: [],
+                            },
+                            close_brace: CloseBrace {
+                                l: 179,
+                                r: 180,
+                                phantom: PhantomData<&()>,
+                            },
+                        },
+                    ),
+                },
+            ),
+            ErrorDefinition(
+                ErrorDefinitionStruct {
+                    error_keyword: ErrorKeyword {
+                        l: 182,
+                        r: 187,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 188,
+                        r: 190,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ErrorParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 190,
+                            r: 191,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: ErrorParameters {
+                            elements: [
+                                ErrorParameterStruct {
+                                    type_name: ElementaryType(
+                                        StringKeyword(
+                                            StringKeyword {
+                                                l: 191,
+                                                r: 197,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ),
+                                    name: None,
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            l: 197,
+                            r: 198,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    semicolon: Semicolon {
+                        l: 198,
+                        r: 199,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            UserDefinedValueTypeDefinition(
+                UserDefinedValueTypeDefinitionStruct {
+                    type_keyword: TypeKeyword {
+                        l: 201,
+                        r: 205,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 206,
+                        r: 207,
+                        phantom: PhantomData<&()>,
+                    },
+                    is_keyword: IsKeyword {
+                        l: 208,
+                        r: 210,
+                        phantom: PhantomData<&()>,
+                    },
+                    value_type: BoolKeyword(
+                        BoolKeyword {
+                            l: 211,
+                            r: 215,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        l: 215,
+                        r: 216,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            EventDefinition(
+                EventDefinitionStruct {
+                    event_keyword: EventKeyword {
+                        l: 218,
+                        r: 223,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 224,
+                        r: 226,
+                        phantom: PhantomData<&()>,
+                    },
+                    parameters: EventParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 226,
+                            r: 227,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: EventParameters {
+                            elements: [
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                l: 227,
+                                                r: 234,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: None,
+                                    name: Some(
+                                        Identifier {
+                                            l: 235,
+                                            r: 240,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            l: 240,
+                            r: 241,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    anonymous_keyword: None,
+                    semicolon: Semicolon {
+                        l: 241,
+                        r: 242,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}
+----------------
+
+V1 Parser: Invalid

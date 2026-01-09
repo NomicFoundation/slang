@@ -37,8 +37,8 @@ impl Parser {
         version: LanguageVersion,
     ) -> Result<SourceUnit<'arena>, String> {
         assert!(
-            version == LanguageVersion::V0_8_30,
-            "Only 0.8.30 is currently supported by the V2 parser"
+            version >= LanguageVersion::V0_7_0 && version <= LanguageVersion::V0_8_33,
+            "Only versions [0.7.0, 0.9.0) are currently supported by the V2 parser"
         );
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);

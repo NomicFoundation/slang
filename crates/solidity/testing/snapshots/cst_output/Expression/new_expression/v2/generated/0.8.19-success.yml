@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+NewExpression(
+    NewExpressionStruct {
+        new_keyword: NewKeyword {
+            l: 0,
+            r: 3,
+            phantom: PhantomData<&()>,
+        },
+        type_name: IdentifierPath(
+            IdentifierPathStruct {
+                head: Identifier {
+                    l: 4,
+                    r: 7,
+                    phantom: PhantomData<&()>,
+                },
+                tail: None,
+            },
+        ),
+        options: None,
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    l: 7,
+                    r: 8,
+                    phantom: PhantomData<&()>,
+                },
+                arguments: PositionalArguments {
+                    elements: [],
+                },
+                close_paren: CloseParen {
+                    l: 8,
+                    r: 9,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+    },
+)

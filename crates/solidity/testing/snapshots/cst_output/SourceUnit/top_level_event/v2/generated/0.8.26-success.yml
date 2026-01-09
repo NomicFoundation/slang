@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            EventDefinition(
+                EventDefinitionStruct {
+                    event_keyword: EventKeyword {
+                        l: 0,
+                        r: 5,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 6,
+                        r: 8,
+                        phantom: PhantomData<&()>,
+                    },
+                    parameters: EventParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 8,
+                            r: 9,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: EventParameters {
+                            elements: [
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                l: 9,
+                                                r: 16,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: None,
+                                    name: Some(
+                                        Identifier {
+                                            l: 17,
+                                            r: 22,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            l: 22,
+                            r: 23,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    anonymous_keyword: None,
+                    semicolon: Semicolon {
+                        l: 23,
+                        r: 24,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}

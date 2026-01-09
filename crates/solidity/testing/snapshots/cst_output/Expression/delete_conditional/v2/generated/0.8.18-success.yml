@@ -1,0 +1,107 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ConditionalExpression(
+    ConditionalExpressionStruct {
+        operand: Identifier(
+            Identifier {
+                l: 0,
+                r: 4,
+                phantom: PhantomData<&()>,
+            },
+        ),
+        question_mark: QuestionMark {
+            l: 5,
+            r: 6,
+            phantom: PhantomData<&()>,
+        },
+        true_expression: PrefixExpression(
+            PrefixExpressionStruct {
+                expression_prefix_expression_operator: DeleteKeyword(
+                    DeleteKeyword {
+                        l: 7,
+                        r: 13,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                operand: IndexAccessExpression(
+                    IndexAccessExpressionStruct {
+                        operand: Identifier(
+                            Identifier {
+                                l: 14,
+                                r: 17,
+                                phantom: PhantomData<&()>,
+                            },
+                        ),
+                        open_bracket: OpenBracket {
+                            l: 17,
+                            r: 18,
+                            phantom: PhantomData<&()>,
+                        },
+                        start: Some(
+                            Identifier(
+                                Identifier {
+                                    l: 18,
+                                    r: 23,
+                                    phantom: PhantomData<&()>,
+                                },
+                            ),
+                        ),
+                        end: None,
+                        close_bracket: CloseBracket {
+                            l: 23,
+                            r: 24,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                ),
+            },
+        ),
+        colon: Colon {
+            l: 25,
+            r: 26,
+            phantom: PhantomData<&()>,
+        },
+        false_expression: PrefixExpression(
+            PrefixExpressionStruct {
+                expression_prefix_expression_operator: DeleteKeyword(
+                    DeleteKeyword {
+                        l: 27,
+                        r: 33,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                operand: IndexAccessExpression(
+                    IndexAccessExpressionStruct {
+                        operand: Identifier(
+                            Identifier {
+                                l: 34,
+                                r: 37,
+                                phantom: PhantomData<&()>,
+                            },
+                        ),
+                        open_bracket: OpenBracket {
+                            l: 37,
+                            r: 38,
+                            phantom: PhantomData<&()>,
+                        },
+                        start: Some(
+                            Identifier(
+                                Identifier {
+                                    l: 38,
+                                    r: 43,
+                                    phantom: PhantomData<&()>,
+                                },
+                            ),
+                        ),
+                        end: None,
+                        close_bracket: CloseBracket {
+                            l: 43,
+                            r: 44,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                ),
+            },
+        ),
+    },
+)

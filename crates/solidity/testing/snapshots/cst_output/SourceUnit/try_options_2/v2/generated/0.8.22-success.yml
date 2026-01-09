@@ -1,0 +1,216 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        l: 0,
+                        r: 7,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 8,
+                        r: 16,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 17,
+                        r: 18,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: LibraryMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        l: 21,
+                                        r: 29,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            l: 30,
+                                            r: 36,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            l: 36,
+                                            r: 37,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            l: 37,
+                                            r: 38,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    l: 39,
+                                                    r: 47,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                            PureKeyword(
+                                                PureKeyword {
+                                                    l: 48,
+                                                    r: 52,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                l: 54,
+                                                r: 55,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    TryStatement(
+                                                        TryStatementStruct {
+                                                            try_keyword: TryKeyword {
+                                                                l: 60,
+                                                                r: 63,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                            expression: Identifier(
+                                                                Identifier {
+                                                                    l: 64,
+                                                                    r: 67,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                            ),
+                                                            returns: None,
+                                                            body: BlockStruct {
+                                                                open_brace: OpenBrace {
+                                                                    l: 68,
+                                                                    r: 69,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                                statements: Statements {
+                                                                    elements: [],
+                                                                },
+                                                                close_brace: CloseBrace {
+                                                                    l: 96,
+                                                                    r: 97,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                            },
+                                                            catch_clauses: CatchClauses {
+                                                                elements: [
+                                                                    CatchClauseStruct {
+                                                                        catch_keyword: CatchKeyword {
+                                                                            l: 98,
+                                                                            r: 103,
+                                                                            phantom: PhantomData<&()>,
+                                                                        },
+                                                                        error: Some(
+                                                                            CatchClauseErrorStruct {
+                                                                                name: Some(
+                                                                                    Identifier {
+                                                                                        l: 104,
+                                                                                        r: 109,
+                                                                                        phantom: PhantomData<&()>,
+                                                                                    },
+                                                                                ),
+                                                                                parameters: ParametersDeclarationStruct {
+                                                                                    open_paren: OpenParen {
+                                                                                        l: 109,
+                                                                                        r: 110,
+                                                                                        phantom: PhantomData<&()>,
+                                                                                    },
+                                                                                    parameters: Parameters {
+                                                                                        elements: [
+                                                                                            ParameterStruct {
+                                                                                                type_name: ElementaryType(
+                                                                                                    StringKeyword(
+                                                                                                        StringKeyword {
+                                                                                                            l: 110,
+                                                                                                            r: 116,
+                                                                                                            phantom: PhantomData<&()>,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                ),
+                                                                                                storage_location: Some(
+                                                                                                    MemoryKeyword(
+                                                                                                        MemoryKeyword {
+                                                                                                            l: 117,
+                                                                                                            r: 123,
+                                                                                                            phantom: PhantomData<&()>,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                ),
+                                                                                                name: Some(
+                                                                                                    Identifier {
+                                                                                                        l: 124,
+                                                                                                        r: 130,
+                                                                                                        phantom: PhantomData<&()>,
+                                                                                                    },
+                                                                                                ),
+                                                                                            },
+                                                                                        ],
+                                                                                    },
+                                                                                    close_paren: CloseParen {
+                                                                                        l: 130,
+                                                                                        r: 131,
+                                                                                        phantom: PhantomData<&()>,
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        ),
+                                                                        body: BlockStruct {
+                                                                            open_brace: OpenBrace {
+                                                                                l: 132,
+                                                                                r: 133,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                            statements: Statements {
+                                                                                elements: [],
+                                                                            },
+                                                                            close_brace: CloseBrace {
+                                                                                l: 184,
+                                                                                r: 185,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                ],
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                l: 188,
+                                                r: 189,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        l: 190,
+                        r: 191,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}

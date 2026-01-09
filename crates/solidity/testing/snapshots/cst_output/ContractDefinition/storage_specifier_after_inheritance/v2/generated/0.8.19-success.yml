@@ -1,0 +1,83 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 0,
+        r: 8,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 9,
+        r: 12,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [
+            InheritanceSpecifier(
+                InheritanceSpecifierStruct {
+                    is_keyword: IsKeyword {
+                        l: 13,
+                        r: 15,
+                        phantom: PhantomData<&()>,
+                    },
+                    types: InheritanceTypes {
+                        elements: [
+                            InheritanceTypeStruct {
+                                type_name: IdentifierPathStruct {
+                                    head: Identifier {
+                                        l: 16,
+                                        r: 19,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    tail: None,
+                                },
+                                arguments: None,
+                            },
+                        ],
+                    },
+                },
+            ),
+            StorageLayoutSpecifier(
+                StorageLayoutSpecifierStruct {
+                    layout_keyword: LayoutKeyword {
+                        l: 20,
+                        r: 26,
+                        phantom: PhantomData<&()>,
+                    },
+                    at_keyword: AtKeyword {
+                        l: 27,
+                        r: 29,
+                        phantom: PhantomData<&()>,
+                    },
+                    expression: DecimalNumberExpression(
+                        DecimalNumberExpressionStruct {
+                            literal: DecimalLiteral {
+                                l: 30,
+                                r: 31,
+                                phantom: PhantomData<&()>,
+                            },
+                            unit: None,
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    open_brace: OpenBrace {
+        l: 32,
+        r: 33,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [],
+    },
+    close_brace: CloseBrace {
+        l: 34,
+        r: 35,
+        phantom: PhantomData<&()>,
+    },
+}
+----------------
+
+V1 Parser: Invalid

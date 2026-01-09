@@ -1447,7 +1447,7 @@ PragmaDirective: PragmaDirective<'arena> = {
                             name = SuperKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                reserved = From("0.8.0"),
+                                //reserved = From("0.8.0"),
                                 value = Atom("super")
                             )]
                         ),
@@ -1479,7 +1479,7 @@ PragmaDirective: PragmaDirective<'arena> = {
                             name = ThisKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                reserved = From("0.8.0"),
+                                // reserved = From("0.8.0"),
                                 value = Atom("this")
                             )]
                         ),

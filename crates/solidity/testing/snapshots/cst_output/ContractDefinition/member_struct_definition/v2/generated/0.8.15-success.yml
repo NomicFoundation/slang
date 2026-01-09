@@ -1,0 +1,102 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 0,
+        r: 8,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 9,
+        r: 15,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        l: 16,
+        r: 17,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [
+            StructDefinition(
+                StructDefinitionStruct {
+                    struct_keyword: StructKeyword {
+                        l: 20,
+                        r: 26,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 27,
+                        r: 28,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 29,
+                        r: 30,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: StructMembers {
+                        elements: [
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            l: 35,
+                                            r: 39,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    l: 40,
+                                    r: 41,
+                                    phantom: PhantomData<&()>,
+                                },
+                                semicolon: Semicolon {
+                                    l: 41,
+                                    r: 42,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            l: 47,
+                                            r: 51,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    l: 52,
+                                    r: 53,
+                                    phantom: PhantomData<&()>,
+                                },
+                                semicolon: Semicolon {
+                                    l: 53,
+                                    r: 54,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        l: 57,
+                        r: 58,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        l: 59,
+        r: 60,
+        phantom: PhantomData<&()>,
+    },
+}

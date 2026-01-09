@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ElementaryType(
+    UfixedKeyword(
+        UfixedKeyword {
+            l: 0,
+            r: 6,
+            phantom: PhantomData<&()>,
+        },
+    ),
+)

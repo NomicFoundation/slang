@@ -4,8 +4,9 @@ use language_v2_definition::model::{Item as LanguageItem, Language, Section, Top
 
 use crate::lexer::{Lexeme, LexerModel};
 use crate::parser::item::{
-    enum_item_to_lalrpop_items, precedence_item_to_lalrpop_items, repeated_item_to_lalrpop_items,
-    separated_item_to_lalrpop_items, struct_item_to_lalrpop_items, LALRPOPItem, VERSION,
+    contains_enabled_versions, enum_item_to_lalrpop_items, overlaps_with_version_range,
+    precedence_item_to_lalrpop_items, repeated_item_to_lalrpop_items,
+    separated_item_to_lalrpop_items, struct_item_to_lalrpop_items, LALRPOPItem,
 };
 use crate::parser::{ParserSection, ParserTopic};
 
@@ -120,7 +121,7 @@ impl<'a> ParserBuilder<'a> {
                     } => {
                         if match reserved {
                             None => true,
-                            Some(spec) => spec.contains(&VERSION),
+                            Some(spec) => overlaps_with_version_range(spec),
                         } {
                             terminals
                                 .entry(kind.clone())
@@ -128,7 +129,10 @@ impl<'a> ParserBuilder<'a> {
                                 .insert(format!("{kind}_Reserved"));
                         }
 
-                        if reserved.as_ref().is_some_and(|rng| !rng.contains(&VERSION)) {
+                        if reserved
+                            .as_ref()
+                            .is_some_and(|rng| !contains_enabled_versions(rng))
+                        {
                             terminals
                                 .entry(identifier.clone())
                                 .or_default()

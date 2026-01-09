@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+IndexAccessExpression(
+    IndexAccessExpressionStruct {
+        operand: IndexAccessExpression(
+            IndexAccessExpressionStruct {
+                operand: Identifier(
+                    Identifier {
+                        l: 0,
+                        r: 3,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                open_bracket: OpenBracket {
+                    l: 3,
+                    r: 4,
+                    phantom: PhantomData<&()>,
+                },
+                start: Some(
+                    Identifier(
+                        Identifier {
+                            l: 4,
+                            r: 10,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                ),
+                end: None,
+                close_bracket: CloseBracket {
+                    l: 10,
+                    r: 11,
+                    phantom: PhantomData<&()>,
+                },
+            },
+        ),
+        open_bracket: OpenBracket {
+            l: 11,
+            r: 12,
+            phantom: PhantomData<&()>,
+        },
+        start: Some(
+            Identifier(
+                Identifier {
+                    l: 12,
+                    r: 18,
+                    phantom: PhantomData<&()>,
+                },
+            ),
+        ),
+        end: None,
+        close_bracket: CloseBracket {
+            l: 18,
+            r: 19,
+            phantom: PhantomData<&()>,
+        },
+    },
+)

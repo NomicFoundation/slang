@@ -1,0 +1,297 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            PragmaDirective(
+                PragmaDirectiveStruct {
+                    pragma_keyword: PragmaKeyword {
+                        l: 32,
+                        r: 38,
+                        phantom: PhantomData<&()>,
+                    },
+                    pragma: AbicoderPragma(
+                        AbicoderPragmaStruct {
+                            abicoder_keyword: AbicoderKeyword {
+                                l: 0,
+                                r: 0,
+                                phantom: PhantomData<&()>,
+                            },
+                            version: AbicoderV1Keyword(
+                                AbicoderV1Keyword {
+                                    l: 0,
+                                    r: 0,
+                                    phantom: PhantomData<&()>,
+                                },
+                            ),
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        l: 54,
+                        r: 55,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        l: 57,
+                        r: 62,
+                        phantom: PhantomData<&()>,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPathStruct {
+                            head: Identifier {
+                                l: 63,
+                                r: 76,
+                                phantom: PhantomData<&()>,
+                            },
+                            tail: None,
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        l: 77,
+                        r: 80,
+                        phantom: PhantomData<&()>,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPathStruct {
+                                head: Identifier {
+                                    l: 81,
+                                    r: 89,
+                                    phantom: PhantomData<&()>,
+                                },
+                                tail: None,
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            l: 90,
+                            r: 96,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        l: 96,
+                        r: 97,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        l: 98,
+                        r: 103,
+                        phantom: PhantomData<&()>,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPathStruct {
+                            head: Identifier {
+                                l: 104,
+                                r: 120,
+                                phantom: PhantomData<&()>,
+                            },
+                            tail: None,
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        l: 121,
+                        r: 124,
+                        phantom: PhantomData<&()>,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPathStruct {
+                                head: Identifier {
+                                    l: 125,
+                                    r: 136,
+                                    phantom: PhantomData<&()>,
+                                },
+                                tail: None,
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            l: 137,
+                            r: 143,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        l: 143,
+                        r: 144,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+            StructDefinition(
+                StructDefinitionStruct {
+                    struct_keyword: StructKeyword {
+                        l: 643,
+                        r: 649,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 650,
+                        r: 658,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 659,
+                        r: 660,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: StructMembers {
+                        elements: [
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            l: 663,
+                                            r: 670,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    l: 671,
+                                    r: 676,
+                                    phantom: PhantomData<&()>,
+                                },
+                                semicolon: Semicolon {
+                                    l: 676,
+                                    r: 677,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    AddressType(
+                                        AddressTypeStruct {
+                                            address_keyword: AddressKeyword {
+                                                l: 680,
+                                                r: 687,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            payable_keyword: None,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    l: 688,
+                                    r: 694,
+                                    phantom: PhantomData<&()>,
+                                },
+                                semicolon: Semicolon {
+                                    l: 694,
+                                    r: 695,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    AddressType(
+                                        AddressTypeStruct {
+                                            address_keyword: AddressKeyword {
+                                                l: 698,
+                                                r: 705,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            payable_keyword: None,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    l: 706,
+                                    r: 717,
+                                    phantom: PhantomData<&()>,
+                                },
+                                semicolon: Semicolon {
+                                    l: 717,
+                                    r: 718,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            l: 721,
+                                            r: 728,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    l: 729,
+                                    r: 742,
+                                    phantom: PhantomData<&()>,
+                                },
+                                semicolon: Semicolon {
+                                    l: 742,
+                                    r: 743,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            l: 746,
+                                            r: 753,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    l: 754,
+                                    r: 772,
+                                    phantom: PhantomData<&()>,
+                                },
+                                semicolon: Semicolon {
+                                    l: 772,
+                                    r: 773,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    BytesKeyword(
+                                        BytesKeyword {
+                                            l: 776,
+                                            r: 781,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    l: 782,
+                                    r: 789,
+                                    phantom: PhantomData<&()>,
+                                },
+                                semicolon: Semicolon {
+                                    l: 789,
+                                    r: 790,
+                                    phantom: PhantomData<&()>,
+                                },
+                            },
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        l: 791,
+                        r: 792,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}
+----------------
+
+V1 Parser: Invalid

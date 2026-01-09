@@ -1,0 +1,352 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        l: 0,
+                        r: 7,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 8,
+                        r: 16,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 17,
+                        r: 18,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: LibraryMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        l: 21,
+                                        r: 29,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            l: 30,
+                                            r: 36,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            l: 36,
+                                            r: 37,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            l: 37,
+                                            r: 38,
+                                            phantom: PhantomData<&()>,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    l: 39,
+                                                    r: 47,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                            PureKeyword(
+                                                PureKeyword {
+                                                    l: 48,
+                                                    r: 52,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                l: 54,
+                                                r: 55,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            l: 61,
+                                                                            r: 67,
+                                                                            phantom: PhantomData<&()>,
+                                                                        },
+                                                                    ),
+                                                                    arguments: PositionalArgumentsDeclaration(
+                                                                        PositionalArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                l: 68,
+                                                                                r: 69,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                            arguments: PositionalArguments {
+                                                                                elements: [
+                                                                                    DecimalNumberExpression(
+                                                                                        DecimalNumberExpressionStruct {
+                                                                                            literal: DecimalLiteral {
+                                                                                                l: 69,
+                                                                                                r: 70,
+                                                                                                phantom: PhantomData<&()>,
+                                                                                            },
+                                                                                            unit: None,
+                                                                                        },
+                                                                                    ),
+                                                                                    DecimalNumberExpression(
+                                                                                        DecimalNumberExpressionStruct {
+                                                                                            literal: DecimalLiteral {
+                                                                                                l: 72,
+                                                                                                r: 73,
+                                                                                                phantom: PhantomData<&()>,
+                                                                                            },
+                                                                                            unit: None,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                l: 73,
+                                                                                r: 74,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                l: 74,
+                                                                r: 75,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                    RevertStatement(
+                                                        RevertStatementStruct {
+                                                            revert_keyword: RevertKeyword {
+                                                                l: 81,
+                                                                r: 87,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                            error: IdentifierPathStruct {
+                                                                head: Identifier {
+                                                                    l: 88,
+                                                                    r: 95,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                                tail: None,
+                                                            },
+                                                            arguments: PositionalArgumentsDeclaration(
+                                                                PositionalArgumentsDeclarationStruct {
+                                                                    open_paren: OpenParen {
+                                                                        l: 95,
+                                                                        r: 96,
+                                                                        phantom: PhantomData<&()>,
+                                                                    },
+                                                                    arguments: PositionalArguments {
+                                                                        elements: [
+                                                                            DecimalNumberExpression(
+                                                                                DecimalNumberExpressionStruct {
+                                                                                    literal: DecimalLiteral {
+                                                                                        l: 96,
+                                                                                        r: 97,
+                                                                                        phantom: PhantomData<&()>,
+                                                                                    },
+                                                                                    unit: None,
+                                                                                },
+                                                                            ),
+                                                                            DecimalNumberExpression(
+                                                                                DecimalNumberExpressionStruct {
+                                                                                    literal: DecimalLiteral {
+                                                                                        l: 99,
+                                                                                        r: 100,
+                                                                                        phantom: PhantomData<&()>,
+                                                                                    },
+                                                                                    unit: None,
+                                                                                },
+                                                                            ),
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        l: 100,
+                                                                        r: 101,
+                                                                        phantom: PhantomData<&()>,
+                                                                    },
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                l: 101,
+                                                                r: 102,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            variable_declaration: VariableDeclarationStruct {
+                                                                variable_type: TypeName(
+                                                                    IdentifierPath(
+                                                                        IdentifierPathStruct {
+                                                                            head: Identifier {
+                                                                                l: 161,
+                                                                                r: 167,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                            tail: None,
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                                storage_location: None,
+                                                                name: Identifier {
+                                                                    l: 168,
+                                                                    r: 171,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                            },
+                                                            value: None,
+                                                            semicolon: Semicolon {
+                                                                l: 171,
+                                                                r: 172,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            variable_declaration: VariableDeclarationStruct {
+                                                                variable_type: TypeName(
+                                                                    IdentifierPath(
+                                                                        IdentifierPathStruct {
+                                                                            head: Identifier {
+                                                                                l: 177,
+                                                                                r: 183,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                            tail: None,
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                                storage_location: None,
+                                                                name: Identifier {
+                                                                    l: 184,
+                                                                    r: 187,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                            },
+                                                            value: Some(
+                                                                VariableDeclarationValueStruct {
+                                                                    equal: Equal {
+                                                                        l: 188,
+                                                                        r: 189,
+                                                                        phantom: PhantomData<&()>,
+                                                                    },
+                                                                    expression: DecimalNumberExpression(
+                                                                        DecimalNumberExpressionStruct {
+                                                                            literal: DecimalLiteral {
+                                                                                l: 190,
+                                                                                r: 192,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                            unit: None,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                l: 192,
+                                                                r: 193,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            variable_declaration: VariableDeclarationStruct {
+                                                                variable_type: TypeName(
+                                                                    IdentifierPath(
+                                                                        IdentifierPathStruct {
+                                                                            head: Identifier {
+                                                                                l: 198,
+                                                                                r: 204,
+                                                                                phantom: PhantomData<&()>,
+                                                                            },
+                                                                            tail: Some(
+                                                                                IdentifierPathTailStruct {
+                                                                                    sep: Period {
+                                                                                        l: 204,
+                                                                                        r: 205,
+                                                                                        phantom: PhantomData<&()>,
+                                                                                    },
+                                                                                    elements: IdentifierPathTailElements {
+                                                                                        elements: [
+                                                                                            Identifier(
+                                                                                                Identifier {
+                                                                                                    l: 205,
+                                                                                                    r: 210,
+                                                                                                    phantom: PhantomData<&()>,
+                                                                                                },
+                                                                                            ),
+                                                                                        ],
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                                storage_location: None,
+                                                                name: Identifier {
+                                                                    l: 211,
+                                                                    r: 214,
+                                                                    phantom: PhantomData<&()>,
+                                                                },
+                                                            },
+                                                            value: None,
+                                                            semicolon: Semicolon {
+                                                                l: 214,
+                                                                r: 215,
+                                                                phantom: PhantomData<&()>,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                l: 218,
+                                                r: 219,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        l: 220,
+                        r: 221,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}
+----------------
+
+V1 Parser: Invalid

@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 0,
+        r: 8,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 9,
+        r: 15,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        l: 16,
+        r: 17,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        l: 20,
+                        r: 25,
+                        phantom: PhantomData<&()>,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPathStruct {
+                            head: Identifier {
+                                l: 26,
+                                r: 27,
+                                phantom: PhantomData<&()>,
+                            },
+                            tail: None,
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        l: 28,
+                        r: 31,
+                        phantom: PhantomData<&()>,
+                    },
+                    target: Asterisk(
+                        Asterisk {
+                            l: 32,
+                            r: 33,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    global_keyword: None,
+                    semicolon: Semicolon {
+                        l: 33,
+                        r: 34,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        l: 35,
+        r: 36,
+        phantom: PhantomData<&()>,
+    },
+}

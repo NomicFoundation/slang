@@ -1,3 +1,5 @@
+use std::f32::MIN;
+
 use language_v2_definition::model::{
     EnumItem, Field, Identifier, KeywordItem, OperatorModel, PrecedenceItem, RepeatedItem,
     SeparatedItem, StructItem, VersionSpecifier,
@@ -9,8 +11,10 @@ use serde::Serialize;
 #[derive(Serialize, Debug, Clone)]
 struct RustCode(String);
 
-// TODO(v2): Support multiple versions
-pub(crate) const VERSION: Version = Version::new(0, 8, 30);
+// Version range for filtering: 0.8.x (any patch version)
+// A VersionSpecifier is enabled if it overlaps with this range [MIN_VERSION, MAX_VERSION)
+pub(crate) const MIN_VERSION: Version = Version::new(0, 7, 0);
+pub(crate) const MAX_VERSION: Version = Version::new(0, 9, 0); // exclusive
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(tag = "type", content = "content")]
@@ -61,7 +65,31 @@ struct LALRPOPField {
 }
 
 fn is_enabled(enabled: &Option<VersionSpecifier>) -> bool {
-    enabled.as_ref().is_none_or(|v| v.contains(&VERSION))
+    enabled
+        .as_ref()
+        .is_none_or(|spec| overlaps_with_version_range(spec))
+}
+
+/// Check if a VersionSpecifier overlaps with [MIN_VERSION, MAX_VERSION)
+pub(crate) fn overlaps_with_version_range(spec: &VersionSpecifier) -> bool {
+    match spec {
+        VersionSpecifier::Never => false,
+        // "From X onwards" overlaps with [min, max) if X < max
+        VersionSpecifier::From { from } => from < &MAX_VERSION,
+        // "Until X" overlaps with [min, max) if X > min
+        VersionSpecifier::Till { till } => till > &MIN_VERSION,
+        // Range [from, till) overlaps with [min, max) if from < max && till > min
+        VersionSpecifier::Range { from, till } => from < &MAX_VERSION && till > &MIN_VERSION,
+    }
+}
+
+pub(crate) fn contains_enabled_versions(spec: &VersionSpecifier) -> bool {
+    match spec {
+        VersionSpecifier::Never => false,
+        VersionSpecifier::From { from } => from <= &MIN_VERSION,
+        VersionSpecifier::Till { till } => &MAX_VERSION < till,
+        VersionSpecifier::Range { from, till } => from <= &MIN_VERSION && &MAX_VERSION < till,
+    }
 }
 
 // Helper rules for LALRPOP matching rules
@@ -238,15 +266,15 @@ pub(crate) fn keyword_item_to_lalrpop_items(item: &KeywordItem) -> Vec<LALRPOPIt
     let mut options = vec![];
     if item.definitions.iter().any(|def| {
         def.reserved
-            .clone()
-            .is_none_or(|rng| rng.contains(&VERSION))
+            .as_ref()
+            .is_none_or(overlaps_with_version_range)
     }) {
         options.push(keyword_option(true));
     }
     if item.definitions.iter().any(|def| {
         def.reserved
-            .clone()
-            .is_some_and(|rng| !rng.contains(&VERSION))
+            .as_ref()
+            .is_some_and(|rng| !overlaps_with_version_range(rng))
     }) {
         options.push(keyword_option(false));
     }

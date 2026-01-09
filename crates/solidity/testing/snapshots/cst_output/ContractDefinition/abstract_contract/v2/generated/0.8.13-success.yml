@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: Some(
+        AbstractKeyword {
+            l: 0,
+            r: 8,
+            phantom: PhantomData<&()>,
+        },
+    ),
+    contract_keyword: ContractKeyword {
+        l: 9,
+        r: 17,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 18,
+        r: 24,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        l: 25,
+        r: 26,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [],
+    },
+    close_brace: CloseBrace {
+        l: 26,
+        r: 27,
+        phantom: PhantomData<&()>,
+    },
+}

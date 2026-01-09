@@ -1,0 +1,75 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        l: 0,
+        r: 8,
+        phantom: PhantomData<&()>,
+    },
+    name: Identifier {
+        l: 9,
+        r: 15,
+        phantom: PhantomData<&()>,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        l: 16,
+        r: 17,
+        phantom: PhantomData<&()>,
+    },
+    members: ContractMembers {
+        elements: [
+            EnumDefinition(
+                EnumDefinitionStruct {
+                    enum_keyword: EnumKeyword {
+                        l: 20,
+                        r: 24,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 25,
+                        r: 30,
+                        phantom: PhantomData<&()>,
+                    },
+                    open_brace: OpenBrace {
+                        l: 31,
+                        r: 32,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: EnumMembers {
+                        elements: [
+                            Identifier {
+                                l: 37,
+                                r: 38,
+                                phantom: PhantomData<&()>,
+                            },
+                            Identifier {
+                                l: 44,
+                                r: 45,
+                                phantom: PhantomData<&()>,
+                            },
+                            Identifier {
+                                l: 51,
+                                r: 52,
+                                phantom: PhantomData<&()>,
+                            },
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        l: 55,
+                        r: 56,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        l: 57,
+        r: 58,
+        phantom: PhantomData<&()>,
+    },
+}

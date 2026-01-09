@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        l: 0,
+                        r: 8,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            l: 9,
+                            r: 12,
+                            phantom: PhantomData<&()>,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            l: 12,
+                            r: 13,
+                            phantom: PhantomData<&()>,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            l: 13,
+                            r: 14,
+                            phantom: PhantomData<&()>,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                l: 15,
+                                r: 16,
+                                phantom: PhantomData<&()>,
+                            },
+                            statements: Statements {
+                                elements: [],
+                            },
+                            close_brace: CloseBrace {
+                                l: 17,
+                                r: 18,
+                                phantom: PhantomData<&()>,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+}
+----------------
+
+V1 Parser: Invalid

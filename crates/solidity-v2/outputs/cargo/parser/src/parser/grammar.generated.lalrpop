@@ -753,6 +753,7 @@ SpecialStateVariableAttribute: StateVariableAttribute<'arena> = {
 // Rules for topic Elementary Types
     ElementaryType: ElementaryType<'arena> = {
         <_BoolKeyword: BoolKeyword>  => new_elementary_type_bool_keyword(arena, <>),
+        <_ByteKeyword: ByteKeyword>  => new_elementary_type_byte_keyword(arena, <>),
         <_StringKeyword: StringKeyword>  => new_elementary_type_string_keyword(arena, <>),
         <_AddressType: AddressType>  => new_elementary_type_address_type(arena, <>),
         <_BytesKeyword: BytesKeyword>  => new_elementary_type_bytes_keyword(arena, <>),
@@ -2900,50 +2901,66 @@ YearsKeyword: YearsKeyword<'arena> = {
         <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulAbstractKeyword: YulAbstractKeyword<'arena> = {
+
+        <l:@L> L_YulAbstractKeyword_Reserved <r:@L> => new_yul_abstract_keyword(arena, <>, source),
 
         <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_abstract_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulAfterKeyword: YulAfterKeyword<'arena> = {
+
+        <l:@L> L_YulAfterKeyword_Reserved <r:@L> => new_yul_after_keyword(arena, <>, source),
 
         <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_yul_after_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulAliasKeyword: YulAliasKeyword<'arena> = {
+
+        <l:@L> L_YulAliasKeyword_Reserved <r:@L> => new_yul_alias_keyword(arena, <>, source),
 
         <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_yul_alias_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulAnonymousKeyword: YulAnonymousKeyword<'arena> = {
+
+        <l:@L> L_YulAnonymousKeyword_Reserved <r:@L> => new_yul_anonymous_keyword(arena, <>, source),
 
         <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_yul_anonymous_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulApplyKeyword: YulApplyKeyword<'arena> = {
+
+        <l:@L> L_YulApplyKeyword_Reserved <r:@L> => new_yul_apply_keyword(arena, <>, source),
 
         <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_yul_apply_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulAsKeyword: YulAsKeyword<'arena> = {
+
+        <l:@L> L_YulAsKeyword_Reserved <r:@L> => new_yul_as_keyword(arena, <>, source),
 
         <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_yul_as_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulAssemblyKeyword: YulAssemblyKeyword<'arena> = {
+
+        <l:@L> L_YulAssemblyKeyword_Reserved <r:@L> => new_yul_assembly_keyword(arena, <>, source),
 
         <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_yul_assembly_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulAutoKeyword: YulAutoKeyword<'arena> = {
+
+        <l:@L> L_YulAutoKeyword_Reserved <r:@L> => new_yul_auto_keyword(arena, <>, source),
 
         <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_yul_auto_keyword(arena, <>, source),
 
@@ -2960,14 +2977,18 @@ YulBreakKeyword: YulBreakKeyword<'arena> = {
         <l:@L> L_YulBreakKeyword_Reserved <r:@L> => new_yul_break_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulBytesKeyword: YulBytesKeyword<'arena> = {
+
+        <l:@L> L_YulBytesKeyword_Reserved <r:@L> => new_yul_bytes_keyword(arena, <>, source),
 
         <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_yul_bytes_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulCallDataKeyword: YulCallDataKeyword<'arena> = {
+
+        <l:@L> L_YulCallDataKeyword_Reserved <r:@L> => new_yul_call_data_keyword(arena, <>, source),
 
         <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_yul_call_data_keyword(arena, <>, source),
 
@@ -2978,20 +2999,26 @@ YulCaseKeyword: YulCaseKeyword<'arena> = {
         <l:@L> L_YulCaseKeyword_Reserved <r:@L> => new_yul_case_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulCatchKeyword: YulCatchKeyword<'arena> = {
+
+        <l:@L> L_YulCatchKeyword_Reserved <r:@L> => new_yul_catch_keyword(arena, <>, source),
 
         <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_yul_catch_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulConstantKeyword: YulConstantKeyword<'arena> = {
+
+        <l:@L> L_YulConstantKeyword_Reserved <r:@L> => new_yul_constant_keyword(arena, <>, source),
 
         <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_yul_constant_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulConstructorKeyword: YulConstructorKeyword<'arena> = {
+
+        <l:@L> L_YulConstructorKeyword_Reserved <r:@L> => new_yul_constructor_keyword(arena, <>, source),
 
         <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_yul_constructor_keyword(arena, <>, source),
 
@@ -3002,20 +3029,26 @@ YulContinueKeyword: YulContinueKeyword<'arena> = {
         <l:@L> L_YulContinueKeyword_Reserved <r:@L> => new_yul_continue_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulContractKeyword: YulContractKeyword<'arena> = {
+
+        <l:@L> L_YulContractKeyword_Reserved <r:@L> => new_yul_contract_keyword(arena, <>, source),
 
         <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_yul_contract_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulCopyOfKeyword: YulCopyOfKeyword<'arena> = {
+
+        <l:@L> L_YulCopyOfKeyword_Reserved <r:@L> => new_yul_copy_of_keyword(arena, <>, source),
 
         <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_yul_copy_of_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulDaysKeyword: YulDaysKeyword<'arena> = {
+
+        <l:@L> L_YulDaysKeyword_Reserved <r:@L> => new_yul_days_keyword(arena, <>, source),
 
         <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_yul_days_keyword(arena, <>, source),
 
@@ -3032,62 +3065,82 @@ YulDefaultKeyword: YulDefaultKeyword<'arena> = {
         <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulDefineKeyword: YulDefineKeyword<'arena> = {
+
+        <l:@L> L_YulDefineKeyword_Reserved <r:@L> => new_yul_define_keyword(arena, <>, source),
 
         <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_yul_define_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulDeleteKeyword: YulDeleteKeyword<'arena> = {
+
+        <l:@L> L_YulDeleteKeyword_Reserved <r:@L> => new_yul_delete_keyword(arena, <>, source),
 
         <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_yul_delete_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulDoKeyword: YulDoKeyword<'arena> = {
+
+        <l:@L> L_YulDoKeyword_Reserved <r:@L> => new_yul_do_keyword(arena, <>, source),
 
         <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_yul_do_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulElseKeyword: YulElseKeyword<'arena> = {
+
+        <l:@L> L_YulElseKeyword_Reserved <r:@L> => new_yul_else_keyword(arena, <>, source),
 
         <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_yul_else_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulEmitKeyword: YulEmitKeyword<'arena> = {
+
+        <l:@L> L_YulEmitKeyword_Reserved <r:@L> => new_yul_emit_keyword(arena, <>, source),
 
         <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_yul_emit_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulEnumKeyword: YulEnumKeyword<'arena> = {
+
+        <l:@L> L_YulEnumKeyword_Reserved <r:@L> => new_yul_enum_keyword(arena, <>, source),
 
         <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_yul_enum_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulEtherKeyword: YulEtherKeyword<'arena> = {
+
+        <l:@L> L_YulEtherKeyword_Reserved <r:@L> => new_yul_ether_keyword(arena, <>, source),
 
         <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_yul_ether_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulEventKeyword: YulEventKeyword<'arena> = {
+
+        <l:@L> L_YulEventKeyword_Reserved <r:@L> => new_yul_event_keyword(arena, <>, source),
 
         <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_yul_event_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulExternalKeyword: YulExternalKeyword<'arena> = {
+
+        <l:@L> L_YulExternalKeyword_Reserved <r:@L> => new_yul_external_keyword(arena, <>, source),
 
         <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_yul_external_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulFallbackKeyword: YulFallbackKeyword<'arena> = {
+
+        <l:@L> L_YulFallbackKeyword_Reserved <r:@L> => new_yul_fallback_keyword(arena, <>, source),
 
         <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_yul_fallback_keyword(arena, <>, source),
 
@@ -3098,8 +3151,10 @@ YulFalseKeyword: YulFalseKeyword<'arena> = {
         <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulFinalKeyword: YulFinalKeyword<'arena> = {
+
+        <l:@L> L_YulFinalKeyword_Reserved <r:@L> => new_yul_final_keyword(arena, <>, source),
 
         <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_yul_final_keyword(arena, <>, source),
 
@@ -3110,8 +3165,10 @@ YulFinneyKeyword: YulFinneyKeyword<'arena> = {
         <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_yul_finney_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulFixedKeyword: YulFixedKeyword<'arena> = {
+
+        <l:@L> L_YulFixedKeyword_Reserved <r:@L> => new_yul_fixed_keyword(arena, <>, source),
 
         <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_yul_fixed_keyword(arena, <>, source),
 
@@ -3128,8 +3185,10 @@ YulFunctionKeyword: YulFunctionKeyword<'arena> = {
         <l:@L> L_YulFunctionKeyword_Reserved <r:@L> => new_yul_function_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulGweiKeyword: YulGweiKeyword<'arena> = {
+
+        <l:@L> L_YulGweiKeyword_Reserved <r:@L> => new_yul_gwei_keyword(arena, <>, source),
 
         <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_yul_gwei_keyword(arena, <>, source),
 
@@ -3146,13 +3205,15 @@ YulHexLiteral: YulHexLiteral<'arena> = {
         <l:@L> L_YulHexLiteral <r:@L> => new_yul_hex_literal(arena, <>, source),
 
 };
-#[inline]
+
 YulHoursKeyword: YulHoursKeyword<'arena> = {
+
+        <l:@L> L_YulHoursKeyword_Reserved <r:@L> => new_yul_hours_keyword(arena, <>, source),
 
         <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_hours_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulIdentifier: YulIdentifier<'arena> = {
 
         <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
@@ -3241,6 +3302,8 @@ YulIdentifier: YulIdentifier<'arena> = {
 
         <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
 
+        <l:@L> L_YulLeaveKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
         <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
 
         <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
@@ -3301,9 +3364,13 @@ YulIdentifier: YulIdentifier<'arena> = {
 
         <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
 
+        <l:@L> L_YulSuperKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
         <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
 
         <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
+
+        <l:@L> L_YulThisKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
 
         <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_identifier(arena, <>, source),
 
@@ -3344,20 +3411,26 @@ YulIfKeyword: YulIfKeyword<'arena> = {
         <l:@L> L_YulIfKeyword_Reserved <r:@L> => new_yul_if_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulImmutableKeyword: YulImmutableKeyword<'arena> = {
+
+        <l:@L> L_YulImmutableKeyword_Reserved <r:@L> => new_yul_immutable_keyword(arena, <>, source),
 
         <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_yul_immutable_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulImplementsKeyword: YulImplementsKeyword<'arena> = {
+
+        <l:@L> L_YulImplementsKeyword_Reserved <r:@L> => new_yul_implements_keyword(arena, <>, source),
 
         <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_yul_implements_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulImportKeyword: YulImportKeyword<'arena> = {
+
+        <l:@L> L_YulImportKeyword_Reserved <r:@L> => new_yul_import_keyword(arena, <>, source),
 
         <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_yul_import_keyword(arena, <>, source),
 
@@ -3368,46 +3441,60 @@ YulInKeyword: YulInKeyword<'arena> = {
         <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_yul_in_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulIndexedKeyword: YulIndexedKeyword<'arena> = {
+
+        <l:@L> L_YulIndexedKeyword_Reserved <r:@L> => new_yul_indexed_keyword(arena, <>, source),
 
         <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_yul_indexed_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulInlineKeyword: YulInlineKeyword<'arena> = {
+
+        <l:@L> L_YulInlineKeyword_Reserved <r:@L> => new_yul_inline_keyword(arena, <>, source),
 
         <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_yul_inline_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulIntKeyword: YulIntKeyword<'arena> = {
+
+        <l:@L> L_YulIntKeyword_Reserved <r:@L> => new_yul_int_keyword(arena, <>, source),
 
         <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_yul_int_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulInterfaceKeyword: YulInterfaceKeyword<'arena> = {
+
+        <l:@L> L_YulInterfaceKeyword_Reserved <r:@L> => new_yul_interface_keyword(arena, <>, source),
 
         <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_yul_interface_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulInternalKeyword: YulInternalKeyword<'arena> = {
+
+        <l:@L> L_YulInternalKeyword_Reserved <r:@L> => new_yul_internal_keyword(arena, <>, source),
 
         <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_yul_internal_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulIsKeyword: YulIsKeyword<'arena> = {
+
+        <l:@L> L_YulIsKeyword_Reserved <r:@L> => new_yul_is_keyword(arena, <>, source),
 
         <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_is_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulLeaveKeyword: YulLeaveKeyword<'arena> = {
 
         <l:@L> L_YulLeaveKeyword_Reserved <r:@L> => new_yul_leave_keyword(arena, <>, source),
+
+        <l:@L> L_YulLeaveKeyword_Unreserved <r:@L> => new_yul_leave_keyword(arena, <>, source),
 
 };
 #[inline]
@@ -3416,194 +3503,258 @@ YulLetKeyword: YulLetKeyword<'arena> = {
         <l:@L> L_YulLetKeyword_Reserved <r:@L> => new_yul_let_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulLibraryKeyword: YulLibraryKeyword<'arena> = {
+
+        <l:@L> L_YulLibraryKeyword_Reserved <r:@L> => new_yul_library_keyword(arena, <>, source),
 
         <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_library_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulMacroKeyword: YulMacroKeyword<'arena> = {
+
+        <l:@L> L_YulMacroKeyword_Reserved <r:@L> => new_yul_macro_keyword(arena, <>, source),
 
         <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_macro_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulMappingKeyword: YulMappingKeyword<'arena> = {
+
+        <l:@L> L_YulMappingKeyword_Reserved <r:@L> => new_yul_mapping_keyword(arena, <>, source),
 
         <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_yul_mapping_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulMatchKeyword: YulMatchKeyword<'arena> = {
+
+        <l:@L> L_YulMatchKeyword_Reserved <r:@L> => new_yul_match_keyword(arena, <>, source),
 
         <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_yul_match_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulMemoryKeyword: YulMemoryKeyword<'arena> = {
+
+        <l:@L> L_YulMemoryKeyword_Reserved <r:@L> => new_yul_memory_keyword(arena, <>, source),
 
         <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_yul_memory_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulMinutesKeyword: YulMinutesKeyword<'arena> = {
+
+        <l:@L> L_YulMinutesKeyword_Reserved <r:@L> => new_yul_minutes_keyword(arena, <>, source),
 
         <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_yul_minutes_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulModifierKeyword: YulModifierKeyword<'arena> = {
+
+        <l:@L> L_YulModifierKeyword_Reserved <r:@L> => new_yul_modifier_keyword(arena, <>, source),
 
         <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_yul_modifier_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulMutableKeyword: YulMutableKeyword<'arena> = {
+
+        <l:@L> L_YulMutableKeyword_Reserved <r:@L> => new_yul_mutable_keyword(arena, <>, source),
 
         <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_yul_mutable_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulNewKeyword: YulNewKeyword<'arena> = {
+
+        <l:@L> L_YulNewKeyword_Reserved <r:@L> => new_yul_new_keyword(arena, <>, source),
 
         <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_yul_new_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulNullKeyword: YulNullKeyword<'arena> = {
+
+        <l:@L> L_YulNullKeyword_Reserved <r:@L> => new_yul_null_keyword(arena, <>, source),
 
         <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_yul_null_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulOfKeyword: YulOfKeyword<'arena> = {
+
+        <l:@L> L_YulOfKeyword_Reserved <r:@L> => new_yul_of_keyword(arena, <>, source),
 
         <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_yul_of_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulOverrideKeyword: YulOverrideKeyword<'arena> = {
+
+        <l:@L> L_YulOverrideKeyword_Reserved <r:@L> => new_yul_override_keyword(arena, <>, source),
 
         <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_yul_override_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulPartialKeyword: YulPartialKeyword<'arena> = {
+
+        <l:@L> L_YulPartialKeyword_Reserved <r:@L> => new_yul_partial_keyword(arena, <>, source),
 
         <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_yul_partial_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulPayableKeyword: YulPayableKeyword<'arena> = {
+
+        <l:@L> L_YulPayableKeyword_Reserved <r:@L> => new_yul_payable_keyword(arena, <>, source),
 
         <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_yul_payable_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulPragmaKeyword: YulPragmaKeyword<'arena> = {
+
+        <l:@L> L_YulPragmaKeyword_Reserved <r:@L> => new_yul_pragma_keyword(arena, <>, source),
 
         <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_yul_pragma_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulPrivateKeyword: YulPrivateKeyword<'arena> = {
+
+        <l:@L> L_YulPrivateKeyword_Reserved <r:@L> => new_yul_private_keyword(arena, <>, source),
 
         <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_yul_private_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulPromiseKeyword: YulPromiseKeyword<'arena> = {
+
+        <l:@L> L_YulPromiseKeyword_Reserved <r:@L> => new_yul_promise_keyword(arena, <>, source),
 
         <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_yul_promise_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulPublicKeyword: YulPublicKeyword<'arena> = {
+
+        <l:@L> L_YulPublicKeyword_Reserved <r:@L> => new_yul_public_keyword(arena, <>, source),
 
         <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_yul_public_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulPureKeyword: YulPureKeyword<'arena> = {
+
+        <l:@L> L_YulPureKeyword_Reserved <r:@L> => new_yul_pure_keyword(arena, <>, source),
 
         <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_yul_pure_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulReceiveKeyword: YulReceiveKeyword<'arena> = {
+
+        <l:@L> L_YulReceiveKeyword_Reserved <r:@L> => new_yul_receive_keyword(arena, <>, source),
 
         <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_yul_receive_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulReferenceKeyword: YulReferenceKeyword<'arena> = {
+
+        <l:@L> L_YulReferenceKeyword_Reserved <r:@L> => new_yul_reference_keyword(arena, <>, source),
 
         <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_yul_reference_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulRelocatableKeyword: YulRelocatableKeyword<'arena> = {
+
+        <l:@L> L_YulRelocatableKeyword_Reserved <r:@L> => new_yul_relocatable_keyword(arena, <>, source),
 
         <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_yul_relocatable_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulReturnsKeyword: YulReturnsKeyword<'arena> = {
+
+        <l:@L> L_YulReturnsKeyword_Reserved <r:@L> => new_yul_returns_keyword(arena, <>, source),
 
         <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_yul_returns_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulSealedKeyword: YulSealedKeyword<'arena> = {
+
+        <l:@L> L_YulSealedKeyword_Reserved <r:@L> => new_yul_sealed_keyword(arena, <>, source),
 
         <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_yul_sealed_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulSecondsKeyword: YulSecondsKeyword<'arena> = {
+
+        <l:@L> L_YulSecondsKeyword_Reserved <r:@L> => new_yul_seconds_keyword(arena, <>, source),
 
         <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_yul_seconds_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulSizeOfKeyword: YulSizeOfKeyword<'arena> = {
+
+        <l:@L> L_YulSizeOfKeyword_Reserved <r:@L> => new_yul_size_of_keyword(arena, <>, source),
 
         <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_yul_size_of_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulStaticKeyword: YulStaticKeyword<'arena> = {
+
+        <l:@L> L_YulStaticKeyword_Reserved <r:@L> => new_yul_static_keyword(arena, <>, source),
 
         <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_yul_static_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulStorageKeyword: YulStorageKeyword<'arena> = {
+
+        <l:@L> L_YulStorageKeyword_Reserved <r:@L> => new_yul_storage_keyword(arena, <>, source),
 
         <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_yul_storage_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulStringKeyword: YulStringKeyword<'arena> = {
+
+        <l:@L> L_YulStringKeyword_Reserved <r:@L> => new_yul_string_keyword(arena, <>, source),
 
         <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_yul_string_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulStructKeyword: YulStructKeyword<'arena> = {
+
+        <l:@L> L_YulStructKeyword_Reserved <r:@L> => new_yul_struct_keyword(arena, <>, source),
 
         <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_struct_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulSuperKeyword: YulSuperKeyword<'arena> = {
 
         <l:@L> L_YulSuperKeyword_Reserved <r:@L> => new_yul_super_keyword(arena, <>, source),
 
+        <l:@L> L_YulSuperKeyword_Unreserved <r:@L> => new_yul_super_keyword(arena, <>, source),
+
 };
-#[inline]
+
 YulSupportsKeyword: YulSupportsKeyword<'arena> = {
+
+        <l:@L> L_YulSupportsKeyword_Reserved <r:@L> => new_yul_supports_keyword(arena, <>, source),
 
         <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_supports_keyword(arena, <>, source),
 
@@ -3620,14 +3771,18 @@ YulSzaboKeyword: YulSzaboKeyword<'arena> = {
         <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_szabo_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulThisKeyword: YulThisKeyword<'arena> = {
 
         <l:@L> L_YulThisKeyword_Reserved <r:@L> => new_yul_this_keyword(arena, <>, source),
 
+        <l:@L> L_YulThisKeyword_Unreserved <r:@L> => new_yul_this_keyword(arena, <>, source),
+
 };
-#[inline]
+
 YulThrowKeyword: YulThrowKeyword<'arena> = {
+
+        <l:@L> L_YulThrowKeyword_Reserved <r:@L> => new_yul_throw_keyword(arena, <>, source),
 
         <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_throw_keyword(arena, <>, source),
 
@@ -3638,50 +3793,66 @@ YulTrueKeyword: YulTrueKeyword<'arena> = {
         <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulTryKeyword: YulTryKeyword<'arena> = {
+
+        <l:@L> L_YulTryKeyword_Reserved <r:@L> => new_yul_try_keyword(arena, <>, source),
 
         <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_yul_try_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulTypeDefKeyword: YulTypeDefKeyword<'arena> = {
+
+        <l:@L> L_YulTypeDefKeyword_Reserved <r:@L> => new_yul_type_def_keyword(arena, <>, source),
 
         <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_yul_type_def_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulTypeKeyword: YulTypeKeyword<'arena> = {
+
+        <l:@L> L_YulTypeKeyword_Reserved <r:@L> => new_yul_type_keyword(arena, <>, source),
 
         <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_yul_type_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulTypeOfKeyword: YulTypeOfKeyword<'arena> = {
+
+        <l:@L> L_YulTypeOfKeyword_Reserved <r:@L> => new_yul_type_of_keyword(arena, <>, source),
 
         <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_yul_type_of_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulUfixedKeyword: YulUfixedKeyword<'arena> = {
+
+        <l:@L> L_YulUfixedKeyword_Reserved <r:@L> => new_yul_ufixed_keyword(arena, <>, source),
 
         <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_yul_ufixed_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulUintKeyword: YulUintKeyword<'arena> = {
+
+        <l:@L> L_YulUintKeyword_Reserved <r:@L> => new_yul_uint_keyword(arena, <>, source),
 
         <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_yul_uint_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulUncheckedKeyword: YulUncheckedKeyword<'arena> = {
+
+        <l:@L> L_YulUncheckedKeyword_Reserved <r:@L> => new_yul_unchecked_keyword(arena, <>, source),
 
         <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_yul_unchecked_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulUsingKeyword: YulUsingKeyword<'arena> = {
+
+        <l:@L> L_YulUsingKeyword_Reserved <r:@L> => new_yul_using_keyword(arena, <>, source),
 
         <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_yul_using_keyword(arena, <>, source),
 
@@ -3692,38 +3863,50 @@ YulVarKeyword: YulVarKeyword<'arena> = {
         <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_yul_var_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulViewKeyword: YulViewKeyword<'arena> = {
+
+        <l:@L> L_YulViewKeyword_Reserved <r:@L> => new_yul_view_keyword(arena, <>, source),
 
         <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_yul_view_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulVirtualKeyword: YulVirtualKeyword<'arena> = {
+
+        <l:@L> L_YulVirtualKeyword_Reserved <r:@L> => new_yul_virtual_keyword(arena, <>, source),
 
         <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_yul_virtual_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulWeeksKeyword: YulWeeksKeyword<'arena> = {
+
+        <l:@L> L_YulWeeksKeyword_Reserved <r:@L> => new_yul_weeks_keyword(arena, <>, source),
 
         <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_yul_weeks_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulWeiKeyword: YulWeiKeyword<'arena> = {
+
+        <l:@L> L_YulWeiKeyword_Reserved <r:@L> => new_yul_wei_keyword(arena, <>, source),
 
         <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_yul_wei_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulWhileKeyword: YulWhileKeyword<'arena> = {
+
+        <l:@L> L_YulWhileKeyword_Reserved <r:@L> => new_yul_while_keyword(arena, <>, source),
 
         <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_yul_while_keyword(arena, <>, source),
 
 };
-#[inline]
+
 YulYearsKeyword: YulYearsKeyword<'arena> = {
+
+        <l:@L> L_YulYearsKeyword_Reserved <r:@L> => new_yul_years_keyword(arena, <>, source),
 
         <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_yul_years_keyword(arena, <>, source),
 
@@ -3925,14 +4108,12 @@ extern {
         L_StringKeyword_Reserved => lexemes::LexemeKind::StringKeyword_Reserved,
         L_StructKeyword_Reserved => lexemes::LexemeKind::StructKeyword_Reserved,
         L_SuperKeyword_Reserved => lexemes::LexemeKind::SuperKeyword_Reserved,
-        L_SuperKeyword_Unreserved => lexemes::LexemeKind::SuperKeyword_Unreserved,
         L_SupportsKeyword_Reserved => lexemes::LexemeKind::SupportsKeyword_Reserved,
         L_SupportsKeyword_Unreserved => lexemes::LexemeKind::SupportsKeyword_Unreserved,
         L_SwitchKeyword_Reserved => lexemes::LexemeKind::SwitchKeyword_Reserved,
         L_SzaboKeyword_Reserved => lexemes::LexemeKind::SzaboKeyword_Reserved,
         L_SzaboKeyword_Unreserved => lexemes::LexemeKind::SzaboKeyword_Unreserved,
         L_ThisKeyword_Reserved => lexemes::LexemeKind::ThisKeyword_Reserved,
-        L_ThisKeyword_Unreserved => lexemes::LexemeKind::ThisKeyword_Unreserved,
         L_ThrowKeyword_Reserved => lexemes::LexemeKind::ThrowKeyword_Reserved,
         L_Tilde => lexemes::LexemeKind::Tilde,
         L_TransientKeyword_Unreserved => lexemes::LexemeKind::TransientKeyword_Unreserved,

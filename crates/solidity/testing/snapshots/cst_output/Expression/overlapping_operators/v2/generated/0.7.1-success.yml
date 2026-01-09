@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+AndExpression(
+    AndExpressionStruct {
+        left_operand: BitwiseAndExpression(
+            BitwiseAndExpressionStruct {
+                left_operand: Identifier(
+                    Identifier {
+                        l: 0,
+                        r: 1,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+                operator: Ampersand {
+                    l: 2,
+                    r: 3,
+                    phantom: PhantomData<&()>,
+                },
+                right_operand: Identifier(
+                    Identifier {
+                        l: 4,
+                        r: 5,
+                        phantom: PhantomData<&()>,
+                    },
+                ),
+            },
+        ),
+        operator: AmpersandAmpersand {
+            l: 6,
+            r: 8,
+            phantom: PhantomData<&()>,
+        },
+        right_operand: Identifier(
+            Identifier {
+                l: 9,
+                r: 10,
+                phantom: PhantomData<&()>,
+            },
+        ),
+    },
+)

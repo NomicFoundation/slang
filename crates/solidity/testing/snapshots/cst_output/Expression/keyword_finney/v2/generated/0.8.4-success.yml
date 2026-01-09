@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Identifier(
+    Identifier {
+        l: 0,
+        r: 6,
+        phantom: PhantomData<&()>,
+    },
+)

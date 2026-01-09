@@ -75,7 +75,9 @@ RepOne<T>: Vec<'arena, T> = {
 // Lexemes formatting
 {% for id, lexemes in model.parser.terminals -%}
 {% if id != "Identifier" -%}
+{% if lexemes | length  == 1 -%}
 #[inline]
+{%- endif %}
 {{ id }}: {{ id }}<'arena> = {
 {% for lexeme in lexemes %}
         <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(arena, <>, source),

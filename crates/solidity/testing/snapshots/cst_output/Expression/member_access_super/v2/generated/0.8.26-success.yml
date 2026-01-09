@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+MemberAccessExpression(
+    MemberAccessExpressionStruct {
+        operand: SuperKeyword(
+            SuperKeyword {
+                l: 0,
+                r: 5,
+                phantom: PhantomData<&()>,
+            },
+        ),
+        period: Period {
+            l: 5,
+            r: 6,
+            phantom: PhantomData<&()>,
+        },
+        member: Identifier(
+            Identifier {
+                l: 6,
+                r: 7,
+                phantom: PhantomData<&()>,
+            },
+        ),
+    },
+)

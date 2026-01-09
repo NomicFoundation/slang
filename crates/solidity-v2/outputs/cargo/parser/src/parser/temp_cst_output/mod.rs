@@ -22,13 +22,11 @@ impl<T> NodeCheckerDebug for T where T: NodeChecker + Debug {}
 /// Compare V1 and V2 only for non terminals and versions supported by both
 pub fn compare_with_v1_output(
     parser_name: &str,
-    test_dir: std::path::PathBuf,
-    mut fs: CodegenFileSystem,
-    source: String,
-) -> Result<(), anyhow::Error> {
-    // TODO(v2): We only check 0.8.30 for now, we should eventually check all versions
-    let version = Version::new(0, 8, 30);
-
+    test_dir: &std::path::PathBuf,
+    fs: &mut CodegenFileSystem,
+    source: &String,
+    version: Version,
+) -> Result<bool, anyhow::Error> {
     // Get the output for v2
     let parser = ParserV2::new();
     let v2_output: Result<Box<dyn NodeCheckerDebug>, _> = match parser_name {
@@ -44,14 +42,14 @@ pub fn compare_with_v1_output(
             .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
         _ => {
             // Ignore everything else
-            return Ok(());
+            return Ok(true);
         }
     };
 
     // Get the output for V1
     let tested_kind = NonterminalKind::from_str(parser_name)
         .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
-    let v1_output = Parser::create(version)?.parse_nonterminal(tested_kind, &source);
+    let v1_output = Parser::create(version.clone())?.parse_nonterminal(tested_kind, &source);
 
     let status = if v2_output.is_ok() {
         "success"
@@ -60,9 +58,9 @@ pub fn compare_with_v1_output(
     };
     let snapshot_path = test_dir
         .join("v2/generated")
-        .join(format!("0.8.30-{status}.yml"));
+        .join(format!("{version}-{status}.yml"));
 
-    Ok(match v2_output {
+    match v2_output {
         Ok(parsed_checker) => {
             let mut s = String::new();
 
@@ -82,27 +80,30 @@ pub fn compare_with_v1_output(
                     }
                 }
                 fs.write_file_raw(&snapshot_path, s)?;
-                assert!(
-                    checked.is_empty(),
-                    "The AST is different between both parsers",
-                );
+                Ok(checked.is_empty())
+                // assert!(
+                //     checked.is_empty(),
+                //     "The AST is different between both parsers",
+                // );
             } else {
                 s.push_str(&"\n----------------\n");
                 s.push_str("\nV1 Parser: Invalid\n");
                 fs.write_file_raw(&snapshot_path, s)?;
-                assert!(
-                    v1_output.is_valid(),
-                    "V1 parser is not valid, but V2 Parser is"
-                );
+                Ok(v1_output.is_valid())
+                // assert!(
+                //     v1_output.is_valid(),
+                //     "V1 parser is not valid, but V2 Parser is"
+                // );
             }
         }
         Err(err) => {
             // We don't care about the errors for now, we just write them
             fs.write_file_raw(&snapshot_path, format!("{err:#?}"))?;
 
-            assert!(!v1_output.is_valid(), "V1 parser is valid, but V2 is not");
+            Ok(!v1_output.is_valid())
+            // assert!(!v1_output.is_valid(), "V1 parser is valid, but V2 is not");
         }
-    })
+    }
 }
 
 pub fn compare_with_v1_cursor(source: String, root_cursor: Cursor) -> Vec<NodeCheckerError> {

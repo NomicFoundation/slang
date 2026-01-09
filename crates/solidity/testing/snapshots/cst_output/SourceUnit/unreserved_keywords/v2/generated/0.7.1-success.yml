@@ -1,0 +1,105 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        l: 0,
+                        r: 8,
+                        phantom: PhantomData<&()>,
+                    },
+                    name: Identifier {
+                        l: 9,
+                        r: 10,
+                        phantom: PhantomData<&()>,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        l: 11,
+                        r: 12,
+                        phantom: PhantomData<&()>,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                l: 14,
+                                                r: 18,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            TransientKeyword(
+                                                TransientKeyword {
+                                                    l: 19,
+                                                    r: 28,
+                                                    phantom: PhantomData<&()>,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        l: 29,
+                                        r: 32,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        l: 32,
+                                        r: 33,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                l: 35,
+                                                r: 39,
+                                                phantom: PhantomData<&()>,
+                                            },
+                                        ),
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        l: 40,
+                                        r: 49,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        l: 49,
+                                        r: 50,
+                                        phantom: PhantomData<&()>,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        l: 51,
+                        r: 52,
+                        phantom: PhantomData<&()>,
+                    },
+                },
+            ),
+        ],
+    },
+}
+----------------
+
+V1 Parser: Invalid
