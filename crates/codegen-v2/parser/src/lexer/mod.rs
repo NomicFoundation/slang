@@ -39,6 +39,6 @@ pub enum Lexeme {
     Keyword {
         kind: String,
         regex: String,
-        reserved: Option<VersionSpecifier>,
+        reserved: VersionSpecifier,
     },
 }
