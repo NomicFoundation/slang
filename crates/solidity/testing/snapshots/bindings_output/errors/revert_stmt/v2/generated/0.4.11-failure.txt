@@ -23,9 +23,9 @@ Error: Expected Equal or Semicolon.
     │                              ╰─────────── Error occurred here.
 ────╯
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:17:23]
+    ╭─[input.sol:15:23]
     │
- 17 │     error GenericError(int code);
+ 15 │     error GenericError(int code);
     │                       ─────┬────  
     │                            ╰────── Error occurred here.
 ────╯
@@ -40,8 +40,8 @@ Definitions (9):
 - Def: #5 ["testOtherRevert" @ input.sol:8:14] (function, type: function () returns void)
 - Def: #6 ["code" @ input.sol:9:13] (variable, type: int256)
 - Def: #7 ["Utils" @ input.sol:10:16] (variable, type: unresolved)
-- Def: #8 ["Utils" @ input.sol:16:9] (library)
-- Def: #9 ["GenericError" @ input.sol:17:11] (state var, type: unresolved)
+- Def: #8 ["Utils" @ input.sol:14:9] (library)
+- Def: #9 ["GenericError" @ input.sol:15:11] (state var, type: unresolved)
 
 ------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ References (4):
 - Ref: ["error" @ input.sol:2:5] -> unresolved
 - Ref: ["revert" @ input.sol:5:9] -> unresolved
 - Ref: ["revert" @ input.sol:10:9] -> unresolved
-- Ref: ["error" @ input.sol:17:5] -> unresolved
+- Ref: ["error" @ input.sol:15:5] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -90,10 +90,10 @@ Bindings:
     │                  │    
     │                  ╰──── name: 7
     │ 
- 16 │ library Utils {
+ 14 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 8
- 17 │     error GenericError(int code);
+ 15 │     error GenericError(int code);
     │     ──┬── ──────┬─────  
     │       ╰───────────────── unresolved
     │                 │       

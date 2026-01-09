@@ -23,9 +23,9 @@ Error: Expected Equal or Semicolon.
     │                              ╰─────────── Error occurred here.
 ────╯
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:17:23]
+    ╭─[input.sol:15:23]
     │
- 17 │     error GenericError(int code);
+ 15 │     error GenericError(int code);
     │                       ─────┬────  
     │                            ╰────── Error occurred here.
 ────╯
@@ -62,10 +62,10 @@ References and definitions:
     │                  │    
     │                  ╰──── name: 7
     │ 
- 16 │ library Utils {
+ 14 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 8
- 17 │     error GenericError(int code);
+ 15 │     error GenericError(int code);
     │     ──┬── ──────┬─────  
     │       ╰───────────────── unresolved
     │                 │       
@@ -97,16 +97,15 @@ Definiens:
  11 │ │ ├─────▶     }
     │ │ │               
     │ │ ╰─────────────── definiens: 5
-    ┆ ┆         
- 14 │ ├─────│ ▶ }
+ 12 │ ├─────│ ▶ }
     │ │     │       
     │ ╰───────────── definiens: 1
- 15 │       ╭─▶ 
+ 13 │       ╭─▶ 
     ┆       ┆   
- 17 │       │       error GenericError(int code);
+ 15 │       │       error GenericError(int code);
     │       │   ─────────────────┬────────────────  
     │       │                    ╰────────────────── definiens: 9
- 18 │       ├─▶ }
+ 16 │       ├─▶ }
     │       │       
     │       ╰─────── definiens: 8
 ────╯
