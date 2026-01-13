@@ -4,7 +4,12 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "postAttachCommand": "/bin/bash scripts/bin/infra setup",
+  "postCreateCommand": {
+    // Fix target volume permissions, if it is owned by root:
+    "fixTargetVolumePermissions_hermit": "sudo chown -R $(whoami): /workspaces/${localWorkspaceFolderBasename}/.hermit",
+    "fixTargetVolumePermissions_node_modules": "sudo chown -R $(whoami): /workspaces/${localWorkspaceFolderBasename}/node_modules",
+    "fixTargetVolumePermissions_target": "sudo chown -R $(whoami): /workspaces/${localWorkspaceFolderBasename}/target"
+  },
   "portsAttributes": {
     // _MKDOCS_WATCH_PORT_ | keep in sync with the port number defined in "$REPO_ROOT/crates/infra/cli/src/toolchains/mkdocs/mod.rs"
     "5353": {
@@ -44,5 +49,24 @@
         "GitHub.vscode-pull-request-github"
       ]
     }
-  }
+  },
+  "mounts": [
+    // Use Docker named volumes for I/O-intensive directories to speed up builds:
+    // https://docs.docker.com/engine/storage/volumes/
+    {
+      "source": "slang_hermit_mount",
+      "target": "/workspaces/${localWorkspaceFolderBasename}/.hermit",
+      "type": "volume"
+    },
+    {
+      "source": "slang_node_modules_mount",
+      "target": "/workspaces/${localWorkspaceFolderBasename}/node_modules",
+      "type": "volume"
+    },
+    {
+      "source": "slang_target_mount",
+      "target": "/workspaces/${localWorkspaceFolderBasename}/target",
+      "type": "volume"
+    }
+  ]
 }
