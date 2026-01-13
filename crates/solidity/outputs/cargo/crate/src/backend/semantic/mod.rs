@@ -3,14 +3,21 @@ use std::rc::Rc;
 
 use semver::Version;
 
+use self::ast::{create_contract_definition, create_source_unit, ContractDefinition, Definition};
 use crate::backend::binder::Binder;
-pub use crate::backend::ir::ir2_flat_contracts as output_ir;
-use crate::backend::passes;
+pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
 use crate::backend::types::TypeRegistry;
+use crate::backend::{binder, passes};
 use crate::compilation::File;
-use crate::cst::{Cursor, NonterminalNode};
+use crate::cst::{Cursor, NodeId, NonterminalNode};
 use crate::parser::ParseError;
 
+// TODO(v2): Unify with `File` as follows
+// (see https://github.com/NomicFoundation/slang/pull/1477#discussion_r2633584612):
+// 1. Rename `File` to a `FileBuilder`, which will contain the CST root.
+// 2. Rename this `SemanticFile` to `File`, which will contain both the CST root and the AST root.
+// 3. When user calls `CompilationBuilder::build()`, we can convert 1. to 2. while
+//    running the backend passes.
 #[derive(Clone)]
 pub struct SemanticFile {
     file: Rc<File>,
@@ -26,7 +33,7 @@ impl SemanticFile {
         &self.file
     }
 
-    pub fn ir_root(&self) -> &output_ir::SourceUnit {
+    pub(crate) fn ir_root(&self) -> &output_ir::SourceUnit {
         &self.ir_root
     }
 
@@ -118,5 +125,42 @@ impl SemanticAnalysis {
     #[cfg(feature = "__private_testing_utils")]
     pub fn types(&self) -> &TypeRegistry {
         &self.types
+    }
+
+    pub fn get_file_ast_root(self: &Rc<Self>, file_id: &str) -> Option<ast::SourceUnit> {
+        self.files
+            .get(file_id)
+            .map(|file| create_source_unit(file.ir_root(), self))
+    }
+
+    pub(crate) fn node_id_to_file_id(&self, node_id: NodeId) -> Option<String> {
+        self.files
+            .values()
+            .find(|file| file.ir_root.node_id == node_id)
+            .map(|file| file.id().to_string())
+    }
+
+    pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition> + use<'_> {
+        self.binder
+            .definitions()
+            .values()
+            .map(|definition| Definition::create(definition.node_id(), self))
+    }
+
+    pub fn find_contract_by_name(self: &Rc<Self>, name: &str) -> Option<ContractDefinition> {
+        self.binder
+            .definitions()
+            .values()
+            .find_map(|definition| {
+                let binder::Definition::Contract(contract) = definition else {
+                    return None;
+                };
+                if definition.identifier().unparse() == name {
+                    Some(contract)
+                } else {
+                    None
+                }
+            })
+            .map(|contract| create_contract_definition(&contract.ir_node, self))
     }
 }

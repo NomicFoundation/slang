@@ -3583,6 +3583,7 @@ dependencies = [
  "indexmap",
  "metaslang_bindings",
  "metaslang_cst",
+ "paste",
  "semver 1.0.26",
  "serde",
  "strum 0.26.3",
