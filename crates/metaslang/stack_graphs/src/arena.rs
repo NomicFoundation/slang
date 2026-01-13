@@ -12,7 +12,7 @@
 //! this in Rust is to use [arena allocation][], where all of the instances of a particular type
 //! are stored in a single vector.  You then use indexes into this vector to store references to a
 //! data instance.  Because indexes are just numbers, you don't run afoul of borrow checker.  And
-//! because all instances live together in a continguous region of memory, your data access
+//! because all instances live together in a contiguous region of memory, your data access
 //! patterns are very cache-friendly.
 //!
 //! This module implements a simple arena allocation scheme for stack graphs.  An
