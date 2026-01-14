@@ -8,7 +8,7 @@ use paste::paste;
 
 use super::input as input_ir;
 use crate::backend::{binder, SemanticAnalysis};
-use crate::cst::{NodeId, TerminalKind, TerminalNode};
+use crate::cst::{NodeId, TerminalKind, TerminalNode, TextIndex};
 use super::node_extensions::{Identifier, IdentifierStruct, YulIdentifier, YulIdentifierStruct};
 use super::node_extensions::{create_identifier, create_yul_identifier};
 
@@ -92,6 +92,10 @@ use super::node_extensions::{create_identifier, create_yul_identifier};
         {% endif %}
       {% endif %}
     {% endfor %}
+
+    pub fn text_offset(&self) -> TextIndex {
+      self.semantic.get_text_offset_by_node_id(self.ir_node.node_id).unwrap()
+    }
   }
 
 {% endfor %}

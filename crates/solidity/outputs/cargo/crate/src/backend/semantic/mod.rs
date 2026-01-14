@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 
 use semver::Version;
@@ -9,7 +9,7 @@ pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
 use crate::backend::types::TypeRegistry;
 use crate::backend::{binder, passes};
 use crate::compilation::File;
-use crate::cst::{Cursor, NodeId, NonterminalNode};
+use crate::cst::{Cursor, NodeId, NonterminalNode, TextIndex};
 use crate::parser::ParseError;
 
 // TODO(v2): Unify with `File` as follows
@@ -58,6 +58,9 @@ pub struct SemanticAnalysis {
     pub(crate) files: BTreeMap<String, SemanticFile>,
     pub(crate) binder: Binder,
     pub(crate) types: TypeRegistry,
+    // TODO(v2): we should obtain the offset/range directly from the AST nodes
+    // if they are available
+    text_offsets: HashMap<NodeId, TextIndex>,
 }
 
 impl SemanticAnalysis {
@@ -68,7 +71,6 @@ impl SemanticAnalysis {
         let mut semantic_analysis = Self::new(language_version);
 
         for file in files {
-            let file_id = file.id().to_string();
             let Some(structured_ast) = passes::p0_build_ast::run_file(file) else {
                 // TODO(validation): the file is not valid and cannot be turned
                 // into a typed IR tree
@@ -82,7 +84,7 @@ impl SemanticAnalysis {
                 file: Rc::clone(file),
                 ir_root,
             };
-            semantic_analysis.files.insert(file_id, semantic_file);
+            semantic_analysis.add_file(semantic_file);
         }
 
         passes::p2_collect_definitions::run(&mut semantic_analysis);
@@ -97,13 +99,37 @@ impl SemanticAnalysis {
         let files = BTreeMap::new();
         let binder = Binder::new();
         let types = TypeRegistry::new(language_version.clone());
+        let text_offsets = HashMap::new();
 
         Self {
             language_version,
             files,
             binder,
             types,
+            text_offsets,
         }
+    }
+
+    fn add_file(&mut self, file: SemanticFile) {
+        // gather text offsets for all non-terminals
+        let mut cursor = file.create_tree_cursor();
+        self.text_offsets
+            .insert(cursor.node().id(), cursor.text_offset());
+        while cursor.go_to_next_nonterminal() {
+            // find the first non-trivia terminal to register the offset of the
+            // non-terminal
+            let mut inner = cursor.spawn();
+            while inner.go_to_next_terminal() {
+                if !inner.node().is_trivia() {
+                    break;
+                }
+            }
+            self.text_offsets
+                .insert(cursor.node().id(), inner.text_offset());
+        }
+
+        // finally add the file to the internal map
+        self.files.insert(file.id().to_string(), file);
     }
 }
 
@@ -162,5 +188,11 @@ impl SemanticAnalysis {
                 }
             })
             .map(|contract| create_contract_definition(&contract.ir_node, self))
+    }
+
+    // Returns the text offset of the beginning of a non-terminal sequence node.
+    // Returns `None` if the information is not available.
+    pub(crate) fn get_text_offset_by_node_id(&self, node_id: NodeId) -> Option<TextIndex> {
+        self.text_offsets.get(&node_id).copied()
     }
 }

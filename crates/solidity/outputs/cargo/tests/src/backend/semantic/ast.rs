@@ -56,3 +56,36 @@ impl ast::visitor::Visitor for IdentifierCounter {
         self.total += 1;
     }
 }
+
+#[test]
+fn test_text_offsets() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("contract is found");
+    assert_eq!(counter.text_offset().line, 7);
+    assert_eq!(counter.text_offset().column, 0);
+
+    let click = counter
+        .members()
+        .iter()
+        .filter_map(|member| {
+            if let ast::ContractMember::FunctionDefinition(function) = member {
+                Some(function)
+            } else {
+                None
+            }
+        })
+        .find(|function| {
+            function
+                .name()
+                .is_some_and(|name| name.unparse() == "click")
+        })
+        .expect("click method is found");
+    assert_eq!(click.text_offset().line, 18);
+    assert_eq!(click.text_offset().column, 4);
+
+    Ok(())
+}
