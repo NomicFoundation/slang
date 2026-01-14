@@ -58,6 +58,8 @@ pub struct SemanticAnalysis {
     pub(crate) files: BTreeMap<String, SemanticFile>,
     pub(crate) binder: Binder,
     pub(crate) types: TypeRegistry,
+    // TODO(v2): we should obtain the offset/range directly from the AST nodes
+    // if they are available
     text_offsets: HashMap<NodeId, TextIndex>,
 }
 
