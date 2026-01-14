@@ -1,11 +1,11 @@
 use anyhow::Result;
 use slang_solidity::backend::semantic::ast;
 
-use crate::backend::sample::build_compilation_unit;
+use crate::backend::fixtures;
 
 #[test]
 fn test_ast_visitor() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let main_ast = semantic.get_file_ast_root("main.sol").unwrap();
@@ -59,7 +59,7 @@ impl ast::visitor::Visitor for IdentifierCounter {
 
 #[test]
 fn test_text_offsets() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
