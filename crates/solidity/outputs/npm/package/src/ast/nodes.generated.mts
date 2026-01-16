@@ -4532,7 +4532,7 @@ export class CatchClauseError {
  * ```ebnf
  * (* Introduced in 0.8.4 *)
  * RevertStatement = (* revert_keyword: *) REVERT_KEYWORD
- *                   (* error: *) IdentifierPath?
+ *                   (* error: *) IdentifierPath
  *                   (* arguments: *) ArgumentsDeclaration
  *                   (* semicolon: *) SEMICOLON;
  * ```
@@ -4543,7 +4543,7 @@ export class RevertStatement {
 
     return {
       revertKeyword: $revertKeyword as TerminalNode,
-      error: $error === undefined ? undefined : new IdentifierPath($error as NonterminalNode),
+      error: new IdentifierPath($error as NonterminalNode),
       arguments: new ArgumentsDeclaration($arguments as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
     };
@@ -4571,7 +4571,7 @@ export class RevertStatement {
   /**
    * Returns the child node that has the label `error`.
    */
-  public get error(): IdentifierPath | undefined {
+  public get error(): IdentifierPath {
     return this.fetch().error;
   }
 

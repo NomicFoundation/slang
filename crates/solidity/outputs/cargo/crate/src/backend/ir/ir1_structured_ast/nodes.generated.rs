@@ -709,7 +709,7 @@ pub type RevertStatement = Rc<RevertStatementStruct>;
 #[derive(Debug)]
 pub struct RevertStatementStruct {
     pub node_id: NodeId,
-    pub error: Option<IdentifierPath>,
+    pub error: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
 }
 

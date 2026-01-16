@@ -1518,7 +1518,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.4 *)
    * RevertStatement = (* revert_keyword: *) REVERT_KEYWORD
-   *                   (* error: *) IdentifierPath?
+   *                   (* error: *) IdentifierPath
    *                   (* arguments: *) ArgumentsDeclaration
    *                   (* semicolon: *) SEMICOLON;
    * ```

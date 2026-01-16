@@ -1011,10 +1011,7 @@ pub trait Rewriter {
     }
 
     fn rewrite_revert_statement(&mut self, source: &RevertStatement) -> RevertStatement {
-        let error = source
-            .error
-            .as_ref()
-            .map(|value| self.rewrite_identifier_path(value));
+        let error = self.rewrite_identifier_path(&source.error);
         let arguments = self.rewrite_arguments_declaration(&source.arguments);
 
         Rc::new(RevertStatementStruct {
