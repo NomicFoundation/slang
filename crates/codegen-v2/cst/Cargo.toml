@@ -1,0 +1,15 @@
+[package]
+name = "codegen_v2_cst"
+description = "Utilities to generate a structured CST from a language definition."
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+language_v2_definition = { workspace = true }
+serde = { workspace = true }
+indexmap = { workspace = true }
+
+[lints]
+workspace = true
