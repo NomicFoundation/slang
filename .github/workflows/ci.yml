@@ -58,8 +58,10 @@ jobs:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
 
-      # NOTE:
-      # No need to run 'infra setup', as it runs automatically when the devcontainer is launched.
+      - name: "infra setup pipenv"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra setup pipenv"
 
       - name: "infra lint mkdocs"
         uses: "./.github/actions/devcontainer/run"
