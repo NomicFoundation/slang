@@ -35,13 +35,13 @@ impl IdentifierStruct {
             .is_some()
     }
 
-    // only makes sense if `is_reference()` is true
+    // Attempts to resolve the identifier path to a definition, following symbol
+    // aliases (import deconstructions). This only makes sense if
+    // `is_reference()` is true.
     pub fn resolve_to_definition(&self) -> Option<Definition> {
-        let reference = self
+        let definition_id = self
             .semantic
-            .binder()
-            .find_reference_by_identifier_node_id(self.ir_node.id())?;
-        let definition_id = reference.resolution.as_definition_id()?;
+            .resolve_reference_identifier_to_definition_id(self.ir_node.id())?;
         Some(Definition::create(definition_id, &self.semantic))
     }
 
@@ -128,6 +128,15 @@ impl SemanticAnalysis {
             })
             .collect()
     }
+
+    fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {
+        let reference = self
+            .binder()
+            .find_reference_by_identifier_node_id(node_id)?;
+        self.binder()
+            .follow_symbol_aliases(&reference.resolution)
+            .as_definition_id()
+    }
 }
 
 impl IdentifierPathStruct {
@@ -139,13 +148,13 @@ impl IdentifierPathStruct {
             .join(".")
     }
 
+    // Attempts to resolve the identifier path to a definition, following symbol
+    // aliases (import deconstructions)
     pub fn resolve_to_definition(&self) -> Option<Definition> {
         let ir_node = self.ir_nodes.last()?;
-        let reference = self
+        let definition_id = self
             .semantic
-            .binder()
-            .find_reference_by_identifier_node_id(ir_node.id())?;
-        let definition_id = reference.resolution.as_definition_id()?;
+            .resolve_reference_identifier_to_definition_id(ir_node.id())?;
         Some(Definition::create(definition_id, &self.semantic))
     }
 }

@@ -32,14 +32,23 @@ impl Pass<'_> {
             } else {
                 Resolution::Unresolved
             };
-            let definition_id = resolution.as_definition_id();
 
             let reference = Reference::new(Rc::clone(identifier), resolution.clone());
             self.binder.insert_reference(reference);
 
+            // Unless we used namespace resolution and in order to continue
+            // resolving the identifier path, we should ensure we've followed
+            // through any symbol alias (ie. import deconstruction symbol)
+            let resolution = if use_lexical_resolution {
+                self.binder.follow_symbol_aliases(&resolution)
+            } else {
+                resolution
+            };
+
             // recurse into file scopes pointed by the resolved definition
             // to resolve the next identifier in the path
-            scope_id = definition_id
+            scope_id = resolution
+                .as_definition_id()
                 .and_then(|node_id| self.binder.find_definition_by_id(node_id))
                 .and_then(|definition| match definition {
                     Definition::Import(ImportDefinition {
@@ -147,7 +156,13 @@ impl Pass<'_> {
                 self.binder
                     .find_reference_by_identifier_node_id(identifier.id())
             })
-            .and_then(|reference| reference.resolution.as_definition_id())?;
+            .and_then(|reference| {
+                // reference may resolve to an imported library, so we need to
+                // follow aliases
+                self.binder
+                    .follow_symbol_aliases(&reference.resolution)
+                    .as_definition_id()
+            })?;
 
         let Some(Definition::Library(_)) = self.binder.find_definition_by_id(definition_id) else {
             // the referenced definition is not a library
