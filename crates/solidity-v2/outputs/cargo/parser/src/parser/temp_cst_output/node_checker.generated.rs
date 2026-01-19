@@ -8243,7 +8243,10 @@ impl NodeChecker for RevertStatement<'_> {
         }
 
         // error
-        if let Some(error) = &self.error {
+
+        {
+            let error = &self.error;
+
             // Prepare edge label
 
             if let Some((child, child_offset)) =
@@ -8254,16 +8257,6 @@ impl NodeChecker for RevertStatement<'_> {
             } else {
                 errors.push(NodeCheckerError::new(
                     "Expected error to be present in the CST, but it was not".to_string(),
-                    node_range.clone(),
-                ));
-            }
-        } else {
-            // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Error) {
-                errors.push(NodeCheckerError::new(
-                    format!(
-                        "Expected error to not be present in the CST, but it was there: {child:#?}"
-                    ),
                     node_range.clone(),
                 ));
             }
