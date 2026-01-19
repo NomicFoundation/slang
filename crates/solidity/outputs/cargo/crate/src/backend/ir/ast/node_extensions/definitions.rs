@@ -27,6 +27,7 @@ use crate::backend::{binder, SemanticAnalysis};
 use crate::cst::NodeId;
 
 // __SLANG_DEFINITION_TYPES__ keep in sync with binder
+#[derive(Clone)]
 pub enum Definition {
     Constant(ConstantDefinition),
     Contract(ContractDefinition),
@@ -136,6 +137,95 @@ impl Definition {
         }
     }
 
+    pub fn node_id(&self) -> NodeId {
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.node_id(),
+            Definition::Contract(contract_definition) => contract_definition.node_id(),
+            Definition::Enum(enum_definition) => enum_definition.node_id(),
+            Definition::EnumMember(identifier) => identifier.node_id(),
+            Definition::Error(error_definition) => error_definition.node_id(),
+            Definition::Event(event_definition) => event_definition.node_id(),
+            Definition::Function(function_definition) => function_definition.node_id(),
+            Definition::Import(path_import) => path_import.node_id(),
+            Definition::ImportedSymbol(import_deconstruction_symbol) => {
+                import_deconstruction_symbol.node_id()
+            }
+            Definition::Interface(interface_definition) => interface_definition.node_id(),
+            Definition::Library(library_definition) => library_definition.node_id(),
+            Definition::Modifier(function_definition) => function_definition.node_id(),
+            Definition::Parameter(parameter) => parameter.node_id(),
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.node_id()
+            }
+            Definition::Struct(struct_definition) => struct_definition.node_id(),
+            Definition::StructMember(struct_member) => struct_member.node_id(),
+            Definition::TypeParameter(parameter) => parameter.node_id(),
+            Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                user_defined_value_type_definition.node_id()
+            }
+            Definition::Variable(variable_declaration_statement) => {
+                variable_declaration_statement.node_id()
+            }
+            Definition::YulFunction(yul_function_definition) => yul_function_definition.node_id(),
+            Definition::YulLabel(yul_label) => yul_label.node_id(),
+            Definition::YulParameter(identifier) => identifier.node_id(),
+            Definition::YulVariable(identifier) => identifier.node_id(),
+        }
+    }
+
+    pub fn identifier(&self) -> Identifier {
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.name(),
+            Definition::Contract(contract_definition) => contract_definition.name(),
+            Definition::Enum(enum_definition) => enum_definition.name(),
+            Definition::EnumMember(identifier) => Rc::clone(identifier),
+            Definition::Error(error_definition) => error_definition.name(),
+            Definition::Event(event_definition) => event_definition.name(),
+            Definition::Function(function_definition) => {
+                // functions that are definitions always have a name
+                function_definition.name().unwrap()
+            }
+            Definition::Import(path_import) => {
+                // imports that are definition always have a name
+                path_import.alias().unwrap()
+            }
+            Definition::ImportedSymbol(import_deconstruction_symbol) => {
+                import_deconstruction_symbol
+                    .alias()
+                    .unwrap_or_else(|| import_deconstruction_symbol.name())
+            }
+            Definition::Interface(interface_definition) => interface_definition.name(),
+            Definition::Library(library_definition) => library_definition.name(),
+            Definition::Modifier(function_definition) => {
+                // modifiers always have a name
+                function_definition.name().unwrap()
+            }
+            Definition::Parameter(parameter) => {
+                // parameters that are definitions always have a name
+                parameter.name().unwrap()
+            }
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.name()
+            }
+            Definition::Struct(struct_definition) => struct_definition.name(),
+            Definition::StructMember(struct_member) => struct_member.name(),
+            Definition::TypeParameter(parameter) => {
+                // parameters that are definitions always have a name
+                parameter.name().unwrap()
+            }
+            Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                user_defined_value_type_definition.name()
+            }
+            Definition::Variable(variable_declaration_statement) => {
+                variable_declaration_statement.name()
+            }
+            Definition::YulFunction(yul_function_definition) => yul_function_definition.name(),
+            Definition::YulLabel(yul_label) => yul_label.label(),
+            Definition::YulParameter(identifier) => Rc::clone(identifier),
+            Definition::YulVariable(identifier) => Rc::clone(identifier),
+        }
+    }
+
     pub fn references(&self) -> Vec<Reference> {
         match self {
             Definition::Constant(constant_definition) => constant_definition.references(),
@@ -181,6 +271,9 @@ macro_rules! define_references_method {
             impl [<$type Struct>] {
                 pub fn references(&self) -> Vec<Reference> {
                     self.semantic.references_binding_to(self.ir_node.node_id)
+                }
+                pub fn as_definition(&self) -> Definition {
+                    Definition::create(self.ir_node.node_id, &self.semantic)
                 }
             }
         }

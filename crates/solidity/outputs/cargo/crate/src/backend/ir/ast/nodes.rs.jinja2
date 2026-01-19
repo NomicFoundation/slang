@@ -35,6 +35,9 @@ use super::node_extensions::{create_identifier, create_yul_identifier};
   }
 
   impl {{ parent_type }}Struct {
+    pub fn node_id(&self) -> NodeId {
+      self.ir_node.node_id
+    }
     {% for field in sequence.fields -%}
       {% if field.is_optional %}
         {% if custom_types is containing(field.type.name) or

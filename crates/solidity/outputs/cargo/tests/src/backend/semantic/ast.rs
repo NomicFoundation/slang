@@ -47,7 +47,7 @@ struct IdentifierCounter {
 
 impl ast::visitor::Visitor for IdentifierCounter {
     fn visit_identifier(&mut self, node: &ast::Identifier) {
-        if node.is_definition() {
+        if node.is_name_of_definition() {
             self.definitions += 1;
         }
         if node.is_reference() {
