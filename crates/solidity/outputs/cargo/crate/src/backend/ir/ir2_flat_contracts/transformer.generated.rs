@@ -563,10 +563,7 @@ pub trait Transformer {
         &mut self,
         source: &input::RevertStatement,
     ) -> output::RevertStatement {
-        let error = source
-            .error
-            .as_ref()
-            .map(|value| self.transform_identifier_path(value));
+        let error = self.transform_identifier_path(&source.error);
         let arguments = self.transform_arguments_declaration(&source.arguments);
 
         Rc::new(output::RevertStatementStruct {

@@ -1382,9 +1382,7 @@ pub fn accept_revert_statement(node: &RevertStatement, visitor: &mut impl Visito
     if !visitor.enter_revert_statement(node) {
         return;
     }
-    if let Some(ref error) = node.error {
-        accept_identifier_path(error, visitor);
-    }
+    accept_identifier_path(&node.error, visitor);
     accept_arguments_declaration(&node.arguments, visitor);
     visitor.leave_revert_statement(node);
 }
