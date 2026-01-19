@@ -3,7 +3,7 @@ use std::rc::Rc;
 use super::super::IdentifierPathStruct;
 use super::Definition;
 use crate::backend::SemanticAnalysis;
-use crate::cst::{NodeId, TerminalKind, TerminalNode};
+use crate::cst::{NodeId, TerminalKind, TerminalNode, TextIndex};
 
 pub type Identifier = Rc<IdentifierStruct>;
 
@@ -76,6 +76,12 @@ impl IdentifierStruct {
     // only makes sense if `is_definition()` is true
     pub fn references(&self) -> Vec<Reference> {
         self.semantic.references_binding_to(self.ir_node.id())
+    }
+
+    pub fn text_offset(&self) -> TextIndex {
+        self.semantic
+            .get_text_offset_by_node_id(self.ir_node.id())
+            .unwrap()
     }
 }
 

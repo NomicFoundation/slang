@@ -24,7 +24,7 @@ use crate::backend::ir::ast::{
     create_variable_declaration_statement, create_yul_function_definition, create_yul_label,
 };
 use crate::backend::{binder, SemanticAnalysis};
-use crate::cst::NodeId;
+use crate::cst::{NodeId, TextIndex};
 
 // __SLANG_DEFINITION_TYPES__ keep in sync with binder
 #[derive(Clone)]
@@ -223,6 +223,44 @@ impl Definition {
             Definition::YulLabel(yul_label) => yul_label.label(),
             Definition::YulParameter(identifier) => Rc::clone(identifier),
             Definition::YulVariable(identifier) => Rc::clone(identifier),
+        }
+    }
+
+    pub fn text_offset(&self) -> TextIndex {
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.text_offset(),
+            Definition::Contract(contract_definition) => contract_definition.text_offset(),
+            Definition::Enum(enum_definition) => enum_definition.text_offset(),
+            Definition::EnumMember(identifier) => identifier.text_offset(),
+            Definition::Error(error_definition) => error_definition.text_offset(),
+            Definition::Event(event_definition) => event_definition.text_offset(),
+            Definition::Function(function_definition) => function_definition.text_offset(),
+            Definition::Import(path_import) => path_import.text_offset(),
+            Definition::ImportedSymbol(import_deconstruction_symbol) => {
+                import_deconstruction_symbol.text_offset()
+            }
+            Definition::Interface(interface_definition) => interface_definition.text_offset(),
+            Definition::Library(library_definition) => library_definition.text_offset(),
+            Definition::Modifier(function_definition) => function_definition.text_offset(),
+            Definition::Parameter(parameter) => parameter.text_offset(),
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.text_offset()
+            }
+            Definition::Struct(struct_definition) => struct_definition.text_offset(),
+            Definition::StructMember(struct_member) => struct_member.text_offset(),
+            Definition::TypeParameter(parameter) => parameter.text_offset(),
+            Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                user_defined_value_type_definition.text_offset()
+            }
+            Definition::Variable(variable_declaration_statement) => {
+                variable_declaration_statement.text_offset()
+            }
+            Definition::YulFunction(yul_function_definition) => {
+                yul_function_definition.text_offset()
+            }
+            Definition::YulLabel(yul_label) => yul_label.text_offset(),
+            Definition::YulParameter(identifier) => identifier.text_offset(),
+            Definition::YulVariable(identifier) => identifier.text_offset(),
         }
     }
 

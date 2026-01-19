@@ -1,6 +1,7 @@
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 
+use metaslang_cst::kinds::TerminalKindExtensions;
 use semver::Version;
 
 use self::ast::{create_contract_definition, create_source_unit, ContractDefinition, Definition};
@@ -9,7 +10,7 @@ pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
 use crate::backend::types::TypeRegistry;
 use crate::backend::{binder, passes};
 use crate::compilation::File;
-use crate::cst::{Cursor, NodeId, NonterminalNode, TextIndex};
+use crate::cst::{Cursor, NodeId, NodeKind, NonterminalNode, TextIndex};
 use crate::parser::ParseError;
 
 // TODO(v2): Unify with `File` as follows
@@ -111,11 +112,17 @@ impl SemanticAnalysis {
     }
 
     fn add_file(&mut self, file: SemanticFile) {
-        // gather text offsets for all non-terminals
+        // gather text offsets for all non-terminals and identifiers
         let mut cursor = file.create_tree_cursor();
         self.text_offsets
             .insert(cursor.node().id(), cursor.text_offset());
-        while cursor.go_to_next_nonterminal() {
+        while cursor.go_to_next() {
+            if cursor.node().is_terminal()
+                && !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier())
+            {
+                continue;
+            }
+
             // find the first non-trivia terminal to register the offset of the
             // non-terminal
             let mut inner = cursor.spawn();
