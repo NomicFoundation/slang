@@ -2026,7 +2026,7 @@ pub type RevertStatement<'arena> = Box<'arena, RevertStatementStruct<'arena>>;
 #[derive(Debug)]
 pub struct RevertStatementStruct<'arena> {
     pub revert_keyword: RevertKeyword<'arena>,
-    pub error: Option<IdentifierPath<'arena>>,
+    pub error: IdentifierPath<'arena>,
     pub arguments: ArgumentsDeclaration<'arena>,
     pub semicolon: Semicolon<'arena>,
 }
@@ -2034,7 +2034,7 @@ pub struct RevertStatementStruct<'arena> {
 pub fn new_revert_statement<'arena>(
     arena: &'arena Bump,
     revert_keyword: RevertKeyword<'arena>,
-    error: Option<IdentifierPath<'arena>>,
+    error: IdentifierPath<'arena>,
     arguments: ArgumentsDeclaration<'arena>,
     semicolon: Semicolon<'arena>,
 ) -> RevertStatement<'arena> {
