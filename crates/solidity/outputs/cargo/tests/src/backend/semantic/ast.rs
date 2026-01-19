@@ -89,3 +89,41 @@ fn test_text_offsets() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_resolve_to_immediate_definition() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("contract is found");
+    let counter_bases: Vec<_> = counter
+        .inheritance_types()
+        .iter()
+        .map(|base_type| base_type.type_name())
+        .collect();
+    assert_eq!(counter_bases.len(), 2);
+
+    assert_eq!(counter_bases[0].unparse(), "Ownable");
+    assert!(matches!(
+        counter_bases[0].resolve_to_definition(),
+        Some(ast::Definition::Contract(_))
+    ));
+    assert!(matches!(
+        counter_bases[0].resolve_to_immediate_definition(),
+        Some(ast::Definition::ImportedSymbol(_))
+    ));
+
+    assert_eq!(counter_bases[1].unparse(), "Activatable");
+    assert!(matches!(
+        counter_bases[1].resolve_to_definition(),
+        Some(ast::Definition::Contract(_))
+    ));
+    assert!(matches!(
+        counter_bases[1].resolve_to_immediate_definition(),
+        Some(ast::Definition::ImportedSymbol(_))
+    ));
+
+    Ok(())
+}

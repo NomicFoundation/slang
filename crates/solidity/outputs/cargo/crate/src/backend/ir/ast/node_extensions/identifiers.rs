@@ -35,7 +35,7 @@ impl IdentifierStruct {
             .is_some()
     }
 
-    // Attempts to resolve the identifier path to a definition, following symbol
+    // Attempts to resolve the identifier to a definition, following symbol
     // aliases (import deconstructions). This only makes sense if
     // `is_reference()` is true.
     pub fn resolve_to_definition(&self) -> Option<Definition> {
@@ -45,6 +45,19 @@ impl IdentifierStruct {
         Some(Definition::create(definition_id, &self.semantic))
     }
 
+    // Attempts to resolve the identifier to an immediate definition, without
+    // following symbol aliases, possibly returning import deconstruction
+    // symbols. If the symbol is directly defined, this is equivalent to
+    // `resolve_to_definition`. This only makes sense if `is_reference()` is
+    // true.
+    pub fn resolve_to_immediate_definition(&self) -> Option<Definition> {
+        let definition_id = self
+            .semantic
+            .resolve_reference_identifier_to_immediate_definition_id(self.ir_node.id())?;
+        Some(Definition::create(definition_id, &self.semantic))
+    }
+
+    /// Returns `true` if the identifier itself is a definition (eg. an enum member)
     pub fn is_definition(&self) -> bool {
         self.semantic
             .binder()
@@ -113,6 +126,14 @@ impl Reference {
             }
         }
     }
+
+    pub fn resolve_to_immediate_definition(&self) -> Option<Definition> {
+        match self {
+            Reference::Identifier(identifier) | Reference::YulIdentifier(identifier) => {
+                identifier.resolve_to_immediate_definition()
+            }
+        }
+    }
 }
 
 impl SemanticAnalysis {
@@ -137,6 +158,16 @@ impl SemanticAnalysis {
             .follow_symbol_aliases(&reference.resolution)
             .as_definition_id()
     }
+
+    fn resolve_reference_identifier_to_immediate_definition_id(
+        &self,
+        node_id: NodeId,
+    ) -> Option<NodeId> {
+        let reference = self
+            .binder()
+            .find_reference_by_identifier_node_id(node_id)?;
+        reference.resolution.as_definition_id()
+    }
 }
 
 impl IdentifierPathStruct {
@@ -155,6 +186,19 @@ impl IdentifierPathStruct {
         let definition_id = self
             .semantic
             .resolve_reference_identifier_to_definition_id(ir_node.id())?;
+        Some(Definition::create(definition_id, &self.semantic))
+    }
+
+    // Attempts to resolve the identifier path to an immediate definition,
+    // without following symbol aliases, possibly returning import
+    // deconstruction symbols. If the symbol is directly defined, this is
+    // equivalent to `resolve_to_definition`. This only makes sense if
+    // `is_reference()` is true.
+    pub fn resolve_to_immediate_definition(&self) -> Option<Definition> {
+        let ir_node = self.ir_nodes.last()?;
+        let definition_id = self
+            .semantic
+            .resolve_reference_identifier_to_immediate_definition_id(ir_node.id())?;
         Some(Definition::create(definition_id, &self.semantic))
     }
 }
