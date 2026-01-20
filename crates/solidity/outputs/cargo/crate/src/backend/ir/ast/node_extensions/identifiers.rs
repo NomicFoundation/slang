@@ -46,22 +46,19 @@ impl IdentifierStruct {
             .binder()
             .find_reference_by_identifier_node_id(self.ir_node.id())?;
         let definition_id = reference.resolution.as_definition_id()?;
-        Some(Definition::create(definition_id, &self.semantic))
+        Definition::try_create(definition_id, &self.semantic)
     }
 
     /// Returns `true` if the identifier itself is a definition (eg. an enum member)
     pub fn is_definition(&self) -> bool {
-        self.semantic
-            .binder()
-            .find_definition_by_id(self.ir_node.id())
-            .is_some()
+        self.as_definition().is_some()
     }
 
     /// Returns the `Definition` corresponding to this identifier. Panics if the
     /// identifier is not a definition by itself, ie. this can only be called
     /// safely if `is_definition()` returns `true`.
-    pub fn as_definition(&self) -> Definition {
-        Definition::create(self.ir_node.id(), &self.semantic)
+    pub fn as_definition(&self) -> Option<Definition> {
+        Definition::try_create(self.ir_node.id(), &self.semantic)
     }
 
     /// Returns `true` if the identifier is a definition itself, or is the name
@@ -173,6 +170,6 @@ impl IdentifierPathStruct {
             .binder()
             .find_reference_by_identifier_node_id(ir_node.id())?;
         let definition_id = reference.resolution.as_definition_id()?;
-        Some(Definition::create(definition_id, &self.semantic))
+        Definition::try_create(definition_id, &self.semantic)
     }
 }

@@ -55,13 +55,13 @@ pub enum Definition {
 }
 
 impl Definition {
-    pub(crate) fn create(definition_id: NodeId, semantic: &Rc<SemanticAnalysis>) -> Self {
-        let definition = semantic
-            .binder()
-            .find_definition_by_id(definition_id)
-            .expect("definition_id references a definition node");
+    pub(crate) fn try_create(
+        definition_id: NodeId,
+        semantic: &Rc<SemanticAnalysis>,
+    ) -> Option<Self> {
+        let definition = semantic.binder().find_definition_by_id(definition_id)?;
 
-        match definition {
+        let definition = match definition {
             binder::Definition::Constant(constant_definition) => Self::Constant(
                 create_constant_definition(&constant_definition.ir_node, semantic),
             ),
@@ -134,7 +134,8 @@ impl Definition {
             binder::Definition::YulVariable(yul_variable_definition) => Self::YulVariable(
                 create_yul_identifier(&yul_variable_definition.ir_node, semantic),
             ),
-        }
+        };
+        Some(definition)
     }
 
     pub fn node_id(&self) -> NodeId {
@@ -183,11 +184,15 @@ impl Definition {
             Definition::Event(event_definition) => event_definition.name(),
             Definition::Function(function_definition) => {
                 // functions that are definitions always have a name
-                function_definition.name().unwrap()
+                function_definition
+                    .name()
+                    .expect("function definitions have a name")
             }
             Definition::Import(path_import) => {
                 // imports that are definition always have a name
-                path_import.alias().unwrap()
+                path_import
+                    .alias()
+                    .expect("path import definitions have a name")
             }
             Definition::ImportedSymbol(import_deconstruction_symbol) => {
                 import_deconstruction_symbol
@@ -198,11 +203,11 @@ impl Definition {
             Definition::Library(library_definition) => library_definition.name(),
             Definition::Modifier(function_definition) => {
                 // modifiers always have a name
-                function_definition.name().unwrap()
+                function_definition.name().expect("modifiers have a name")
             }
             Definition::Parameter(parameter) => {
                 // parameters that are definitions always have a name
-                parameter.name().unwrap()
+                parameter.name().expect("parameter definitions have a name")
             }
             Definition::StateVariable(state_variable_definition) => {
                 state_variable_definition.name()
@@ -211,7 +216,9 @@ impl Definition {
             Definition::StructMember(struct_member) => struct_member.name(),
             Definition::TypeParameter(parameter) => {
                 // parameters that are definitions always have a name
-                parameter.name().unwrap()
+                parameter
+                    .name()
+                    .expect("type parameter definitions have a name")
             }
             Definition::UserDefinedValueType(user_defined_value_type_definition) => {
                 user_defined_value_type_definition.name()
@@ -310,8 +317,8 @@ macro_rules! define_references_method {
                 pub fn references(&self) -> Vec<Reference> {
                     self.semantic.references_binding_to(self.ir_node.node_id)
                 }
-                pub fn as_definition(&self) -> Definition {
-                    Definition::create(self.ir_node.node_id, &self.semantic)
+                pub fn as_definition(&self) -> Option<Definition> {
+                    Definition::try_create(self.ir_node.node_id, &self.semantic)
                 }
             }
         }

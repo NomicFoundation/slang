@@ -87,5 +87,9 @@ fn test_text_offsets() -> Result<()> {
     assert_eq!(click.text_offset().line, 18);
     assert_eq!(click.text_offset().column, 4);
 
+    let click_identifier = click.name().unwrap();
+    assert_eq!(click_identifier.text_offset().line, 18);
+    assert_eq!(click_identifier.text_offset().column, 13);
+
     Ok(())
 }

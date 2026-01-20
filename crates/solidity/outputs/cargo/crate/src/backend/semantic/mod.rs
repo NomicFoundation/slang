@@ -117,9 +117,7 @@ impl SemanticAnalysis {
         self.text_offsets
             .insert(cursor.node().id(), cursor.text_offset());
         while cursor.go_to_next() {
-            if cursor.node().is_terminal()
-                && !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier())
-            {
+            if matches!(cursor.node().kind(), NodeKind::Terminal(kind) if !kind.is_identifier()) {
                 continue;
             }
 
@@ -177,7 +175,7 @@ impl SemanticAnalysis {
         self.binder
             .definitions()
             .values()
-            .map(|definition| Definition::create(definition.node_id(), self))
+            .map(|definition| Definition::try_create(definition.node_id(), self).unwrap())
     }
 
     pub fn find_contract_by_name(self: &Rc<Self>, name: &str) -> Option<ContractDefinition> {
