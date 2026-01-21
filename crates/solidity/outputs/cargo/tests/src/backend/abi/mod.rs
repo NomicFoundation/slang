@@ -67,7 +67,7 @@ fn test_storage_layout() -> Result<()> {
         .find_contract_by_name("Counter")
         .expect("contract can be found");
     let counter_abi = counter
-        .abi_with_file_id("main.sol".to_string())
+        .compute_abi_with_file_id("main.sol".to_string())
         .expect("can compute ABI");
     let layout = &counter_abi.storage_layout;
 
@@ -109,20 +109,20 @@ fn test_function_selector() -> Result<()> {
     assert_eq!(functions.len(), 5);
 
     // all the functions in the contract are public
-    assert_eq!(functions[0].selector(), Some(0x7d55_923d_u32)); // click()
-    assert_eq!(functions[1].selector(), Some(0x2f27_70db_u32)); // disable()
-    assert_eq!(functions[2].selector(), Some(0xa390_7d71_u32)); // enable()
-    assert_eq!(functions[3].selector(), Some(0x7cf5_dab0_u32)); // increment(uint256)
-    assert_eq!(functions[4].selector(), Some(0x6aa6_33b6_u32)); // isEnabled()
+    assert_eq!(functions[0].compute_selector(), Some(0x7d55_923d_u32)); // click()
+    assert_eq!(functions[1].compute_selector(), Some(0x2f27_70db_u32)); // disable()
+    assert_eq!(functions[2].compute_selector(), Some(0xa390_7d71_u32)); // enable()
+    assert_eq!(functions[3].compute_selector(), Some(0x7cf5_dab0_u32)); // increment(uint256)
+    assert_eq!(functions[4].compute_selector(), Some(0x6aa6_33b6_u32)); // isEnabled()
 
     let state_variables = counter.linearised_state_variables();
     assert_eq!(state_variables.len(), 4);
 
     // for state variables, selectors only make sense for public getters
-    assert_eq!(state_variables[0].selector(), None); // _owner
-    assert_eq!(state_variables[1].selector(), None); // _state
-    assert_eq!(state_variables[2].selector(), Some(0x0666_1abd_u32)); // count()
-    assert_eq!(state_variables[3].selector(), None); // _clickers
+    assert_eq!(state_variables[0].compute_selector(), None); // _owner
+    assert_eq!(state_variables[1].compute_selector(), None); // _state
+    assert_eq!(state_variables[2].compute_selector(), Some(0x0666_1abd_u32)); // count()
+    assert_eq!(state_variables[3].compute_selector(), None); // _clickers
 
     Ok(())
 }

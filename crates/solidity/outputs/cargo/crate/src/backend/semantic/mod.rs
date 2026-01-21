@@ -205,7 +205,8 @@ impl SemanticAnalysis {
                 if contract.abstract_keyword() {
                     continue;
                 }
-                let Some(contract) = contract.abi_with_file_id(file.id().to_string()) else {
+                let Some(contract) = contract.compute_abi_with_file_id(file.id().to_string())
+                else {
                     // TODO(validation): report the user that a contract's ABI
                     // could not be computed
                     continue;

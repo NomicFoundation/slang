@@ -47,9 +47,9 @@ impl ContractDefinitionStruct {
     // TODO: ideally the user wouldn't need to provide the file_id and we should
     // be able to obtain it here, but for that we need bi-directional tree
     // navigation
-    pub fn abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
+    pub fn compute_abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
         let name = self.name().unparse();
-        let functions = self.abi_functions()?;
+        let functions = self.compute_abi_functions()?;
         let storage_layout = self.compute_storage_layout()?;
         Some(ContractAbi {
             node_id: self.ir_node.node_id,
@@ -60,19 +60,19 @@ impl ContractDefinitionStruct {
         })
     }
 
-    fn abi_functions(&self) -> Option<Vec<FunctionAbi>> {
+    fn compute_abi_functions(&self) -> Option<Vec<FunctionAbi>> {
         let mut functions = Vec::new();
         if let Some(constructor) = self.constructor() {
-            functions.push(constructor.abi()?);
+            functions.push(constructor.compute_abi()?);
         }
         for function in &self.linearised_functions() {
             if function.is_public() {
-                functions.push(function.abi()?);
+                functions.push(function.compute_abi()?);
             }
         }
         for state_variable in &self.linearised_state_variables() {
             if state_variable.is_public() {
-                functions.push(state_variable.abi()?);
+                functions.push(state_variable.compute_abi()?);
             }
         }
 
@@ -133,13 +133,13 @@ impl FunctionDefinitionStruct {
         )
     }
 
-    pub fn abi(&self) -> Option<FunctionAbi> {
+    pub fn compute_abi(&self) -> Option<FunctionAbi> {
         if !self.is_public() {
             return None;
         }
-        let inputs = self.parameters().abi()?;
+        let inputs = self.parameters().compute_abi()?;
         let outputs = if let Some(returns) = self.returns() {
-            returns.abi()?
+            returns.compute_abi()?
         } else {
             Vec::new()
         };
@@ -154,7 +154,7 @@ impl FunctionDefinitionStruct {
         })
     }
 
-    pub fn selector(&self) -> Option<u32> {
+    pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_public() {
             return None;
         }
@@ -162,7 +162,7 @@ impl FunctionDefinitionStruct {
         let signature = format!(
             "{name}({parameters})",
             name = name.unparse(),
-            parameters = self.parameters().canonical_signature()?,
+            parameters = self.parameters().compute_canonical_signature()?,
         );
 
         Some(selector_from_signature(&signature))
@@ -170,7 +170,7 @@ impl FunctionDefinitionStruct {
 }
 
 impl ParametersStruct {
-    pub(crate) fn abi(&self) -> Option<Vec<FunctionParameter>> {
+    pub(crate) fn compute_abi(&self) -> Option<Vec<FunctionParameter>> {
         let mut result = Vec::new();
         for parameter in &self.ir_nodes {
             let node_id = parameter.node_id;
@@ -187,7 +187,7 @@ impl ParametersStruct {
         Some(result)
     }
 
-    pub(crate) fn canonical_signature(&self) -> Option<String> {
+    pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
         let mut result = Vec::new();
         for parameter in &self.ir_nodes {
             let node_id = parameter.node_id;
@@ -204,7 +204,7 @@ impl StateVariableDefinitionStruct {
         matches!(self.visibility(), StateVariableVisibility::Public)
     }
 
-    pub fn abi(&self) -> Option<FunctionAbi> {
+    pub fn compute_abi(&self) -> Option<FunctionAbi> {
         if !self.is_public() {
             return None;
         }
@@ -229,7 +229,7 @@ impl StateVariableDefinitionStruct {
         })
     }
 
-    pub fn selector(&self) -> Option<u32> {
+    pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_public() {
             return None;
         }
