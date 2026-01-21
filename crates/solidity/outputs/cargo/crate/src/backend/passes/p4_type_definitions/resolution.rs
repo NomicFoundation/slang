@@ -38,7 +38,10 @@ impl Pass<'_> {
 
             // Unless we used namespace resolution and in order to continue
             // resolving the identifier path, we should ensure we've followed
-            // through any symbol alias (ie. import deconstruction symbol)
+            // through any symbol alias (ie. import deconstruction symbol). This
+            // is not needed for namespaced resolution because there cannot be
+            // import directives inside contracts, interfaces or libraries which
+            // changes the lookup mode (see below).
             let resolution = if use_lexical_resolution {
                 self.binder.follow_symbol_aliases(&resolution)
             } else {
