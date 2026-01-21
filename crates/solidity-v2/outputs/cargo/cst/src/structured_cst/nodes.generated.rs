@@ -5,6 +5,7 @@
 #![allow(unused_variables)]
 #![allow(clippy::too_many_arguments)]
 
+use std::ops::Range;
 use std::rc::Rc;
 
 // TODO(v2):
@@ -5027,3032 +5028,2721 @@ pub fn new_yul_variable_names(elements: Vec<YulIdentifier>) -> YulVariableNames 
 
 #[derive(Debug)]
 pub struct ABIEncoderV2Keyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_abi_encoder_v2_keyword(l: usize, r: usize, _source: &str) -> ABIEncoderV2Keyword {
-    ABIEncoderV2Keyword { l, r }
+pub fn new_abi_encoder_v2_keyword(range: Range<usize>, _source: &str) -> ABIEncoderV2Keyword {
+    ABIEncoderV2Keyword { range }
 }
 
 #[derive(Debug)]
 pub struct AbicoderKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_abicoder_keyword(l: usize, r: usize, _source: &str) -> AbicoderKeyword {
-    AbicoderKeyword { l, r }
+pub fn new_abicoder_keyword(range: Range<usize>, _source: &str) -> AbicoderKeyword {
+    AbicoderKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct AbicoderV1Keyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_abicoder_v1_keyword(l: usize, r: usize, _source: &str) -> AbicoderV1Keyword {
-    AbicoderV1Keyword { l, r }
+pub fn new_abicoder_v1_keyword(range: Range<usize>, _source: &str) -> AbicoderV1Keyword {
+    AbicoderV1Keyword { range }
 }
 
 #[derive(Debug)]
 pub struct AbicoderV2Keyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_abicoder_v2_keyword(l: usize, r: usize, _source: &str) -> AbicoderV2Keyword {
-    AbicoderV2Keyword { l, r }
+pub fn new_abicoder_v2_keyword(range: Range<usize>, _source: &str) -> AbicoderV2Keyword {
+    AbicoderV2Keyword { range }
 }
 
 #[derive(Debug)]
 pub struct AbstractKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_abstract_keyword(l: usize, r: usize, _source: &str) -> AbstractKeyword {
-    AbstractKeyword { l, r }
+pub fn new_abstract_keyword(range: Range<usize>, _source: &str) -> AbstractKeyword {
+    AbstractKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct AddressKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_address_keyword(l: usize, r: usize, _source: &str) -> AddressKeyword {
-    AddressKeyword { l, r }
+pub fn new_address_keyword(range: Range<usize>, _source: &str) -> AddressKeyword {
+    AddressKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct AfterKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_after_keyword(l: usize, r: usize, _source: &str) -> AfterKeyword {
-    AfterKeyword { l, r }
+pub fn new_after_keyword(range: Range<usize>, _source: &str) -> AfterKeyword {
+    AfterKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct AliasKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_alias_keyword(l: usize, r: usize, _source: &str) -> AliasKeyword {
-    AliasKeyword { l, r }
+pub fn new_alias_keyword(range: Range<usize>, _source: &str) -> AliasKeyword {
+    AliasKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Ampersand {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_ampersand(l: usize, r: usize, _source: &str) -> Ampersand {
-    Ampersand { l, r }
+pub fn new_ampersand(range: Range<usize>, _source: &str) -> Ampersand {
+    Ampersand { range }
 }
 
 #[derive(Debug)]
 pub struct AmpersandAmpersand {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_ampersand_ampersand(l: usize, r: usize, _source: &str) -> AmpersandAmpersand {
-    AmpersandAmpersand { l, r }
+pub fn new_ampersand_ampersand(range: Range<usize>, _source: &str) -> AmpersandAmpersand {
+    AmpersandAmpersand { range }
 }
 
 #[derive(Debug)]
 pub struct AmpersandEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_ampersand_equal(l: usize, r: usize, _source: &str) -> AmpersandEqual {
-    AmpersandEqual { l, r }
+pub fn new_ampersand_equal(range: Range<usize>, _source: &str) -> AmpersandEqual {
+    AmpersandEqual { range }
 }
 
 #[derive(Debug)]
 pub struct AnonymousKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_anonymous_keyword(l: usize, r: usize, _source: &str) -> AnonymousKeyword {
-    AnonymousKeyword { l, r }
+pub fn new_anonymous_keyword(range: Range<usize>, _source: &str) -> AnonymousKeyword {
+    AnonymousKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ApplyKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_apply_keyword(l: usize, r: usize, _source: &str) -> ApplyKeyword {
-    ApplyKeyword { l, r }
+pub fn new_apply_keyword(range: Range<usize>, _source: &str) -> ApplyKeyword {
+    ApplyKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct AsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_as_keyword(l: usize, r: usize, _source: &str) -> AsKeyword {
-    AsKeyword { l, r }
+pub fn new_as_keyword(range: Range<usize>, _source: &str) -> AsKeyword {
+    AsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct AssemblyKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_assembly_keyword(l: usize, r: usize, _source: &str) -> AssemblyKeyword {
-    AssemblyKeyword { l, r }
+pub fn new_assembly_keyword(range: Range<usize>, _source: &str) -> AssemblyKeyword {
+    AssemblyKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Asterisk {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_asterisk(l: usize, r: usize, _source: &str) -> Asterisk {
-    Asterisk { l, r }
+pub fn new_asterisk(range: Range<usize>, _source: &str) -> Asterisk {
+    Asterisk { range }
 }
 
 #[derive(Debug)]
 pub struct AsteriskAsterisk {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_asterisk_asterisk(l: usize, r: usize, _source: &str) -> AsteriskAsterisk {
-    AsteriskAsterisk { l, r }
+pub fn new_asterisk_asterisk(range: Range<usize>, _source: &str) -> AsteriskAsterisk {
+    AsteriskAsterisk { range }
 }
 
 #[derive(Debug)]
 pub struct AsteriskEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_asterisk_equal(l: usize, r: usize, _source: &str) -> AsteriskEqual {
-    AsteriskEqual { l, r }
+pub fn new_asterisk_equal(range: Range<usize>, _source: &str) -> AsteriskEqual {
+    AsteriskEqual { range }
 }
 
 #[derive(Debug)]
 pub struct AtKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_at_keyword(l: usize, r: usize, _source: &str) -> AtKeyword {
-    AtKeyword { l, r }
+pub fn new_at_keyword(range: Range<usize>, _source: &str) -> AtKeyword {
+    AtKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct AutoKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_auto_keyword(l: usize, r: usize, _source: &str) -> AutoKeyword {
-    AutoKeyword { l, r }
+pub fn new_auto_keyword(range: Range<usize>, _source: &str) -> AutoKeyword {
+    AutoKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Bang {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_bang(l: usize, r: usize, _source: &str) -> Bang {
-    Bang { l, r }
+pub fn new_bang(range: Range<usize>, _source: &str) -> Bang {
+    Bang { range }
 }
 
 #[derive(Debug)]
 pub struct BangEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_bang_equal(l: usize, r: usize, _source: &str) -> BangEqual {
-    BangEqual { l, r }
+pub fn new_bang_equal(range: Range<usize>, _source: &str) -> BangEqual {
+    BangEqual { range }
 }
 
 #[derive(Debug)]
 pub struct Bar {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_bar(l: usize, r: usize, _source: &str) -> Bar {
-    Bar { l, r }
+pub fn new_bar(range: Range<usize>, _source: &str) -> Bar {
+    Bar { range }
 }
 
 #[derive(Debug)]
 pub struct BarBar {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_bar_bar(l: usize, r: usize, _source: &str) -> BarBar {
-    BarBar { l, r }
+pub fn new_bar_bar(range: Range<usize>, _source: &str) -> BarBar {
+    BarBar { range }
 }
 
 #[derive(Debug)]
 pub struct BarEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_bar_equal(l: usize, r: usize, _source: &str) -> BarEqual {
-    BarEqual { l, r }
+pub fn new_bar_equal(range: Range<usize>, _source: &str) -> BarEqual {
+    BarEqual { range }
 }
 
 #[derive(Debug)]
 pub struct BoolKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_bool_keyword(l: usize, r: usize, _source: &str) -> BoolKeyword {
-    BoolKeyword { l, r }
+pub fn new_bool_keyword(range: Range<usize>, _source: &str) -> BoolKeyword {
+    BoolKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct BreakKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_break_keyword(l: usize, r: usize, _source: &str) -> BreakKeyword {
-    BreakKeyword { l, r }
+pub fn new_break_keyword(range: Range<usize>, _source: &str) -> BreakKeyword {
+    BreakKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ByteKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_byte_keyword(l: usize, r: usize, _source: &str) -> ByteKeyword {
-    ByteKeyword { l, r }
+pub fn new_byte_keyword(range: Range<usize>, _source: &str) -> ByteKeyword {
+    ByteKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct BytesKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_bytes_keyword(l: usize, r: usize, _source: &str) -> BytesKeyword {
-    BytesKeyword { l, r }
+pub fn new_bytes_keyword(range: Range<usize>, _source: &str) -> BytesKeyword {
+    BytesKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct CallDataKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_call_data_keyword(l: usize, r: usize, _source: &str) -> CallDataKeyword {
-    CallDataKeyword { l, r }
+pub fn new_call_data_keyword(range: Range<usize>, _source: &str) -> CallDataKeyword {
+    CallDataKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Caret {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_caret(l: usize, r: usize, _source: &str) -> Caret {
-    Caret { l, r }
+pub fn new_caret(range: Range<usize>, _source: &str) -> Caret {
+    Caret { range }
 }
 
 #[derive(Debug)]
 pub struct CaretEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_caret_equal(l: usize, r: usize, _source: &str) -> CaretEqual {
-    CaretEqual { l, r }
+pub fn new_caret_equal(range: Range<usize>, _source: &str) -> CaretEqual {
+    CaretEqual { range }
 }
 
 #[derive(Debug)]
 pub struct CaseKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_case_keyword(l: usize, r: usize, _source: &str) -> CaseKeyword {
-    CaseKeyword { l, r }
+pub fn new_case_keyword(range: Range<usize>, _source: &str) -> CaseKeyword {
+    CaseKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct CatchKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_catch_keyword(l: usize, r: usize, _source: &str) -> CatchKeyword {
-    CatchKeyword { l, r }
+pub fn new_catch_keyword(range: Range<usize>, _source: &str) -> CatchKeyword {
+    CatchKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct CloseBrace {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_close_brace(l: usize, r: usize, _source: &str) -> CloseBrace {
-    CloseBrace { l, r }
+pub fn new_close_brace(range: Range<usize>, _source: &str) -> CloseBrace {
+    CloseBrace { range }
 }
 
 #[derive(Debug)]
 pub struct CloseBracket {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_close_bracket(l: usize, r: usize, _source: &str) -> CloseBracket {
-    CloseBracket { l, r }
+pub fn new_close_bracket(range: Range<usize>, _source: &str) -> CloseBracket {
+    CloseBracket { range }
 }
 
 #[derive(Debug)]
 pub struct CloseParen {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_close_paren(l: usize, r: usize, _source: &str) -> CloseParen {
-    CloseParen { l, r }
+pub fn new_close_paren(range: Range<usize>, _source: &str) -> CloseParen {
+    CloseParen { range }
 }
 
 #[derive(Debug)]
 pub struct Colon {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_colon(l: usize, r: usize, _source: &str) -> Colon {
-    Colon { l, r }
+pub fn new_colon(range: Range<usize>, _source: &str) -> Colon {
+    Colon { range }
 }
 
 #[derive(Debug)]
 pub struct ColonEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_colon_equal(l: usize, r: usize, _source: &str) -> ColonEqual {
-    ColonEqual { l, r }
+pub fn new_colon_equal(range: Range<usize>, _source: &str) -> ColonEqual {
+    ColonEqual { range }
 }
 
 #[derive(Debug)]
 pub struct Comma {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_comma(l: usize, r: usize, _source: &str) -> Comma {
-    Comma { l, r }
+pub fn new_comma(range: Range<usize>, _source: &str) -> Comma {
+    Comma { range }
 }
 
 #[derive(Debug)]
 pub struct ConstantKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_constant_keyword(l: usize, r: usize, _source: &str) -> ConstantKeyword {
-    ConstantKeyword { l, r }
+pub fn new_constant_keyword(range: Range<usize>, _source: &str) -> ConstantKeyword {
+    ConstantKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ConstructorKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_constructor_keyword(l: usize, r: usize, _source: &str) -> ConstructorKeyword {
-    ConstructorKeyword { l, r }
+pub fn new_constructor_keyword(range: Range<usize>, _source: &str) -> ConstructorKeyword {
+    ConstructorKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ContinueKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_continue_keyword(l: usize, r: usize, _source: &str) -> ContinueKeyword {
-    ContinueKeyword { l, r }
+pub fn new_continue_keyword(range: Range<usize>, _source: &str) -> ContinueKeyword {
+    ContinueKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ContractKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_contract_keyword(l: usize, r: usize, _source: &str) -> ContractKeyword {
-    ContractKeyword { l, r }
+pub fn new_contract_keyword(range: Range<usize>, _source: &str) -> ContractKeyword {
+    ContractKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct CopyOfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_copy_of_keyword(l: usize, r: usize, _source: &str) -> CopyOfKeyword {
-    CopyOfKeyword { l, r }
+pub fn new_copy_of_keyword(range: Range<usize>, _source: &str) -> CopyOfKeyword {
+    CopyOfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct DaysKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_days_keyword(l: usize, r: usize, _source: &str) -> DaysKeyword {
-    DaysKeyword { l, r }
+pub fn new_days_keyword(range: Range<usize>, _source: &str) -> DaysKeyword {
+    DaysKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct DecimalLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_decimal_literal(l: usize, r: usize, _source: &str) -> DecimalLiteral {
-    DecimalLiteral { l, r }
+pub fn new_decimal_literal(range: Range<usize>, _source: &str) -> DecimalLiteral {
+    DecimalLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct DefaultKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_default_keyword(l: usize, r: usize, _source: &str) -> DefaultKeyword {
-    DefaultKeyword { l, r }
+pub fn new_default_keyword(range: Range<usize>, _source: &str) -> DefaultKeyword {
+    DefaultKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct DefineKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_define_keyword(l: usize, r: usize, _source: &str) -> DefineKeyword {
-    DefineKeyword { l, r }
+pub fn new_define_keyword(range: Range<usize>, _source: &str) -> DefineKeyword {
+    DefineKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct DeleteKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_delete_keyword(l: usize, r: usize, _source: &str) -> DeleteKeyword {
-    DeleteKeyword { l, r }
+pub fn new_delete_keyword(range: Range<usize>, _source: &str) -> DeleteKeyword {
+    DeleteKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct DoKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_do_keyword(l: usize, r: usize, _source: &str) -> DoKeyword {
-    DoKeyword { l, r }
+pub fn new_do_keyword(range: Range<usize>, _source: &str) -> DoKeyword {
+    DoKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct DoubleQuotedHexStringLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_double_quoted_hex_string_literal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> DoubleQuotedHexStringLiteral {
-    DoubleQuotedHexStringLiteral { l, r }
+    DoubleQuotedHexStringLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct DoubleQuotedStringLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_double_quoted_string_literal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> DoubleQuotedStringLiteral {
-    DoubleQuotedStringLiteral { l, r }
+    DoubleQuotedStringLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct DoubleQuotedUnicodeStringLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_double_quoted_unicode_string_literal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> DoubleQuotedUnicodeStringLiteral {
-    DoubleQuotedUnicodeStringLiteral { l, r }
+    DoubleQuotedUnicodeStringLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct DoubleQuotedVersionLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_double_quoted_version_literal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> DoubleQuotedVersionLiteral {
-    DoubleQuotedVersionLiteral { l, r }
+    DoubleQuotedVersionLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct ElseKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_else_keyword(l: usize, r: usize, _source: &str) -> ElseKeyword {
-    ElseKeyword { l, r }
+pub fn new_else_keyword(range: Range<usize>, _source: &str) -> ElseKeyword {
+    ElseKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct EmitKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_emit_keyword(l: usize, r: usize, _source: &str) -> EmitKeyword {
-    EmitKeyword { l, r }
+pub fn new_emit_keyword(range: Range<usize>, _source: &str) -> EmitKeyword {
+    EmitKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct EndOfLine {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_end_of_line(l: usize, r: usize, _source: &str) -> EndOfLine {
-    EndOfLine { l, r }
+pub fn new_end_of_line(range: Range<usize>, _source: &str) -> EndOfLine {
+    EndOfLine { range }
 }
 
 #[derive(Debug)]
 pub struct EnumKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_enum_keyword(l: usize, r: usize, _source: &str) -> EnumKeyword {
-    EnumKeyword { l, r }
+pub fn new_enum_keyword(range: Range<usize>, _source: &str) -> EnumKeyword {
+    EnumKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Equal {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_equal(l: usize, r: usize, _source: &str) -> Equal {
-    Equal { l, r }
+pub fn new_equal(range: Range<usize>, _source: &str) -> Equal {
+    Equal { range }
 }
 
 #[derive(Debug)]
 pub struct EqualColon {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_equal_colon(l: usize, r: usize, _source: &str) -> EqualColon {
-    EqualColon { l, r }
+pub fn new_equal_colon(range: Range<usize>, _source: &str) -> EqualColon {
+    EqualColon { range }
 }
 
 #[derive(Debug)]
 pub struct EqualEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_equal_equal(l: usize, r: usize, _source: &str) -> EqualEqual {
-    EqualEqual { l, r }
+pub fn new_equal_equal(range: Range<usize>, _source: &str) -> EqualEqual {
+    EqualEqual { range }
 }
 
 #[derive(Debug)]
 pub struct EqualGreaterThan {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_equal_greater_than(l: usize, r: usize, _source: &str) -> EqualGreaterThan {
-    EqualGreaterThan { l, r }
+pub fn new_equal_greater_than(range: Range<usize>, _source: &str) -> EqualGreaterThan {
+    EqualGreaterThan { range }
 }
 
 #[derive(Debug)]
 pub struct ErrorKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_error_keyword(l: usize, r: usize, _source: &str) -> ErrorKeyword {
-    ErrorKeyword { l, r }
+pub fn new_error_keyword(range: Range<usize>, _source: &str) -> ErrorKeyword {
+    ErrorKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct EtherKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_ether_keyword(l: usize, r: usize, _source: &str) -> EtherKeyword {
-    EtherKeyword { l, r }
+pub fn new_ether_keyword(range: Range<usize>, _source: &str) -> EtherKeyword {
+    EtherKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct EventKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_event_keyword(l: usize, r: usize, _source: &str) -> EventKeyword {
-    EventKeyword { l, r }
+pub fn new_event_keyword(range: Range<usize>, _source: &str) -> EventKeyword {
+    EventKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ExperimentalKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_experimental_keyword(l: usize, r: usize, _source: &str) -> ExperimentalKeyword {
-    ExperimentalKeyword { l, r }
+pub fn new_experimental_keyword(range: Range<usize>, _source: &str) -> ExperimentalKeyword {
+    ExperimentalKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ExternalKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_external_keyword(l: usize, r: usize, _source: &str) -> ExternalKeyword {
-    ExternalKeyword { l, r }
+pub fn new_external_keyword(range: Range<usize>, _source: &str) -> ExternalKeyword {
+    ExternalKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct FallbackKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_fallback_keyword(l: usize, r: usize, _source: &str) -> FallbackKeyword {
-    FallbackKeyword { l, r }
+pub fn new_fallback_keyword(range: Range<usize>, _source: &str) -> FallbackKeyword {
+    FallbackKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct FalseKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_false_keyword(l: usize, r: usize, _source: &str) -> FalseKeyword {
-    FalseKeyword { l, r }
+pub fn new_false_keyword(range: Range<usize>, _source: &str) -> FalseKeyword {
+    FalseKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct FinalKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_final_keyword(l: usize, r: usize, _source: &str) -> FinalKeyword {
-    FinalKeyword { l, r }
+pub fn new_final_keyword(range: Range<usize>, _source: &str) -> FinalKeyword {
+    FinalKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct FinneyKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_finney_keyword(l: usize, r: usize, _source: &str) -> FinneyKeyword {
-    FinneyKeyword { l, r }
+pub fn new_finney_keyword(range: Range<usize>, _source: &str) -> FinneyKeyword {
+    FinneyKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct FixedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_fixed_keyword(l: usize, r: usize, _source: &str) -> FixedKeyword {
-    FixedKeyword { l, r }
+pub fn new_fixed_keyword(range: Range<usize>, _source: &str) -> FixedKeyword {
+    FixedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ForKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_for_keyword(l: usize, r: usize, _source: &str) -> ForKeyword {
-    ForKeyword { l, r }
+pub fn new_for_keyword(range: Range<usize>, _source: &str) -> ForKeyword {
+    ForKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct FromKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_from_keyword(l: usize, r: usize, _source: &str) -> FromKeyword {
-    FromKeyword { l, r }
+pub fn new_from_keyword(range: Range<usize>, _source: &str) -> FromKeyword {
+    FromKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct FunctionKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_function_keyword(l: usize, r: usize, _source: &str) -> FunctionKeyword {
-    FunctionKeyword { l, r }
+pub fn new_function_keyword(range: Range<usize>, _source: &str) -> FunctionKeyword {
+    FunctionKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct GlobalKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_global_keyword(l: usize, r: usize, _source: &str) -> GlobalKeyword {
-    GlobalKeyword { l, r }
+pub fn new_global_keyword(range: Range<usize>, _source: &str) -> GlobalKeyword {
+    GlobalKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct GreaterThan {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_greater_than(l: usize, r: usize, _source: &str) -> GreaterThan {
-    GreaterThan { l, r }
+pub fn new_greater_than(range: Range<usize>, _source: &str) -> GreaterThan {
+    GreaterThan { range }
 }
 
 #[derive(Debug)]
 pub struct GreaterThanEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_greater_than_equal(l: usize, r: usize, _source: &str) -> GreaterThanEqual {
-    GreaterThanEqual { l, r }
+pub fn new_greater_than_equal(range: Range<usize>, _source: &str) -> GreaterThanEqual {
+    GreaterThanEqual { range }
 }
 
 #[derive(Debug)]
 pub struct GreaterThanGreaterThan {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_greater_than_greater_than(l: usize, r: usize, _source: &str) -> GreaterThanGreaterThan {
-    GreaterThanGreaterThan { l, r }
+pub fn new_greater_than_greater_than(range: Range<usize>, _source: &str) -> GreaterThanGreaterThan {
+    GreaterThanGreaterThan { range }
 }
 
 #[derive(Debug)]
 pub struct GreaterThanGreaterThanEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_greater_than_greater_than_equal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> GreaterThanGreaterThanEqual {
-    GreaterThanGreaterThanEqual { l, r }
+    GreaterThanGreaterThanEqual { range }
 }
 
 #[derive(Debug)]
 pub struct GreaterThanGreaterThanGreaterThan {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_greater_than_greater_than_greater_than(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> GreaterThanGreaterThanGreaterThan {
-    GreaterThanGreaterThanGreaterThan { l, r }
+    GreaterThanGreaterThanGreaterThan { range }
 }
 
 #[derive(Debug)]
 pub struct GreaterThanGreaterThanGreaterThanEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_greater_than_greater_than_greater_than_equal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> GreaterThanGreaterThanGreaterThanEqual {
-    GreaterThanGreaterThanGreaterThanEqual { l, r }
+    GreaterThanGreaterThanGreaterThanEqual { range }
 }
 
 #[derive(Debug)]
 pub struct GweiKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_gwei_keyword(l: usize, r: usize, _source: &str) -> GweiKeyword {
-    GweiKeyword { l, r }
+pub fn new_gwei_keyword(range: Range<usize>, _source: &str) -> GweiKeyword {
+    GweiKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct HexKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_hex_keyword(l: usize, r: usize, _source: &str) -> HexKeyword {
-    HexKeyword { l, r }
+pub fn new_hex_keyword(range: Range<usize>, _source: &str) -> HexKeyword {
+    HexKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct HexLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_hex_literal(l: usize, r: usize, _source: &str) -> HexLiteral {
-    HexLiteral { l, r }
+pub fn new_hex_literal(range: Range<usize>, _source: &str) -> HexLiteral {
+    HexLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct HoursKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_hours_keyword(l: usize, r: usize, _source: &str) -> HoursKeyword {
-    HoursKeyword { l, r }
+pub fn new_hours_keyword(range: Range<usize>, _source: &str) -> HoursKeyword {
+    HoursKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Identifier {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_identifier(l: usize, r: usize, _source: &str) -> Identifier {
-    Identifier { l, r }
+pub fn new_identifier(range: Range<usize>, _source: &str) -> Identifier {
+    Identifier { range }
 }
 
 #[derive(Debug)]
 pub struct IfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_if_keyword(l: usize, r: usize, _source: &str) -> IfKeyword {
-    IfKeyword { l, r }
+pub fn new_if_keyword(range: Range<usize>, _source: &str) -> IfKeyword {
+    IfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ImmutableKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_immutable_keyword(l: usize, r: usize, _source: &str) -> ImmutableKeyword {
-    ImmutableKeyword { l, r }
+pub fn new_immutable_keyword(range: Range<usize>, _source: &str) -> ImmutableKeyword {
+    ImmutableKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ImplementsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_implements_keyword(l: usize, r: usize, _source: &str) -> ImplementsKeyword {
-    ImplementsKeyword { l, r }
+pub fn new_implements_keyword(range: Range<usize>, _source: &str) -> ImplementsKeyword {
+    ImplementsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ImportKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_import_keyword(l: usize, r: usize, _source: &str) -> ImportKeyword {
-    ImportKeyword { l, r }
+pub fn new_import_keyword(range: Range<usize>, _source: &str) -> ImportKeyword {
+    ImportKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct InKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_in_keyword(l: usize, r: usize, _source: &str) -> InKeyword {
-    InKeyword { l, r }
+pub fn new_in_keyword(range: Range<usize>, _source: &str) -> InKeyword {
+    InKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct IndexedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_indexed_keyword(l: usize, r: usize, _source: &str) -> IndexedKeyword {
-    IndexedKeyword { l, r }
+pub fn new_indexed_keyword(range: Range<usize>, _source: &str) -> IndexedKeyword {
+    IndexedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct InlineKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_inline_keyword(l: usize, r: usize, _source: &str) -> InlineKeyword {
-    InlineKeyword { l, r }
+pub fn new_inline_keyword(range: Range<usize>, _source: &str) -> InlineKeyword {
+    InlineKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct IntKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_int_keyword(l: usize, r: usize, _source: &str) -> IntKeyword {
-    IntKeyword { l, r }
+pub fn new_int_keyword(range: Range<usize>, _source: &str) -> IntKeyword {
+    IntKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct InterfaceKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_interface_keyword(l: usize, r: usize, _source: &str) -> InterfaceKeyword {
-    InterfaceKeyword { l, r }
+pub fn new_interface_keyword(range: Range<usize>, _source: &str) -> InterfaceKeyword {
+    InterfaceKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct InternalKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_internal_keyword(l: usize, r: usize, _source: &str) -> InternalKeyword {
-    InternalKeyword { l, r }
+pub fn new_internal_keyword(range: Range<usize>, _source: &str) -> InternalKeyword {
+    InternalKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct IsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_is_keyword(l: usize, r: usize, _source: &str) -> IsKeyword {
-    IsKeyword { l, r }
+pub fn new_is_keyword(range: Range<usize>, _source: &str) -> IsKeyword {
+    IsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct LayoutKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_layout_keyword(l: usize, r: usize, _source: &str) -> LayoutKeyword {
-    LayoutKeyword { l, r }
+pub fn new_layout_keyword(range: Range<usize>, _source: &str) -> LayoutKeyword {
+    LayoutKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct LessThan {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_less_than(l: usize, r: usize, _source: &str) -> LessThan {
-    LessThan { l, r }
+pub fn new_less_than(range: Range<usize>, _source: &str) -> LessThan {
+    LessThan { range }
 }
 
 #[derive(Debug)]
 pub struct LessThanEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_less_than_equal(l: usize, r: usize, _source: &str) -> LessThanEqual {
-    LessThanEqual { l, r }
+pub fn new_less_than_equal(range: Range<usize>, _source: &str) -> LessThanEqual {
+    LessThanEqual { range }
 }
 
 #[derive(Debug)]
 pub struct LessThanLessThan {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_less_than_less_than(l: usize, r: usize, _source: &str) -> LessThanLessThan {
-    LessThanLessThan { l, r }
+pub fn new_less_than_less_than(range: Range<usize>, _source: &str) -> LessThanLessThan {
+    LessThanLessThan { range }
 }
 
 #[derive(Debug)]
 pub struct LessThanLessThanEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_less_than_less_than_equal(l: usize, r: usize, _source: &str) -> LessThanLessThanEqual {
-    LessThanLessThanEqual { l, r }
+pub fn new_less_than_less_than_equal(range: Range<usize>, _source: &str) -> LessThanLessThanEqual {
+    LessThanLessThanEqual { range }
 }
 
 #[derive(Debug)]
 pub struct LetKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_let_keyword(l: usize, r: usize, _source: &str) -> LetKeyword {
-    LetKeyword { l, r }
+pub fn new_let_keyword(range: Range<usize>, _source: &str) -> LetKeyword {
+    LetKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct LibraryKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_library_keyword(l: usize, r: usize, _source: &str) -> LibraryKeyword {
-    LibraryKeyword { l, r }
+pub fn new_library_keyword(range: Range<usize>, _source: &str) -> LibraryKeyword {
+    LibraryKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct MacroKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_macro_keyword(l: usize, r: usize, _source: &str) -> MacroKeyword {
-    MacroKeyword { l, r }
+pub fn new_macro_keyword(range: Range<usize>, _source: &str) -> MacroKeyword {
+    MacroKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct MappingKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_mapping_keyword(l: usize, r: usize, _source: &str) -> MappingKeyword {
-    MappingKeyword { l, r }
+pub fn new_mapping_keyword(range: Range<usize>, _source: &str) -> MappingKeyword {
+    MappingKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct MatchKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_match_keyword(l: usize, r: usize, _source: &str) -> MatchKeyword {
-    MatchKeyword { l, r }
+pub fn new_match_keyword(range: Range<usize>, _source: &str) -> MatchKeyword {
+    MatchKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct MemoryKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_memory_keyword(l: usize, r: usize, _source: &str) -> MemoryKeyword {
-    MemoryKeyword { l, r }
+pub fn new_memory_keyword(range: Range<usize>, _source: &str) -> MemoryKeyword {
+    MemoryKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Minus {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_minus(l: usize, r: usize, _source: &str) -> Minus {
-    Minus { l, r }
+pub fn new_minus(range: Range<usize>, _source: &str) -> Minus {
+    Minus { range }
 }
 
 #[derive(Debug)]
 pub struct MinusEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_minus_equal(l: usize, r: usize, _source: &str) -> MinusEqual {
-    MinusEqual { l, r }
+pub fn new_minus_equal(range: Range<usize>, _source: &str) -> MinusEqual {
+    MinusEqual { range }
 }
 
 #[derive(Debug)]
 pub struct MinusGreaterThan {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_minus_greater_than(l: usize, r: usize, _source: &str) -> MinusGreaterThan {
-    MinusGreaterThan { l, r }
+pub fn new_minus_greater_than(range: Range<usize>, _source: &str) -> MinusGreaterThan {
+    MinusGreaterThan { range }
 }
 
 #[derive(Debug)]
 pub struct MinusMinus {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_minus_minus(l: usize, r: usize, _source: &str) -> MinusMinus {
-    MinusMinus { l, r }
+pub fn new_minus_minus(range: Range<usize>, _source: &str) -> MinusMinus {
+    MinusMinus { range }
 }
 
 #[derive(Debug)]
 pub struct MinutesKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_minutes_keyword(l: usize, r: usize, _source: &str) -> MinutesKeyword {
-    MinutesKeyword { l, r }
+pub fn new_minutes_keyword(range: Range<usize>, _source: &str) -> MinutesKeyword {
+    MinutesKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ModifierKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_modifier_keyword(l: usize, r: usize, _source: &str) -> ModifierKeyword {
-    ModifierKeyword { l, r }
+pub fn new_modifier_keyword(range: Range<usize>, _source: &str) -> ModifierKeyword {
+    ModifierKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct MultiLineComment {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_multi_line_comment(l: usize, r: usize, _source: &str) -> MultiLineComment {
-    MultiLineComment { l, r }
+pub fn new_multi_line_comment(range: Range<usize>, _source: &str) -> MultiLineComment {
+    MultiLineComment { range }
 }
 
 #[derive(Debug)]
 pub struct MultiLineNatSpecComment {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_multi_line_nat_spec_comment(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> MultiLineNatSpecComment {
-    MultiLineNatSpecComment { l, r }
+    MultiLineNatSpecComment { range }
 }
 
 #[derive(Debug)]
 pub struct MutableKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_mutable_keyword(l: usize, r: usize, _source: &str) -> MutableKeyword {
-    MutableKeyword { l, r }
+pub fn new_mutable_keyword(range: Range<usize>, _source: &str) -> MutableKeyword {
+    MutableKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct NewKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_new_keyword(l: usize, r: usize, _source: &str) -> NewKeyword {
-    NewKeyword { l, r }
+pub fn new_new_keyword(range: Range<usize>, _source: &str) -> NewKeyword {
+    NewKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct NullKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_null_keyword(l: usize, r: usize, _source: &str) -> NullKeyword {
-    NullKeyword { l, r }
+pub fn new_null_keyword(range: Range<usize>, _source: &str) -> NullKeyword {
+    NullKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct OfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_of_keyword(l: usize, r: usize, _source: &str) -> OfKeyword {
-    OfKeyword { l, r }
+pub fn new_of_keyword(range: Range<usize>, _source: &str) -> OfKeyword {
+    OfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct OpenBrace {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_open_brace(l: usize, r: usize, _source: &str) -> OpenBrace {
-    OpenBrace { l, r }
+pub fn new_open_brace(range: Range<usize>, _source: &str) -> OpenBrace {
+    OpenBrace { range }
 }
 
 #[derive(Debug)]
 pub struct OpenBracket {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_open_bracket(l: usize, r: usize, _source: &str) -> OpenBracket {
-    OpenBracket { l, r }
+pub fn new_open_bracket(range: Range<usize>, _source: &str) -> OpenBracket {
+    OpenBracket { range }
 }
 
 #[derive(Debug)]
 pub struct OpenParen {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_open_paren(l: usize, r: usize, _source: &str) -> OpenParen {
-    OpenParen { l, r }
+pub fn new_open_paren(range: Range<usize>, _source: &str) -> OpenParen {
+    OpenParen { range }
 }
 
 #[derive(Debug)]
 pub struct OverrideKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_override_keyword(l: usize, r: usize, _source: &str) -> OverrideKeyword {
-    OverrideKeyword { l, r }
+pub fn new_override_keyword(range: Range<usize>, _source: &str) -> OverrideKeyword {
+    OverrideKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct PartialKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_partial_keyword(l: usize, r: usize, _source: &str) -> PartialKeyword {
-    PartialKeyword { l, r }
+pub fn new_partial_keyword(range: Range<usize>, _source: &str) -> PartialKeyword {
+    PartialKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct PayableKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_payable_keyword(l: usize, r: usize, _source: &str) -> PayableKeyword {
-    PayableKeyword { l, r }
+pub fn new_payable_keyword(range: Range<usize>, _source: &str) -> PayableKeyword {
+    PayableKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Percent {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_percent(l: usize, r: usize, _source: &str) -> Percent {
-    Percent { l, r }
+pub fn new_percent(range: Range<usize>, _source: &str) -> Percent {
+    Percent { range }
 }
 
 #[derive(Debug)]
 pub struct PercentEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_percent_equal(l: usize, r: usize, _source: &str) -> PercentEqual {
-    PercentEqual { l, r }
+pub fn new_percent_equal(range: Range<usize>, _source: &str) -> PercentEqual {
+    PercentEqual { range }
 }
 
 #[derive(Debug)]
 pub struct Period {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_period(l: usize, r: usize, _source: &str) -> Period {
-    Period { l, r }
+pub fn new_period(range: Range<usize>, _source: &str) -> Period {
+    Period { range }
 }
 
 #[derive(Debug)]
 pub struct Plus {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_plus(l: usize, r: usize, _source: &str) -> Plus {
-    Plus { l, r }
+pub fn new_plus(range: Range<usize>, _source: &str) -> Plus {
+    Plus { range }
 }
 
 #[derive(Debug)]
 pub struct PlusEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_plus_equal(l: usize, r: usize, _source: &str) -> PlusEqual {
-    PlusEqual { l, r }
+pub fn new_plus_equal(range: Range<usize>, _source: &str) -> PlusEqual {
+    PlusEqual { range }
 }
 
 #[derive(Debug)]
 pub struct PlusPlus {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_plus_plus(l: usize, r: usize, _source: &str) -> PlusPlus {
-    PlusPlus { l, r }
+pub fn new_plus_plus(range: Range<usize>, _source: &str) -> PlusPlus {
+    PlusPlus { range }
 }
 
 #[derive(Debug)]
 pub struct PragmaKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_pragma_keyword(l: usize, r: usize, _source: &str) -> PragmaKeyword {
-    PragmaKeyword { l, r }
+pub fn new_pragma_keyword(range: Range<usize>, _source: &str) -> PragmaKeyword {
+    PragmaKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct PrivateKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_private_keyword(l: usize, r: usize, _source: &str) -> PrivateKeyword {
-    PrivateKeyword { l, r }
+pub fn new_private_keyword(range: Range<usize>, _source: &str) -> PrivateKeyword {
+    PrivateKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct PromiseKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_promise_keyword(l: usize, r: usize, _source: &str) -> PromiseKeyword {
-    PromiseKeyword { l, r }
+pub fn new_promise_keyword(range: Range<usize>, _source: &str) -> PromiseKeyword {
+    PromiseKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct PublicKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_public_keyword(l: usize, r: usize, _source: &str) -> PublicKeyword {
-    PublicKeyword { l, r }
+pub fn new_public_keyword(range: Range<usize>, _source: &str) -> PublicKeyword {
+    PublicKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct PureKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_pure_keyword(l: usize, r: usize, _source: &str) -> PureKeyword {
-    PureKeyword { l, r }
+pub fn new_pure_keyword(range: Range<usize>, _source: &str) -> PureKeyword {
+    PureKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct QuestionMark {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_question_mark(l: usize, r: usize, _source: &str) -> QuestionMark {
-    QuestionMark { l, r }
+pub fn new_question_mark(range: Range<usize>, _source: &str) -> QuestionMark {
+    QuestionMark { range }
 }
 
 #[derive(Debug)]
 pub struct ReceiveKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_receive_keyword(l: usize, r: usize, _source: &str) -> ReceiveKeyword {
-    ReceiveKeyword { l, r }
+pub fn new_receive_keyword(range: Range<usize>, _source: &str) -> ReceiveKeyword {
+    ReceiveKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ReferenceKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_reference_keyword(l: usize, r: usize, _source: &str) -> ReferenceKeyword {
-    ReferenceKeyword { l, r }
+pub fn new_reference_keyword(range: Range<usize>, _source: &str) -> ReferenceKeyword {
+    ReferenceKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct RelocatableKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_relocatable_keyword(l: usize, r: usize, _source: &str) -> RelocatableKeyword {
-    RelocatableKeyword { l, r }
+pub fn new_relocatable_keyword(range: Range<usize>, _source: &str) -> RelocatableKeyword {
+    RelocatableKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ReturnKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_return_keyword(l: usize, r: usize, _source: &str) -> ReturnKeyword {
-    ReturnKeyword { l, r }
+pub fn new_return_keyword(range: Range<usize>, _source: &str) -> ReturnKeyword {
+    ReturnKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ReturnsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_returns_keyword(l: usize, r: usize, _source: &str) -> ReturnsKeyword {
-    ReturnsKeyword { l, r }
+pub fn new_returns_keyword(range: Range<usize>, _source: &str) -> ReturnsKeyword {
+    ReturnsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct RevertKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_revert_keyword(l: usize, r: usize, _source: &str) -> RevertKeyword {
-    RevertKeyword { l, r }
+pub fn new_revert_keyword(range: Range<usize>, _source: &str) -> RevertKeyword {
+    RevertKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct SMTCheckerKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_smt_checker_keyword(l: usize, r: usize, _source: &str) -> SMTCheckerKeyword {
-    SMTCheckerKeyword { l, r }
+pub fn new_smt_checker_keyword(range: Range<usize>, _source: &str) -> SMTCheckerKeyword {
+    SMTCheckerKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct SealedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_sealed_keyword(l: usize, r: usize, _source: &str) -> SealedKeyword {
-    SealedKeyword { l, r }
+pub fn new_sealed_keyword(range: Range<usize>, _source: &str) -> SealedKeyword {
+    SealedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct SecondsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_seconds_keyword(l: usize, r: usize, _source: &str) -> SecondsKeyword {
-    SecondsKeyword { l, r }
+pub fn new_seconds_keyword(range: Range<usize>, _source: &str) -> SecondsKeyword {
+    SecondsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Semicolon {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_semicolon(l: usize, r: usize, _source: &str) -> Semicolon {
-    Semicolon { l, r }
+pub fn new_semicolon(range: Range<usize>, _source: &str) -> Semicolon {
+    Semicolon { range }
 }
 
 #[derive(Debug)]
 pub struct SingleLineComment {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_single_line_comment(l: usize, r: usize, _source: &str) -> SingleLineComment {
-    SingleLineComment { l, r }
+pub fn new_single_line_comment(range: Range<usize>, _source: &str) -> SingleLineComment {
+    SingleLineComment { range }
 }
 
 #[derive(Debug)]
 pub struct SingleLineNatSpecComment {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_single_line_nat_spec_comment(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> SingleLineNatSpecComment {
-    SingleLineNatSpecComment { l, r }
+    SingleLineNatSpecComment { range }
 }
 
 #[derive(Debug)]
 pub struct SingleQuotedHexStringLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_single_quoted_hex_string_literal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> SingleQuotedHexStringLiteral {
-    SingleQuotedHexStringLiteral { l, r }
+    SingleQuotedHexStringLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct SingleQuotedStringLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_single_quoted_string_literal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> SingleQuotedStringLiteral {
-    SingleQuotedStringLiteral { l, r }
+    SingleQuotedStringLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct SingleQuotedUnicodeStringLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_single_quoted_unicode_string_literal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> SingleQuotedUnicodeStringLiteral {
-    SingleQuotedUnicodeStringLiteral { l, r }
+    SingleQuotedUnicodeStringLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct SingleQuotedVersionLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
 pub fn new_single_quoted_version_literal(
-    l: usize,
-    r: usize,
+    range: Range<usize>,
     _source: &str,
 ) -> SingleQuotedVersionLiteral {
-    SingleQuotedVersionLiteral { l, r }
+    SingleQuotedVersionLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct SizeOfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_size_of_keyword(l: usize, r: usize, _source: &str) -> SizeOfKeyword {
-    SizeOfKeyword { l, r }
+pub fn new_size_of_keyword(range: Range<usize>, _source: &str) -> SizeOfKeyword {
+    SizeOfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Slash {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_slash(l: usize, r: usize, _source: &str) -> Slash {
-    Slash { l, r }
+pub fn new_slash(range: Range<usize>, _source: &str) -> Slash {
+    Slash { range }
 }
 
 #[derive(Debug)]
 pub struct SlashEqual {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_slash_equal(l: usize, r: usize, _source: &str) -> SlashEqual {
-    SlashEqual { l, r }
+pub fn new_slash_equal(range: Range<usize>, _source: &str) -> SlashEqual {
+    SlashEqual { range }
 }
 
 #[derive(Debug)]
 pub struct SolidityKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_solidity_keyword(l: usize, r: usize, _source: &str) -> SolidityKeyword {
-    SolidityKeyword { l, r }
+pub fn new_solidity_keyword(range: Range<usize>, _source: &str) -> SolidityKeyword {
+    SolidityKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct StaticKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_static_keyword(l: usize, r: usize, _source: &str) -> StaticKeyword {
-    StaticKeyword { l, r }
+pub fn new_static_keyword(range: Range<usize>, _source: &str) -> StaticKeyword {
+    StaticKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct StorageKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_storage_keyword(l: usize, r: usize, _source: &str) -> StorageKeyword {
-    StorageKeyword { l, r }
+pub fn new_storage_keyword(range: Range<usize>, _source: &str) -> StorageKeyword {
+    StorageKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct StringKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_string_keyword(l: usize, r: usize, _source: &str) -> StringKeyword {
-    StringKeyword { l, r }
+pub fn new_string_keyword(range: Range<usize>, _source: &str) -> StringKeyword {
+    StringKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct StructKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_struct_keyword(l: usize, r: usize, _source: &str) -> StructKeyword {
-    StructKeyword { l, r }
+pub fn new_struct_keyword(range: Range<usize>, _source: &str) -> StructKeyword {
+    StructKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct SuperKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_super_keyword(l: usize, r: usize, _source: &str) -> SuperKeyword {
-    SuperKeyword { l, r }
+pub fn new_super_keyword(range: Range<usize>, _source: &str) -> SuperKeyword {
+    SuperKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct SupportsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_supports_keyword(l: usize, r: usize, _source: &str) -> SupportsKeyword {
-    SupportsKeyword { l, r }
+pub fn new_supports_keyword(range: Range<usize>, _source: &str) -> SupportsKeyword {
+    SupportsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct SwitchKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_switch_keyword(l: usize, r: usize, _source: &str) -> SwitchKeyword {
-    SwitchKeyword { l, r }
+pub fn new_switch_keyword(range: Range<usize>, _source: &str) -> SwitchKeyword {
+    SwitchKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct SzaboKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_szabo_keyword(l: usize, r: usize, _source: &str) -> SzaboKeyword {
-    SzaboKeyword { l, r }
+pub fn new_szabo_keyword(range: Range<usize>, _source: &str) -> SzaboKeyword {
+    SzaboKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ThisKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_this_keyword(l: usize, r: usize, _source: &str) -> ThisKeyword {
-    ThisKeyword { l, r }
+pub fn new_this_keyword(range: Range<usize>, _source: &str) -> ThisKeyword {
+    ThisKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct ThrowKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_throw_keyword(l: usize, r: usize, _source: &str) -> ThrowKeyword {
-    ThrowKeyword { l, r }
+pub fn new_throw_keyword(range: Range<usize>, _source: &str) -> ThrowKeyword {
+    ThrowKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Tilde {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_tilde(l: usize, r: usize, _source: &str) -> Tilde {
-    Tilde { l, r }
+pub fn new_tilde(range: Range<usize>, _source: &str) -> Tilde {
+    Tilde { range }
 }
 
 #[derive(Debug)]
 pub struct TransientKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_transient_keyword(l: usize, r: usize, _source: &str) -> TransientKeyword {
-    TransientKeyword { l, r }
+pub fn new_transient_keyword(range: Range<usize>, _source: &str) -> TransientKeyword {
+    TransientKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct TrueKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_true_keyword(l: usize, r: usize, _source: &str) -> TrueKeyword {
-    TrueKeyword { l, r }
+pub fn new_true_keyword(range: Range<usize>, _source: &str) -> TrueKeyword {
+    TrueKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct TryKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_try_keyword(l: usize, r: usize, _source: &str) -> TryKeyword {
-    TryKeyword { l, r }
+pub fn new_try_keyword(range: Range<usize>, _source: &str) -> TryKeyword {
+    TryKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct TypeDefKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_type_def_keyword(l: usize, r: usize, _source: &str) -> TypeDefKeyword {
-    TypeDefKeyword { l, r }
+pub fn new_type_def_keyword(range: Range<usize>, _source: &str) -> TypeDefKeyword {
+    TypeDefKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct TypeKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_type_keyword(l: usize, r: usize, _source: &str) -> TypeKeyword {
-    TypeKeyword { l, r }
+pub fn new_type_keyword(range: Range<usize>, _source: &str) -> TypeKeyword {
+    TypeKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct TypeOfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_type_of_keyword(l: usize, r: usize, _source: &str) -> TypeOfKeyword {
-    TypeOfKeyword { l, r }
+pub fn new_type_of_keyword(range: Range<usize>, _source: &str) -> TypeOfKeyword {
+    TypeOfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct UfixedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_ufixed_keyword(l: usize, r: usize, _source: &str) -> UfixedKeyword {
-    UfixedKeyword { l, r }
+pub fn new_ufixed_keyword(range: Range<usize>, _source: &str) -> UfixedKeyword {
+    UfixedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct UintKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_uint_keyword(l: usize, r: usize, _source: &str) -> UintKeyword {
-    UintKeyword { l, r }
+pub fn new_uint_keyword(range: Range<usize>, _source: &str) -> UintKeyword {
+    UintKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct UncheckedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_unchecked_keyword(l: usize, r: usize, _source: &str) -> UncheckedKeyword {
-    UncheckedKeyword { l, r }
+pub fn new_unchecked_keyword(range: Range<usize>, _source: &str) -> UncheckedKeyword {
+    UncheckedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct UsingKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_using_keyword(l: usize, r: usize, _source: &str) -> UsingKeyword {
-    UsingKeyword { l, r }
+pub fn new_using_keyword(range: Range<usize>, _source: &str) -> UsingKeyword {
+    UsingKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct VarKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_var_keyword(l: usize, r: usize, _source: &str) -> VarKeyword {
-    VarKeyword { l, r }
+pub fn new_var_keyword(range: Range<usize>, _source: &str) -> VarKeyword {
+    VarKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct VersionSpecifier {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_version_specifier(l: usize, r: usize, _source: &str) -> VersionSpecifier {
-    VersionSpecifier { l, r }
+pub fn new_version_specifier(range: Range<usize>, _source: &str) -> VersionSpecifier {
+    VersionSpecifier { range }
 }
 
 #[derive(Debug)]
 pub struct ViewKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_view_keyword(l: usize, r: usize, _source: &str) -> ViewKeyword {
-    ViewKeyword { l, r }
+pub fn new_view_keyword(range: Range<usize>, _source: &str) -> ViewKeyword {
+    ViewKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct VirtualKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_virtual_keyword(l: usize, r: usize, _source: &str) -> VirtualKeyword {
-    VirtualKeyword { l, r }
+pub fn new_virtual_keyword(range: Range<usize>, _source: &str) -> VirtualKeyword {
+    VirtualKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct WeeksKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_weeks_keyword(l: usize, r: usize, _source: &str) -> WeeksKeyword {
-    WeeksKeyword { l, r }
+pub fn new_weeks_keyword(range: Range<usize>, _source: &str) -> WeeksKeyword {
+    WeeksKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct WeiKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_wei_keyword(l: usize, r: usize, _source: &str) -> WeiKeyword {
-    WeiKeyword { l, r }
+pub fn new_wei_keyword(range: Range<usize>, _source: &str) -> WeiKeyword {
+    WeiKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct WhileKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_while_keyword(l: usize, r: usize, _source: &str) -> WhileKeyword {
-    WhileKeyword { l, r }
+pub fn new_while_keyword(range: Range<usize>, _source: &str) -> WhileKeyword {
+    WhileKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct Whitespace {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_whitespace(l: usize, r: usize, _source: &str) -> Whitespace {
-    Whitespace { l, r }
+pub fn new_whitespace(range: Range<usize>, _source: &str) -> Whitespace {
+    Whitespace { range }
 }
 
 #[derive(Debug)]
 pub struct YearsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_years_keyword(l: usize, r: usize, _source: &str) -> YearsKeyword {
-    YearsKeyword { l, r }
+pub fn new_years_keyword(range: Range<usize>, _source: &str) -> YearsKeyword {
+    YearsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulAbstractKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_abstract_keyword(l: usize, r: usize, _source: &str) -> YulAbstractKeyword {
-    YulAbstractKeyword { l, r }
+pub fn new_yul_abstract_keyword(range: Range<usize>, _source: &str) -> YulAbstractKeyword {
+    YulAbstractKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulAfterKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_after_keyword(l: usize, r: usize, _source: &str) -> YulAfterKeyword {
-    YulAfterKeyword { l, r }
+pub fn new_yul_after_keyword(range: Range<usize>, _source: &str) -> YulAfterKeyword {
+    YulAfterKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulAliasKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_alias_keyword(l: usize, r: usize, _source: &str) -> YulAliasKeyword {
-    YulAliasKeyword { l, r }
+pub fn new_yul_alias_keyword(range: Range<usize>, _source: &str) -> YulAliasKeyword {
+    YulAliasKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulAnonymousKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_anonymous_keyword(l: usize, r: usize, _source: &str) -> YulAnonymousKeyword {
-    YulAnonymousKeyword { l, r }
+pub fn new_yul_anonymous_keyword(range: Range<usize>, _source: &str) -> YulAnonymousKeyword {
+    YulAnonymousKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulApplyKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_apply_keyword(l: usize, r: usize, _source: &str) -> YulApplyKeyword {
-    YulApplyKeyword { l, r }
+pub fn new_yul_apply_keyword(range: Range<usize>, _source: &str) -> YulApplyKeyword {
+    YulApplyKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulAsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_as_keyword(l: usize, r: usize, _source: &str) -> YulAsKeyword {
-    YulAsKeyword { l, r }
+pub fn new_yul_as_keyword(range: Range<usize>, _source: &str) -> YulAsKeyword {
+    YulAsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulAssemblyKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_assembly_keyword(l: usize, r: usize, _source: &str) -> YulAssemblyKeyword {
-    YulAssemblyKeyword { l, r }
+pub fn new_yul_assembly_keyword(range: Range<usize>, _source: &str) -> YulAssemblyKeyword {
+    YulAssemblyKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulAutoKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_auto_keyword(l: usize, r: usize, _source: &str) -> YulAutoKeyword {
-    YulAutoKeyword { l, r }
+pub fn new_yul_auto_keyword(range: Range<usize>, _source: &str) -> YulAutoKeyword {
+    YulAutoKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulBoolKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_bool_keyword(l: usize, r: usize, _source: &str) -> YulBoolKeyword {
-    YulBoolKeyword { l, r }
+pub fn new_yul_bool_keyword(range: Range<usize>, _source: &str) -> YulBoolKeyword {
+    YulBoolKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulBreakKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_break_keyword(l: usize, r: usize, _source: &str) -> YulBreakKeyword {
-    YulBreakKeyword { l, r }
+pub fn new_yul_break_keyword(range: Range<usize>, _source: &str) -> YulBreakKeyword {
+    YulBreakKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulBytesKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_bytes_keyword(l: usize, r: usize, _source: &str) -> YulBytesKeyword {
-    YulBytesKeyword { l, r }
+pub fn new_yul_bytes_keyword(range: Range<usize>, _source: &str) -> YulBytesKeyword {
+    YulBytesKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulCallDataKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_call_data_keyword(l: usize, r: usize, _source: &str) -> YulCallDataKeyword {
-    YulCallDataKeyword { l, r }
+pub fn new_yul_call_data_keyword(range: Range<usize>, _source: &str) -> YulCallDataKeyword {
+    YulCallDataKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulCaseKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_case_keyword(l: usize, r: usize, _source: &str) -> YulCaseKeyword {
-    YulCaseKeyword { l, r }
+pub fn new_yul_case_keyword(range: Range<usize>, _source: &str) -> YulCaseKeyword {
+    YulCaseKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulCatchKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_catch_keyword(l: usize, r: usize, _source: &str) -> YulCatchKeyword {
-    YulCatchKeyword { l, r }
+pub fn new_yul_catch_keyword(range: Range<usize>, _source: &str) -> YulCatchKeyword {
+    YulCatchKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulConstantKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_constant_keyword(l: usize, r: usize, _source: &str) -> YulConstantKeyword {
-    YulConstantKeyword { l, r }
+pub fn new_yul_constant_keyword(range: Range<usize>, _source: &str) -> YulConstantKeyword {
+    YulConstantKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulConstructorKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_constructor_keyword(l: usize, r: usize, _source: &str) -> YulConstructorKeyword {
-    YulConstructorKeyword { l, r }
+pub fn new_yul_constructor_keyword(range: Range<usize>, _source: &str) -> YulConstructorKeyword {
+    YulConstructorKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulContinueKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_continue_keyword(l: usize, r: usize, _source: &str) -> YulContinueKeyword {
-    YulContinueKeyword { l, r }
+pub fn new_yul_continue_keyword(range: Range<usize>, _source: &str) -> YulContinueKeyword {
+    YulContinueKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulContractKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_contract_keyword(l: usize, r: usize, _source: &str) -> YulContractKeyword {
-    YulContractKeyword { l, r }
+pub fn new_yul_contract_keyword(range: Range<usize>, _source: &str) -> YulContractKeyword {
+    YulContractKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulCopyOfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_copy_of_keyword(l: usize, r: usize, _source: &str) -> YulCopyOfKeyword {
-    YulCopyOfKeyword { l, r }
+pub fn new_yul_copy_of_keyword(range: Range<usize>, _source: &str) -> YulCopyOfKeyword {
+    YulCopyOfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulDaysKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_days_keyword(l: usize, r: usize, _source: &str) -> YulDaysKeyword {
-    YulDaysKeyword { l, r }
+pub fn new_yul_days_keyword(range: Range<usize>, _source: &str) -> YulDaysKeyword {
+    YulDaysKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulDecimalLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_decimal_literal(l: usize, r: usize, _source: &str) -> YulDecimalLiteral {
-    YulDecimalLiteral { l, r }
+pub fn new_yul_decimal_literal(range: Range<usize>, _source: &str) -> YulDecimalLiteral {
+    YulDecimalLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct YulDefaultKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_default_keyword(l: usize, r: usize, _source: &str) -> YulDefaultKeyword {
-    YulDefaultKeyword { l, r }
+pub fn new_yul_default_keyword(range: Range<usize>, _source: &str) -> YulDefaultKeyword {
+    YulDefaultKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulDefineKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_define_keyword(l: usize, r: usize, _source: &str) -> YulDefineKeyword {
-    YulDefineKeyword { l, r }
+pub fn new_yul_define_keyword(range: Range<usize>, _source: &str) -> YulDefineKeyword {
+    YulDefineKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulDeleteKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_delete_keyword(l: usize, r: usize, _source: &str) -> YulDeleteKeyword {
-    YulDeleteKeyword { l, r }
+pub fn new_yul_delete_keyword(range: Range<usize>, _source: &str) -> YulDeleteKeyword {
+    YulDeleteKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulDoKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_do_keyword(l: usize, r: usize, _source: &str) -> YulDoKeyword {
-    YulDoKeyword { l, r }
+pub fn new_yul_do_keyword(range: Range<usize>, _source: &str) -> YulDoKeyword {
+    YulDoKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulElseKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_else_keyword(l: usize, r: usize, _source: &str) -> YulElseKeyword {
-    YulElseKeyword { l, r }
+pub fn new_yul_else_keyword(range: Range<usize>, _source: &str) -> YulElseKeyword {
+    YulElseKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulEmitKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_emit_keyword(l: usize, r: usize, _source: &str) -> YulEmitKeyword {
-    YulEmitKeyword { l, r }
+pub fn new_yul_emit_keyword(range: Range<usize>, _source: &str) -> YulEmitKeyword {
+    YulEmitKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulEnumKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_enum_keyword(l: usize, r: usize, _source: &str) -> YulEnumKeyword {
-    YulEnumKeyword { l, r }
+pub fn new_yul_enum_keyword(range: Range<usize>, _source: &str) -> YulEnumKeyword {
+    YulEnumKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulEtherKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_ether_keyword(l: usize, r: usize, _source: &str) -> YulEtherKeyword {
-    YulEtherKeyword { l, r }
+pub fn new_yul_ether_keyword(range: Range<usize>, _source: &str) -> YulEtherKeyword {
+    YulEtherKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulEventKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_event_keyword(l: usize, r: usize, _source: &str) -> YulEventKeyword {
-    YulEventKeyword { l, r }
+pub fn new_yul_event_keyword(range: Range<usize>, _source: &str) -> YulEventKeyword {
+    YulEventKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulExternalKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_external_keyword(l: usize, r: usize, _source: &str) -> YulExternalKeyword {
-    YulExternalKeyword { l, r }
+pub fn new_yul_external_keyword(range: Range<usize>, _source: &str) -> YulExternalKeyword {
+    YulExternalKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulFallbackKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_fallback_keyword(l: usize, r: usize, _source: &str) -> YulFallbackKeyword {
-    YulFallbackKeyword { l, r }
+pub fn new_yul_fallback_keyword(range: Range<usize>, _source: &str) -> YulFallbackKeyword {
+    YulFallbackKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulFalseKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_false_keyword(l: usize, r: usize, _source: &str) -> YulFalseKeyword {
-    YulFalseKeyword { l, r }
+pub fn new_yul_false_keyword(range: Range<usize>, _source: &str) -> YulFalseKeyword {
+    YulFalseKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulFinalKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_final_keyword(l: usize, r: usize, _source: &str) -> YulFinalKeyword {
-    YulFinalKeyword { l, r }
+pub fn new_yul_final_keyword(range: Range<usize>, _source: &str) -> YulFinalKeyword {
+    YulFinalKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulFinneyKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_finney_keyword(l: usize, r: usize, _source: &str) -> YulFinneyKeyword {
-    YulFinneyKeyword { l, r }
+pub fn new_yul_finney_keyword(range: Range<usize>, _source: &str) -> YulFinneyKeyword {
+    YulFinneyKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulFixedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_fixed_keyword(l: usize, r: usize, _source: &str) -> YulFixedKeyword {
-    YulFixedKeyword { l, r }
+pub fn new_yul_fixed_keyword(range: Range<usize>, _source: &str) -> YulFixedKeyword {
+    YulFixedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulForKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_for_keyword(l: usize, r: usize, _source: &str) -> YulForKeyword {
-    YulForKeyword { l, r }
+pub fn new_yul_for_keyword(range: Range<usize>, _source: &str) -> YulForKeyword {
+    YulForKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulFunctionKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_function_keyword(l: usize, r: usize, _source: &str) -> YulFunctionKeyword {
-    YulFunctionKeyword { l, r }
+pub fn new_yul_function_keyword(range: Range<usize>, _source: &str) -> YulFunctionKeyword {
+    YulFunctionKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulGweiKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_gwei_keyword(l: usize, r: usize, _source: &str) -> YulGweiKeyword {
-    YulGweiKeyword { l, r }
+pub fn new_yul_gwei_keyword(range: Range<usize>, _source: &str) -> YulGweiKeyword {
+    YulGweiKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulHexKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_hex_keyword(l: usize, r: usize, _source: &str) -> YulHexKeyword {
-    YulHexKeyword { l, r }
+pub fn new_yul_hex_keyword(range: Range<usize>, _source: &str) -> YulHexKeyword {
+    YulHexKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulHexLiteral {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_hex_literal(l: usize, r: usize, _source: &str) -> YulHexLiteral {
-    YulHexLiteral { l, r }
+pub fn new_yul_hex_literal(range: Range<usize>, _source: &str) -> YulHexLiteral {
+    YulHexLiteral { range }
 }
 
 #[derive(Debug)]
 pub struct YulHoursKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_hours_keyword(l: usize, r: usize, _source: &str) -> YulHoursKeyword {
-    YulHoursKeyword { l, r }
+pub fn new_yul_hours_keyword(range: Range<usize>, _source: &str) -> YulHoursKeyword {
+    YulHoursKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulIdentifier {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_identifier(l: usize, r: usize, _source: &str) -> YulIdentifier {
-    YulIdentifier { l, r }
+pub fn new_yul_identifier(range: Range<usize>, _source: &str) -> YulIdentifier {
+    YulIdentifier { range }
 }
 
 #[derive(Debug)]
 pub struct YulIfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_if_keyword(l: usize, r: usize, _source: &str) -> YulIfKeyword {
-    YulIfKeyword { l, r }
+pub fn new_yul_if_keyword(range: Range<usize>, _source: &str) -> YulIfKeyword {
+    YulIfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulImmutableKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_immutable_keyword(l: usize, r: usize, _source: &str) -> YulImmutableKeyword {
-    YulImmutableKeyword { l, r }
+pub fn new_yul_immutable_keyword(range: Range<usize>, _source: &str) -> YulImmutableKeyword {
+    YulImmutableKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulImplementsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_implements_keyword(l: usize, r: usize, _source: &str) -> YulImplementsKeyword {
-    YulImplementsKeyword { l, r }
+pub fn new_yul_implements_keyword(range: Range<usize>, _source: &str) -> YulImplementsKeyword {
+    YulImplementsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulImportKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_import_keyword(l: usize, r: usize, _source: &str) -> YulImportKeyword {
-    YulImportKeyword { l, r }
+pub fn new_yul_import_keyword(range: Range<usize>, _source: &str) -> YulImportKeyword {
+    YulImportKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulInKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_in_keyword(l: usize, r: usize, _source: &str) -> YulInKeyword {
-    YulInKeyword { l, r }
+pub fn new_yul_in_keyword(range: Range<usize>, _source: &str) -> YulInKeyword {
+    YulInKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulIndexedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_indexed_keyword(l: usize, r: usize, _source: &str) -> YulIndexedKeyword {
-    YulIndexedKeyword { l, r }
+pub fn new_yul_indexed_keyword(range: Range<usize>, _source: &str) -> YulIndexedKeyword {
+    YulIndexedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulInlineKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_inline_keyword(l: usize, r: usize, _source: &str) -> YulInlineKeyword {
-    YulInlineKeyword { l, r }
+pub fn new_yul_inline_keyword(range: Range<usize>, _source: &str) -> YulInlineKeyword {
+    YulInlineKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulIntKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_int_keyword(l: usize, r: usize, _source: &str) -> YulIntKeyword {
-    YulIntKeyword { l, r }
+pub fn new_yul_int_keyword(range: Range<usize>, _source: &str) -> YulIntKeyword {
+    YulIntKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulInterfaceKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_interface_keyword(l: usize, r: usize, _source: &str) -> YulInterfaceKeyword {
-    YulInterfaceKeyword { l, r }
+pub fn new_yul_interface_keyword(range: Range<usize>, _source: &str) -> YulInterfaceKeyword {
+    YulInterfaceKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulInternalKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_internal_keyword(l: usize, r: usize, _source: &str) -> YulInternalKeyword {
-    YulInternalKeyword { l, r }
+pub fn new_yul_internal_keyword(range: Range<usize>, _source: &str) -> YulInternalKeyword {
+    YulInternalKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulIsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_is_keyword(l: usize, r: usize, _source: &str) -> YulIsKeyword {
-    YulIsKeyword { l, r }
+pub fn new_yul_is_keyword(range: Range<usize>, _source: &str) -> YulIsKeyword {
+    YulIsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulLeaveKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_leave_keyword(l: usize, r: usize, _source: &str) -> YulLeaveKeyword {
-    YulLeaveKeyword { l, r }
+pub fn new_yul_leave_keyword(range: Range<usize>, _source: &str) -> YulLeaveKeyword {
+    YulLeaveKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulLetKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_let_keyword(l: usize, r: usize, _source: &str) -> YulLetKeyword {
-    YulLetKeyword { l, r }
+pub fn new_yul_let_keyword(range: Range<usize>, _source: &str) -> YulLetKeyword {
+    YulLetKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulLibraryKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_library_keyword(l: usize, r: usize, _source: &str) -> YulLibraryKeyword {
-    YulLibraryKeyword { l, r }
+pub fn new_yul_library_keyword(range: Range<usize>, _source: &str) -> YulLibraryKeyword {
+    YulLibraryKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulMacroKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_macro_keyword(l: usize, r: usize, _source: &str) -> YulMacroKeyword {
-    YulMacroKeyword { l, r }
+pub fn new_yul_macro_keyword(range: Range<usize>, _source: &str) -> YulMacroKeyword {
+    YulMacroKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulMappingKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_mapping_keyword(l: usize, r: usize, _source: &str) -> YulMappingKeyword {
-    YulMappingKeyword { l, r }
+pub fn new_yul_mapping_keyword(range: Range<usize>, _source: &str) -> YulMappingKeyword {
+    YulMappingKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulMatchKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_match_keyword(l: usize, r: usize, _source: &str) -> YulMatchKeyword {
-    YulMatchKeyword { l, r }
+pub fn new_yul_match_keyword(range: Range<usize>, _source: &str) -> YulMatchKeyword {
+    YulMatchKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulMemoryKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_memory_keyword(l: usize, r: usize, _source: &str) -> YulMemoryKeyword {
-    YulMemoryKeyword { l, r }
+pub fn new_yul_memory_keyword(range: Range<usize>, _source: &str) -> YulMemoryKeyword {
+    YulMemoryKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulMinutesKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_minutes_keyword(l: usize, r: usize, _source: &str) -> YulMinutesKeyword {
-    YulMinutesKeyword { l, r }
+pub fn new_yul_minutes_keyword(range: Range<usize>, _source: &str) -> YulMinutesKeyword {
+    YulMinutesKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulModifierKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_modifier_keyword(l: usize, r: usize, _source: &str) -> YulModifierKeyword {
-    YulModifierKeyword { l, r }
+pub fn new_yul_modifier_keyword(range: Range<usize>, _source: &str) -> YulModifierKeyword {
+    YulModifierKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulMutableKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_mutable_keyword(l: usize, r: usize, _source: &str) -> YulMutableKeyword {
-    YulMutableKeyword { l, r }
+pub fn new_yul_mutable_keyword(range: Range<usize>, _source: &str) -> YulMutableKeyword {
+    YulMutableKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulNewKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_new_keyword(l: usize, r: usize, _source: &str) -> YulNewKeyword {
-    YulNewKeyword { l, r }
+pub fn new_yul_new_keyword(range: Range<usize>, _source: &str) -> YulNewKeyword {
+    YulNewKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulNullKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_null_keyword(l: usize, r: usize, _source: &str) -> YulNullKeyword {
-    YulNullKeyword { l, r }
+pub fn new_yul_null_keyword(range: Range<usize>, _source: &str) -> YulNullKeyword {
+    YulNullKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulOfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_of_keyword(l: usize, r: usize, _source: &str) -> YulOfKeyword {
-    YulOfKeyword { l, r }
+pub fn new_yul_of_keyword(range: Range<usize>, _source: &str) -> YulOfKeyword {
+    YulOfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulOverrideKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_override_keyword(l: usize, r: usize, _source: &str) -> YulOverrideKeyword {
-    YulOverrideKeyword { l, r }
+pub fn new_yul_override_keyword(range: Range<usize>, _source: &str) -> YulOverrideKeyword {
+    YulOverrideKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulPartialKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_partial_keyword(l: usize, r: usize, _source: &str) -> YulPartialKeyword {
-    YulPartialKeyword { l, r }
+pub fn new_yul_partial_keyword(range: Range<usize>, _source: &str) -> YulPartialKeyword {
+    YulPartialKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulPayableKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_payable_keyword(l: usize, r: usize, _source: &str) -> YulPayableKeyword {
-    YulPayableKeyword { l, r }
+pub fn new_yul_payable_keyword(range: Range<usize>, _source: &str) -> YulPayableKeyword {
+    YulPayableKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulPragmaKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_pragma_keyword(l: usize, r: usize, _source: &str) -> YulPragmaKeyword {
-    YulPragmaKeyword { l, r }
+pub fn new_yul_pragma_keyword(range: Range<usize>, _source: &str) -> YulPragmaKeyword {
+    YulPragmaKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulPrivateKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_private_keyword(l: usize, r: usize, _source: &str) -> YulPrivateKeyword {
-    YulPrivateKeyword { l, r }
+pub fn new_yul_private_keyword(range: Range<usize>, _source: &str) -> YulPrivateKeyword {
+    YulPrivateKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulPromiseKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_promise_keyword(l: usize, r: usize, _source: &str) -> YulPromiseKeyword {
-    YulPromiseKeyword { l, r }
+pub fn new_yul_promise_keyword(range: Range<usize>, _source: &str) -> YulPromiseKeyword {
+    YulPromiseKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulPublicKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_public_keyword(l: usize, r: usize, _source: &str) -> YulPublicKeyword {
-    YulPublicKeyword { l, r }
+pub fn new_yul_public_keyword(range: Range<usize>, _source: &str) -> YulPublicKeyword {
+    YulPublicKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulPureKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_pure_keyword(l: usize, r: usize, _source: &str) -> YulPureKeyword {
-    YulPureKeyword { l, r }
+pub fn new_yul_pure_keyword(range: Range<usize>, _source: &str) -> YulPureKeyword {
+    YulPureKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulReceiveKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_receive_keyword(l: usize, r: usize, _source: &str) -> YulReceiveKeyword {
-    YulReceiveKeyword { l, r }
+pub fn new_yul_receive_keyword(range: Range<usize>, _source: &str) -> YulReceiveKeyword {
+    YulReceiveKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulReferenceKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_reference_keyword(l: usize, r: usize, _source: &str) -> YulReferenceKeyword {
-    YulReferenceKeyword { l, r }
+pub fn new_yul_reference_keyword(range: Range<usize>, _source: &str) -> YulReferenceKeyword {
+    YulReferenceKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulRelocatableKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_relocatable_keyword(l: usize, r: usize, _source: &str) -> YulRelocatableKeyword {
-    YulRelocatableKeyword { l, r }
+pub fn new_yul_relocatable_keyword(range: Range<usize>, _source: &str) -> YulRelocatableKeyword {
+    YulRelocatableKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulReturnsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_returns_keyword(l: usize, r: usize, _source: &str) -> YulReturnsKeyword {
-    YulReturnsKeyword { l, r }
+pub fn new_yul_returns_keyword(range: Range<usize>, _source: &str) -> YulReturnsKeyword {
+    YulReturnsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulSealedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_sealed_keyword(l: usize, r: usize, _source: &str) -> YulSealedKeyword {
-    YulSealedKeyword { l, r }
+pub fn new_yul_sealed_keyword(range: Range<usize>, _source: &str) -> YulSealedKeyword {
+    YulSealedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulSecondsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_seconds_keyword(l: usize, r: usize, _source: &str) -> YulSecondsKeyword {
-    YulSecondsKeyword { l, r }
+pub fn new_yul_seconds_keyword(range: Range<usize>, _source: &str) -> YulSecondsKeyword {
+    YulSecondsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulSizeOfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_size_of_keyword(l: usize, r: usize, _source: &str) -> YulSizeOfKeyword {
-    YulSizeOfKeyword { l, r }
+pub fn new_yul_size_of_keyword(range: Range<usize>, _source: &str) -> YulSizeOfKeyword {
+    YulSizeOfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulStaticKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_static_keyword(l: usize, r: usize, _source: &str) -> YulStaticKeyword {
-    YulStaticKeyword { l, r }
+pub fn new_yul_static_keyword(range: Range<usize>, _source: &str) -> YulStaticKeyword {
+    YulStaticKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulStorageKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_storage_keyword(l: usize, r: usize, _source: &str) -> YulStorageKeyword {
-    YulStorageKeyword { l, r }
+pub fn new_yul_storage_keyword(range: Range<usize>, _source: &str) -> YulStorageKeyword {
+    YulStorageKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulStringKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_string_keyword(l: usize, r: usize, _source: &str) -> YulStringKeyword {
-    YulStringKeyword { l, r }
+pub fn new_yul_string_keyword(range: Range<usize>, _source: &str) -> YulStringKeyword {
+    YulStringKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulStructKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_struct_keyword(l: usize, r: usize, _source: &str) -> YulStructKeyword {
-    YulStructKeyword { l, r }
+pub fn new_yul_struct_keyword(range: Range<usize>, _source: &str) -> YulStructKeyword {
+    YulStructKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulSuperKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_super_keyword(l: usize, r: usize, _source: &str) -> YulSuperKeyword {
-    YulSuperKeyword { l, r }
+pub fn new_yul_super_keyword(range: Range<usize>, _source: &str) -> YulSuperKeyword {
+    YulSuperKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulSupportsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_supports_keyword(l: usize, r: usize, _source: &str) -> YulSupportsKeyword {
-    YulSupportsKeyword { l, r }
+pub fn new_yul_supports_keyword(range: Range<usize>, _source: &str) -> YulSupportsKeyword {
+    YulSupportsKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulSwitchKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_switch_keyword(l: usize, r: usize, _source: &str) -> YulSwitchKeyword {
-    YulSwitchKeyword { l, r }
+pub fn new_yul_switch_keyword(range: Range<usize>, _source: &str) -> YulSwitchKeyword {
+    YulSwitchKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulSzaboKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_szabo_keyword(l: usize, r: usize, _source: &str) -> YulSzaboKeyword {
-    YulSzaboKeyword { l, r }
+pub fn new_yul_szabo_keyword(range: Range<usize>, _source: &str) -> YulSzaboKeyword {
+    YulSzaboKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulThisKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_this_keyword(l: usize, r: usize, _source: &str) -> YulThisKeyword {
-    YulThisKeyword { l, r }
+pub fn new_yul_this_keyword(range: Range<usize>, _source: &str) -> YulThisKeyword {
+    YulThisKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulThrowKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_throw_keyword(l: usize, r: usize, _source: &str) -> YulThrowKeyword {
-    YulThrowKeyword { l, r }
+pub fn new_yul_throw_keyword(range: Range<usize>, _source: &str) -> YulThrowKeyword {
+    YulThrowKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulTrueKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_true_keyword(l: usize, r: usize, _source: &str) -> YulTrueKeyword {
-    YulTrueKeyword { l, r }
+pub fn new_yul_true_keyword(range: Range<usize>, _source: &str) -> YulTrueKeyword {
+    YulTrueKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulTryKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_try_keyword(l: usize, r: usize, _source: &str) -> YulTryKeyword {
-    YulTryKeyword { l, r }
+pub fn new_yul_try_keyword(range: Range<usize>, _source: &str) -> YulTryKeyword {
+    YulTryKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulTypeDefKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_type_def_keyword(l: usize, r: usize, _source: &str) -> YulTypeDefKeyword {
-    YulTypeDefKeyword { l, r }
+pub fn new_yul_type_def_keyword(range: Range<usize>, _source: &str) -> YulTypeDefKeyword {
+    YulTypeDefKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulTypeKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_type_keyword(l: usize, r: usize, _source: &str) -> YulTypeKeyword {
-    YulTypeKeyword { l, r }
+pub fn new_yul_type_keyword(range: Range<usize>, _source: &str) -> YulTypeKeyword {
+    YulTypeKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulTypeOfKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_type_of_keyword(l: usize, r: usize, _source: &str) -> YulTypeOfKeyword {
-    YulTypeOfKeyword { l, r }
+pub fn new_yul_type_of_keyword(range: Range<usize>, _source: &str) -> YulTypeOfKeyword {
+    YulTypeOfKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulUfixedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_ufixed_keyword(l: usize, r: usize, _source: &str) -> YulUfixedKeyword {
-    YulUfixedKeyword { l, r }
+pub fn new_yul_ufixed_keyword(range: Range<usize>, _source: &str) -> YulUfixedKeyword {
+    YulUfixedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulUintKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_uint_keyword(l: usize, r: usize, _source: &str) -> YulUintKeyword {
-    YulUintKeyword { l, r }
+pub fn new_yul_uint_keyword(range: Range<usize>, _source: &str) -> YulUintKeyword {
+    YulUintKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulUncheckedKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_unchecked_keyword(l: usize, r: usize, _source: &str) -> YulUncheckedKeyword {
-    YulUncheckedKeyword { l, r }
+pub fn new_yul_unchecked_keyword(range: Range<usize>, _source: &str) -> YulUncheckedKeyword {
+    YulUncheckedKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulUsingKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_using_keyword(l: usize, r: usize, _source: &str) -> YulUsingKeyword {
-    YulUsingKeyword { l, r }
+pub fn new_yul_using_keyword(range: Range<usize>, _source: &str) -> YulUsingKeyword {
+    YulUsingKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulVarKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_var_keyword(l: usize, r: usize, _source: &str) -> YulVarKeyword {
-    YulVarKeyword { l, r }
+pub fn new_yul_var_keyword(range: Range<usize>, _source: &str) -> YulVarKeyword {
+    YulVarKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulViewKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_view_keyword(l: usize, r: usize, _source: &str) -> YulViewKeyword {
-    YulViewKeyword { l, r }
+pub fn new_yul_view_keyword(range: Range<usize>, _source: &str) -> YulViewKeyword {
+    YulViewKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulVirtualKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_virtual_keyword(l: usize, r: usize, _source: &str) -> YulVirtualKeyword {
-    YulVirtualKeyword { l, r }
+pub fn new_yul_virtual_keyword(range: Range<usize>, _source: &str) -> YulVirtualKeyword {
+    YulVirtualKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulWeeksKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_weeks_keyword(l: usize, r: usize, _source: &str) -> YulWeeksKeyword {
-    YulWeeksKeyword { l, r }
+pub fn new_yul_weeks_keyword(range: Range<usize>, _source: &str) -> YulWeeksKeyword {
+    YulWeeksKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulWeiKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_wei_keyword(l: usize, r: usize, _source: &str) -> YulWeiKeyword {
-    YulWeiKeyword { l, r }
+pub fn new_yul_wei_keyword(range: Range<usize>, _source: &str) -> YulWeiKeyword {
+    YulWeiKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulWhileKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_while_keyword(l: usize, r: usize, _source: &str) -> YulWhileKeyword {
-    YulWhileKeyword { l, r }
+pub fn new_yul_while_keyword(range: Range<usize>, _source: &str) -> YulWhileKeyword {
+    YulWhileKeyword { range }
 }
 
 #[derive(Debug)]
 pub struct YulYearsKeyword {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
 }
 
-pub fn new_yul_years_keyword(l: usize, r: usize, _source: &str) -> YulYearsKeyword {
-    YulYearsKeyword { l, r }
+pub fn new_yul_years_keyword(range: Range<usize>, _source: &str) -> YulYearsKeyword {
+    YulYearsKeyword { range }
 }
