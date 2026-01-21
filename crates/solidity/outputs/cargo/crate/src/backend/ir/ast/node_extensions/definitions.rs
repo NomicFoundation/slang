@@ -24,9 +24,10 @@ use crate::backend::ir::ast::{
     create_variable_declaration_statement, create_yul_function_definition, create_yul_label,
 };
 use crate::backend::{binder, SemanticAnalysis};
-use crate::cst::NodeId;
+use crate::cst::{NodeId, TextIndex};
 
 // __SLANG_DEFINITION_TYPES__ keep in sync with binder
+#[derive(Clone)]
 pub enum Definition {
     Constant(ConstantDefinition),
     Contract(ContractDefinition),
@@ -54,13 +55,13 @@ pub enum Definition {
 }
 
 impl Definition {
-    pub(crate) fn create(definition_id: NodeId, semantic: &Rc<SemanticAnalysis>) -> Self {
-        let definition = semantic
-            .binder()
-            .find_definition_by_id(definition_id)
-            .expect("definition_id references a definition node");
+    pub(crate) fn try_create(
+        definition_id: NodeId,
+        semantic: &Rc<SemanticAnalysis>,
+    ) -> Option<Self> {
+        let definition = semantic.binder().find_definition_by_id(definition_id)?;
 
-        match definition {
+        let definition = match definition {
             binder::Definition::Constant(constant_definition) => Self::Constant(
                 create_constant_definition(&constant_definition.ir_node, semantic),
             ),
@@ -133,6 +134,140 @@ impl Definition {
             binder::Definition::YulVariable(yul_variable_definition) => Self::YulVariable(
                 create_yul_identifier(&yul_variable_definition.ir_node, semantic),
             ),
+        };
+        Some(definition)
+    }
+
+    pub fn node_id(&self) -> NodeId {
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.node_id(),
+            Definition::Contract(contract_definition) => contract_definition.node_id(),
+            Definition::Enum(enum_definition) => enum_definition.node_id(),
+            Definition::EnumMember(identifier) => identifier.node_id(),
+            Definition::Error(error_definition) => error_definition.node_id(),
+            Definition::Event(event_definition) => event_definition.node_id(),
+            Definition::Function(function_definition) => function_definition.node_id(),
+            Definition::Import(path_import) => path_import.node_id(),
+            Definition::ImportedSymbol(import_deconstruction_symbol) => {
+                import_deconstruction_symbol.node_id()
+            }
+            Definition::Interface(interface_definition) => interface_definition.node_id(),
+            Definition::Library(library_definition) => library_definition.node_id(),
+            Definition::Modifier(function_definition) => function_definition.node_id(),
+            Definition::Parameter(parameter) => parameter.node_id(),
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.node_id()
+            }
+            Definition::Struct(struct_definition) => struct_definition.node_id(),
+            Definition::StructMember(struct_member) => struct_member.node_id(),
+            Definition::TypeParameter(parameter) => parameter.node_id(),
+            Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                user_defined_value_type_definition.node_id()
+            }
+            Definition::Variable(variable_declaration_statement) => {
+                variable_declaration_statement.node_id()
+            }
+            Definition::YulFunction(yul_function_definition) => yul_function_definition.node_id(),
+            Definition::YulLabel(yul_label) => yul_label.node_id(),
+            Definition::YulParameter(identifier) => identifier.node_id(),
+            Definition::YulVariable(identifier) => identifier.node_id(),
+        }
+    }
+
+    pub fn identifier(&self) -> Identifier {
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.name(),
+            Definition::Contract(contract_definition) => contract_definition.name(),
+            Definition::Enum(enum_definition) => enum_definition.name(),
+            Definition::EnumMember(identifier) => Rc::clone(identifier),
+            Definition::Error(error_definition) => error_definition.name(),
+            Definition::Event(event_definition) => event_definition.name(),
+            Definition::Function(function_definition) => {
+                // functions that are definitions always have a name
+                function_definition
+                    .name()
+                    .expect("function definitions have a name")
+            }
+            Definition::Import(path_import) => {
+                // imports that are definition always have a name
+                path_import
+                    .alias()
+                    .expect("path import definitions have a name")
+            }
+            Definition::ImportedSymbol(import_deconstruction_symbol) => {
+                import_deconstruction_symbol
+                    .alias()
+                    .unwrap_or_else(|| import_deconstruction_symbol.name())
+            }
+            Definition::Interface(interface_definition) => interface_definition.name(),
+            Definition::Library(library_definition) => library_definition.name(),
+            Definition::Modifier(function_definition) => {
+                // modifiers always have a name
+                function_definition.name().expect("modifiers have a name")
+            }
+            Definition::Parameter(parameter) => {
+                // parameters that are definitions always have a name
+                parameter.name().expect("parameter definitions have a name")
+            }
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.name()
+            }
+            Definition::Struct(struct_definition) => struct_definition.name(),
+            Definition::StructMember(struct_member) => struct_member.name(),
+            Definition::TypeParameter(parameter) => {
+                // parameters that are definitions always have a name
+                parameter
+                    .name()
+                    .expect("type parameter definitions have a name")
+            }
+            Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                user_defined_value_type_definition.name()
+            }
+            Definition::Variable(variable_declaration_statement) => {
+                variable_declaration_statement.name()
+            }
+            Definition::YulFunction(yul_function_definition) => yul_function_definition.name(),
+            Definition::YulLabel(yul_label) => yul_label.label(),
+            Definition::YulParameter(identifier) => Rc::clone(identifier),
+            Definition::YulVariable(identifier) => Rc::clone(identifier),
+        }
+    }
+
+    pub fn text_offset(&self) -> TextIndex {
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.text_offset(),
+            Definition::Contract(contract_definition) => contract_definition.text_offset(),
+            Definition::Enum(enum_definition) => enum_definition.text_offset(),
+            Definition::EnumMember(identifier) => identifier.text_offset(),
+            Definition::Error(error_definition) => error_definition.text_offset(),
+            Definition::Event(event_definition) => event_definition.text_offset(),
+            Definition::Function(function_definition) => function_definition.text_offset(),
+            Definition::Import(path_import) => path_import.text_offset(),
+            Definition::ImportedSymbol(import_deconstruction_symbol) => {
+                import_deconstruction_symbol.text_offset()
+            }
+            Definition::Interface(interface_definition) => interface_definition.text_offset(),
+            Definition::Library(library_definition) => library_definition.text_offset(),
+            Definition::Modifier(function_definition) => function_definition.text_offset(),
+            Definition::Parameter(parameter) => parameter.text_offset(),
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.text_offset()
+            }
+            Definition::Struct(struct_definition) => struct_definition.text_offset(),
+            Definition::StructMember(struct_member) => struct_member.text_offset(),
+            Definition::TypeParameter(parameter) => parameter.text_offset(),
+            Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                user_defined_value_type_definition.text_offset()
+            }
+            Definition::Variable(variable_declaration_statement) => {
+                variable_declaration_statement.text_offset()
+            }
+            Definition::YulFunction(yul_function_definition) => {
+                yul_function_definition.text_offset()
+            }
+            Definition::YulLabel(yul_label) => yul_label.text_offset(),
+            Definition::YulParameter(identifier) => identifier.text_offset(),
+            Definition::YulVariable(identifier) => identifier.text_offset(),
         }
     }
 
@@ -181,6 +316,9 @@ macro_rules! define_references_method {
             impl [<$type Struct>] {
                 pub fn references(&self) -> Vec<Reference> {
                     self.semantic.references_binding_to(self.ir_node.node_id)
+                }
+                pub fn as_definition(&self) -> Option<Definition> {
+                    Definition::try_create(self.ir_node.node_id, &self.semantic)
                 }
             }
         }

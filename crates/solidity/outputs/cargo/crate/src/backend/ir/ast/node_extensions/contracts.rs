@@ -42,7 +42,8 @@ impl ContractDefinitionStruct {
         base_node_ids
             .iter()
             .map(|node_id| {
-                let base_definition = Rc::new(Definition::create(*node_id, &self.semantic));
+                let base_definition =
+                    Definition::try_create(*node_id, &self.semantic).expect("node is a definition");
                 ContractBase::from_definition(&base_definition)
                     .expect("Linearised base is either a contract or interface")
             })

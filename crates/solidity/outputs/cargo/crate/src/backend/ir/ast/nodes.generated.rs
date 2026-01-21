@@ -35,6 +35,10 @@ pub(crate) fn create_source_unit(
 }
 
 impl SourceUnitStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn members(&self) -> SourceUnitMembers {
         create_source_unit_members(&self.ir_node.members, &self.semantic)
     }
@@ -64,6 +68,10 @@ pub(crate) fn create_pragma_directive(
 }
 
 impl PragmaDirectiveStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn pragma(&self) -> Pragma {
         create_pragma(&self.ir_node.pragma, &self.semantic)
     }
@@ -93,6 +101,10 @@ pub(crate) fn create_abicoder_pragma(
 }
 
 impl AbicoderPragmaStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn version(&self) -> AbicoderVersion {
         create_abicoder_version(&self.ir_node.version, &self.semantic)
     }
@@ -122,6 +134,10 @@ pub(crate) fn create_experimental_pragma(
 }
 
 impl ExperimentalPragmaStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn feature(&self) -> ExperimentalFeature {
         create_experimental_feature(&self.ir_node.feature, &self.semantic)
     }
@@ -151,6 +167,10 @@ pub(crate) fn create_version_pragma(
 }
 
 impl VersionPragmaStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn sets(&self) -> VersionExpressionSets {
         create_version_expression_sets(&self.ir_node.sets, &self.semantic)
     }
@@ -180,6 +200,10 @@ pub(crate) fn create_version_range(
 }
 
 impl VersionRangeStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn start(&self) -> VersionLiteral {
         create_version_literal(&self.ir_node.start, &self.semantic)
     }
@@ -213,6 +237,10 @@ pub(crate) fn create_version_term(
 }
 
 impl VersionTermStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operator(&self) -> Option<VersionOperator> {
         self.ir_node
             .operator
@@ -249,6 +277,10 @@ pub(crate) fn create_path_import(
 }
 
 impl PathImportStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn alias(&self) -> Option<Identifier> {
         self.ir_node
             .alias
@@ -285,6 +317,10 @@ pub(crate) fn create_import_deconstruction(
 }
 
 impl ImportDeconstructionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn symbols(&self) -> ImportDeconstructionSymbols {
         create_import_deconstruction_symbols(&self.ir_node.symbols, &self.semantic)
     }
@@ -318,6 +354,10 @@ pub(crate) fn create_import_deconstruction_symbol(
 }
 
 impl ImportDeconstructionSymbolStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -354,6 +394,10 @@ pub(crate) fn create_using_directive(
 }
 
 impl UsingDirectiveStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn clause(&self) -> UsingClause {
         create_using_clause(&self.ir_node.clause, &self.semantic)
     }
@@ -391,6 +435,10 @@ pub(crate) fn create_using_deconstruction(
 }
 
 impl UsingDeconstructionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn symbols(&self) -> UsingDeconstructionSymbols {
         create_using_deconstruction_symbols(&self.ir_node.symbols, &self.semantic)
     }
@@ -420,6 +468,10 @@ pub(crate) fn create_using_deconstruction_symbol(
 }
 
 impl UsingDeconstructionSymbolStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> IdentifierPath {
         create_identifier_path(&self.ir_node.name, &self.semantic)
     }
@@ -456,6 +508,10 @@ pub(crate) fn create_contract_definition(
 }
 
 impl ContractDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn abstract_keyword(&self) -> bool {
         self.ir_node.abstract_keyword
     }
@@ -504,6 +560,10 @@ pub(crate) fn create_inheritance_type(
 }
 
 impl InheritanceTypeStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn type_name(&self) -> IdentifierPath {
         create_identifier_path(&self.ir_node.type_name, &self.semantic)
     }
@@ -540,6 +600,10 @@ pub(crate) fn create_interface_definition(
 }
 
 impl InterfaceDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -580,6 +644,10 @@ pub(crate) fn create_library_definition(
 }
 
 impl LibraryDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -613,6 +681,10 @@ pub(crate) fn create_struct_definition(
 }
 
 impl StructDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -646,6 +718,10 @@ pub(crate) fn create_struct_member(
 }
 
 impl StructMemberStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn type_name(&self) -> TypeName {
         create_type_name(&self.ir_node.type_name, &self.semantic)
     }
@@ -679,6 +755,10 @@ pub(crate) fn create_enum_definition(
 }
 
 impl EnumDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -712,6 +792,10 @@ pub(crate) fn create_constant_definition(
 }
 
 impl ConstantDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn type_name(&self) -> TypeName {
         create_type_name(&self.ir_node.type_name, &self.semantic)
     }
@@ -759,6 +843,10 @@ pub(crate) fn create_state_variable_definition(
 }
 
 impl StateVariableDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn type_name(&self) -> TypeName {
         create_type_name(&self.ir_node.type_name, &self.semantic)
     }
@@ -814,6 +902,10 @@ pub(crate) fn create_function_definition(
 }
 
 impl FunctionDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn parameters(&self) -> Parameters {
         create_parameters(&self.ir_node.parameters, &self.semantic)
     }
@@ -891,6 +983,10 @@ pub(crate) fn create_parameter(
 }
 
 impl ParameterStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn type_name(&self) -> TypeName {
         create_type_name(&self.ir_node.type_name, &self.semantic)
     }
@@ -938,6 +1034,10 @@ pub(crate) fn create_override_specifier(
 }
 
 impl OverrideSpecifierStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn overridden(&self) -> Option<OverridePaths> {
         self.ir_node
             .overridden
@@ -970,6 +1070,10 @@ pub(crate) fn create_modifier_invocation(
 }
 
 impl ModifierInvocationStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> IdentifierPath {
         create_identifier_path(&self.ir_node.name, &self.semantic)
     }
@@ -1006,6 +1110,10 @@ pub(crate) fn create_event_definition(
 }
 
 impl EventDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -1043,6 +1151,10 @@ pub(crate) fn create_user_defined_value_type_definition(
 }
 
 impl UserDefinedValueTypeDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -1076,6 +1188,10 @@ pub(crate) fn create_error_definition(
 }
 
 impl ErrorDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -1109,6 +1225,10 @@ pub(crate) fn create_array_type_name(
 }
 
 impl ArrayTypeNameStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operand(&self) -> TypeName {
         create_type_name(&self.ir_node.operand, &self.semantic)
     }
@@ -1145,6 +1265,10 @@ pub(crate) fn create_function_type(
 }
 
 impl FunctionTypeStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn parameters(&self) -> Parameters {
         create_parameters(&self.ir_node.parameters, &self.semantic)
     }
@@ -1189,6 +1313,10 @@ pub(crate) fn create_mapping_type(
 }
 
 impl MappingTypeStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn key_type(&self) -> Parameter {
         create_parameter(&self.ir_node.key_type, &self.semantic)
     }
@@ -1222,6 +1350,10 @@ pub(crate) fn create_address_type(
 }
 
 impl AddressTypeStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn payable_keyword(&self) -> bool {
         self.ir_node.payable_keyword
     }
@@ -1248,6 +1380,10 @@ pub(crate) fn create_block(ir_node: &input_ir::Block, semantic: &Rc<SemanticAnal
 }
 
 impl BlockStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn statements(&self) -> Statements {
         create_statements(&self.ir_node.statements, &self.semantic)
     }
@@ -1277,6 +1413,10 @@ pub(crate) fn create_unchecked_block(
 }
 
 impl UncheckedBlockStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn block(&self) -> Block {
         create_block(&self.ir_node.block, &self.semantic)
     }
@@ -1306,6 +1446,10 @@ pub(crate) fn create_expression_statement(
 }
 
 impl ExpressionStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn expression(&self) -> Expression {
         create_expression(&self.ir_node.expression, &self.semantic)
     }
@@ -1335,6 +1479,10 @@ pub(crate) fn create_assembly_statement(
 }
 
 impl AssemblyStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn body(&self) -> YulBlock {
         create_yul_block(&self.ir_node.body, &self.semantic)
     }
@@ -1372,6 +1520,10 @@ pub(crate) fn create_tuple_deconstruction_statement(
 }
 
 impl TupleDeconstructionStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn expression(&self) -> Expression {
         create_expression(&self.ir_node.expression, &self.semantic)
     }
@@ -1405,6 +1557,10 @@ pub(crate) fn create_variable_declaration_statement(
 }
 
 impl VariableDeclarationStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn storage_location(&self) -> Option<StorageLocation> {
         self.ir_node
             .storage_location
@@ -1455,6 +1611,10 @@ pub(crate) fn create_if_statement(
 }
 
 impl IfStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn condition(&self) -> Expression {
         create_expression(&self.ir_node.condition, &self.semantic)
     }
@@ -1495,6 +1655,10 @@ pub(crate) fn create_for_statement(
 }
 
 impl ForStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn initialization(&self) -> ForStatementInitialization {
         create_for_statement_initialization(&self.ir_node.initialization, &self.semantic)
     }
@@ -1539,6 +1703,10 @@ pub(crate) fn create_while_statement(
 }
 
 impl WhileStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn condition(&self) -> Expression {
         create_expression(&self.ir_node.condition, &self.semantic)
     }
@@ -1572,6 +1740,10 @@ pub(crate) fn create_do_while_statement(
 }
 
 impl DoWhileStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn body(&self) -> Statement {
         create_statement(&self.ir_node.body, &self.semantic)
     }
@@ -1605,6 +1777,10 @@ pub(crate) fn create_continue_statement(
 }
 
 impl ContinueStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn text_offset(&self) -> TextIndex {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
@@ -1630,6 +1806,10 @@ pub(crate) fn create_break_statement(
 }
 
 impl BreakStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn text_offset(&self) -> TextIndex {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
@@ -1655,6 +1835,10 @@ pub(crate) fn create_return_statement(
 }
 
 impl ReturnStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn expression(&self) -> Option<Expression> {
         self.ir_node
             .expression
@@ -1687,6 +1871,10 @@ pub(crate) fn create_emit_statement(
 }
 
 impl EmitStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn event(&self) -> IdentifierPath {
         create_identifier_path(&self.ir_node.event, &self.semantic)
     }
@@ -1720,6 +1908,10 @@ pub(crate) fn create_try_statement(
 }
 
 impl TryStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn expression(&self) -> Expression {
         create_expression(&self.ir_node.expression, &self.semantic)
     }
@@ -1764,6 +1956,10 @@ pub(crate) fn create_catch_clause(
 }
 
 impl CatchClauseStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn error(&self) -> Option<CatchClauseError> {
         self.ir_node
             .error
@@ -1800,6 +1996,10 @@ pub(crate) fn create_catch_clause_error(
 }
 
 impl CatchClauseErrorStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Option<Identifier> {
         self.ir_node
             .name
@@ -1836,6 +2036,10 @@ pub(crate) fn create_revert_statement(
 }
 
 impl RevertStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn error(&self) -> IdentifierPath {
         create_identifier_path(&self.ir_node.error, &self.semantic)
     }
@@ -1869,6 +2073,10 @@ pub(crate) fn create_throw_statement(
 }
 
 impl ThrowStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn text_offset(&self) -> TextIndex {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
@@ -1894,6 +2102,10 @@ pub(crate) fn create_assignment_expression(
 }
 
 impl AssignmentExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -1931,6 +2143,10 @@ pub(crate) fn create_conditional_expression(
 }
 
 impl ConditionalExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operand(&self) -> Expression {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
@@ -1968,6 +2184,10 @@ pub(crate) fn create_or_expression(
 }
 
 impl OrExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2001,6 +2221,10 @@ pub(crate) fn create_and_expression(
 }
 
 impl AndExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2034,6 +2258,10 @@ pub(crate) fn create_equality_expression(
 }
 
 impl EqualityExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2071,6 +2299,10 @@ pub(crate) fn create_inequality_expression(
 }
 
 impl InequalityExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2108,6 +2340,10 @@ pub(crate) fn create_bitwise_or_expression(
 }
 
 impl BitwiseOrExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2141,6 +2377,10 @@ pub(crate) fn create_bitwise_xor_expression(
 }
 
 impl BitwiseXorExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2174,6 +2414,10 @@ pub(crate) fn create_bitwise_and_expression(
 }
 
 impl BitwiseAndExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2207,6 +2451,10 @@ pub(crate) fn create_shift_expression(
 }
 
 impl ShiftExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2244,6 +2492,10 @@ pub(crate) fn create_additive_expression(
 }
 
 impl AdditiveExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2281,6 +2533,10 @@ pub(crate) fn create_multiplicative_expression(
 }
 
 impl MultiplicativeExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2318,6 +2574,10 @@ pub(crate) fn create_exponentiation_expression(
 }
 
 impl ExponentiationExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn left_operand(&self) -> Expression {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
@@ -2355,6 +2615,10 @@ pub(crate) fn create_postfix_expression(
 }
 
 impl PostfixExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operand(&self) -> Expression {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
@@ -2388,6 +2652,10 @@ pub(crate) fn create_prefix_expression(
 }
 
 impl PrefixExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operator(&self) -> Rc<TerminalNode> {
         Rc::clone(&self.ir_node.operator)
     }
@@ -2421,6 +2689,10 @@ pub(crate) fn create_function_call_expression(
 }
 
 impl FunctionCallExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operand(&self) -> Expression {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
@@ -2454,6 +2726,10 @@ pub(crate) fn create_call_options_expression(
 }
 
 impl CallOptionsExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operand(&self) -> Expression {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
@@ -2487,6 +2763,10 @@ pub(crate) fn create_member_access_expression(
 }
 
 impl MemberAccessExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operand(&self) -> Expression {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
@@ -2520,6 +2800,10 @@ pub(crate) fn create_index_access_expression(
 }
 
 impl IndexAccessExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operand(&self) -> Expression {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
@@ -2563,6 +2847,10 @@ pub(crate) fn create_named_argument(
 }
 
 impl NamedArgumentStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -2596,6 +2884,10 @@ pub(crate) fn create_type_expression(
 }
 
 impl TypeExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn type_name(&self) -> TypeName {
         create_type_name(&self.ir_node.type_name, &self.semantic)
     }
@@ -2625,6 +2917,10 @@ pub(crate) fn create_new_expression(
 }
 
 impl NewExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn type_name(&self) -> TypeName {
         create_type_name(&self.ir_node.type_name, &self.semantic)
     }
@@ -2654,6 +2950,10 @@ pub(crate) fn create_tuple_expression(
 }
 
 impl TupleExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn items(&self) -> TupleValues {
         create_tuple_values(&self.ir_node.items, &self.semantic)
     }
@@ -2683,6 +2983,10 @@ pub(crate) fn create_tuple_value(
 }
 
 impl TupleValueStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn expression(&self) -> Option<Expression> {
         self.ir_node
             .expression
@@ -2715,6 +3019,10 @@ pub(crate) fn create_array_expression(
 }
 
 impl ArrayExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn items(&self) -> ArrayValues {
         create_array_values(&self.ir_node.items, &self.semantic)
     }
@@ -2744,6 +3052,10 @@ pub(crate) fn create_hex_number_expression(
 }
 
 impl HexNumberExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn literal(&self) -> Rc<TerminalNode> {
         Rc::clone(&self.ir_node.literal)
     }
@@ -2780,6 +3092,10 @@ pub(crate) fn create_decimal_number_expression(
 }
 
 impl DecimalNumberExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn literal(&self) -> Rc<TerminalNode> {
         Rc::clone(&self.ir_node.literal)
     }
@@ -2816,6 +3132,10 @@ pub(crate) fn create_yul_block(
 }
 
 impl YulBlockStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn statements(&self) -> YulStatements {
         create_yul_statements(&self.ir_node.statements, &self.semantic)
     }
@@ -2845,6 +3165,10 @@ pub(crate) fn create_yul_function_definition(
 }
 
 impl YulFunctionDefinitionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn name(&self) -> YulIdentifier {
         create_yul_identifier(&self.ir_node.name, &self.semantic)
     }
@@ -2889,6 +3213,10 @@ pub(crate) fn create_yul_variable_declaration_statement(
 }
 
 impl YulVariableDeclarationStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn variables(&self) -> YulVariableNames {
         create_yul_variable_names(&self.ir_node.variables, &self.semantic)
     }
@@ -2925,6 +3253,10 @@ pub(crate) fn create_yul_variable_declaration_value(
 }
 
 impl YulVariableDeclarationValueStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn assignment(&self) -> YulAssignmentOperator {
         create_yul_assignment_operator(&self.ir_node.assignment, &self.semantic)
     }
@@ -2958,6 +3290,10 @@ pub(crate) fn create_yul_variable_assignment_statement(
 }
 
 impl YulVariableAssignmentStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn variables(&self) -> YulPaths {
         create_yul_paths(&self.ir_node.variables, &self.semantic)
     }
@@ -2995,6 +3331,10 @@ pub(crate) fn create_yul_colon_and_equal(
 }
 
 impl YulColonAndEqualStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn text_offset(&self) -> TextIndex {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
@@ -3020,6 +3360,10 @@ pub(crate) fn create_yul_stack_assignment_statement(
 }
 
 impl YulStackAssignmentStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn assignment(&self) -> YulStackAssignmentOperator {
         create_yul_stack_assignment_operator(&self.ir_node.assignment, &self.semantic)
     }
@@ -3053,6 +3397,10 @@ pub(crate) fn create_yul_equal_and_colon(
 }
 
 impl YulEqualAndColonStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn text_offset(&self) -> TextIndex {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
@@ -3078,6 +3426,10 @@ pub(crate) fn create_yul_if_statement(
 }
 
 impl YulIfStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn condition(&self) -> YulExpression {
         create_yul_expression(&self.ir_node.condition, &self.semantic)
     }
@@ -3111,6 +3463,10 @@ pub(crate) fn create_yul_for_statement(
 }
 
 impl YulForStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn initialization(&self) -> YulBlock {
         create_yul_block(&self.ir_node.initialization, &self.semantic)
     }
@@ -3152,6 +3508,10 @@ pub(crate) fn create_yul_switch_statement(
 }
 
 impl YulSwitchStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn expression(&self) -> YulExpression {
         create_yul_expression(&self.ir_node.expression, &self.semantic)
     }
@@ -3185,6 +3545,10 @@ pub(crate) fn create_yul_default_case(
 }
 
 impl YulDefaultCaseStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn body(&self) -> YulBlock {
         create_yul_block(&self.ir_node.body, &self.semantic)
     }
@@ -3214,6 +3578,10 @@ pub(crate) fn create_yul_value_case(
 }
 
 impl YulValueCaseStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn value(&self) -> YulLiteral {
         create_yul_literal(&self.ir_node.value, &self.semantic)
     }
@@ -3247,6 +3615,10 @@ pub(crate) fn create_yul_leave_statement(
 }
 
 impl YulLeaveStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn text_offset(&self) -> TextIndex {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
@@ -3272,6 +3644,10 @@ pub(crate) fn create_yul_break_statement(
 }
 
 impl YulBreakStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn text_offset(&self) -> TextIndex {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
@@ -3297,6 +3673,10 @@ pub(crate) fn create_yul_continue_statement(
 }
 
 impl YulContinueStatementStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn text_offset(&self) -> TextIndex {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
@@ -3322,6 +3702,10 @@ pub(crate) fn create_yul_label(
 }
 
 impl YulLabelStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn label(&self) -> YulIdentifier {
         create_yul_identifier(&self.ir_node.label, &self.semantic)
     }
@@ -3351,6 +3735,10 @@ pub(crate) fn create_yul_function_call_expression(
 }
 
 impl YulFunctionCallExpressionStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.node_id
+    }
+
     pub fn operand(&self) -> YulExpression {
         create_yul_expression(&self.ir_node.operand, &self.semantic)
     }
