@@ -1,5 +1,5 @@
 ---
-"@nomicfoundation/slang": minor
+"@nomicfoundation/slang": patch
 ---
 
-Fixed the old style revert calls (`revert("oops!")`) to be parsed as a normal function call rather than a `revert` statement.
+Fixed the old style revert calls (`revert("oops!")`) to be parsed as a `FunctionCallExpression` rather than a `RevertStatement`.
