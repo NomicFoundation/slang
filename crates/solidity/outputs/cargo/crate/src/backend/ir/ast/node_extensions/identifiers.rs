@@ -35,9 +35,9 @@ impl IdentifierStruct {
             .is_some()
     }
 
-    // Attempts to resolve the identifier to a definition, following symbol
-    // aliases (import deconstructions). This only makes sense if
-    // `is_reference()` is true.
+    /// Attempts to resolve the identifier to a definition, following symbol
+    /// aliases (import deconstructions). This only makes sense if
+    /// `is_reference()` is true.
     pub fn resolve_to_definition(&self) -> Option<Definition> {
         let definition_id = self
             .semantic
