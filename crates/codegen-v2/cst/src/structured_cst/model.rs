@@ -17,7 +17,7 @@ use serde::ser::SerializeMap;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
-pub struct IrModel {
+pub struct StructuredCstModel {
     /// Terminal nodes and whether they are unique or their value depends on the
     /// content.
     pub terminals: BTreeMap<model::Identifier, bool>,
@@ -109,9 +109,9 @@ impl Serialize for NodeType {
 }
 
 // Construction
-impl IrModel {
+impl StructuredCstModel {
     pub fn from_language(language: &model::Language) -> Self {
-        let builder = IrModelBuilder::create(language);
+        let builder = StructuredCstModelBuilder::create(language);
 
         Self {
             terminals: builder.terminals,
@@ -131,14 +131,14 @@ impl IrModel {
     }
 }
 
-struct IrModelBuilder {
+struct StructuredCstModelBuilder {
     pub terminals: BTreeMap<model::Identifier, bool>,
     pub sequences: BTreeMap<model::Identifier, Sequence>,
     pub choices: BTreeMap<model::Identifier, Choice>,
     pub collections: BTreeMap<model::Identifier, Collection>,
 }
 
-impl IrModelBuilder {
+impl StructuredCstModelBuilder {
     fn create(language: &model::Language) -> Self {
         let mut builder = Self {
             terminals: BTreeMap::new(),
