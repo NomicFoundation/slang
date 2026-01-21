@@ -17,7 +17,7 @@ pub struct ContractAbi {
     pub name: String,
     pub file_id: String,
     pub functions: Vec<FunctionAbi>,
-    pub storage_layout: Vec<Slot>,
+    pub storage_layout: Vec<StorageItem>,
 }
 
 pub struct FunctionAbi {
@@ -35,7 +35,7 @@ pub struct FunctionParameter {
     pub r#type: String,
 }
 
-pub struct Slot {
+pub struct StorageItem {
     pub node_id: NodeId,
     pub label: String,
     pub slot: usize,
@@ -80,7 +80,7 @@ impl ContractDefinitionStruct {
         Some(functions)
     }
 
-    fn compute_storage_layout(&self) -> Option<Vec<Slot>> {
+    fn compute_storage_layout(&self) -> Option<Vec<StorageItem>> {
         let mut storage_layout = Vec::new();
         // TODO: if the contract has a specific storage layout specifier, we
         // need to compute its value and use it as the base
@@ -110,7 +110,7 @@ impl ContractDefinitionStruct {
             let slot = ptr.div(SemanticAnalysis::SLOT_SIZE);
             let offset = ptr % SemanticAnalysis::SLOT_SIZE;
             let r#type = self.semantic.type_canonical_name(variable_type_id);
-            storage_layout.push(Slot {
+            storage_layout.push(StorageItem {
                 node_id,
                 label,
                 slot,
