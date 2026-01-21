@@ -13,6 +13,7 @@ members = [
     "crates/codegen/spec",
     "crates/codegen/testing",
 
+    "crates/codegen-v2/cst",
     "crates/codegen-v2/parser",
 
     "crates/infra/cli",
