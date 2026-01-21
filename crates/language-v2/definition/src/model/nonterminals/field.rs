@@ -3,12 +3,28 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::{Identifier, VersionSpecifier};
 
+/// Error recovery for fields, this is used by the parser to recover in case of missing or unexpected tokens.
+///
+/// Note: Some nonterminals have both a terminator and delimiters, ie `DoWhileStatement`.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct FieldsErrorRecovery {
+    /// Error recovery happens at a terminator.
+    ///
+    /// For example `PragmaDirective` has a `Semicolon` terminator, that could
+    /// be used to recover from an invalid `pragma` directive like
+    /// ```
+    /// pragma soldity ^0.8.0;
+    /// ```
     #[serde(skip_serializing_if = "Option::is_none")]
     pub terminator: Option<Identifier>,
 
+    /// Error recovery happens at delimiters.
+    ///
+    /// For example `TupleExpression` has a `OpenParen` and `CloseParen` delimiters,
+    /// that could be used to recover from an invalid tuple like
+    /// `(pragma, bar)`
+    ///   ~~~~~ -> This is not a valid expression
     #[serde(skip_serializing_if = "Option::is_none")]
     pub delimiters: Option<FieldDelimiters>,
 }
@@ -29,6 +45,9 @@ pub struct FieldDelimiters {
     pub terminals_matched_acceptance_threshold: Option<u8>,
 }
 
+/// A `Field` of a nonterminal that can be either required or optional.
+///
+/// Note: `Optional` fields are versioned, `Required` fields are not.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 #[serde(tag = "type")]
