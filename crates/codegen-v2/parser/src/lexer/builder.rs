@@ -104,7 +104,13 @@ impl LexerModelBuilder {
                             kinds.insert(format!("{kind}_Reserved"));
                         }
 
-                        if !reserved.is_always() {
+                        if match reserved {
+                            VersionSpecifier::Always => false,
+                            VersionSpecifier::Never => true,
+                            VersionSpecifier::From { .. } => true,
+                            VersionSpecifier::Till { .. } => true,
+                            VersionSpecifier::Range { .. } => true,
+                        } {
                             kinds.insert(format!("{kind}_Unreserved"));
                         }
                     }

@@ -6,7 +6,6 @@ use semver::Version;
 
 language_v2_macros::compile!(Language(
     name = Tiny,
-    binding_rules_file = "tiny/bindings/rules.msgb",
     root_item = Foo,
     leading_trivia = Sequence([]),
     trailing_trivia = Sequence([]),
@@ -39,7 +38,6 @@ fn definition() {
         tiny::TinyDefinition::create(),
         Language {
             name: "Tiny".into(),
-            binding_rules_file: "tiny/bindings/rules.msgb".into(),
             root_item: "Foo".into(),
             leading_trivia: TriviaParser::Sequence { parsers: [].into() },
             trailing_trivia: TriviaParser::Sequence { parsers: [].into() },
