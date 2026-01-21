@@ -24,12 +24,12 @@ pub struct FunctionAbi {
     pub node_id: NodeId,
     pub name: Option<String>,
     pub kind: FunctionKind,
-    pub inputs: Vec<FunctionInputOutput>,
-    pub outputs: Vec<FunctionInputOutput>,
+    pub inputs: Vec<FunctionParameter>,
+    pub outputs: Vec<FunctionParameter>,
     pub state_mutability: FunctionMutability,
 }
 
-pub struct FunctionInputOutput {
+pub struct FunctionParameter {
     pub node_id: Option<NodeId>, // will be `None` if the function is a generated getter
     pub name: Option<String>,
     pub r#type: String,
@@ -170,7 +170,7 @@ impl FunctionDefinitionStruct {
 }
 
 impl ParametersStruct {
-    pub(crate) fn abi(&self) -> Option<Vec<FunctionInputOutput>> {
+    pub(crate) fn abi(&self) -> Option<Vec<FunctionParameter>> {
         let mut result = Vec::new();
         for parameter in &self.ir_nodes {
             let node_id = parameter.node_id;
@@ -178,7 +178,7 @@ impl ParametersStruct {
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
             let r#type = self.semantic.type_canonical_name(type_id);
-            result.push(FunctionInputOutput {
+            result.push(FunctionParameter {
                 node_id: Some(node_id),
                 name,
                 r#type,
@@ -262,20 +262,20 @@ impl SemanticAnalysis {
     fn extract_function_type_parameters_abi(
         &self,
         type_id: TypeId,
-    ) -> Option<(Vec<FunctionInputOutput>, Vec<FunctionInputOutput>)> {
+    ) -> Option<(Vec<FunctionParameter>, Vec<FunctionParameter>)> {
         let Type::Function(function_type) = self.types.get_type_by_id(type_id) else {
             return None;
         };
         let inputs = function_type
             .parameter_types
             .iter()
-            .map(|parameter_type_id| FunctionInputOutput {
+            .map(|parameter_type_id| FunctionParameter {
                 node_id: None,
                 name: None,
                 r#type: self.type_canonical_name(*parameter_type_id),
             })
             .collect();
-        let outputs = vec![FunctionInputOutput {
+        let outputs = vec![FunctionParameter {
             node_id: None,
             name: None,
             r#type: self.type_canonical_name(function_type.return_type),
