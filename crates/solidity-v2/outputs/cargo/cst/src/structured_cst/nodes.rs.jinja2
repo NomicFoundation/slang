@@ -85,7 +85,7 @@ use std::rc::Rc;
 //
 // Note: _source is unused on the constructor methods, but kept for uniformity with other constructors
 // and because it may be needed in the future
-{% for parent_type, unique in target.terminals %}
+{% for parent_type in target.terminals %}
 #[derive(Debug)]
   pub struct {{ parent_type }} {
     pub range: Range<usize>,

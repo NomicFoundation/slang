@@ -18,9 +18,8 @@ use serde::Serialize;
 
 #[derive(Default, Serialize)]
 pub struct StructuredCstModel {
-    /// Terminal nodes and whether they are unique or their value depends on the
-    /// content.
-    pub terminals: BTreeMap<model::Identifier, bool>,
+    /// Terminal nodes.
+    pub terminals: BTreeSet<model::Identifier>,
 
     /// Nonterminal nodes that are a fixed size group of potentially different nodes
     /// ie a struct
@@ -44,7 +43,6 @@ pub struct Sequence {
 pub enum NodeType {
     Nonterminal(model::Identifier),
     Terminal(model::Identifier),
-    UniqueTerminal(model::Identifier),
 }
 
 #[derive(Clone, Serialize)]
@@ -68,23 +66,21 @@ pub struct Collection {
 impl NodeType {
     pub fn as_identifier(&self) -> &model::Identifier {
         match self {
-            NodeType::Nonterminal(identifier)
-            | NodeType::Terminal(identifier)
-            | NodeType::UniqueTerminal(identifier) => identifier,
+            NodeType::Nonterminal(identifier) | NodeType::Terminal(identifier) => identifier,
         }
     }
 
     pub fn is_terminal(&self) -> bool {
-        matches!(self, Self::Terminal(_) | Self::UniqueTerminal(_))
+        matches!(self, Self::Terminal(_))
     }
 }
 
 impl PartialEq<model::Identifier> for NodeType {
     fn eq(&self, other: &model::Identifier) -> bool {
         match self {
-            NodeType::Nonterminal(identifier)
-            | NodeType::Terminal(identifier)
-            | NodeType::UniqueTerminal(identifier) => identifier == other,
+            NodeType::Nonterminal(identifier) | NodeType::Terminal(identifier) => {
+                identifier == other
+            }
         }
     }
 }
@@ -94,16 +90,14 @@ impl Serialize for NodeType {
     where
         S: serde::Serializer,
     {
-        let mut map = serializer.serialize_map(Some(4))?;
-        let (identifier, kind, is_terminal, is_unique) = match self {
-            NodeType::Nonterminal(identifier) => (identifier, "Nonterminal", false, false),
-            NodeType::Terminal(identifier) => (identifier, "Terminal", true, false),
-            NodeType::UniqueTerminal(identifier) => (identifier, "UniqueTerminal", true, true),
+        let mut map = serializer.serialize_map(Some(3))?;
+        let (identifier, kind, is_terminal) = match self {
+            NodeType::Nonterminal(identifier) => (identifier, "Nonterminal", false),
+            NodeType::Terminal(identifier) => (identifier, "Terminal", true),
         };
         map.serialize_entry("name", identifier)?;
         map.serialize_entry("kind", kind)?;
         map.serialize_entry("is_terminal", &is_terminal)?;
-        map.serialize_entry("is_unique", &is_unique)?;
         map.end()
     }
 }
@@ -132,7 +126,7 @@ impl StructuredCstModel {
 }
 
 struct StructuredCstModelBuilder {
-    pub terminals: BTreeMap<model::Identifier, bool>,
+    pub terminals: BTreeSet<model::Identifier>,
     pub sequences: BTreeMap<model::Identifier, Sequence>,
     pub choices: BTreeMap<model::Identifier, Choice>,
     pub collections: BTreeMap<model::Identifier, Collection>,
@@ -141,7 +135,7 @@ struct StructuredCstModelBuilder {
 impl StructuredCstModelBuilder {
     fn create(language: &model::Language) -> Self {
         let mut builder = Self {
-            terminals: BTreeMap::new(),
+            terminals: BTreeSet::new(),
             sequences: BTreeMap::new(),
             choices: BTreeMap::new(),
             collections: BTreeMap::new(),
@@ -167,13 +161,13 @@ impl StructuredCstModelBuilder {
                     // These items are nonterminals.
                 }
                 model::Item::Trivia { item } => {
-                    self.terminals.insert(item.name.clone(), false);
+                    self.terminals.insert(item.name.clone());
                 }
                 model::Item::Keyword { item } => {
-                    self.terminals.insert(item.name.clone(), item.is_unique());
+                    self.terminals.insert(item.name.clone());
                 }
                 model::Item::Token { item } => {
-                    self.terminals.insert(item.name.clone(), item.is_unique());
+                    self.terminals.insert(item.name.clone());
                 }
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
@@ -217,10 +211,10 @@ impl StructuredCstModelBuilder {
     }
 
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
-        match self.terminals.get(identifier) {
-            None => NodeType::Nonterminal(identifier.clone()),
-            Some(false) => NodeType::Terminal(identifier.clone()),
-            Some(true) => NodeType::UniqueTerminal(identifier.clone()),
+        if self.terminals.contains(identifier) {
+            NodeType::Terminal(identifier.clone())
+        } else {
+            NodeType::Nonterminal(identifier.clone())
         }
     }
 
