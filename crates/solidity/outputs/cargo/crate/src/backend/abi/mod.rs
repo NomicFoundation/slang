@@ -47,14 +47,14 @@ impl ContractDefinitionStruct {
     // TODO: ideally the user wouldn't need to provide the file_id and we should
     // be able to obtain it here, but for that we need bi-directional tree
     // navigation
-    pub fn abi_with_file_id(&self, file_id: &str) -> Option<ContractAbi> {
+    pub fn abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
         let name = self.name().unparse();
         let functions = self.abi_functions()?;
         let storage_layout = self.compute_storage_layout()?;
         Some(ContractAbi {
             node_id: self.ir_node.node_id,
             name,
-            file_id: file_id.to_string(),
+            file_id,
             functions,
             storage_layout,
         })

@@ -67,7 +67,7 @@ fn test_storage_layout() -> Result<()> {
         .find_contract_by_name("Counter")
         .expect("contract can be found");
     let counter_abi = counter
-        .abi_with_file_id("main.sol")
+        .abi_with_file_id("main.sol".to_string())
         .expect("can compute ABI");
     let layout = &counter_abi.storage_layout;
 
