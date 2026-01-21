@@ -115,7 +115,6 @@ ariadne = { version = "0.2.0" }
 # https://github.com/bencherdev/bencher/releases/tag/v0.5.8
 bencher_cli = { git = "https://github.com/bencherdev/bencher", rev = "61e6a2c2e0b4c8f61c87bef598ba9dbafa51c689"}
 bitvec = { version = "1.0.1" }
-bumpalo = { version = "3.19.0", features = ["collections", "boxed"] }
 cargo-edit = { version = "0.12.3" }
 cargo-nextest = { version = "0.9.72" }
 clap = { version = "4.5.40", features = ["derive", "wrap_help"] }

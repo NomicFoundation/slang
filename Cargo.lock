@@ -3622,9 +3622,6 @@ dependencies = [
 [[package]]
 name = "slang_solidity_v2_cst"
 version = "1.3.2"
-dependencies = [
- "bumpalo",
-]
 
 [[package]]
 name = "slang_solidity_v2_parser"
