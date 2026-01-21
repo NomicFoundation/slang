@@ -33,7 +33,7 @@ impl VersionSpecifier {
     }
 
     /// Returns an iterator over the versions specified as the upper and lower bound.
-    pub fn versions(&self) -> impl Iterator<Item = &Version> {
+    pub fn breaking_versions(&self) -> impl Iterator<Item = &Version> {
         match self {
             VersionSpecifier::Always | VersionSpecifier::Never => [None, None],
             VersionSpecifier::From { from } => [Some(from), None],
@@ -42,11 +42,5 @@ impl VersionSpecifier {
         }
         .into_iter()
         .flatten()
-    }
-}
-
-impl VersionSpecifier {
-    pub fn is_always(&self) -> bool {
-        matches!(self, VersionSpecifier::Always)
     }
 }
