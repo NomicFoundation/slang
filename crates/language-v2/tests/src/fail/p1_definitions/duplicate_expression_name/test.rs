@@ -2,7 +2,6 @@
 
 language_v2_macros::compile!(Language(
     name = Foo,
-    binding_rules_file = "bindings/rules.msgb",
     root_item = Bar,
     leading_trivia = Sequence([]),
     trailing_trivia = Sequence([]),
