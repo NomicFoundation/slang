@@ -4,6 +4,7 @@
 #![allow(unused_variables)]
 #![allow(clippy::too_many_arguments)]
 
+use std::ops::Range;
 use std::rc::Rc;
 
 
@@ -87,15 +88,11 @@ use std::rc::Rc;
 {% for parent_type, unique in target.terminals %}
 #[derive(Debug)]
   pub struct {{ parent_type }} {
-    pub l: usize,
-    pub r: usize,
+    pub range: Range<usize>,
   }
 
-  pub fn new_{{ parent_type | snake_case }}(l: usize, r: usize, _source: &str) -> {{ parent_type }} {
-    {{ parent_type }} {
-      l,
-      r,
-    }
+  pub fn new_{{ parent_type | snake_case }}(range: Range<usize>, _source: &str) -> {{ parent_type }} {
+    {{ parent_type }} { range }
   }
 {% endfor %}
 
