@@ -20,7 +20,6 @@ categories = ["compilers", "CST"]
 
 
 [dependencies]
-bumpalo = { workspace = true }
 
 [lints]
 workspace = true
