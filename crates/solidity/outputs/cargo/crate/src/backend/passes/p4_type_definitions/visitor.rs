@@ -87,15 +87,22 @@ impl Visitor for Pass<'_> {
 
     fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
         for symbol in &node.symbols {
-            let target_symbol = if let Some(alias) = &symbol.alias {
-                alias
-            } else {
-                &symbol.name
+            // find the associated definition to get the imported file ID
+            let Some(Definition::ImportedSymbol(imported_symbol)) =
+                self.binder.find_definition_by_id(symbol.node_id)
+            else {
+                unreachable!("expected to find definition associated to imported symbol");
             };
-            let resolution = self.binder.resolve_in_scope(
-                self.current_contract_or_file_scope_id(),
-                &target_symbol.unparse(),
-            );
+            // now we can get the target scope ID
+            let scope_id = imported_symbol
+                .resolved_file_id
+                .as_ref()
+                .and_then(|file_id| self.binder.scope_id_for_file_id(file_id));
+
+            let resolution = scope_id.map_or(Resolution::Unresolved, |scope_id| {
+                self.binder
+                    .resolve_in_scope(scope_id, &symbol.name.unparse())
+            });
             let reference = Reference::new(Rc::clone(&symbol.name), resolution);
             self.binder.insert_reference(reference);
         }

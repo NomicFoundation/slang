@@ -15,9 +15,9 @@ Definitions (8):
 References (6):
 - Ref: ["Foo" @ main.sol:1:9] -> #3
 - Ref: ["Bar" @ main.sol:2:9] -> #1
-- Ref: ["Foo" @ main.sol:6:16] -> #3
+- Ref: ["Foo" @ main.sol:6:16] -> #5
 - Ref: ["foo" @ main.sol:6:20] -> #4
-- Ref: ["LocalBar" @ main.sol:6:28] -> #1
+- Ref: ["LocalBar" @ main.sol:6:28] -> #6
 - Ref: ["bar" @ main.sol:6:37] -> #2
 
 ------------------------------------------------------------------------
@@ -74,11 +74,11 @@ Bindings:
    │                ╰─── name: 8
  6 │         return Foo.foo() + LocalBar.bar();
    │                ─┬─ ─┬─     ────┬─── ─┬─  
-   │                 ╰──────────────────────── ref: 3
+   │                 ╰──────────────────────── ref: 5
    │                     │          │     │   
    │                     ╰──────────────────── ref: 4
    │                                │     │   
-   │                                ╰───────── ref: 1
+   │                                ╰───────── ref: 6
    │                                      │   
    │                                      ╰─── ref: 2
 ───╯

@@ -27,7 +27,7 @@ Definitions (8):
 References (5):
 - Ref: ["Counter" @ counter.sol:5:20] -> #1
 - Ref: ["Counter" @ main.sol:1:9] -> #1
-- Ref: ["Counter" @ main.sol:4:19] -> #1
+- Ref: ["Counter" @ main.sol:4:19] -> #5
 - Ref: ["c" @ main.sol:5:9] -> #8
 - Ref: ["increment" @ main.sol:5:11] -> unresolved
 
@@ -74,7 +74,7 @@ Bindings:
    │              ──┬─ ───┬───        ┬  
    │                ╰──────────────────── name: 7
    │                      │           │  
-   │                      ╰────────────── ref: 1
+   │                      ╰────────────── ref: 5
    │                                  │  
    │                                  ╰── name: 8
  5 │         c.increment();

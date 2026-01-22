@@ -16,7 +16,14 @@ impl Pass<'_> {
                 self.binder
                     .find_reference_by_identifier_node_id(identifier.id())
             })
-            .and_then(|reference| reference.resolution.as_definition_id())
+            .and_then(|reference| {
+                // We should follow symbol aliases here. This is only relevant
+                // if the path has a single element, as in other cases symbols
+                // cannot be aliased.
+                self.binder
+                    .follow_symbol_aliases(&reference.resolution)
+                    .as_definition_id()
+            })
             .and_then(|node_id| self.type_of_definition(node_id, data_location))
     }
 

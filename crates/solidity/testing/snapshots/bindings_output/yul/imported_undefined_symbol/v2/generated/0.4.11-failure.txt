@@ -14,8 +14,8 @@ References (5):
 - Ref: ["slot" @ input.sol:1:10] -> unresolved
 - Ref: ["value" @ input.sol:7:13] -> #4
 - Ref: ["sload" @ input.sol:7:22] -> built-in
-- Ref: ["slot" @ input.sol:7:28] -> unresolved
-- Ref: ["slot" @ input.sol:12:22] -> unresolved
+- Ref: ["slot" @ input.sol:7:28] -> #1
+- Ref: ["slot" @ input.sol:12:22] -> #1
 
 ------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ Bindings:
     │                        │     │   
     │                        ╰───────── built-in
     │                              │   
-    │                              ╰─── unresolved
+    │                              ╰─── ref: 1
     │ 
  11 │     function useSlotInSolidity() public {
     │              ────────┬────────  
@@ -57,5 +57,5 @@ Bindings:
     │              ──┬──   ──┬─  
     │                ╰─────────── name: 6
     │                        │   
-    │                        ╰─── unresolved
+    │                        ╰─── ref: 1
 ────╯

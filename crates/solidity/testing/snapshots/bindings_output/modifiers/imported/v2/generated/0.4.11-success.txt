@@ -12,8 +12,8 @@ Definitions (5):
 References (5):
 - Ref: ["_" @ lib.sol:3:9] -> built-in
 - Ref: ["Base" @ main.sol:1:9] -> #1
-- Ref: ["Base" @ main.sol:3:18] -> #1
-- Ref: ["Base" @ main.sol:4:28] -> #1
+- Ref: ["Base" @ main.sol:3:18] -> #3
+- Ref: ["Base" @ main.sol:4:28] -> #3
 - Ref: ["beforeRun" @ main.sol:4:33] -> #2
 
 ------------------------------------------------------------------------
@@ -51,12 +51,12 @@ Bindings:
    │          ──┬─    ──┬─  
    │            ╰─────────── name: 4
    │                    │   
-   │                    ╰─── ref: 1
+   │                    ╰─── ref: 3
  4 │     function test() public Base.beforeRun {
    │              ──┬─          ──┬─ ────┬────  
    │                ╰─────────────────────────── name: 5
    │                              │      │      
-   │                              ╰───────────── ref: 1
+   │                              ╰───────────── ref: 3
    │                                     │      
    │                                     ╰────── ref: 2
 ───╯

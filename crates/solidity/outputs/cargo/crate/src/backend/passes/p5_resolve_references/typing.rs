@@ -139,12 +139,14 @@ impl Pass<'_> {
     }
 
     fn typing_of_identifier(&self, identifier: &Rc<TerminalNode>) -> Typing {
-        let resolution = self
+        let resolution = &self
             .binder
             .find_reference_by_identifier_node_id(identifier.id())
             .unwrap()
-            .resolution
-            .clone();
+            .resolution;
+        // The resolution may point to an imported symbol, so we need to follow
+        // through in order to get to the actual typing
+        let resolution = self.binder.follow_symbol_aliases(resolution);
         self.typing_of_resolution(&resolution)
     }
 
