@@ -1,7 +1,9 @@
 use anyhow::Result;
 use slang_solidity::backend::semantic::ast;
+use slang_solidity::utils::LanguageFacts;
 
 use crate::backend::sample::build_compilation_unit;
+use crate::compilation::compilation_unit::build_compilation_unit_from_multi_part_file;
 
 #[test]
 fn test_ast_visitor() -> Result<()> {
@@ -124,6 +126,98 @@ fn test_resolve_to_immediate_definition() -> Result<()> {
         counter_bases[1].resolve_to_immediate_definition(),
         Some(ast::Definition::ImportedSymbol(_))
     ));
+
+    Ok(())
+}
+
+const CHAINED_SAMPLE: &str = r#"
+// ---- path: first.sol
+import {B2 as B1} from "second.sol";
+interface I1 {}
+contract A1 is I1, B1 {}
+
+// ---- path: second.sol
+import {B3 as B2} from "third.sol";
+
+// ---- path: third.sol
+contract B3 {}
+"#;
+
+#[test]
+fn test_resolve_to_immediate_resolves_to_direct_definition() -> Result<()> {
+    let unit = build_compilation_unit_from_multi_part_file(
+        &LanguageFacts::LATEST_VERSION,
+        CHAINED_SAMPLE,
+    )?;
+    let semantic = unit.semantic_analysis();
+
+    let a1 = semantic
+        .find_contract_by_name("A1")
+        .expect("contract is found");
+    let i1_typename = a1
+        .inheritance_types()
+        .iter()
+        .next()
+        .expect("there is at least one inheritance type")
+        .type_name();
+    assert_eq!(i1_typename.unparse(), "I1");
+    let Some(i1) = i1_typename.resolve_to_definition() else {
+        panic!("i1 can be resolved");
+    };
+    let Some(i1_immediate) = i1_typename.resolve_to_immediate_definition() else {
+        panic!("i1 can be resolved immediately");
+    };
+
+    assert!(matches!(
+        (i1, i1_immediate),
+        (ast::Definition::Interface(_), ast::Definition::Interface(_))
+    ));
+
+    Ok(())
+}
+
+#[test]
+fn test_chained_imports_resolution() -> Result<()> {
+    let unit = build_compilation_unit_from_multi_part_file(
+        &LanguageFacts::LATEST_VERSION,
+        CHAINED_SAMPLE,
+    )?;
+    let semantic = unit.semantic_analysis();
+
+    let a1 = semantic
+        .find_contract_by_name("A1")
+        .expect("contract is found");
+    let b1_typename = a1
+        .inheritance_types()
+        .iter()
+        .nth(1)
+        .expect("there are at least two inheritance types")
+        .type_name();
+    assert_eq!(b1_typename.unparse(), "B1");
+
+    let b1 = b1_typename
+        .resolve_to_immediate_definition()
+        .expect("b1 base can be resolved");
+    let ast::Definition::ImportedSymbol(b1_import) = b1 else {
+        panic!("b1 resolves to an import symbol");
+    };
+
+    let b2 = b1_import
+        .name()
+        .resolve_to_immediate_definition()
+        .expect("b1 import can be resolved");
+    let ast::Definition::ImportedSymbol(b2_import) = b2 else {
+        panic!("b2 resolves to an import symbol");
+    };
+
+    let b3 = b2_import
+        .name()
+        .resolve_to_immediate_definition()
+        .expect("b2 import can be resolved");
+    let ast::Definition::Contract(b3_contract) = b3 else {
+        panic!("b3 resolves to a contract");
+    };
+    assert_eq!(b3_contract.name().unparse(), "B3");
 
     Ok(())
 }
