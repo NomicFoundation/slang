@@ -99,7 +99,7 @@ fn children_with_offsets(node: &Node, text_offset: TextIndex) -> Vec<(Edge, Text
 //
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for AbicoderPragma<'_> {
+impl NodeChecker for AbicoderPragma {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -173,7 +173,7 @@ impl NodeChecker for AbicoderPragma<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for AdditiveExpression<'_> {
+impl NodeChecker for AdditiveExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -266,7 +266,7 @@ impl NodeChecker for AdditiveExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for AddressType<'_> {
+impl NodeChecker for AddressType {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -344,7 +344,7 @@ impl NodeChecker for AddressType<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for AndExpression<'_> {
+impl NodeChecker for AndExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -436,7 +436,7 @@ impl NodeChecker for AndExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ArrayExpression<'_> {
+impl NodeChecker for ArrayExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -528,7 +528,7 @@ impl NodeChecker for ArrayExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ArrayTypeName<'_> {
+impl NodeChecker for ArrayTypeName {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -647,7 +647,7 @@ impl NodeChecker for ArrayTypeName<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for AssemblyFlagsDeclaration<'_> {
+impl NodeChecker for AssemblyFlagsDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -739,7 +739,7 @@ impl NodeChecker for AssemblyFlagsDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for AssemblyStatement<'_> {
+impl NodeChecker for AssemblyStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -867,7 +867,7 @@ impl NodeChecker for AssemblyStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for AssignmentExpression<'_> {
+impl NodeChecker for AssignmentExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -960,7 +960,7 @@ impl NodeChecker for AssignmentExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for BitwiseAndExpression<'_> {
+impl NodeChecker for BitwiseAndExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1052,7 +1052,7 @@ impl NodeChecker for BitwiseAndExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for BitwiseOrExpression<'_> {
+impl NodeChecker for BitwiseOrExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1144,7 +1144,7 @@ impl NodeChecker for BitwiseOrExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for BitwiseXorExpression<'_> {
+impl NodeChecker for BitwiseXorExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1236,7 +1236,7 @@ impl NodeChecker for BitwiseXorExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for Block<'_> {
+impl NodeChecker for Block {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1328,7 +1328,7 @@ impl NodeChecker for Block<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for BreakStatement<'_> {
+impl NodeChecker for BreakStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1400,7 +1400,7 @@ impl NodeChecker for BreakStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for CallOptionsExpression<'_> {
+impl NodeChecker for CallOptionsExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1512,7 +1512,7 @@ impl NodeChecker for CallOptionsExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for CatchClause<'_> {
+impl NodeChecker for CatchClause {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1611,7 +1611,7 @@ impl NodeChecker for CatchClause<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for CatchClauseError<'_> {
+impl NodeChecker for CatchClauseError {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1690,7 +1690,7 @@ impl NodeChecker for CatchClauseError<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ConditionalExpression<'_> {
+impl NodeChecker for ConditionalExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1825,7 +1825,7 @@ impl NodeChecker for ConditionalExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ConstantDefinition<'_> {
+impl NodeChecker for ConstantDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -1979,7 +1979,7 @@ impl NodeChecker for ConstantDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ConstructorDefinition<'_> {
+impl NodeChecker for ConstructorDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2093,7 +2093,7 @@ impl NodeChecker for ConstructorDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ContinueStatement<'_> {
+impl NodeChecker for ContinueStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2167,7 +2167,7 @@ impl NodeChecker for ContinueStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ContractDefinition<'_> {
+impl NodeChecker for ContractDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2347,7 +2347,7 @@ impl NodeChecker for ContractDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for DecimalNumberExpression<'_> {
+impl NodeChecker for DecimalNumberExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2426,7 +2426,7 @@ impl NodeChecker for DecimalNumberExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for DoWhileStatement<'_> {
+impl NodeChecker for DoWhileStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2598,7 +2598,7 @@ impl NodeChecker for DoWhileStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ElseBranch<'_> {
+impl NodeChecker for ElseBranch {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2670,7 +2670,7 @@ impl NodeChecker for ElseBranch<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for EmitStatement<'_> {
+impl NodeChecker for EmitStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2782,7 +2782,7 @@ impl NodeChecker for EmitStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for EnumDefinition<'_> {
+impl NodeChecker for EnumDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -2914,7 +2914,7 @@ impl NodeChecker for EnumDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for EqualityExpression<'_> {
+impl NodeChecker for EqualityExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3007,7 +3007,7 @@ impl NodeChecker for EqualityExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ErrorDefinition<'_> {
+impl NodeChecker for ErrorDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3119,7 +3119,7 @@ impl NodeChecker for ErrorDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ErrorParameter<'_> {
+impl NodeChecker for ErrorParameter {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3198,7 +3198,7 @@ impl NodeChecker for ErrorParameter<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ErrorParametersDeclaration<'_> {
+impl NodeChecker for ErrorParametersDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3290,7 +3290,7 @@ impl NodeChecker for ErrorParametersDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for EventDefinition<'_> {
+impl NodeChecker for EventDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3428,7 +3428,7 @@ impl NodeChecker for EventDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for EventParameter<'_> {
+impl NodeChecker for EventParameter {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3532,7 +3532,7 @@ impl NodeChecker for EventParameter<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for EventParametersDeclaration<'_> {
+impl NodeChecker for EventParametersDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3624,7 +3624,7 @@ impl NodeChecker for EventParametersDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ExperimentalPragma<'_> {
+impl NodeChecker for ExperimentalPragma {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3698,7 +3698,7 @@ impl NodeChecker for ExperimentalPragma<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ExponentiationExpression<'_> {
+impl NodeChecker for ExponentiationExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3791,7 +3791,7 @@ impl NodeChecker for ExponentiationExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ExpressionStatement<'_> {
+impl NodeChecker for ExpressionStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3863,7 +3863,7 @@ impl NodeChecker for ExpressionStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for FallbackFunctionDefinition<'_> {
+impl NodeChecker for FallbackFunctionDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -3999,7 +3999,7 @@ impl NodeChecker for FallbackFunctionDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ForStatement<'_> {
+impl NodeChecker for ForStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4173,7 +4173,7 @@ impl NodeChecker for ForStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for FunctionCallExpression<'_> {
+impl NodeChecker for FunctionCallExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4245,7 +4245,7 @@ impl NodeChecker for FunctionCallExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for FunctionDefinition<'_> {
+impl NodeChecker for FunctionDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4401,7 +4401,7 @@ impl NodeChecker for FunctionDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for FunctionType<'_> {
+impl NodeChecker for FunctionType {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4517,7 +4517,7 @@ impl NodeChecker for FunctionType<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for HexNumberExpression<'_> {
+impl NodeChecker for HexNumberExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4596,7 +4596,7 @@ impl NodeChecker for HexNumberExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for IfStatement<'_> {
+impl NodeChecker for IfStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4751,7 +4751,7 @@ impl NodeChecker for IfStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ImportAlias<'_> {
+impl NodeChecker for ImportAlias {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4823,7 +4823,7 @@ impl NodeChecker for ImportAlias<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ImportDeconstruction<'_> {
+impl NodeChecker for ImportDeconstruction {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -4955,7 +4955,7 @@ impl NodeChecker for ImportDeconstruction<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ImportDeconstructionSymbol<'_> {
+impl NodeChecker for ImportDeconstructionSymbol {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5034,7 +5034,7 @@ impl NodeChecker for ImportDeconstructionSymbol<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ImportDirective<'_> {
+impl NodeChecker for ImportDirective {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5126,7 +5126,7 @@ impl NodeChecker for ImportDirective<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for IndexAccessEnd<'_> {
+impl NodeChecker for IndexAccessEnd {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5205,7 +5205,7 @@ impl NodeChecker for IndexAccessEnd<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for IndexAccessExpression<'_> {
+impl NodeChecker for IndexAccessExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5351,7 +5351,7 @@ impl NodeChecker for IndexAccessExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for InequalityExpression<'_> {
+impl NodeChecker for InequalityExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5444,7 +5444,7 @@ impl NodeChecker for InequalityExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for InheritanceSpecifier<'_> {
+impl NodeChecker for InheritanceSpecifier {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5516,7 +5516,7 @@ impl NodeChecker for InheritanceSpecifier<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for InheritanceType<'_> {
+impl NodeChecker for InheritanceType {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5591,7 +5591,7 @@ impl NodeChecker for InheritanceType<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for InterfaceDefinition<'_> {
+impl NodeChecker for InterfaceDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5749,7 +5749,7 @@ impl NodeChecker for InterfaceDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for LibraryDefinition<'_> {
+impl NodeChecker for LibraryDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5882,7 +5882,7 @@ impl NodeChecker for LibraryDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for MappingKey<'_> {
+impl NodeChecker for MappingKey {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -5961,7 +5961,7 @@ impl NodeChecker for MappingKey<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for MappingType<'_> {
+impl NodeChecker for MappingType {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6116,7 +6116,7 @@ impl NodeChecker for MappingType<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for MappingValue<'_> {
+impl NodeChecker for MappingValue {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6195,7 +6195,7 @@ impl NodeChecker for MappingValue<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for MemberAccessExpression<'_> {
+impl NodeChecker for MemberAccessExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6287,7 +6287,7 @@ impl NodeChecker for MemberAccessExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ModifierDefinition<'_> {
+impl NodeChecker for ModifierDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6424,7 +6424,7 @@ impl NodeChecker for ModifierDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ModifierInvocation<'_> {
+impl NodeChecker for ModifierInvocation {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6499,7 +6499,7 @@ impl NodeChecker for ModifierInvocation<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for MultiplicativeExpression<'_> {
+impl NodeChecker for MultiplicativeExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6592,7 +6592,7 @@ impl NodeChecker for MultiplicativeExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for NamedArgument<'_> {
+impl NodeChecker for NamedArgument {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6684,7 +6684,7 @@ impl NodeChecker for NamedArgument<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for NamedArgumentGroup<'_> {
+impl NodeChecker for NamedArgumentGroup {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6776,7 +6776,7 @@ impl NodeChecker for NamedArgumentGroup<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for NamedArgumentsDeclaration<'_> {
+impl NodeChecker for NamedArgumentsDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6871,7 +6871,7 @@ impl NodeChecker for NamedArgumentsDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for NamedImport<'_> {
+impl NodeChecker for NamedImport {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -6983,7 +6983,7 @@ impl NodeChecker for NamedImport<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for NewExpression<'_> {
+impl NodeChecker for NewExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7055,7 +7055,7 @@ impl NodeChecker for NewExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for OrExpression<'_> {
+impl NodeChecker for OrExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7147,7 +7147,7 @@ impl NodeChecker for OrExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for OverridePathsDeclaration<'_> {
+impl NodeChecker for OverridePathsDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7239,7 +7239,7 @@ impl NodeChecker for OverridePathsDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for OverrideSpecifier<'_> {
+impl NodeChecker for OverrideSpecifier {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7316,7 +7316,7 @@ impl NodeChecker for OverrideSpecifier<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for Parameter<'_> {
+impl NodeChecker for Parameter {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7421,7 +7421,7 @@ impl NodeChecker for Parameter<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ParametersDeclaration<'_> {
+impl NodeChecker for ParametersDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7513,7 +7513,7 @@ impl NodeChecker for ParametersDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for PathImport<'_> {
+impl NodeChecker for PathImport {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7592,7 +7592,7 @@ impl NodeChecker for PathImport<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for PositionalArgumentsDeclaration<'_> {
+impl NodeChecker for PositionalArgumentsDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7684,7 +7684,7 @@ impl NodeChecker for PositionalArgumentsDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for PostfixExpression<'_> {
+impl NodeChecker for PostfixExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7757,7 +7757,7 @@ impl NodeChecker for PostfixExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for PragmaDirective<'_> {
+impl NodeChecker for PragmaDirective {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7849,7 +7849,7 @@ impl NodeChecker for PragmaDirective<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for PrefixExpression<'_> {
+impl NodeChecker for PrefixExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -7921,7 +7921,7 @@ impl NodeChecker for PrefixExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ReceiveFunctionDefinition<'_> {
+impl NodeChecker for ReceiveFunctionDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8034,7 +8034,7 @@ impl NodeChecker for ReceiveFunctionDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ReturnStatement<'_> {
+impl NodeChecker for ReturnStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8129,7 +8129,7 @@ impl NodeChecker for ReturnStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ReturnsDeclaration<'_> {
+impl NodeChecker for ReturnsDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8202,7 +8202,7 @@ impl NodeChecker for ReturnsDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for RevertStatement<'_> {
+impl NodeChecker for RevertStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8314,7 +8314,7 @@ impl NodeChecker for RevertStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ShiftExpression<'_> {
+impl NodeChecker for ShiftExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8406,7 +8406,7 @@ impl NodeChecker for ShiftExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for SourceUnit<'_> {
+impl NodeChecker for SourceUnit {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8458,7 +8458,7 @@ impl NodeChecker for SourceUnit<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for StateVariableDefinition<'_> {
+impl NodeChecker for StateVariableDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8597,7 +8597,7 @@ impl NodeChecker for StateVariableDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for StateVariableDefinitionValue<'_> {
+impl NodeChecker for StateVariableDefinitionValue {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8669,7 +8669,7 @@ impl NodeChecker for StateVariableDefinitionValue<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for StorageLayoutSpecifier<'_> {
+impl NodeChecker for StorageLayoutSpecifier {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8761,7 +8761,7 @@ impl NodeChecker for StorageLayoutSpecifier<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for StructDefinition<'_> {
+impl NodeChecker for StructDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8893,7 +8893,7 @@ impl NodeChecker for StructDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for StructMember<'_> {
+impl NodeChecker for StructMember {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -8985,7 +8985,7 @@ impl NodeChecker for StructMember<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for ThrowStatement<'_> {
+impl NodeChecker for ThrowStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9057,7 +9057,7 @@ impl NodeChecker for ThrowStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for TryStatement<'_> {
+impl NodeChecker for TryStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9191,7 +9191,7 @@ impl NodeChecker for TryStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for TupleDeconstructionElement<'_> {
+impl NodeChecker for TupleDeconstructionElement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9245,7 +9245,7 @@ impl NodeChecker for TupleDeconstructionElement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for TupleDeconstructionStatement<'_> {
+impl NodeChecker for TupleDeconstructionStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9420,7 +9420,7 @@ impl NodeChecker for TupleDeconstructionStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for TupleExpression<'_> {
+impl NodeChecker for TupleExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9512,7 +9512,7 @@ impl NodeChecker for TupleExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for TupleValue<'_> {
+impl NodeChecker for TupleValue {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9567,7 +9567,7 @@ impl NodeChecker for TupleValue<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for TypeExpression<'_> {
+impl NodeChecker for TypeExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9679,7 +9679,7 @@ impl NodeChecker for TypeExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for TypedTupleMember<'_> {
+impl NodeChecker for TypedTupleMember {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9777,7 +9777,7 @@ impl NodeChecker for TypedTupleMember<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for UncheckedBlock<'_> {
+impl NodeChecker for UncheckedBlock {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9851,7 +9851,7 @@ impl NodeChecker for UncheckedBlock<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for UnnamedFunctionDefinition<'_> {
+impl NodeChecker for UnnamedFunctionDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -9965,7 +9965,7 @@ impl NodeChecker for UnnamedFunctionDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for UntypedTupleMember<'_> {
+impl NodeChecker for UntypedTupleMember {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10043,7 +10043,7 @@ impl NodeChecker for UntypedTupleMember<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for UserDefinedValueTypeDefinition<'_> {
+impl NodeChecker for UserDefinedValueTypeDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10175,7 +10175,7 @@ impl NodeChecker for UserDefinedValueTypeDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for UsingAlias<'_> {
+impl NodeChecker for UsingAlias {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10247,7 +10247,7 @@ impl NodeChecker for UsingAlias<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for UsingDeconstruction<'_> {
+impl NodeChecker for UsingDeconstruction {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10339,7 +10339,7 @@ impl NodeChecker for UsingDeconstruction<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for UsingDeconstructionSymbol<'_> {
+impl NodeChecker for UsingDeconstructionSymbol {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10418,7 +10418,7 @@ impl NodeChecker for UsingDeconstructionSymbol<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for UsingDirective<'_> {
+impl NodeChecker for UsingDirective {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10574,7 +10574,7 @@ impl NodeChecker for UsingDirective<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for VariableDeclarationStatement<'_> {
+impl NodeChecker for VariableDeclarationStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10719,7 +10719,7 @@ impl NodeChecker for VariableDeclarationStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for VariableDeclarationValue<'_> {
+impl NodeChecker for VariableDeclarationValue {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10791,7 +10791,7 @@ impl NodeChecker for VariableDeclarationValue<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for VersionPragma<'_> {
+impl NodeChecker for VersionPragma {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10865,7 +10865,7 @@ impl NodeChecker for VersionPragma<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for VersionRange<'_> {
+impl NodeChecker for VersionRange {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10957,7 +10957,7 @@ impl NodeChecker for VersionRange<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for VersionTerm<'_> {
+impl NodeChecker for VersionTerm {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11031,7 +11031,7 @@ impl NodeChecker for VersionTerm<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for WhileStatement<'_> {
+impl NodeChecker for WhileStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11163,7 +11163,7 @@ impl NodeChecker for WhileStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulBlock<'_> {
+impl NodeChecker for YulBlock {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11255,7 +11255,7 @@ impl NodeChecker for YulBlock<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulBreakStatement<'_> {
+impl NodeChecker for YulBreakStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11307,7 +11307,7 @@ impl NodeChecker for YulBreakStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulColonAndEqual<'_> {
+impl NodeChecker for YulColonAndEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11379,7 +11379,7 @@ impl NodeChecker for YulColonAndEqual<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulContinueStatement<'_> {
+impl NodeChecker for YulContinueStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11433,7 +11433,7 @@ impl NodeChecker for YulContinueStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulDefaultCase<'_> {
+impl NodeChecker for YulDefaultCase {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11506,7 +11506,7 @@ impl NodeChecker for YulDefaultCase<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulEqualAndColon<'_> {
+impl NodeChecker for YulEqualAndColon {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11578,7 +11578,7 @@ impl NodeChecker for YulEqualAndColon<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulForStatement<'_> {
+impl NodeChecker for YulForStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11710,7 +11710,7 @@ impl NodeChecker for YulForStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulFunctionCallExpression<'_> {
+impl NodeChecker for YulFunctionCallExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11822,7 +11822,7 @@ impl NodeChecker for YulFunctionCallExpression<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulFunctionDefinition<'_> {
+impl NodeChecker for YulFunctionDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -11958,7 +11958,7 @@ impl NodeChecker for YulFunctionDefinition<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulIfStatement<'_> {
+impl NodeChecker for YulIfStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12050,7 +12050,7 @@ impl NodeChecker for YulIfStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulLabel<'_> {
+impl NodeChecker for YulLabel {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12122,7 +12122,7 @@ impl NodeChecker for YulLabel<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulLeaveStatement<'_> {
+impl NodeChecker for YulLeaveStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12174,7 +12174,7 @@ impl NodeChecker for YulLeaveStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulParametersDeclaration<'_> {
+impl NodeChecker for YulParametersDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12266,7 +12266,7 @@ impl NodeChecker for YulParametersDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulReturnsDeclaration<'_> {
+impl NodeChecker for YulReturnsDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12340,7 +12340,7 @@ impl NodeChecker for YulReturnsDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulStackAssignmentStatement<'_> {
+impl NodeChecker for YulStackAssignmentStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12412,7 +12412,7 @@ impl NodeChecker for YulStackAssignmentStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulSwitchStatement<'_> {
+impl NodeChecker for YulSwitchStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12504,7 +12504,7 @@ impl NodeChecker for YulSwitchStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulValueCase<'_> {
+impl NodeChecker for YulValueCase {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12596,7 +12596,7 @@ impl NodeChecker for YulValueCase<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulVariableAssignmentStatement<'_> {
+impl NodeChecker for YulVariableAssignmentStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12688,7 +12688,7 @@ impl NodeChecker for YulVariableAssignmentStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulVariableDeclarationStatement<'_> {
+impl NodeChecker for YulVariableDeclarationStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12787,7 +12787,7 @@ impl NodeChecker for YulVariableDeclarationStatement<'_> {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for YulVariableDeclarationValue<'_> {
+impl NodeChecker for YulVariableDeclarationValue {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12863,7 +12863,7 @@ impl NodeChecker for YulVariableDeclarationValue<'_> {
 //
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for AbicoderVersion<'_> {
+impl NodeChecker for AbicoderVersion {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12921,7 +12921,7 @@ impl NodeChecker for AbicoderVersion<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ArgumentsDeclaration<'_> {
+impl NodeChecker for ArgumentsDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -12979,7 +12979,7 @@ impl NodeChecker for ArgumentsDeclaration<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ConstructorAttribute<'_> {
+impl NodeChecker for ConstructorAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13053,7 +13053,7 @@ impl NodeChecker for ConstructorAttribute<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ContractMember<'_> {
+impl NodeChecker for ContractMember {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13155,7 +13155,7 @@ impl NodeChecker for ContractMember<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ContractSpecifier<'_> {
+impl NodeChecker for ContractSpecifier {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13213,7 +13213,7 @@ impl NodeChecker for ContractSpecifier<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ElementaryType<'_> {
+impl NodeChecker for ElementaryType {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13299,7 +13299,7 @@ impl NodeChecker for ElementaryType<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ExperimentalFeature<'_> {
+impl NodeChecker for ExperimentalFeature {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13361,7 +13361,7 @@ impl NodeChecker for ExperimentalFeature<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for Expression<'_> {
+impl NodeChecker for Expression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13543,7 +13543,7 @@ impl NodeChecker for Expression<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_AdditiveExpression_Operator<'_> {
+impl NodeChecker for Expression_AdditiveExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::Minus(element) => element.check_node_with_offset(node, text_offset),
@@ -13554,7 +13554,7 @@ impl NodeChecker for Expression_AdditiveExpression_Operator<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_AssignmentExpression_Operator<'_> {
+impl NodeChecker for Expression_AssignmentExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::AmpersandEqual(element) => element.check_node_with_offset(node, text_offset),
@@ -13591,7 +13591,7 @@ impl NodeChecker for Expression_AssignmentExpression_Operator<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_EqualityExpression_Operator<'_> {
+impl NodeChecker for Expression_EqualityExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::BangEqual(element) => element.check_node_with_offset(node, text_offset),
@@ -13602,7 +13602,7 @@ impl NodeChecker for Expression_EqualityExpression_Operator<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_ExponentiationExpression_Operator<'_> {
+impl NodeChecker for Expression_ExponentiationExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::AsteriskAsterisk(element) => element.check_node_with_offset(node, text_offset),
@@ -13611,7 +13611,7 @@ impl NodeChecker for Expression_ExponentiationExpression_Operator<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_InequalityExpression_Operator<'_> {
+impl NodeChecker for Expression_InequalityExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::GreaterThan(element) => element.check_node_with_offset(node, text_offset),
@@ -13626,7 +13626,7 @@ impl NodeChecker for Expression_InequalityExpression_Operator<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_MultiplicativeExpression_Operator<'_> {
+impl NodeChecker for Expression_MultiplicativeExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::Asterisk(element) => element.check_node_with_offset(node, text_offset),
@@ -13639,7 +13639,7 @@ impl NodeChecker for Expression_MultiplicativeExpression_Operator<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_PostfixExpression_Operator<'_> {
+impl NodeChecker for Expression_PostfixExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::MinusMinus(element) => element.check_node_with_offset(node, text_offset),
@@ -13650,7 +13650,7 @@ impl NodeChecker for Expression_PostfixExpression_Operator<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_PrefixExpression_Operator<'_> {
+impl NodeChecker for Expression_PrefixExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::Bang(element) => element.check_node_with_offset(node, text_offset),
@@ -13671,7 +13671,7 @@ impl NodeChecker for Expression_PrefixExpression_Operator<'_> {
 }
 
 // Special case for operator choices that are merged together
-impl NodeChecker for Expression_ShiftExpression_Operator<'_> {
+impl NodeChecker for Expression_ShiftExpression_Operator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             Self::GreaterThanGreaterThan(element) => {
@@ -13688,7 +13688,7 @@ impl NodeChecker for Expression_ShiftExpression_Operator<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for FallbackFunctionAttribute<'_> {
+impl NodeChecker for FallbackFunctionAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13766,7 +13766,7 @@ impl NodeChecker for FallbackFunctionAttribute<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ForStatementCondition<'_> {
+impl NodeChecker for ForStatementCondition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13824,7 +13824,7 @@ impl NodeChecker for ForStatementCondition<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ForStatementInitialization<'_> {
+impl NodeChecker for ForStatementInitialization {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13890,7 +13890,7 @@ impl NodeChecker for ForStatementInitialization<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for FunctionAttribute<'_> {
+impl NodeChecker for FunctionAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13984,7 +13984,7 @@ impl NodeChecker for FunctionAttribute<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for FunctionBody<'_> {
+impl NodeChecker for FunctionBody {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14042,7 +14042,7 @@ impl NodeChecker for FunctionBody<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for FunctionName<'_> {
+impl NodeChecker for FunctionName {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14104,7 +14104,7 @@ impl NodeChecker for FunctionName<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for FunctionTypeAttribute<'_> {
+impl NodeChecker for FunctionTypeAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14186,7 +14186,7 @@ impl NodeChecker for FunctionTypeAttribute<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for HexStringLiteral<'_> {
+impl NodeChecker for HexStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14244,7 +14244,7 @@ impl NodeChecker for HexStringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ImportClause<'_> {
+impl NodeChecker for ImportClause {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14306,7 +14306,7 @@ impl NodeChecker for ImportClause<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for MappingKeyType<'_> {
+impl NodeChecker for MappingKeyType {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14364,7 +14364,7 @@ impl NodeChecker for MappingKeyType<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ModifierAttribute<'_> {
+impl NodeChecker for ModifierAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14422,7 +14422,7 @@ impl NodeChecker for ModifierAttribute<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for NumberUnit<'_> {
+impl NodeChecker for NumberUnit {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14516,7 +14516,7 @@ impl NodeChecker for NumberUnit<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for Pragma<'_> {
+impl NodeChecker for Pragma {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14578,7 +14578,7 @@ impl NodeChecker for Pragma<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for ReceiveFunctionAttribute<'_> {
+impl NodeChecker for ReceiveFunctionAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14648,7 +14648,7 @@ impl NodeChecker for ReceiveFunctionAttribute<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for SourceUnitMember<'_> {
+impl NodeChecker for SourceUnitMember {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14750,7 +14750,7 @@ impl NodeChecker for SourceUnitMember<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for StateVariableAttribute<'_> {
+impl NodeChecker for StateVariableAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14828,7 +14828,7 @@ impl NodeChecker for StateVariableAttribute<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for Statement<'_> {
+impl NodeChecker for Statement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14946,7 +14946,7 @@ impl NodeChecker for Statement<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for StorageLocation<'_> {
+impl NodeChecker for StorageLocation {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15008,7 +15008,7 @@ impl NodeChecker for StorageLocation<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for StringExpression<'_> {
+impl NodeChecker for StringExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15078,7 +15078,7 @@ impl NodeChecker for StringExpression<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for StringLiteral<'_> {
+impl NodeChecker for StringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15136,7 +15136,7 @@ impl NodeChecker for StringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for TupleMember<'_> {
+impl NodeChecker for TupleMember {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15194,7 +15194,7 @@ impl NodeChecker for TupleMember<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for TypeName<'_> {
+impl NodeChecker for TypeName {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15264,7 +15264,7 @@ impl NodeChecker for TypeName<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for UnicodeStringLiteral<'_> {
+impl NodeChecker for UnicodeStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15322,7 +15322,7 @@ impl NodeChecker for UnicodeStringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for UnnamedFunctionAttribute<'_> {
+impl NodeChecker for UnnamedFunctionAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15408,7 +15408,7 @@ impl NodeChecker for UnnamedFunctionAttribute<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for UsingClause<'_> {
+impl NodeChecker for UsingClause {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15466,7 +15466,7 @@ impl NodeChecker for UsingClause<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for UsingOperator<'_> {
+impl NodeChecker for UsingOperator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15576,7 +15576,7 @@ impl NodeChecker for UsingOperator<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for UsingTarget<'_> {
+impl NodeChecker for UsingTarget {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15634,7 +15634,7 @@ impl NodeChecker for UsingTarget<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for VariableDeclarationType<'_> {
+impl NodeChecker for VariableDeclarationType {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15692,7 +15692,7 @@ impl NodeChecker for VariableDeclarationType<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for VersionExpression<'_> {
+impl NodeChecker for VersionExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15750,7 +15750,7 @@ impl NodeChecker for VersionExpression<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for VersionLiteral<'_> {
+impl NodeChecker for VersionLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15812,7 +15812,7 @@ impl NodeChecker for VersionLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for VersionOperator<'_> {
+impl NodeChecker for VersionOperator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15890,7 +15890,7 @@ impl NodeChecker for VersionOperator<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for YulAssignmentOperator<'_> {
+impl NodeChecker for YulAssignmentOperator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -15948,7 +15948,7 @@ impl NodeChecker for YulAssignmentOperator<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for YulExpression<'_> {
+impl NodeChecker for YulExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16010,7 +16010,7 @@ impl NodeChecker for YulExpression<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for YulLiteral<'_> {
+impl NodeChecker for YulLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16084,7 +16084,7 @@ impl NodeChecker for YulLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for YulStackAssignmentOperator<'_> {
+impl NodeChecker for YulStackAssignmentOperator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16142,7 +16142,7 @@ impl NodeChecker for YulStackAssignmentOperator<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for YulStatement<'_> {
+impl NodeChecker for YulStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16244,7 +16244,7 @@ impl NodeChecker for YulStatement<'_> {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for YulSwitchCase<'_> {
+impl NodeChecker for YulSwitchCase {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16306,7 +16306,7 @@ impl NodeChecker for YulSwitchCase<'_> {
 //
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for ArrayValues<'_> {
+impl NodeChecker for ArrayValues {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16346,7 +16346,7 @@ impl NodeChecker for ArrayValues<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for AssemblyFlags<'_> {
+impl NodeChecker for AssemblyFlags {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16386,7 +16386,7 @@ impl NodeChecker for AssemblyFlags<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for CallOptions<'_> {
+impl NodeChecker for CallOptions {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16426,7 +16426,7 @@ impl NodeChecker for CallOptions<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for CatchClauses<'_> {
+impl NodeChecker for CatchClauses {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16466,7 +16466,7 @@ impl NodeChecker for CatchClauses<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for ConstructorAttributes<'_> {
+impl NodeChecker for ConstructorAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16506,7 +16506,7 @@ impl NodeChecker for ConstructorAttributes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for ContractMembers<'_> {
+impl NodeChecker for ContractMembers {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16546,7 +16546,7 @@ impl NodeChecker for ContractMembers<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for ContractSpecifiers<'_> {
+impl NodeChecker for ContractSpecifiers {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16586,7 +16586,7 @@ impl NodeChecker for ContractSpecifiers<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for EnumMembers<'_> {
+impl NodeChecker for EnumMembers {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16626,7 +16626,7 @@ impl NodeChecker for EnumMembers<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for ErrorParameters<'_> {
+impl NodeChecker for ErrorParameters {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16666,7 +16666,7 @@ impl NodeChecker for ErrorParameters<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for EventParameters<'_> {
+impl NodeChecker for EventParameters {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16706,7 +16706,7 @@ impl NodeChecker for EventParameters<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for FallbackFunctionAttributes<'_> {
+impl NodeChecker for FallbackFunctionAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16746,7 +16746,7 @@ impl NodeChecker for FallbackFunctionAttributes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for FunctionAttributes<'_> {
+impl NodeChecker for FunctionAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16786,7 +16786,7 @@ impl NodeChecker for FunctionAttributes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for FunctionTypeAttributes<'_> {
+impl NodeChecker for FunctionTypeAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16826,7 +16826,7 @@ impl NodeChecker for FunctionTypeAttributes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for HexStringLiterals<'_> {
+impl NodeChecker for HexStringLiterals {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16866,7 +16866,7 @@ impl NodeChecker for HexStringLiterals<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for IdentifierPath<'_> {
+impl NodeChecker for IdentifierPath {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16906,7 +16906,7 @@ impl NodeChecker for IdentifierPath<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for ImportDeconstructionSymbols<'_> {
+impl NodeChecker for ImportDeconstructionSymbols {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16946,7 +16946,7 @@ impl NodeChecker for ImportDeconstructionSymbols<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for InheritanceTypes<'_> {
+impl NodeChecker for InheritanceTypes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16986,7 +16986,7 @@ impl NodeChecker for InheritanceTypes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for InterfaceMembers<'_> {
+impl NodeChecker for InterfaceMembers {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17026,7 +17026,7 @@ impl NodeChecker for InterfaceMembers<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for LibraryMembers<'_> {
+impl NodeChecker for LibraryMembers {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17066,7 +17066,7 @@ impl NodeChecker for LibraryMembers<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for ModifierAttributes<'_> {
+impl NodeChecker for ModifierAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17106,7 +17106,7 @@ impl NodeChecker for ModifierAttributes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for NamedArguments<'_> {
+impl NodeChecker for NamedArguments {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17146,7 +17146,7 @@ impl NodeChecker for NamedArguments<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for OverridePaths<'_> {
+impl NodeChecker for OverridePaths {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17186,7 +17186,7 @@ impl NodeChecker for OverridePaths<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for Parameters<'_> {
+impl NodeChecker for Parameters {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17226,7 +17226,7 @@ impl NodeChecker for Parameters<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for PositionalArguments<'_> {
+impl NodeChecker for PositionalArguments {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17266,7 +17266,7 @@ impl NodeChecker for PositionalArguments<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for ReceiveFunctionAttributes<'_> {
+impl NodeChecker for ReceiveFunctionAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17306,7 +17306,7 @@ impl NodeChecker for ReceiveFunctionAttributes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for SimpleVersionLiteral<'_> {
+impl NodeChecker for SimpleVersionLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17346,7 +17346,7 @@ impl NodeChecker for SimpleVersionLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for SourceUnitMembers<'_> {
+impl NodeChecker for SourceUnitMembers {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17386,7 +17386,7 @@ impl NodeChecker for SourceUnitMembers<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for StateVariableAttributes<'_> {
+impl NodeChecker for StateVariableAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17426,7 +17426,7 @@ impl NodeChecker for StateVariableAttributes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for Statements<'_> {
+impl NodeChecker for Statements {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17466,7 +17466,7 @@ impl NodeChecker for Statements<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for StringLiterals<'_> {
+impl NodeChecker for StringLiterals {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17506,7 +17506,7 @@ impl NodeChecker for StringLiterals<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for StructMembers<'_> {
+impl NodeChecker for StructMembers {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17546,7 +17546,7 @@ impl NodeChecker for StructMembers<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for TupleDeconstructionElements<'_> {
+impl NodeChecker for TupleDeconstructionElements {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17586,7 +17586,7 @@ impl NodeChecker for TupleDeconstructionElements<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for TupleValues<'_> {
+impl NodeChecker for TupleValues {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17626,7 +17626,7 @@ impl NodeChecker for TupleValues<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for UnicodeStringLiterals<'_> {
+impl NodeChecker for UnicodeStringLiterals {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17666,7 +17666,7 @@ impl NodeChecker for UnicodeStringLiterals<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for UnnamedFunctionAttributes<'_> {
+impl NodeChecker for UnnamedFunctionAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17706,7 +17706,7 @@ impl NodeChecker for UnnamedFunctionAttributes<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for UsingDeconstructionSymbols<'_> {
+impl NodeChecker for UsingDeconstructionSymbols {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17746,7 +17746,7 @@ impl NodeChecker for UsingDeconstructionSymbols<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for VersionExpressionSet<'_> {
+impl NodeChecker for VersionExpressionSet {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17786,7 +17786,7 @@ impl NodeChecker for VersionExpressionSet<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for VersionExpressionSets<'_> {
+impl NodeChecker for VersionExpressionSets {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17826,7 +17826,7 @@ impl NodeChecker for VersionExpressionSets<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for YulArguments<'_> {
+impl NodeChecker for YulArguments {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17866,7 +17866,7 @@ impl NodeChecker for YulArguments<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for YulParameters<'_> {
+impl NodeChecker for YulParameters {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17906,7 +17906,7 @@ impl NodeChecker for YulParameters<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for YulPath<'_> {
+impl NodeChecker for YulPath {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17946,7 +17946,7 @@ impl NodeChecker for YulPath<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for YulPaths<'_> {
+impl NodeChecker for YulPaths {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -17986,7 +17986,7 @@ impl NodeChecker for YulPaths<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for YulStatements<'_> {
+impl NodeChecker for YulStatements {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18026,7 +18026,7 @@ impl NodeChecker for YulStatements<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for YulSwitchCases<'_> {
+impl NodeChecker for YulSwitchCases {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18066,7 +18066,7 @@ impl NodeChecker for YulSwitchCases<'_> {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for YulVariableNames<'_> {
+impl NodeChecker for YulVariableNames {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -18108,7 +18108,7 @@ impl NodeChecker for YulVariableNames<'_> {
 // Terminals
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ABIEncoderV2Keyword<'_> {
+impl NodeChecker for ABIEncoderV2Keyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18136,7 +18136,7 @@ impl NodeChecker for ABIEncoderV2Keyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AbicoderKeyword<'_> {
+impl NodeChecker for AbicoderKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18164,7 +18164,7 @@ impl NodeChecker for AbicoderKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AbicoderV1Keyword<'_> {
+impl NodeChecker for AbicoderV1Keyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18192,7 +18192,7 @@ impl NodeChecker for AbicoderV1Keyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AbicoderV2Keyword<'_> {
+impl NodeChecker for AbicoderV2Keyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18220,7 +18220,7 @@ impl NodeChecker for AbicoderV2Keyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AbstractKeyword<'_> {
+impl NodeChecker for AbstractKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18248,7 +18248,7 @@ impl NodeChecker for AbstractKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AddressKeyword<'_> {
+impl NodeChecker for AddressKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18276,7 +18276,7 @@ impl NodeChecker for AddressKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AfterKeyword<'_> {
+impl NodeChecker for AfterKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18304,7 +18304,7 @@ impl NodeChecker for AfterKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AliasKeyword<'_> {
+impl NodeChecker for AliasKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18332,7 +18332,7 @@ impl NodeChecker for AliasKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Ampersand<'_> {
+impl NodeChecker for Ampersand {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18360,7 +18360,7 @@ impl NodeChecker for Ampersand<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AmpersandAmpersand<'_> {
+impl NodeChecker for AmpersandAmpersand {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18388,7 +18388,7 @@ impl NodeChecker for AmpersandAmpersand<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AmpersandEqual<'_> {
+impl NodeChecker for AmpersandEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18416,7 +18416,7 @@ impl NodeChecker for AmpersandEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AnonymousKeyword<'_> {
+impl NodeChecker for AnonymousKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18444,7 +18444,7 @@ impl NodeChecker for AnonymousKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ApplyKeyword<'_> {
+impl NodeChecker for ApplyKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18472,7 +18472,7 @@ impl NodeChecker for ApplyKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AsKeyword<'_> {
+impl NodeChecker for AsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18500,7 +18500,7 @@ impl NodeChecker for AsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AssemblyKeyword<'_> {
+impl NodeChecker for AssemblyKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18528,7 +18528,7 @@ impl NodeChecker for AssemblyKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Asterisk<'_> {
+impl NodeChecker for Asterisk {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18556,7 +18556,7 @@ impl NodeChecker for Asterisk<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AsteriskAsterisk<'_> {
+impl NodeChecker for AsteriskAsterisk {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18584,7 +18584,7 @@ impl NodeChecker for AsteriskAsterisk<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AsteriskEqual<'_> {
+impl NodeChecker for AsteriskEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18612,7 +18612,7 @@ impl NodeChecker for AsteriskEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AtKeyword<'_> {
+impl NodeChecker for AtKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18640,7 +18640,7 @@ impl NodeChecker for AtKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for AutoKeyword<'_> {
+impl NodeChecker for AutoKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18668,7 +18668,7 @@ impl NodeChecker for AutoKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Bang<'_> {
+impl NodeChecker for Bang {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18696,7 +18696,7 @@ impl NodeChecker for Bang<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for BangEqual<'_> {
+impl NodeChecker for BangEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18724,7 +18724,7 @@ impl NodeChecker for BangEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Bar<'_> {
+impl NodeChecker for Bar {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18752,7 +18752,7 @@ impl NodeChecker for Bar<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for BarBar<'_> {
+impl NodeChecker for BarBar {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18780,7 +18780,7 @@ impl NodeChecker for BarBar<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for BarEqual<'_> {
+impl NodeChecker for BarEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18808,7 +18808,7 @@ impl NodeChecker for BarEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for BoolKeyword<'_> {
+impl NodeChecker for BoolKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18836,7 +18836,7 @@ impl NodeChecker for BoolKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for BreakKeyword<'_> {
+impl NodeChecker for BreakKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18864,7 +18864,7 @@ impl NodeChecker for BreakKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ByteKeyword<'_> {
+impl NodeChecker for ByteKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18892,7 +18892,7 @@ impl NodeChecker for ByteKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for BytesKeyword<'_> {
+impl NodeChecker for BytesKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18920,7 +18920,7 @@ impl NodeChecker for BytesKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for CallDataKeyword<'_> {
+impl NodeChecker for CallDataKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18948,7 +18948,7 @@ impl NodeChecker for CallDataKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Caret<'_> {
+impl NodeChecker for Caret {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -18976,7 +18976,7 @@ impl NodeChecker for Caret<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for CaretEqual<'_> {
+impl NodeChecker for CaretEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19004,7 +19004,7 @@ impl NodeChecker for CaretEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for CaseKeyword<'_> {
+impl NodeChecker for CaseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19032,7 +19032,7 @@ impl NodeChecker for CaseKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for CatchKeyword<'_> {
+impl NodeChecker for CatchKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19060,7 +19060,7 @@ impl NodeChecker for CatchKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for CloseBrace<'_> {
+impl NodeChecker for CloseBrace {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19088,7 +19088,7 @@ impl NodeChecker for CloseBrace<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for CloseBracket<'_> {
+impl NodeChecker for CloseBracket {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19116,7 +19116,7 @@ impl NodeChecker for CloseBracket<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for CloseParen<'_> {
+impl NodeChecker for CloseParen {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19144,7 +19144,7 @@ impl NodeChecker for CloseParen<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Colon<'_> {
+impl NodeChecker for Colon {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19172,7 +19172,7 @@ impl NodeChecker for Colon<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ColonEqual<'_> {
+impl NodeChecker for ColonEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19200,7 +19200,7 @@ impl NodeChecker for ColonEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Comma<'_> {
+impl NodeChecker for Comma {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19228,7 +19228,7 @@ impl NodeChecker for Comma<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ConstantKeyword<'_> {
+impl NodeChecker for ConstantKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19256,7 +19256,7 @@ impl NodeChecker for ConstantKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ConstructorKeyword<'_> {
+impl NodeChecker for ConstructorKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19284,7 +19284,7 @@ impl NodeChecker for ConstructorKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ContinueKeyword<'_> {
+impl NodeChecker for ContinueKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19312,7 +19312,7 @@ impl NodeChecker for ContinueKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ContractKeyword<'_> {
+impl NodeChecker for ContractKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19340,7 +19340,7 @@ impl NodeChecker for ContractKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for CopyOfKeyword<'_> {
+impl NodeChecker for CopyOfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19368,7 +19368,7 @@ impl NodeChecker for CopyOfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DaysKeyword<'_> {
+impl NodeChecker for DaysKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19396,7 +19396,7 @@ impl NodeChecker for DaysKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DecimalLiteral<'_> {
+impl NodeChecker for DecimalLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19424,7 +19424,7 @@ impl NodeChecker for DecimalLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DefaultKeyword<'_> {
+impl NodeChecker for DefaultKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19452,7 +19452,7 @@ impl NodeChecker for DefaultKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DefineKeyword<'_> {
+impl NodeChecker for DefineKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19480,7 +19480,7 @@ impl NodeChecker for DefineKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DeleteKeyword<'_> {
+impl NodeChecker for DeleteKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19508,7 +19508,7 @@ impl NodeChecker for DeleteKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DoKeyword<'_> {
+impl NodeChecker for DoKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19536,7 +19536,7 @@ impl NodeChecker for DoKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DoubleQuotedHexStringLiteral<'_> {
+impl NodeChecker for DoubleQuotedHexStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19564,7 +19564,7 @@ impl NodeChecker for DoubleQuotedHexStringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DoubleQuotedStringLiteral<'_> {
+impl NodeChecker for DoubleQuotedStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19592,7 +19592,7 @@ impl NodeChecker for DoubleQuotedStringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DoubleQuotedUnicodeStringLiteral<'_> {
+impl NodeChecker for DoubleQuotedUnicodeStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19620,7 +19620,7 @@ impl NodeChecker for DoubleQuotedUnicodeStringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DoubleQuotedVersionLiteral<'_> {
+impl NodeChecker for DoubleQuotedVersionLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19648,7 +19648,7 @@ impl NodeChecker for DoubleQuotedVersionLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ElseKeyword<'_> {
+impl NodeChecker for ElseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19676,7 +19676,7 @@ impl NodeChecker for ElseKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for EmitKeyword<'_> {
+impl NodeChecker for EmitKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19704,7 +19704,7 @@ impl NodeChecker for EmitKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for EndOfLine<'_> {
+impl NodeChecker for EndOfLine {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19732,7 +19732,7 @@ impl NodeChecker for EndOfLine<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for EnumKeyword<'_> {
+impl NodeChecker for EnumKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19760,7 +19760,7 @@ impl NodeChecker for EnumKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Equal<'_> {
+impl NodeChecker for Equal {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19788,7 +19788,7 @@ impl NodeChecker for Equal<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for EqualColon<'_> {
+impl NodeChecker for EqualColon {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19816,7 +19816,7 @@ impl NodeChecker for EqualColon<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for EqualEqual<'_> {
+impl NodeChecker for EqualEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19844,7 +19844,7 @@ impl NodeChecker for EqualEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for EqualGreaterThan<'_> {
+impl NodeChecker for EqualGreaterThan {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19872,7 +19872,7 @@ impl NodeChecker for EqualGreaterThan<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ErrorKeyword<'_> {
+impl NodeChecker for ErrorKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19900,7 +19900,7 @@ impl NodeChecker for ErrorKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for EtherKeyword<'_> {
+impl NodeChecker for EtherKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19928,7 +19928,7 @@ impl NodeChecker for EtherKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for EventKeyword<'_> {
+impl NodeChecker for EventKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19956,7 +19956,7 @@ impl NodeChecker for EventKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ExperimentalKeyword<'_> {
+impl NodeChecker for ExperimentalKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -19984,7 +19984,7 @@ impl NodeChecker for ExperimentalKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ExternalKeyword<'_> {
+impl NodeChecker for ExternalKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20012,7 +20012,7 @@ impl NodeChecker for ExternalKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for FallbackKeyword<'_> {
+impl NodeChecker for FallbackKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20040,7 +20040,7 @@ impl NodeChecker for FallbackKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for FalseKeyword<'_> {
+impl NodeChecker for FalseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20068,7 +20068,7 @@ impl NodeChecker for FalseKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for FinalKeyword<'_> {
+impl NodeChecker for FinalKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20096,7 +20096,7 @@ impl NodeChecker for FinalKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for FinneyKeyword<'_> {
+impl NodeChecker for FinneyKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20124,7 +20124,7 @@ impl NodeChecker for FinneyKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for FixedKeyword<'_> {
+impl NodeChecker for FixedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20152,7 +20152,7 @@ impl NodeChecker for FixedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ForKeyword<'_> {
+impl NodeChecker for ForKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20180,7 +20180,7 @@ impl NodeChecker for ForKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for FromKeyword<'_> {
+impl NodeChecker for FromKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20208,7 +20208,7 @@ impl NodeChecker for FromKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for FunctionKeyword<'_> {
+impl NodeChecker for FunctionKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20236,7 +20236,7 @@ impl NodeChecker for FunctionKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for GlobalKeyword<'_> {
+impl NodeChecker for GlobalKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20264,7 +20264,7 @@ impl NodeChecker for GlobalKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for GreaterThan<'_> {
+impl NodeChecker for GreaterThan {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20292,7 +20292,7 @@ impl NodeChecker for GreaterThan<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for GreaterThanEqual<'_> {
+impl NodeChecker for GreaterThanEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20320,7 +20320,7 @@ impl NodeChecker for GreaterThanEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for GreaterThanGreaterThan<'_> {
+impl NodeChecker for GreaterThanGreaterThan {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20348,7 +20348,7 @@ impl NodeChecker for GreaterThanGreaterThan<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for GreaterThanGreaterThanEqual<'_> {
+impl NodeChecker for GreaterThanGreaterThanEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20376,7 +20376,7 @@ impl NodeChecker for GreaterThanGreaterThanEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for GreaterThanGreaterThanGreaterThan<'_> {
+impl NodeChecker for GreaterThanGreaterThanGreaterThan {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20404,7 +20404,7 @@ impl NodeChecker for GreaterThanGreaterThanGreaterThan<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for GreaterThanGreaterThanGreaterThanEqual<'_> {
+impl NodeChecker for GreaterThanGreaterThanGreaterThanEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20432,7 +20432,7 @@ impl NodeChecker for GreaterThanGreaterThanGreaterThanEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for GweiKeyword<'_> {
+impl NodeChecker for GweiKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20460,7 +20460,7 @@ impl NodeChecker for GweiKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for HexKeyword<'_> {
+impl NodeChecker for HexKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20488,7 +20488,7 @@ impl NodeChecker for HexKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for HexLiteral<'_> {
+impl NodeChecker for HexLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20516,7 +20516,7 @@ impl NodeChecker for HexLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for HoursKeyword<'_> {
+impl NodeChecker for HoursKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20544,7 +20544,7 @@ impl NodeChecker for HoursKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Identifier<'_> {
+impl NodeChecker for Identifier {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20572,7 +20572,7 @@ impl NodeChecker for Identifier<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for IfKeyword<'_> {
+impl NodeChecker for IfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20600,7 +20600,7 @@ impl NodeChecker for IfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ImmutableKeyword<'_> {
+impl NodeChecker for ImmutableKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20628,7 +20628,7 @@ impl NodeChecker for ImmutableKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ImplementsKeyword<'_> {
+impl NodeChecker for ImplementsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20656,7 +20656,7 @@ impl NodeChecker for ImplementsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ImportKeyword<'_> {
+impl NodeChecker for ImportKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20684,7 +20684,7 @@ impl NodeChecker for ImportKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for InKeyword<'_> {
+impl NodeChecker for InKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20712,7 +20712,7 @@ impl NodeChecker for InKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for IndexedKeyword<'_> {
+impl NodeChecker for IndexedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20740,7 +20740,7 @@ impl NodeChecker for IndexedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for InlineKeyword<'_> {
+impl NodeChecker for InlineKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20768,7 +20768,7 @@ impl NodeChecker for InlineKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for IntKeyword<'_> {
+impl NodeChecker for IntKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20796,7 +20796,7 @@ impl NodeChecker for IntKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for InterfaceKeyword<'_> {
+impl NodeChecker for InterfaceKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20824,7 +20824,7 @@ impl NodeChecker for InterfaceKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for InternalKeyword<'_> {
+impl NodeChecker for InternalKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20852,7 +20852,7 @@ impl NodeChecker for InternalKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for IsKeyword<'_> {
+impl NodeChecker for IsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20880,7 +20880,7 @@ impl NodeChecker for IsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for LayoutKeyword<'_> {
+impl NodeChecker for LayoutKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20908,7 +20908,7 @@ impl NodeChecker for LayoutKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for LessThan<'_> {
+impl NodeChecker for LessThan {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20936,7 +20936,7 @@ impl NodeChecker for LessThan<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for LessThanEqual<'_> {
+impl NodeChecker for LessThanEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20964,7 +20964,7 @@ impl NodeChecker for LessThanEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for LessThanLessThan<'_> {
+impl NodeChecker for LessThanLessThan {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -20992,7 +20992,7 @@ impl NodeChecker for LessThanLessThan<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for LessThanLessThanEqual<'_> {
+impl NodeChecker for LessThanLessThanEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21020,7 +21020,7 @@ impl NodeChecker for LessThanLessThanEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for LetKeyword<'_> {
+impl NodeChecker for LetKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21048,7 +21048,7 @@ impl NodeChecker for LetKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for LibraryKeyword<'_> {
+impl NodeChecker for LibraryKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21076,7 +21076,7 @@ impl NodeChecker for LibraryKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MacroKeyword<'_> {
+impl NodeChecker for MacroKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21104,7 +21104,7 @@ impl NodeChecker for MacroKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MappingKeyword<'_> {
+impl NodeChecker for MappingKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21132,7 +21132,7 @@ impl NodeChecker for MappingKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MatchKeyword<'_> {
+impl NodeChecker for MatchKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21160,7 +21160,7 @@ impl NodeChecker for MatchKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MemoryKeyword<'_> {
+impl NodeChecker for MemoryKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21188,7 +21188,7 @@ impl NodeChecker for MemoryKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Minus<'_> {
+impl NodeChecker for Minus {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21216,7 +21216,7 @@ impl NodeChecker for Minus<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MinusEqual<'_> {
+impl NodeChecker for MinusEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21244,7 +21244,7 @@ impl NodeChecker for MinusEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MinusGreaterThan<'_> {
+impl NodeChecker for MinusGreaterThan {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21272,7 +21272,7 @@ impl NodeChecker for MinusGreaterThan<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MinusMinus<'_> {
+impl NodeChecker for MinusMinus {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21300,7 +21300,7 @@ impl NodeChecker for MinusMinus<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MinutesKeyword<'_> {
+impl NodeChecker for MinutesKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21328,7 +21328,7 @@ impl NodeChecker for MinutesKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ModifierKeyword<'_> {
+impl NodeChecker for ModifierKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21356,7 +21356,7 @@ impl NodeChecker for ModifierKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MultiLineComment<'_> {
+impl NodeChecker for MultiLineComment {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21384,7 +21384,7 @@ impl NodeChecker for MultiLineComment<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MultiLineNatSpecComment<'_> {
+impl NodeChecker for MultiLineNatSpecComment {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21412,7 +21412,7 @@ impl NodeChecker for MultiLineNatSpecComment<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for MutableKeyword<'_> {
+impl NodeChecker for MutableKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21440,7 +21440,7 @@ impl NodeChecker for MutableKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for NewKeyword<'_> {
+impl NodeChecker for NewKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21468,7 +21468,7 @@ impl NodeChecker for NewKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for NullKeyword<'_> {
+impl NodeChecker for NullKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21496,7 +21496,7 @@ impl NodeChecker for NullKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for OfKeyword<'_> {
+impl NodeChecker for OfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21524,7 +21524,7 @@ impl NodeChecker for OfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for OpenBrace<'_> {
+impl NodeChecker for OpenBrace {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21552,7 +21552,7 @@ impl NodeChecker for OpenBrace<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for OpenBracket<'_> {
+impl NodeChecker for OpenBracket {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21580,7 +21580,7 @@ impl NodeChecker for OpenBracket<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for OpenParen<'_> {
+impl NodeChecker for OpenParen {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21608,7 +21608,7 @@ impl NodeChecker for OpenParen<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for OverrideKeyword<'_> {
+impl NodeChecker for OverrideKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21636,7 +21636,7 @@ impl NodeChecker for OverrideKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PartialKeyword<'_> {
+impl NodeChecker for PartialKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21664,7 +21664,7 @@ impl NodeChecker for PartialKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PayableKeyword<'_> {
+impl NodeChecker for PayableKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21692,7 +21692,7 @@ impl NodeChecker for PayableKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Percent<'_> {
+impl NodeChecker for Percent {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21720,7 +21720,7 @@ impl NodeChecker for Percent<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PercentEqual<'_> {
+impl NodeChecker for PercentEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21748,7 +21748,7 @@ impl NodeChecker for PercentEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Period<'_> {
+impl NodeChecker for Period {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21776,7 +21776,7 @@ impl NodeChecker for Period<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Plus<'_> {
+impl NodeChecker for Plus {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21804,7 +21804,7 @@ impl NodeChecker for Plus<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PlusEqual<'_> {
+impl NodeChecker for PlusEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21832,7 +21832,7 @@ impl NodeChecker for PlusEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PlusPlus<'_> {
+impl NodeChecker for PlusPlus {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21860,7 +21860,7 @@ impl NodeChecker for PlusPlus<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PragmaKeyword<'_> {
+impl NodeChecker for PragmaKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21888,7 +21888,7 @@ impl NodeChecker for PragmaKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PrivateKeyword<'_> {
+impl NodeChecker for PrivateKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21916,7 +21916,7 @@ impl NodeChecker for PrivateKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PromiseKeyword<'_> {
+impl NodeChecker for PromiseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21944,7 +21944,7 @@ impl NodeChecker for PromiseKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PublicKeyword<'_> {
+impl NodeChecker for PublicKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -21972,7 +21972,7 @@ impl NodeChecker for PublicKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PureKeyword<'_> {
+impl NodeChecker for PureKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22000,7 +22000,7 @@ impl NodeChecker for PureKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for QuestionMark<'_> {
+impl NodeChecker for QuestionMark {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22028,7 +22028,7 @@ impl NodeChecker for QuestionMark<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ReceiveKeyword<'_> {
+impl NodeChecker for ReceiveKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22056,7 +22056,7 @@ impl NodeChecker for ReceiveKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ReferenceKeyword<'_> {
+impl NodeChecker for ReferenceKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22084,7 +22084,7 @@ impl NodeChecker for ReferenceKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for RelocatableKeyword<'_> {
+impl NodeChecker for RelocatableKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22112,7 +22112,7 @@ impl NodeChecker for RelocatableKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ReturnKeyword<'_> {
+impl NodeChecker for ReturnKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22140,7 +22140,7 @@ impl NodeChecker for ReturnKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ReturnsKeyword<'_> {
+impl NodeChecker for ReturnsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22168,7 +22168,7 @@ impl NodeChecker for ReturnsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for RevertKeyword<'_> {
+impl NodeChecker for RevertKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22196,7 +22196,7 @@ impl NodeChecker for RevertKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SMTCheckerKeyword<'_> {
+impl NodeChecker for SMTCheckerKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22224,7 +22224,7 @@ impl NodeChecker for SMTCheckerKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SealedKeyword<'_> {
+impl NodeChecker for SealedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22252,7 +22252,7 @@ impl NodeChecker for SealedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SecondsKeyword<'_> {
+impl NodeChecker for SecondsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22280,7 +22280,7 @@ impl NodeChecker for SecondsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Semicolon<'_> {
+impl NodeChecker for Semicolon {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22308,7 +22308,7 @@ impl NodeChecker for Semicolon<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleLineComment<'_> {
+impl NodeChecker for SingleLineComment {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22336,7 +22336,7 @@ impl NodeChecker for SingleLineComment<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleLineNatSpecComment<'_> {
+impl NodeChecker for SingleLineNatSpecComment {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22364,7 +22364,7 @@ impl NodeChecker for SingleLineNatSpecComment<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleQuotedHexStringLiteral<'_> {
+impl NodeChecker for SingleQuotedHexStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22392,7 +22392,7 @@ impl NodeChecker for SingleQuotedHexStringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleQuotedStringLiteral<'_> {
+impl NodeChecker for SingleQuotedStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22420,7 +22420,7 @@ impl NodeChecker for SingleQuotedStringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleQuotedUnicodeStringLiteral<'_> {
+impl NodeChecker for SingleQuotedUnicodeStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22448,7 +22448,7 @@ impl NodeChecker for SingleQuotedUnicodeStringLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleQuotedVersionLiteral<'_> {
+impl NodeChecker for SingleQuotedVersionLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22476,7 +22476,7 @@ impl NodeChecker for SingleQuotedVersionLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SizeOfKeyword<'_> {
+impl NodeChecker for SizeOfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22504,7 +22504,7 @@ impl NodeChecker for SizeOfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Slash<'_> {
+impl NodeChecker for Slash {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22532,7 +22532,7 @@ impl NodeChecker for Slash<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SlashEqual<'_> {
+impl NodeChecker for SlashEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22560,7 +22560,7 @@ impl NodeChecker for SlashEqual<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SolidityKeyword<'_> {
+impl NodeChecker for SolidityKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22588,7 +22588,7 @@ impl NodeChecker for SolidityKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for StaticKeyword<'_> {
+impl NodeChecker for StaticKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22616,7 +22616,7 @@ impl NodeChecker for StaticKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for StorageKeyword<'_> {
+impl NodeChecker for StorageKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22644,7 +22644,7 @@ impl NodeChecker for StorageKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for StringKeyword<'_> {
+impl NodeChecker for StringKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22672,7 +22672,7 @@ impl NodeChecker for StringKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for StructKeyword<'_> {
+impl NodeChecker for StructKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22700,7 +22700,7 @@ impl NodeChecker for StructKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SuperKeyword<'_> {
+impl NodeChecker for SuperKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22728,7 +22728,7 @@ impl NodeChecker for SuperKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SupportsKeyword<'_> {
+impl NodeChecker for SupportsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22756,7 +22756,7 @@ impl NodeChecker for SupportsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SwitchKeyword<'_> {
+impl NodeChecker for SwitchKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22784,7 +22784,7 @@ impl NodeChecker for SwitchKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SzaboKeyword<'_> {
+impl NodeChecker for SzaboKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22812,7 +22812,7 @@ impl NodeChecker for SzaboKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ThisKeyword<'_> {
+impl NodeChecker for ThisKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22840,7 +22840,7 @@ impl NodeChecker for ThisKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ThrowKeyword<'_> {
+impl NodeChecker for ThrowKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22868,7 +22868,7 @@ impl NodeChecker for ThrowKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Tilde<'_> {
+impl NodeChecker for Tilde {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22896,7 +22896,7 @@ impl NodeChecker for Tilde<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for TransientKeyword<'_> {
+impl NodeChecker for TransientKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22924,7 +22924,7 @@ impl NodeChecker for TransientKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for TrueKeyword<'_> {
+impl NodeChecker for TrueKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22952,7 +22952,7 @@ impl NodeChecker for TrueKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for TryKeyword<'_> {
+impl NodeChecker for TryKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -22980,7 +22980,7 @@ impl NodeChecker for TryKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for TypeDefKeyword<'_> {
+impl NodeChecker for TypeDefKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23008,7 +23008,7 @@ impl NodeChecker for TypeDefKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for TypeKeyword<'_> {
+impl NodeChecker for TypeKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23036,7 +23036,7 @@ impl NodeChecker for TypeKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for TypeOfKeyword<'_> {
+impl NodeChecker for TypeOfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23064,7 +23064,7 @@ impl NodeChecker for TypeOfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for UfixedKeyword<'_> {
+impl NodeChecker for UfixedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23092,7 +23092,7 @@ impl NodeChecker for UfixedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for UintKeyword<'_> {
+impl NodeChecker for UintKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23120,7 +23120,7 @@ impl NodeChecker for UintKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for UncheckedKeyword<'_> {
+impl NodeChecker for UncheckedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23148,7 +23148,7 @@ impl NodeChecker for UncheckedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for UsingKeyword<'_> {
+impl NodeChecker for UsingKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23176,7 +23176,7 @@ impl NodeChecker for UsingKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for VarKeyword<'_> {
+impl NodeChecker for VarKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23204,7 +23204,7 @@ impl NodeChecker for VarKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for VersionSpecifier<'_> {
+impl NodeChecker for VersionSpecifier {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23232,7 +23232,7 @@ impl NodeChecker for VersionSpecifier<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for ViewKeyword<'_> {
+impl NodeChecker for ViewKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23260,7 +23260,7 @@ impl NodeChecker for ViewKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for VirtualKeyword<'_> {
+impl NodeChecker for VirtualKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23288,7 +23288,7 @@ impl NodeChecker for VirtualKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for WeeksKeyword<'_> {
+impl NodeChecker for WeeksKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23316,7 +23316,7 @@ impl NodeChecker for WeeksKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for WeiKeyword<'_> {
+impl NodeChecker for WeiKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23344,7 +23344,7 @@ impl NodeChecker for WeiKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for WhileKeyword<'_> {
+impl NodeChecker for WhileKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23372,7 +23372,7 @@ impl NodeChecker for WhileKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for Whitespace<'_> {
+impl NodeChecker for Whitespace {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23400,7 +23400,7 @@ impl NodeChecker for Whitespace<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YearsKeyword<'_> {
+impl NodeChecker for YearsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23428,7 +23428,7 @@ impl NodeChecker for YearsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulAbstractKeyword<'_> {
+impl NodeChecker for YulAbstractKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23456,7 +23456,7 @@ impl NodeChecker for YulAbstractKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulAfterKeyword<'_> {
+impl NodeChecker for YulAfterKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23484,7 +23484,7 @@ impl NodeChecker for YulAfterKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulAliasKeyword<'_> {
+impl NodeChecker for YulAliasKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23512,7 +23512,7 @@ impl NodeChecker for YulAliasKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulAnonymousKeyword<'_> {
+impl NodeChecker for YulAnonymousKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23540,7 +23540,7 @@ impl NodeChecker for YulAnonymousKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulApplyKeyword<'_> {
+impl NodeChecker for YulApplyKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23568,7 +23568,7 @@ impl NodeChecker for YulApplyKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulAsKeyword<'_> {
+impl NodeChecker for YulAsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23596,7 +23596,7 @@ impl NodeChecker for YulAsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulAssemblyKeyword<'_> {
+impl NodeChecker for YulAssemblyKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23624,7 +23624,7 @@ impl NodeChecker for YulAssemblyKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulAutoKeyword<'_> {
+impl NodeChecker for YulAutoKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23652,7 +23652,7 @@ impl NodeChecker for YulAutoKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulBoolKeyword<'_> {
+impl NodeChecker for YulBoolKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23680,7 +23680,7 @@ impl NodeChecker for YulBoolKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulBreakKeyword<'_> {
+impl NodeChecker for YulBreakKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23708,7 +23708,7 @@ impl NodeChecker for YulBreakKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulBytesKeyword<'_> {
+impl NodeChecker for YulBytesKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23736,7 +23736,7 @@ impl NodeChecker for YulBytesKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulCallDataKeyword<'_> {
+impl NodeChecker for YulCallDataKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23764,7 +23764,7 @@ impl NodeChecker for YulCallDataKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulCaseKeyword<'_> {
+impl NodeChecker for YulCaseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23792,7 +23792,7 @@ impl NodeChecker for YulCaseKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulCatchKeyword<'_> {
+impl NodeChecker for YulCatchKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23820,7 +23820,7 @@ impl NodeChecker for YulCatchKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulConstantKeyword<'_> {
+impl NodeChecker for YulConstantKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23848,7 +23848,7 @@ impl NodeChecker for YulConstantKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulConstructorKeyword<'_> {
+impl NodeChecker for YulConstructorKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23876,7 +23876,7 @@ impl NodeChecker for YulConstructorKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulContinueKeyword<'_> {
+impl NodeChecker for YulContinueKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23904,7 +23904,7 @@ impl NodeChecker for YulContinueKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulContractKeyword<'_> {
+impl NodeChecker for YulContractKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23932,7 +23932,7 @@ impl NodeChecker for YulContractKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulCopyOfKeyword<'_> {
+impl NodeChecker for YulCopyOfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23960,7 +23960,7 @@ impl NodeChecker for YulCopyOfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulDaysKeyword<'_> {
+impl NodeChecker for YulDaysKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -23988,7 +23988,7 @@ impl NodeChecker for YulDaysKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulDecimalLiteral<'_> {
+impl NodeChecker for YulDecimalLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24016,7 +24016,7 @@ impl NodeChecker for YulDecimalLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulDefaultKeyword<'_> {
+impl NodeChecker for YulDefaultKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24044,7 +24044,7 @@ impl NodeChecker for YulDefaultKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulDefineKeyword<'_> {
+impl NodeChecker for YulDefineKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24072,7 +24072,7 @@ impl NodeChecker for YulDefineKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulDeleteKeyword<'_> {
+impl NodeChecker for YulDeleteKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24100,7 +24100,7 @@ impl NodeChecker for YulDeleteKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulDoKeyword<'_> {
+impl NodeChecker for YulDoKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24128,7 +24128,7 @@ impl NodeChecker for YulDoKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulElseKeyword<'_> {
+impl NodeChecker for YulElseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24156,7 +24156,7 @@ impl NodeChecker for YulElseKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulEmitKeyword<'_> {
+impl NodeChecker for YulEmitKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24184,7 +24184,7 @@ impl NodeChecker for YulEmitKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulEnumKeyword<'_> {
+impl NodeChecker for YulEnumKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24212,7 +24212,7 @@ impl NodeChecker for YulEnumKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulEtherKeyword<'_> {
+impl NodeChecker for YulEtherKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24240,7 +24240,7 @@ impl NodeChecker for YulEtherKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulEventKeyword<'_> {
+impl NodeChecker for YulEventKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24268,7 +24268,7 @@ impl NodeChecker for YulEventKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulExternalKeyword<'_> {
+impl NodeChecker for YulExternalKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24296,7 +24296,7 @@ impl NodeChecker for YulExternalKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulFallbackKeyword<'_> {
+impl NodeChecker for YulFallbackKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24324,7 +24324,7 @@ impl NodeChecker for YulFallbackKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulFalseKeyword<'_> {
+impl NodeChecker for YulFalseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24352,7 +24352,7 @@ impl NodeChecker for YulFalseKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulFinalKeyword<'_> {
+impl NodeChecker for YulFinalKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24380,7 +24380,7 @@ impl NodeChecker for YulFinalKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulFinneyKeyword<'_> {
+impl NodeChecker for YulFinneyKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24408,7 +24408,7 @@ impl NodeChecker for YulFinneyKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulFixedKeyword<'_> {
+impl NodeChecker for YulFixedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24436,7 +24436,7 @@ impl NodeChecker for YulFixedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulForKeyword<'_> {
+impl NodeChecker for YulForKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24464,7 +24464,7 @@ impl NodeChecker for YulForKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulFunctionKeyword<'_> {
+impl NodeChecker for YulFunctionKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24492,7 +24492,7 @@ impl NodeChecker for YulFunctionKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulGweiKeyword<'_> {
+impl NodeChecker for YulGweiKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24520,7 +24520,7 @@ impl NodeChecker for YulGweiKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulHexKeyword<'_> {
+impl NodeChecker for YulHexKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24548,7 +24548,7 @@ impl NodeChecker for YulHexKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulHexLiteral<'_> {
+impl NodeChecker for YulHexLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24576,7 +24576,7 @@ impl NodeChecker for YulHexLiteral<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulHoursKeyword<'_> {
+impl NodeChecker for YulHoursKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24604,7 +24604,7 @@ impl NodeChecker for YulHoursKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulIdentifier<'_> {
+impl NodeChecker for YulIdentifier {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24632,7 +24632,7 @@ impl NodeChecker for YulIdentifier<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulIfKeyword<'_> {
+impl NodeChecker for YulIfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24660,7 +24660,7 @@ impl NodeChecker for YulIfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulImmutableKeyword<'_> {
+impl NodeChecker for YulImmutableKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24688,7 +24688,7 @@ impl NodeChecker for YulImmutableKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulImplementsKeyword<'_> {
+impl NodeChecker for YulImplementsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24716,7 +24716,7 @@ impl NodeChecker for YulImplementsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulImportKeyword<'_> {
+impl NodeChecker for YulImportKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24744,7 +24744,7 @@ impl NodeChecker for YulImportKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulInKeyword<'_> {
+impl NodeChecker for YulInKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24772,7 +24772,7 @@ impl NodeChecker for YulInKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulIndexedKeyword<'_> {
+impl NodeChecker for YulIndexedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24800,7 +24800,7 @@ impl NodeChecker for YulIndexedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulInlineKeyword<'_> {
+impl NodeChecker for YulInlineKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24828,7 +24828,7 @@ impl NodeChecker for YulInlineKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulIntKeyword<'_> {
+impl NodeChecker for YulIntKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24856,7 +24856,7 @@ impl NodeChecker for YulIntKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulInterfaceKeyword<'_> {
+impl NodeChecker for YulInterfaceKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24884,7 +24884,7 @@ impl NodeChecker for YulInterfaceKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulInternalKeyword<'_> {
+impl NodeChecker for YulInternalKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24912,7 +24912,7 @@ impl NodeChecker for YulInternalKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulIsKeyword<'_> {
+impl NodeChecker for YulIsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24940,7 +24940,7 @@ impl NodeChecker for YulIsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulLeaveKeyword<'_> {
+impl NodeChecker for YulLeaveKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24968,7 +24968,7 @@ impl NodeChecker for YulLeaveKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulLetKeyword<'_> {
+impl NodeChecker for YulLetKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -24996,7 +24996,7 @@ impl NodeChecker for YulLetKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulLibraryKeyword<'_> {
+impl NodeChecker for YulLibraryKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25024,7 +25024,7 @@ impl NodeChecker for YulLibraryKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulMacroKeyword<'_> {
+impl NodeChecker for YulMacroKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25052,7 +25052,7 @@ impl NodeChecker for YulMacroKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulMappingKeyword<'_> {
+impl NodeChecker for YulMappingKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25080,7 +25080,7 @@ impl NodeChecker for YulMappingKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulMatchKeyword<'_> {
+impl NodeChecker for YulMatchKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25108,7 +25108,7 @@ impl NodeChecker for YulMatchKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulMemoryKeyword<'_> {
+impl NodeChecker for YulMemoryKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25136,7 +25136,7 @@ impl NodeChecker for YulMemoryKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulMinutesKeyword<'_> {
+impl NodeChecker for YulMinutesKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25164,7 +25164,7 @@ impl NodeChecker for YulMinutesKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulModifierKeyword<'_> {
+impl NodeChecker for YulModifierKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25192,7 +25192,7 @@ impl NodeChecker for YulModifierKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulMutableKeyword<'_> {
+impl NodeChecker for YulMutableKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25220,7 +25220,7 @@ impl NodeChecker for YulMutableKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulNewKeyword<'_> {
+impl NodeChecker for YulNewKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25248,7 +25248,7 @@ impl NodeChecker for YulNewKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulNullKeyword<'_> {
+impl NodeChecker for YulNullKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25276,7 +25276,7 @@ impl NodeChecker for YulNullKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulOfKeyword<'_> {
+impl NodeChecker for YulOfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25304,7 +25304,7 @@ impl NodeChecker for YulOfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulOverrideKeyword<'_> {
+impl NodeChecker for YulOverrideKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25332,7 +25332,7 @@ impl NodeChecker for YulOverrideKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulPartialKeyword<'_> {
+impl NodeChecker for YulPartialKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25360,7 +25360,7 @@ impl NodeChecker for YulPartialKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulPayableKeyword<'_> {
+impl NodeChecker for YulPayableKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25388,7 +25388,7 @@ impl NodeChecker for YulPayableKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulPragmaKeyword<'_> {
+impl NodeChecker for YulPragmaKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25416,7 +25416,7 @@ impl NodeChecker for YulPragmaKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulPrivateKeyword<'_> {
+impl NodeChecker for YulPrivateKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25444,7 +25444,7 @@ impl NodeChecker for YulPrivateKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulPromiseKeyword<'_> {
+impl NodeChecker for YulPromiseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25472,7 +25472,7 @@ impl NodeChecker for YulPromiseKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulPublicKeyword<'_> {
+impl NodeChecker for YulPublicKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25500,7 +25500,7 @@ impl NodeChecker for YulPublicKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulPureKeyword<'_> {
+impl NodeChecker for YulPureKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25528,7 +25528,7 @@ impl NodeChecker for YulPureKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulReceiveKeyword<'_> {
+impl NodeChecker for YulReceiveKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25556,7 +25556,7 @@ impl NodeChecker for YulReceiveKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulReferenceKeyword<'_> {
+impl NodeChecker for YulReferenceKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25584,7 +25584,7 @@ impl NodeChecker for YulReferenceKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulRelocatableKeyword<'_> {
+impl NodeChecker for YulRelocatableKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25612,7 +25612,7 @@ impl NodeChecker for YulRelocatableKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulReturnsKeyword<'_> {
+impl NodeChecker for YulReturnsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25640,7 +25640,7 @@ impl NodeChecker for YulReturnsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSealedKeyword<'_> {
+impl NodeChecker for YulSealedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25668,7 +25668,7 @@ impl NodeChecker for YulSealedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSecondsKeyword<'_> {
+impl NodeChecker for YulSecondsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25696,7 +25696,7 @@ impl NodeChecker for YulSecondsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSizeOfKeyword<'_> {
+impl NodeChecker for YulSizeOfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25724,7 +25724,7 @@ impl NodeChecker for YulSizeOfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulStaticKeyword<'_> {
+impl NodeChecker for YulStaticKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25752,7 +25752,7 @@ impl NodeChecker for YulStaticKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulStorageKeyword<'_> {
+impl NodeChecker for YulStorageKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25780,7 +25780,7 @@ impl NodeChecker for YulStorageKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulStringKeyword<'_> {
+impl NodeChecker for YulStringKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25808,7 +25808,7 @@ impl NodeChecker for YulStringKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulStructKeyword<'_> {
+impl NodeChecker for YulStructKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25836,7 +25836,7 @@ impl NodeChecker for YulStructKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSuperKeyword<'_> {
+impl NodeChecker for YulSuperKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25864,7 +25864,7 @@ impl NodeChecker for YulSuperKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSupportsKeyword<'_> {
+impl NodeChecker for YulSupportsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25892,7 +25892,7 @@ impl NodeChecker for YulSupportsKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSwitchKeyword<'_> {
+impl NodeChecker for YulSwitchKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25920,7 +25920,7 @@ impl NodeChecker for YulSwitchKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSzaboKeyword<'_> {
+impl NodeChecker for YulSzaboKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25948,7 +25948,7 @@ impl NodeChecker for YulSzaboKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulThisKeyword<'_> {
+impl NodeChecker for YulThisKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -25976,7 +25976,7 @@ impl NodeChecker for YulThisKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulThrowKeyword<'_> {
+impl NodeChecker for YulThrowKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26004,7 +26004,7 @@ impl NodeChecker for YulThrowKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulTrueKeyword<'_> {
+impl NodeChecker for YulTrueKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26032,7 +26032,7 @@ impl NodeChecker for YulTrueKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulTryKeyword<'_> {
+impl NodeChecker for YulTryKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26060,7 +26060,7 @@ impl NodeChecker for YulTryKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulTypeDefKeyword<'_> {
+impl NodeChecker for YulTypeDefKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26088,7 +26088,7 @@ impl NodeChecker for YulTypeDefKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulTypeKeyword<'_> {
+impl NodeChecker for YulTypeKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26116,7 +26116,7 @@ impl NodeChecker for YulTypeKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulTypeOfKeyword<'_> {
+impl NodeChecker for YulTypeOfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26144,7 +26144,7 @@ impl NodeChecker for YulTypeOfKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulUfixedKeyword<'_> {
+impl NodeChecker for YulUfixedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26172,7 +26172,7 @@ impl NodeChecker for YulUfixedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulUintKeyword<'_> {
+impl NodeChecker for YulUintKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26200,7 +26200,7 @@ impl NodeChecker for YulUintKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulUncheckedKeyword<'_> {
+impl NodeChecker for YulUncheckedKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26228,7 +26228,7 @@ impl NodeChecker for YulUncheckedKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulUsingKeyword<'_> {
+impl NodeChecker for YulUsingKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26256,7 +26256,7 @@ impl NodeChecker for YulUsingKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulVarKeyword<'_> {
+impl NodeChecker for YulVarKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26284,7 +26284,7 @@ impl NodeChecker for YulVarKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulViewKeyword<'_> {
+impl NodeChecker for YulViewKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26312,7 +26312,7 @@ impl NodeChecker for YulViewKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulVirtualKeyword<'_> {
+impl NodeChecker for YulVirtualKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26340,7 +26340,7 @@ impl NodeChecker for YulVirtualKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulWeeksKeyword<'_> {
+impl NodeChecker for YulWeeksKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26368,7 +26368,7 @@ impl NodeChecker for YulWeeksKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulWeiKeyword<'_> {
+impl NodeChecker for YulWeiKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26396,7 +26396,7 @@ impl NodeChecker for YulWeiKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulWhileKeyword<'_> {
+impl NodeChecker for YulWhileKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
@@ -26424,7 +26424,7 @@ impl NodeChecker for YulWhileKeyword<'_> {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulYearsKeyword<'_> {
+impl NodeChecker for YulYearsKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
