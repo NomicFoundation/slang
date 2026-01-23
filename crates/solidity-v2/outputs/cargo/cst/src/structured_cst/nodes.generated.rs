@@ -20,7 +20,7 @@ use std::rc::Rc;
 
 pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AbicoderPragmaStruct {
     pub abicoder_keyword: AbicoderKeyword,
     pub version: AbicoderVersion,
@@ -38,7 +38,7 @@ pub fn new_abicoder_pragma(
 
 pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AdditiveExpressionStruct {
     pub left_operand: Expression,
     pub expression_additive_expression_operator: Expression_AdditiveExpression_Operator,
@@ -59,7 +59,7 @@ pub fn new_additive_expression(
 
 pub type AddressType = Rc<AddressTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AddressTypeStruct {
     pub address_keyword: AddressKeyword,
     pub payable_keyword: Option<PayableKeyword>,
@@ -77,7 +77,7 @@ pub fn new_address_type(
 
 pub type AndExpression = Rc<AndExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AndExpressionStruct {
     pub left_operand: Expression,
     pub operator: AmpersandAmpersand,
@@ -98,7 +98,7 @@ pub fn new_and_expression(
 
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ArrayExpressionStruct {
     pub open_bracket: OpenBracket,
     pub items: ArrayValues,
@@ -119,7 +119,7 @@ pub fn new_array_expression(
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ArrayTypeNameStruct {
     pub operand: TypeName,
     pub open_bracket: OpenBracket,
@@ -143,7 +143,7 @@ pub fn new_array_type_name(
 
 pub type AssemblyFlagsDeclaration = Rc<AssemblyFlagsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AssemblyFlagsDeclarationStruct {
     pub open_paren: OpenParen,
     pub flags: AssemblyFlags,
@@ -164,7 +164,7 @@ pub fn new_assembly_flags_declaration(
 
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AssemblyStatementStruct {
     pub assembly_keyword: AssemblyKeyword,
     pub label: Option<StringLiteral>,
@@ -188,7 +188,7 @@ pub fn new_assembly_statement(
 
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AssignmentExpressionStruct {
     pub left_operand: Expression,
     pub expression_assignment_expression_operator: Expression_AssignmentExpression_Operator,
@@ -209,7 +209,7 @@ pub fn new_assignment_expression(
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BitwiseAndExpressionStruct {
     pub left_operand: Expression,
     pub operator: Ampersand,
@@ -230,7 +230,7 @@ pub fn new_bitwise_and_expression(
 
 pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BitwiseOrExpressionStruct {
     pub left_operand: Expression,
     pub operator: Bar,
@@ -251,7 +251,7 @@ pub fn new_bitwise_or_expression(
 
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BitwiseXorExpressionStruct {
     pub left_operand: Expression,
     pub operator: Caret,
@@ -272,7 +272,7 @@ pub fn new_bitwise_xor_expression(
 
 pub type Block = Rc<BlockStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BlockStruct {
     pub open_brace: OpenBrace,
     pub statements: Statements,
@@ -289,7 +289,7 @@ pub fn new_block(open_brace: OpenBrace, statements: Statements, close_brace: Clo
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BreakStatementStruct {
     pub break_keyword: BreakKeyword,
     pub semicolon: Semicolon,
@@ -304,7 +304,7 @@ pub fn new_break_statement(break_keyword: BreakKeyword, semicolon: Semicolon) ->
 
 pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CallOptionsExpressionStruct {
     pub operand: Expression,
     pub open_brace: OpenBrace,
@@ -328,7 +328,7 @@ pub fn new_call_options_expression(
 
 pub type CatchClause = Rc<CatchClauseStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CatchClauseStruct {
     pub catch_keyword: CatchKeyword,
     pub error: Option<CatchClauseError>,
@@ -349,7 +349,7 @@ pub fn new_catch_clause(
 
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CatchClauseErrorStruct {
     pub name: Option<Identifier>,
     pub parameters: ParametersDeclaration,
@@ -364,7 +364,7 @@ pub fn new_catch_clause_error(
 
 pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ConditionalExpressionStruct {
     pub operand: Expression,
     pub question_mark: QuestionMark,
@@ -391,7 +391,7 @@ pub fn new_conditional_expression(
 
 pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ConstantDefinitionStruct {
     pub type_name: TypeName,
     pub constant_keyword: ConstantKeyword,
@@ -421,7 +421,7 @@ pub fn new_constant_definition(
 
 pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ConstructorDefinitionStruct {
     pub constructor_keyword: ConstructorKeyword,
     pub parameters: ParametersDeclaration,
@@ -445,7 +445,7 @@ pub fn new_constructor_definition(
 
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ContinueStatementStruct {
     pub continue_keyword: ContinueKeyword,
     pub semicolon: Semicolon,
@@ -463,7 +463,7 @@ pub fn new_continue_statement(
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ContractDefinitionStruct {
     pub abstract_keyword: Option<AbstractKeyword>,
     pub contract_keyword: ContractKeyword,
@@ -496,7 +496,7 @@ pub fn new_contract_definition(
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DecimalNumberExpressionStruct {
     pub literal: DecimalLiteral,
     pub unit: Option<NumberUnit>,
@@ -511,7 +511,7 @@ pub fn new_decimal_number_expression(
 
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DoWhileStatementStruct {
     pub do_keyword: DoKeyword,
     pub body: Statement,
@@ -544,7 +544,7 @@ pub fn new_do_while_statement(
 
 pub type ElseBranch = Rc<ElseBranchStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ElseBranchStruct {
     pub else_keyword: ElseKeyword,
     pub body: Statement,
@@ -556,7 +556,7 @@ pub fn new_else_branch(else_keyword: ElseKeyword, body: Statement) -> ElseBranch
 
 pub type EmitStatement = Rc<EmitStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EmitStatementStruct {
     pub emit_keyword: EmitKeyword,
     pub event: IdentifierPath,
@@ -580,7 +580,7 @@ pub fn new_emit_statement(
 
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EnumDefinitionStruct {
     pub enum_keyword: EnumKeyword,
     pub name: Identifier,
@@ -607,7 +607,7 @@ pub fn new_enum_definition(
 
 pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EqualityExpressionStruct {
     pub left_operand: Expression,
     pub expression_equality_expression_operator: Expression_EqualityExpression_Operator,
@@ -628,7 +628,7 @@ pub fn new_equality_expression(
 
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ErrorDefinitionStruct {
     pub error_keyword: ErrorKeyword,
     pub name: Identifier,
@@ -652,7 +652,7 @@ pub fn new_error_definition(
 
 pub type ErrorParameter = Rc<ErrorParameterStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ErrorParameterStruct {
     pub type_name: TypeName,
     pub name: Option<Identifier>,
@@ -664,7 +664,7 @@ pub fn new_error_parameter(type_name: TypeName, name: Option<Identifier>) -> Err
 
 pub type ErrorParametersDeclaration = Rc<ErrorParametersDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ErrorParametersDeclarationStruct {
     pub open_paren: OpenParen,
     pub parameters: ErrorParameters,
@@ -685,7 +685,7 @@ pub fn new_error_parameters_declaration(
 
 pub type EventDefinition = Rc<EventDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EventDefinitionStruct {
     pub event_keyword: EventKeyword,
     pub name: Identifier,
@@ -712,7 +712,7 @@ pub fn new_event_definition(
 
 pub type EventParameter = Rc<EventParameterStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EventParameterStruct {
     pub type_name: TypeName,
     pub indexed_keyword: Option<IndexedKeyword>,
@@ -733,7 +733,7 @@ pub fn new_event_parameter(
 
 pub type EventParametersDeclaration = Rc<EventParametersDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EventParametersDeclarationStruct {
     pub open_paren: OpenParen,
     pub parameters: EventParameters,
@@ -754,7 +754,7 @@ pub fn new_event_parameters_declaration(
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ExperimentalPragmaStruct {
     pub experimental_keyword: ExperimentalKeyword,
     pub feature: ExperimentalFeature,
@@ -772,7 +772,7 @@ pub fn new_experimental_pragma(
 
 pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ExponentiationExpressionStruct {
     pub left_operand: Expression,
     pub expression_exponentiation_expression_operator: Expression_ExponentiationExpression_Operator,
@@ -793,7 +793,7 @@ pub fn new_exponentiation_expression(
 
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ExpressionStatementStruct {
     pub expression: Expression,
     pub semicolon: Semicolon,
@@ -811,7 +811,7 @@ pub fn new_expression_statement(
 
 pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FallbackFunctionDefinitionStruct {
     pub fallback_keyword: FallbackKeyword,
     pub parameters: ParametersDeclaration,
@@ -838,7 +838,7 @@ pub fn new_fallback_function_definition(
 
 pub type ForStatement = Rc<ForStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ForStatementStruct {
     pub for_keyword: ForKeyword,
     pub open_paren: OpenParen,
@@ -871,7 +871,7 @@ pub fn new_for_statement(
 
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FunctionCallExpressionStruct {
     pub operand: Expression,
     pub arguments: ArgumentsDeclaration,
@@ -886,7 +886,7 @@ pub fn new_function_call_expression(
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FunctionDefinitionStruct {
     pub function_keyword: FunctionKeyword,
     pub name: FunctionName,
@@ -916,7 +916,7 @@ pub fn new_function_definition(
 
 pub type FunctionType = Rc<FunctionTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FunctionTypeStruct {
     pub function_keyword: FunctionKeyword,
     pub parameters: ParametersDeclaration,
@@ -940,7 +940,7 @@ pub fn new_function_type(
 
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct HexNumberExpressionStruct {
     pub literal: HexLiteral,
     pub unit: Option<NumberUnit>,
@@ -955,7 +955,7 @@ pub fn new_hex_number_expression(
 
 pub type IfStatement = Rc<IfStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct IfStatementStruct {
     pub if_keyword: IfKeyword,
     pub open_paren: OpenParen,
@@ -985,7 +985,7 @@ pub fn new_if_statement(
 
 pub type ImportAlias = Rc<ImportAliasStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImportAliasStruct {
     pub as_keyword: AsKeyword,
     pub identifier: Identifier,
@@ -1000,7 +1000,7 @@ pub fn new_import_alias(as_keyword: AsKeyword, identifier: Identifier) -> Import
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImportDeconstructionStruct {
     pub open_brace: OpenBrace,
     pub symbols: ImportDeconstructionSymbols,
@@ -1027,7 +1027,7 @@ pub fn new_import_deconstruction(
 
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImportDeconstructionSymbolStruct {
     pub name: Identifier,
     pub alias: Option<ImportAlias>,
@@ -1042,7 +1042,7 @@ pub fn new_import_deconstruction_symbol(
 
 pub type ImportDirective = Rc<ImportDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImportDirectiveStruct {
     pub import_keyword: ImportKeyword,
     pub clause: ImportClause,
@@ -1063,7 +1063,7 @@ pub fn new_import_directive(
 
 pub type IndexAccessEnd = Rc<IndexAccessEndStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct IndexAccessEndStruct {
     pub colon: Colon,
     pub end: Option<Expression>,
@@ -1075,7 +1075,7 @@ pub fn new_index_access_end(colon: Colon, end: Option<Expression>) -> IndexAcces
 
 pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct IndexAccessExpressionStruct {
     pub operand: Expression,
     pub open_bracket: OpenBracket,
@@ -1102,7 +1102,7 @@ pub fn new_index_access_expression(
 
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InequalityExpressionStruct {
     pub left_operand: Expression,
     pub expression_inequality_expression_operator: Expression_InequalityExpression_Operator,
@@ -1123,7 +1123,7 @@ pub fn new_inequality_expression(
 
 pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InheritanceSpecifierStruct {
     pub is_keyword: IsKeyword,
     pub types: InheritanceTypes,
@@ -1138,7 +1138,7 @@ pub fn new_inheritance_specifier(
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InheritanceTypeStruct {
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
@@ -1156,7 +1156,7 @@ pub fn new_inheritance_type(
 
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InterfaceDefinitionStruct {
     pub interface_keyword: InterfaceKeyword,
     pub name: Identifier,
@@ -1186,7 +1186,7 @@ pub fn new_interface_definition(
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LibraryDefinitionStruct {
     pub library_keyword: LibraryKeyword,
     pub name: Identifier,
@@ -1213,7 +1213,7 @@ pub fn new_library_definition(
 
 pub type MappingKey = Rc<MappingKeyStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MappingKeyStruct {
     pub key_type: MappingKeyType,
     pub name: Option<Identifier>,
@@ -1225,7 +1225,7 @@ pub fn new_mapping_key(key_type: MappingKeyType, name: Option<Identifier>) -> Ma
 
 pub type MappingType = Rc<MappingTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MappingTypeStruct {
     pub mapping_keyword: MappingKeyword,
     pub open_paren: OpenParen,
@@ -1255,7 +1255,7 @@ pub fn new_mapping_type(
 
 pub type MappingValue = Rc<MappingValueStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MappingValueStruct {
     pub type_name: TypeName,
     pub name: Option<Identifier>,
@@ -1267,7 +1267,7 @@ pub fn new_mapping_value(type_name: TypeName, name: Option<Identifier>) -> Mappi
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MemberAccessExpressionStruct {
     pub operand: Expression,
     pub period: Period,
@@ -1288,7 +1288,7 @@ pub fn new_member_access_expression(
 
 pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ModifierDefinitionStruct {
     pub modifier_keyword: ModifierKeyword,
     pub name: Identifier,
@@ -1315,7 +1315,7 @@ pub fn new_modifier_definition(
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ModifierInvocationStruct {
     pub name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
@@ -1330,7 +1330,7 @@ pub fn new_modifier_invocation(
 
 pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MultiplicativeExpressionStruct {
     pub left_operand: Expression,
     pub expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator,
@@ -1351,7 +1351,7 @@ pub fn new_multiplicative_expression(
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NamedArgumentStruct {
     pub name: Identifier,
     pub colon: Colon,
@@ -1364,7 +1364,7 @@ pub fn new_named_argument(name: Identifier, colon: Colon, value: Expression) -> 
 
 pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NamedArgumentGroupStruct {
     pub open_brace: OpenBrace,
     pub arguments: NamedArguments,
@@ -1385,7 +1385,7 @@ pub fn new_named_argument_group(
 
 pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NamedArgumentsDeclarationStruct {
     pub open_paren: OpenParen,
     pub arguments: Option<NamedArgumentGroup>,
@@ -1406,7 +1406,7 @@ pub fn new_named_arguments_declaration(
 
 pub type NamedImport = Rc<NamedImportStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NamedImportStruct {
     pub asterisk: Asterisk,
     pub alias: ImportAlias,
@@ -1430,7 +1430,7 @@ pub fn new_named_import(
 
 pub type NewExpression = Rc<NewExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NewExpressionStruct {
     pub new_keyword: NewKeyword,
     pub type_name: TypeName,
@@ -1445,7 +1445,7 @@ pub fn new_new_expression(new_keyword: NewKeyword, type_name: TypeName) -> NewEx
 
 pub type OrExpression = Rc<OrExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OrExpressionStruct {
     pub left_operand: Expression,
     pub operator: BarBar,
@@ -1466,7 +1466,7 @@ pub fn new_or_expression(
 
 pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OverridePathsDeclarationStruct {
     pub open_paren: OpenParen,
     pub paths: OverridePaths,
@@ -1487,7 +1487,7 @@ pub fn new_override_paths_declaration(
 
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OverrideSpecifierStruct {
     pub override_keyword: OverrideKeyword,
     pub overridden: Option<OverridePathsDeclaration>,
@@ -1505,7 +1505,7 @@ pub fn new_override_specifier(
 
 pub type Parameter = Rc<ParameterStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ParameterStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
@@ -1526,7 +1526,7 @@ pub fn new_parameter(
 
 pub type ParametersDeclaration = Rc<ParametersDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ParametersDeclarationStruct {
     pub open_paren: OpenParen,
     pub parameters: Parameters,
@@ -1547,7 +1547,7 @@ pub fn new_parameters_declaration(
 
 pub type PathImport = Rc<PathImportStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PathImportStruct {
     pub path: StringLiteral,
     pub alias: Option<ImportAlias>,
@@ -1559,7 +1559,7 @@ pub fn new_path_import(path: StringLiteral, alias: Option<ImportAlias>) -> PathI
 
 pub type PositionalArgumentsDeclaration = Rc<PositionalArgumentsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PositionalArgumentsDeclarationStruct {
     pub open_paren: OpenParen,
     pub arguments: PositionalArguments,
@@ -1580,7 +1580,7 @@ pub fn new_positional_arguments_declaration(
 
 pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PostfixExpressionStruct {
     pub operand: Expression,
     pub expression_postfix_expression_operator: Expression_PostfixExpression_Operator,
@@ -1598,7 +1598,7 @@ pub fn new_postfix_expression(
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PragmaDirectiveStruct {
     pub pragma_keyword: PragmaKeyword,
     pub pragma: Pragma,
@@ -1619,7 +1619,7 @@ pub fn new_pragma_directive(
 
 pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PrefixExpressionStruct {
     pub expression_prefix_expression_operator: Expression_PrefixExpression_Operator,
     pub operand: Expression,
@@ -1637,7 +1637,7 @@ pub fn new_prefix_expression(
 
 pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ReceiveFunctionDefinitionStruct {
     pub receive_keyword: ReceiveKeyword,
     pub parameters: ParametersDeclaration,
@@ -1661,7 +1661,7 @@ pub fn new_receive_function_definition(
 
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ReturnStatementStruct {
     pub return_keyword: ReturnKeyword,
     pub expression: Option<Expression>,
@@ -1682,7 +1682,7 @@ pub fn new_return_statement(
 
 pub type ReturnsDeclaration = Rc<ReturnsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ReturnsDeclarationStruct {
     pub returns_keyword: ReturnsKeyword,
     pub variables: ParametersDeclaration,
@@ -1700,7 +1700,7 @@ pub fn new_returns_declaration(
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct RevertStatementStruct {
     pub revert_keyword: RevertKeyword,
     pub error: IdentifierPath,
@@ -1724,7 +1724,7 @@ pub fn new_revert_statement(
 
 pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ShiftExpressionStruct {
     pub left_operand: Expression,
     pub expression_shift_expression_operator: Expression_ShiftExpression_Operator,
@@ -1745,7 +1745,7 @@ pub fn new_shift_expression(
 
 pub type SourceUnit = Rc<SourceUnitStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SourceUnitStruct {
     pub members: SourceUnitMembers,
 }
@@ -1756,7 +1756,7 @@ pub fn new_source_unit(members: SourceUnitMembers) -> SourceUnit {
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StateVariableDefinitionStruct {
     pub type_name: TypeName,
     pub attributes: StateVariableAttributes,
@@ -1783,7 +1783,7 @@ pub fn new_state_variable_definition(
 
 pub type StateVariableDefinitionValue = Rc<StateVariableDefinitionValueStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StateVariableDefinitionValueStruct {
     pub equal: Equal,
     pub value: Expression,
@@ -1798,7 +1798,7 @@ pub fn new_state_variable_definition_value(
 
 pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StorageLayoutSpecifierStruct {
     pub layout_keyword: LayoutKeyword,
     pub at_keyword: AtKeyword,
@@ -1819,7 +1819,7 @@ pub fn new_storage_layout_specifier(
 
 pub type StructDefinition = Rc<StructDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StructDefinitionStruct {
     pub struct_keyword: StructKeyword,
     pub name: Identifier,
@@ -1846,7 +1846,7 @@ pub fn new_struct_definition(
 
 pub type StructMember = Rc<StructMemberStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StructMemberStruct {
     pub type_name: TypeName,
     pub name: Identifier,
@@ -1867,7 +1867,7 @@ pub fn new_struct_member(
 
 pub type ThrowStatement = Rc<ThrowStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ThrowStatementStruct {
     pub throw_keyword: ThrowKeyword,
     pub semicolon: Semicolon,
@@ -1882,7 +1882,7 @@ pub fn new_throw_statement(throw_keyword: ThrowKeyword, semicolon: Semicolon) ->
 
 pub type TryStatement = Rc<TryStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TryStatementStruct {
     pub try_keyword: TryKeyword,
     pub expression: Expression,
@@ -1909,7 +1909,7 @@ pub fn new_try_statement(
 
 pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TupleDeconstructionElementStruct {
     pub member: Option<TupleMember>,
 }
@@ -1920,7 +1920,7 @@ pub fn new_tuple_deconstruction_element(member: Option<TupleMember>) -> TupleDec
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TupleDeconstructionStatementStruct {
     pub var_keyword: Option<VarKeyword>,
     pub open_paren: OpenParen,
@@ -1953,7 +1953,7 @@ pub fn new_tuple_deconstruction_statement(
 
 pub type TupleExpression = Rc<TupleExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TupleExpressionStruct {
     pub open_paren: OpenParen,
     pub items: TupleValues,
@@ -1974,7 +1974,7 @@ pub fn new_tuple_expression(
 
 pub type TupleValue = Rc<TupleValueStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TupleValueStruct {
     pub expression: Option<Expression>,
 }
@@ -1985,7 +1985,7 @@ pub fn new_tuple_value(expression: Option<Expression>) -> TupleValue {
 
 pub type TypeExpression = Rc<TypeExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TypeExpressionStruct {
     pub type_keyword: TypeKeyword,
     pub open_paren: OpenParen,
@@ -2009,7 +2009,7 @@ pub fn new_type_expression(
 
 pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TypedTupleMemberStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
@@ -2030,7 +2030,7 @@ pub fn new_typed_tuple_member(
 
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UncheckedBlockStruct {
     pub unchecked_keyword: UncheckedKeyword,
     pub block: Block,
@@ -2045,7 +2045,7 @@ pub fn new_unchecked_block(unchecked_keyword: UncheckedKeyword, block: Block) ->
 
 pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UnnamedFunctionDefinitionStruct {
     pub function_keyword: FunctionKeyword,
     pub parameters: ParametersDeclaration,
@@ -2069,7 +2069,7 @@ pub fn new_unnamed_function_definition(
 
 pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UntypedTupleMemberStruct {
     pub storage_location: Option<StorageLocation>,
     pub name: Identifier,
@@ -2087,7 +2087,7 @@ pub fn new_untyped_tuple_member(
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UserDefinedValueTypeDefinitionStruct {
     pub type_keyword: TypeKeyword,
     pub name: Identifier,
@@ -2114,7 +2114,7 @@ pub fn new_user_defined_value_type_definition(
 
 pub type UsingAlias = Rc<UsingAliasStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UsingAliasStruct {
     pub as_keyword: AsKeyword,
     pub operator: UsingOperator,
@@ -2129,7 +2129,7 @@ pub fn new_using_alias(as_keyword: AsKeyword, operator: UsingOperator) -> UsingA
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UsingDeconstructionStruct {
     pub open_brace: OpenBrace,
     pub symbols: UsingDeconstructionSymbols,
@@ -2150,7 +2150,7 @@ pub fn new_using_deconstruction(
 
 pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UsingDeconstructionSymbolStruct {
     pub name: IdentifierPath,
     pub alias: Option<UsingAlias>,
@@ -2165,7 +2165,7 @@ pub fn new_using_deconstruction_symbol(
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UsingDirectiveStruct {
     pub using_keyword: UsingKeyword,
     pub clause: UsingClause,
@@ -2195,7 +2195,7 @@ pub fn new_using_directive(
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VariableDeclarationStatementStruct {
     pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
@@ -2222,7 +2222,7 @@ pub fn new_variable_declaration_statement(
 
 pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VariableDeclarationValueStruct {
     pub equal: Equal,
     pub expression: Expression,
@@ -2237,7 +2237,7 @@ pub fn new_variable_declaration_value(
 
 pub type VersionPragma = Rc<VersionPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VersionPragmaStruct {
     pub solidity_keyword: SolidityKeyword,
     pub sets: VersionExpressionSets,
@@ -2255,7 +2255,7 @@ pub fn new_version_pragma(
 
 pub type VersionRange = Rc<VersionRangeStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VersionRangeStruct {
     pub start: VersionLiteral,
     pub minus: Minus,
@@ -2268,7 +2268,7 @@ pub fn new_version_range(start: VersionLiteral, minus: Minus, end: VersionLitera
 
 pub type VersionTerm = Rc<VersionTermStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VersionTermStruct {
     pub operator: Option<VersionOperator>,
     pub literal: VersionLiteral,
@@ -2280,7 +2280,7 @@ pub fn new_version_term(operator: Option<VersionOperator>, literal: VersionLiter
 
 pub type WhileStatement = Rc<WhileStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct WhileStatementStruct {
     pub while_keyword: WhileKeyword,
     pub open_paren: OpenParen,
@@ -2307,7 +2307,7 @@ pub fn new_while_statement(
 
 pub type YulBlock = Rc<YulBlockStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulBlockStruct {
     pub open_brace: OpenBrace,
     pub statements: YulStatements,
@@ -2328,7 +2328,7 @@ pub fn new_yul_block(
 
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulBreakStatementStruct {
     pub break_keyword: YulBreakKeyword,
 }
@@ -2339,7 +2339,7 @@ pub fn new_yul_break_statement(break_keyword: YulBreakKeyword) -> YulBreakStatem
 
 pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulColonAndEqualStruct {
     pub colon: Colon,
     pub equal: Equal,
@@ -2351,7 +2351,7 @@ pub fn new_yul_colon_and_equal(colon: Colon, equal: Equal) -> YulColonAndEqual {
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulContinueStatementStruct {
     pub continue_keyword: YulContinueKeyword,
 }
@@ -2362,7 +2362,7 @@ pub fn new_yul_continue_statement(continue_keyword: YulContinueKeyword) -> YulCo
 
 pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulDefaultCaseStruct {
     pub default_keyword: YulDefaultKeyword,
     pub body: YulBlock,
@@ -2377,7 +2377,7 @@ pub fn new_yul_default_case(default_keyword: YulDefaultKeyword, body: YulBlock) 
 
 pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulEqualAndColonStruct {
     pub equal: Equal,
     pub colon: Colon,
@@ -2389,7 +2389,7 @@ pub fn new_yul_equal_and_colon(equal: Equal, colon: Colon) -> YulEqualAndColon {
 
 pub type YulForStatement = Rc<YulForStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulForStatementStruct {
     pub for_keyword: YulForKeyword,
     pub initialization: YulBlock,
@@ -2416,7 +2416,7 @@ pub fn new_yul_for_statement(
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulFunctionCallExpressionStruct {
     pub operand: YulExpression,
     pub open_paren: OpenParen,
@@ -2440,7 +2440,7 @@ pub fn new_yul_function_call_expression(
 
 pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulFunctionDefinitionStruct {
     pub function_keyword: YulFunctionKeyword,
     pub name: YulIdentifier,
@@ -2467,7 +2467,7 @@ pub fn new_yul_function_definition(
 
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulIfStatementStruct {
     pub if_keyword: YulIfKeyword,
     pub condition: YulExpression,
@@ -2488,7 +2488,7 @@ pub fn new_yul_if_statement(
 
 pub type YulLabel = Rc<YulLabelStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulLabelStruct {
     pub label: YulIdentifier,
     pub colon: Colon,
@@ -2500,7 +2500,7 @@ pub fn new_yul_label(label: YulIdentifier, colon: Colon) -> YulLabel {
 
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulLeaveStatementStruct {
     pub leave_keyword: YulLeaveKeyword,
 }
@@ -2511,7 +2511,7 @@ pub fn new_yul_leave_statement(leave_keyword: YulLeaveKeyword) -> YulLeaveStatem
 
 pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulParametersDeclarationStruct {
     pub open_paren: OpenParen,
     pub parameters: YulParameters,
@@ -2532,7 +2532,7 @@ pub fn new_yul_parameters_declaration(
 
 pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulReturnsDeclarationStruct {
     pub minus_greater_than: MinusGreaterThan,
     pub variables: YulVariableNames,
@@ -2550,7 +2550,7 @@ pub fn new_yul_returns_declaration(
 
 pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulStackAssignmentStatementStruct {
     pub assignment: YulStackAssignmentOperator,
     pub variable: YulIdentifier,
@@ -2568,7 +2568,7 @@ pub fn new_yul_stack_assignment_statement(
 
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSwitchStatementStruct {
     pub switch_keyword: YulSwitchKeyword,
     pub expression: YulExpression,
@@ -2589,7 +2589,7 @@ pub fn new_yul_switch_statement(
 
 pub type YulValueCase = Rc<YulValueCaseStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulValueCaseStruct {
     pub case_keyword: YulCaseKeyword,
     pub value: YulLiteral,
@@ -2610,7 +2610,7 @@ pub fn new_yul_value_case(
 
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulVariableAssignmentStatementStruct {
     pub variables: YulPaths,
     pub assignment: YulAssignmentOperator,
@@ -2631,7 +2631,7 @@ pub fn new_yul_variable_assignment_statement(
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulVariableDeclarationStatementStruct {
     pub let_keyword: YulLetKeyword,
     pub variables: YulVariableNames,
@@ -2652,7 +2652,7 @@ pub fn new_yul_variable_declaration_statement(
 
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulVariableDeclarationValueStruct {
     pub assignment: YulAssignmentOperator,
     pub expression: YulExpression,
@@ -2673,7 +2673,7 @@ pub fn new_yul_variable_declaration_value(
 //
 // Note: We create a constructor function for each variant
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword(AbicoderV1Keyword),
     AbicoderV2Keyword(AbicoderV2Keyword),
@@ -2687,7 +2687,7 @@ pub fn new_abicoder_version_abicoder_v2_keyword(element: AbicoderV2Keyword) -> A
     AbicoderVersion::AbicoderV2Keyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ArgumentsDeclaration {
     PositionalArgumentsDeclaration(PositionalArgumentsDeclaration),
     NamedArgumentsDeclaration(NamedArgumentsDeclaration),
@@ -2705,7 +2705,7 @@ pub fn new_arguments_declaration_named_arguments_declaration(
     ArgumentsDeclaration::NamedArgumentsDeclaration(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ConstructorAttribute {
     ModifierInvocation(ModifierInvocation),
     InternalKeyword(InternalKeyword),
@@ -2745,7 +2745,7 @@ pub fn new_constructor_attribute_virtual_keyword(element: VirtualKeyword) -> Con
     ConstructorAttribute::VirtualKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -2826,7 +2826,7 @@ pub fn new_contract_member_state_variable_definition(
     ContractMember::StateVariableDefinition(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ContractSpecifier {
     InheritanceSpecifier(InheritanceSpecifier),
     StorageLayoutSpecifier(StorageLayoutSpecifier),
@@ -2844,7 +2844,7 @@ pub fn new_contract_specifier_storage_layout_specifier(
     ContractSpecifier::StorageLayoutSpecifier(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ElementaryType {
     BoolKeyword(BoolKeyword),
     ByteKeyword(ByteKeyword),
@@ -2893,7 +2893,7 @@ pub fn new_elementary_type_ufixed_keyword(element: UfixedKeyword) -> ElementaryT
     ElementaryType::UfixedKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword(ABIEncoderV2Keyword),
     SMTCheckerKeyword(SMTCheckerKeyword),
@@ -2916,7 +2916,7 @@ pub fn new_experimental_feature_string_literal(element: StringLiteral) -> Experi
     ExperimentalFeature::StringLiteral(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -3085,7 +3085,7 @@ pub fn new_expression_identifier(element: Identifier) -> Expression {
     Expression::Identifier(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_AdditiveExpression_Operator {
     Minus(Minus),
     Plus(Plus),
@@ -3103,7 +3103,7 @@ pub fn new_expression_additive_expression_operator_plus(
     Expression_AdditiveExpression_Operator::Plus(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_AssignmentExpression_Operator {
     AmpersandEqual(AmpersandEqual),
     AsteriskEqual(AsteriskEqual),
@@ -3191,7 +3191,7 @@ pub fn new_expression_assignment_expression_operator_slash_equal(
     Expression_AssignmentExpression_Operator::SlashEqual(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_EqualityExpression_Operator {
     BangEqual(BangEqual),
     EqualEqual(EqualEqual),
@@ -3209,7 +3209,7 @@ pub fn new_expression_equality_expression_operator_equal_equal(
     Expression_EqualityExpression_Operator::EqualEqual(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_ExponentiationExpression_Operator {
     AsteriskAsterisk(AsteriskAsterisk),
 }
@@ -3220,7 +3220,7 @@ pub fn new_expression_exponentiation_expression_operator_asterisk_asterisk(
     Expression_ExponentiationExpression_Operator::AsteriskAsterisk(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_InequalityExpression_Operator {
     GreaterThan(GreaterThan),
     GreaterThanEqual(GreaterThanEqual),
@@ -3252,7 +3252,7 @@ pub fn new_expression_inequality_expression_operator_less_than_equal(
     Expression_InequalityExpression_Operator::LessThanEqual(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_MultiplicativeExpression_Operator {
     Asterisk(Asterisk),
     Percent(Percent),
@@ -3277,7 +3277,7 @@ pub fn new_expression_multiplicative_expression_operator_slash(
     Expression_MultiplicativeExpression_Operator::Slash(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_PostfixExpression_Operator {
     MinusMinus(MinusMinus),
     PlusPlus(PlusPlus),
@@ -3295,7 +3295,7 @@ pub fn new_expression_postfix_expression_operator_plus_plus(
     Expression_PostfixExpression_Operator::PlusPlus(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_PrefixExpression_Operator {
     Bang(Bang),
     DeleteKeyword(DeleteKeyword),
@@ -3348,7 +3348,7 @@ pub fn new_expression_prefix_expression_operator_tilde(
     Expression_PrefixExpression_Operator::Tilde(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Expression_ShiftExpression_Operator {
     GreaterThanGreaterThan(GreaterThanGreaterThan),
     GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
@@ -3373,7 +3373,7 @@ pub fn new_expression_shift_expression_operator_less_than_less_than(
     Expression_ShiftExpression_Operator::LessThanLessThan(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FallbackFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -3426,7 +3426,7 @@ pub fn new_fallback_function_attribute_virtual_keyword(
     FallbackFunctionAttribute::VirtualKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon(Semicolon),
@@ -3442,7 +3442,7 @@ pub fn new_for_statement_condition_semicolon(element: Semicolon) -> ForStatement
     ForStatementCondition::Semicolon(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ForStatementInitialization {
     TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
@@ -3474,7 +3474,7 @@ pub fn new_for_statement_initialization_semicolon(
     ForStatementInitialization::Semicolon(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -3535,7 +3535,7 @@ pub fn new_function_attribute_virtual_keyword(element: VirtualKeyword) -> Functi
     FunctionAttribute::VirtualKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionBody {
     Block(Block),
     Semicolon(Semicolon),
@@ -3549,7 +3549,7 @@ pub fn new_function_body_semicolon(element: Semicolon) -> FunctionBody {
     FunctionBody::Semicolon(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionName {
     Identifier(Identifier),
     FallbackKeyword(FallbackKeyword),
@@ -3568,7 +3568,7 @@ pub fn new_function_name_receive_keyword(element: ReceiveKeyword) -> FunctionNam
     FunctionName::ReceiveKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum FunctionTypeAttribute {
     InternalKeyword(InternalKeyword),
     ExternalKeyword(ExternalKeyword),
@@ -3622,7 +3622,7 @@ pub fn new_function_type_attribute_payable_keyword(
     FunctionTypeAttribute::PayableKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum HexStringLiteral {
     SingleQuotedHexStringLiteral(SingleQuotedHexStringLiteral),
     DoubleQuotedHexStringLiteral(DoubleQuotedHexStringLiteral),
@@ -3640,7 +3640,7 @@ pub fn new_hex_string_literal_double_quoted_hex_string_literal(
     HexStringLiteral::DoubleQuotedHexStringLiteral(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ImportClause {
     PathImport(PathImport),
     NamedImport(NamedImport),
@@ -3659,7 +3659,7 @@ pub fn new_import_clause_import_deconstruction(element: ImportDeconstruction) ->
     ImportClause::ImportDeconstruction(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum MappingKeyType {
     ElementaryType(ElementaryType),
     IdentifierPath(IdentifierPath),
@@ -3673,7 +3673,7 @@ pub fn new_mapping_key_type_identifier_path(element: IdentifierPath) -> MappingK
     MappingKeyType::IdentifierPath(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ModifierAttribute {
     OverrideSpecifier(OverrideSpecifier),
     VirtualKeyword(VirtualKeyword),
@@ -3687,7 +3687,7 @@ pub fn new_modifier_attribute_virtual_keyword(element: VirtualKeyword) -> Modifi
     ModifierAttribute::VirtualKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum NumberUnit {
     WeiKeyword(WeiKeyword),
     GweiKeyword(GweiKeyword),
@@ -3746,7 +3746,7 @@ pub fn new_number_unit_years_keyword(element: YearsKeyword) -> NumberUnit {
     NumberUnit::YearsKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
@@ -3765,7 +3765,7 @@ pub fn new_pragma_experimental_pragma(element: ExperimentalPragma) -> Pragma {
     Pragma::ExperimentalPragma(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ReceiveFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -3804,7 +3804,7 @@ pub fn new_receive_function_attribute_virtual_keyword(
     ReceiveFunctionAttribute::VirtualKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ImportDirective(ImportDirective),
@@ -3877,7 +3877,7 @@ pub fn new_source_unit_member_constant_definition(element: ConstantDefinition) -
     SourceUnitMember::ConstantDefinition(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StateVariableAttribute {
     OverrideSpecifier(OverrideSpecifier),
     ConstantKeyword(ConstantKeyword),
@@ -3930,7 +3930,7 @@ pub fn new_state_variable_attribute_transient_keyword(
     StateVariableAttribute::TransientKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -4023,7 +4023,7 @@ pub fn new_statement_expression_statement(element: ExpressionStatement) -> State
     Statement::ExpressionStatement(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StorageLocation {
     MemoryKeyword(MemoryKeyword),
     StorageKeyword(StorageKeyword),
@@ -4042,7 +4042,7 @@ pub fn new_storage_location_call_data_keyword(element: CallDataKeyword) -> Stora
     StorageLocation::CallDataKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StringExpression {
     StringLiteral(StringLiteral),
     StringLiterals(StringLiterals),
@@ -4073,7 +4073,7 @@ pub fn new_string_expression_unicode_string_literals(
     StringExpression::UnicodeStringLiterals(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum StringLiteral {
     SingleQuotedStringLiteral(SingleQuotedStringLiteral),
     DoubleQuotedStringLiteral(DoubleQuotedStringLiteral),
@@ -4091,7 +4091,7 @@ pub fn new_string_literal_double_quoted_string_literal(
     StringLiteral::DoubleQuotedStringLiteral(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum TupleMember {
     TypedTupleMember(TypedTupleMember),
     UntypedTupleMember(UntypedTupleMember),
@@ -4105,7 +4105,7 @@ pub fn new_tuple_member_untyped_tuple_member(element: UntypedTupleMember) -> Tup
     TupleMember::UntypedTupleMember(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -4134,7 +4134,7 @@ pub fn new_type_name_identifier_path(element: IdentifierPath) -> TypeName {
     TypeName::IdentifierPath(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UnicodeStringLiteral {
     SingleQuotedUnicodeStringLiteral(SingleQuotedUnicodeStringLiteral),
     DoubleQuotedUnicodeStringLiteral(DoubleQuotedUnicodeStringLiteral),
@@ -4152,7 +4152,7 @@ pub fn new_unicode_string_literal_double_quoted_unicode_string_literal(
     UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UnnamedFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     ConstantKeyword(ConstantKeyword),
@@ -4219,7 +4219,7 @@ pub fn new_unnamed_function_attribute_view_keyword(
     UnnamedFunctionAttribute::ViewKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
@@ -4233,7 +4233,7 @@ pub fn new_using_clause_using_deconstruction(element: UsingDeconstruction) -> Us
     UsingClause::UsingDeconstruction(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingOperator {
     Ampersand(Ampersand),
     Asterisk(Asterisk),
@@ -4312,7 +4312,7 @@ pub fn new_using_operator_tilde(element: Tilde) -> UsingOperator {
     UsingOperator::Tilde(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk(Asterisk),
@@ -4326,7 +4326,7 @@ pub fn new_using_target_asterisk(element: Asterisk) -> UsingTarget {
     UsingTarget::Asterisk(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VariableDeclarationType {
     TypeName(TypeName),
     VarKeyword(VarKeyword),
@@ -4340,7 +4340,7 @@ pub fn new_variable_declaration_type_var_keyword(element: VarKeyword) -> Variabl
     VariableDeclarationType::VarKeyword(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
@@ -4354,7 +4354,7 @@ pub fn new_version_expression_version_term(element: VersionTerm) -> VersionExpre
     VersionExpression::VersionTerm(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     SingleQuotedVersionLiteral(SingleQuotedVersionLiteral),
@@ -4377,7 +4377,7 @@ pub fn new_version_literal_double_quoted_version_literal(
     VersionLiteral::DoubleQuotedVersionLiteral(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum VersionOperator {
     Caret(Caret),
     Tilde(Tilde),
@@ -4416,7 +4416,7 @@ pub fn new_version_operator_greater_than_equal(element: GreaterThanEqual) -> Ver
     VersionOperator::GreaterThanEqual(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulAssignmentOperator {
     ColonEqual(ColonEqual),
     YulColonAndEqual(YulColonAndEqual),
@@ -4432,7 +4432,7 @@ pub fn new_yul_assignment_operator_yul_colon_and_equal(
     YulAssignmentOperator::YulColonAndEqual(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
@@ -4453,7 +4453,7 @@ pub fn new_yul_expression_yul_path(element: YulPath) -> YulExpression {
     YulExpression::YulPath(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulLiteral {
     YulTrueKeyword(YulTrueKeyword),
     YulFalseKeyword(YulFalseKeyword),
@@ -4487,7 +4487,7 @@ pub fn new_yul_literal_string_literal(element: StringLiteral) -> YulLiteral {
     YulLiteral::StringLiteral(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulStackAssignmentOperator {
     EqualColon(EqualColon),
     YulEqualAndColon(YulEqualAndColon),
@@ -4505,7 +4505,7 @@ pub fn new_yul_stack_assignment_operator_yul_equal_and_colon(
     YulStackAssignmentOperator::YulEqualAndColon(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -4580,7 +4580,7 @@ pub fn new_yul_statement_yul_expression(element: YulExpression) -> YulStatement 
     YulStatement::YulExpression(element)
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
@@ -4599,7 +4599,7 @@ pub fn new_yul_switch_case_yul_value_case(element: YulValueCase) -> YulSwitchCas
 //
 // TODO(v2): consider using a transparent representation
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ArrayValues {
     pub elements: Vec<Expression>,
 }
@@ -4608,7 +4608,7 @@ pub fn new_array_values(elements: Vec<Expression>) -> ArrayValues {
     ArrayValues { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AssemblyFlags {
     pub elements: Vec<StringLiteral>,
 }
@@ -4617,7 +4617,7 @@ pub fn new_assembly_flags(elements: Vec<StringLiteral>) -> AssemblyFlags {
     AssemblyFlags { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CallOptions {
     pub elements: Vec<NamedArgument>,
 }
@@ -4626,7 +4626,7 @@ pub fn new_call_options(elements: Vec<NamedArgument>) -> CallOptions {
     CallOptions { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CatchClauses {
     pub elements: Vec<CatchClause>,
 }
@@ -4635,7 +4635,7 @@ pub fn new_catch_clauses(elements: Vec<CatchClause>) -> CatchClauses {
     CatchClauses { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ConstructorAttributes {
     pub elements: Vec<ConstructorAttribute>,
 }
@@ -4644,7 +4644,7 @@ pub fn new_constructor_attributes(elements: Vec<ConstructorAttribute>) -> Constr
     ConstructorAttributes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ContractMembers {
     pub elements: Vec<ContractMember>,
 }
@@ -4653,7 +4653,7 @@ pub fn new_contract_members(elements: Vec<ContractMember>) -> ContractMembers {
     ContractMembers { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ContractSpecifiers {
     pub elements: Vec<ContractSpecifier>,
 }
@@ -4662,7 +4662,7 @@ pub fn new_contract_specifiers(elements: Vec<ContractSpecifier>) -> ContractSpec
     ContractSpecifiers { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EnumMembers {
     pub elements: Vec<Identifier>,
 }
@@ -4671,7 +4671,7 @@ pub fn new_enum_members(elements: Vec<Identifier>) -> EnumMembers {
     EnumMembers { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ErrorParameters {
     pub elements: Vec<ErrorParameter>,
 }
@@ -4680,7 +4680,7 @@ pub fn new_error_parameters(elements: Vec<ErrorParameter>) -> ErrorParameters {
     ErrorParameters { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EventParameters {
     pub elements: Vec<EventParameter>,
 }
@@ -4689,7 +4689,7 @@ pub fn new_event_parameters(elements: Vec<EventParameter>) -> EventParameters {
     EventParameters { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FallbackFunctionAttributes {
     pub elements: Vec<FallbackFunctionAttribute>,
 }
@@ -4700,7 +4700,7 @@ pub fn new_fallback_function_attributes(
     FallbackFunctionAttributes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FunctionAttributes {
     pub elements: Vec<FunctionAttribute>,
 }
@@ -4709,7 +4709,7 @@ pub fn new_function_attributes(elements: Vec<FunctionAttribute>) -> FunctionAttr
     FunctionAttributes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FunctionTypeAttributes {
     pub elements: Vec<FunctionTypeAttribute>,
 }
@@ -4720,7 +4720,7 @@ pub fn new_function_type_attributes(
     FunctionTypeAttributes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct HexStringLiterals {
     pub elements: Vec<HexStringLiteral>,
 }
@@ -4729,7 +4729,7 @@ pub fn new_hex_string_literals(elements: Vec<HexStringLiteral>) -> HexStringLite
     HexStringLiterals { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct IdentifierPath {
     pub elements: Vec<Identifier>,
 }
@@ -4738,7 +4738,7 @@ pub fn new_identifier_path(elements: Vec<Identifier>) -> IdentifierPath {
     IdentifierPath { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImportDeconstructionSymbols {
     pub elements: Vec<ImportDeconstructionSymbol>,
 }
@@ -4749,7 +4749,7 @@ pub fn new_import_deconstruction_symbols(
     ImportDeconstructionSymbols { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InheritanceTypes {
     pub elements: Vec<InheritanceType>,
 }
@@ -4758,7 +4758,7 @@ pub fn new_inheritance_types(elements: Vec<InheritanceType>) -> InheritanceTypes
     InheritanceTypes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InterfaceMembers {
     pub elements: Vec<ContractMember>,
 }
@@ -4767,7 +4767,7 @@ pub fn new_interface_members(elements: Vec<ContractMember>) -> InterfaceMembers 
     InterfaceMembers { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LibraryMembers {
     pub elements: Vec<ContractMember>,
 }
@@ -4776,7 +4776,7 @@ pub fn new_library_members(elements: Vec<ContractMember>) -> LibraryMembers {
     LibraryMembers { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ModifierAttributes {
     pub elements: Vec<ModifierAttribute>,
 }
@@ -4785,7 +4785,7 @@ pub fn new_modifier_attributes(elements: Vec<ModifierAttribute>) -> ModifierAttr
     ModifierAttributes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NamedArguments {
     pub elements: Vec<NamedArgument>,
 }
@@ -4794,7 +4794,7 @@ pub fn new_named_arguments(elements: Vec<NamedArgument>) -> NamedArguments {
     NamedArguments { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OverridePaths {
     pub elements: Vec<IdentifierPath>,
 }
@@ -4803,7 +4803,7 @@ pub fn new_override_paths(elements: Vec<IdentifierPath>) -> OverridePaths {
     OverridePaths { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Parameters {
     pub elements: Vec<Parameter>,
 }
@@ -4812,7 +4812,7 @@ pub fn new_parameters(elements: Vec<Parameter>) -> Parameters {
     Parameters { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PositionalArguments {
     pub elements: Vec<Expression>,
 }
@@ -4821,7 +4821,7 @@ pub fn new_positional_arguments(elements: Vec<Expression>) -> PositionalArgument
     PositionalArguments { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ReceiveFunctionAttributes {
     pub elements: Vec<ReceiveFunctionAttribute>,
 }
@@ -4832,7 +4832,7 @@ pub fn new_receive_function_attributes(
     ReceiveFunctionAttributes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SimpleVersionLiteral {
     pub elements: Vec<VersionSpecifier>,
 }
@@ -4841,7 +4841,7 @@ pub fn new_simple_version_literal(elements: Vec<VersionSpecifier>) -> SimpleVers
     SimpleVersionLiteral { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SourceUnitMembers {
     pub elements: Vec<SourceUnitMember>,
 }
@@ -4850,7 +4850,7 @@ pub fn new_source_unit_members(elements: Vec<SourceUnitMember>) -> SourceUnitMem
     SourceUnitMembers { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StateVariableAttributes {
     pub elements: Vec<StateVariableAttribute>,
 }
@@ -4861,7 +4861,7 @@ pub fn new_state_variable_attributes(
     StateVariableAttributes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Statements {
     pub elements: Vec<Statement>,
 }
@@ -4870,7 +4870,7 @@ pub fn new_statements(elements: Vec<Statement>) -> Statements {
     Statements { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StringLiterals {
     pub elements: Vec<StringLiteral>,
 }
@@ -4879,7 +4879,7 @@ pub fn new_string_literals(elements: Vec<StringLiteral>) -> StringLiterals {
     StringLiterals { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StructMembers {
     pub elements: Vec<StructMember>,
 }
@@ -4888,7 +4888,7 @@ pub fn new_struct_members(elements: Vec<StructMember>) -> StructMembers {
     StructMembers { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TupleDeconstructionElements {
     pub elements: Vec<TupleDeconstructionElement>,
 }
@@ -4899,7 +4899,7 @@ pub fn new_tuple_deconstruction_elements(
     TupleDeconstructionElements { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TupleValues {
     pub elements: Vec<TupleValue>,
 }
@@ -4908,7 +4908,7 @@ pub fn new_tuple_values(elements: Vec<TupleValue>) -> TupleValues {
     TupleValues { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UnicodeStringLiterals {
     pub elements: Vec<UnicodeStringLiteral>,
 }
@@ -4917,7 +4917,7 @@ pub fn new_unicode_string_literals(elements: Vec<UnicodeStringLiteral>) -> Unico
     UnicodeStringLiterals { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UnnamedFunctionAttributes {
     pub elements: Vec<UnnamedFunctionAttribute>,
 }
@@ -4928,7 +4928,7 @@ pub fn new_unnamed_function_attributes(
     UnnamedFunctionAttributes { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UsingDeconstructionSymbols {
     pub elements: Vec<UsingDeconstructionSymbol>,
 }
@@ -4939,7 +4939,7 @@ pub fn new_using_deconstruction_symbols(
     UsingDeconstructionSymbols { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VersionExpressionSet {
     pub elements: Vec<VersionExpression>,
 }
@@ -4948,7 +4948,7 @@ pub fn new_version_expression_set(elements: Vec<VersionExpression>) -> VersionEx
     VersionExpressionSet { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VersionExpressionSets {
     pub elements: Vec<VersionExpressionSet>,
 }
@@ -4957,7 +4957,7 @@ pub fn new_version_expression_sets(elements: Vec<VersionExpressionSet>) -> Versi
     VersionExpressionSets { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulArguments {
     pub elements: Vec<YulExpression>,
 }
@@ -4966,7 +4966,7 @@ pub fn new_yul_arguments(elements: Vec<YulExpression>) -> YulArguments {
     YulArguments { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulParameters {
     pub elements: Vec<YulIdentifier>,
 }
@@ -4975,7 +4975,7 @@ pub fn new_yul_parameters(elements: Vec<YulIdentifier>) -> YulParameters {
     YulParameters { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPath {
     pub elements: Vec<YulIdentifier>,
 }
@@ -4984,7 +4984,7 @@ pub fn new_yul_path(elements: Vec<YulIdentifier>) -> YulPath {
     YulPath { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPaths {
     pub elements: Vec<YulPath>,
 }
@@ -4993,7 +4993,7 @@ pub fn new_yul_paths(elements: Vec<YulPath>) -> YulPaths {
     YulPaths { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulStatements {
     pub elements: Vec<YulStatement>,
 }
@@ -5002,7 +5002,7 @@ pub fn new_yul_statements(elements: Vec<YulStatement>) -> YulStatements {
     YulStatements { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSwitchCases {
     pub elements: Vec<YulSwitchCase>,
 }
@@ -5011,7 +5011,7 @@ pub fn new_yul_switch_cases(elements: Vec<YulSwitchCase>) -> YulSwitchCases {
     YulSwitchCases { elements }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulVariableNames {
     pub elements: Vec<YulIdentifier>,
 }
@@ -5026,7 +5026,7 @@ pub fn new_yul_variable_names(elements: Vec<YulIdentifier>) -> YulVariableNames 
 // Note: _source is unused on the constructor methods, but kept for uniformity with other constructors
 // and because it may be needed in the future
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ABIEncoderV2Keyword {
     pub range: Range<usize>,
 }
@@ -5035,7 +5035,7 @@ pub fn new_abi_encoder_v2_keyword(range: Range<usize>, _source: &str) -> ABIEnco
     ABIEncoderV2Keyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AbicoderKeyword {
     pub range: Range<usize>,
 }
@@ -5044,7 +5044,7 @@ pub fn new_abicoder_keyword(range: Range<usize>, _source: &str) -> AbicoderKeywo
     AbicoderKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AbicoderV1Keyword {
     pub range: Range<usize>,
 }
@@ -5053,7 +5053,7 @@ pub fn new_abicoder_v1_keyword(range: Range<usize>, _source: &str) -> AbicoderV1
     AbicoderV1Keyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AbicoderV2Keyword {
     pub range: Range<usize>,
 }
@@ -5062,7 +5062,7 @@ pub fn new_abicoder_v2_keyword(range: Range<usize>, _source: &str) -> AbicoderV2
     AbicoderV2Keyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AbstractKeyword {
     pub range: Range<usize>,
 }
@@ -5071,7 +5071,7 @@ pub fn new_abstract_keyword(range: Range<usize>, _source: &str) -> AbstractKeywo
     AbstractKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AddressKeyword {
     pub range: Range<usize>,
 }
@@ -5080,7 +5080,7 @@ pub fn new_address_keyword(range: Range<usize>, _source: &str) -> AddressKeyword
     AddressKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AfterKeyword {
     pub range: Range<usize>,
 }
@@ -5089,7 +5089,7 @@ pub fn new_after_keyword(range: Range<usize>, _source: &str) -> AfterKeyword {
     AfterKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AliasKeyword {
     pub range: Range<usize>,
 }
@@ -5098,7 +5098,7 @@ pub fn new_alias_keyword(range: Range<usize>, _source: &str) -> AliasKeyword {
     AliasKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Ampersand {
     pub range: Range<usize>,
 }
@@ -5107,7 +5107,7 @@ pub fn new_ampersand(range: Range<usize>, _source: &str) -> Ampersand {
     Ampersand { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AmpersandAmpersand {
     pub range: Range<usize>,
 }
@@ -5116,7 +5116,7 @@ pub fn new_ampersand_ampersand(range: Range<usize>, _source: &str) -> AmpersandA
     AmpersandAmpersand { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AmpersandEqual {
     pub range: Range<usize>,
 }
@@ -5125,7 +5125,7 @@ pub fn new_ampersand_equal(range: Range<usize>, _source: &str) -> AmpersandEqual
     AmpersandEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AnonymousKeyword {
     pub range: Range<usize>,
 }
@@ -5134,7 +5134,7 @@ pub fn new_anonymous_keyword(range: Range<usize>, _source: &str) -> AnonymousKey
     AnonymousKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ApplyKeyword {
     pub range: Range<usize>,
 }
@@ -5143,7 +5143,7 @@ pub fn new_apply_keyword(range: Range<usize>, _source: &str) -> ApplyKeyword {
     ApplyKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AsKeyword {
     pub range: Range<usize>,
 }
@@ -5152,7 +5152,7 @@ pub fn new_as_keyword(range: Range<usize>, _source: &str) -> AsKeyword {
     AsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AssemblyKeyword {
     pub range: Range<usize>,
 }
@@ -5161,7 +5161,7 @@ pub fn new_assembly_keyword(range: Range<usize>, _source: &str) -> AssemblyKeywo
     AssemblyKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Asterisk {
     pub range: Range<usize>,
 }
@@ -5170,7 +5170,7 @@ pub fn new_asterisk(range: Range<usize>, _source: &str) -> Asterisk {
     Asterisk { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AsteriskAsterisk {
     pub range: Range<usize>,
 }
@@ -5179,7 +5179,7 @@ pub fn new_asterisk_asterisk(range: Range<usize>, _source: &str) -> AsteriskAste
     AsteriskAsterisk { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AsteriskEqual {
     pub range: Range<usize>,
 }
@@ -5188,7 +5188,7 @@ pub fn new_asterisk_equal(range: Range<usize>, _source: &str) -> AsteriskEqual {
     AsteriskEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AtKeyword {
     pub range: Range<usize>,
 }
@@ -5197,7 +5197,7 @@ pub fn new_at_keyword(range: Range<usize>, _source: &str) -> AtKeyword {
     AtKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct AutoKeyword {
     pub range: Range<usize>,
 }
@@ -5206,7 +5206,7 @@ pub fn new_auto_keyword(range: Range<usize>, _source: &str) -> AutoKeyword {
     AutoKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Bang {
     pub range: Range<usize>,
 }
@@ -5215,7 +5215,7 @@ pub fn new_bang(range: Range<usize>, _source: &str) -> Bang {
     Bang { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BangEqual {
     pub range: Range<usize>,
 }
@@ -5224,7 +5224,7 @@ pub fn new_bang_equal(range: Range<usize>, _source: &str) -> BangEqual {
     BangEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Bar {
     pub range: Range<usize>,
 }
@@ -5233,7 +5233,7 @@ pub fn new_bar(range: Range<usize>, _source: &str) -> Bar {
     Bar { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BarBar {
     pub range: Range<usize>,
 }
@@ -5242,7 +5242,7 @@ pub fn new_bar_bar(range: Range<usize>, _source: &str) -> BarBar {
     BarBar { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BarEqual {
     pub range: Range<usize>,
 }
@@ -5251,7 +5251,7 @@ pub fn new_bar_equal(range: Range<usize>, _source: &str) -> BarEqual {
     BarEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BoolKeyword {
     pub range: Range<usize>,
 }
@@ -5260,7 +5260,7 @@ pub fn new_bool_keyword(range: Range<usize>, _source: &str) -> BoolKeyword {
     BoolKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BreakKeyword {
     pub range: Range<usize>,
 }
@@ -5269,7 +5269,7 @@ pub fn new_break_keyword(range: Range<usize>, _source: &str) -> BreakKeyword {
     BreakKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ByteKeyword {
     pub range: Range<usize>,
 }
@@ -5278,7 +5278,7 @@ pub fn new_byte_keyword(range: Range<usize>, _source: &str) -> ByteKeyword {
     ByteKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct BytesKeyword {
     pub range: Range<usize>,
 }
@@ -5287,7 +5287,7 @@ pub fn new_bytes_keyword(range: Range<usize>, _source: &str) -> BytesKeyword {
     BytesKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CallDataKeyword {
     pub range: Range<usize>,
 }
@@ -5296,7 +5296,7 @@ pub fn new_call_data_keyword(range: Range<usize>, _source: &str) -> CallDataKeyw
     CallDataKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Caret {
     pub range: Range<usize>,
 }
@@ -5305,7 +5305,7 @@ pub fn new_caret(range: Range<usize>, _source: &str) -> Caret {
     Caret { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CaretEqual {
     pub range: Range<usize>,
 }
@@ -5314,7 +5314,7 @@ pub fn new_caret_equal(range: Range<usize>, _source: &str) -> CaretEqual {
     CaretEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CaseKeyword {
     pub range: Range<usize>,
 }
@@ -5323,7 +5323,7 @@ pub fn new_case_keyword(range: Range<usize>, _source: &str) -> CaseKeyword {
     CaseKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CatchKeyword {
     pub range: Range<usize>,
 }
@@ -5332,7 +5332,7 @@ pub fn new_catch_keyword(range: Range<usize>, _source: &str) -> CatchKeyword {
     CatchKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CloseBrace {
     pub range: Range<usize>,
 }
@@ -5341,7 +5341,7 @@ pub fn new_close_brace(range: Range<usize>, _source: &str) -> CloseBrace {
     CloseBrace { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CloseBracket {
     pub range: Range<usize>,
 }
@@ -5350,7 +5350,7 @@ pub fn new_close_bracket(range: Range<usize>, _source: &str) -> CloseBracket {
     CloseBracket { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CloseParen {
     pub range: Range<usize>,
 }
@@ -5359,7 +5359,7 @@ pub fn new_close_paren(range: Range<usize>, _source: &str) -> CloseParen {
     CloseParen { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Colon {
     pub range: Range<usize>,
 }
@@ -5368,7 +5368,7 @@ pub fn new_colon(range: Range<usize>, _source: &str) -> Colon {
     Colon { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ColonEqual {
     pub range: Range<usize>,
 }
@@ -5377,7 +5377,7 @@ pub fn new_colon_equal(range: Range<usize>, _source: &str) -> ColonEqual {
     ColonEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Comma {
     pub range: Range<usize>,
 }
@@ -5386,7 +5386,7 @@ pub fn new_comma(range: Range<usize>, _source: &str) -> Comma {
     Comma { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ConstantKeyword {
     pub range: Range<usize>,
 }
@@ -5395,7 +5395,7 @@ pub fn new_constant_keyword(range: Range<usize>, _source: &str) -> ConstantKeywo
     ConstantKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ConstructorKeyword {
     pub range: Range<usize>,
 }
@@ -5404,7 +5404,7 @@ pub fn new_constructor_keyword(range: Range<usize>, _source: &str) -> Constructo
     ConstructorKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ContinueKeyword {
     pub range: Range<usize>,
 }
@@ -5413,7 +5413,7 @@ pub fn new_continue_keyword(range: Range<usize>, _source: &str) -> ContinueKeywo
     ContinueKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ContractKeyword {
     pub range: Range<usize>,
 }
@@ -5422,7 +5422,7 @@ pub fn new_contract_keyword(range: Range<usize>, _source: &str) -> ContractKeywo
     ContractKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CopyOfKeyword {
     pub range: Range<usize>,
 }
@@ -5431,7 +5431,7 @@ pub fn new_copy_of_keyword(range: Range<usize>, _source: &str) -> CopyOfKeyword 
     CopyOfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DaysKeyword {
     pub range: Range<usize>,
 }
@@ -5440,7 +5440,7 @@ pub fn new_days_keyword(range: Range<usize>, _source: &str) -> DaysKeyword {
     DaysKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DecimalLiteral {
     pub range: Range<usize>,
 }
@@ -5449,7 +5449,7 @@ pub fn new_decimal_literal(range: Range<usize>, _source: &str) -> DecimalLiteral
     DecimalLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DefaultKeyword {
     pub range: Range<usize>,
 }
@@ -5458,7 +5458,7 @@ pub fn new_default_keyword(range: Range<usize>, _source: &str) -> DefaultKeyword
     DefaultKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DefineKeyword {
     pub range: Range<usize>,
 }
@@ -5467,7 +5467,7 @@ pub fn new_define_keyword(range: Range<usize>, _source: &str) -> DefineKeyword {
     DefineKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DeleteKeyword {
     pub range: Range<usize>,
 }
@@ -5476,7 +5476,7 @@ pub fn new_delete_keyword(range: Range<usize>, _source: &str) -> DeleteKeyword {
     DeleteKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DoKeyword {
     pub range: Range<usize>,
 }
@@ -5485,7 +5485,7 @@ pub fn new_do_keyword(range: Range<usize>, _source: &str) -> DoKeyword {
     DoKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DoubleQuotedHexStringLiteral {
     pub range: Range<usize>,
 }
@@ -5497,7 +5497,7 @@ pub fn new_double_quoted_hex_string_literal(
     DoubleQuotedHexStringLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DoubleQuotedStringLiteral {
     pub range: Range<usize>,
 }
@@ -5509,7 +5509,7 @@ pub fn new_double_quoted_string_literal(
     DoubleQuotedStringLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DoubleQuotedUnicodeStringLiteral {
     pub range: Range<usize>,
 }
@@ -5521,7 +5521,7 @@ pub fn new_double_quoted_unicode_string_literal(
     DoubleQuotedUnicodeStringLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DoubleQuotedVersionLiteral {
     pub range: Range<usize>,
 }
@@ -5533,7 +5533,7 @@ pub fn new_double_quoted_version_literal(
     DoubleQuotedVersionLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ElseKeyword {
     pub range: Range<usize>,
 }
@@ -5542,7 +5542,7 @@ pub fn new_else_keyword(range: Range<usize>, _source: &str) -> ElseKeyword {
     ElseKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EmitKeyword {
     pub range: Range<usize>,
 }
@@ -5551,7 +5551,7 @@ pub fn new_emit_keyword(range: Range<usize>, _source: &str) -> EmitKeyword {
     EmitKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EndOfLine {
     pub range: Range<usize>,
 }
@@ -5560,7 +5560,7 @@ pub fn new_end_of_line(range: Range<usize>, _source: &str) -> EndOfLine {
     EndOfLine { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EnumKeyword {
     pub range: Range<usize>,
 }
@@ -5569,7 +5569,7 @@ pub fn new_enum_keyword(range: Range<usize>, _source: &str) -> EnumKeyword {
     EnumKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Equal {
     pub range: Range<usize>,
 }
@@ -5578,7 +5578,7 @@ pub fn new_equal(range: Range<usize>, _source: &str) -> Equal {
     Equal { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EqualColon {
     pub range: Range<usize>,
 }
@@ -5587,7 +5587,7 @@ pub fn new_equal_colon(range: Range<usize>, _source: &str) -> EqualColon {
     EqualColon { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EqualEqual {
     pub range: Range<usize>,
 }
@@ -5596,7 +5596,7 @@ pub fn new_equal_equal(range: Range<usize>, _source: &str) -> EqualEqual {
     EqualEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EqualGreaterThan {
     pub range: Range<usize>,
 }
@@ -5605,7 +5605,7 @@ pub fn new_equal_greater_than(range: Range<usize>, _source: &str) -> EqualGreate
     EqualGreaterThan { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ErrorKeyword {
     pub range: Range<usize>,
 }
@@ -5614,7 +5614,7 @@ pub fn new_error_keyword(range: Range<usize>, _source: &str) -> ErrorKeyword {
     ErrorKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EtherKeyword {
     pub range: Range<usize>,
 }
@@ -5623,7 +5623,7 @@ pub fn new_ether_keyword(range: Range<usize>, _source: &str) -> EtherKeyword {
     EtherKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EventKeyword {
     pub range: Range<usize>,
 }
@@ -5632,7 +5632,7 @@ pub fn new_event_keyword(range: Range<usize>, _source: &str) -> EventKeyword {
     EventKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ExperimentalKeyword {
     pub range: Range<usize>,
 }
@@ -5641,7 +5641,7 @@ pub fn new_experimental_keyword(range: Range<usize>, _source: &str) -> Experimen
     ExperimentalKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ExternalKeyword {
     pub range: Range<usize>,
 }
@@ -5650,7 +5650,7 @@ pub fn new_external_keyword(range: Range<usize>, _source: &str) -> ExternalKeywo
     ExternalKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FallbackKeyword {
     pub range: Range<usize>,
 }
@@ -5659,7 +5659,7 @@ pub fn new_fallback_keyword(range: Range<usize>, _source: &str) -> FallbackKeywo
     FallbackKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FalseKeyword {
     pub range: Range<usize>,
 }
@@ -5668,7 +5668,7 @@ pub fn new_false_keyword(range: Range<usize>, _source: &str) -> FalseKeyword {
     FalseKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FinalKeyword {
     pub range: Range<usize>,
 }
@@ -5677,7 +5677,7 @@ pub fn new_final_keyword(range: Range<usize>, _source: &str) -> FinalKeyword {
     FinalKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FinneyKeyword {
     pub range: Range<usize>,
 }
@@ -5686,7 +5686,7 @@ pub fn new_finney_keyword(range: Range<usize>, _source: &str) -> FinneyKeyword {
     FinneyKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FixedKeyword {
     pub range: Range<usize>,
 }
@@ -5695,7 +5695,7 @@ pub fn new_fixed_keyword(range: Range<usize>, _source: &str) -> FixedKeyword {
     FixedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ForKeyword {
     pub range: Range<usize>,
 }
@@ -5704,7 +5704,7 @@ pub fn new_for_keyword(range: Range<usize>, _source: &str) -> ForKeyword {
     ForKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FromKeyword {
     pub range: Range<usize>,
 }
@@ -5713,7 +5713,7 @@ pub fn new_from_keyword(range: Range<usize>, _source: &str) -> FromKeyword {
     FromKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct FunctionKeyword {
     pub range: Range<usize>,
 }
@@ -5722,7 +5722,7 @@ pub fn new_function_keyword(range: Range<usize>, _source: &str) -> FunctionKeywo
     FunctionKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GlobalKeyword {
     pub range: Range<usize>,
 }
@@ -5731,7 +5731,7 @@ pub fn new_global_keyword(range: Range<usize>, _source: &str) -> GlobalKeyword {
     GlobalKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GreaterThan {
     pub range: Range<usize>,
 }
@@ -5740,7 +5740,7 @@ pub fn new_greater_than(range: Range<usize>, _source: &str) -> GreaterThan {
     GreaterThan { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GreaterThanEqual {
     pub range: Range<usize>,
 }
@@ -5749,7 +5749,7 @@ pub fn new_greater_than_equal(range: Range<usize>, _source: &str) -> GreaterThan
     GreaterThanEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GreaterThanGreaterThan {
     pub range: Range<usize>,
 }
@@ -5758,7 +5758,7 @@ pub fn new_greater_than_greater_than(range: Range<usize>, _source: &str) -> Grea
     GreaterThanGreaterThan { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GreaterThanGreaterThanEqual {
     pub range: Range<usize>,
 }
@@ -5770,7 +5770,7 @@ pub fn new_greater_than_greater_than_equal(
     GreaterThanGreaterThanEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GreaterThanGreaterThanGreaterThan {
     pub range: Range<usize>,
 }
@@ -5782,7 +5782,7 @@ pub fn new_greater_than_greater_than_greater_than(
     GreaterThanGreaterThanGreaterThan { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GreaterThanGreaterThanGreaterThanEqual {
     pub range: Range<usize>,
 }
@@ -5794,7 +5794,7 @@ pub fn new_greater_than_greater_than_greater_than_equal(
     GreaterThanGreaterThanGreaterThanEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GweiKeyword {
     pub range: Range<usize>,
 }
@@ -5803,7 +5803,7 @@ pub fn new_gwei_keyword(range: Range<usize>, _source: &str) -> GweiKeyword {
     GweiKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct HexKeyword {
     pub range: Range<usize>,
 }
@@ -5812,7 +5812,7 @@ pub fn new_hex_keyword(range: Range<usize>, _source: &str) -> HexKeyword {
     HexKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct HexLiteral {
     pub range: Range<usize>,
 }
@@ -5821,7 +5821,7 @@ pub fn new_hex_literal(range: Range<usize>, _source: &str) -> HexLiteral {
     HexLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct HoursKeyword {
     pub range: Range<usize>,
 }
@@ -5830,7 +5830,7 @@ pub fn new_hours_keyword(range: Range<usize>, _source: &str) -> HoursKeyword {
     HoursKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Identifier {
     pub range: Range<usize>,
 }
@@ -5839,7 +5839,7 @@ pub fn new_identifier(range: Range<usize>, _source: &str) -> Identifier {
     Identifier { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct IfKeyword {
     pub range: Range<usize>,
 }
@@ -5848,7 +5848,7 @@ pub fn new_if_keyword(range: Range<usize>, _source: &str) -> IfKeyword {
     IfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImmutableKeyword {
     pub range: Range<usize>,
 }
@@ -5857,7 +5857,7 @@ pub fn new_immutable_keyword(range: Range<usize>, _source: &str) -> ImmutableKey
     ImmutableKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImplementsKeyword {
     pub range: Range<usize>,
 }
@@ -5866,7 +5866,7 @@ pub fn new_implements_keyword(range: Range<usize>, _source: &str) -> ImplementsK
     ImplementsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImportKeyword {
     pub range: Range<usize>,
 }
@@ -5875,7 +5875,7 @@ pub fn new_import_keyword(range: Range<usize>, _source: &str) -> ImportKeyword {
     ImportKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InKeyword {
     pub range: Range<usize>,
 }
@@ -5884,7 +5884,7 @@ pub fn new_in_keyword(range: Range<usize>, _source: &str) -> InKeyword {
     InKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct IndexedKeyword {
     pub range: Range<usize>,
 }
@@ -5893,7 +5893,7 @@ pub fn new_indexed_keyword(range: Range<usize>, _source: &str) -> IndexedKeyword
     IndexedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InlineKeyword {
     pub range: Range<usize>,
 }
@@ -5902,7 +5902,7 @@ pub fn new_inline_keyword(range: Range<usize>, _source: &str) -> InlineKeyword {
     InlineKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct IntKeyword {
     pub range: Range<usize>,
 }
@@ -5911,7 +5911,7 @@ pub fn new_int_keyword(range: Range<usize>, _source: &str) -> IntKeyword {
     IntKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InterfaceKeyword {
     pub range: Range<usize>,
 }
@@ -5920,7 +5920,7 @@ pub fn new_interface_keyword(range: Range<usize>, _source: &str) -> InterfaceKey
     InterfaceKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct InternalKeyword {
     pub range: Range<usize>,
 }
@@ -5929,7 +5929,7 @@ pub fn new_internal_keyword(range: Range<usize>, _source: &str) -> InternalKeywo
     InternalKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct IsKeyword {
     pub range: Range<usize>,
 }
@@ -5938,7 +5938,7 @@ pub fn new_is_keyword(range: Range<usize>, _source: &str) -> IsKeyword {
     IsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LayoutKeyword {
     pub range: Range<usize>,
 }
@@ -5947,7 +5947,7 @@ pub fn new_layout_keyword(range: Range<usize>, _source: &str) -> LayoutKeyword {
     LayoutKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LessThan {
     pub range: Range<usize>,
 }
@@ -5956,7 +5956,7 @@ pub fn new_less_than(range: Range<usize>, _source: &str) -> LessThan {
     LessThan { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LessThanEqual {
     pub range: Range<usize>,
 }
@@ -5965,7 +5965,7 @@ pub fn new_less_than_equal(range: Range<usize>, _source: &str) -> LessThanEqual 
     LessThanEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LessThanLessThan {
     pub range: Range<usize>,
 }
@@ -5974,7 +5974,7 @@ pub fn new_less_than_less_than(range: Range<usize>, _source: &str) -> LessThanLe
     LessThanLessThan { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LessThanLessThanEqual {
     pub range: Range<usize>,
 }
@@ -5983,7 +5983,7 @@ pub fn new_less_than_less_than_equal(range: Range<usize>, _source: &str) -> Less
     LessThanLessThanEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LetKeyword {
     pub range: Range<usize>,
 }
@@ -5992,7 +5992,7 @@ pub fn new_let_keyword(range: Range<usize>, _source: &str) -> LetKeyword {
     LetKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct LibraryKeyword {
     pub range: Range<usize>,
 }
@@ -6001,7 +6001,7 @@ pub fn new_library_keyword(range: Range<usize>, _source: &str) -> LibraryKeyword
     LibraryKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MacroKeyword {
     pub range: Range<usize>,
 }
@@ -6010,7 +6010,7 @@ pub fn new_macro_keyword(range: Range<usize>, _source: &str) -> MacroKeyword {
     MacroKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MappingKeyword {
     pub range: Range<usize>,
 }
@@ -6019,7 +6019,7 @@ pub fn new_mapping_keyword(range: Range<usize>, _source: &str) -> MappingKeyword
     MappingKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MatchKeyword {
     pub range: Range<usize>,
 }
@@ -6028,7 +6028,7 @@ pub fn new_match_keyword(range: Range<usize>, _source: &str) -> MatchKeyword {
     MatchKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MemoryKeyword {
     pub range: Range<usize>,
 }
@@ -6037,7 +6037,7 @@ pub fn new_memory_keyword(range: Range<usize>, _source: &str) -> MemoryKeyword {
     MemoryKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Minus {
     pub range: Range<usize>,
 }
@@ -6046,7 +6046,7 @@ pub fn new_minus(range: Range<usize>, _source: &str) -> Minus {
     Minus { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MinusEqual {
     pub range: Range<usize>,
 }
@@ -6055,7 +6055,7 @@ pub fn new_minus_equal(range: Range<usize>, _source: &str) -> MinusEqual {
     MinusEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MinusGreaterThan {
     pub range: Range<usize>,
 }
@@ -6064,7 +6064,7 @@ pub fn new_minus_greater_than(range: Range<usize>, _source: &str) -> MinusGreate
     MinusGreaterThan { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MinusMinus {
     pub range: Range<usize>,
 }
@@ -6073,7 +6073,7 @@ pub fn new_minus_minus(range: Range<usize>, _source: &str) -> MinusMinus {
     MinusMinus { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MinutesKeyword {
     pub range: Range<usize>,
 }
@@ -6082,7 +6082,7 @@ pub fn new_minutes_keyword(range: Range<usize>, _source: &str) -> MinutesKeyword
     MinutesKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ModifierKeyword {
     pub range: Range<usize>,
 }
@@ -6091,7 +6091,7 @@ pub fn new_modifier_keyword(range: Range<usize>, _source: &str) -> ModifierKeywo
     ModifierKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MultiLineComment {
     pub range: Range<usize>,
 }
@@ -6100,7 +6100,7 @@ pub fn new_multi_line_comment(range: Range<usize>, _source: &str) -> MultiLineCo
     MultiLineComment { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MultiLineNatSpecComment {
     pub range: Range<usize>,
 }
@@ -6112,7 +6112,7 @@ pub fn new_multi_line_nat_spec_comment(
     MultiLineNatSpecComment { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MutableKeyword {
     pub range: Range<usize>,
 }
@@ -6121,7 +6121,7 @@ pub fn new_mutable_keyword(range: Range<usize>, _source: &str) -> MutableKeyword
     MutableKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NewKeyword {
     pub range: Range<usize>,
 }
@@ -6130,7 +6130,7 @@ pub fn new_new_keyword(range: Range<usize>, _source: &str) -> NewKeyword {
     NewKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NullKeyword {
     pub range: Range<usize>,
 }
@@ -6139,7 +6139,7 @@ pub fn new_null_keyword(range: Range<usize>, _source: &str) -> NullKeyword {
     NullKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OfKeyword {
     pub range: Range<usize>,
 }
@@ -6148,7 +6148,7 @@ pub fn new_of_keyword(range: Range<usize>, _source: &str) -> OfKeyword {
     OfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OpenBrace {
     pub range: Range<usize>,
 }
@@ -6157,7 +6157,7 @@ pub fn new_open_brace(range: Range<usize>, _source: &str) -> OpenBrace {
     OpenBrace { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OpenBracket {
     pub range: Range<usize>,
 }
@@ -6166,7 +6166,7 @@ pub fn new_open_bracket(range: Range<usize>, _source: &str) -> OpenBracket {
     OpenBracket { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OpenParen {
     pub range: Range<usize>,
 }
@@ -6175,7 +6175,7 @@ pub fn new_open_paren(range: Range<usize>, _source: &str) -> OpenParen {
     OpenParen { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct OverrideKeyword {
     pub range: Range<usize>,
 }
@@ -6184,7 +6184,7 @@ pub fn new_override_keyword(range: Range<usize>, _source: &str) -> OverrideKeywo
     OverrideKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PartialKeyword {
     pub range: Range<usize>,
 }
@@ -6193,7 +6193,7 @@ pub fn new_partial_keyword(range: Range<usize>, _source: &str) -> PartialKeyword
     PartialKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PayableKeyword {
     pub range: Range<usize>,
 }
@@ -6202,7 +6202,7 @@ pub fn new_payable_keyword(range: Range<usize>, _source: &str) -> PayableKeyword
     PayableKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Percent {
     pub range: Range<usize>,
 }
@@ -6211,7 +6211,7 @@ pub fn new_percent(range: Range<usize>, _source: &str) -> Percent {
     Percent { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PercentEqual {
     pub range: Range<usize>,
 }
@@ -6220,7 +6220,7 @@ pub fn new_percent_equal(range: Range<usize>, _source: &str) -> PercentEqual {
     PercentEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Period {
     pub range: Range<usize>,
 }
@@ -6229,7 +6229,7 @@ pub fn new_period(range: Range<usize>, _source: &str) -> Period {
     Period { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Plus {
     pub range: Range<usize>,
 }
@@ -6238,7 +6238,7 @@ pub fn new_plus(range: Range<usize>, _source: &str) -> Plus {
     Plus { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PlusEqual {
     pub range: Range<usize>,
 }
@@ -6247,7 +6247,7 @@ pub fn new_plus_equal(range: Range<usize>, _source: &str) -> PlusEqual {
     PlusEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PlusPlus {
     pub range: Range<usize>,
 }
@@ -6256,7 +6256,7 @@ pub fn new_plus_plus(range: Range<usize>, _source: &str) -> PlusPlus {
     PlusPlus { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PragmaKeyword {
     pub range: Range<usize>,
 }
@@ -6265,7 +6265,7 @@ pub fn new_pragma_keyword(range: Range<usize>, _source: &str) -> PragmaKeyword {
     PragmaKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PrivateKeyword {
     pub range: Range<usize>,
 }
@@ -6274,7 +6274,7 @@ pub fn new_private_keyword(range: Range<usize>, _source: &str) -> PrivateKeyword
     PrivateKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PromiseKeyword {
     pub range: Range<usize>,
 }
@@ -6283,7 +6283,7 @@ pub fn new_promise_keyword(range: Range<usize>, _source: &str) -> PromiseKeyword
     PromiseKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PublicKeyword {
     pub range: Range<usize>,
 }
@@ -6292,7 +6292,7 @@ pub fn new_public_keyword(range: Range<usize>, _source: &str) -> PublicKeyword {
     PublicKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PureKeyword {
     pub range: Range<usize>,
 }
@@ -6301,7 +6301,7 @@ pub fn new_pure_keyword(range: Range<usize>, _source: &str) -> PureKeyword {
     PureKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct QuestionMark {
     pub range: Range<usize>,
 }
@@ -6310,7 +6310,7 @@ pub fn new_question_mark(range: Range<usize>, _source: &str) -> QuestionMark {
     QuestionMark { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ReceiveKeyword {
     pub range: Range<usize>,
 }
@@ -6319,7 +6319,7 @@ pub fn new_receive_keyword(range: Range<usize>, _source: &str) -> ReceiveKeyword
     ReceiveKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ReferenceKeyword {
     pub range: Range<usize>,
 }
@@ -6328,7 +6328,7 @@ pub fn new_reference_keyword(range: Range<usize>, _source: &str) -> ReferenceKey
     ReferenceKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct RelocatableKeyword {
     pub range: Range<usize>,
 }
@@ -6337,7 +6337,7 @@ pub fn new_relocatable_keyword(range: Range<usize>, _source: &str) -> Relocatabl
     RelocatableKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ReturnKeyword {
     pub range: Range<usize>,
 }
@@ -6346,7 +6346,7 @@ pub fn new_return_keyword(range: Range<usize>, _source: &str) -> ReturnKeyword {
     ReturnKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ReturnsKeyword {
     pub range: Range<usize>,
 }
@@ -6355,7 +6355,7 @@ pub fn new_returns_keyword(range: Range<usize>, _source: &str) -> ReturnsKeyword
     ReturnsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct RevertKeyword {
     pub range: Range<usize>,
 }
@@ -6364,7 +6364,7 @@ pub fn new_revert_keyword(range: Range<usize>, _source: &str) -> RevertKeyword {
     RevertKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SMTCheckerKeyword {
     pub range: Range<usize>,
 }
@@ -6373,7 +6373,7 @@ pub fn new_smt_checker_keyword(range: Range<usize>, _source: &str) -> SMTChecker
     SMTCheckerKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SealedKeyword {
     pub range: Range<usize>,
 }
@@ -6382,7 +6382,7 @@ pub fn new_sealed_keyword(range: Range<usize>, _source: &str) -> SealedKeyword {
     SealedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SecondsKeyword {
     pub range: Range<usize>,
 }
@@ -6391,7 +6391,7 @@ pub fn new_seconds_keyword(range: Range<usize>, _source: &str) -> SecondsKeyword
     SecondsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Semicolon {
     pub range: Range<usize>,
 }
@@ -6400,7 +6400,7 @@ pub fn new_semicolon(range: Range<usize>, _source: &str) -> Semicolon {
     Semicolon { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SingleLineComment {
     pub range: Range<usize>,
 }
@@ -6409,7 +6409,7 @@ pub fn new_single_line_comment(range: Range<usize>, _source: &str) -> SingleLine
     SingleLineComment { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SingleLineNatSpecComment {
     pub range: Range<usize>,
 }
@@ -6421,7 +6421,7 @@ pub fn new_single_line_nat_spec_comment(
     SingleLineNatSpecComment { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SingleQuotedHexStringLiteral {
     pub range: Range<usize>,
 }
@@ -6433,7 +6433,7 @@ pub fn new_single_quoted_hex_string_literal(
     SingleQuotedHexStringLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SingleQuotedStringLiteral {
     pub range: Range<usize>,
 }
@@ -6445,7 +6445,7 @@ pub fn new_single_quoted_string_literal(
     SingleQuotedStringLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SingleQuotedUnicodeStringLiteral {
     pub range: Range<usize>,
 }
@@ -6457,7 +6457,7 @@ pub fn new_single_quoted_unicode_string_literal(
     SingleQuotedUnicodeStringLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SingleQuotedVersionLiteral {
     pub range: Range<usize>,
 }
@@ -6469,7 +6469,7 @@ pub fn new_single_quoted_version_literal(
     SingleQuotedVersionLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SizeOfKeyword {
     pub range: Range<usize>,
 }
@@ -6478,7 +6478,7 @@ pub fn new_size_of_keyword(range: Range<usize>, _source: &str) -> SizeOfKeyword 
     SizeOfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Slash {
     pub range: Range<usize>,
 }
@@ -6487,7 +6487,7 @@ pub fn new_slash(range: Range<usize>, _source: &str) -> Slash {
     Slash { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SlashEqual {
     pub range: Range<usize>,
 }
@@ -6496,7 +6496,7 @@ pub fn new_slash_equal(range: Range<usize>, _source: &str) -> SlashEqual {
     SlashEqual { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SolidityKeyword {
     pub range: Range<usize>,
 }
@@ -6505,7 +6505,7 @@ pub fn new_solidity_keyword(range: Range<usize>, _source: &str) -> SolidityKeywo
     SolidityKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StaticKeyword {
     pub range: Range<usize>,
 }
@@ -6514,7 +6514,7 @@ pub fn new_static_keyword(range: Range<usize>, _source: &str) -> StaticKeyword {
     StaticKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StorageKeyword {
     pub range: Range<usize>,
 }
@@ -6523,7 +6523,7 @@ pub fn new_storage_keyword(range: Range<usize>, _source: &str) -> StorageKeyword
     StorageKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StringKeyword {
     pub range: Range<usize>,
 }
@@ -6532,7 +6532,7 @@ pub fn new_string_keyword(range: Range<usize>, _source: &str) -> StringKeyword {
     StringKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct StructKeyword {
     pub range: Range<usize>,
 }
@@ -6541,7 +6541,7 @@ pub fn new_struct_keyword(range: Range<usize>, _source: &str) -> StructKeyword {
     StructKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SuperKeyword {
     pub range: Range<usize>,
 }
@@ -6550,7 +6550,7 @@ pub fn new_super_keyword(range: Range<usize>, _source: &str) -> SuperKeyword {
     SuperKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SupportsKeyword {
     pub range: Range<usize>,
 }
@@ -6559,7 +6559,7 @@ pub fn new_supports_keyword(range: Range<usize>, _source: &str) -> SupportsKeywo
     SupportsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SwitchKeyword {
     pub range: Range<usize>,
 }
@@ -6568,7 +6568,7 @@ pub fn new_switch_keyword(range: Range<usize>, _source: &str) -> SwitchKeyword {
     SwitchKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SzaboKeyword {
     pub range: Range<usize>,
 }
@@ -6577,7 +6577,7 @@ pub fn new_szabo_keyword(range: Range<usize>, _source: &str) -> SzaboKeyword {
     SzaboKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ThisKeyword {
     pub range: Range<usize>,
 }
@@ -6586,7 +6586,7 @@ pub fn new_this_keyword(range: Range<usize>, _source: &str) -> ThisKeyword {
     ThisKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ThrowKeyword {
     pub range: Range<usize>,
 }
@@ -6595,7 +6595,7 @@ pub fn new_throw_keyword(range: Range<usize>, _source: &str) -> ThrowKeyword {
     ThrowKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Tilde {
     pub range: Range<usize>,
 }
@@ -6604,7 +6604,7 @@ pub fn new_tilde(range: Range<usize>, _source: &str) -> Tilde {
     Tilde { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TransientKeyword {
     pub range: Range<usize>,
 }
@@ -6613,7 +6613,7 @@ pub fn new_transient_keyword(range: Range<usize>, _source: &str) -> TransientKey
     TransientKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TrueKeyword {
     pub range: Range<usize>,
 }
@@ -6622,7 +6622,7 @@ pub fn new_true_keyword(range: Range<usize>, _source: &str) -> TrueKeyword {
     TrueKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TryKeyword {
     pub range: Range<usize>,
 }
@@ -6631,7 +6631,7 @@ pub fn new_try_keyword(range: Range<usize>, _source: &str) -> TryKeyword {
     TryKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TypeDefKeyword {
     pub range: Range<usize>,
 }
@@ -6640,7 +6640,7 @@ pub fn new_type_def_keyword(range: Range<usize>, _source: &str) -> TypeDefKeywor
     TypeDefKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TypeKeyword {
     pub range: Range<usize>,
 }
@@ -6649,7 +6649,7 @@ pub fn new_type_keyword(range: Range<usize>, _source: &str) -> TypeKeyword {
     TypeKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TypeOfKeyword {
     pub range: Range<usize>,
 }
@@ -6658,7 +6658,7 @@ pub fn new_type_of_keyword(range: Range<usize>, _source: &str) -> TypeOfKeyword 
     TypeOfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UfixedKeyword {
     pub range: Range<usize>,
 }
@@ -6667,7 +6667,7 @@ pub fn new_ufixed_keyword(range: Range<usize>, _source: &str) -> UfixedKeyword {
     UfixedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UintKeyword {
     pub range: Range<usize>,
 }
@@ -6676,7 +6676,7 @@ pub fn new_uint_keyword(range: Range<usize>, _source: &str) -> UintKeyword {
     UintKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UncheckedKeyword {
     pub range: Range<usize>,
 }
@@ -6685,7 +6685,7 @@ pub fn new_unchecked_keyword(range: Range<usize>, _source: &str) -> UncheckedKey
     UncheckedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UsingKeyword {
     pub range: Range<usize>,
 }
@@ -6694,7 +6694,7 @@ pub fn new_using_keyword(range: Range<usize>, _source: &str) -> UsingKeyword {
     UsingKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VarKeyword {
     pub range: Range<usize>,
 }
@@ -6703,7 +6703,7 @@ pub fn new_var_keyword(range: Range<usize>, _source: &str) -> VarKeyword {
     VarKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VersionSpecifier {
     pub range: Range<usize>,
 }
@@ -6712,7 +6712,7 @@ pub fn new_version_specifier(range: Range<usize>, _source: &str) -> VersionSpeci
     VersionSpecifier { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ViewKeyword {
     pub range: Range<usize>,
 }
@@ -6721,7 +6721,7 @@ pub fn new_view_keyword(range: Range<usize>, _source: &str) -> ViewKeyword {
     ViewKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VirtualKeyword {
     pub range: Range<usize>,
 }
@@ -6730,7 +6730,7 @@ pub fn new_virtual_keyword(range: Range<usize>, _source: &str) -> VirtualKeyword
     VirtualKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct WeeksKeyword {
     pub range: Range<usize>,
 }
@@ -6739,7 +6739,7 @@ pub fn new_weeks_keyword(range: Range<usize>, _source: &str) -> WeeksKeyword {
     WeeksKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct WeiKeyword {
     pub range: Range<usize>,
 }
@@ -6748,7 +6748,7 @@ pub fn new_wei_keyword(range: Range<usize>, _source: &str) -> WeiKeyword {
     WeiKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct WhileKeyword {
     pub range: Range<usize>,
 }
@@ -6757,7 +6757,7 @@ pub fn new_while_keyword(range: Range<usize>, _source: &str) -> WhileKeyword {
     WhileKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Whitespace {
     pub range: Range<usize>,
 }
@@ -6766,7 +6766,7 @@ pub fn new_whitespace(range: Range<usize>, _source: &str) -> Whitespace {
     Whitespace { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YearsKeyword {
     pub range: Range<usize>,
 }
@@ -6775,7 +6775,7 @@ pub fn new_years_keyword(range: Range<usize>, _source: &str) -> YearsKeyword {
     YearsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulAbstractKeyword {
     pub range: Range<usize>,
 }
@@ -6784,7 +6784,7 @@ pub fn new_yul_abstract_keyword(range: Range<usize>, _source: &str) -> YulAbstra
     YulAbstractKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulAfterKeyword {
     pub range: Range<usize>,
 }
@@ -6793,7 +6793,7 @@ pub fn new_yul_after_keyword(range: Range<usize>, _source: &str) -> YulAfterKeyw
     YulAfterKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulAliasKeyword {
     pub range: Range<usize>,
 }
@@ -6802,7 +6802,7 @@ pub fn new_yul_alias_keyword(range: Range<usize>, _source: &str) -> YulAliasKeyw
     YulAliasKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulAnonymousKeyword {
     pub range: Range<usize>,
 }
@@ -6811,7 +6811,7 @@ pub fn new_yul_anonymous_keyword(range: Range<usize>, _source: &str) -> YulAnony
     YulAnonymousKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulApplyKeyword {
     pub range: Range<usize>,
 }
@@ -6820,7 +6820,7 @@ pub fn new_yul_apply_keyword(range: Range<usize>, _source: &str) -> YulApplyKeyw
     YulApplyKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulAsKeyword {
     pub range: Range<usize>,
 }
@@ -6829,7 +6829,7 @@ pub fn new_yul_as_keyword(range: Range<usize>, _source: &str) -> YulAsKeyword {
     YulAsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulAssemblyKeyword {
     pub range: Range<usize>,
 }
@@ -6838,7 +6838,7 @@ pub fn new_yul_assembly_keyword(range: Range<usize>, _source: &str) -> YulAssemb
     YulAssemblyKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulAutoKeyword {
     pub range: Range<usize>,
 }
@@ -6847,7 +6847,7 @@ pub fn new_yul_auto_keyword(range: Range<usize>, _source: &str) -> YulAutoKeywor
     YulAutoKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulBoolKeyword {
     pub range: Range<usize>,
 }
@@ -6856,7 +6856,7 @@ pub fn new_yul_bool_keyword(range: Range<usize>, _source: &str) -> YulBoolKeywor
     YulBoolKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulBreakKeyword {
     pub range: Range<usize>,
 }
@@ -6865,7 +6865,7 @@ pub fn new_yul_break_keyword(range: Range<usize>, _source: &str) -> YulBreakKeyw
     YulBreakKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulBytesKeyword {
     pub range: Range<usize>,
 }
@@ -6874,7 +6874,7 @@ pub fn new_yul_bytes_keyword(range: Range<usize>, _source: &str) -> YulBytesKeyw
     YulBytesKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulCallDataKeyword {
     pub range: Range<usize>,
 }
@@ -6883,7 +6883,7 @@ pub fn new_yul_call_data_keyword(range: Range<usize>, _source: &str) -> YulCallD
     YulCallDataKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulCaseKeyword {
     pub range: Range<usize>,
 }
@@ -6892,7 +6892,7 @@ pub fn new_yul_case_keyword(range: Range<usize>, _source: &str) -> YulCaseKeywor
     YulCaseKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulCatchKeyword {
     pub range: Range<usize>,
 }
@@ -6901,7 +6901,7 @@ pub fn new_yul_catch_keyword(range: Range<usize>, _source: &str) -> YulCatchKeyw
     YulCatchKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulConstantKeyword {
     pub range: Range<usize>,
 }
@@ -6910,7 +6910,7 @@ pub fn new_yul_constant_keyword(range: Range<usize>, _source: &str) -> YulConsta
     YulConstantKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulConstructorKeyword {
     pub range: Range<usize>,
 }
@@ -6919,7 +6919,7 @@ pub fn new_yul_constructor_keyword(range: Range<usize>, _source: &str) -> YulCon
     YulConstructorKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulContinueKeyword {
     pub range: Range<usize>,
 }
@@ -6928,7 +6928,7 @@ pub fn new_yul_continue_keyword(range: Range<usize>, _source: &str) -> YulContin
     YulContinueKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulContractKeyword {
     pub range: Range<usize>,
 }
@@ -6937,7 +6937,7 @@ pub fn new_yul_contract_keyword(range: Range<usize>, _source: &str) -> YulContra
     YulContractKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulCopyOfKeyword {
     pub range: Range<usize>,
 }
@@ -6946,7 +6946,7 @@ pub fn new_yul_copy_of_keyword(range: Range<usize>, _source: &str) -> YulCopyOfK
     YulCopyOfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulDaysKeyword {
     pub range: Range<usize>,
 }
@@ -6955,7 +6955,7 @@ pub fn new_yul_days_keyword(range: Range<usize>, _source: &str) -> YulDaysKeywor
     YulDaysKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulDecimalLiteral {
     pub range: Range<usize>,
 }
@@ -6964,7 +6964,7 @@ pub fn new_yul_decimal_literal(range: Range<usize>, _source: &str) -> YulDecimal
     YulDecimalLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulDefaultKeyword {
     pub range: Range<usize>,
 }
@@ -6973,7 +6973,7 @@ pub fn new_yul_default_keyword(range: Range<usize>, _source: &str) -> YulDefault
     YulDefaultKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulDefineKeyword {
     pub range: Range<usize>,
 }
@@ -6982,7 +6982,7 @@ pub fn new_yul_define_keyword(range: Range<usize>, _source: &str) -> YulDefineKe
     YulDefineKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulDeleteKeyword {
     pub range: Range<usize>,
 }
@@ -6991,7 +6991,7 @@ pub fn new_yul_delete_keyword(range: Range<usize>, _source: &str) -> YulDeleteKe
     YulDeleteKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulDoKeyword {
     pub range: Range<usize>,
 }
@@ -7000,7 +7000,7 @@ pub fn new_yul_do_keyword(range: Range<usize>, _source: &str) -> YulDoKeyword {
     YulDoKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulElseKeyword {
     pub range: Range<usize>,
 }
@@ -7009,7 +7009,7 @@ pub fn new_yul_else_keyword(range: Range<usize>, _source: &str) -> YulElseKeywor
     YulElseKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulEmitKeyword {
     pub range: Range<usize>,
 }
@@ -7018,7 +7018,7 @@ pub fn new_yul_emit_keyword(range: Range<usize>, _source: &str) -> YulEmitKeywor
     YulEmitKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulEnumKeyword {
     pub range: Range<usize>,
 }
@@ -7027,7 +7027,7 @@ pub fn new_yul_enum_keyword(range: Range<usize>, _source: &str) -> YulEnumKeywor
     YulEnumKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulEtherKeyword {
     pub range: Range<usize>,
 }
@@ -7036,7 +7036,7 @@ pub fn new_yul_ether_keyword(range: Range<usize>, _source: &str) -> YulEtherKeyw
     YulEtherKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulEventKeyword {
     pub range: Range<usize>,
 }
@@ -7045,7 +7045,7 @@ pub fn new_yul_event_keyword(range: Range<usize>, _source: &str) -> YulEventKeyw
     YulEventKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulExternalKeyword {
     pub range: Range<usize>,
 }
@@ -7054,7 +7054,7 @@ pub fn new_yul_external_keyword(range: Range<usize>, _source: &str) -> YulExtern
     YulExternalKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulFallbackKeyword {
     pub range: Range<usize>,
 }
@@ -7063,7 +7063,7 @@ pub fn new_yul_fallback_keyword(range: Range<usize>, _source: &str) -> YulFallba
     YulFallbackKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulFalseKeyword {
     pub range: Range<usize>,
 }
@@ -7072,7 +7072,7 @@ pub fn new_yul_false_keyword(range: Range<usize>, _source: &str) -> YulFalseKeyw
     YulFalseKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulFinalKeyword {
     pub range: Range<usize>,
 }
@@ -7081,7 +7081,7 @@ pub fn new_yul_final_keyword(range: Range<usize>, _source: &str) -> YulFinalKeyw
     YulFinalKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulFinneyKeyword {
     pub range: Range<usize>,
 }
@@ -7090,7 +7090,7 @@ pub fn new_yul_finney_keyword(range: Range<usize>, _source: &str) -> YulFinneyKe
     YulFinneyKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulFixedKeyword {
     pub range: Range<usize>,
 }
@@ -7099,7 +7099,7 @@ pub fn new_yul_fixed_keyword(range: Range<usize>, _source: &str) -> YulFixedKeyw
     YulFixedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulForKeyword {
     pub range: Range<usize>,
 }
@@ -7108,7 +7108,7 @@ pub fn new_yul_for_keyword(range: Range<usize>, _source: &str) -> YulForKeyword 
     YulForKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulFunctionKeyword {
     pub range: Range<usize>,
 }
@@ -7117,7 +7117,7 @@ pub fn new_yul_function_keyword(range: Range<usize>, _source: &str) -> YulFuncti
     YulFunctionKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulGweiKeyword {
     pub range: Range<usize>,
 }
@@ -7126,7 +7126,7 @@ pub fn new_yul_gwei_keyword(range: Range<usize>, _source: &str) -> YulGweiKeywor
     YulGweiKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulHexKeyword {
     pub range: Range<usize>,
 }
@@ -7135,7 +7135,7 @@ pub fn new_yul_hex_keyword(range: Range<usize>, _source: &str) -> YulHexKeyword 
     YulHexKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulHexLiteral {
     pub range: Range<usize>,
 }
@@ -7144,7 +7144,7 @@ pub fn new_yul_hex_literal(range: Range<usize>, _source: &str) -> YulHexLiteral 
     YulHexLiteral { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulHoursKeyword {
     pub range: Range<usize>,
 }
@@ -7153,7 +7153,7 @@ pub fn new_yul_hours_keyword(range: Range<usize>, _source: &str) -> YulHoursKeyw
     YulHoursKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulIdentifier {
     pub range: Range<usize>,
 }
@@ -7162,7 +7162,7 @@ pub fn new_yul_identifier(range: Range<usize>, _source: &str) -> YulIdentifier {
     YulIdentifier { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulIfKeyword {
     pub range: Range<usize>,
 }
@@ -7171,7 +7171,7 @@ pub fn new_yul_if_keyword(range: Range<usize>, _source: &str) -> YulIfKeyword {
     YulIfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulImmutableKeyword {
     pub range: Range<usize>,
 }
@@ -7180,7 +7180,7 @@ pub fn new_yul_immutable_keyword(range: Range<usize>, _source: &str) -> YulImmut
     YulImmutableKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulImplementsKeyword {
     pub range: Range<usize>,
 }
@@ -7189,7 +7189,7 @@ pub fn new_yul_implements_keyword(range: Range<usize>, _source: &str) -> YulImpl
     YulImplementsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulImportKeyword {
     pub range: Range<usize>,
 }
@@ -7198,7 +7198,7 @@ pub fn new_yul_import_keyword(range: Range<usize>, _source: &str) -> YulImportKe
     YulImportKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulInKeyword {
     pub range: Range<usize>,
 }
@@ -7207,7 +7207,7 @@ pub fn new_yul_in_keyword(range: Range<usize>, _source: &str) -> YulInKeyword {
     YulInKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulIndexedKeyword {
     pub range: Range<usize>,
 }
@@ -7216,7 +7216,7 @@ pub fn new_yul_indexed_keyword(range: Range<usize>, _source: &str) -> YulIndexed
     YulIndexedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulInlineKeyword {
     pub range: Range<usize>,
 }
@@ -7225,7 +7225,7 @@ pub fn new_yul_inline_keyword(range: Range<usize>, _source: &str) -> YulInlineKe
     YulInlineKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulIntKeyword {
     pub range: Range<usize>,
 }
@@ -7234,7 +7234,7 @@ pub fn new_yul_int_keyword(range: Range<usize>, _source: &str) -> YulIntKeyword 
     YulIntKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulInterfaceKeyword {
     pub range: Range<usize>,
 }
@@ -7243,7 +7243,7 @@ pub fn new_yul_interface_keyword(range: Range<usize>, _source: &str) -> YulInter
     YulInterfaceKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulInternalKeyword {
     pub range: Range<usize>,
 }
@@ -7252,7 +7252,7 @@ pub fn new_yul_internal_keyword(range: Range<usize>, _source: &str) -> YulIntern
     YulInternalKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulIsKeyword {
     pub range: Range<usize>,
 }
@@ -7261,7 +7261,7 @@ pub fn new_yul_is_keyword(range: Range<usize>, _source: &str) -> YulIsKeyword {
     YulIsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulLeaveKeyword {
     pub range: Range<usize>,
 }
@@ -7270,7 +7270,7 @@ pub fn new_yul_leave_keyword(range: Range<usize>, _source: &str) -> YulLeaveKeyw
     YulLeaveKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulLetKeyword {
     pub range: Range<usize>,
 }
@@ -7279,7 +7279,7 @@ pub fn new_yul_let_keyword(range: Range<usize>, _source: &str) -> YulLetKeyword 
     YulLetKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulLibraryKeyword {
     pub range: Range<usize>,
 }
@@ -7288,7 +7288,7 @@ pub fn new_yul_library_keyword(range: Range<usize>, _source: &str) -> YulLibrary
     YulLibraryKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulMacroKeyword {
     pub range: Range<usize>,
 }
@@ -7297,7 +7297,7 @@ pub fn new_yul_macro_keyword(range: Range<usize>, _source: &str) -> YulMacroKeyw
     YulMacroKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulMappingKeyword {
     pub range: Range<usize>,
 }
@@ -7306,7 +7306,7 @@ pub fn new_yul_mapping_keyword(range: Range<usize>, _source: &str) -> YulMapping
     YulMappingKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulMatchKeyword {
     pub range: Range<usize>,
 }
@@ -7315,7 +7315,7 @@ pub fn new_yul_match_keyword(range: Range<usize>, _source: &str) -> YulMatchKeyw
     YulMatchKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulMemoryKeyword {
     pub range: Range<usize>,
 }
@@ -7324,7 +7324,7 @@ pub fn new_yul_memory_keyword(range: Range<usize>, _source: &str) -> YulMemoryKe
     YulMemoryKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulMinutesKeyword {
     pub range: Range<usize>,
 }
@@ -7333,7 +7333,7 @@ pub fn new_yul_minutes_keyword(range: Range<usize>, _source: &str) -> YulMinutes
     YulMinutesKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulModifierKeyword {
     pub range: Range<usize>,
 }
@@ -7342,7 +7342,7 @@ pub fn new_yul_modifier_keyword(range: Range<usize>, _source: &str) -> YulModifi
     YulModifierKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulMutableKeyword {
     pub range: Range<usize>,
 }
@@ -7351,7 +7351,7 @@ pub fn new_yul_mutable_keyword(range: Range<usize>, _source: &str) -> YulMutable
     YulMutableKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulNewKeyword {
     pub range: Range<usize>,
 }
@@ -7360,7 +7360,7 @@ pub fn new_yul_new_keyword(range: Range<usize>, _source: &str) -> YulNewKeyword 
     YulNewKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulNullKeyword {
     pub range: Range<usize>,
 }
@@ -7369,7 +7369,7 @@ pub fn new_yul_null_keyword(range: Range<usize>, _source: &str) -> YulNullKeywor
     YulNullKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulOfKeyword {
     pub range: Range<usize>,
 }
@@ -7378,7 +7378,7 @@ pub fn new_yul_of_keyword(range: Range<usize>, _source: &str) -> YulOfKeyword {
     YulOfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulOverrideKeyword {
     pub range: Range<usize>,
 }
@@ -7387,7 +7387,7 @@ pub fn new_yul_override_keyword(range: Range<usize>, _source: &str) -> YulOverri
     YulOverrideKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPartialKeyword {
     pub range: Range<usize>,
 }
@@ -7396,7 +7396,7 @@ pub fn new_yul_partial_keyword(range: Range<usize>, _source: &str) -> YulPartial
     YulPartialKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPayableKeyword {
     pub range: Range<usize>,
 }
@@ -7405,7 +7405,7 @@ pub fn new_yul_payable_keyword(range: Range<usize>, _source: &str) -> YulPayable
     YulPayableKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPragmaKeyword {
     pub range: Range<usize>,
 }
@@ -7414,7 +7414,7 @@ pub fn new_yul_pragma_keyword(range: Range<usize>, _source: &str) -> YulPragmaKe
     YulPragmaKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPrivateKeyword {
     pub range: Range<usize>,
 }
@@ -7423,7 +7423,7 @@ pub fn new_yul_private_keyword(range: Range<usize>, _source: &str) -> YulPrivate
     YulPrivateKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPromiseKeyword {
     pub range: Range<usize>,
 }
@@ -7432,7 +7432,7 @@ pub fn new_yul_promise_keyword(range: Range<usize>, _source: &str) -> YulPromise
     YulPromiseKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPublicKeyword {
     pub range: Range<usize>,
 }
@@ -7441,7 +7441,7 @@ pub fn new_yul_public_keyword(range: Range<usize>, _source: &str) -> YulPublicKe
     YulPublicKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulPureKeyword {
     pub range: Range<usize>,
 }
@@ -7450,7 +7450,7 @@ pub fn new_yul_pure_keyword(range: Range<usize>, _source: &str) -> YulPureKeywor
     YulPureKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulReceiveKeyword {
     pub range: Range<usize>,
 }
@@ -7459,7 +7459,7 @@ pub fn new_yul_receive_keyword(range: Range<usize>, _source: &str) -> YulReceive
     YulReceiveKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulReferenceKeyword {
     pub range: Range<usize>,
 }
@@ -7468,7 +7468,7 @@ pub fn new_yul_reference_keyword(range: Range<usize>, _source: &str) -> YulRefer
     YulReferenceKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulRelocatableKeyword {
     pub range: Range<usize>,
 }
@@ -7477,7 +7477,7 @@ pub fn new_yul_relocatable_keyword(range: Range<usize>, _source: &str) -> YulRel
     YulRelocatableKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulReturnsKeyword {
     pub range: Range<usize>,
 }
@@ -7486,7 +7486,7 @@ pub fn new_yul_returns_keyword(range: Range<usize>, _source: &str) -> YulReturns
     YulReturnsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSealedKeyword {
     pub range: Range<usize>,
 }
@@ -7495,7 +7495,7 @@ pub fn new_yul_sealed_keyword(range: Range<usize>, _source: &str) -> YulSealedKe
     YulSealedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSecondsKeyword {
     pub range: Range<usize>,
 }
@@ -7504,7 +7504,7 @@ pub fn new_yul_seconds_keyword(range: Range<usize>, _source: &str) -> YulSeconds
     YulSecondsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSizeOfKeyword {
     pub range: Range<usize>,
 }
@@ -7513,7 +7513,7 @@ pub fn new_yul_size_of_keyword(range: Range<usize>, _source: &str) -> YulSizeOfK
     YulSizeOfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulStaticKeyword {
     pub range: Range<usize>,
 }
@@ -7522,7 +7522,7 @@ pub fn new_yul_static_keyword(range: Range<usize>, _source: &str) -> YulStaticKe
     YulStaticKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulStorageKeyword {
     pub range: Range<usize>,
 }
@@ -7531,7 +7531,7 @@ pub fn new_yul_storage_keyword(range: Range<usize>, _source: &str) -> YulStorage
     YulStorageKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulStringKeyword {
     pub range: Range<usize>,
 }
@@ -7540,7 +7540,7 @@ pub fn new_yul_string_keyword(range: Range<usize>, _source: &str) -> YulStringKe
     YulStringKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulStructKeyword {
     pub range: Range<usize>,
 }
@@ -7549,7 +7549,7 @@ pub fn new_yul_struct_keyword(range: Range<usize>, _source: &str) -> YulStructKe
     YulStructKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSuperKeyword {
     pub range: Range<usize>,
 }
@@ -7558,7 +7558,7 @@ pub fn new_yul_super_keyword(range: Range<usize>, _source: &str) -> YulSuperKeyw
     YulSuperKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSupportsKeyword {
     pub range: Range<usize>,
 }
@@ -7567,7 +7567,7 @@ pub fn new_yul_supports_keyword(range: Range<usize>, _source: &str) -> YulSuppor
     YulSupportsKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSwitchKeyword {
     pub range: Range<usize>,
 }
@@ -7576,7 +7576,7 @@ pub fn new_yul_switch_keyword(range: Range<usize>, _source: &str) -> YulSwitchKe
     YulSwitchKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulSzaboKeyword {
     pub range: Range<usize>,
 }
@@ -7585,7 +7585,7 @@ pub fn new_yul_szabo_keyword(range: Range<usize>, _source: &str) -> YulSzaboKeyw
     YulSzaboKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulThisKeyword {
     pub range: Range<usize>,
 }
@@ -7594,7 +7594,7 @@ pub fn new_yul_this_keyword(range: Range<usize>, _source: &str) -> YulThisKeywor
     YulThisKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulThrowKeyword {
     pub range: Range<usize>,
 }
@@ -7603,7 +7603,7 @@ pub fn new_yul_throw_keyword(range: Range<usize>, _source: &str) -> YulThrowKeyw
     YulThrowKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulTrueKeyword {
     pub range: Range<usize>,
 }
@@ -7612,7 +7612,7 @@ pub fn new_yul_true_keyword(range: Range<usize>, _source: &str) -> YulTrueKeywor
     YulTrueKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulTryKeyword {
     pub range: Range<usize>,
 }
@@ -7621,7 +7621,7 @@ pub fn new_yul_try_keyword(range: Range<usize>, _source: &str) -> YulTryKeyword 
     YulTryKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulTypeDefKeyword {
     pub range: Range<usize>,
 }
@@ -7630,7 +7630,7 @@ pub fn new_yul_type_def_keyword(range: Range<usize>, _source: &str) -> YulTypeDe
     YulTypeDefKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulTypeKeyword {
     pub range: Range<usize>,
 }
@@ -7639,7 +7639,7 @@ pub fn new_yul_type_keyword(range: Range<usize>, _source: &str) -> YulTypeKeywor
     YulTypeKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulTypeOfKeyword {
     pub range: Range<usize>,
 }
@@ -7648,7 +7648,7 @@ pub fn new_yul_type_of_keyword(range: Range<usize>, _source: &str) -> YulTypeOfK
     YulTypeOfKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulUfixedKeyword {
     pub range: Range<usize>,
 }
@@ -7657,7 +7657,7 @@ pub fn new_yul_ufixed_keyword(range: Range<usize>, _source: &str) -> YulUfixedKe
     YulUfixedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulUintKeyword {
     pub range: Range<usize>,
 }
@@ -7666,7 +7666,7 @@ pub fn new_yul_uint_keyword(range: Range<usize>, _source: &str) -> YulUintKeywor
     YulUintKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulUncheckedKeyword {
     pub range: Range<usize>,
 }
@@ -7675,7 +7675,7 @@ pub fn new_yul_unchecked_keyword(range: Range<usize>, _source: &str) -> YulUnche
     YulUncheckedKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulUsingKeyword {
     pub range: Range<usize>,
 }
@@ -7684,7 +7684,7 @@ pub fn new_yul_using_keyword(range: Range<usize>, _source: &str) -> YulUsingKeyw
     YulUsingKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulVarKeyword {
     pub range: Range<usize>,
 }
@@ -7693,7 +7693,7 @@ pub fn new_yul_var_keyword(range: Range<usize>, _source: &str) -> YulVarKeyword 
     YulVarKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulViewKeyword {
     pub range: Range<usize>,
 }
@@ -7702,7 +7702,7 @@ pub fn new_yul_view_keyword(range: Range<usize>, _source: &str) -> YulViewKeywor
     YulViewKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulVirtualKeyword {
     pub range: Range<usize>,
 }
@@ -7711,7 +7711,7 @@ pub fn new_yul_virtual_keyword(range: Range<usize>, _source: &str) -> YulVirtual
     YulVirtualKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulWeeksKeyword {
     pub range: Range<usize>,
 }
@@ -7720,7 +7720,7 @@ pub fn new_yul_weeks_keyword(range: Range<usize>, _source: &str) -> YulWeeksKeyw
     YulWeeksKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulWeiKeyword {
     pub range: Range<usize>,
 }
@@ -7729,7 +7729,7 @@ pub fn new_yul_wei_keyword(range: Range<usize>, _source: &str) -> YulWeiKeyword 
     YulWeiKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulWhileKeyword {
     pub range: Range<usize>,
 }
@@ -7738,7 +7738,7 @@ pub fn new_yul_while_keyword(range: Range<usize>, _source: &str) -> YulWhileKeyw
     YulWhileKeyword { range }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct YulYearsKeyword {
     pub range: Range<usize>,
 }
