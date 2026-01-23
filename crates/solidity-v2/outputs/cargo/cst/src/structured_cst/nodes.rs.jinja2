@@ -21,7 +21,7 @@ use std::rc::Rc;
 {% for parent_type, sequence in target.sequences %}
   pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
-  #[derive(Debug)]
+  #[derive(Clone, Debug)]
   pub struct {{ parent_type }}Struct {
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
@@ -50,7 +50,7 @@ use std::rc::Rc;
 //
 // Note: We create a constructor function for each variant
 {% for parent_type, choice in target.choices %}
-  #[derive(Debug)]
+  #[derive(Clone, Debug)]
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}({{ variant.name }}),
@@ -69,7 +69,7 @@ use std::rc::Rc;
 //
 // TODO(v2): consider using a transparent representation
 {% for parent_type, collection in target.collections %}
-  #[derive(Debug)]
+  #[derive(Clone, Debug)]
   pub struct {{ parent_type }} {
       pub elements: Vec<{{ collection.item_type.name }}>,
   }
@@ -86,7 +86,7 @@ use std::rc::Rc;
 // Note: _source is unused on the constructor methods, but kept for uniformity with other constructors
 // and because it may be needed in the future
 {% for parent_type in target.terminals %}
-#[derive(Debug)]
+#[derive(Clone, Debug)]
   pub struct {{ parent_type }} {
     pub range: Range<usize>,
   }
