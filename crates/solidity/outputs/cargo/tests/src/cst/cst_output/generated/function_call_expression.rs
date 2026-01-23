@@ -12,6 +12,11 @@ fn empty_named_arguments() -> Result<()> {
 }
 
 #[test]
+fn empty_positional_arguments() -> Result<()> {
+    run(T, "empty_positional_arguments")
+}
+
+#[test]
 fn payable_conversion() -> Result<()> {
     run(T, "payable_conversion")
 }

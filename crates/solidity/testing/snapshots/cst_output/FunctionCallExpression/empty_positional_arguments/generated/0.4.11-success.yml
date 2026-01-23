@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ someFunc()                                                                       │ 0..10
+
+Errors: []
+
+Tree:
+  - (root꞉ FunctionCallExpression): # "someFunc()\n" (0..11)
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "someFunc" # (0..8)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()\n" (8..11)
+          - (open_paren꞉ OpenParen): "(" # (8..9)
+          - (arguments꞉ PositionalArguments): [] # (9..9)
+          - (close_paren꞉ CloseParen): ")" # (9..10)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (10..11)
