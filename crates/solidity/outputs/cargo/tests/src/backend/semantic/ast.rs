@@ -89,3 +89,36 @@ fn test_text_offsets() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_get_type() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let ownable = semantic
+        .find_contract_by_name("Ownable")
+        .expect("contract is found");
+
+    let state_variables = ownable
+        .members()
+        .iter()
+        .filter_map(|member| {
+            if let ast::ContractMember::StateVariableDefinition(definition) = member {
+                Some(definition)
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<_>>();
+
+    assert_eq!(state_variables.len(), 1);
+    let owner = &state_variables[0];
+    assert_eq!(owner.name().unparse(), "_owner");
+
+    let owner_type = owner
+        .get_type()
+        .expect("_owner state variable has resolved type");
+    assert!(matches!(owner_type, ast::Type::Address(_)));
+
+    Ok(())
+}

@@ -1,12 +1,10 @@
-use paste::paste;
 use std::rc::Rc;
 
-use crate::backend::{
-    types::{self, DataLocation, TypeId},
-    SemanticAnalysis,
-};
+use paste::paste;
 
 use super::Definition;
+use crate::backend::types::{self, DataLocation, TypeId};
+use crate::backend::SemanticAnalysis;
 
 // __SLANG_TYPE_TYPES__ keep in sync with binder types
 #[derive(Clone)]
@@ -278,7 +276,10 @@ impl TupleType {
         let types::Type::Tuple { types } = self.internal_type() else {
             unreachable!("invalid tuple type");
         };
-        types.iter().map(|type_id| Type::create(*type_id, &self.semantic)).collect()
+        types
+            .iter()
+            .map(|type_id| Type::create(*type_id, &self.semantic))
+            .collect()
     }
 }
 
