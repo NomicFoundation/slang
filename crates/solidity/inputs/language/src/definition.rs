@@ -3680,7 +3680,7 @@ language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(OpenParen),
-                                arguments = Optional(reference = NamedArgumentGroup),
+                                arguments = Required(NamedArgumentGroup),
                                 close_paren = Required(CloseParen)
                             )
                         ),

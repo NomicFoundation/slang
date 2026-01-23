@@ -921,7 +921,7 @@ pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
 #[derive(Debug)]
 pub struct NamedArgumentsDeclarationStruct {
     pub node_id: NodeId,
-    pub arguments: Option<NamedArgumentGroup>,
+    pub arguments: NamedArgumentGroup,
 }
 
 pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;

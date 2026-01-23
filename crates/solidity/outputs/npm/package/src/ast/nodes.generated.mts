@@ -5940,7 +5940,7 @@ export class PositionalArgumentsDeclaration {
  *
  * ```ebnf
  * NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
- *                             (* arguments: *) NamedArgumentGroup?
+ *                             (* arguments: *) NamedArgumentGroup
  *                             (* close_paren: *) CLOSE_PAREN;
  * ```
  */
@@ -5950,7 +5950,7 @@ export class NamedArgumentsDeclaration {
 
     return {
       openParen: $openParen as TerminalNode,
-      arguments: $arguments === undefined ? undefined : new NamedArgumentGroup($arguments as NonterminalNode),
+      arguments: new NamedArgumentGroup($arguments as NonterminalNode),
       closeParen: $closeParen as TerminalNode,
     };
   });
@@ -5977,7 +5977,7 @@ export class NamedArgumentsDeclaration {
   /**
    * Returns the child node that has the label `arguments`.
    */
-  public get arguments(): NamedArgumentGroup | undefined {
+  public get arguments(): NamedArgumentGroup {
     return this.fetch().arguments;
   }
 

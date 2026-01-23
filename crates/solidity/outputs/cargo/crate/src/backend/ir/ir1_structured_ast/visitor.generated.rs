@@ -2140,9 +2140,7 @@ pub fn accept_named_arguments_declaration(
     if !visitor.enter_named_arguments_declaration(node) {
         return;
     }
-    if let Some(ref arguments) = node.arguments {
-        accept_named_argument_group(arguments, visitor);
-    }
+    accept_named_argument_group(&node.arguments, visitor);
     visitor.leave_named_arguments_declaration(node);
 }
 

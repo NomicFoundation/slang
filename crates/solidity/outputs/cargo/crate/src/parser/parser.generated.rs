@@ -4040,7 +4040,8 @@ impl Parser {
                     TerminalKind::OpenParen,
                 ),
             )?;
-            match OptionalHelper::transform(self.named_argument_group(input))
+            match self
+                .named_argument_group(input)
                 .with_label(EdgeLabel::Arguments)
             {
                 result if result.matches_at_least_n_terminals(0u8) => {

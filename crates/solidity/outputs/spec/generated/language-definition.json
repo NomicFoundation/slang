@@ -4935,7 +4935,7 @@
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
                   "fields": [
                     ["open_paren", { "Required": { "reference": "OpenParen" } }],
-                    ["arguments", { "Optional": { "reference": "NamedArgumentGroup" } }],
+                    ["arguments", { "Required": { "reference": "NamedArgumentGroup" } }],
                     ["close_paren", { "Required": { "reference": "CloseParen" } }]
                   ]
                 }

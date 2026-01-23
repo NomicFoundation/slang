@@ -229,12 +229,7 @@ impl Transformer for Pass {
             ),
             input::ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments_declaration) => {
                 output::ArgumentsDeclaration::NamedArguments(
-                    named_arguments_declaration.arguments.as_ref().map_or(
-                        Vec::new(),
-                        |named_argument_group| {
-                            self.transform_named_argument_group(named_argument_group)
-                        },
-                    ),
+                    self.transform_named_argument_group(&named_arguments_declaration.arguments),
                 )
             }
         }

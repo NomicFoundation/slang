@@ -1476,7 +1476,7 @@ PositionalArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
 PositionalArguments = ((* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*)?;
 
 NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
-                            (* arguments: *) NamedArgumentGroup?
+                            (* arguments: *) NamedArgumentGroup
                             (* close_paren: *) CLOSE_PAREN;
 
 NamedArgumentGroup = (* open_brace: *) OPEN_BRACE

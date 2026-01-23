@@ -1241,7 +1241,7 @@ impl Helper {
     fn named_arguments_declaration_sequence(&mut self) -> Result<Vec<Option<Node>>> {
         Ok(vec![
             Some(self.select(EdgeLabel::OpenParen)?),
-            self.try_select(EdgeLabel::Arguments),
+            Some(self.select(EdgeLabel::Arguments)?),
             Some(self.select(EdgeLabel::CloseParen)?),
         ])
     }

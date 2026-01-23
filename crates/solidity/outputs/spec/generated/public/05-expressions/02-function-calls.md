@@ -24,7 +24,7 @@
 
 ```
 
-<pre ebnf-snippet="NamedArgumentsDeclaration" style="display: none;"><a href="#NamedArgumentsDeclaration"><span class="k">NamedArgumentsDeclaration</span></a><span class="o"> = </span><span class="cm">(* open_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                            </span><span class="cm">(* arguments: *)</span><span class="o"> </span><a href="#NamedArgumentGroup"><span class="k">NamedArgumentGroup</span></a><span class="o">?</span><br /><span class="o">                            </span><span class="cm">(* close_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="NamedArgumentsDeclaration" style="display: none;"><a href="#NamedArgumentsDeclaration"><span class="k">NamedArgumentsDeclaration</span></a><span class="o"> = </span><span class="cm">(* open_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                            </span><span class="cm">(* arguments: *)</span><span class="o"> </span><a href="#NamedArgumentGroup"><span class="k">NamedArgumentGroup</span></a><br /><span class="o">                            </span><span class="cm">(* close_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #NamedArgumentGroup }
 

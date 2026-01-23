@@ -1324,10 +1324,7 @@ pub trait Rewriter {
         &mut self,
         source: &NamedArgumentsDeclaration,
     ) -> NamedArgumentsDeclaration {
-        let arguments = source
-            .arguments
-            .as_ref()
-            .map(|value| self.rewrite_named_argument_group(value));
+        let arguments = self.rewrite_named_argument_group(&source.arguments);
 
         Rc::new(NamedArgumentsDeclarationStruct {
             node_id: source.node_id,

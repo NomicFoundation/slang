@@ -1041,7 +1041,7 @@ pub enum NonterminalKind {
     ///
     /// ```ebnf
     /// NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
-    ///                             (* arguments: *) NamedArgumentGroup?
+    ///                             (* arguments: *) NamedArgumentGroup
     ///                             (* close_paren: *) CLOSE_PAREN;
     /// ```
     NamedArgumentsDeclaration,

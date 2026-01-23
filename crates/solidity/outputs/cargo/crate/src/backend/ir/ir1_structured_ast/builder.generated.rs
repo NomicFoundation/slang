@@ -2010,9 +2010,8 @@ pub fn build_named_arguments_declaration(
     assert_nonterminal_kind(node, NonterminalKind::NamedArgumentsDeclaration);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
-    let arguments = helper
-        .accept_label(EdgeLabel::Arguments)
-        .and_then(|node| build_named_argument_group(nonterminal_node(node)));
+    let arguments =
+        build_named_argument_group(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
     if !helper.finalize() {
         return None;
