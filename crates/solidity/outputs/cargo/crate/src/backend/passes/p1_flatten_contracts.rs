@@ -447,7 +447,7 @@ impl Transformer for Pass {
         let expression = self.transform_expression(&source.expression);
         let members = match &source.target {
             input::TupleDeconstructionTarget::VarTupleDeconstructionTarget(target) => {
-                self.transform_var_tuple_deconstruction_elements(&target.elements)
+                Self::transform_var_tuple_deconstruction_elements(&target.elements)
             }
             input::TupleDeconstructionTarget::TypedTupleDeconstructionTarget(target) => {
                 self.transform_typed_tuple_deconstruction_elements(&target.elements)
@@ -1143,7 +1143,6 @@ impl Pass {
     }
 
     fn transform_var_tuple_deconstruction_elements(
-        &mut self,
         source: &input::UntypedTupleDeconstructionElements,
     ) -> output::TupleDeconstructionMembers {
         source
