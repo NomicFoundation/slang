@@ -122,3 +122,44 @@ fn test_get_type() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_function_get_type() -> Result<()> {
+    let unit = build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let counter = semantic
+        .find_contract_by_name("Counter")
+        .expect("contract is found");
+
+    let increment = counter
+        .members()
+        .iter()
+        .find_map(|member| {
+            if let ast::ContractMember::FunctionDefinition(function_definition) = member {
+                if function_definition
+                    .name()
+                    .is_some_and(|name| name.unparse() == "increment")
+                {
+                    Some(function_definition)
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        })
+        .expect("increment method is found");
+
+    let increment_type = increment.get_type().expect("increment method has a type");
+    let ast::Type::Function(function_type) = increment_type else {
+        panic!("method's type is expect to be a function");
+    };
+    assert!(function_type.external());
+    assert!(matches!(function_type.return_type(), ast::Type::Integer(_)));
+    assert!(function_type
+        .associated_definition()
+        .is_some_and(|definition| matches!(definition, ast::Definition::Function(_))));
+
+    Ok(())
+}

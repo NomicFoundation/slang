@@ -3,7 +3,7 @@ use std::rc::Rc;
 use paste::paste;
 
 use super::Definition;
-use crate::backend::types::{self, DataLocation, TypeId};
+use crate::backend::types::{self, DataLocation, FunctionTypeKind, TypeId};
 use crate::backend::SemanticAnalysis;
 
 // __SLANG_TYPE_TYPES__ keep in sync with binder types
@@ -204,7 +204,57 @@ impl FixedPointNumberType {
     }
 }
 
-impl FunctionType {}
+impl FunctionType {
+    pub fn associated_definition(&self) -> Option<Definition> {
+        let types::Type::Function(function_type) = self.internal_type() else {
+            unreachable!("invalid function type");
+        };
+        function_type
+            .definition_id
+            .map(|definition_id| Definition::create(definition_id, &self.semantic))
+    }
+
+    pub fn implicit_receiver_type(&self) -> Option<Type> {
+        let types::Type::Function(function_type) = self.internal_type() else {
+            unreachable!("invalid function type");
+        };
+        function_type
+            .implicit_receiver_type
+            .map(|type_id| Type::create(type_id, &self.semantic))
+    }
+
+    pub fn parameter_types(&self) -> Vec<Type> {
+        let types::Type::Function(function_type) = self.internal_type() else {
+            unreachable!("invalid function type");
+        };
+        function_type
+            .parameter_types
+            .iter()
+            .map(|type_id| Type::create(*type_id, &self.semantic))
+            .collect()
+    }
+
+    pub fn return_type(&self) -> Type {
+        let types::Type::Function(function_type) = self.internal_type() else {
+            unreachable!("invalid function type");
+        };
+        Type::create(function_type.return_type, &self.semantic)
+    }
+
+    pub fn external(&self) -> bool {
+        let types::Type::Function(function_type) = self.internal_type() else {
+            unreachable!("invalid function type");
+        };
+        function_type.external
+    }
+
+    pub fn kind(&self) -> FunctionTypeKind {
+        let types::Type::Function(function_type) = self.internal_type() else {
+            unreachable!("invalid function type");
+        };
+        function_type.kind
+    }
+}
 
 impl IntegerType {
     pub fn signed(&self) -> bool {
