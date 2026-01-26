@@ -3,7 +3,9 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use self::ast::{create_contract_definition, create_source_unit, ContractDefinition, Definition};
+use self::ast::{
+    create_contract_definition, create_source_unit, ContractDefinition, Definition, Type,
+};
 use crate::backend::binder::Binder;
 pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};
 use crate::backend::types::TypeRegistry;
@@ -194,5 +196,12 @@ impl SemanticAnalysis {
     // Returns `None` if the information is not available.
     pub(crate) fn get_text_offset_by_node_id(&self, node_id: NodeId) -> Option<TextIndex> {
         self.text_offsets.get(&node_id).copied()
+    }
+
+    pub fn get_type_from_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Type> {
+        self.binder
+            .node_typing(node_id)
+            .as_type_id()
+            .map(|type_id| Type::create(type_id, self))
     }
 }

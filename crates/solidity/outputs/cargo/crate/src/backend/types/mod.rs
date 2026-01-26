@@ -8,6 +8,7 @@ pub use registry::TypeRegistry;
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct TypeId(usize);
 
+// __SLANG_TYPE_TYPES__ keep in sync with AST types
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Type {
     Address {
