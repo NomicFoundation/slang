@@ -137,6 +137,11 @@ fn trailing_trivia_only_until_newline() -> Result<()> {
 }
 
 #[test]
+fn tuple_deconstruction_statement() -> Result<()> {
+    run(T, "tuple_deconstruction_statement")
+}
+
+#[test]
 fn using_directive() -> Result<()> {
     run(T, "using_directive")
 }

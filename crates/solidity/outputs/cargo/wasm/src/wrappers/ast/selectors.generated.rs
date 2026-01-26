@@ -99,11 +99,21 @@ pub fn select_sequence(node: &Rc<NonterminalNode>) -> Result<Vec<Option<Node>>> 
         NonterminalKind::TupleDeconstructionStatement => {
             helper.tuple_deconstruction_statement_sequence()?
         }
-        NonterminalKind::TupleDeconstructionElement => {
-            helper.tuple_deconstruction_element_sequence()?
+        NonterminalKind::VarTupleDeconstructionTarget => {
+            helper.var_tuple_deconstruction_target_sequence()?
         }
-        NonterminalKind::TypedTupleMember => helper.typed_tuple_member_sequence()?,
-        NonterminalKind::UntypedTupleMember => helper.untyped_tuple_member_sequence()?,
+        NonterminalKind::UntypedTupleDeconstructionElement => {
+            helper.untyped_tuple_deconstruction_element_sequence()?
+        }
+        NonterminalKind::TypedTupleDeconstructionTarget => {
+            helper.typed_tuple_deconstruction_target_sequence()?
+        }
+        NonterminalKind::TypedTupleDeconstructionElement => {
+            helper.typed_tuple_deconstruction_element_sequence()?
+        }
+        NonterminalKind::TypedTupleDeconstructionMember => {
+            helper.typed_tuple_deconstruction_member_sequence()?
+        }
         NonterminalKind::VariableDeclarationStatement => {
             helper.variable_declaration_statement_sequence()?
         }
@@ -817,10 +827,7 @@ impl Helper {
 impl Helper {
     fn tuple_deconstruction_statement_sequence(&mut self) -> Result<Vec<Option<Node>>> {
         Ok(vec![
-            self.try_select(EdgeLabel::VarKeyword),
-            Some(self.select(EdgeLabel::OpenParen)?),
-            Some(self.select(EdgeLabel::Elements)?),
-            Some(self.select(EdgeLabel::CloseParen)?),
+            Some(self.select(EdgeLabel::Target)?),
             Some(self.select(EdgeLabel::Equal)?),
             Some(self.select(EdgeLabel::Expression)?),
             Some(self.select(EdgeLabel::Semicolon)?),
@@ -829,24 +836,42 @@ impl Helper {
 }
 
 impl Helper {
-    fn tuple_deconstruction_element_sequence(&mut self) -> Result<Vec<Option<Node>>> {
-        Ok(vec![self.try_select(EdgeLabel::Member)])
-    }
-}
-
-impl Helper {
-    fn typed_tuple_member_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+    fn var_tuple_deconstruction_target_sequence(&mut self) -> Result<Vec<Option<Node>>> {
         Ok(vec![
-            Some(self.select(EdgeLabel::TypeName)?),
-            self.try_select(EdgeLabel::StorageLocation),
-            Some(self.select(EdgeLabel::Name)?),
+            Some(self.select(EdgeLabel::VarKeyword)?),
+            Some(self.select(EdgeLabel::OpenParen)?),
+            Some(self.select(EdgeLabel::Elements)?),
+            Some(self.select(EdgeLabel::CloseParen)?),
         ])
     }
 }
 
 impl Helper {
-    fn untyped_tuple_member_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+    fn untyped_tuple_deconstruction_element_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+        Ok(vec![self.try_select(EdgeLabel::Name)])
+    }
+}
+
+impl Helper {
+    fn typed_tuple_deconstruction_target_sequence(&mut self) -> Result<Vec<Option<Node>>> {
         Ok(vec![
+            Some(self.select(EdgeLabel::OpenParen)?),
+            Some(self.select(EdgeLabel::Elements)?),
+            Some(self.select(EdgeLabel::CloseParen)?),
+        ])
+    }
+}
+
+impl Helper {
+    fn typed_tuple_deconstruction_element_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+        Ok(vec![self.try_select(EdgeLabel::Member)])
+    }
+}
+
+impl Helper {
+    fn typed_tuple_deconstruction_member_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+        Ok(vec![
+            Some(self.select(EdgeLabel::TypeName)?),
             self.try_select(EdgeLabel::StorageLocation),
             Some(self.select(EdgeLabel::Name)?),
         ])

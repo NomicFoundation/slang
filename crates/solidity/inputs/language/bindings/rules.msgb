@@ -2016,13 +2016,13 @@ inherit .star_extension
 
 ;; Tuple deconstruction statements with no types and a `var` keyword are
 ;; declarations (only valid in Solidity < 0.5.0)
-@tuple_decon [TupleDeconstructionStatement [VarKeyword] [TupleDeconstructionElements
-    [TupleDeconstructionElement
-        [TupleMember @tuple_member variant: [UntypedTupleMember
-            @name name: [Identifier]]
+@tuple_decon [TupleDeconstructionStatement
+    target: [TupleDeconstructionTarget variant: [VarTupleDeconstructionTarget
+        [UntypedTupleDeconstructionElements
+            @tuple_member [UntypedTupleDeconstructionElement @name name: [Identifier]]
         ]
-    ]
-]] {
+    ]]
+] {
   node def
   attr (def) node_definition = @name
   attr (def) definiens_node = @tuple_member
@@ -2030,28 +2030,19 @@ inherit .star_extension
   edge @tuple_decon.defs -> def
 }
 
-;; Tuple deconstruction statements with no types and no `var` keyword are assignments
-@tuple_decon [TupleDeconstructionStatement . [OpenParen] [TupleDeconstructionElements
-    [TupleDeconstructionElement
-        [TupleMember variant: [UntypedTupleMember
-            @name name: [Identifier]]
+;; Tuple deconstruction statements with explicit types
+@tuple_decon [TupleDeconstructionStatement
+    target: [TupleDeconstructionTarget variant: [TypedTupleDeconstructionTarget
+        [TypedTupleDeconstructionElements
+            [TypedTupleDeconstructionElement
+                @tuple_member member: [TypedTupleDeconstructionMember
+                    @member_type type_name: [TypeName]
+                    @name name: [Identifier]
+                ]
+            ]
         ]
-    ]
-]] {
-  node ref
-  attr (ref) node_reference = @name
-
-  edge ref -> @tuple_decon.lexical_scope
-}
-
-@tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
-    [TupleDeconstructionElement
-        [TupleMember @tuple_member variant: [TypedTupleMember
-            @member_type type_name: [TypeName]
-            @name name: [Identifier]]
-        ]
-    ]
-]] {
+    ]]
+] {
   node def
   attr (def) node_definition = @name
   attr (def) definiens_node = @tuple_member

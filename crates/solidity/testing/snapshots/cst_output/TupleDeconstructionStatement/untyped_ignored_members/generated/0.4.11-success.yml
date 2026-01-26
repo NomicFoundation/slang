@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ var (, second, , fourth) = rhs;                                                  │ 0..31
+
+Errors: []
+
+Tree:
+  - (root꞉ TupleDeconstructionStatement): # "var (, second, , fourth) = rhs;\n" (0..32)
+      - (target꞉ TupleDeconstructionTarget) ► (variant꞉ VarTupleDeconstructionTarget): # "var (, second, , fourth)" (0..24)
+          - (var_keyword꞉ VarKeyword): "var" # (0..3)
+          - (leading_trivia꞉ Whitespace): " " # (3..4)
+          - (open_paren꞉ OpenParen): "(" # (4..5)
+          - (elements꞉ UntypedTupleDeconstructionElements): # ", second, , fourth" (5..23)
+              - (item꞉ UntypedTupleDeconstructionElement): [] # (5..5)
+              - (separator꞉ Comma): "," # (5..6)
+              - (item꞉ UntypedTupleDeconstructionElement): # " second" (6..13)
+                  - (leading_trivia꞉ Whitespace): " " # (6..7)
+                  - (name꞉ Identifier): "second" # (7..13)
+              - (separator꞉ Comma): "," # (13..14)
+              - (item꞉ UntypedTupleDeconstructionElement): [] # (14..14)
+              - (leading_trivia꞉ Whitespace): " " # (14..15)
+              - (separator꞉ Comma): "," # (15..16)
+              - (item꞉ UntypedTupleDeconstructionElement): # " fourth" (16..23)
+                  - (leading_trivia꞉ Whitespace): " " # (16..17)
+                  - (name꞉ Identifier): "fourth" # (17..23)
+          - (close_paren꞉ CloseParen): ")" # (23..24)
+      - (leading_trivia꞉ Whitespace): " " # (24..25)
+      - (equal꞉ Equal): "=" # (25..26)
+      - (expression꞉ Expression): # " rhs" (26..30)
+          - (leading_trivia꞉ Whitespace): " " # (26..27)
+          - (variant꞉ Identifier): "rhs" # (27..30)
+      - (semicolon꞉ Semicolon): ";" # (30..31)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (31..32)

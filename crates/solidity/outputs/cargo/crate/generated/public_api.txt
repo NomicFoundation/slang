@@ -368,23 +368,25 @@ pub slang_solidity::cst::NonterminalKind::StructMember
 pub slang_solidity::cst::NonterminalKind::StructMembers
 pub slang_solidity::cst::NonterminalKind::ThrowStatement
 pub slang_solidity::cst::NonterminalKind::TryStatement
-pub slang_solidity::cst::NonterminalKind::TupleDeconstructionElement
-pub slang_solidity::cst::NonterminalKind::TupleDeconstructionElements
 pub slang_solidity::cst::NonterminalKind::TupleDeconstructionStatement
+pub slang_solidity::cst::NonterminalKind::TupleDeconstructionTarget
 pub slang_solidity::cst::NonterminalKind::TupleExpression
-pub slang_solidity::cst::NonterminalKind::TupleMember
 pub slang_solidity::cst::NonterminalKind::TupleValue
 pub slang_solidity::cst::NonterminalKind::TupleValues
 pub slang_solidity::cst::NonterminalKind::TypeExpression
 pub slang_solidity::cst::NonterminalKind::TypeName
-pub slang_solidity::cst::NonterminalKind::TypedTupleMember
+pub slang_solidity::cst::NonterminalKind::TypedTupleDeconstructionElement
+pub slang_solidity::cst::NonterminalKind::TypedTupleDeconstructionElements
+pub slang_solidity::cst::NonterminalKind::TypedTupleDeconstructionMember
+pub slang_solidity::cst::NonterminalKind::TypedTupleDeconstructionTarget
 pub slang_solidity::cst::NonterminalKind::UncheckedBlock
 pub slang_solidity::cst::NonterminalKind::UnicodeStringLiteral
 pub slang_solidity::cst::NonterminalKind::UnicodeStringLiterals
 pub slang_solidity::cst::NonterminalKind::UnnamedFunctionAttribute
 pub slang_solidity::cst::NonterminalKind::UnnamedFunctionAttributes
 pub slang_solidity::cst::NonterminalKind::UnnamedFunctionDefinition
-pub slang_solidity::cst::NonterminalKind::UntypedTupleMember
+pub slang_solidity::cst::NonterminalKind::UntypedTupleDeconstructionElement
+pub slang_solidity::cst::NonterminalKind::UntypedTupleDeconstructionElements
 pub slang_solidity::cst::NonterminalKind::UserDefinedValueTypeDefinition
 pub slang_solidity::cst::NonterminalKind::UsingAlias
 pub slang_solidity::cst::NonterminalKind::UsingClause
@@ -394,6 +396,7 @@ pub slang_solidity::cst::NonterminalKind::UsingDeconstructionSymbols
 pub slang_solidity::cst::NonterminalKind::UsingDirective
 pub slang_solidity::cst::NonterminalKind::UsingOperator
 pub slang_solidity::cst::NonterminalKind::UsingTarget
+pub slang_solidity::cst::NonterminalKind::VarTupleDeconstructionTarget
 pub slang_solidity::cst::NonterminalKind::VariableDeclarationStatement
 pub slang_solidity::cst::NonterminalKind::VariableDeclarationType
 pub slang_solidity::cst::NonterminalKind::VariableDeclarationValue
@@ -1151,11 +1154,9 @@ pub fn slang_solidity::cst::BaseRewriter::rewrite_transient_keyword(&mut self, n
 pub fn slang_solidity::cst::BaseRewriter::rewrite_true_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_try_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_try_statement(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
-pub fn slang_solidity::cst::BaseRewriter::rewrite_tuple_deconstruction_element(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
-pub fn slang_solidity::cst::BaseRewriter::rewrite_tuple_deconstruction_elements(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_tuple_deconstruction_statement(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
+pub fn slang_solidity::cst::BaseRewriter::rewrite_tuple_deconstruction_target(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_tuple_expression(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
-pub fn slang_solidity::cst::BaseRewriter::rewrite_tuple_member(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_tuple_value(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_tuple_values(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_type_def_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
@@ -1163,7 +1164,10 @@ pub fn slang_solidity::cst::BaseRewriter::rewrite_type_expression(&mut self, nod
 pub fn slang_solidity::cst::BaseRewriter::rewrite_type_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_type_name(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_type_of_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
-pub fn slang_solidity::cst::BaseRewriter::rewrite_typed_tuple_member(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
+pub fn slang_solidity::cst::BaseRewriter::rewrite_typed_tuple_deconstruction_element(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
+pub fn slang_solidity::cst::BaseRewriter::rewrite_typed_tuple_deconstruction_elements(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
+pub fn slang_solidity::cst::BaseRewriter::rewrite_typed_tuple_deconstruction_member(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
+pub fn slang_solidity::cst::BaseRewriter::rewrite_typed_tuple_deconstruction_target(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_ufixed_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_uint_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_unchecked_block(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
@@ -1174,7 +1178,8 @@ pub fn slang_solidity::cst::BaseRewriter::rewrite_unnamed_function_attribute(&mu
 pub fn slang_solidity::cst::BaseRewriter::rewrite_unnamed_function_attributes(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_unnamed_function_definition(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_unrecognized(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
-pub fn slang_solidity::cst::BaseRewriter::rewrite_untyped_tuple_member(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
+pub fn slang_solidity::cst::BaseRewriter::rewrite_untyped_tuple_deconstruction_element(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
+pub fn slang_solidity::cst::BaseRewriter::rewrite_untyped_tuple_deconstruction_elements(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_user_defined_value_type_definition(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_using_alias(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_using_clause(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
@@ -1186,6 +1191,7 @@ pub fn slang_solidity::cst::BaseRewriter::rewrite_using_keyword(&mut self, node:
 pub fn slang_solidity::cst::BaseRewriter::rewrite_using_operator(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_using_target(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_var_keyword(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> core::option::Option<slang_solidity::cst::Node>
+pub fn slang_solidity::cst::BaseRewriter::rewrite_var_tuple_deconstruction_target(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_variable_declaration_statement(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_variable_declaration_type(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>
 pub fn slang_solidity::cst::BaseRewriter::rewrite_variable_declaration_value(&mut self, node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::cst::Node>

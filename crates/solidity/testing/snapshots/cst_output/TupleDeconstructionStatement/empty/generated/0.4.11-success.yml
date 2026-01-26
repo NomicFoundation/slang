@@ -7,10 +7,11 @@ Errors: []
 
 Tree:
   - (root꞉ TupleDeconstructionStatement): # "() = ();\n" (0..9)
-      - (open_paren꞉ OpenParen): "(" # (0..1)
-      - (elements꞉ TupleDeconstructionElements): # "" (1..1)
-          - (item꞉ TupleDeconstructionElement): [] # (1..1)
-      - (close_paren꞉ CloseParen): ")" # (1..2)
+      - (target꞉ TupleDeconstructionTarget) ► (variant꞉ TypedTupleDeconstructionTarget): # "()" (0..2)
+          - (open_paren꞉ OpenParen): "(" # (0..1)
+          - (elements꞉ TypedTupleDeconstructionElements): # "" (1..1)
+              - (item꞉ TypedTupleDeconstructionElement): [] # (1..1)
+          - (close_paren꞉ CloseParen): ")" # (1..2)
       - (leading_trivia꞉ Whitespace): " " # (2..3)
       - (equal꞉ Equal): "=" # (3..4)
       - (expression꞉ Expression) ► (variant꞉ TupleExpression): # " ()" (4..7)

@@ -317,20 +317,53 @@ pub trait Visitor {
     }
     fn leave_tuple_deconstruction_statement(&mut self, _node: &TupleDeconstructionStatement) {}
 
-    fn enter_tuple_deconstruction_element(&mut self, _node: &TupleDeconstructionElement) -> bool {
+    fn enter_var_tuple_deconstruction_target(
+        &mut self,
+        _node: &VarTupleDeconstructionTarget,
+    ) -> bool {
         true
     }
-    fn leave_tuple_deconstruction_element(&mut self, _node: &TupleDeconstructionElement) {}
+    fn leave_var_tuple_deconstruction_target(&mut self, _node: &VarTupleDeconstructionTarget) {}
 
-    fn enter_typed_tuple_member(&mut self, _node: &TypedTupleMember) -> bool {
+    fn enter_untyped_tuple_deconstruction_element(
+        &mut self,
+        _node: &UntypedTupleDeconstructionElement,
+    ) -> bool {
         true
     }
-    fn leave_typed_tuple_member(&mut self, _node: &TypedTupleMember) {}
+    fn leave_untyped_tuple_deconstruction_element(
+        &mut self,
+        _node: &UntypedTupleDeconstructionElement,
+    ) {
+    }
 
-    fn enter_untyped_tuple_member(&mut self, _node: &UntypedTupleMember) -> bool {
+    fn enter_typed_tuple_deconstruction_target(
+        &mut self,
+        _node: &TypedTupleDeconstructionTarget,
+    ) -> bool {
         true
     }
-    fn leave_untyped_tuple_member(&mut self, _node: &UntypedTupleMember) {}
+    fn leave_typed_tuple_deconstruction_target(&mut self, _node: &TypedTupleDeconstructionTarget) {}
+
+    fn enter_typed_tuple_deconstruction_element(
+        &mut self,
+        _node: &TypedTupleDeconstructionElement,
+    ) -> bool {
+        true
+    }
+    fn leave_typed_tuple_deconstruction_element(
+        &mut self,
+        _node: &TypedTupleDeconstructionElement,
+    ) {
+    }
+
+    fn enter_typed_tuple_deconstruction_member(
+        &mut self,
+        _node: &TypedTupleDeconstructionMember,
+    ) -> bool {
+        true
+    }
+    fn leave_typed_tuple_deconstruction_member(&mut self, _node: &TypedTupleDeconstructionMember) {}
 
     fn enter_variable_declaration_statement(
         &mut self,
@@ -824,10 +857,10 @@ pub trait Visitor {
     }
     fn leave_statement(&mut self, _node: &Statement) {}
 
-    fn enter_tuple_member(&mut self, _node: &TupleMember) -> bool {
+    fn enter_tuple_deconstruction_target(&mut self, _node: &TupleDeconstructionTarget) -> bool {
         true
     }
-    fn leave_tuple_member(&mut self, _node: &TupleMember) {}
+    fn leave_tuple_deconstruction_target(&mut self, _node: &TupleDeconstructionTarget) {}
 
     fn enter_variable_declaration_type(&mut self, _node: &VariableDeclarationType) -> bool {
         true
@@ -1052,13 +1085,29 @@ pub trait Visitor {
     }
     fn leave_assembly_flags(&mut self, _items: &AssemblyFlags) {}
 
-    fn enter_tuple_deconstruction_elements(
+    fn enter_untyped_tuple_deconstruction_elements(
         &mut self,
-        _items: &TupleDeconstructionElements,
+        _items: &UntypedTupleDeconstructionElements,
     ) -> bool {
         true
     }
-    fn leave_tuple_deconstruction_elements(&mut self, _items: &TupleDeconstructionElements) {}
+    fn leave_untyped_tuple_deconstruction_elements(
+        &mut self,
+        _items: &UntypedTupleDeconstructionElements,
+    ) {
+    }
+
+    fn enter_typed_tuple_deconstruction_elements(
+        &mut self,
+        _items: &TypedTupleDeconstructionElements,
+    ) -> bool {
+        true
+    }
+    fn leave_typed_tuple_deconstruction_elements(
+        &mut self,
+        _items: &TypedTupleDeconstructionElements,
+    ) {
+    }
 
     fn enter_catch_clauses(&mut self, _items: &CatchClauses) -> bool {
         true
@@ -1733,43 +1782,68 @@ pub fn accept_tuple_deconstruction_statement(
     if !visitor.enter_tuple_deconstruction_statement(node) {
         return;
     }
-    accept_tuple_deconstruction_elements(&node.elements, visitor);
+    accept_tuple_deconstruction_target(&node.target, visitor);
     accept_expression(&node.expression, visitor);
     visitor.leave_tuple_deconstruction_statement(node);
 }
 
-pub fn accept_tuple_deconstruction_element(
-    node: &TupleDeconstructionElement,
+pub fn accept_var_tuple_deconstruction_target(
+    node: &VarTupleDeconstructionTarget,
     visitor: &mut impl Visitor,
 ) {
-    if !visitor.enter_tuple_deconstruction_element(node) {
+    if !visitor.enter_var_tuple_deconstruction_target(node) {
+        return;
+    }
+    accept_untyped_tuple_deconstruction_elements(&node.elements, visitor);
+    visitor.leave_var_tuple_deconstruction_target(node);
+}
+
+pub fn accept_untyped_tuple_deconstruction_element(
+    node: &UntypedTupleDeconstructionElement,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_untyped_tuple_deconstruction_element(node) {
+        return;
+    }
+    visitor.leave_untyped_tuple_deconstruction_element(node);
+}
+
+pub fn accept_typed_tuple_deconstruction_target(
+    node: &TypedTupleDeconstructionTarget,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_typed_tuple_deconstruction_target(node) {
+        return;
+    }
+    accept_typed_tuple_deconstruction_elements(&node.elements, visitor);
+    visitor.leave_typed_tuple_deconstruction_target(node);
+}
+
+pub fn accept_typed_tuple_deconstruction_element(
+    node: &TypedTupleDeconstructionElement,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_typed_tuple_deconstruction_element(node) {
         return;
     }
     if let Some(ref member) = node.member {
-        accept_tuple_member(member, visitor);
+        accept_typed_tuple_deconstruction_member(member, visitor);
     }
-    visitor.leave_tuple_deconstruction_element(node);
+    visitor.leave_typed_tuple_deconstruction_element(node);
 }
 
-pub fn accept_typed_tuple_member(node: &TypedTupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_typed_tuple_member(node) {
+pub fn accept_typed_tuple_deconstruction_member(
+    node: &TypedTupleDeconstructionMember,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_typed_tuple_deconstruction_member(node) {
         return;
     }
     accept_type_name(&node.type_name, visitor);
     if let Some(ref storage_location) = node.storage_location {
         accept_storage_location(storage_location, visitor);
     }
-    visitor.leave_typed_tuple_member(node);
-}
-
-pub fn accept_untyped_tuple_member(node: &UntypedTupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_untyped_tuple_member(node) {
-        return;
-    }
-    if let Some(ref storage_location) = node.storage_location {
-        accept_storage_location(storage_location, visitor);
-    }
-    visitor.leave_untyped_tuple_member(node);
+    visitor.leave_typed_tuple_deconstruction_member(node);
 }
 
 pub fn accept_variable_declaration_statement(
@@ -2920,19 +2994,26 @@ pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
     visitor.leave_statement(node);
 }
 
-pub fn accept_tuple_member(node: &TupleMember, visitor: &mut impl Visitor) {
-    if !visitor.enter_tuple_member(node) {
+pub fn accept_tuple_deconstruction_target(
+    node: &TupleDeconstructionTarget,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_tuple_deconstruction_target(node) {
         return;
     }
     match node {
-        TupleMember::TypedTupleMember(ref typed_tuple_member) => {
-            accept_typed_tuple_member(typed_tuple_member, visitor);
+        TupleDeconstructionTarget::VarTupleDeconstructionTarget(
+            ref var_tuple_deconstruction_target,
+        ) => {
+            accept_var_tuple_deconstruction_target(var_tuple_deconstruction_target, visitor);
         }
-        TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
-            accept_untyped_tuple_member(untyped_tuple_member, visitor);
+        TupleDeconstructionTarget::TypedTupleDeconstructionTarget(
+            ref typed_tuple_deconstruction_target,
+        ) => {
+            accept_typed_tuple_deconstruction_target(typed_tuple_deconstruction_target, visitor);
         }
     }
-    visitor.leave_tuple_member(node);
+    visitor.leave_tuple_deconstruction_target(node);
 }
 
 pub fn accept_variable_declaration_type(
@@ -3576,17 +3657,31 @@ fn accept_assembly_flags(items: &Vec<StringLiteral>, visitor: &mut impl Visitor)
 }
 
 #[inline]
-fn accept_tuple_deconstruction_elements(
-    items: &Vec<TupleDeconstructionElement>,
+fn accept_untyped_tuple_deconstruction_elements(
+    items: &Vec<UntypedTupleDeconstructionElement>,
     visitor: &mut impl Visitor,
 ) {
-    if !visitor.enter_tuple_deconstruction_elements(items) {
+    if !visitor.enter_untyped_tuple_deconstruction_elements(items) {
         return;
     }
     for item in items {
-        accept_tuple_deconstruction_element(item, visitor);
+        accept_untyped_tuple_deconstruction_element(item, visitor);
     }
-    visitor.leave_tuple_deconstruction_elements(items);
+    visitor.leave_untyped_tuple_deconstruction_elements(items);
+}
+
+#[inline]
+fn accept_typed_tuple_deconstruction_elements(
+    items: &Vec<TypedTupleDeconstructionElement>,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_typed_tuple_deconstruction_elements(items) {
+        return;
+    }
+    for item in items {
+        accept_typed_tuple_deconstruction_element(item, visitor);
+    }
+    visitor.leave_typed_tuple_deconstruction_elements(items);
 }
 
 #[inline]

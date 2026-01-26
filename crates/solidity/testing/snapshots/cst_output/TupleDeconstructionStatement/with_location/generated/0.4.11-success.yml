@@ -1,26 +1,34 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ (memory with_location, without_location) = rhs;                                  │ 0..47
+  1  │ (bool memory with_location, foo without_location) = rhs;                         │ 0..56
 
 Errors: []
 
 Tree:
-  - (root꞉ TupleDeconstructionStatement): # "(memory with_location, without_location) = rhs;" (0..47)
-      - (open_paren꞉ OpenParen): "(" # (0..1)
-      - (elements꞉ TupleDeconstructionElements): # "memory with_location, without_location" (1..39)
-          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember): # "memory with_location" (1..21)
-              - (storage_location꞉ StorageLocation) ► (variant꞉ MemoryKeyword): "memory" # (1..7)
-              - (leading_trivia꞉ Whitespace): " " # (7..8)
-              - (name꞉ Identifier): "with_location" # (8..21)
-          - (separator꞉ Comma): "," # (21..22)
-          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember): # " without_location" (22..39)
-              - (leading_trivia꞉ Whitespace): " " # (22..23)
-              - (name꞉ Identifier): "without_location" # (23..39)
-      - (close_paren꞉ CloseParen): ")" # (39..40)
-      - (leading_trivia꞉ Whitespace): " " # (40..41)
-      - (equal꞉ Equal): "=" # (41..42)
-      - (expression꞉ Expression): # " rhs" (42..46)
-          - (leading_trivia꞉ Whitespace): " " # (42..43)
-          - (variant꞉ Identifier): "rhs" # (43..46)
-      - (semicolon꞉ Semicolon): ";" # (46..47)
+  - (root꞉ TupleDeconstructionStatement): # "(bool memory with_location, foo without_location) ..." (0..57)
+      - (target꞉ TupleDeconstructionTarget) ► (variant꞉ TypedTupleDeconstructionTarget): # "(bool memory with_location, foo without_location)" (0..49)
+          - (open_paren꞉ OpenParen): "(" # (0..1)
+          - (elements꞉ TypedTupleDeconstructionElements): # "bool memory with_location, foo without_location" (1..48)
+              - (item꞉ TypedTupleDeconstructionElement) ► (member꞉ TypedTupleDeconstructionMember): # "bool memory with_location" (1..26)
+                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ BoolKeyword): "bool" # (1..5)
+                  - (storage_location꞉ StorageLocation): # " memory" (5..12)
+                      - (leading_trivia꞉ Whitespace): " " # (5..6)
+                      - (variant꞉ MemoryKeyword): "memory" # (6..12)
+                  - (leading_trivia꞉ Whitespace): " " # (12..13)
+                  - (name꞉ Identifier): "with_location" # (13..26)
+              - (separator꞉ Comma): "," # (26..27)
+              - (item꞉ TypedTupleDeconstructionElement) ► (member꞉ TypedTupleDeconstructionMember): # " foo without_location" (27..48)
+                  - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " foo" (27..31)
+                      - (leading_trivia꞉ Whitespace): " " # (27..28)
+                      - (item꞉ Identifier): "foo" # (28..31)
+                  - (leading_trivia꞉ Whitespace): " " # (31..32)
+                  - (name꞉ Identifier): "without_location" # (32..48)
+          - (close_paren꞉ CloseParen): ")" # (48..49)
+      - (leading_trivia꞉ Whitespace): " " # (49..50)
+      - (equal꞉ Equal): "=" # (50..51)
+      - (expression꞉ Expression): # " rhs" (51..55)
+          - (leading_trivia꞉ Whitespace): " " # (51..52)
+          - (variant꞉ Identifier): "rhs" # (52..55)
+      - (semicolon꞉ Semicolon): ";" # (55..56)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (56..57)

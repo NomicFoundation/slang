@@ -546,34 +546,48 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
     pub node_id: NodeId,
-    pub var_keyword: bool,
-    pub elements: TupleDeconstructionElements,
+    pub target: TupleDeconstructionTarget,
     pub expression: Expression,
 }
 
-pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
+pub type VarTupleDeconstructionTarget = Rc<VarTupleDeconstructionTargetStruct>;
 
 #[derive(Debug)]
-pub struct TupleDeconstructionElementStruct {
+pub struct VarTupleDeconstructionTargetStruct {
     pub node_id: NodeId,
-    pub member: Option<TupleMember>,
+    pub elements: UntypedTupleDeconstructionElements,
 }
 
-pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
+pub type UntypedTupleDeconstructionElement = Rc<UntypedTupleDeconstructionElementStruct>;
 
 #[derive(Debug)]
-pub struct TypedTupleMemberStruct {
+pub struct UntypedTupleDeconstructionElementStruct {
+    pub node_id: NodeId,
+    pub name: Option<Rc<TerminalNode>>,
+}
+
+pub type TypedTupleDeconstructionTarget = Rc<TypedTupleDeconstructionTargetStruct>;
+
+#[derive(Debug)]
+pub struct TypedTupleDeconstructionTargetStruct {
+    pub node_id: NodeId,
+    pub elements: TypedTupleDeconstructionElements,
+}
+
+pub type TypedTupleDeconstructionElement = Rc<TypedTupleDeconstructionElementStruct>;
+
+#[derive(Debug)]
+pub struct TypedTupleDeconstructionElementStruct {
+    pub node_id: NodeId,
+    pub member: Option<TypedTupleDeconstructionMember>,
+}
+
+pub type TypedTupleDeconstructionMember = Rc<TypedTupleDeconstructionMemberStruct>;
+
+#[derive(Debug)]
+pub struct TypedTupleDeconstructionMemberStruct {
     pub node_id: NodeId,
     pub type_name: TypeName,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Rc<TerminalNode>,
-}
-
-pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
-
-#[derive(Debug)]
-pub struct UntypedTupleMemberStruct {
-    pub node_id: NodeId,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
 }
@@ -1445,9 +1459,9 @@ pub enum Statement {
 }
 
 #[derive(Clone, Debug)]
-pub enum TupleMember {
-    TypedTupleMember(TypedTupleMember),
-    UntypedTupleMember(UntypedTupleMember),
+pub enum TupleDeconstructionTarget {
+    VarTupleDeconstructionTarget(VarTupleDeconstructionTarget),
+    TypedTupleDeconstructionTarget(TypedTupleDeconstructionTarget),
 }
 
 #[derive(Clone, Debug)]
@@ -1672,7 +1686,9 @@ pub type Statements = Vec<Statement>;
 
 pub type AssemblyFlags = Vec<StringLiteral>;
 
-pub type TupleDeconstructionElements = Vec<TupleDeconstructionElement>;
+pub type UntypedTupleDeconstructionElements = Vec<UntypedTupleDeconstructionElement>;
+
+pub type TypedTupleDeconstructionElements = Vec<TypedTupleDeconstructionElement>;
 
 pub type CatchClauses = Vec<CatchClause>;
 

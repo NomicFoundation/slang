@@ -4195,18 +4195,9 @@
               "Struct": {
                 "item": {
                   "name": "TupleDeconstructionStatement",
-                  "error_recovery": {
-                    "terminator": "semicolon",
-                    "delimiters": { "open": "open_paren", "close": "close_paren" }
-                  },
+                  "error_recovery": { "terminator": "semicolon" },
                   "fields": [
-                    [
-                      "var_keyword",
-                      { "Optional": { "reference": "VarKeyword", "enabled": { "Till": { "till": "0.5.0" } } } }
-                    ],
-                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
-                    ["elements", { "Required": { "reference": "TupleDeconstructionElements" } }],
-                    ["close_paren", { "Required": { "reference": "CloseParen" } }],
+                    ["target", { "Required": { "reference": "TupleDeconstructionTarget" } }],
                     ["equal", { "Required": { "reference": "Equal" } }],
                     ["expression", { "Required": { "reference": "Expression" } }],
                     ["semicolon", { "Required": { "reference": "Semicolon" } }]
@@ -4215,38 +4206,12 @@
               }
             },
             {
-              "Separated": {
-                "item": {
-                  "name": "TupleDeconstructionElements",
-                  "reference": "TupleDeconstructionElement",
-                  "separator": "Comma"
-                }
-              }
-            },
-            {
-              "Struct": {
-                "item": {
-                  "name": "TupleDeconstructionElement",
-                  "fields": [["member", { "Optional": { "reference": "TupleMember" } }]]
-                }
-              }
-            },
-            {
               "Enum": {
                 "item": {
-                  "name": "TupleMember",
-                  "variants": [{ "reference": "TypedTupleMember" }, { "reference": "UntypedTupleMember" }]
-                }
-              }
-            },
-            {
-              "Struct": {
-                "item": {
-                  "name": "TypedTupleMember",
-                  "fields": [
-                    ["type_name", { "Required": { "reference": "TypeName" } }],
-                    ["storage_location", { "Optional": { "reference": "StorageLocation" } }],
-                    ["name", { "Required": { "reference": "Identifier" } }]
+                  "name": "TupleDeconstructionTarget",
+                  "variants": [
+                    { "reference": "VarTupleDeconstructionTarget", "enabled": { "Till": { "till": "0.5.0" } } },
+                    { "reference": "TypedTupleDeconstructionTarget" }
                   ]
                 }
               }
@@ -4254,8 +4219,73 @@
             {
               "Struct": {
                 "item": {
-                  "name": "UntypedTupleMember",
+                  "name": "VarTupleDeconstructionTarget",
+                  "enabled": { "Till": { "till": "0.5.0" } },
+                  "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
                   "fields": [
+                    ["var_keyword", { "Required": { "reference": "VarKeyword" } }],
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["elements", { "Required": { "reference": "UntypedTupleDeconstructionElements" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
+                }
+              }
+            },
+            {
+              "Separated": {
+                "item": {
+                  "name": "UntypedTupleDeconstructionElements",
+                  "reference": "UntypedTupleDeconstructionElement",
+                  "separator": "Comma",
+                  "enabled": { "Till": { "till": "0.5.0" } }
+                }
+              }
+            },
+            {
+              "Struct": {
+                "item": {
+                  "name": "UntypedTupleDeconstructionElement",
+                  "enabled": { "Till": { "till": "0.5.0" } },
+                  "fields": [["name", { "Optional": { "reference": "Identifier" } }]]
+                }
+              }
+            },
+            {
+              "Struct": {
+                "item": {
+                  "name": "TypedTupleDeconstructionTarget",
+                  "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["elements", { "Required": { "reference": "TypedTupleDeconstructionElements" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
+                }
+              }
+            },
+            {
+              "Separated": {
+                "item": {
+                  "name": "TypedTupleDeconstructionElements",
+                  "reference": "TypedTupleDeconstructionElement",
+                  "separator": "Comma"
+                }
+              }
+            },
+            {
+              "Struct": {
+                "item": {
+                  "name": "TypedTupleDeconstructionElement",
+                  "fields": [["member", { "Optional": { "reference": "TypedTupleDeconstructionMember" } }]]
+                }
+              }
+            },
+            {
+              "Struct": {
+                "item": {
+                  "name": "TypedTupleDeconstructionMember",
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
                     ["storage_location", { "Optional": { "reference": "StorageLocation" } }],
                     ["name", { "Required": { "reference": "Identifier" } }]
                   ]

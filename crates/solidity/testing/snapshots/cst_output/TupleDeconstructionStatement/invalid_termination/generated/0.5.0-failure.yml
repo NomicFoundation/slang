@@ -7,7 +7,7 @@ Source: >
 
 Errors: # 3 total
   - >
-    Error: Expected Identifier or MemoryKeyword or StorageKeyword.
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:1:3]
        │
      1 │ (a, b) = (123, 135)
@@ -15,7 +15,7 @@ Errors: # 3 total
        │   ╰─ Error occurred here.
     ───╯
   - >
-    Error: Expected Identifier or MemoryKeyword or StorageKeyword.
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:1:6]
        │
      1 │ (a, b) = (123, 135)

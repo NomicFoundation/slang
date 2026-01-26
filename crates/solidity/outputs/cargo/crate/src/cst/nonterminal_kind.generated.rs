@@ -1469,30 +1469,22 @@ pub enum NonterminalKind {
     ///                (* catch_clauses: *) CatchClauses;
     /// ```
     TryStatement,
-    /// Represents a node with kind `TupleDeconstructionElement`, having the following structure:
-    ///
-    /// ```ebnf
-    /// TupleDeconstructionElement = (* member: *) TupleMember?;
-    /// ```
-    TupleDeconstructionElement,
-    /// Represents a node with kind `TupleDeconstructionElements`, having the following structure:
-    ///
-    /// ```ebnf
-    /// TupleDeconstructionElements = (* item: *) TupleDeconstructionElement ((* separator: *) COMMA (* item: *) TupleDeconstructionElement)*;
-    /// ```
-    TupleDeconstructionElements,
     /// Represents a node with kind `TupleDeconstructionStatement`, having the following structure:
     ///
     /// ```ebnf
-    /// TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 0.5.0 *)
-    ///                                (* open_paren: *) OPEN_PAREN
-    ///                                (* elements: *) TupleDeconstructionElements
-    ///                                (* close_paren: *) CLOSE_PAREN
+    /// TupleDeconstructionStatement = (* target: *) TupleDeconstructionTarget
     ///                                (* equal: *) EQUAL
     ///                                (* expression: *) Expression
     ///                                (* semicolon: *) SEMICOLON;
     /// ```
     TupleDeconstructionStatement,
+    /// Represents a node with kind `TupleDeconstructionTarget`, having the following structure:
+    ///
+    /// ```ebnf
+    /// TupleDeconstructionTarget = (* variant: *) VarTupleDeconstructionTarget (* Deprecated in 0.5.0 *)
+    ///                           | (* variant: *) TypedTupleDeconstructionTarget;
+    /// ```
+    TupleDeconstructionTarget,
     /// Represents a node with kind `TupleExpression`, having the following structure:
     ///
     /// ```ebnf
@@ -1501,13 +1493,6 @@ pub enum NonterminalKind {
     ///                   (* close_paren: *) CLOSE_PAREN;
     /// ```
     TupleExpression,
-    /// Represents a node with kind `TupleMember`, having the following structure:
-    ///
-    /// ```ebnf
-    /// TupleMember = (* variant: *) TypedTupleMember
-    ///             | (* variant: *) UntypedTupleMember;
-    /// ```
-    TupleMember,
     /// Represents a node with kind `TupleValue`, having the following structure:
     ///
     /// ```ebnf
@@ -1540,14 +1525,34 @@ pub enum NonterminalKind {
     ///          | (* variant: *) IdentifierPath;
     /// ```
     TypeName,
-    /// Represents a node with kind `TypedTupleMember`, having the following structure:
+    /// Represents a node with kind `TypedTupleDeconstructionElement`, having the following structure:
     ///
     /// ```ebnf
-    /// TypedTupleMember = (* type_name: *) TypeName
-    ///                    (* storage_location: *) StorageLocation?
-    ///                    (* name: *) IDENTIFIER;
+    /// TypedTupleDeconstructionElement = (* member: *) TypedTupleDeconstructionMember?;
     /// ```
-    TypedTupleMember,
+    TypedTupleDeconstructionElement,
+    /// Represents a node with kind `TypedTupleDeconstructionElements`, having the following structure:
+    ///
+    /// ```ebnf
+    /// TypedTupleDeconstructionElements = (* item: *) TypedTupleDeconstructionElement ((* separator: *) COMMA (* item: *) TypedTupleDeconstructionElement)*;
+    /// ```
+    TypedTupleDeconstructionElements,
+    /// Represents a node with kind `TypedTupleDeconstructionMember`, having the following structure:
+    ///
+    /// ```ebnf
+    /// TypedTupleDeconstructionMember = (* type_name: *) TypeName
+    ///                                  (* storage_location: *) StorageLocation?
+    ///                                  (* name: *) IDENTIFIER;
+    /// ```
+    TypedTupleDeconstructionMember,
+    /// Represents a node with kind `TypedTupleDeconstructionTarget`, having the following structure:
+    ///
+    /// ```ebnf
+    /// TypedTupleDeconstructionTarget = (* open_paren: *) OPEN_PAREN
+    ///                                  (* elements: *) TypedTupleDeconstructionElements
+    ///                                  (* close_paren: *) CLOSE_PAREN;
+    /// ```
+    TypedTupleDeconstructionTarget,
     /// Represents a node with kind `UncheckedBlock`, having the following structure:
     ///
     /// ```ebnf
@@ -1603,13 +1608,20 @@ pub enum NonterminalKind {
     ///                             (* body: *) FunctionBody;
     /// ```
     UnnamedFunctionDefinition,
-    /// Represents a node with kind `UntypedTupleMember`, having the following structure:
+    /// Represents a node with kind `UntypedTupleDeconstructionElement`, having the following structure:
     ///
     /// ```ebnf
-    /// UntypedTupleMember = (* storage_location: *) StorageLocation?
-    ///                      (* name: *) IDENTIFIER;
+    /// (* Deprecated in 0.5.0 *)
+    /// UntypedTupleDeconstructionElement = (* name: *) IDENTIFIER?;
     /// ```
-    UntypedTupleMember,
+    UntypedTupleDeconstructionElement,
+    /// Represents a node with kind `UntypedTupleDeconstructionElements`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Deprecated in 0.5.0 *)
+    /// UntypedTupleDeconstructionElements = (* item: *) UntypedTupleDeconstructionElement ((* separator: *) COMMA (* item: *) UntypedTupleDeconstructionElement)*;
+    /// ```
+    UntypedTupleDeconstructionElements,
     /// Represents a node with kind `UserDefinedValueTypeDefinition`, having the following structure:
     ///
     /// ```ebnf
@@ -1699,6 +1711,16 @@ pub enum NonterminalKind {
     ///             | (* variant: *) ASTERISK;
     /// ```
     UsingTarget,
+    /// Represents a node with kind `VarTupleDeconstructionTarget`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Deprecated in 0.5.0 *)
+    /// VarTupleDeconstructionTarget = (* var_keyword: *) VAR_KEYWORD
+    ///                                (* open_paren: *) OPEN_PAREN
+    ///                                (* elements: *) UntypedTupleDeconstructionElements
+    ///                                (* close_paren: *) CLOSE_PAREN;
+    /// ```
+    VarTupleDeconstructionTarget,
     /// Represents a node with kind `VariableDeclarationStatement`, having the following structure:
     ///
     /// ```ebnf

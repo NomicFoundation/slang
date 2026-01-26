@@ -3422,10 +3422,7 @@ export class AssemblyFlagsDeclaration {
  * This node represents a `TupleDeconstructionStatement` nonterminal, with the following structure:
  *
  * ```ebnf
- * TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 0.5.0 *)
- *                                (* open_paren: *) OPEN_PAREN
- *                                (* elements: *) TupleDeconstructionElements
- *                                (* close_paren: *) CLOSE_PAREN
+ * TupleDeconstructionStatement = (* target: *) TupleDeconstructionTarget
  *                                (* equal: *) EQUAL
  *                                (* expression: *) Expression
  *                                (* semicolon: *) SEMICOLON;
@@ -3433,14 +3430,10 @@ export class AssemblyFlagsDeclaration {
  */
 export class TupleDeconstructionStatement {
   private readonly fetch = once(() => {
-    const [$varKeyword, $openParen, $elements, $closeParen, $equal, $expression, $semicolon] =
-      wasm.ast.Selectors.sequence(this.cst);
+    const [$target, $equal, $expression, $semicolon] = wasm.ast.Selectors.sequence(this.cst);
 
     return {
-      varKeyword: $varKeyword === undefined ? undefined : ($varKeyword as TerminalNode),
-      openParen: $openParen as TerminalNode,
-      elements: new TupleDeconstructionElements($elements as NonterminalNode),
-      closeParen: $closeParen as TerminalNode,
+      target: new TupleDeconstructionTarget($target as NonterminalNode),
       equal: $equal as TerminalNode,
       expression: new Expression($expression as NonterminalNode),
       semicolon: $semicolon as TerminalNode,
@@ -3460,31 +3453,10 @@ export class TupleDeconstructionStatement {
   }
 
   /**
-   * Returns the child node that has the label `var_keyword`.
+   * Returns the child node that has the label `target`.
    */
-  public get varKeyword(): TerminalNode | undefined {
-    return this.fetch().varKeyword;
-  }
-
-  /**
-   * Returns the child node that has the label `open_paren`.
-   */
-  public get openParen(): TerminalNode {
-    return this.fetch().openParen;
-  }
-
-  /**
-   * Returns the child node that has the label `elements`.
-   */
-  public get elements(): TupleDeconstructionElements {
-    return this.fetch().elements;
-  }
-
-  /**
-   * Returns the child node that has the label `close_paren`.
-   */
-  public get closeParen(): TerminalNode {
-    return this.fetch().closeParen;
+  public get target(): TupleDeconstructionTarget {
+    return this.fetch().target;
   }
 
   /**
@@ -3510,51 +3482,206 @@ export class TupleDeconstructionStatement {
 }
 
 /**
- * This node represents a `TupleDeconstructionElement` nonterminal, with the following structure:
+ * This node represents a `VarTupleDeconstructionTarget` nonterminal, with the following structure:
  *
  * ```ebnf
- * TupleDeconstructionElement = (* member: *) TupleMember?;
+ * (* Deprecated in 0.5.0 *)
+ * VarTupleDeconstructionTarget = (* var_keyword: *) VAR_KEYWORD
+ *                                (* open_paren: *) OPEN_PAREN
+ *                                (* elements: *) UntypedTupleDeconstructionElements
+ *                                (* close_paren: *) CLOSE_PAREN;
  * ```
  */
-export class TupleDeconstructionElement {
+export class VarTupleDeconstructionTarget {
   private readonly fetch = once(() => {
-    const [$member] = wasm.ast.Selectors.sequence(this.cst);
+    const [$varKeyword, $openParen, $elements, $closeParen] = wasm.ast.Selectors.sequence(this.cst);
 
     return {
-      member: $member === undefined ? undefined : new TupleMember($member as NonterminalNode),
+      varKeyword: $varKeyword as TerminalNode,
+      openParen: $openParen as TerminalNode,
+      elements: new UntypedTupleDeconstructionElements($elements as NonterminalNode),
+      closeParen: $closeParen as TerminalNode,
     };
   });
 
   /**
-   * Constructs a new AST node of type `TupleDeconstructionElement`, given a nonterminal CST node of the same kind.
+   * Constructs a new AST node of type `VarTupleDeconstructionTarget`, given a nonterminal CST node of the same kind.
    */
   public constructor(
     /**
-     * The underlying nonterminal CST node of kind `TupleDeconstructionElement`.
+     * The underlying nonterminal CST node of kind `VarTupleDeconstructionTarget`.
      */
     public readonly cst: NonterminalNode,
   ) {
-    assertKind(this.cst.kind, NonterminalKind.TupleDeconstructionElement);
+    assertKind(this.cst.kind, NonterminalKind.VarTupleDeconstructionTarget);
+  }
+
+  /**
+   * Returns the child node that has the label `var_keyword`.
+   */
+  public get varKeyword(): TerminalNode {
+    return this.fetch().varKeyword;
+  }
+
+  /**
+   * Returns the child node that has the label `open_paren`.
+   */
+  public get openParen(): TerminalNode {
+    return this.fetch().openParen;
+  }
+
+  /**
+   * Returns the child node that has the label `elements`.
+   */
+  public get elements(): UntypedTupleDeconstructionElements {
+    return this.fetch().elements;
+  }
+
+  /**
+   * Returns the child node that has the label `close_paren`.
+   */
+  public get closeParen(): TerminalNode {
+    return this.fetch().closeParen;
+  }
+}
+
+/**
+ * This node represents a `UntypedTupleDeconstructionElement` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * (* Deprecated in 0.5.0 *)
+ * UntypedTupleDeconstructionElement = (* name: *) IDENTIFIER?;
+ * ```
+ */
+export class UntypedTupleDeconstructionElement {
+  private readonly fetch = once(() => {
+    const [$name] = wasm.ast.Selectors.sequence(this.cst);
+
+    return {
+      name: $name === undefined ? undefined : ($name as TerminalNode),
+    };
+  });
+
+  /**
+   * Constructs a new AST node of type `UntypedTupleDeconstructionElement`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `UntypedTupleDeconstructionElement`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.UntypedTupleDeconstructionElement);
+  }
+
+  /**
+   * Returns the child node that has the label `name`.
+   */
+  public get name(): TerminalNode | undefined {
+    return this.fetch().name;
+  }
+}
+
+/**
+ * This node represents a `TypedTupleDeconstructionTarget` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * TypedTupleDeconstructionTarget = (* open_paren: *) OPEN_PAREN
+ *                                  (* elements: *) TypedTupleDeconstructionElements
+ *                                  (* close_paren: *) CLOSE_PAREN;
+ * ```
+ */
+export class TypedTupleDeconstructionTarget {
+  private readonly fetch = once(() => {
+    const [$openParen, $elements, $closeParen] = wasm.ast.Selectors.sequence(this.cst);
+
+    return {
+      openParen: $openParen as TerminalNode,
+      elements: new TypedTupleDeconstructionElements($elements as NonterminalNode),
+      closeParen: $closeParen as TerminalNode,
+    };
+  });
+
+  /**
+   * Constructs a new AST node of type `TypedTupleDeconstructionTarget`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `TypedTupleDeconstructionTarget`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.TypedTupleDeconstructionTarget);
+  }
+
+  /**
+   * Returns the child node that has the label `open_paren`.
+   */
+  public get openParen(): TerminalNode {
+    return this.fetch().openParen;
+  }
+
+  /**
+   * Returns the child node that has the label `elements`.
+   */
+  public get elements(): TypedTupleDeconstructionElements {
+    return this.fetch().elements;
+  }
+
+  /**
+   * Returns the child node that has the label `close_paren`.
+   */
+  public get closeParen(): TerminalNode {
+    return this.fetch().closeParen;
+  }
+}
+
+/**
+ * This node represents a `TypedTupleDeconstructionElement` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * TypedTupleDeconstructionElement = (* member: *) TypedTupleDeconstructionMember?;
+ * ```
+ */
+export class TypedTupleDeconstructionElement {
+  private readonly fetch = once(() => {
+    const [$member] = wasm.ast.Selectors.sequence(this.cst);
+
+    return {
+      member: $member === undefined ? undefined : new TypedTupleDeconstructionMember($member as NonterminalNode),
+    };
+  });
+
+  /**
+   * Constructs a new AST node of type `TypedTupleDeconstructionElement`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `TypedTupleDeconstructionElement`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.TypedTupleDeconstructionElement);
   }
 
   /**
    * Returns the child node that has the label `member`.
    */
-  public get member(): TupleMember | undefined {
+  public get member(): TypedTupleDeconstructionMember | undefined {
     return this.fetch().member;
   }
 }
 
 /**
- * This node represents a `TypedTupleMember` nonterminal, with the following structure:
+ * This node represents a `TypedTupleDeconstructionMember` nonterminal, with the following structure:
  *
  * ```ebnf
- * TypedTupleMember = (* type_name: *) TypeName
- *                    (* storage_location: *) StorageLocation?
- *                    (* name: *) IDENTIFIER;
+ * TypedTupleDeconstructionMember = (* type_name: *) TypeName
+ *                                  (* storage_location: *) StorageLocation?
+ *                                  (* name: *) IDENTIFIER;
  * ```
  */
-export class TypedTupleMember {
+export class TypedTupleDeconstructionMember {
   private readonly fetch = once(() => {
     const [$typeName, $storageLocation, $name] = wasm.ast.Selectors.sequence(this.cst);
 
@@ -3567,15 +3694,15 @@ export class TypedTupleMember {
   });
 
   /**
-   * Constructs a new AST node of type `TypedTupleMember`, given a nonterminal CST node of the same kind.
+   * Constructs a new AST node of type `TypedTupleDeconstructionMember`, given a nonterminal CST node of the same kind.
    */
   public constructor(
     /**
-     * The underlying nonterminal CST node of kind `TypedTupleMember`.
+     * The underlying nonterminal CST node of kind `TypedTupleDeconstructionMember`.
      */
     public readonly cst: NonterminalNode,
   ) {
-    assertKind(this.cst.kind, NonterminalKind.TypedTupleMember);
+    assertKind(this.cst.kind, NonterminalKind.TypedTupleDeconstructionMember);
   }
 
   /**
@@ -3583,52 +3710,6 @@ export class TypedTupleMember {
    */
   public get typeName(): TypeName {
     return this.fetch().typeName;
-  }
-
-  /**
-   * Returns the child node that has the label `storage_location`.
-   */
-  public get storageLocation(): StorageLocation | undefined {
-    return this.fetch().storageLocation;
-  }
-
-  /**
-   * Returns the child node that has the label `name`.
-   */
-  public get name(): TerminalNode {
-    return this.fetch().name;
-  }
-}
-
-/**
- * This node represents a `UntypedTupleMember` nonterminal, with the following structure:
- *
- * ```ebnf
- * UntypedTupleMember = (* storage_location: *) StorageLocation?
- *                      (* name: *) IDENTIFIER;
- * ```
- */
-export class UntypedTupleMember {
-  private readonly fetch = once(() => {
-    const [$storageLocation, $name] = wasm.ast.Selectors.sequence(this.cst);
-
-    return {
-      storageLocation:
-        $storageLocation === undefined ? undefined : new StorageLocation($storageLocation as NonterminalNode),
-      name: $name as TerminalNode,
-    };
-  });
-
-  /**
-   * Constructs a new AST node of type `UntypedTupleMember`, given a nonterminal CST node of the same kind.
-   */
-  public constructor(
-    /**
-     * The underlying nonterminal CST node of kind `UntypedTupleMember`.
-     */
-    public readonly cst: NonterminalNode,
-  ) {
-    assertKind(this.cst.kind, NonterminalKind.UntypedTupleMember);
   }
 
   /**
@@ -8898,22 +8979,22 @@ export class Statement {
 }
 
 /**
- * This node represents a `TupleMember` nonterminal, with the following structure:
+ * This node represents a `TupleDeconstructionTarget` nonterminal, with the following structure:
  *
  * ```ebnf
- * TupleMember = (* variant: *) TypedTupleMember
- *             | (* variant: *) UntypedTupleMember;
+ * TupleDeconstructionTarget = (* variant: *) VarTupleDeconstructionTarget (* Deprecated in 0.5.0 *)
+ *                           | (* variant: *) TypedTupleDeconstructionTarget;
  * ```
  */
-export class TupleMember {
-  private readonly fetch: () => TypedTupleMember | UntypedTupleMember = once(() => {
+export class TupleDeconstructionTarget {
+  private readonly fetch: () => VarTupleDeconstructionTarget | TypedTupleDeconstructionTarget = once(() => {
     const variant = wasm.ast.Selectors.choice(this.cst);
 
     switch (variant.kind) {
-      case NonterminalKind.TypedTupleMember:
-        return new TypedTupleMember(variant as NonterminalNode);
-      case NonterminalKind.UntypedTupleMember:
-        return new UntypedTupleMember(variant as NonterminalNode);
+      case NonterminalKind.VarTupleDeconstructionTarget:
+        return new VarTupleDeconstructionTarget(variant as NonterminalNode);
+      case NonterminalKind.TypedTupleDeconstructionTarget:
+        return new TypedTupleDeconstructionTarget(variant as NonterminalNode);
 
       default:
         throw new Error(`Unexpected variant: '${variant.kind}'.`);
@@ -8921,21 +9002,21 @@ export class TupleMember {
   });
 
   /**
-   * Constructs a new AST node of type `TupleMember`, given a nonterminal CST node of the same kind.
+   * Constructs a new AST node of type `TupleDeconstructionTarget`, given a nonterminal CST node of the same kind.
    */
   public constructor(
     /**
-     * The underlying nonterminal CST node of kind `TupleMember`.
+     * The underlying nonterminal CST node of kind `TupleDeconstructionTarget`.
      */
     public readonly cst: NonterminalNode,
   ) {
-    assertKind(this.cst.kind, NonterminalKind.TupleMember);
+    assertKind(this.cst.kind, NonterminalKind.TupleDeconstructionTarget);
   }
 
   /**
    * Returns the child node that has the label `variant`.
    */
-  public get variant(): TypedTupleMember | UntypedTupleMember {
+  public get variant(): VarTupleDeconstructionTarget | TypedTupleDeconstructionTarget {
     return this.fetch();
   }
 }
@@ -11117,38 +11198,83 @@ export class AssemblyFlags {
 }
 
 /**
- * This node represents a `TupleDeconstructionElements` nonterminal, with the following structure:
+ * This node represents a `UntypedTupleDeconstructionElements` nonterminal, with the following structure:
  *
  * ```ebnf
- * TupleDeconstructionElements = (* item: *) TupleDeconstructionElement ((* separator: *) COMMA (* item: *) TupleDeconstructionElement)*;
+ * (* Deprecated in 0.5.0 *)
+ * UntypedTupleDeconstructionElements = (* item: *) UntypedTupleDeconstructionElement ((* separator: *) COMMA (* item: *) UntypedTupleDeconstructionElement)*;
  * ```
  */
-export class TupleDeconstructionElements {
+export class UntypedTupleDeconstructionElements {
   private readonly fetch = once(() => {
     const [items, separators] = wasm.ast.Selectors.separated(this.cst);
 
     return {
-      items: items!.map((item) => new TupleDeconstructionElement(item as NonterminalNode)),
+      items: items!.map((item) => new UntypedTupleDeconstructionElement(item as NonterminalNode)),
       separators: separators as TerminalNode[],
     };
   });
 
   /**
-   * Constructs a new AST node of type `TupleDeconstructionElements`, given a nonterminal CST node of the same kind.
+   * Constructs a new AST node of type `UntypedTupleDeconstructionElements`, given a nonterminal CST node of the same kind.
    */
   public constructor(
     /**
-     * The underlying nonterminal CST node of kind `TupleDeconstructionElements`.
+     * The underlying nonterminal CST node of kind `UntypedTupleDeconstructionElements`.
      */
     public readonly cst: NonterminalNode,
   ) {
-    assertKind(this.cst.kind, NonterminalKind.TupleDeconstructionElements);
+    assertKind(this.cst.kind, NonterminalKind.UntypedTupleDeconstructionElements);
   }
 
   /**
    * Returns an array of the child nodes that have the label `item`.
    */
-  public get items(): readonly TupleDeconstructionElement[] {
+  public get items(): readonly UntypedTupleDeconstructionElement[] {
+    return this.fetch().items;
+  }
+
+  /**
+   * Returns an array of the child nodes that have the label `separator`.
+   */
+  public get separators(): readonly TerminalNode[] {
+    return this.fetch().separators;
+  }
+}
+
+/**
+ * This node represents a `TypedTupleDeconstructionElements` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * TypedTupleDeconstructionElements = (* item: *) TypedTupleDeconstructionElement ((* separator: *) COMMA (* item: *) TypedTupleDeconstructionElement)*;
+ * ```
+ */
+export class TypedTupleDeconstructionElements {
+  private readonly fetch = once(() => {
+    const [items, separators] = wasm.ast.Selectors.separated(this.cst);
+
+    return {
+      items: items!.map((item) => new TypedTupleDeconstructionElement(item as NonterminalNode)),
+      separators: separators as TerminalNode[],
+    };
+  });
+
+  /**
+   * Constructs a new AST node of type `TypedTupleDeconstructionElements`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `TypedTupleDeconstructionElements`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.TypedTupleDeconstructionElements);
+  }
+
+  /**
+   * Returns an array of the child nodes that have the label `item`.
+   */
+  public get items(): readonly TypedTupleDeconstructionElement[] {
     return this.fetch().items;
   }
 

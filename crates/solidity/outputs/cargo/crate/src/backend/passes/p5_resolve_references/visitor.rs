@@ -562,25 +562,6 @@ impl Visitor for Pass<'_> {
         false
     }
 
-    fn enter_tuple_deconstruction_statement(
-        &mut self,
-        node: &input_ir::TupleDeconstructionStatement,
-    ) -> bool {
-        for member in &node.members {
-            let input_ir::TupleDeconstructionMember::Identifier(identifier) = &member else {
-                continue;
-            };
-            let scope_id = self.current_scope_id();
-            let resolution = self.filter_overriden_definitions(
-                self.resolve_symbol_in_scope(scope_id, &identifier.unparse()),
-            );
-            let reference = Reference::new(Rc::clone(identifier), resolution);
-            self.binder.insert_reference(reference);
-        }
-
-        true
-    }
-
     fn leave_emit_statement(&mut self, node: &input_ir::EmitStatement) {
         let event_reference_id = node.event.last().unwrap().id();
         let event_resolution = self

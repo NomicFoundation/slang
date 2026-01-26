@@ -433,22 +433,29 @@ impl Parser {
             NonterminalKind::StructMembers => Self::struct_members.parse(self, input, kind),
             NonterminalKind::ThrowStatement => Self::throw_statement.parse(self, input, kind),
             NonterminalKind::TryStatement => Self::try_statement.parse(self, input, kind),
-            NonterminalKind::TupleDeconstructionElement => {
-                Self::tuple_deconstruction_element.parse(self, input, kind)
-            }
-            NonterminalKind::TupleDeconstructionElements => {
-                Self::tuple_deconstruction_elements.parse(self, input, kind)
-            }
             NonterminalKind::TupleDeconstructionStatement => {
                 Self::tuple_deconstruction_statement.parse(self, input, kind)
             }
+            NonterminalKind::TupleDeconstructionTarget => {
+                Self::tuple_deconstruction_target.parse(self, input, kind)
+            }
             NonterminalKind::TupleExpression => Self::tuple_expression.parse(self, input, kind),
-            NonterminalKind::TupleMember => Self::tuple_member.parse(self, input, kind),
             NonterminalKind::TupleValue => Self::tuple_value.parse(self, input, kind),
             NonterminalKind::TupleValues => Self::tuple_values.parse(self, input, kind),
             NonterminalKind::TypeExpression => Self::type_expression.parse(self, input, kind),
             NonterminalKind::TypeName => Self::type_name.parse(self, input, kind),
-            NonterminalKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input, kind),
+            NonterminalKind::TypedTupleDeconstructionElement => {
+                Self::typed_tuple_deconstruction_element.parse(self, input, kind)
+            }
+            NonterminalKind::TypedTupleDeconstructionElements => {
+                Self::typed_tuple_deconstruction_elements.parse(self, input, kind)
+            }
+            NonterminalKind::TypedTupleDeconstructionMember => {
+                Self::typed_tuple_deconstruction_member.parse(self, input, kind)
+            }
+            NonterminalKind::TypedTupleDeconstructionTarget => {
+                Self::typed_tuple_deconstruction_target.parse(self, input, kind)
+            }
             NonterminalKind::UncheckedBlock => Self::unchecked_block.parse(self, input, kind),
             NonterminalKind::UnicodeStringLiteral => {
                 Self::unicode_string_literal.parse(self, input, kind)
@@ -465,8 +472,11 @@ impl Parser {
             NonterminalKind::UnnamedFunctionDefinition => {
                 Self::unnamed_function_definition.parse(self, input, kind)
             }
-            NonterminalKind::UntypedTupleMember => {
-                Self::untyped_tuple_member.parse(self, input, kind)
+            NonterminalKind::UntypedTupleDeconstructionElement => {
+                Self::untyped_tuple_deconstruction_element.parse(self, input, kind)
+            }
+            NonterminalKind::UntypedTupleDeconstructionElements => {
+                Self::untyped_tuple_deconstruction_elements.parse(self, input, kind)
             }
             NonterminalKind::UserDefinedValueTypeDefinition => {
                 Self::user_defined_value_type_definition.parse(self, input, kind)
@@ -485,6 +495,9 @@ impl Parser {
             NonterminalKind::UsingDirective => Self::using_directive.parse(self, input, kind),
             NonterminalKind::UsingOperator => Self::using_operator.parse(self, input, kind),
             NonterminalKind::UsingTarget => Self::using_target.parse(self, input, kind),
+            NonterminalKind::VarTupleDeconstructionTarget => {
+                Self::var_tuple_deconstruction_target.parse(self, input, kind)
+            }
             NonterminalKind::VariableDeclarationStatement => {
                 Self::variable_declaration_statement.parse(self, input, kind)
             }
@@ -5267,30 +5280,58 @@ impl Parser {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_deconstruction_element(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OptionalHelper::transform(self.tuple_member(input))
-            .with_label(EdgeLabel::Member)
-            .with_kind(NonterminalKind::TupleDeconstructionElement)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn tuple_deconstruction_elements(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| {
-                self.tuple_deconstruction_element(input)
-                    .with_label(EdgeLabel::Item)
-            },
-            TerminalKind::Comma,
-            EdgeLabel::Separator,
-        )
-        .with_kind(NonterminalKind::TupleDeconstructionElements)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { match SequenceHelper :: run (| mut seq | { if ! self . version_is_at_least_0_5_0 { seq . elem_labeled (EdgeLabel :: VarKeyword , OptionalHelper :: transform (self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: VarKeyword))) ? ; } seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . tuple_deconstruction_elements (input) . with_label (EdgeLabel :: Elements) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: no_match (vec ! [])) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem_labeled (EdgeLabel :: Equal , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Equal)) ? ; seq . elem_labeled (EdgeLabel :: Expression , self . expression (input)) ? ; seq . finish () }) { result if result . matches_at_least_n_terminals (1u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: Semicolon ,)) ? ; } , result => { seq . elem (result) ? ; } , } seq . elem_labeled (EdgeLabel :: Semicolon , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Semicolon)) ? ; seq . finish () }) . with_kind (NonterminalKind :: TupleDeconstructionStatement)
+        SequenceHelper::run(|mut seq| {
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(EdgeLabel::Target, self.tuple_deconstruction_target(input))?;
+                seq.elem_labeled(
+                    EdgeLabel::Equal,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::Equal,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Expression, self.expression(input))?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::Semicolon,
+                        ),
+                    )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
+            seq.elem_labeled(
+                EdgeLabel::Semicolon,
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::Semicolon,
+                ),
+            )?;
+            seq.finish()
+        })
+        .with_kind(NonterminalKind::TupleDeconstructionStatement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn tuple_deconstruction_target(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            if !self.version_is_at_least_0_5_0 {
+                let result = self.var_tuple_deconstruction_target(input);
+                choice.consider(input, result)?;
+            }
+            let result = self.typed_tuple_deconstruction_target(input);
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonterminalKind::TupleDeconstructionTarget)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5329,19 +5370,6 @@ impl Parser {
             seq.finish()
         })
         .with_kind(NonterminalKind::TupleExpression)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.typed_tuple_member(input);
-            choice.consider(input, result)?;
-            let result = self.untyped_tuple_member(input);
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
-        .with_kind(NonterminalKind::TupleMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5441,7 +5469,29 @@ impl Parser {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn typed_tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
+    fn typed_tuple_deconstruction_element(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        OptionalHelper::transform(self.typed_tuple_deconstruction_member(input))
+            .with_label(EdgeLabel::Member)
+            .with_kind(NonterminalKind::TypedTupleDeconstructionElement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn typed_tuple_deconstruction_elements(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| {
+                self.typed_tuple_deconstruction_element(input)
+                    .with_label(EdgeLabel::Item)
+            },
+            TerminalKind::Comma,
+            EdgeLabel::Separator,
+        )
+        .with_kind(NonterminalKind::TypedTupleDeconstructionElements)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn typed_tuple_deconstruction_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
             seq.elem_labeled(
@@ -5457,7 +5507,48 @@ impl Parser {
             )?;
             seq.finish()
         })
-        .with_kind(NonterminalKind::TypedTupleMember)
+        .with_kind(NonterminalKind::TypedTupleDeconstructionMember)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn typed_tuple_deconstruction_target(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
+            let input = delim_guard.ctx();
+            seq.elem_labeled(
+                EdgeLabel::OpenParen,
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::OpenParen,
+                ),
+            )?;
+            match self
+                .typed_tuple_deconstruction_elements(input)
+                .with_label(EdgeLabel::Elements)
+            {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseParen,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
+                }
+            }
+            seq.elem_labeled(
+                EdgeLabel::CloseParen,
+                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::CloseParen,
+                ),
+            )?;
+            seq.finish()
+        })
+        .with_kind(NonterminalKind::TypedTupleDeconstructionTarget)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5622,22 +5713,38 @@ impl Parser {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn untyped_tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(
-                EdgeLabel::StorageLocation,
-                OptionalHelper::transform(self.storage_location(input)),
-            )?;
-            seq.elem_labeled(
-                EdgeLabel::Name,
+    fn untyped_tuple_deconstruction_element(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if !self.version_is_at_least_0_5_0 {
+            OptionalHelper::transform(
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::Identifier,
                 ),
-            )?;
-            seq.finish()
-        })
-        .with_kind(NonterminalKind::UntypedTupleMember)
+            )
+            .with_label(EdgeLabel::Name)
+        } else {
+            ParserResult::no_match(vec![])
+        }
+        .with_kind(NonterminalKind::UntypedTupleDeconstructionElement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn untyped_tuple_deconstruction_elements(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if !self.version_is_at_least_0_5_0 {
+            SeparatedHelper::run::<_, LexicalContextType::Default>(
+                input,
+                self,
+                |input| {
+                    self.untyped_tuple_deconstruction_element(input)
+                        .with_label(EdgeLabel::Item)
+                },
+                TerminalKind::Comma,
+                EdgeLabel::Separator,
+            )
+        } else {
+            ParserResult::no_match(vec![])
+        }
+        .with_kind(NonterminalKind::UntypedTupleDeconstructionElements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5977,6 +6084,11 @@ impl Parser {
         })
         .with_label(EdgeLabel::Variant)
         .with_kind(NonterminalKind::UsingTarget)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn var_tuple_deconstruction_target(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if ! self . version_is_at_least_0_5_0 { SequenceHelper :: run (| mut seq | { seq . elem_labeled (EdgeLabel :: VarKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: VarKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . untyped_tuple_deconstruction_elements (input) . with_label (EdgeLabel :: Elements) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: no_match (vec ! [])) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } else { ParserResult :: no_match (vec ! []) } . with_kind (NonterminalKind :: VarTupleDeconstructionTarget)
     }
 
     #[allow(unused_assignments, unused_parens)]

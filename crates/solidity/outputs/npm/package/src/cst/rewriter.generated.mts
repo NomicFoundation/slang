@@ -465,20 +465,14 @@ export abstract class BaseRewriter {
       case NonterminalKind.TryStatement:
         return this.rewriteTryStatement(node);
 
-      case NonterminalKind.TupleDeconstructionElement:
-        return this.rewriteTupleDeconstructionElement(node);
-
-      case NonterminalKind.TupleDeconstructionElements:
-        return this.rewriteTupleDeconstructionElements(node);
-
       case NonterminalKind.TupleDeconstructionStatement:
         return this.rewriteTupleDeconstructionStatement(node);
 
+      case NonterminalKind.TupleDeconstructionTarget:
+        return this.rewriteTupleDeconstructionTarget(node);
+
       case NonterminalKind.TupleExpression:
         return this.rewriteTupleExpression(node);
-
-      case NonterminalKind.TupleMember:
-        return this.rewriteTupleMember(node);
 
       case NonterminalKind.TupleValue:
         return this.rewriteTupleValue(node);
@@ -492,8 +486,17 @@ export abstract class BaseRewriter {
       case NonterminalKind.TypeName:
         return this.rewriteTypeName(node);
 
-      case NonterminalKind.TypedTupleMember:
-        return this.rewriteTypedTupleMember(node);
+      case NonterminalKind.TypedTupleDeconstructionElement:
+        return this.rewriteTypedTupleDeconstructionElement(node);
+
+      case NonterminalKind.TypedTupleDeconstructionElements:
+        return this.rewriteTypedTupleDeconstructionElements(node);
+
+      case NonterminalKind.TypedTupleDeconstructionMember:
+        return this.rewriteTypedTupleDeconstructionMember(node);
+
+      case NonterminalKind.TypedTupleDeconstructionTarget:
+        return this.rewriteTypedTupleDeconstructionTarget(node);
 
       case NonterminalKind.UncheckedBlock:
         return this.rewriteUncheckedBlock(node);
@@ -513,8 +516,11 @@ export abstract class BaseRewriter {
       case NonterminalKind.UnnamedFunctionDefinition:
         return this.rewriteUnnamedFunctionDefinition(node);
 
-      case NonterminalKind.UntypedTupleMember:
-        return this.rewriteUntypedTupleMember(node);
+      case NonterminalKind.UntypedTupleDeconstructionElement:
+        return this.rewriteUntypedTupleDeconstructionElement(node);
+
+      case NonterminalKind.UntypedTupleDeconstructionElements:
+        return this.rewriteUntypedTupleDeconstructionElements(node);
 
       case NonterminalKind.UserDefinedValueTypeDefinition:
         return this.rewriteUserDefinedValueTypeDefinition(node);
@@ -542,6 +548,9 @@ export abstract class BaseRewriter {
 
       case NonterminalKind.UsingTarget:
         return this.rewriteUsingTarget(node);
+
+      case NonterminalKind.VarTupleDeconstructionTarget:
+        return this.rewriteVarTupleDeconstructionTarget(node);
 
       case NonterminalKind.VariableDeclarationStatement:
         return this.rewriteVariableDeclarationStatement(node);
@@ -2329,28 +2338,18 @@ export abstract class BaseRewriter {
     return this.rewriteChildren(node);
   }
 
-  /** @virtual Rewrites a `TupleDeconstructionElement` node, recursively traversing the children (unless overriden). */
-  public rewriteTupleDeconstructionElement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(node);
-  }
-
-  /** @virtual Rewrites a `TupleDeconstructionElements` node, recursively traversing the children (unless overriden). */
-  public rewriteTupleDeconstructionElements(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(node);
-  }
-
   /** @virtual Rewrites a `TupleDeconstructionStatement` node, recursively traversing the children (unless overriden). */
   public rewriteTupleDeconstructionStatement(node: NonterminalNode): Node | undefined {
     return this.rewriteChildren(node);
   }
 
-  /** @virtual Rewrites a `TupleExpression` node, recursively traversing the children (unless overriden). */
-  public rewriteTupleExpression(node: NonterminalNode): Node | undefined {
+  /** @virtual Rewrites a `TupleDeconstructionTarget` node, recursively traversing the children (unless overriden). */
+  public rewriteTupleDeconstructionTarget(node: NonterminalNode): Node | undefined {
     return this.rewriteChildren(node);
   }
 
-  /** @virtual Rewrites a `TupleMember` node, recursively traversing the children (unless overriden). */
-  public rewriteTupleMember(node: NonterminalNode): Node | undefined {
+  /** @virtual Rewrites a `TupleExpression` node, recursively traversing the children (unless overriden). */
+  public rewriteTupleExpression(node: NonterminalNode): Node | undefined {
     return this.rewriteChildren(node);
   }
 
@@ -2374,8 +2373,23 @@ export abstract class BaseRewriter {
     return this.rewriteChildren(node);
   }
 
-  /** @virtual Rewrites a `TypedTupleMember` node, recursively traversing the children (unless overriden). */
-  public rewriteTypedTupleMember(node: NonterminalNode): Node | undefined {
+  /** @virtual Rewrites a `TypedTupleDeconstructionElement` node, recursively traversing the children (unless overriden). */
+  public rewriteTypedTupleDeconstructionElement(node: NonterminalNode): Node | undefined {
+    return this.rewriteChildren(node);
+  }
+
+  /** @virtual Rewrites a `TypedTupleDeconstructionElements` node, recursively traversing the children (unless overriden). */
+  public rewriteTypedTupleDeconstructionElements(node: NonterminalNode): Node | undefined {
+    return this.rewriteChildren(node);
+  }
+
+  /** @virtual Rewrites a `TypedTupleDeconstructionMember` node, recursively traversing the children (unless overriden). */
+  public rewriteTypedTupleDeconstructionMember(node: NonterminalNode): Node | undefined {
+    return this.rewriteChildren(node);
+  }
+
+  /** @virtual Rewrites a `TypedTupleDeconstructionTarget` node, recursively traversing the children (unless overriden). */
+  public rewriteTypedTupleDeconstructionTarget(node: NonterminalNode): Node | undefined {
     return this.rewriteChildren(node);
   }
 
@@ -2409,8 +2423,13 @@ export abstract class BaseRewriter {
     return this.rewriteChildren(node);
   }
 
-  /** @virtual Rewrites a `UntypedTupleMember` node, recursively traversing the children (unless overriden). */
-  public rewriteUntypedTupleMember(node: NonterminalNode): Node | undefined {
+  /** @virtual Rewrites a `UntypedTupleDeconstructionElement` node, recursively traversing the children (unless overriden). */
+  public rewriteUntypedTupleDeconstructionElement(node: NonterminalNode): Node | undefined {
+    return this.rewriteChildren(node);
+  }
+
+  /** @virtual Rewrites a `UntypedTupleDeconstructionElements` node, recursively traversing the children (unless overriden). */
+  public rewriteUntypedTupleDeconstructionElements(node: NonterminalNode): Node | undefined {
     return this.rewriteChildren(node);
   }
 
@@ -2456,6 +2475,11 @@ export abstract class BaseRewriter {
 
   /** @virtual Rewrites a `UsingTarget` node, recursively traversing the children (unless overriden). */
   public rewriteUsingTarget(node: NonterminalNode): Node | undefined {
+    return this.rewriteChildren(node);
+  }
+
+  /** @virtual Rewrites a `VarTupleDeconstructionTarget` node, recursively traversing the children (unless overriden). */
+  public rewriteVarTupleDeconstructionTarget(node: NonterminalNode): Node | undefined {
     return this.rewriteChildren(node);
   }
 

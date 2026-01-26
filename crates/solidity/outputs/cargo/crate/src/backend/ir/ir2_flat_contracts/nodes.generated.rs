@@ -1234,7 +1234,6 @@ pub enum StateVariableMutability {
 #[derive(Clone, Debug)]
 pub enum TupleDeconstructionMember {
     VariableDeclarationStatement(VariableDeclarationStatement),
-    Identifier(Rc<TerminalNode>),
     None,
 }
 

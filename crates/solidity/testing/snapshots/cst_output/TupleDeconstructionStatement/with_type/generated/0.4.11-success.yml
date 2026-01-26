@@ -1,26 +1,31 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ (bool with_type, without_type) = rhs;                                            │ 0..37
+  1  │ (bool with_type, foo without_type) = rhs;                                        │ 0..41
 
 Errors: []
 
 Tree:
-  - (root꞉ TupleDeconstructionStatement): # "(bool with_type, without_type) = rhs;" (0..37)
-      - (open_paren꞉ OpenParen): "(" # (0..1)
-      - (elements꞉ TupleDeconstructionElements): # "bool with_type, without_type" (1..29)
-          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ TypedTupleMember): # "bool with_type" (1..15)
-              - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ BoolKeyword): "bool" # (1..5)
-              - (leading_trivia꞉ Whitespace): " " # (5..6)
-              - (name꞉ Identifier): "with_type" # (6..15)
-          - (separator꞉ Comma): "," # (15..16)
-          - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember): # " without_type" (16..29)
-              - (leading_trivia꞉ Whitespace): " " # (16..17)
-              - (name꞉ Identifier): "without_type" # (17..29)
-      - (close_paren꞉ CloseParen): ")" # (29..30)
-      - (leading_trivia꞉ Whitespace): " " # (30..31)
-      - (equal꞉ Equal): "=" # (31..32)
-      - (expression꞉ Expression): # " rhs" (32..36)
-          - (leading_trivia꞉ Whitespace): " " # (32..33)
-          - (variant꞉ Identifier): "rhs" # (33..36)
-      - (semicolon꞉ Semicolon): ";" # (36..37)
+  - (root꞉ TupleDeconstructionStatement): # "(bool with_type, foo without_type) = rhs;\n" (0..42)
+      - (target꞉ TupleDeconstructionTarget) ► (variant꞉ TypedTupleDeconstructionTarget): # "(bool with_type, foo without_type)" (0..34)
+          - (open_paren꞉ OpenParen): "(" # (0..1)
+          - (elements꞉ TypedTupleDeconstructionElements): # "bool with_type, foo without_type" (1..33)
+              - (item꞉ TypedTupleDeconstructionElement) ► (member꞉ TypedTupleDeconstructionMember): # "bool with_type" (1..15)
+                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ BoolKeyword): "bool" # (1..5)
+                  - (leading_trivia꞉ Whitespace): " " # (5..6)
+                  - (name꞉ Identifier): "with_type" # (6..15)
+              - (separator꞉ Comma): "," # (15..16)
+              - (item꞉ TypedTupleDeconstructionElement) ► (member꞉ TypedTupleDeconstructionMember): # " foo without_type" (16..33)
+                  - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " foo" (16..20)
+                      - (leading_trivia꞉ Whitespace): " " # (16..17)
+                      - (item꞉ Identifier): "foo" # (17..20)
+                  - (leading_trivia꞉ Whitespace): " " # (20..21)
+                  - (name꞉ Identifier): "without_type" # (21..33)
+          - (close_paren꞉ CloseParen): ")" # (33..34)
+      - (leading_trivia꞉ Whitespace): " " # (34..35)
+      - (equal꞉ Equal): "=" # (35..36)
+      - (expression꞉ Expression): # " rhs" (36..40)
+          - (leading_trivia꞉ Whitespace): " " # (36..37)
+          - (variant꞉ Identifier): "rhs" # (37..40)
+      - (semicolon꞉ Semicolon): ";" # (40..41)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (41..42)

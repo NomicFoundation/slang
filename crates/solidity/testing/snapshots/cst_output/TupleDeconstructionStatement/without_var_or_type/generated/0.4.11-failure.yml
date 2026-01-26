@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ (bool foo, , bar) = rhs;                                                         │ 0..24
+
+Errors: # 1 total
+  - >
+    Error: Expected Identifier or MemoryKeyword or StorageKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/without_var_or_type/input.sol:1:17]
+       │
+     1 │ (bool foo, , bar) = rhs;
+       │                 │ 
+       │                 ╰─ Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ TupleDeconstructionStatement): # "(bool foo, , bar) = rhs;\n" (0..25)
+      - (target꞉ TupleDeconstructionTarget) ► (variant꞉ TypedTupleDeconstructionTarget): # "(bool foo, , bar)" (0..17)
+          - (open_paren꞉ OpenParen): "(" # (0..1)
+          - (elements꞉ TypedTupleDeconstructionElements): # "bool foo, , bar" (1..16)
+              - (item꞉ TypedTupleDeconstructionElement) ► (member꞉ TypedTupleDeconstructionMember): # "bool foo" (1..9)
+                  - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ BoolKeyword): "bool" # (1..5)
+                  - (leading_trivia꞉ Whitespace): " " # (5..6)
+                  - (name꞉ Identifier): "foo" # (6..9)
+              - (separator꞉ Comma): "," # (9..10)
+              - (item꞉ TypedTupleDeconstructionElement): [] # (10..10)
+              - (leading_trivia꞉ Whitespace): " " # (10..11)
+              - (separator꞉ Comma): "," # (11..12)
+              - (item꞉ TypedTupleDeconstructionElement) ► (member꞉ TypedTupleDeconstructionMember) ► (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " bar" (12..16)
+                  - (leading_trivia꞉ Whitespace): " " # (12..13)
+                  - (item꞉ Identifier): "bar" # (13..16)
+          - (missing꞉ MISSING): "" # (16..16)
+          - (close_paren꞉ CloseParen): ")" # (16..17)
+      - (leading_trivia꞉ Whitespace): " " # (17..18)
+      - (equal꞉ Equal): "=" # (18..19)
+      - (expression꞉ Expression): # " rhs" (19..23)
+          - (leading_trivia꞉ Whitespace): " " # (19..20)
+          - (variant꞉ Identifier): "rhs" # (20..23)
+      - (semicolon꞉ Semicolon): ";" # (23..24)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (24..25)

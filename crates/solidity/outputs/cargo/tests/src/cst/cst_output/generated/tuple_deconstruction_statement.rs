@@ -32,6 +32,11 @@ fn invalid_termination() -> Result<()> {
 }
 
 #[test]
+fn untyped_ignored_members() -> Result<()> {
+    run(T, "untyped_ignored_members")
+}
+
+#[test]
 fn with_location() -> Result<()> {
     run(T, "with_location")
 }
@@ -49,4 +54,9 @@ fn with_type_and_location() -> Result<()> {
 #[test]
 fn with_var() -> Result<()> {
     run(T, "with_var")
+}
+
+#[test]
+fn without_var_or_type() -> Result<()> {
+    run(T, "without_var_or_type")
 }

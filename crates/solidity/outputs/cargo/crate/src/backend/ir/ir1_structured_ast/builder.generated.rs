@@ -1177,12 +1177,9 @@ pub fn build_tuple_deconstruction_statement(
 ) -> Option<TupleDeconstructionStatement> {
     assert_nonterminal_kind(node, NonterminalKind::TupleDeconstructionStatement);
     let mut helper = ChildrenHelper::new(&node.children);
-    let var_keyword = helper.accept_label(EdgeLabel::VarKeyword).is_some();
-    _ = helper.accept_label(EdgeLabel::OpenParen)?;
-    let elements = build_tuple_deconstruction_elements(nonterminal_node(
-        helper.accept_label(EdgeLabel::Elements)?,
+    let target = build_tuple_deconstruction_target(nonterminal_node(
+        helper.accept_label(EdgeLabel::Target)?,
     ))?;
-    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     _ = helper.accept_label(EdgeLabel::Equal)?;
     let expression = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::Expression)?,
@@ -1194,32 +1191,92 @@ pub fn build_tuple_deconstruction_statement(
 
     Some(Rc::new(TupleDeconstructionStatementStruct {
         node_id: node.id(),
-        var_keyword,
-        elements,
+        target,
         expression,
     }))
 }
 
-pub fn build_tuple_deconstruction_element(
+pub fn build_var_tuple_deconstruction_target(
     node: &Rc<NonterminalNode>,
-) -> Option<TupleDeconstructionElement> {
-    assert_nonterminal_kind(node, NonterminalKind::TupleDeconstructionElement);
+) -> Option<VarTupleDeconstructionTarget> {
+    assert_nonterminal_kind(node, NonterminalKind::VarTupleDeconstructionTarget);
     let mut helper = ChildrenHelper::new(&node.children);
-    let member = helper
-        .accept_label(EdgeLabel::Member)
-        .and_then(|node| build_tuple_member(nonterminal_node(node)));
+    _ = helper.accept_label(EdgeLabel::VarKeyword)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
+    let elements = build_untyped_tuple_deconstruction_elements(nonterminal_node(
+        helper.accept_label(EdgeLabel::Elements)?,
+    ))?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     if !helper.finalize() {
         return None;
     }
 
-    Some(Rc::new(TupleDeconstructionElementStruct {
+    Some(Rc::new(VarTupleDeconstructionTargetStruct {
+        node_id: node.id(),
+        elements,
+    }))
+}
+
+pub fn build_untyped_tuple_deconstruction_element(
+    node: &Rc<NonterminalNode>,
+) -> Option<UntypedTupleDeconstructionElement> {
+    assert_nonterminal_kind(node, NonterminalKind::UntypedTupleDeconstructionElement);
+    let mut helper = ChildrenHelper::new(&node.children);
+    let name = helper
+        .accept_label(EdgeLabel::Name)
+        .map(terminal_node_cloned);
+    if !helper.finalize() {
+        return None;
+    }
+
+    Some(Rc::new(UntypedTupleDeconstructionElementStruct {
+        node_id: node.id(),
+        name,
+    }))
+}
+
+pub fn build_typed_tuple_deconstruction_target(
+    node: &Rc<NonterminalNode>,
+) -> Option<TypedTupleDeconstructionTarget> {
+    assert_nonterminal_kind(node, NonterminalKind::TypedTupleDeconstructionTarget);
+    let mut helper = ChildrenHelper::new(&node.children);
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
+    let elements = build_typed_tuple_deconstruction_elements(nonterminal_node(
+        helper.accept_label(EdgeLabel::Elements)?,
+    ))?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
+    if !helper.finalize() {
+        return None;
+    }
+
+    Some(Rc::new(TypedTupleDeconstructionTargetStruct {
+        node_id: node.id(),
+        elements,
+    }))
+}
+
+pub fn build_typed_tuple_deconstruction_element(
+    node: &Rc<NonterminalNode>,
+) -> Option<TypedTupleDeconstructionElement> {
+    assert_nonterminal_kind(node, NonterminalKind::TypedTupleDeconstructionElement);
+    let mut helper = ChildrenHelper::new(&node.children);
+    let member = helper
+        .accept_label(EdgeLabel::Member)
+        .and_then(|node| build_typed_tuple_deconstruction_member(nonterminal_node(node)));
+    if !helper.finalize() {
+        return None;
+    }
+
+    Some(Rc::new(TypedTupleDeconstructionElementStruct {
         node_id: node.id(),
         member,
     }))
 }
 
-pub fn build_typed_tuple_member(node: &Rc<NonterminalNode>) -> Option<TypedTupleMember> {
-    assert_nonterminal_kind(node, NonterminalKind::TypedTupleMember);
+pub fn build_typed_tuple_deconstruction_member(
+    node: &Rc<NonterminalNode>,
+) -> Option<TypedTupleDeconstructionMember> {
+    assert_nonterminal_kind(node, NonterminalKind::TypedTupleDeconstructionMember);
     let mut helper = ChildrenHelper::new(&node.children);
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
     let storage_location = helper
@@ -1230,27 +1287,9 @@ pub fn build_typed_tuple_member(node: &Rc<NonterminalNode>) -> Option<TypedTuple
         return None;
     }
 
-    Some(Rc::new(TypedTupleMemberStruct {
+    Some(Rc::new(TypedTupleDeconstructionMemberStruct {
         node_id: node.id(),
         type_name,
-        storage_location,
-        name,
-    }))
-}
-
-pub fn build_untyped_tuple_member(node: &Rc<NonterminalNode>) -> Option<UntypedTupleMember> {
-    assert_nonterminal_kind(node, NonterminalKind::UntypedTupleMember);
-    let mut helper = ChildrenHelper::new(&node.children);
-    let storage_location = helper
-        .accept_label(EdgeLabel::StorageLocation)
-        .and_then(|node| build_storage_location(nonterminal_node(node)));
-    let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
-    if !helper.finalize() {
-        return None;
-    }
-
-    Some(Rc::new(UntypedTupleMemberStruct {
-        node_id: node.id(),
         storage_location,
         name,
     }))
@@ -3454,16 +3493,22 @@ pub fn build_statement(node: &Rc<NonterminalNode>) -> Option<Statement> {
     Some(item)
 }
 
-pub fn build_tuple_member(node: &Rc<NonterminalNode>) -> Option<TupleMember> {
-    assert_nonterminal_kind(node, NonterminalKind::TupleMember);
+pub fn build_tuple_deconstruction_target(
+    node: &Rc<NonterminalNode>,
+) -> Option<TupleDeconstructionTarget> {
+    assert_nonterminal_kind(node, NonterminalKind::TupleDeconstructionTarget);
     let mut helper = ChildrenHelper::new(&node.children);
     let variant = helper.accept_label(EdgeLabel::Variant)?;
     let item = match variant.kind() {
-        NodeKind::Nonterminal(NonterminalKind::TypedTupleMember) => {
-            TupleMember::TypedTupleMember(build_typed_tuple_member(nonterminal_node(variant))?)
+        NodeKind::Nonterminal(NonterminalKind::VarTupleDeconstructionTarget) => {
+            TupleDeconstructionTarget::VarTupleDeconstructionTarget(
+                build_var_tuple_deconstruction_target(nonterminal_node(variant))?,
+            )
         }
-        NodeKind::Nonterminal(NonterminalKind::UntypedTupleMember) => {
-            TupleMember::UntypedTupleMember(build_untyped_tuple_member(nonterminal_node(variant))?)
+        NodeKind::Nonterminal(NonterminalKind::TypedTupleDeconstructionTarget) => {
+            TupleDeconstructionTarget::TypedTupleDeconstructionTarget(
+                build_typed_tuple_deconstruction_target(nonterminal_node(variant))?,
+            )
         }
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             unreachable!(
@@ -4528,14 +4573,32 @@ pub fn build_assembly_flags(node: &Rc<NonterminalNode>) -> Option<AssemblyFlags>
     Some(items)
 }
 
-pub fn build_tuple_deconstruction_elements(
+pub fn build_untyped_tuple_deconstruction_elements(
     node: &Rc<NonterminalNode>,
-) -> Option<TupleDeconstructionElements> {
-    assert_nonterminal_kind(node, NonterminalKind::TupleDeconstructionElements);
-    let mut items = TupleDeconstructionElements::new();
+) -> Option<UntypedTupleDeconstructionElements> {
+    assert_nonterminal_kind(node, NonterminalKind::UntypedTupleDeconstructionElements);
+    let mut items = UntypedTupleDeconstructionElements::new();
     let mut helper = ChildrenHelper::new(&node.children);
     while let Some(child) = helper.accept_label(EdgeLabel::Item) {
-        if let Some(item) = build_tuple_deconstruction_element(nonterminal_node(child)) {
+        if let Some(item) = build_untyped_tuple_deconstruction_element(nonterminal_node(child)) {
+            items.push(item);
+        }
+        _ = helper.accept_label(EdgeLabel::Separator);
+    }
+    if !helper.finalize() {
+        return None;
+    }
+    Some(items)
+}
+
+pub fn build_typed_tuple_deconstruction_elements(
+    node: &Rc<NonterminalNode>,
+) -> Option<TypedTupleDeconstructionElements> {
+    assert_nonterminal_kind(node, NonterminalKind::TypedTupleDeconstructionElements);
+    let mut items = TypedTupleDeconstructionElements::new();
+    let mut helper = ChildrenHelper::new(&node.children);
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_typed_tuple_deconstruction_element(nonterminal_node(child)) {
             items.push(item);
         }
         _ = helper.accept_label(EdgeLabel::Separator);

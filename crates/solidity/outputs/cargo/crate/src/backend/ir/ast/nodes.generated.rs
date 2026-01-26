@@ -4444,7 +4444,6 @@ pub(crate) fn create_state_variable_mutability(
 
 pub enum TupleDeconstructionMember {
     None,
-    Identifier(Identifier),
     VariableDeclarationStatement(VariableDeclarationStatement),
 }
 
@@ -4455,9 +4454,6 @@ pub(crate) fn create_tuple_deconstruction_member(
 ) -> TupleDeconstructionMember {
     match ir_node {
         input_ir::TupleDeconstructionMember::None => TupleDeconstructionMember::None,
-        input_ir::TupleDeconstructionMember::Identifier(variant) => {
-            TupleDeconstructionMember::Identifier(create_identifier(variant, semantic))
-        }
         input_ir::TupleDeconstructionMember::VariableDeclarationStatement(variant) => {
             TupleDeconstructionMember::VariableDeclarationStatement(
                 create_variable_declaration_statement(variant, semantic),

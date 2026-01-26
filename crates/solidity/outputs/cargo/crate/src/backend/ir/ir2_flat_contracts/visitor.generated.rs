@@ -2424,7 +2424,6 @@ pub fn accept_tuple_deconstruction_member(
         ) => {
             accept_variable_declaration_statement(variable_declaration_statement, visitor);
         }
-        TupleDeconstructionMember::Identifier(_) => {}
         TupleDeconstructionMember::None => {}
     }
     visitor.leave_tuple_deconstruction_member(node);

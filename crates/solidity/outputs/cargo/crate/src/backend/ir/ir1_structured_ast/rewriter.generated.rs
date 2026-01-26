@@ -774,34 +774,71 @@ pub trait Rewriter {
         &mut self,
         source: &TupleDeconstructionStatement,
     ) -> TupleDeconstructionStatement {
-        let var_keyword = source.var_keyword;
-        let elements = self.rewrite_tuple_deconstruction_elements(&source.elements);
+        let target = self.rewrite_tuple_deconstruction_target(&source.target);
         let expression = self.rewrite_expression(&source.expression);
 
         Rc::new(TupleDeconstructionStatementStruct {
             node_id: source.node_id,
-            var_keyword,
-            elements,
+            target,
             expression,
         })
     }
 
-    fn rewrite_tuple_deconstruction_element(
+    fn rewrite_var_tuple_deconstruction_target(
         &mut self,
-        source: &TupleDeconstructionElement,
-    ) -> TupleDeconstructionElement {
+        source: &VarTupleDeconstructionTarget,
+    ) -> VarTupleDeconstructionTarget {
+        let elements = self.rewrite_untyped_tuple_deconstruction_elements(&source.elements);
+
+        Rc::new(VarTupleDeconstructionTargetStruct {
+            node_id: source.node_id,
+            elements,
+        })
+    }
+
+    fn rewrite_untyped_tuple_deconstruction_element(
+        &mut self,
+        source: &UntypedTupleDeconstructionElement,
+    ) -> UntypedTupleDeconstructionElement {
+        let name = source.name.as_ref().map(Rc::clone);
+
+        Rc::new(UntypedTupleDeconstructionElementStruct {
+            node_id: source.node_id,
+            name,
+        })
+    }
+
+    fn rewrite_typed_tuple_deconstruction_target(
+        &mut self,
+        source: &TypedTupleDeconstructionTarget,
+    ) -> TypedTupleDeconstructionTarget {
+        let elements = self.rewrite_typed_tuple_deconstruction_elements(&source.elements);
+
+        Rc::new(TypedTupleDeconstructionTargetStruct {
+            node_id: source.node_id,
+            elements,
+        })
+    }
+
+    fn rewrite_typed_tuple_deconstruction_element(
+        &mut self,
+        source: &TypedTupleDeconstructionElement,
+    ) -> TypedTupleDeconstructionElement {
         let member = source
             .member
             .as_ref()
-            .map(|value| self.rewrite_tuple_member(value));
+            .map(|value| self.rewrite_typed_tuple_deconstruction_member(value));
 
-        Rc::new(TupleDeconstructionElementStruct {
+        Rc::new(TypedTupleDeconstructionElementStruct {
             node_id: source.node_id,
             member,
         })
     }
 
-    fn rewrite_typed_tuple_member(&mut self, source: &TypedTupleMember) -> TypedTupleMember {
+    fn rewrite_typed_tuple_deconstruction_member(
+        &mut self,
+        source: &TypedTupleDeconstructionMember,
+    ) -> TypedTupleDeconstructionMember {
         let type_name = self.rewrite_type_name(&source.type_name);
         let storage_location = source
             .storage_location
@@ -809,23 +846,9 @@ pub trait Rewriter {
             .map(|value| self.rewrite_storage_location(value));
         let name = Rc::clone(&source.name);
 
-        Rc::new(TypedTupleMemberStruct {
+        Rc::new(TypedTupleDeconstructionMemberStruct {
             node_id: source.node_id,
             type_name,
-            storage_location,
-            name,
-        })
-    }
-
-    fn rewrite_untyped_tuple_member(&mut self, source: &UntypedTupleMember) -> UntypedTupleMember {
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|value| self.rewrite_storage_location(value));
-        let name = Rc::clone(&source.name);
-
-        Rc::new(UntypedTupleMemberStruct {
-            node_id: source.node_id,
             storage_location,
             name,
         })
@@ -2327,20 +2350,28 @@ pub trait Rewriter {
         self.default_rewrite_statement(source)
     }
 
-    fn default_rewrite_tuple_member(&mut self, source: &TupleMember) -> TupleMember {
+    fn default_rewrite_tuple_deconstruction_target(
+        &mut self,
+        source: &TupleDeconstructionTarget,
+    ) -> TupleDeconstructionTarget {
         match source {
-            TupleMember::TypedTupleMember(ref typed_tuple_member) => {
-                TupleMember::TypedTupleMember(self.rewrite_typed_tuple_member(typed_tuple_member))
-            }
-            TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
-                TupleMember::UntypedTupleMember(
-                    self.rewrite_untyped_tuple_member(untyped_tuple_member),
-                )
-            }
+            TupleDeconstructionTarget::VarTupleDeconstructionTarget(
+                ref var_tuple_deconstruction_target,
+            ) => TupleDeconstructionTarget::VarTupleDeconstructionTarget(
+                self.rewrite_var_tuple_deconstruction_target(var_tuple_deconstruction_target),
+            ),
+            TupleDeconstructionTarget::TypedTupleDeconstructionTarget(
+                ref typed_tuple_deconstruction_target,
+            ) => TupleDeconstructionTarget::TypedTupleDeconstructionTarget(
+                self.rewrite_typed_tuple_deconstruction_target(typed_tuple_deconstruction_target),
+            ),
         }
     }
-    fn rewrite_tuple_member(&mut self, source: &TupleMember) -> TupleMember {
-        self.default_rewrite_tuple_member(source)
+    fn rewrite_tuple_deconstruction_target(
+        &mut self,
+        source: &TupleDeconstructionTarget,
+    ) -> TupleDeconstructionTarget {
+        self.default_rewrite_tuple_deconstruction_target(source)
     }
 
     fn default_rewrite_variable_declaration_type(
@@ -3048,13 +3079,23 @@ pub trait Rewriter {
             .collect()
     }
 
-    fn rewrite_tuple_deconstruction_elements(
+    fn rewrite_untyped_tuple_deconstruction_elements(
         &mut self,
-        source: &TupleDeconstructionElements,
-    ) -> TupleDeconstructionElements {
+        source: &UntypedTupleDeconstructionElements,
+    ) -> UntypedTupleDeconstructionElements {
         source
             .iter()
-            .map(|item| self.rewrite_tuple_deconstruction_element(item))
+            .map(|item| self.rewrite_untyped_tuple_deconstruction_element(item))
+            .collect()
+    }
+
+    fn rewrite_typed_tuple_deconstruction_elements(
+        &mut self,
+        source: &TypedTupleDeconstructionElements,
+    ) -> TypedTupleDeconstructionElements {
+        source
+            .iter()
+            .map(|item| self.rewrite_typed_tuple_deconstruction_element(item))
             .collect()
     }
 

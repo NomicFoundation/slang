@@ -445,8 +445,14 @@ impl Transformer for Pass {
         source: &input::TupleDeconstructionStatement,
     ) -> output::TupleDeconstructionStatement {
         let expression = self.transform_expression(&source.expression);
-        let members =
-            self.transform_tuple_deconstruction_elements(&source.elements, source.var_keyword);
+        let members = match &source.target {
+            input::TupleDeconstructionTarget::VarTupleDeconstructionTarget(target) => {
+                self.transform_var_tuple_deconstruction_elements(&target.elements)
+            }
+            input::TupleDeconstructionTarget::TypedTupleDeconstructionTarget(target) => {
+                self.transform_typed_tuple_deconstruction_elements(&target.elements)
+            }
+        };
 
         Rc::new(output::TupleDeconstructionStatementStruct {
             node_id: source.node_id,
@@ -1121,47 +1127,51 @@ impl Pass {
         }
     }
 
-    fn transform_tuple_deconstruction_elements(
+    fn transform_typed_tuple_deconstruction_elements(
         &mut self,
-        source: &input::TupleDeconstructionElements,
-        var_keyword: bool,
+        source: &input::TypedTupleDeconstructionElements,
+    ) -> output::TupleDeconstructionMembers {
+        source
+            .iter()
+            .map(|element| match &element.member {
+                Some(member) => output::TupleDeconstructionMember::VariableDeclarationStatement(
+                    self.transform_typed_tuple_deconstruction_member(member),
+                ),
+                None => output::TupleDeconstructionMember::None,
+            })
+            .collect()
+    }
+
+    fn transform_var_tuple_deconstruction_elements(
+        &mut self,
+        source: &input::UntypedTupleDeconstructionElements,
     ) -> output::TupleDeconstructionMembers {
         source
             .iter()
             .map(|element| {
-                match &element.member {
-                    Some(member) => match member {
-                        input::TupleMember::TypedTupleMember(typed_tuple_member) => {
-                            // TODO(validation): `var_keyword` should be false here,
-                            // since we have a typed tuple member
-                            output::TupleDeconstructionMember::VariableDeclarationStatement(
-                                self.transform_typed_tuple_member(typed_tuple_member),
-                            )
-                        }
-                        input::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
-                            if var_keyword {
-                                output::TupleDeconstructionMember::VariableDeclarationStatement(
-                                    self.transform_untyped_tuple_member(untyped_tuple_member),
-                                )
-                            } else {
-                                // TODO(validation): the storage location of the
-                                // member should be absent, since this is an
-                                // assignment and not a declaration
-                                output::TupleDeconstructionMember::Identifier(Rc::clone(
-                                    &untyped_tuple_member.name,
-                                ))
-                            }
-                        }
-                    },
+                match &element.name {
+                    Some(name) => {
+                        // For var declarations, we create a VariableDeclarationStatement
+                        // with no type (type is inferred)
+                        output::TupleDeconstructionMember::VariableDeclarationStatement(Rc::new(
+                            output::VariableDeclarationStatementStruct {
+                                node_id: element.node_id,
+                                storage_location: None,
+                                name: Rc::clone(name),
+                                value: None,
+                                type_name: None,
+                            },
+                        ))
+                    }
                     None => output::TupleDeconstructionMember::None,
                 }
             })
             .collect()
     }
 
-    fn transform_typed_tuple_member(
+    fn transform_typed_tuple_deconstruction_member(
         &mut self,
-        source: &input::TypedTupleMember,
+        source: &input::TypedTupleDeconstructionMember,
     ) -> output::VariableDeclarationStatement {
         let storage_location = source
             .storage_location
@@ -1176,25 +1186,6 @@ impl Pass {
             name,
             value: None,
             type_name,
-        })
-    }
-
-    fn transform_untyped_tuple_member(
-        &mut self,
-        source: &input::UntypedTupleMember,
-    ) -> output::VariableDeclarationStatement {
-        let storage_location = source
-            .storage_location
-            .as_ref()
-            .map(|location| self.transform_storage_location(location));
-        let name = Rc::clone(&source.name);
-
-        Rc::new(output::VariableDeclarationStatementStruct {
-            node_id: source.node_id,
-            storage_location,
-            name,
-            value: None,
-            type_name: None,
         })
     }
 

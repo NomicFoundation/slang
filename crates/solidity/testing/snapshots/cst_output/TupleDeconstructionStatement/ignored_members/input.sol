@@ -1,1 +1,1 @@
-(, second, , fourth) = rhs;
+(, bool second, , foo fourth) = rhs;

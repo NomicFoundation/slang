@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ var (, second, , fourth) = rhs;                                                  │ 0..31
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenParen.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/untyped_ignored_members/input.sol:1:1]
+       │
+     1 │ var (, second, , fourth) = rhs;
+       │ ────────────────┬───────────────  
+       │                 ╰───────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ TupleDeconstructionStatement) ► (unrecognized꞉ UNRECOGNIZED): "var (, second, , fourth) = rhs;\n" # (0..32)

@@ -1,1 +1,1 @@
-(bool with_type, without_type) = rhs;
+(bool with_type, foo without_type) = rhs;

@@ -359,21 +359,15 @@ pub trait BaseRewriter {
 
             NonterminalKind::TryStatement => self.rewrite_try_statement(node),
 
-            NonterminalKind::TupleDeconstructionElement => {
-                self.rewrite_tuple_deconstruction_element(node)
-            }
-
-            NonterminalKind::TupleDeconstructionElements => {
-                self.rewrite_tuple_deconstruction_elements(node)
-            }
-
             NonterminalKind::TupleDeconstructionStatement => {
                 self.rewrite_tuple_deconstruction_statement(node)
             }
 
-            NonterminalKind::TupleExpression => self.rewrite_tuple_expression(node),
+            NonterminalKind::TupleDeconstructionTarget => {
+                self.rewrite_tuple_deconstruction_target(node)
+            }
 
-            NonterminalKind::TupleMember => self.rewrite_tuple_member(node),
+            NonterminalKind::TupleExpression => self.rewrite_tuple_expression(node),
 
             NonterminalKind::TupleValue => self.rewrite_tuple_value(node),
 
@@ -383,7 +377,21 @@ pub trait BaseRewriter {
 
             NonterminalKind::TypeName => self.rewrite_type_name(node),
 
-            NonterminalKind::TypedTupleMember => self.rewrite_typed_tuple_member(node),
+            NonterminalKind::TypedTupleDeconstructionElement => {
+                self.rewrite_typed_tuple_deconstruction_element(node)
+            }
+
+            NonterminalKind::TypedTupleDeconstructionElements => {
+                self.rewrite_typed_tuple_deconstruction_elements(node)
+            }
+
+            NonterminalKind::TypedTupleDeconstructionMember => {
+                self.rewrite_typed_tuple_deconstruction_member(node)
+            }
+
+            NonterminalKind::TypedTupleDeconstructionTarget => {
+                self.rewrite_typed_tuple_deconstruction_target(node)
+            }
 
             NonterminalKind::UncheckedBlock => self.rewrite_unchecked_block(node),
 
@@ -403,7 +411,13 @@ pub trait BaseRewriter {
                 self.rewrite_unnamed_function_definition(node)
             }
 
-            NonterminalKind::UntypedTupleMember => self.rewrite_untyped_tuple_member(node),
+            NonterminalKind::UntypedTupleDeconstructionElement => {
+                self.rewrite_untyped_tuple_deconstruction_element(node)
+            }
+
+            NonterminalKind::UntypedTupleDeconstructionElements => {
+                self.rewrite_untyped_tuple_deconstruction_elements(node)
+            }
 
             NonterminalKind::UserDefinedValueTypeDefinition => {
                 self.rewrite_user_defined_value_type_definition(node)
@@ -428,6 +442,10 @@ pub trait BaseRewriter {
             NonterminalKind::UsingOperator => self.rewrite_using_operator(node),
 
             NonterminalKind::UsingTarget => self.rewrite_using_target(node),
+
+            NonterminalKind::VarTupleDeconstructionTarget => {
+                self.rewrite_var_tuple_deconstruction_target(node)
+            }
 
             NonterminalKind::VariableDeclarationStatement => {
                 self.rewrite_variable_declaration_statement(node)
@@ -1925,19 +1943,6 @@ pub trait BaseRewriter {
         Some(self.rewrite_children(node))
     }
 
-    /// Rewrites a `TupleDeconstructionElement` node, recursively traversing the children (unless overriden).
-    fn rewrite_tuple_deconstruction_element(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
-        Some(self.rewrite_children(node))
-    }
-
-    /// Rewrites a `TupleDeconstructionElements` node, recursively traversing the children (unless overriden).
-    fn rewrite_tuple_deconstruction_elements(
-        &mut self,
-        node: &Rc<NonterminalNode>,
-    ) -> Option<Node> {
-        Some(self.rewrite_children(node))
-    }
-
     /// Rewrites a `TupleDeconstructionStatement` node, recursively traversing the children (unless overriden).
     fn rewrite_tuple_deconstruction_statement(
         &mut self,
@@ -1946,13 +1951,13 @@ pub trait BaseRewriter {
         Some(self.rewrite_children(node))
     }
 
-    /// Rewrites a `TupleExpression` node, recursively traversing the children (unless overriden).
-    fn rewrite_tuple_expression(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
+    /// Rewrites a `TupleDeconstructionTarget` node, recursively traversing the children (unless overriden).
+    fn rewrite_tuple_deconstruction_target(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
         Some(self.rewrite_children(node))
     }
 
-    /// Rewrites a `TupleMember` node, recursively traversing the children (unless overriden).
-    fn rewrite_tuple_member(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
+    /// Rewrites a `TupleExpression` node, recursively traversing the children (unless overriden).
+    fn rewrite_tuple_expression(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
         Some(self.rewrite_children(node))
     }
 
@@ -1976,8 +1981,35 @@ pub trait BaseRewriter {
         Some(self.rewrite_children(node))
     }
 
-    /// Rewrites a `TypedTupleMember` node, recursively traversing the children (unless overriden).
-    fn rewrite_typed_tuple_member(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
+    /// Rewrites a `TypedTupleDeconstructionElement` node, recursively traversing the children (unless overriden).
+    fn rewrite_typed_tuple_deconstruction_element(
+        &mut self,
+        node: &Rc<NonterminalNode>,
+    ) -> Option<Node> {
+        Some(self.rewrite_children(node))
+    }
+
+    /// Rewrites a `TypedTupleDeconstructionElements` node, recursively traversing the children (unless overriden).
+    fn rewrite_typed_tuple_deconstruction_elements(
+        &mut self,
+        node: &Rc<NonterminalNode>,
+    ) -> Option<Node> {
+        Some(self.rewrite_children(node))
+    }
+
+    /// Rewrites a `TypedTupleDeconstructionMember` node, recursively traversing the children (unless overriden).
+    fn rewrite_typed_tuple_deconstruction_member(
+        &mut self,
+        node: &Rc<NonterminalNode>,
+    ) -> Option<Node> {
+        Some(self.rewrite_children(node))
+    }
+
+    /// Rewrites a `TypedTupleDeconstructionTarget` node, recursively traversing the children (unless overriden).
+    fn rewrite_typed_tuple_deconstruction_target(
+        &mut self,
+        node: &Rc<NonterminalNode>,
+    ) -> Option<Node> {
         Some(self.rewrite_children(node))
     }
 
@@ -2011,8 +2043,19 @@ pub trait BaseRewriter {
         Some(self.rewrite_children(node))
     }
 
-    /// Rewrites a `UntypedTupleMember` node, recursively traversing the children (unless overriden).
-    fn rewrite_untyped_tuple_member(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
+    /// Rewrites a `UntypedTupleDeconstructionElement` node, recursively traversing the children (unless overriden).
+    fn rewrite_untyped_tuple_deconstruction_element(
+        &mut self,
+        node: &Rc<NonterminalNode>,
+    ) -> Option<Node> {
+        Some(self.rewrite_children(node))
+    }
+
+    /// Rewrites a `UntypedTupleDeconstructionElements` node, recursively traversing the children (unless overriden).
+    fn rewrite_untyped_tuple_deconstruction_elements(
+        &mut self,
+        node: &Rc<NonterminalNode>,
+    ) -> Option<Node> {
         Some(self.rewrite_children(node))
     }
 
@@ -2061,6 +2104,14 @@ pub trait BaseRewriter {
 
     /// Rewrites a `UsingTarget` node, recursively traversing the children (unless overriden).
     fn rewrite_using_target(&mut self, node: &Rc<NonterminalNode>) -> Option<Node> {
+        Some(self.rewrite_children(node))
+    }
+
+    /// Rewrites a `VarTupleDeconstructionTarget` node, recursively traversing the children (unless overriden).
+    fn rewrite_var_tuple_deconstruction_target(
+        &mut self,
+        node: &Rc<NonterminalNode>,
+    ) -> Option<Node> {
         Some(self.rewrite_children(node))
     }
 

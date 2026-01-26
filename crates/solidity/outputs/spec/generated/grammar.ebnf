@@ -1060,27 +1060,37 @@ AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) St
 
 (* 4.2. Declaration Statements: *)
 
-TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 0.5.0 *)
-                               (* open_paren: *) OPEN_PAREN
-                               (* elements: *) TupleDeconstructionElements
-                               (* close_paren: *) CLOSE_PAREN
+TupleDeconstructionStatement = (* target: *) TupleDeconstructionTarget
                                (* equal: *) EQUAL
                                (* expression: *) Expression
                                (* semicolon: *) SEMICOLON;
 
-TupleDeconstructionElements = (* item: *) TupleDeconstructionElement ((* separator: *) COMMA (* item: *) TupleDeconstructionElement)*;
+TupleDeconstructionTarget = (* variant: *) VarTupleDeconstructionTarget (* Deprecated in 0.5.0 *)
+                          | (* variant: *) TypedTupleDeconstructionTarget;
 
-TupleDeconstructionElement = (* member: *) TupleMember?;
+(* Deprecated in 0.5.0 *)
+VarTupleDeconstructionTarget = (* var_keyword: *) VAR_KEYWORD
+                               (* open_paren: *) OPEN_PAREN
+                               (* elements: *) UntypedTupleDeconstructionElements
+                               (* close_paren: *) CLOSE_PAREN;
 
-TupleMember = (* variant: *) TypedTupleMember
-            | (* variant: *) UntypedTupleMember;
+(* Deprecated in 0.5.0 *)
+UntypedTupleDeconstructionElements = (* item: *) UntypedTupleDeconstructionElement ((* separator: *) COMMA (* item: *) UntypedTupleDeconstructionElement)*;
 
-TypedTupleMember = (* type_name: *) TypeName
-                   (* storage_location: *) StorageLocation?
-                   (* name: *) IDENTIFIER;
+(* Deprecated in 0.5.0 *)
+UntypedTupleDeconstructionElement = (* name: *) IDENTIFIER?;
 
-UntypedTupleMember = (* storage_location: *) StorageLocation?
-                     (* name: *) IDENTIFIER;
+TypedTupleDeconstructionTarget = (* open_paren: *) OPEN_PAREN
+                                 (* elements: *) TypedTupleDeconstructionElements
+                                 (* close_paren: *) CLOSE_PAREN;
+
+TypedTupleDeconstructionElements = (* item: *) TypedTupleDeconstructionElement ((* separator: *) COMMA (* item: *) TypedTupleDeconstructionElement)*;
+
+TypedTupleDeconstructionElement = (* member: *) TypedTupleDeconstructionMember?;
+
+TypedTupleDeconstructionMember = (* type_name: *) TypeName
+                                 (* storage_location: *) StorageLocation?
+                                 (* name: *) IDENTIFIER;
 
 VariableDeclarationStatement = (* variable_type: *) VariableDeclarationType
                                (* storage_location: *) StorageLocation?

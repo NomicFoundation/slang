@@ -1,1 +1,1 @@
-(memory with_location, without_location) = rhs;
+(bool memory with_location, foo without_location) = rhs;
