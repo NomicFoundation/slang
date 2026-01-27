@@ -214,7 +214,7 @@ impl Pass<'_> {
                 }
 
                 // non-scalar types
-                Type::Array { element_type, .. } => {
+                Type::Array { element_type, .. } | Type::FixedSizeArray { element_type, .. } => {
                     return_type = *element_type;
                     parameter_types.push(self.types.uint256());
                 }

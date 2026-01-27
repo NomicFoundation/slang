@@ -250,6 +250,14 @@ impl SemanticAnalysis {
                 "{prefix}{bits}x{precision_bits}",
                 prefix = if *signed { "fixed" } else { "ufixed" },
             ),
+            Type::FixedSizeArray {
+                element_type, size, ..
+            } => {
+                format!(
+                    "{element}[{size}]",
+                    element = self.type_canonical_name(*element_type)
+                )
+            }
             Type::Function(_) => "function".to_string(),
             Type::Integer { signed, bits } => format!(
                 "{prefix}{bits}",
@@ -302,8 +310,20 @@ impl SemanticAnalysis {
             Type::Bytes { .. } | Type::String { .. } => Some(Self::SLOT_SIZE),
             Type::Mapping { .. } => Some(Self::SLOT_SIZE),
 
-            // FIXME: we need to support statically sized arrays properly
             Type::Array { .. } => Some(Self::SLOT_SIZE),
+            Type::FixedSizeArray {
+                element_type, size, ..
+            } => {
+                let element_size = self.storage_size_of_type_id(*element_type)?;
+                if element_size > Self::SLOT_SIZE {
+                    let element_size = element_size.div_ceil(Self::SLOT_SIZE);
+                    Some(element_size * size)
+                } else {
+                    let elements_per_slot = Self::SLOT_SIZE / element_size;
+                    let num_slots = size.div_ceil(elements_per_slot);
+                    Some(num_slots * size)
+                }
+            }
 
             Type::Function(function_type) => {
                 if function_type.external {

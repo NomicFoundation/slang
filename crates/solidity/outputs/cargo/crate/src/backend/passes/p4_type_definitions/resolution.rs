@@ -81,10 +81,21 @@ impl Pass<'_> {
                 data_location.and_then(|data_location| {
                     self.resolve_type_name(&array_type_name.operand, Some(data_location))
                         .map(|element_type| {
-                            self.types.register_type(Type::Array {
-                                element_type,
-                                location: data_location,
-                            })
+                            if array_type_name.index.is_some() {
+                                self.types.register_type(Type::FixedSizeArray {
+                                    element_type,
+                                    // FIXME: resolve the size of the array,
+                                    // possibly in a secondary pass after the
+                                    // main pass
+                                    size: 0,
+                                    location: data_location,
+                                })
+                            } else {
+                                self.types.register_type(Type::Array {
+                                    element_type,
+                                    location: data_location,
+                                })
+                            }
                         })
                 })
             }

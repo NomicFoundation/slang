@@ -16,7 +16,6 @@ pub enum Type {
     Array {
         element_type: TypeId,
         location: DataLocation,
-        // TODO: handle fixed-size array types?
     },
     Boolean,
     ByteArray {
@@ -35,6 +34,13 @@ pub enum Type {
         signed: bool,
         bits: u32,
         precision_bits: u32,
+    },
+    FixedSizeArray {
+        element_type: TypeId,
+        location: DataLocation,
+        // TODO: this probably should be a u256, although in practice usize or
+        // even u32 should suffice
+        size: usize,
     },
     Function(FunctionType),
     Integer {
@@ -151,6 +157,7 @@ impl Type {
         match self {
             Self::Array { location, .. }
             | Self::Bytes { location }
+            | Self::FixedSizeArray { location, .. }
             | Self::String { location }
             | Self::Struct { location, .. } => Some(*location),
             Self::Mapping { .. } => Some(DataLocation::Storage),
@@ -178,6 +185,7 @@ impl Type {
             | Type::UserDefinedValue { .. } => true,
 
             Type::Array { .. }
+            | Type::FixedSizeArray { .. }
             | Type::Function(_)
             | Type::Mapping { .. }
             | Type::Literal(_)

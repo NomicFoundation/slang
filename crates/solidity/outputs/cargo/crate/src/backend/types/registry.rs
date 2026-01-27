@@ -216,6 +216,25 @@ impl TypeRegistry {
             }
 
             (
+                Type::FixedSizeArray {
+                    element_type: from_element_type,
+                    location: from_location,
+                    size: from_size,
+                },
+                Type::FixedSizeArray {
+                    element_type: to_element_type,
+                    location: to_location,
+                    size: to_size,
+                },
+            ) => {
+                // conversion rules are strict and only allow changing data
+                // location (from storage/calldata to memory)
+                *from_size == *to_size
+                    && *from_element_type == *to_element_type
+                    && from_location.implicitly_convertible_to(*to_location)
+            }
+
+            (
                 Type::Struct {
                     definition_id: from_definition,
                     location: from_location,
@@ -272,6 +291,8 @@ impl TypeRegistry {
         }
     }
 
+    // Similar to `implicitly_convertible_to` above, but with relaxed rules for
+    // data location
     pub fn implicitly_convertible_to_for_external_call(
         &self,
         from_type_id: TypeId,
@@ -299,6 +320,19 @@ impl TypeRegistry {
                 },
             ) => self
                 .implicitly_convertible_to_for_external_call(*from_element_type, *to_element_type),
+
+            (
+                Type::FixedSizeArray {
+                    element_type: from_element_type,
+                    size: from_size,
+                    ..
+                },
+                Type::FixedSizeArray {
+                    element_type: to_element_type,
+                    size: to_size,
+                    ..
+                },
+            ) => from_size == to_size && from_element_type == to_element_type,
 
             (
                 Type::Struct {
@@ -330,6 +364,16 @@ impl TypeRegistry {
             Type::Bytes { .. } => Type::Bytes {
                 location: DataLocation::Inherited,
             },
+            Type::FixedSizeArray {
+                element_type, size, ..
+            } => {
+                let element_type = self.find_canonical_type_id(*element_type)?;
+                Type::FixedSizeArray {
+                    element_type,
+                    size: *size,
+                    location: DataLocation::Inherited,
+                }
+            }
             Type::String { .. } => Type::String {
                 location: DataLocation::Inherited,
             },
@@ -389,6 +433,13 @@ impl TypeRegistry {
                 location,
             },
             Type::Bytes { .. } => Type::Bytes { location },
+            Type::FixedSizeArray {
+                element_type, size, ..
+            } => Type::FixedSizeArray {
+                element_type: self.register_type_id_with_data_location(element_type, location),
+                size,
+                location,
+            },
             Type::String { .. } => Type::String { location },
             Type::Struct { definition_id, .. } => Type::Struct {
                 definition_id,
@@ -479,6 +530,22 @@ impl TypeRegistry {
                         },
                     ) => {
                         element_type_left == element_type_right
+                            && location_left.overrides(*location_right)
+                    }
+                    (
+                        Type::FixedSizeArray {
+                            element_type: element_type_left,
+                            size: size_left,
+                            location: location_left,
+                        },
+                        Type::FixedSizeArray {
+                            element_type: element_type_right,
+                            size: size_right,
+                            location: location_right,
+                        },
+                    ) => {
+                        element_type_left == element_type_right
+                            && size_left == size_right
                             && location_left.overrides(*location_right)
                     }
                     (

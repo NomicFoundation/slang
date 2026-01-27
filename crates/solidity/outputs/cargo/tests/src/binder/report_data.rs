@@ -267,6 +267,15 @@ impl CollectedDefinitionDisplay<'_> {
                     signed = if *signed { "" } else { "u" }
                 )
             }
+            Type::FixedSizeArray {
+                element_type,
+                size,
+                location,
+            } => format!(
+                "{element_type}[{size}] {location}",
+                element_type = self.type_display(*element_type),
+                location = data_location_display(*location),
+            ),
             Type::Function(FunctionType {
                 parameter_types,
                 return_type,
