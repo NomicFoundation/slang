@@ -1279,13 +1279,13 @@ pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 pub struct MemberAccessExpressionStruct {
     pub operand: Expression,
     pub period: Period,
-    pub member: Identifier,
+    pub member: IdentifierPathElement,
 }
 
 pub fn new_member_access_expression(
     operand: Expression,
     period: Period,
-    member: Identifier,
+    member: IdentifierPathElement,
 ) -> MemberAccessExpression {
     Rc::new(MemberAccessExpressionStruct {
         operand,
@@ -1334,6 +1334,43 @@ pub fn new_modifier_invocation(
     arguments: Option<ArgumentsDeclaration>,
 ) -> ModifierInvocation {
     Rc::new(ModifierInvocationStruct { name, arguments })
+}
+
+pub type MultiTypedDeclaration = Rc<MultiTypedDeclarationStruct>;
+
+#[derive(Clone, Debug)]
+pub struct MultiTypedDeclarationStruct {
+    pub open_paren: OpenParen,
+    pub elements: MultiTypedDeclarationElements,
+    pub close_paren: CloseParen,
+    pub value: VariableDeclarationValue,
+}
+
+pub fn new_multi_typed_declaration(
+    open_paren: OpenParen,
+    elements: MultiTypedDeclarationElements,
+    close_paren: CloseParen,
+    value: VariableDeclarationValue,
+) -> MultiTypedDeclaration {
+    Rc::new(MultiTypedDeclarationStruct {
+        open_paren,
+        elements,
+        close_paren,
+        value,
+    })
+}
+
+pub type MultiTypedDeclarationElement = Rc<MultiTypedDeclarationElementStruct>;
+
+#[derive(Clone, Debug)]
+pub struct MultiTypedDeclarationElementStruct {
+    pub member: Option<VariableDeclaration>,
+}
+
+pub fn new_multi_typed_declaration_element(
+    member: Option<VariableDeclaration>,
+) -> MultiTypedDeclarationElement {
+    Rc::new(MultiTypedDeclarationElementStruct { member })
 }
 
 pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
@@ -1396,13 +1433,13 @@ pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
 #[derive(Clone, Debug)]
 pub struct NamedArgumentsDeclarationStruct {
     pub open_paren: OpenParen,
-    pub arguments: Option<NamedArgumentGroup>,
+    pub arguments: NamedArgumentGroup,
     pub close_paren: CloseParen,
 }
 
 pub fn new_named_arguments_declaration(
     open_paren: OpenParen,
-    arguments: Option<NamedArgumentGroup>,
+    arguments: NamedArgumentGroup,
     close_paren: CloseParen,
 ) -> NamedArgumentsDeclaration {
     Rc::new(NamedArgumentsDeclarationStruct {
@@ -1751,6 +1788,21 @@ pub fn new_shift_expression(
     })
 }
 
+pub type SingleTypedDeclaration = Rc<SingleTypedDeclarationStruct>;
+
+#[derive(Clone, Debug)]
+pub struct SingleTypedDeclarationStruct {
+    pub declaration: VariableDeclaration,
+    pub value: Option<VariableDeclarationValue>,
+}
+
+pub fn new_single_typed_declaration(
+    declaration: VariableDeclaration,
+    value: Option<VariableDeclarationValue>,
+) -> SingleTypedDeclaration {
+    Rc::new(SingleTypedDeclarationStruct { declaration, value })
+}
+
 pub type SourceUnit = Rc<SourceUnitStruct>;
 
 #[derive(Clone, Debug)]
@@ -1915,50 +1967,6 @@ pub fn new_try_statement(
     })
 }
 
-pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
-
-#[derive(Clone, Debug)]
-pub struct TupleDeconstructionElementStruct {
-    pub member: Option<TupleMember>,
-}
-
-pub fn new_tuple_deconstruction_element(member: Option<TupleMember>) -> TupleDeconstructionElement {
-    Rc::new(TupleDeconstructionElementStruct { member })
-}
-
-pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
-
-#[derive(Clone, Debug)]
-pub struct TupleDeconstructionStatementStruct {
-    pub var_keyword: Option<VarKeyword>,
-    pub open_paren: OpenParen,
-    pub elements: TupleDeconstructionElements,
-    pub close_paren: CloseParen,
-    pub equal: Equal,
-    pub expression: Expression,
-    pub semicolon: Semicolon,
-}
-
-pub fn new_tuple_deconstruction_statement(
-    var_keyword: Option<VarKeyword>,
-    open_paren: OpenParen,
-    elements: TupleDeconstructionElements,
-    close_paren: CloseParen,
-    equal: Equal,
-    expression: Expression,
-    semicolon: Semicolon,
-) -> TupleDeconstructionStatement {
-    Rc::new(TupleDeconstructionStatementStruct {
-        var_keyword,
-        open_paren,
-        elements,
-        close_paren,
-        equal,
-        expression,
-        semicolon,
-    })
-}
-
 pub type TupleExpression = Rc<TupleExpressionStruct>;
 
 #[derive(Clone, Debug)]
@@ -2015,27 +2023,6 @@ pub fn new_type_expression(
     })
 }
 
-pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
-
-#[derive(Clone, Debug)]
-pub struct TypedTupleMemberStruct {
-    pub type_name: TypeName,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Identifier,
-}
-
-pub fn new_typed_tuple_member(
-    type_name: TypeName,
-    storage_location: Option<StorageLocation>,
-    name: Identifier,
-) -> TypedTupleMember {
-    Rc::new(TypedTupleMemberStruct {
-        type_name,
-        storage_location,
-        name,
-    })
-}
-
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
 #[derive(Clone, Debug)]
@@ -2075,22 +2062,59 @@ pub fn new_unnamed_function_definition(
     })
 }
 
-pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
+pub type UntypedDeclaration = Rc<UntypedDeclarationStruct>;
 
 #[derive(Clone, Debug)]
-pub struct UntypedTupleMemberStruct {
-    pub storage_location: Option<StorageLocation>,
-    pub name: Identifier,
+pub struct UntypedDeclarationStruct {
+    pub var_keyword: VarKeyword,
+    pub names: UntypedDeclarationNames,
+    pub value: VariableDeclarationValue,
 }
 
-pub fn new_untyped_tuple_member(
-    storage_location: Option<StorageLocation>,
-    name: Identifier,
-) -> UntypedTupleMember {
-    Rc::new(UntypedTupleMemberStruct {
-        storage_location,
-        name,
+pub fn new_untyped_declaration(
+    var_keyword: VarKeyword,
+    names: UntypedDeclarationNames,
+    value: VariableDeclarationValue,
+) -> UntypedDeclaration {
+    Rc::new(UntypedDeclarationStruct {
+        var_keyword,
+        names,
+        value,
     })
+}
+
+pub type UntypedTupleDeclaration = Rc<UntypedTupleDeclarationStruct>;
+
+#[derive(Clone, Debug)]
+pub struct UntypedTupleDeclarationStruct {
+    pub open_paren: OpenParen,
+    pub elements: UntypedTupleDeclarationElements,
+    pub close_paren: CloseParen,
+}
+
+pub fn new_untyped_tuple_declaration(
+    open_paren: OpenParen,
+    elements: UntypedTupleDeclarationElements,
+    close_paren: CloseParen,
+) -> UntypedTupleDeclaration {
+    Rc::new(UntypedTupleDeclarationStruct {
+        open_paren,
+        elements,
+        close_paren,
+    })
+}
+
+pub type UntypedTupleDeclarationElement = Rc<UntypedTupleDeclarationElementStruct>;
+
+#[derive(Clone, Debug)]
+pub struct UntypedTupleDeclarationElementStruct {
+    pub name: Option<Identifier>,
+}
+
+pub fn new_untyped_tuple_declaration_element(
+    name: Option<Identifier>,
+) -> UntypedTupleDeclarationElement {
+    Rc::new(UntypedTupleDeclarationElementStruct { name })
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
@@ -2201,31 +2225,40 @@ pub fn new_using_directive(
     })
 }
 
+pub type VariableDeclaration = Rc<VariableDeclarationStruct>;
+
+#[derive(Clone, Debug)]
+pub struct VariableDeclarationStruct {
+    pub type_name: TypeName,
+    pub storage_location: Option<StorageLocation>,
+    pub name: Identifier,
+}
+
+pub fn new_variable_declaration(
+    type_name: TypeName,
+    storage_location: Option<StorageLocation>,
+    name: Identifier,
+) -> VariableDeclaration {
+    Rc::new(VariableDeclarationStruct {
+        type_name,
+        storage_location,
+        name,
+    })
+}
+
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
 #[derive(Clone, Debug)]
 pub struct VariableDeclarationStatementStruct {
-    pub variable_type: VariableDeclarationType,
-    pub storage_location: Option<StorageLocation>,
-    pub name: Identifier,
-    pub value: Option<VariableDeclarationValue>,
+    pub target: VariableDeclarationOption,
     pub semicolon: Semicolon,
 }
 
 pub fn new_variable_declaration_statement(
-    variable_type: VariableDeclarationType,
-    storage_location: Option<StorageLocation>,
-    name: Identifier,
-    value: Option<VariableDeclarationValue>,
+    target: VariableDeclarationOption,
     semicolon: Semicolon,
 ) -> VariableDeclarationStatement {
-    Rc::new(VariableDeclarationStatementStruct {
-        variable_type,
-        storage_location,
-        name,
-        value,
-        semicolon,
-    })
+    Rc::new(VariableDeclarationStatementStruct { target, semicolon })
 }
 
 pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
@@ -3452,16 +3485,9 @@ pub fn new_for_statement_condition_semicolon(element: Semicolon) -> ForStatement
 
 #[derive(Clone, Debug)]
 pub enum ForStatementInitialization {
-    TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
     Semicolon(Semicolon),
-}
-
-pub fn new_for_statement_initialization_tuple_deconstruction_statement(
-    element: TupleDeconstructionStatement,
-) -> ForStatementInitialization {
-    ForStatementInitialization::TupleDeconstructionStatement(element)
 }
 
 pub fn new_for_statement_initialization_variable_declaration_statement(
@@ -3646,6 +3672,22 @@ pub fn new_hex_string_literal_double_quoted_hex_string_literal(
     element: DoubleQuotedHexStringLiteral,
 ) -> HexStringLiteral {
     HexStringLiteral::DoubleQuotedHexStringLiteral(element)
+}
+
+#[derive(Clone, Debug)]
+pub enum IdentifierPathElement {
+    Identifier(Identifier),
+    AddressKeyword(AddressKeyword),
+}
+
+pub fn new_identifier_path_element_identifier(element: Identifier) -> IdentifierPathElement {
+    IdentifierPathElement::Identifier(element)
+}
+
+pub fn new_identifier_path_element_address_keyword(
+    element: AddressKeyword,
+) -> IdentifierPathElement {
+    IdentifierPathElement::AddressKeyword(element)
 }
 
 #[derive(Clone, Debug)]
@@ -3954,7 +3996,6 @@ pub enum Statement {
     AssemblyStatement(AssemblyStatement),
     Block(Block),
     UncheckedBlock(UncheckedBlock),
-    TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
 }
@@ -4013,12 +4054,6 @@ pub fn new_statement_block(element: Block) -> Statement {
 
 pub fn new_statement_unchecked_block(element: UncheckedBlock) -> Statement {
     Statement::UncheckedBlock(element)
-}
-
-pub fn new_statement_tuple_deconstruction_statement(
-    element: TupleDeconstructionStatement,
-) -> Statement {
-    Statement::TupleDeconstructionStatement(element)
 }
 
 pub fn new_statement_variable_declaration_statement(
@@ -4097,20 +4132,6 @@ pub fn new_string_literal_double_quoted_string_literal(
     element: DoubleQuotedStringLiteral,
 ) -> StringLiteral {
     StringLiteral::DoubleQuotedStringLiteral(element)
-}
-
-#[derive(Clone, Debug)]
-pub enum TupleMember {
-    TypedTupleMember(TypedTupleMember),
-    UntypedTupleMember(UntypedTupleMember),
-}
-
-pub fn new_tuple_member_typed_tuple_member(element: TypedTupleMember) -> TupleMember {
-    TupleMember::TypedTupleMember(element)
-}
-
-pub fn new_tuple_member_untyped_tuple_member(element: UntypedTupleMember) -> TupleMember {
-    TupleMember::UntypedTupleMember(element)
 }
 
 #[derive(Clone, Debug)]
@@ -4228,6 +4249,22 @@ pub fn new_unnamed_function_attribute_view_keyword(
 }
 
 #[derive(Clone, Debug)]
+pub enum UntypedDeclarationNames {
+    Identifier(Identifier),
+    UntypedTupleDeclaration(UntypedTupleDeclaration),
+}
+
+pub fn new_untyped_declaration_names_identifier(element: Identifier) -> UntypedDeclarationNames {
+    UntypedDeclarationNames::Identifier(element)
+}
+
+pub fn new_untyped_declaration_names_untyped_tuple_declaration(
+    element: UntypedTupleDeclaration,
+) -> UntypedDeclarationNames {
+    UntypedDeclarationNames::UntypedTupleDeclaration(element)
+}
+
+#[derive(Clone, Debug)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
@@ -4335,17 +4372,28 @@ pub fn new_using_target_asterisk(element: Asterisk) -> UsingTarget {
 }
 
 #[derive(Clone, Debug)]
-pub enum VariableDeclarationType {
-    TypeName(TypeName),
-    VarKeyword(VarKeyword),
+pub enum VariableDeclarationOption {
+    SingleTypedDeclaration(SingleTypedDeclaration),
+    MultiTypedDeclaration(MultiTypedDeclaration),
+    UntypedDeclaration(UntypedDeclaration),
 }
 
-pub fn new_variable_declaration_type_type_name(element: TypeName) -> VariableDeclarationType {
-    VariableDeclarationType::TypeName(element)
+pub fn new_variable_declaration_option_single_typed_declaration(
+    element: SingleTypedDeclaration,
+) -> VariableDeclarationOption {
+    VariableDeclarationOption::SingleTypedDeclaration(element)
 }
 
-pub fn new_variable_declaration_type_var_keyword(element: VarKeyword) -> VariableDeclarationType {
-    VariableDeclarationType::VarKeyword(element)
+pub fn new_variable_declaration_option_multi_typed_declaration(
+    element: MultiTypedDeclaration,
+) -> VariableDeclarationOption {
+    VariableDeclarationOption::MultiTypedDeclaration(element)
+}
+
+pub fn new_variable_declaration_option_untyped_declaration(
+    element: UntypedDeclaration,
+) -> VariableDeclarationOption {
+    VariableDeclarationOption::UntypedDeclaration(element)
 }
 
 #[derive(Clone, Debug)]
@@ -4739,10 +4787,10 @@ pub fn new_hex_string_literals(elements: Vec<HexStringLiteral>) -> HexStringLite
 
 #[derive(Clone, Debug)]
 pub struct IdentifierPath {
-    pub elements: Vec<Identifier>,
+    pub elements: Vec<IdentifierPathElement>,
 }
 
-pub fn new_identifier_path(elements: Vec<Identifier>) -> IdentifierPath {
+pub fn new_identifier_path(elements: Vec<IdentifierPathElement>) -> IdentifierPath {
     IdentifierPath { elements }
 }
 
@@ -4791,6 +4839,17 @@ pub struct ModifierAttributes {
 
 pub fn new_modifier_attributes(elements: Vec<ModifierAttribute>) -> ModifierAttributes {
     ModifierAttributes { elements }
+}
+
+#[derive(Clone, Debug)]
+pub struct MultiTypedDeclarationElements {
+    pub elements: Vec<MultiTypedDeclarationElement>,
+}
+
+pub fn new_multi_typed_declaration_elements(
+    elements: Vec<MultiTypedDeclarationElement>,
+) -> MultiTypedDeclarationElements {
+    MultiTypedDeclarationElements { elements }
 }
 
 #[derive(Clone, Debug)]
@@ -4897,17 +4956,6 @@ pub fn new_struct_members(elements: Vec<StructMember>) -> StructMembers {
 }
 
 #[derive(Clone, Debug)]
-pub struct TupleDeconstructionElements {
-    pub elements: Vec<TupleDeconstructionElement>,
-}
-
-pub fn new_tuple_deconstruction_elements(
-    elements: Vec<TupleDeconstructionElement>,
-) -> TupleDeconstructionElements {
-    TupleDeconstructionElements { elements }
-}
-
-#[derive(Clone, Debug)]
 pub struct TupleValues {
     pub elements: Vec<TupleValue>,
 }
@@ -4934,6 +4982,17 @@ pub fn new_unnamed_function_attributes(
     elements: Vec<UnnamedFunctionAttribute>,
 ) -> UnnamedFunctionAttributes {
     UnnamedFunctionAttributes { elements }
+}
+
+#[derive(Clone, Debug)]
+pub struct UntypedTupleDeclarationElements {
+    pub elements: Vec<UntypedTupleDeclarationElement>,
+}
+
+pub fn new_untyped_tuple_declaration_elements(
+    elements: Vec<UntypedTupleDeclarationElement>,
+) -> UntypedTupleDeclarationElements {
+    UntypedTupleDeclarationElements { elements }
 }
 
 #[derive(Clone, Debug)]
