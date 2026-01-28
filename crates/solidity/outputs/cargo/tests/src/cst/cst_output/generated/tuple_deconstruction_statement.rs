@@ -22,6 +22,16 @@ fn empty() -> Result<()> {
 }
 
 #[test]
+fn empty_tuple() -> Result<()> {
+    run(T, "empty_tuple")
+}
+
+#[test]
+fn empty_var_tuple() -> Result<()> {
+    run(T, "empty_var_tuple")
+}
+
+#[test]
 fn ignored_members() -> Result<()> {
     run(T, "ignored_members")
 }
