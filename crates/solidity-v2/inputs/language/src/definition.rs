@@ -39,7 +39,8 @@ language_v2_macros::compile!(Language(
                     items = [
                         Struct(
                             name = SourceUnit,
-                            fields = (members = Required(SourceUnitMembers))
+                            fields = (members = Required(SourceUnitMembers)),
+                            parser_options = ParserOptions(inline = false, pubb = true)
                         ),
                         Repeated(
                             name = SourceUnitMembers,
@@ -86,7 +87,16 @@ language_v2_macros::compile!(Language(
                                 pragma_keyword = Required(PragmaKeyword),
                                 pragma = Required(Pragma),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            // TODO(v2): Until the lexer can perform context switching, we ignore pragmas
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+PragmaDirective: PragmaDirective = {
+    <_pragma_keyword: PragmaKeyword>  ! <_semicolon: Semicolon>  => {
+    let abicoder = new_pragma_abicoder_pragma(new_abicoder_pragma(new_abicoder_keyword(0..0, source), new_abicoder_version_abicoder_v1_keyword(new_abicoder_v1_keyword(0..0, source))));
+    new_pragma_directive(_pragma_keyword, abicoder , _semicolon)
+    }
+};
+"#)
                         ),
                         Enum(
                             name = Pragma,
@@ -2071,12 +2081,73 @@ language_v2_macros::compile!(Language(
                                 open_brace = Required(OpenBrace),
                                 members = Required(ContractMembers),
                                 close_brace = Required(CloseBrace)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = true, verbatim = "
+// Contracts are syntactically complex (for an LR parser) since the storage layout specifier
+// has a trailing expression, which can have a trailing option call (`{ ... }`), which conflicts
+// with the contract members block.
+//
+// In order to solve this we use a trailing expression that captures both the expression and the members,
+// and then extract the members from it.
+pub ContractDefinition: ContractDefinition = {
+    // If no specifiers are present, we simply capture the members directly
+    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        new_contract_definition(_abstract_keyword, _contract_keyword, _name, new_contract_specifiers(vec![]), _open_brace, _members, _close_brace)
+    },
+    // If specifiers are present, we extract the trailing members from them
+    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiersTrailingMembers>  => {
+        let (specifiers, (_open_brace, _members, _close_brace)) = _specifiers;
+        new_contract_definition(_abstract_keyword, _contract_keyword, _name, specifiers, _open_brace, _members, _close_brace)
+    },
+};
+")
                         ),
                         Repeated(
                             name = ContractSpecifiers,
                             reference = ContractSpecifier,
-                            allow_empty = true
+                            allow_empty = true,
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = "
+// In this case, we require at least one specifier, the case with zero is handled above.
+// Note that the return type now includes the trailing members
+ContractSpecifiersTrailingMembers: (ContractSpecifiers, (OpenBrace, ContractMembers, CloseBrace)) = {
+    <mut _ContractSpecifier: Rep<<ContractSpecifier>>> <_tail: ContractSpecifierTrailingMembers>  => {
+        let (specifier, tail) = _tail;
+        _ContractSpecifier.push(specifier);
+        (new_contract_specifiers(_ContractSpecifier), tail)
+    },
+};
+ContractSpecifierTrailingMembers: (ContractSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
+    // Since there's no conflict with inheritance specifiers, we can parse them directly and
+    // then parse the members
+    <_InheritanceSpecifier: InheritanceSpecifier> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (new_contract_specifier_inheritance_specifier(_InheritanceSpecifier), (_open_brace, _members, _close_brace))
+    },
+    // For storage layout specifiers, we need to extract the trailing members from them
+    <_StorageLayoutSpecifier: StorageLayoutSpecifierTrailingMembers>  => {
+        let (storage_layout_specifier, tail) = _StorageLayoutSpecifier;
+        (new_contract_specifier_storage_layout_specifier(storage_layout_specifier), tail)
+    },
+};
+
+StorageLayoutSpecifierTrailingMembers: (StorageLayoutSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
+    // Instead of parsing a regular Expression, we parse one that captures the trailing members
+    <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: ExpressionTrailingMembers>  => {
+        let (expr, tail) = _expression;
+        (new_storage_layout_specifier(_layout_keyword, _at_keyword, expr), tail)
+    },
+};
+
+// An expression followed by contract members
+// See the Expression rule for details
+ExpressionTrailingMembers: (Expression, (OpenBrace, ContractMembers, CloseBrace)) = {
+        <Expression: Expression19<BracedContractMembers>>  => <>,
+};
+BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
+    <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (_open_brace, _members, _close_brace)
+    },
+};
+")
                         ),
                         Enum(
                             name = ContractSpecifier,
@@ -2297,7 +2368,68 @@ language_v2_macros::compile!(Language(
                                 name = Required(Identifier),
                                 value = Optional(reference = StateVariableDefinitionValue),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// State variable definitions have a conflict when used with function types, since some attributes
+// can be both function type attributes and state variable attributes.
+// For example in `function (uint a) internal internal foo;`, the first `internal` is a function type attribute,
+// while the second `internal` is a state variable attribute.
+//
+// To disambiguate in these cases we need to count, everything from the second attribute onwards
+// belongs to the state variable. This is very hard to do in LR(1) grammars, so we resort to letting
+// the function type capture all compatible attributes, and then extract the trailing ones to use them in the state variable.
+// 
+// This is done by splitting the state variable rules into two cases, one where any type is allowed, except function types
+// that do not specify a return; and one where only function types without return are allowed.
+//
+// Another issue comes from the `error` keyword, since it's not reserved it can also be used as an identifier.
+// This conflicts with state variables since `error foo...` could be the beginning of either an
+// error definition or a state variable definition.
+//
+// To solve this we match against state variables where the type is exactly `error` as a special case.
+StateVariableDefinition: StateVariableDefinition = {
+    // When allowing any type except function types without return, we can parse normally.
+    // Note the `IdentifierPathNoError`, it avoids matching against `error` as an identifier.
+    <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+
+    // Special case for `error` type
+    <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon> => {
+        let identifier = new_identifier(l..r, source);
+        let iap = new_index_access_path_from_identifier_path(new_identifier_path(identifier, None));
+        let type_name = new_type_name_index_access_path(iap);
+
+        new_state_variable_definition(type_name, _attributes, _name, _value, _semicolon)
+    },
+
+
+    // If the function type has no return, then we don't directly parse state variable attributes, we only do it if
+    // we see a special one (one that can be a state variable attribute but not a function type attribute).
+    <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
+        let (function_type, mut extra_attributes) = extract_extra_attributes(_type_name);
+        if let Some(special_attributes) = special_attributes {
+            extra_attributes.push(special_attributes.0);
+            extra_attributes.extend(special_attributes.1.elements);
+        }
+        new_state_variable_definition(new_type_name_function_type(function_type), new_state_variable_attributes(extra_attributes), _name, _value, _semicolon)
+    },
+};
+
+// Match an identifier path that, if it's a single element, is not `error`
+IdentifierPathNoError: IdentifierPath = {
+    // We either have any identifier with a tail (ie a period)
+    <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(_head, Some(_tail)),
+    // or a single identifier that is not `error`
+    <_head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(_head, None),
+};
+
+// These are the attributes that can appear in a state variable but not a function,
+// they can work as a limit between these definitions.
+SpecialStateVariableAttribute: StateVariableAttribute = {
+        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
+        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
+        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
+};
+"#)
                         ),
                         Struct(
                             name = StateVariableDefinitionValue,
@@ -2306,7 +2438,10 @@ language_v2_macros::compile!(Language(
                         Repeated(
                             name = StateVariableAttributes,
                             reference = StateVariableAttribute,
-                            allow_empty = true
+                            allow_empty = true,
+                            // We inline this to resolve a simple conflict, since some of the attributes
+                            // are unreserved (can be identifiers) the parser needs to wait before actually reducing.
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Enum(
                             name = StateVariableAttribute,
@@ -2670,7 +2805,8 @@ language_v2_macros::compile!(Language(
                                 name = Required(Identifier),
                                 members = Required(ErrorParametersDeclaration),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Struct(
                             name = ErrorParametersDeclaration,
@@ -2735,7 +2871,42 @@ language_v2_macros::compile!(Language(
                                 PrimaryExpression(reference = MappingType),
                                 PrimaryExpression(reference = ElementaryType),
                                 PrimaryExpression(reference = IdentifierPath)
-                            ]
+                            ],
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = "
+// TypeName has two peculiarities:
+// 1. We need to parametrize the FunctionRule to allow StateVariableDefinition to disable FunctionTypes without returns.
+//    Note that the ArrayTypeName doesn't respect this; most of these manual cases care about trailing constructs, as
+//    soon as an extra `[]` is added, the ambiguities disappear.
+// 2. A TypeName that can be represented as an `IndexAccessPath` can conflict with a `MemberAccess`, for example
+//    `a.b[c]` can be either a member access over an identifier path, or array type, depending on what comes next.
+//    This means we need to treat these constructs as IAPs for as long as possible, and only convert them to TypeNames
+//    when it's certainly a type. `new_type_name_index_access_path` transforms an IAP into a TypeName.
+//    However, since a IAP and an array type conflict, we need to make sure that array types are only matched against
+//    base types that are not IAPs, hence the parametric IAPRule.
+TypeName0<FunctionRule, IAPRule>: TypeName = {
+    <_FunctionType: FunctionRule> => new_type_name_function_type(<>),
+    <_MappingType: MappingType>  => new_type_name_mapping_type(<>),
+    <_IndexAccessPath: IAPRule> => new_type_name_index_access_path(<>),
+};
+TypeName1<FunctionRule, IAPRule>: TypeName = {
+    <_TypeName: ArrayTypeName>  => new_type_name_array_type_name(<>),
+    <TypeName: TypeName0<FunctionRule, IAPRule>>  => <>,
+};
+TypeName: TypeName = {
+    // A regular type can have any function type and an IAP
+    <TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
+};
+
+#[inline]
+ArrayTypeName: ArrayTypeName = {
+    // The base expression shouldn't end in a trailing IAP, if it does (like `a.b[c]`) it will be
+    // handled by `new_type_name_index_access_path` above
+    <_TypeName: TypeName1<FunctionType, NoIndexAccessPath>>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(<>),
+};
+
+// An empty rule to disable IAPs
+NoIndexAccessPath: IndexAccessPath = {};
+")
                         ),
                         Struct(
                             name = FunctionType,
@@ -2744,7 +2915,24 @@ language_v2_macros::compile!(Language(
                                 parameters = Required(ParametersDeclaration),
                                 attributes = Required(FunctionTypeAttributes),
                                 returns = Optional(reference = ReturnsDeclaration)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = "
+// The only reason to split FunctionType into two rules is to allow StateVariableDefinition
+// to choose whether to allow FunctionTypes without returns or not.
+// Note: This could be solved with macros, but is short enough to be explicit
+FunctionType: FunctionType = {
+    FunctionTypeInternalNoReturn => <>,
+    FunctionTypeInternalReturn => <>,
+};
+
+FunctionTypeInternalNoReturn: FunctionType = {
+    <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(_function_keyword, _parameters, _attributes, None),
+};
+FunctionTypeInternalReturn: FunctionType = {
+    <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(_function_keyword, _parameters, _attributes, Some(_returns)),
+    
+};
+")
                         ),
                         Repeated(
                             name = FunctionTypeAttributes,
@@ -2872,7 +3060,77 @@ language_v2_macros::compile!(Language(
                                 EnumVariant(reference = TupleDeconstructionStatement),
                                 EnumVariant(reference = VariableDeclarationStatement),
                                 EnumVariant(reference = ExpressionStatement)
-                            ]
+                            ],
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// There's two issues with `Statement`:
+//
+// This is a common problem in grammars[1]. To not reinvent the wheel we follow advice from
+// LALRPOP community[2].
+// Briefly, we parametrize statements on whether they allow a trailing else or not, forcing `else`s to attach to
+// the innermost `if`` possible.
+//
+// [1]: https://en.wikipedia.org/wiki/Dangling_else
+// [2]: https://github.com/lalrpop/lalrpop/issues/67#issuecomment-188951041
+//
+// On top of that, the `revert` keyword is unreserved, meaning that a variable declaration like
+// `revert x = ...;` is valid.
+// From the perspective of the parser there's an ambiguity when looking at a statement starting with `revert x ...`
+//
+// To solve it we introduce a special `VariableDeclarationStatement` that handles this case specifically,
+// since both this and `RevertStatement` are inlined, the parser doesn't need to reduce until it has seen the
+// entire statement.
+_Statement<TrailingElse>: Statement = {
+    <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
+    <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
+    <_WhileStatement: WhileStatement<TrailingElse>>  => new_statement_while_statement(<>),
+    <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(<>),
+    <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(<>),
+    <_BreakStatement: BreakStatement>  => new_statement_break_statement(<>),
+    <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(<>),
+    <_EmitStatement: EmitStatement>  => new_statement_emit_statement(<>),
+    <_TryStatement: TryStatement>  => new_statement_try_statement(<>),
+    <_RevertStatement: RevertStatement>  => new_statement_revert_statement(<>),
+    <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
+    <_Block: Block>  => new_statement_block(<>),
+    <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
+    <_TupleDeconstructionStatement: TupleDeconstructionStatement>  => new_statement_tuple_deconstruction_statement(<>),
+    <_VariableDeclarationStatement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
+    <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
+};
+
+// By default statements allow dangling `else`s
+Statement = _Statement<"True">;
+
+// A VariableDeclarationStatement that has a `revert` type as a special case, this allows
+// to disambiguate between a revert statement and a variable declaration with type `revert`
+//
+// Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
+#[inline]
+VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
+    <_variable_type: VariableDeclarationTypeSpecialRevert>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+};
+#[inline]
+VariableDeclarationTypeSpecialRevert: VariableDeclarationType = {
+    // A regular type that is not `revert`
+    //
+    // Note: we're tempted to inline TypeNames, but they are recursive, that's why we extract the special case
+    <_TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  => new_variable_declaration_type_type_name(<>),
+    // The special `revert` type
+    <l:@L> L_RevertKeyword_Unreserved <r:@R> => {
+        let identifier = new_identifier(l..r, source);
+        let iap = new_index_access_path_from_identifier_path(new_identifier_path(identifier, None));
+        let type_name = new_type_name_index_access_path(iap);
+        new_variable_declaration_type_type_name(type_name)
+    }
+};
+// An IdentifierPath that cannot be `revert`, used to disambiguate from the `revert` type
+IdentifierPathNoRevert: IdentifierPath = {
+    // We either have any identifier with a tail (ie a period)
+    <_head: Identifier>  <_tail: (IdentifierPathTail)>  => new_identifier_path(_head, Some(_tail)),
+    // or a single identifier that is not `revert`
+    <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(_head, None),
+};
+"#)
                         ),
                         Struct(
                             name = UncheckedBlock,
@@ -2987,7 +3245,37 @@ language_v2_macros::compile!(Language(
                         Separated(
                             name = TypedTupleDeconstructionElements,
                             reference = TypedTupleDeconstructionElement,
-                            separator = Comma
+                            separator = Comma,
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// TupleDeconstructionStatements conflict with tuple expression, for example, the following is ambiguous:
+//
+// |--------|  => Assignment expression
+// |--|        => Tuple expression
+// (,,) = foo;
+// |--------|  => TupleDeconstructionStatement
+//
+// In order to fix that, we give priority to assignment expressions, except an actual declaration (`uint bar`)
+// is seen.
+//
+// Since they also share a prefix (`(,,,`) we need to have a common prefix rule to avoid reduce/reduce conflicts.
+TypedTupleDeconstructionElements: TypedTupleDeconstructionElements = {
+    <prefix: TuplePrefix> <differentiator: TypedTupleDeconstructionMember> <_TypedTupleDeconstructionElement: (Comma <SepOne<Comma, <TypedTupleDeconstructionElement>>>)?>  => {
+        let mut elements = vec![new_typed_tuple_deconstruction_element(None); prefix];
+        elements.push(new_typed_tuple_deconstruction_element(Some(differentiator)));
+        elements.extend(_TypedTupleDeconstructionElement.unwrap_or(vec![]));
+        new_typed_tuple_deconstruction_elements(elements)
+    },
+    
+};
+
+// TuplePrefix counts how many leading commas we have in a tuple deconstruction or
+// in a tuple expression, this helps avoid reduce/reduce conflicts
+TuplePrefix: usize = {
+    // Count how many commas we have at the start, each comma represents an unnamed element
+    Comma  <_rest: TuplePrefix>  => 1 + _rest,
+    => 0,
+};
+"#)
                         ),
                         Struct(
                             name = TypedTupleDeconstructionElement,
@@ -3051,7 +3339,15 @@ language_v2_macros::compile!(Language(
                                 close_paren = Required(CloseParen),
                                 body = Required(Statement),
                                 else_branch = Optional(reference = ElseBranch)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// As explained in the `Statement` rule, this solves the dangling else problem
+IfStatement<TrailingElse>: IfStatement = {
+    // IfStatement only allows `if`s without an else if TrailingElse == "True"
+    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(<>, None),
+    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<TrailingElse>>  => new_if_statement(_if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(_else_keyword, _else_branch))),
+};
+"#)
                         ),
                         Struct(
                             name = ElseBranch,
@@ -3074,7 +3370,14 @@ language_v2_macros::compile!(Language(
                                 iterator = Optional(reference = Expression),
                                 close_paren = Required(CloseParen),
                                 body = Required(Statement)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// As explained in the `Statement` rule, this solves the dangling else problem
+//
+// Since a `ForStatement` can have a trailing `Statement` we need to parametrize it as well
+ForStatement<TrailingElse>: ForStatement = {
+        <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_for_statement(<>),
+};"#)
                         ),
                         Enum(
                             name = ForStatementInitialization,
@@ -3104,7 +3407,15 @@ language_v2_macros::compile!(Language(
                                 condition = Required(Expression),
                                 close_paren = Required(CloseParen),
                                 body = Required(Statement)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// As explained in the `Statement` rule, this solves the dangling else problem
+//
+// Since a `WhileStatement` can have a trailing `Statement` we need to parametrize it as well
+WhileStatement<TrailingElse>: WhileStatement = {
+        <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_while_statement(<>),
+};"#)
+
                         ),
                         Struct(
                             name = DoWhileStatement,
@@ -3174,7 +3485,29 @@ language_v2_macros::compile!(Language(
                                 returns = Optional(reference = ReturnsDeclaration),
                                 body = Required(Block),
                                 catch_clauses = Required(CatchClauses)
-                            )
+                            ),
+                            parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
+// at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
+// start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
+//
+// We use expressions with a trailing block to solve this, and steal the block from there.
+TryStatement: TryStatement = {
+    // a `ReturnsDeclaration` acts as a disambiguator
+    <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: ReturnsDeclaration>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
+        new_try_statement(_try_keyword, _expression, Some(_returns), _body, _catch_clauses)
+    },
+    <_try_keyword: TryKeyword>  <_expression: ExpressionTrailingBlock>   <_catch_clauses: CatchClauses>  => {
+        let (expr, body) = _expression;
+        new_try_statement(_try_keyword, expr, None, body, _catch_clauses)
+    },
+};
+
+// An expression followed by a block
+ExpressionTrailingBlock: (Expression, Block) = {
+        <Expression: Expression19<Block>>  => <>,
+};
+"#)
                         ),
                         Repeated(
                             name = CatchClauses,
@@ -3207,7 +3540,9 @@ language_v2_macros::compile!(Language(
                                 error = Required(IdentifierPath),
                                 arguments = Required(ArgumentsDeclaration),
                                 semicolon = Required(Semicolon)
-                            )
+                            ),
+                            // RevertStatement needs to be inline to disambiguate from VariableDeclarationStatement
+                            parser_options = ParserOptions(inline = true, pubb = false)
                         ),
                         Struct(
                             name = ThrowStatement,
@@ -3572,7 +3907,303 @@ language_v2_macros::compile!(Language(
                                 PrimaryExpression(reference = TrueKeyword),
                                 PrimaryExpression(reference = FalseKeyword),
                                 PrimaryExpression(reference = Identifier)
-                            ]
+                            ],
+                            parser_options = ParserOptions(
+                                inline = false,
+                                pubb = true,
+                                verbatim = r#"
+                                
+// Expression has a lot of tricky cases:
+// 1. There's conflicts with `TypeName`, for example `a.b[c]` can be either a member access over an identifier path, or
+//    an array type, depending on what comes next. As explained on the `TypeName` rule, we need to delay reduction of
+//    these constructs as long as possible, only converting them to `Expression` at new_expression_index_access_path.
+//    Note: That there's no `ElementaryType` rule, it's handled as an IAP
+// 2. But this creates another problem, since we still want to have `MemberAccess` and `IndexAccess` as expressions,
+//    but now they conflict with IAP; for example, `a.b` can be either a member access or an IAP, therefore we have to
+//    disable member access and index access over IAPs that can be types, we do this by parametrizing the
+//    `IndexAccessPathRule`
+// 3. Also, new expressions are problematic, since they have a trailing `TypeName`, allowing this example to be parsed
+//    in two different ambiguous ways:
+//
+//        |--------| => IndexAccessExpression
+//        |-----|    => NewExpression
+//            |-|    => TypeName
+//        new foo[]
+//            |---|  => TypeName (an array type)
+//        |-------|  => NewExpression
+//
+//    We want to fix this by giving priority to the internal typename, therefore we parametrize over `NewExpressionRule`
+//    disallowing `MemberAccess` and `IndexAccess` over new expressions.
+// 4. `Expression` are often at a trailing position, for example in storage layout specifiers,
+//    to facilitate fixing ambiguities in those cases, we allow `Expression` to be parametrized over a trailing element,
+//    that will be matched against when possible, and lifted up through the recursion.
+//    This seems to not have any effect, but it allows the parser to postpone reductions.
+// 5. Finally, expressions have multiple precedence levels and associativity, we handle this explicitely here.
+Expression0<IndexAccessPathRule, NewExpressionRule>: Expression = {
+    // The Rule used here is parametric
+    <_IndexAccessPath: IndexAccessPathRule> => new_expression_index_access_path(<>),
+    // The Rule used here is parametric
+    <_NewExpression: NewExpressionRule> => new_expression_new_expression(<>),
+    <_TupleExpression: TupleExpression>  => new_expression_tuple_expression(<>),
+    <_TypeExpression: TypeExpression>  => new_expression_type_expression(<>),
+    <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(<>),
+    <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
+    <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
+    <_StringExpression: StringExpression>  => new_expression_string_expression(<>),
+    <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(<>),
+    <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(<>),
+    <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(<>),
+    <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(<>),
+    <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
+};
+
+// An IAP that doesn't match anything
+NoIndexAccessPath_Expr: IndexAccessPath = {};
+
+// We simplifiy all these levels of expressions into a single one, there's no need
+// for precedence here
+Expression1<IndexAccessPathRule, NewExpressionRule>: Expression = {
+    // When parsing an index acces expression, the sub expression shouldn't trail in an index access path
+    // Nor should it trail on a NewExpression
+    <_Expression: Expression1<NoIndexAccessPath_Expr, NoNewExpression>>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+    // When parsing a member access expression, the sub expression shouldn't trail in a path
+    // Nor should it trail on a NewExpression
+    <_Expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>  <_period: Period>  <_member: MemberAccessIdentifier>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+
+    // Both the braces and the arguments declaration serve as markers for disambiguation, therefore
+    // resetting the parametric rules.
+    <_Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+    <_Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+
+    <Expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
+};
+
+// A Matcher for an empty NewExpression 
+NoNewExpression: NewExpression = {};
+
+// Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
+Expression5<Tail>: (Expression, Tail) = {
+    <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Tail>>  => {
+        let (expr, tail) = _Expression;
+        (new_expression_prefix_expression(new_prefix_expression(_Expression_PrefixExpression_Operator, expr)), tail)
+    },
+    
+    // A tail can appear just after a postfix or primary expression
+    <Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => {
+        (Expression, tail)
+    },
+};
+Expression6<Tail>: (Expression, Tail) = {
+    // This is the only other postfix expression that can overwrite a trailing element
+    // Note that the recursive call expects no tail at all
+    <_Expression: Expression6<EmptyTail>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
+        let (expr, _) = _Expression;
+        (new_expression_postfix_expression(new_postfix_expression(expr, _Expression_PostfixExpression_Operator)), tail)
+    },
+    
+    <Expression: Expression5<Tail>>  => <>,
+};
+Expression7<Tail>: (Expression, Tail) = {
+    // Note that only the right recursive rule matches a tail, the left recursive expects no tail
+    <_Expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_exponentiation_expression(new_exponentiation_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression6<Tail>>  => <>,
+};
+Expression8<Tail>: (Expression, Tail) = {
+    <_Expression: Expression8<EmptyTail>>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_multiplicative_expression(new_multiplicative_expression(e, _Expression_MultiplicativeExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression7<Tail>>  => <>,
+};
+Expression9<Tail>: (Expression, Tail) = {
+    <_Expression: Expression9<EmptyTail>>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_additive_expression(new_additive_expression(e, _Expression_AdditiveExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression8<Tail>>  => <>,
+};
+Expression10<Tail>: (Expression, Tail) = {
+    <_Expression: Expression10<EmptyTail>>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_shift_expression(new_shift_expression(e, _Expression_ShiftExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression9<Tail>>  => <>,
+};
+Expression11<Tail>: (Expression, Tail) = {
+    <_Expression: Expression11<EmptyTail>>  <_operator: Ampersand>  <_Expression_2: Expression10<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_bitwise_and_expression(new_bitwise_and_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression10<Tail>>  => <>,
+};
+Expression12<Tail>: (Expression, Tail) = {
+    <_Expression: Expression12<EmptyTail>>  <_operator: Caret>  <_Expression_2: Expression11<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_bitwise_xor_expression(new_bitwise_xor_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression11<Tail>>  => <>,
+};
+Expression13<Tail>: (Expression, Tail) = {
+    <_Expression: Expression13<EmptyTail>>  <_operator: Bar>  <_Expression_2: Expression12<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_bitwise_or_expression(new_bitwise_or_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression12<Tail>>  => <>,
+};
+Expression14<Tail>: (Expression, Tail) = {
+    <_Expression: Expression14<EmptyTail>>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_inequality_expression(new_inequality_expression(e, _Expression_InequalityExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression13<Tail>>  => <>,
+};
+Expression15<Tail>: (Expression, Tail) = {
+    <_Expression: Expression15<EmptyTail>>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_equality_expression(new_equality_expression(e, _Expression_EqualityExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression14<Tail>>  => <>,
+};
+Expression16<Tail>: (Expression, Tail) = {
+    <_Expression: Expression16<EmptyTail>>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_and_expression(new_and_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression15<Tail>>  => <>,
+};
+Expression17<Tail>: (Expression, Tail) = {
+    <_Expression: Expression17<EmptyTail>>  <_operator: BarBar>  <_Expression_2: Expression16<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_or_expression(new_or_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression16<Tail>>  => <>,
+};
+Expression18<Tail>: (Expression, Tail) = {
+    <_Expression: Expression17<EmptyTail>>  <_question_mark: QuestionMark>  <_true_expression: Expression18<EmptyTail>>  <_colon: Colon>  <_false_expression: Expression18<Tail>>  => {
+        let (cond_expr, _) = _Expression;
+        let (true_expr, _) = _true_expression;
+        let (false_expr, tail) = _false_expression;
+        (new_expression_conditional_expression(new_conditional_expression(cond_expr, _question_mark, true_expr, _colon, false_expr)), tail)
+    },
+    
+    <Expression: Expression17<Tail>>  => <>,
+};
+Expression19<Tail>: (Expression, Tail) = {
+    <_Expression: Expression19<EmptyTail>>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_assignment_expression(new_assignment_expression(e, _Expression_AssignmentExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression18<Tail>>  => <>,
+};
+
+// Expression is public
+pub Expression: Expression = {
+    // By default, we expect no tail
+    <Expression: Expression19<EmptyTail>>  => Expression.0,
+};
+
+// An empty tail is the default behaviour
+EmptyTail: () = {
+    () => (),
+};
+
+// The different operators are used like choices, and wrapped accordingly
+Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator = {
+    <_operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(<>),
+    <_operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(<>),
+    <_operator: Tilde>  => new_expression_prefix_expression_operator_tilde(<>),
+    <_operator: Bang>  => new_expression_prefix_expression_operator_bang(<>),
+    <_operator: Minus>  => new_expression_prefix_expression_operator_minus(<>),
+    <_operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(<>),
+};
+Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator = {
+    <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(<>),
+    <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(<>),
+};
+Expression_ExponentiationExpression_Operator: Expression_ExponentiationExpression_Operator = {
+    <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(<>),
+};
+Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator = {
+    <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(<>),
+    <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(<>),
+    <_operator: Percent>  => new_expression_multiplicative_expression_operator_percent(<>),
+};
+Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator = {
+    <_operator: Plus>  => new_expression_additive_expression_operator_plus(<>),
+    <_operator: Minus>  => new_expression_additive_expression_operator_minus(<>),
+};
+Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator = {
+    <_operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(<>),
+    <_operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(<>),
+    <_operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(<>),
+};
+Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator = {
+    <_operator: LessThan>  => new_expression_inequality_expression_operator_less_than(<>),
+    <_operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(<>),
+    <_operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(<>),
+    <_operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(<>),
+};
+Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator = {
+    <_operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(<>),
+    <_operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(<>),
+};
+Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator = {
+    <_operator: Equal>  => new_expression_assignment_expression_operator_equal(<>),
+    <_operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(<>),
+    <_operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(<>),
+    <_operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(<>),
+    <_operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(<>),
+    <_operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(<>),
+    <_operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(<>),
+    <_operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(<>),
+    <_operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(<>),
+    <_operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(<>),
+    <_operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(<>),
+    <_operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(<>),
+};
+
+// A rule matching en empty `IdentifierPath`
+NoIdentPath: IdentifierPath = {};
+
+// An Index Access Path that is parametric over the IdentifierPath rule used for member access and index access
+IndexAccessPath<IdentPathRule>: IndexAccessPath = {
+    // As before, we usually care about trailing constructs, so the brackets serve as markers to reset the parametric rule
+    <iap: IndexAccessPath<IdentifierPath>> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(<>),
+    <IndexAccessPath1<IdentPathRule>>  => <>,
+};
+IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
+    <_Identifier: IdentPathRule> => new_index_access_path_from_identifier_path(<>),
+    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
+};
+"#
+                            )
                         ),
                         Struct(
                             name = IndexAccessEnd,
@@ -3691,7 +4322,23 @@ language_v2_macros::compile!(Language(
                             fields = (
                                 new_keyword = Required(NewKeyword),
                                 type_name = Required(TypeName)
-                            )
+                            ),
+                            parser_options = ParserOptions(
+                                inline = false,
+                                pubb = true,
+                                verbatim = r#"
+// We avoid function types entirely in new expressions, this is ok since they're not allowed
+// in Solidity, but the error will be syntactic rather than semantic, which may be confusing.
+//
+// We do this to avoid the amibiguity of `try new function () returns (uint) ...`, where the returns clause may be
+// parsed either as part of the function type or as part of a try statement.
+NewExpression: NewExpression = {
+    <_new_keyword: NewKeyword>  <_type_name: TypeName1<NoFunctionType, IndexAccessPath<IdentifierPath>>>  => new_new_expression(<>),
+    
+};
+
+NoFunctionType: FunctionType = {};
+"#)
                         ),
                         Struct(
                             name = TupleExpression,
@@ -3708,7 +4355,29 @@ language_v2_macros::compile!(Language(
                         Separated(
                             name = TupleValues,
                             reference = TupleValue,
-                            separator = Comma
+                            separator = Comma,
+                            parser_options = ParserOptions(
+                                inline = false,
+                                pubb = false,
+                                verbatim = r#"
+// See the comment around TupleDeconstructionStatement for an explanation of this rule.
+#[inline]
+TupleValues: TupleValues = {
+    <prefix: TuplePrefix> => {
+        // We need to add an extra empty element here, since the trailing comma indicates
+        // an additional empty tuple value.
+        let elements = vec![new_tuple_value(None); prefix + 1];
+        new_tuple_values(elements)
+    },
+    <prefix: TuplePrefix> <differentiator: Expression> <_TupleValue: (Comma <SepOne<Comma, <TupleValue>>>)?>  => {
+        let mut elements = vec![new_tuple_value(None); prefix];
+        elements.push(new_tuple_value(Some(differentiator)));
+        elements.extend(_TupleValue.unwrap_or(vec![]));
+        new_tuple_values(elements)
+    },
+    
+};
+"#)
                         ),
                         Struct(
                             name = TupleValue,
@@ -3742,6 +4411,16 @@ language_v2_macros::compile!(Language(
                             fields = (
                                 literal = Required(HexLiteral),
                                 unit = Optional(reference = NumberUnit, enabled = Till("0.5.0"))
+                            ),
+                            parser_options = ParserOptions(
+                                inline = false,
+                                pubb = false,
+                                verbatim = "
+// This rule shouldn't be manual, but the node constructor takes an optional argument that is not
+// enabled in 0.8.30, therefore we don't have it automatically generated
+HexNumberExpression: HexNumberExpression = {
+        <_literal: HexLiteral>  => new_hex_number_expression(<>, None),
+};"
                             )
                         ),
                         Struct(
@@ -4089,7 +4768,15 @@ language_v2_macros::compile!(Language(
                                 open_brace = Required(OpenBrace),
                                 statements = Required(YulStatements),
                                 close_brace = Required(CloseBrace)
-                            )
+                            ),
+                            // TODO(v2): Until the lexer can perform context switching, we ignore YulBlocks
+parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+YulBlock: YulBlock = {
+    <_open_brace: OpenBrace>  !  <_close_brace: CloseBrace>  => {
+        new_yul_block(_open_brace, new_yul_statements(vec![]), _close_brace)
+    }
+};
+"#)
                         ),
                         Repeated(
                             name = YulStatements,

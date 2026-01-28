@@ -1,0 +1,231 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 0..8,
+                    },
+                    name: Identifier {
+                        range: 9..17,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        range: 18..24,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        range: 25..27,
+                                    },
+                                    expression: DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                range: 28..31,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 33..34,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 35..36,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 39..47,
+                    },
+                    name: Identifier {
+                        range: 48..56,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        range: 57..63,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        range: 64..66,
+                                    },
+                                    expression: CallOptionsExpression(
+                                        CallOptionsExpressionStruct {
+                                            operand: Identifier(
+                                                Identifier {
+                                                    range: 67..70,
+                                                },
+                                            ),
+                                            open_brace: OpenBrace {
+                                                range: 70..71,
+                                            },
+                                            options: CallOptions {
+                                                elements: [
+                                                    NamedArgumentStruct {
+                                                        name: Identifier {
+                                                            range: 71..74,
+                                                        },
+                                                        colon: Colon {
+                                                            range: 74..75,
+                                                        },
+                                                        value: DecimalNumberExpression(
+                                                            DecimalNumberExpressionStruct {
+                                                                literal: DecimalLiteral {
+                                                                    range: 75..78,
+                                                                },
+                                                                unit: None,
+                                                            },
+                                                        ),
+                                                    },
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 78..79,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 81..82,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 83..84,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 87..95,
+                    },
+                    name: Identifier {
+                        range: 96..104,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        range: 105..111,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        range: 112..114,
+                                    },
+                                    expression: FunctionCallExpression(
+                                        FunctionCallExpressionStruct {
+                                            operand: Identifier(
+                                                Identifier {
+                                                    range: 115..118,
+                                                },
+                                            ),
+                                            arguments: PositionalArgumentsDeclaration(
+                                                PositionalArgumentsDeclarationStruct {
+                                                    open_paren: OpenParen {
+                                                        range: 118..119,
+                                                    },
+                                                    arguments: PositionalArguments {
+                                                        elements: [],
+                                                    },
+                                                    close_paren: CloseParen {
+                                                        range: 119..120,
+                                                    },
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 122..123,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 124..125,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 127..135,
+                    },
+                    name: Identifier {
+                        range: 136..144,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        range: 145..151,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        range: 152..154,
+                                    },
+                                    expression: AdditiveExpression(
+                                        AdditiveExpressionStruct {
+                                            left_operand: DecimalNumberExpression(
+                                                DecimalNumberExpressionStruct {
+                                                    literal: DecimalLiteral {
+                                                        range: 155..158,
+                                                    },
+                                                    unit: None,
+                                                },
+                                            ),
+                                            expression_additive_expression_operator: Plus(
+                                                Plus {
+                                                    range: 159..160,
+                                                },
+                                            ),
+                                            right_operand: Identifier(
+                                                Identifier {
+                                                    range: 161..164,
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 166..167,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 168..169,
+                    },
+                },
+            ),
+        ],
+    },
+}

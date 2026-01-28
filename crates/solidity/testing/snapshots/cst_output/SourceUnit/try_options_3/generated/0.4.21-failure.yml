@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ library SafeMath {                                                               │ 0..18
+  2  │   function tryAdd() internal pure  {                                             │ 19..55
+  3  │     try 2 ++ {                                                                   │ 56..70
+  4  │       // do something                                                            │ 71..92
+  5  │     } catch Error(string memory reason) {                                        │ 93..134
+  6  │       // catch failing revert() and require()                                    │ 135..180
+  7  │     }                                                                            │ 181..186
+  8  │   }                                                                              │ 187..190
+  9  │ }                                                                                │ 191..192
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DoKeyword or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or ReturnKeyword or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or ThrowKeyword or TrueKeyword or UfixedKeyword or UintKeyword or VarKeyword or WhileKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/try_options_3/input.sol:3:5]
+       │
+     3 │ ╭─▶     try 2 ++ {
+       ┆ ┆   
+     8 │ ├─▶   }
+       │ │         
+       │ ╰───────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (0..193)
+      - (item꞉ SourceUnitMember) ► (variant꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (0..193)
+          - (library_keyword꞉ LibraryKeyword): "library" # (0..7)
+          - (leading_trivia꞉ Whitespace): " " # (7..8)
+          - (name꞉ Identifier): "SafeMath" # (8..16)
+          - (leading_trivia꞉ Whitespace): " " # (16..17)
+          - (open_brace꞉ OpenBrace): "{" # (17..18)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (18..19)
+          - (members꞉ LibraryMembers): # "  function tryAdd() internal pure  {\n    try 2 ++ ..." (19..191)
+              - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "  function tryAdd() internal pure  {\n    try 2 ++ ..." (19..191)
+                  - (leading_trivia꞉ Whitespace): "  " # (19..21)
+                  - (function_keyword꞉ FunctionKeyword): "function" # (21..29)
+                  - (name꞉ FunctionName): # " tryAdd" (29..36)
+                      - (leading_trivia꞉ Whitespace): " " # (29..30)
+                      - (variant꞉ Identifier): "tryAdd" # (30..36)
+                  - (parameters꞉ ParametersDeclaration): # "()" (36..38)
+                      - (open_paren꞉ OpenParen): "(" # (36..37)
+                      - (parameters꞉ Parameters): [] # (37..37)
+                      - (close_paren꞉ CloseParen): ")" # (37..38)
+                  - (attributes꞉ FunctionAttributes): # " internal pure" (38..52)
+                      - (item꞉ FunctionAttribute): # " internal" (38..47)
+                          - (leading_trivia꞉ Whitespace): " " # (38..39)
+                          - (variant꞉ InternalKeyword): "internal" # (39..47)
+                      - (item꞉ FunctionAttribute): # " pure" (47..52)
+                          - (leading_trivia꞉ Whitespace): " " # (47..48)
+                          - (variant꞉ PureKeyword): "pure" # (48..52)
+                  - (body꞉ FunctionBody) ► (variant꞉ Block): # "  {\n    try 2 ++ {\n      // do something\n    } cat..." (52..191)
+                      - (leading_trivia꞉ Whitespace): "  " # (52..54)
+                      - (open_brace꞉ OpenBrace): "{" # (54..55)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (55..56)
+                      - (statements꞉ Statements): [] # (56..56)
+                      - (leading_trivia꞉ Whitespace): "    " # (56..60)
+                      - (unrecognized꞉ UNRECOGNIZED): "try 2 ++ {\n      // do something\n    } catch Error..." # (60..189)
+                      - (close_brace꞉ CloseBrace): "}" # (189..190)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (190..191)
+          - (close_brace꞉ CloseBrace): "}" # (191..192)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (192..193)

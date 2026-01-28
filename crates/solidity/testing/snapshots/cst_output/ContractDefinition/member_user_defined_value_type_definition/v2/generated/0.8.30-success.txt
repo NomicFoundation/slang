@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            UserDefinedValueTypeDefinition(
+                UserDefinedValueTypeDefinitionStruct {
+                    type_keyword: TypeKeyword {
+                        range: 20..24,
+                    },
+                    name: Identifier {
+                        range: 25..28,
+                    },
+                    is_keyword: IsKeyword {
+                        range: 29..31,
+                    },
+                    value_type: BoolKeyword(
+                        BoolKeyword {
+                            range: 32..36,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 36..37,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 38..39,
+    },
+}

@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+AndExpression(
+    AndExpressionStruct {
+        left_operand: BitwiseAndExpression(
+            BitwiseAndExpressionStruct {
+                left_operand: Identifier(
+                    Identifier {
+                        range: 0..1,
+                    },
+                ),
+                operator: Ampersand {
+                    range: 2..3,
+                },
+                right_operand: Identifier(
+                    Identifier {
+                        range: 4..5,
+                    },
+                ),
+            },
+        ),
+        operator: AmpersandAmpersand {
+            range: 6..8,
+        },
+        right_operand: Identifier(
+            Identifier {
+                range: 9..10,
+            },
+        ),
+    },
+)

@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..12,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [
+            InheritanceSpecifier(
+                InheritanceSpecifierStruct {
+                    is_keyword: IsKeyword {
+                        range: 13..15,
+                    },
+                    types: InheritanceTypes {
+                        elements: [
+                            InheritanceTypeStruct {
+                                type_name: IdentifierPathStruct {
+                                    head: Identifier {
+                                        range: 16..19,
+                                    },
+                                    tail: None,
+                                },
+                                arguments: None,
+                            },
+                        ],
+                    },
+                },
+            ),
+            StorageLayoutSpecifier(
+                StorageLayoutSpecifierStruct {
+                    layout_keyword: LayoutKeyword {
+                        range: 20..26,
+                    },
+                    at_keyword: AtKeyword {
+                        range: 27..29,
+                    },
+                    expression: DecimalNumberExpression(
+                        DecimalNumberExpressionStruct {
+                            literal: DecimalLiteral {
+                                range: 30..31,
+                            },
+                            unit: None,
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    open_brace: OpenBrace {
+        range: 32..33,
+    },
+    members: ContractMembers {
+        elements: [],
+    },
+    close_brace: CloseBrace {
+        range: 34..35,
+    },
+}

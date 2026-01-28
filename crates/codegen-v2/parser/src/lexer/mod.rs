@@ -38,6 +38,7 @@ pub enum Lexeme {
     },
     Keyword {
         kind: String,
+        identifier: String,
         regex: String,
         reserved: Option<VersionSpecifier>,
     },
