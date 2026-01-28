@@ -14,7 +14,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use crate::temp_cst_output::node_checker::{NodeChecker, NodeCheckerError};
 use crate::Parser as ParserV2;
 
-/// We use this trait only to combine Debug and NodeChecker
+/// We use this trait only to combine Debug and `NodeChecker`
 trait NodeCheckerDebug: NodeChecker + Debug {}
 
 impl<T> NodeCheckerDebug for T where T: NodeChecker + Debug {}
@@ -62,7 +62,7 @@ pub fn compare_with_v1_output(
         .join("v2/generated")
         .join(format!("0.8.30-{status}.yml"));
 
-    Ok(match v2_output {
+    match v2_output {
         Ok(parsed_checker) => {
             let mut s = String::new();
 
@@ -76,7 +76,7 @@ pub fn compare_with_v1_output(
                     parsed_checker.check_node(&Node::Nonterminal(v1_output.tree().clone()));
 
                 if !checked.is_empty() {
-                    s.push_str(&"\n----------------\n");
+                    s.push_str("\n----------------\n");
                     for err in &checked {
                         s.push_str(&format!("{}\n\n", err.err));
                     }
@@ -87,7 +87,7 @@ pub fn compare_with_v1_output(
                     "The AST is different between both parsers",
                 );
             } else {
-                s.push_str(&"\n----------------\n");
+                s.push_str("\n----------------\n");
                 s.push_str("\nV1 Parser: Invalid\n");
                 fs.write_file_raw(&snapshot_path, s)?;
                 assert!(
@@ -102,7 +102,8 @@ pub fn compare_with_v1_output(
 
             assert!(!v1_output.is_valid(), "V1 parser is valid, but V2 is not");
         }
-    })
+    };
+    Ok(())
 }
 
 pub fn compare_with_v1_cursor(source: String, root_cursor: Cursor) -> Vec<NodeCheckerError> {

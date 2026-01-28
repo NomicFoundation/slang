@@ -20,6 +20,12 @@ pub mod temp_cst_output;
 /// TODO(v2): Support multiple versions, for now only 0.8.30 is supported
 pub struct Parser;
 
+impl Default for Parser {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Parser {
     pub fn new() -> Self {
         Self

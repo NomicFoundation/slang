@@ -128,9 +128,10 @@ impl NodeChecker for PragmaDirective {
                 let child_errors = pragma_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected pragma_keyword to be present in the CST, but it was not"
-                ), node_range.clone()));
+                errors.push(NodeCheckerError::new(
+                    "Expected pragma_keyword to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
             }
         }
 
@@ -139,12 +140,13 @@ impl NodeChecker for PragmaDirective {
         {
             // Prepare edge label
 
-            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Pragma) {
+            if extract_first_with_label(&mut children, EdgeLabel::Pragma).is_some() {
                 // We don't check, since V2 can't parse these yet
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected pragma to be present in the CST, but it was not"
-                ), node_range.clone()));
+                errors.push(NodeCheckerError::new(
+                    "Expected pragma to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
             }
         }
 
@@ -159,17 +161,18 @@ impl NodeChecker for PragmaDirective {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected semicolon to be present in the CST, but it was not"
-                ), node_range.clone()));
+                errors.push(NodeCheckerError::new(
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
             }
         }
 
         if !children.is_empty() {
-            errors.push(NodeCheckerError::new(format!(
-                "Expected 0 children left, but there's some left {:#?}",
-                children
-            ), node_range));
+            errors.push(NodeCheckerError::new(
+                format!("Expected 0 children left, but there's some left {children:#?}"),
+                node_range,
+            ));
         }
 
         errors
@@ -207,9 +210,10 @@ impl NodeChecker for YulBlock {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected open_brace to be present in the CST, but it was not"
-                ), node_range.clone()));
+                errors.push(NodeCheckerError::new(
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
             }
         }
 
@@ -218,12 +222,13 @@ impl NodeChecker for YulBlock {
         {
             // Prepare edge label
 
-            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Statements) {
+            if extract_first_with_label(&mut children, EdgeLabel::Statements).is_some() {
                 // We don't check statements, since V2 can't parse them yet
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected statements to be present in the CST, but it was not"
-                ), node_range.clone()));
+                errors.push(NodeCheckerError::new(
+                    "Expected statements to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
             }
         }
 
@@ -238,17 +243,18 @@ impl NodeChecker for YulBlock {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
-                errors.push(NodeCheckerError::new(format!(
-                    "Expected close_brace to be present in the CST, but it was not"
-                ), node_range.clone()));
+                errors.push(NodeCheckerError::new(
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
             }
         }
 
         if !children.is_empty() {
-            errors.push(NodeCheckerError::new(format!(
-                "Expected 0 children left, but there's some left {:#?}",
-                children
-            ), node_range));
+            errors.push(NodeCheckerError::new(
+                format!("Expected 0 children left, but there's some left {children:#?}"),
+                node_range,
+            ));
         }
 
         errors

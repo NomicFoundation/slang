@@ -7844,7 +7844,7 @@ impl NodeChecker for PragmaDirective {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected pragma_keyword to be present in the CST, but it was not"),
+                    "Expected pragma_keyword to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7855,11 +7855,11 @@ impl NodeChecker for PragmaDirective {
         {
             // Prepare edge label
 
-            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Pragma) {
+            if extract_first_with_label(&mut children, EdgeLabel::Pragma).is_some() {
                 // We don't check, since V2 can't parse these yet
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected pragma to be present in the CST, but it was not"),
+                    "Expected pragma to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7879,7 +7879,7 @@ impl NodeChecker for PragmaDirective {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected semicolon to be present in the CST, but it was not"),
+                    "Expected semicolon to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -7887,10 +7887,7 @@ impl NodeChecker for PragmaDirective {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
@@ -11276,7 +11273,7 @@ impl NodeChecker for YulBlock {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected open_brace to be present in the CST, but it was not"),
+                    "Expected open_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11287,11 +11284,11 @@ impl NodeChecker for YulBlock {
         {
             // Prepare edge label
 
-            if let Some(_) = extract_first_with_label(&mut children, EdgeLabel::Statements) {
+            if extract_first_with_label(&mut children, EdgeLabel::Statements).is_some() {
                 // We don't check statements, since V2 can't parse them yet
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected statements to be present in the CST, but it was not"),
+                    "Expected statements to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11311,7 +11308,7 @@ impl NodeChecker for YulBlock {
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    format!("Expected close_brace to be present in the CST, but it was not"),
+                    "Expected close_brace to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -11319,10 +11316,7 @@ impl NodeChecker for YulBlock {
 
         if !children.is_empty() {
             errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected 0 children left, but there's some left {:#?}",
-                    children
-                ),
+                format!("Expected 0 children left, but there's some left {children:#?}"),
                 node_range,
             ));
         }
