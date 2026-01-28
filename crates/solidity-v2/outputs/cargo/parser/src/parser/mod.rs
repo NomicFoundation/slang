@@ -12,7 +12,7 @@ lalrpop_mod!(
     pub(crate) grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
 
 // TODO(v2): This is temporary and it's used to compare against V1
-pub mod temp_cst_output;
+pub mod temp_testing;
 
 /// A Solidity Parser
 ///
@@ -20,18 +20,8 @@ pub mod temp_cst_output;
 /// TODO(v2): Support multiple versions, for now only 0.8.30 is supported
 pub struct Parser;
 
-impl Default for Parser {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl Parser {
-    pub fn new() -> Self {
-        Self
-    }
-
-    pub fn parse(&self, input: &str, version: LanguageVersion) -> Result<SourceUnit, String> {
+    pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, String> {
         assert!(
             version == LanguageVersion::V0_8_30,
             "Only 0.8.30 is currently supported by the V2 parser"
@@ -45,11 +35,7 @@ impl Parser {
             .map_err(|e| format!("{e:?}"))
     }
 
-    pub fn parse_expression(
-        &self,
-        input: &str,
-        version: LanguageVersion,
-    ) -> Result<Expression, String> {
+    pub fn parse_expression(input: &str, version: LanguageVersion) -> Result<Expression, String> {
         assert!(
             version == LanguageVersion::V0_8_30,
             "Only 0.8.30 is currently supported by the V2 parser"
@@ -64,7 +50,6 @@ impl Parser {
     }
 
     pub fn parse_contract_definition(
-        &self,
         input: &str,
         version: LanguageVersion,
     ) -> Result<ContractDefinition, String> {
