@@ -9,6 +9,7 @@ pub(crate) mod nodes;
 
 lalrpop_mod!(
     #[allow(non_snake_case)]
+    #[allow(clippy::all)]
     pub(crate) grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
 
 // TODO(v2): This is temporary and it's used to compare against V1

@@ -3,6 +3,7 @@ pub mod node_checker;
 
 use std::fmt::{Debug, Write};
 use std::path::Path;
+use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::codegen::CodegenFileSystem;
@@ -72,7 +73,7 @@ pub fn test_v2_output(
             // We don't care about the errors for now, we just write them
             writeln!(s, "{err:#?}")?;
         }
-    };
+    }
 
     fs.write_file_raw(&snapshot_path, s)?;
 
@@ -89,10 +90,10 @@ pub fn test_v2_output(
             if v1_output.is_valid() {
                 // Check for errors
                 let checked =
-                    parsed_checker.check_node(&Node::Nonterminal(v1_output.tree().clone()));
+                    parsed_checker.check_node(&Node::Nonterminal(Rc::clone(v1_output.tree())));
 
                 if !checked.is_empty() {
-                    write_errors(&mut s, &checked, source_id, &source)?;
+                    write_errors(&mut s, &checked, source_id, source)?;
 
                     fs.write_file_raw(&diff_path, s)?;
                 }
@@ -110,7 +111,8 @@ pub fn test_v2_output(
         Err(_) => {
             // TODO(v2): Both are invalid, compare the errors
         }
-    };
+    }
+
     Ok(())
 }
 
@@ -136,8 +138,8 @@ fn write_errors(
     Ok(())
 }
 
-pub fn compare_with_v1_cursor(source: String, root_cursor: Cursor) -> Vec<NodeCheckerError> {
-    let v2_output = ParserV2::parse(&source, LanguageVersion::V0_8_30);
+pub fn compare_with_v1_cursor(source: &String, root_cursor: &Cursor) -> Vec<NodeCheckerError> {
+    let v2_output = ParserV2::parse(source, LanguageVersion::V0_8_30);
 
     match v2_output {
         Ok(v2_tree) => v2_tree.check_node(&root_cursor.node()),

@@ -4,7 +4,17 @@
 
 use std::rc::Rc;
 
-use slang_solidity_v2_cst::structured_cst::nodes::{CloseBracket, ElementaryType, Expression, FunctionType, FunctionTypeAttribute, FunctionTypeStruct, IdentifierPath, IdentifierPathStruct, IndexAccessEnd, MemberAccessIdentifier, OpenBracket, Period, StateVariableAttribute, TypeName, new_array_type_name, new_expression_elementary_type, new_expression_identifier, new_expression_index_access_expression, new_expression_member_access_expression, new_function_type, new_function_type_attributes, new_index_access_expression, new_member_access_expression, new_member_access_identifier_address_keyword, new_member_access_identifier_identifier, new_type_name_array_type_name, new_type_name_elementary_type, new_type_name_identifier_path};
+use slang_solidity_v2_cst::structured_cst::nodes::{
+    new_array_type_name, new_expression_elementary_type, new_expression_identifier,
+    new_expression_index_access_expression, new_expression_member_access_expression,
+    new_function_type, new_function_type_attributes, new_index_access_expression,
+    new_member_access_expression, new_member_access_identifier_address_keyword,
+    new_member_access_identifier_identifier, new_type_name_array_type_name,
+    new_type_name_elementary_type, new_type_name_identifier_path, CloseBracket, ElementaryType,
+    Expression, FunctionType, FunctionTypeAttribute, FunctionTypeStruct, IdentifierPath,
+    IdentifierPathStruct, IndexAccessEnd, MemberAccessIdentifier, OpenBracket, Period,
+    StateVariableAttribute, TypeName,
+};
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
 /// zero or more index accesses, e.g. foo.bar[0][1:3] or uint256[5][]
