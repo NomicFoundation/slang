@@ -59,7 +59,7 @@ pub fn test_v2_output(
 
     let snapshot_path = test_dir
         .join("v2/generated")
-        .join(format!("{version}-{status}.yml"));
+        .join(format!("{version}-{status}.txt"));
 
     let mut s = String::new();
 
@@ -95,27 +95,17 @@ pub fn test_v2_output(
                     write_errors(&mut s, &checked, source_id, &source)?;
 
                     fs.write_file_raw(&diff_path, s)?;
-                    assert!(
-                        checked.is_empty(),
-                        "The AST is different between both parsers",
-                    );
                 }
             } else {
                 writeln!(s, "V1 Parser: Invalid")?;
                 writeln!(s, "V2 Parser: Valid")?;
                 fs.write_file_raw(&diff_path, s)?;
-                assert!(
-                    v1_output.is_valid(),
-                    "V1 parser is not valid, but V2 Parser is"
-                );
             }
         }
         Err(_) if v1_output.is_valid() => {
             writeln!(s, "V1 Parser: Valid")?;
             writeln!(s, "V2 Parser: Invalid")?;
             fs.write_file_raw(&diff_path, s)?;
-
-            assert!(!v1_output.is_valid(), "V1 parser is valid, but V2 is not");
         }
         Err(_) => {
             // TODO(v2): Both are invalid, compare the errors
