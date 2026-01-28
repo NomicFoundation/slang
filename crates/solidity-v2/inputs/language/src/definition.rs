@@ -493,10 +493,13 @@ language_v2_macros::compile!(Language(
                             definitions = [KeywordDefinition(value = Atom("abstract"))]
                         ),
                         Keyword(
+                            // `address` is a reserved keyword, but it can still be used as an identifier in some contexts,
+                            // in particular as a member access (e.g., `myPayload.address`) or as an identifier
+                            // path
+                            // See `MemberAccessIdentifier` for details
                             name = AddressKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(reserved = Never, value = Atom("address"))]
+                            definitions = [KeywordDefinition(value = Atom("address"))]
                         ),
                         Keyword(
                             name = AfterKeyword,
@@ -2926,49 +2929,75 @@ language_v2_macros::compile!(Language(
                     items = [
                         Struct(
                             name = TupleDeconstructionStatement,
-                            error_recovery = FieldsErrorRecovery(
-                                terminator = semicolon,
-                                delimiters =
-                                    FieldDelimiters(open = open_paren, close = close_paren)
-                            ),
+                            error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
-                                var_keyword =
-                                    Optional(reference = VarKeyword, enabled = Till("0.5.0")),
-                                open_paren = Required(OpenParen),
-                                elements = Required(TupleDeconstructionElements),
-                                close_paren = Required(CloseParen),
+                                target = Required(TupleDeconstructionTarget),
                                 equal = Required(Equal),
                                 expression = Required(Expression),
                                 semicolon = Required(Semicolon)
                             )
                         ),
-                        Separated(
-                            name = TupleDeconstructionElements,
-                            reference = TupleDeconstructionElement,
-                            separator = Comma
-                        ),
-                        Struct(
-                            name = TupleDeconstructionElement,
-                            fields = (member = Optional(reference = TupleMember))
-                        ),
                         Enum(
-                            name = TupleMember,
+                            name = TupleDeconstructionTarget,
                             variants = [
-                                EnumVariant(reference = TypedTupleMember),
-                                EnumVariant(reference = UntypedTupleMember)
+                                EnumVariant(
+                                    reference = VarTupleDeconstructionTarget,
+                                    enabled = Till("0.5.0")
+                                ),
+                                EnumVariant(reference = TypedTupleDeconstructionTarget)
                             ]
                         ),
                         Struct(
-                            name = TypedTupleMember,
+                            name = VarTupleDeconstructionTarget,
+                            enabled = Till("0.5.0"),
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_paren, close = close_paren)
+                            ),
                             fields = (
-                                type_name = Required(TypeName),
-                                storage_location = Optional(reference = StorageLocation),
-                                name = Required(Identifier)
+                                var_keyword = Required(VarKeyword),
+                                open_paren = Required(OpenParen),
+                                elements = Required(UntypedTupleDeconstructionElements),
+                                close_paren = Required(CloseParen)
                             )
                         ),
+                        Separated(
+                            name = UntypedTupleDeconstructionElements,
+                            reference = UntypedTupleDeconstructionElement,
+                            separator = Comma,
+                            enabled = Till("0.5.0")
+                        ),
                         Struct(
-                            name = UntypedTupleMember,
+                            name = UntypedTupleDeconstructionElement,
+                            enabled = Till("0.5.0"),
+                            fields = (name = Optional(reference = Identifier))
+                        ),
+                        Struct(
+                            name = TypedTupleDeconstructionTarget,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_paren, close = close_paren)
+                            ),
                             fields = (
+                                open_paren = Required(OpenParen),
+                                elements = Required(TypedTupleDeconstructionElements),
+                                close_paren = Required(CloseParen)
+                            )
+                        ),
+                        Separated(
+                            name = TypedTupleDeconstructionElements,
+                            reference = TypedTupleDeconstructionElement,
+                            separator = Comma
+                        ),
+                        Struct(
+                            name = TypedTupleDeconstructionElement,
+                            fields =
+                                (member = Optional(reference = TypedTupleDeconstructionMember))
+                        ),
+                        Struct(
+                            name = TypedTupleDeconstructionMember,
+                            fields = (
+                                type_name = Required(TypeName),
                                 storage_location = Optional(reference = StorageLocation),
                                 name = Required(Identifier)
                             )
@@ -3499,7 +3528,7 @@ language_v2_macros::compile!(Language(
                                         model = Postfix,
                                         fields = (
                                             period = Required(Period),
-                                            member = Required(Identifier)
+                                            member = Required(MemberAccessIdentifier)
                                         )
                                     )]
                                 ),
@@ -3551,6 +3580,14 @@ language_v2_macros::compile!(Language(
                                 colon = Required(Colon),
                                 end = Optional(reference = Expression)
                             )
+                        ),
+                        Enum(
+                            // A member access can be either an identifier or the reserved `address` keyword
+                            name = MemberAccessIdentifier,
+                            variants = [
+                                EnumVariant(reference = Identifier),
+                                EnumVariant(reference = AddressKeyword, enabled = From("0.6.0"))
+                            ]
                         )
                     ]
                 ),
@@ -3591,7 +3628,7 @@ language_v2_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(OpenParen),
-                                arguments = Optional(reference = NamedArgumentGroup),
+                                arguments = Required(NamedArgumentGroup),
                                 close_paren = Required(CloseParen)
                             )
                         ),
@@ -3986,9 +4023,26 @@ language_v2_macros::compile!(Language(
                     title = "Identifiers",
                     lexical_context = Solidity,
                     items = [
-                        Separated(
+                        // Since an identifier path can include the reserved keyword `address` as parth of the path
+                        // (but not as the head), we differentiate between head (any `Identifier`)
+                        // and tail (which can use `MemberAccessIdentifier`)
+                        Struct(
                             name = IdentifierPath,
-                            reference = Identifier,
+                            fields = (
+                                head = Required(Identifier),
+                                tail = Optional(reference = IdentifierPathTail)
+                            )
+                        ),
+                        Struct(
+                            name = IdentifierPathTail,
+                            fields = (
+                                sep = Required(Period),
+                                elements = Required(IdentifierPathTailElements)
+                            )
+                        ),
+                        Separated(
+                            name = IdentifierPathTailElements,
+                            reference = MemberAccessIdentifier,
                             separator = Period
                         ),
                         Token(

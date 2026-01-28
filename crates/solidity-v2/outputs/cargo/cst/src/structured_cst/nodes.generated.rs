@@ -953,6 +953,33 @@ pub fn new_hex_number_expression(
     Rc::new(HexNumberExpressionStruct { literal, unit })
 }
 
+pub type IdentifierPath = Rc<IdentifierPathStruct>;
+
+#[derive(Clone, Debug)]
+pub struct IdentifierPathStruct {
+    pub head: Identifier,
+    pub tail: Option<IdentifierPathTail>,
+}
+
+pub fn new_identifier_path(head: Identifier, tail: Option<IdentifierPathTail>) -> IdentifierPath {
+    Rc::new(IdentifierPathStruct { head, tail })
+}
+
+pub type IdentifierPathTail = Rc<IdentifierPathTailStruct>;
+
+#[derive(Clone, Debug)]
+pub struct IdentifierPathTailStruct {
+    pub sep: Period,
+    pub elements: IdentifierPathTailElements,
+}
+
+pub fn new_identifier_path_tail(
+    sep: Period,
+    elements: IdentifierPathTailElements,
+) -> IdentifierPathTail {
+    Rc::new(IdentifierPathTailStruct { sep, elements })
+}
+
 pub type IfStatement = Rc<IfStatementStruct>;
 
 #[derive(Clone, Debug)]
@@ -1271,13 +1298,13 @@ pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 pub struct MemberAccessExpressionStruct {
     pub operand: Expression,
     pub period: Period,
-    pub member: Identifier,
+    pub member: MemberAccessIdentifier,
 }
 
 pub fn new_member_access_expression(
     operand: Expression,
     period: Period,
-    member: Identifier,
+    member: MemberAccessIdentifier,
 ) -> MemberAccessExpression {
     Rc::new(MemberAccessExpressionStruct {
         operand,
@@ -1388,13 +1415,13 @@ pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
 #[derive(Clone, Debug)]
 pub struct NamedArgumentsDeclarationStruct {
     pub open_paren: OpenParen,
-    pub arguments: Option<NamedArgumentGroup>,
+    pub arguments: NamedArgumentGroup,
     pub close_paren: CloseParen,
 }
 
 pub fn new_named_arguments_declaration(
     open_paren: OpenParen,
-    arguments: Option<NamedArgumentGroup>,
+    arguments: NamedArgumentGroup,
     close_paren: CloseParen,
 ) -> NamedArgumentsDeclaration {
     Rc::new(NamedArgumentsDeclarationStruct {
@@ -1907,44 +1934,24 @@ pub fn new_try_statement(
     })
 }
 
-pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
-
-#[derive(Clone, Debug)]
-pub struct TupleDeconstructionElementStruct {
-    pub member: Option<TupleMember>,
-}
-
-pub fn new_tuple_deconstruction_element(member: Option<TupleMember>) -> TupleDeconstructionElement {
-    Rc::new(TupleDeconstructionElementStruct { member })
-}
-
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
 #[derive(Clone, Debug)]
 pub struct TupleDeconstructionStatementStruct {
-    pub var_keyword: Option<VarKeyword>,
-    pub open_paren: OpenParen,
-    pub elements: TupleDeconstructionElements,
-    pub close_paren: CloseParen,
+    pub target: TupleDeconstructionTarget,
     pub equal: Equal,
     pub expression: Expression,
     pub semicolon: Semicolon,
 }
 
 pub fn new_tuple_deconstruction_statement(
-    var_keyword: Option<VarKeyword>,
-    open_paren: OpenParen,
-    elements: TupleDeconstructionElements,
-    close_paren: CloseParen,
+    target: TupleDeconstructionTarget,
     equal: Equal,
     expression: Expression,
     semicolon: Semicolon,
 ) -> TupleDeconstructionStatement {
     Rc::new(TupleDeconstructionStatementStruct {
-        var_keyword,
-        open_paren,
-        elements,
-        close_paren,
+        target,
         equal,
         expression,
         semicolon,
@@ -2007,24 +2014,58 @@ pub fn new_type_expression(
     })
 }
 
-pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
+pub type TypedTupleDeconstructionElement = Rc<TypedTupleDeconstructionElementStruct>;
 
 #[derive(Clone, Debug)]
-pub struct TypedTupleMemberStruct {
+pub struct TypedTupleDeconstructionElementStruct {
+    pub member: Option<TypedTupleDeconstructionMember>,
+}
+
+pub fn new_typed_tuple_deconstruction_element(
+    member: Option<TypedTupleDeconstructionMember>,
+) -> TypedTupleDeconstructionElement {
+    Rc::new(TypedTupleDeconstructionElementStruct { member })
+}
+
+pub type TypedTupleDeconstructionMember = Rc<TypedTupleDeconstructionMemberStruct>;
+
+#[derive(Clone, Debug)]
+pub struct TypedTupleDeconstructionMemberStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Identifier,
 }
 
-pub fn new_typed_tuple_member(
+pub fn new_typed_tuple_deconstruction_member(
     type_name: TypeName,
     storage_location: Option<StorageLocation>,
     name: Identifier,
-) -> TypedTupleMember {
-    Rc::new(TypedTupleMemberStruct {
+) -> TypedTupleDeconstructionMember {
+    Rc::new(TypedTupleDeconstructionMemberStruct {
         type_name,
         storage_location,
         name,
+    })
+}
+
+pub type TypedTupleDeconstructionTarget = Rc<TypedTupleDeconstructionTargetStruct>;
+
+#[derive(Clone, Debug)]
+pub struct TypedTupleDeconstructionTargetStruct {
+    pub open_paren: OpenParen,
+    pub elements: TypedTupleDeconstructionElements,
+    pub close_paren: CloseParen,
+}
+
+pub fn new_typed_tuple_deconstruction_target(
+    open_paren: OpenParen,
+    elements: TypedTupleDeconstructionElements,
+    close_paren: CloseParen,
+) -> TypedTupleDeconstructionTarget {
+    Rc::new(TypedTupleDeconstructionTargetStruct {
+        open_paren,
+        elements,
+        close_paren,
     })
 }
 
@@ -2067,22 +2108,17 @@ pub fn new_unnamed_function_definition(
     })
 }
 
-pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
+pub type UntypedTupleDeconstructionElement = Rc<UntypedTupleDeconstructionElementStruct>;
 
 #[derive(Clone, Debug)]
-pub struct UntypedTupleMemberStruct {
-    pub storage_location: Option<StorageLocation>,
-    pub name: Identifier,
+pub struct UntypedTupleDeconstructionElementStruct {
+    pub name: Option<Identifier>,
 }
 
-pub fn new_untyped_tuple_member(
-    storage_location: Option<StorageLocation>,
-    name: Identifier,
-) -> UntypedTupleMember {
-    Rc::new(UntypedTupleMemberStruct {
-        storage_location,
-        name,
-    })
+pub fn new_untyped_tuple_deconstruction_element(
+    name: Option<Identifier>,
+) -> UntypedTupleDeconstructionElement {
+    Rc::new(UntypedTupleDeconstructionElementStruct { name })
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
@@ -2190,6 +2226,30 @@ pub fn new_using_directive(
         target,
         global_keyword,
         semicolon,
+    })
+}
+
+pub type VarTupleDeconstructionTarget = Rc<VarTupleDeconstructionTargetStruct>;
+
+#[derive(Clone, Debug)]
+pub struct VarTupleDeconstructionTargetStruct {
+    pub var_keyword: VarKeyword,
+    pub open_paren: OpenParen,
+    pub elements: UntypedTupleDeconstructionElements,
+    pub close_paren: CloseParen,
+}
+
+pub fn new_var_tuple_deconstruction_target(
+    var_keyword: VarKeyword,
+    open_paren: OpenParen,
+    elements: UntypedTupleDeconstructionElements,
+    close_paren: CloseParen,
+) -> VarTupleDeconstructionTarget {
+    Rc::new(VarTupleDeconstructionTargetStruct {
+        var_keyword,
+        open_paren,
+        elements,
+        close_paren,
     })
 }
 
@@ -3674,6 +3734,22 @@ pub fn new_mapping_key_type_identifier_path(element: IdentifierPath) -> MappingK
 }
 
 #[derive(Clone, Debug)]
+pub enum MemberAccessIdentifier {
+    Identifier(Identifier),
+    AddressKeyword(AddressKeyword),
+}
+
+pub fn new_member_access_identifier_identifier(element: Identifier) -> MemberAccessIdentifier {
+    MemberAccessIdentifier::Identifier(element)
+}
+
+pub fn new_member_access_identifier_address_keyword(
+    element: AddressKeyword,
+) -> MemberAccessIdentifier {
+    MemberAccessIdentifier::AddressKeyword(element)
+}
+
+#[derive(Clone, Debug)]
 pub enum ModifierAttribute {
     OverrideSpecifier(OverrideSpecifier),
     VirtualKeyword(VirtualKeyword),
@@ -4092,17 +4168,21 @@ pub fn new_string_literal_double_quoted_string_literal(
 }
 
 #[derive(Clone, Debug)]
-pub enum TupleMember {
-    TypedTupleMember(TypedTupleMember),
-    UntypedTupleMember(UntypedTupleMember),
+pub enum TupleDeconstructionTarget {
+    VarTupleDeconstructionTarget(VarTupleDeconstructionTarget),
+    TypedTupleDeconstructionTarget(TypedTupleDeconstructionTarget),
 }
 
-pub fn new_tuple_member_typed_tuple_member(element: TypedTupleMember) -> TupleMember {
-    TupleMember::TypedTupleMember(element)
+pub fn new_tuple_deconstruction_target_var_tuple_deconstruction_target(
+    element: VarTupleDeconstructionTarget,
+) -> TupleDeconstructionTarget {
+    TupleDeconstructionTarget::VarTupleDeconstructionTarget(element)
 }
 
-pub fn new_tuple_member_untyped_tuple_member(element: UntypedTupleMember) -> TupleMember {
-    TupleMember::UntypedTupleMember(element)
+pub fn new_tuple_deconstruction_target_typed_tuple_deconstruction_target(
+    element: TypedTupleDeconstructionTarget,
+) -> TupleDeconstructionTarget {
+    TupleDeconstructionTarget::TypedTupleDeconstructionTarget(element)
 }
 
 #[derive(Clone, Debug)]
@@ -4730,12 +4810,14 @@ pub fn new_hex_string_literals(elements: Vec<HexStringLiteral>) -> HexStringLite
 }
 
 #[derive(Clone, Debug)]
-pub struct IdentifierPath {
-    pub elements: Vec<Identifier>,
+pub struct IdentifierPathTailElements {
+    pub elements: Vec<MemberAccessIdentifier>,
 }
 
-pub fn new_identifier_path(elements: Vec<Identifier>) -> IdentifierPath {
-    IdentifierPath { elements }
+pub fn new_identifier_path_tail_elements(
+    elements: Vec<MemberAccessIdentifier>,
+) -> IdentifierPathTailElements {
+    IdentifierPathTailElements { elements }
 }
 
 #[derive(Clone, Debug)]
@@ -4889,23 +4971,23 @@ pub fn new_struct_members(elements: Vec<StructMember>) -> StructMembers {
 }
 
 #[derive(Clone, Debug)]
-pub struct TupleDeconstructionElements {
-    pub elements: Vec<TupleDeconstructionElement>,
-}
-
-pub fn new_tuple_deconstruction_elements(
-    elements: Vec<TupleDeconstructionElement>,
-) -> TupleDeconstructionElements {
-    TupleDeconstructionElements { elements }
-}
-
-#[derive(Clone, Debug)]
 pub struct TupleValues {
     pub elements: Vec<TupleValue>,
 }
 
 pub fn new_tuple_values(elements: Vec<TupleValue>) -> TupleValues {
     TupleValues { elements }
+}
+
+#[derive(Clone, Debug)]
+pub struct TypedTupleDeconstructionElements {
+    pub elements: Vec<TypedTupleDeconstructionElement>,
+}
+
+pub fn new_typed_tuple_deconstruction_elements(
+    elements: Vec<TypedTupleDeconstructionElement>,
+) -> TypedTupleDeconstructionElements {
+    TypedTupleDeconstructionElements { elements }
 }
 
 #[derive(Clone, Debug)]
@@ -4926,6 +5008,17 @@ pub fn new_unnamed_function_attributes(
     elements: Vec<UnnamedFunctionAttribute>,
 ) -> UnnamedFunctionAttributes {
     UnnamedFunctionAttributes { elements }
+}
+
+#[derive(Clone, Debug)]
+pub struct UntypedTupleDeconstructionElements {
+    pub elements: Vec<UntypedTupleDeconstructionElement>,
+}
+
+pub fn new_untyped_tuple_deconstruction_elements(
+    elements: Vec<UntypedTupleDeconstructionElement>,
+) -> UntypedTupleDeconstructionElements {
+    UntypedTupleDeconstructionElements { elements }
 }
 
 #[derive(Clone, Debug)]
