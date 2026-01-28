@@ -27,3 +27,52 @@ We should consider adding validation for these at a later stage if needed:
     - They were only enabled after `0.7.0`.
 - `HexLiteral` and `YulHexLiteral` and `DecimalLiteral` and `YulDecimalLiteral`:
     - It was illegal for them to be followed by `IdentifierStart`. Now we will produce two separate tokens rather than rejecting it.
+
+## Language Definition Changes
+
+The following changes modify the language definition to support the new parser and resolve grammar ambiguities.
+In some cases we also try to simplify the model.
+
+### AddressKeyword
+
+- Made the `address` keyword reserved in all versions, handling the few cases where it can be used as an identifier separately.
+- `MemberAccessIdentifier` handles the cases where `address` can be used as an `Identifier`, either in an `IdentifierPath` or a `MemberAccessExpression`.
+
+### MemberAccessIdentifier
+
+New enum added to allow the reserved `address` keyword in member access expressions (from Solidity 0.6.0):
+
+- Variants: `Identifier` | `AddressKeyword` (enabled from 0.6.0)
+- Used in `MemberAccessExpression` (previously just `Identifier`) and in `IdentifierPathTailElements` (for identifier path tails)
+
+### IdentifierPath
+
+Changed from a simple `Separated` list to a structured format to allow the reserved `address` keyword to appear in identifier paths (but not as the head):
+
+- **Before**: `Separated(name = IdentifierPath, reference = Identifier, separator = Period)`
+- **After**: `Struct` with `head: Identifier` and `tail: Optional<IdentifierPathTail>`, where `IdentifierPathTail` contains a `Period` separator followed by `IdentifierPathTailElements` (a `Separated` list of `MemberAccessIdentifier`).
+
+### TupleDeconstructionStatement
+
+Major restructuring to resolve ambiguities with tuple expressions and assignment expressions:
+
+- **Before**: Single struct with optional `var_keyword`, `open_paren`, `elements: TupleDeconstructionElements`, `close_paren`, `equal`, `expression`, `semicolon`.
+- **After**: Split into typed and untyped (var) variants:
+  - `TupleDeconstructionStatement`: Contains `target: TupleDeconstructionTarget`, `equal`, `expression`, `semicolon`
+  - `TupleDeconstructionTarget`: Enum with `VarTupleDeconstructionTarget` (till 0.5.0) | `TypedTupleDeconstructionTarget`
+  - `VarTupleDeconstructionTarget`: For `var (a, b) = ...` syntax (till 0.5.0)
+  - `TypedTupleDeconstructionTarget`: For `(uint a, uint b) = ...` syntax
+
+This makes certain cases that were allowed before disallowed in V2, in particular having untyped declarations (like `(a, bool b) = ...`)
+or having typed together with `var` (like `var (a, bool b) = ... `).
+The cases where using empty tuples are still ambiguous, `(,,,) = ...` can still be a `TupleDeconstructionStatement` or a
+an `AssignmentExpression` with a `TupleExpression` on the lhs.
+
+Removed types: `TupleDeconstructionElements`, `TupleDeconstructionElement`, `TupleMember`, `TypedTupleMember`, `UntypedTupleMember`
+
+Added types: `TupleDeconstructionTarget`, `VarTupleDeconstructionTarget`, `UntypedTupleDeconstructionElements`, `UntypedTupleDeconstructionElement`, `TypedTupleDeconstructionTarget`, `TypedTupleDeconstructionElements`, `TypedTupleDeconstructionElement`, `TypedTupleDeconstructionMember`
+
+### NamedArgumentsDeclaration
+
+- Changed `arguments` field from `Optional(NamedArgumentGroup)` to `Required(NamedArgumentGroup)`.
+- This avoids ambiguity with empty argument lists `()` which could be either positional or named.
