@@ -17,7 +17,7 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
 };
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
-/// zero or more index accesses, e.g. foo.bar[0][1:3] or uint256[5][]
+/// zero or more index accesses, e.g. `foo.bar[0][1:3]` or `uint256[5][]`
 ///
 /// It's heavily inspired by solc
 /// <https://github.com/argotorg/solidity/blob/194b114664c7daebc2ff68af3c573272f5d28913/libsolidity/parsing/Parser.h#L198-L209>
@@ -167,32 +167,6 @@ pub(crate) fn extract_extra_attributes(
     let mut seen_public = false;
     let mut duplicate_found = false;
 
-    let mut extra_attributes: Vec<StateVariableAttribute> = vec![];
-    fn add_to_extra(
-        attr: FunctionTypeAttribute,
-        extra_attributes: &mut Vec<StateVariableAttribute>,
-    ) {
-        match attr {
-      FunctionTypeAttribute::ConstantKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::ConstantKeyword(terminal));
-      }
-      FunctionTypeAttribute::InternalKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::InternalKeyword(terminal));
-      }
-      FunctionTypeAttribute::PrivateKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::PrivateKeyword(terminal));
-      }
-      FunctionTypeAttribute::PublicKeyword(terminal) => {
-        extra_attributes.push(StateVariableAttribute::PublicKeyword(terminal));
-      }
-      _ => panic!("This is wrong, I don't really know what to do for now, but it should fail gracefully (like a parser error)")
-    }
-    }
-
-    // This works like extract_if, but we don't have that in this vector
-    // TODO(v2): use extract_if
-    let mut i = 0;
-
     let FunctionTypeStruct {
         function_keyword,
         parameters,
@@ -201,32 +175,50 @@ pub(crate) fn extract_extra_attributes(
     } = Rc::unwrap_or_clone(fun_type);
     let mut vec = attributes.elements;
 
-    while i < vec.len() {
+    let extracted = vec.extract_if(.., |attr| {
         if duplicate_found {
-            let val = vec.remove(i);
-            add_to_extra(val, &mut extra_attributes);
+            // After the first duplicate is found, all matching attributes are extracted
+            true
         } else {
-            let seen = match vec[i] {
+            let seen = match attr {
                 FunctionTypeAttribute::ConstantKeyword(_) => &mut seen_constant,
                 FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
                 FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
                 FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
-                _ => {
-                    i += 1;
-                    continue;
-                }
+                _ => return false,
             };
 
             if *seen {
+                // If a given attribute has already been seen, mark duplicate_found and extract it
                 duplicate_found = true;
-                let val = vec.remove(i);
-                add_to_extra(val, &mut extra_attributes);
+                true
             } else {
+                // If it's the first time we see this attribute, mark it as seen and don't extract it
                 *seen = true;
-                i += 1;
+                false
             }
         }
-    }
+    });
+
+    let extra_attributes: Vec<StateVariableAttribute> = extracted
+        .map(|attr| {
+        match attr {
+        FunctionTypeAttribute::ConstantKeyword(terminal) => {
+            StateVariableAttribute::ConstantKeyword(terminal)
+        }
+        FunctionTypeAttribute::InternalKeyword(terminal) => {
+            StateVariableAttribute::InternalKeyword(terminal)
+        }
+        FunctionTypeAttribute::PrivateKeyword(terminal) => {
+            StateVariableAttribute::PrivateKeyword(terminal)
+        }
+        FunctionTypeAttribute::PublicKeyword(terminal) => {
+            StateVariableAttribute::PublicKeyword(terminal)
+        }
+        _ => panic!("This is wrong, I don't really know what to do for now, but it should fail gracefully (like a parser error)")
+        }
+        })
+        .collect();
 
     let new_fun_type = new_function_type(
         function_keyword,

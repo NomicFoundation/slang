@@ -26,7 +26,7 @@ pub fn test_v2_output(
     test_dir: &Path,
     fs: &mut CodegenFileSystem,
     source_id: &str,
-    source: &String,
+    source: &str,
     version: &Version,
     v1_output: &ParseOutput,
 ) -> Result<(), anyhow::Error> {
@@ -38,12 +38,12 @@ pub fn test_v2_output(
     // Get the output for v2
     let v2_output: Result<Box<dyn NodeCheckerDebug>, _> = match parser_name {
         // For now we only have a few parsers, having all parsers with LALRPOP is expensive
-        "SourceUnit" => ParserV2::parse(&source, LanguageVersion::V0_8_30)
+        "SourceUnit" => ParserV2::parse(source, LanguageVersion::V0_8_30)
             .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
-        "Expression" => ParserV2::parse_expression(&source, LanguageVersion::V0_8_30)
+        "Expression" => ParserV2::parse_expression(source, LanguageVersion::V0_8_30)
             .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
         "ContractDefinition" => {
-            ParserV2::parse_contract_definition(&source, LanguageVersion::V0_8_30)
+            ParserV2::parse_contract_definition(source, LanguageVersion::V0_8_30)
                 .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>)
         }
         _ => {
@@ -138,7 +138,7 @@ fn write_errors(
     Ok(())
 }
 
-pub fn compare_with_v1_cursor(source: &String, root_cursor: &Cursor) -> Vec<NodeCheckerError> {
+pub fn compare_with_v1_cursor(source: &str, root_cursor: &Cursor) -> Vec<NodeCheckerError> {
     let v2_output = ParserV2::parse(source, LanguageVersion::V0_8_30);
 
     match v2_output {

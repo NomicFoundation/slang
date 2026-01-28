@@ -21,26 +21,21 @@ impl<'a> ParserBuilder<'a> {
     }
 
     pub(crate) fn build(self) -> Vec<ParserSection> {
-        let this = &self;
-        this.language
+        self.language
             .sections
             .iter()
-            .map(|section| this.collect_section(section))
+            .map(Self::collect_section)
             .collect()
     }
 
-    fn collect_section(&self, section: &Section) -> ParserSection {
+    fn collect_section(section: &Section) -> ParserSection {
         ParserSection {
             title: section.title.clone(),
-            topics: section
-                .topics
-                .iter()
-                .map(|topic| self.collect_topic(topic))
-                .collect(),
+            topics: section.topics.iter().map(Self::collect_topic).collect(),
         }
     }
 
-    fn collect_topic(&self, topic: &Topic) -> ParserTopic {
+    fn collect_topic(topic: &Topic) -> ParserTopic {
         ParserTopic {
             title: topic.title.clone(),
             items: topic

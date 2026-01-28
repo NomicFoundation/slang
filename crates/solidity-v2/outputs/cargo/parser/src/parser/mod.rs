@@ -8,8 +8,10 @@ use crate::lexer::definition::Lexer;
 pub(crate) mod nodes;
 
 lalrpop_mod!(
-    #[allow(non_snake_case)]
     #[allow(clippy::all)]
+    #[allow(clippy::trivially_copy_pass_by_ref)]
+    #[allow(warnings)]
+    #[rustfmt::skip]
     pub(crate) grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
 
 // TODO(v2): This is temporary and it's used to compare against V1
