@@ -535,11 +535,12 @@ language_v2_macros::compile!(Language(
                                     definitions = [KeywordDefinition(value = Atom("abstract"))]
                                 ),
                                 Keyword(
+                                    // `address` is a reserved keyword, but it can still be used as an identifier in some contexts,
+                                    // in particular as a member access (e.g., `myPayload.address`) or as an identifier
+                                    // path
+                                    // See `IdentifierPathElement` for details
                                     name = AddressKeyword,
-                                    definitions = [KeywordDefinition(
-                                        reserved = Never,
-                                        value = Atom("address")
-                                    )]
+                                    definitions = [KeywordDefinition(value = Atom("address"))]
                                 ),
                                 Keyword(
                                     name = AfterKeyword,
@@ -2851,7 +2852,6 @@ language_v2_macros::compile!(Language(
                                             reference = UncheckedBlock,
                                             enabled = From("0.8.0")
                                         ),
-                                        EnumVariant(reference = TupleDeconstructionStatement),
                                         EnumVariant(reference = VariableDeclarationStatement),
                                         EnumVariant(reference = ExpressionStatement)
                                     ]
@@ -2909,52 +2909,9 @@ language_v2_macros::compile!(Language(
                             title = "Declaration Statements",
                             items = [
                                 Struct(
-                                    name = TupleDeconstructionStatement,
-                                    error_recovery = FieldsErrorRecovery(
-                                        terminator = semicolon,
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
-                                    fields = (
-                                        var_keyword = Optional(
-                                            reference = VarKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        open_paren = Required(OpenParen),
-                                        elements = Required(TupleDeconstructionElements),
-                                        close_paren = Required(CloseParen),
-                                        equal = Required(Equal),
-                                        expression = Required(Expression),
-                                        semicolon = Required(Semicolon)
-                                    )
-                                ),
-                                Separated(
-                                    name = TupleDeconstructionElements,
-                                    reference = TupleDeconstructionElement,
-                                    separator = Comma
-                                ),
-                                Struct(
-                                    name = TupleDeconstructionElement,
-                                    fields = (member = Optional(reference = TupleMember))
-                                ),
-                                Enum(
-                                    name = TupleMember,
-                                    variants = [
-                                        EnumVariant(reference = TypedTupleMember),
-                                        EnumVariant(reference = UntypedTupleMember)
-                                    ]
-                                ),
-                                Struct(
-                                    name = TypedTupleMember,
+                                    name = VariableDeclaration,
                                     fields = (
                                         type_name = Required(TypeName),
-                                        storage_location = Optional(reference = StorageLocation),
-                                        name = Required(Identifier)
-                                    )
-                                ),
-                                Struct(
-                                    name = UntypedTupleMember,
-                                    fields = (
                                         storage_location = Optional(reference = StorageLocation),
                                         name = Required(Identifier)
                                     )
@@ -2963,22 +2920,90 @@ language_v2_macros::compile!(Language(
                                     name = VariableDeclarationStatement,
                                     error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
-                                        variable_type = Required(VariableDeclarationType),
-                                        storage_location = Optional(reference = StorageLocation),
-                                        name = Required(Identifier),
-                                        value = Optional(reference = VariableDeclarationValue),
+                                        target = Required(VariableDeclarationOption),
                                         semicolon = Required(Semicolon)
                                     )
                                 ),
                                 Enum(
-                                    name = VariableDeclarationType,
+                                    name = VariableDeclarationOption,
                                     variants = [
-                                        EnumVariant(reference = TypeName),
+                                        EnumVariant(reference = SingleTypedDeclaration),
+                                        EnumVariant(reference = MultiTypedDeclaration),
                                         EnumVariant(
-                                            reference = VarKeyword,
+                                            reference = UntypedDeclaration,
                                             enabled = Till("0.5.0")
                                         )
                                     ]
+                                ),
+                                Struct(
+                                    name = SingleTypedDeclaration,
+                                    fields = (
+                                        declaration = Required(VariableDeclaration),
+                                        value = Optional(reference = VariableDeclarationValue)
+                                    )
+                                ),
+                                Struct(
+                                    name = MultiTypedDeclaration,
+                                    error_recovery = FieldsErrorRecovery(
+                                        delimiters =
+                                            FieldDelimiters(open = open_paren, close = close_paren)
+                                    ),
+                                    fields = (
+                                        open_paren = Required(OpenParen),
+                                        elements = Required(MultiTypedDeclarationElements),
+                                        close_paren = Required(CloseParen),
+                                        value = Required(VariableDeclarationValue)
+                                    )
+                                ),
+                                Separated(
+                                    name = MultiTypedDeclarationElements,
+                                    reference = MultiTypedDeclarationElement,
+                                    separator = Comma
+                                ),
+                                Struct(
+                                    name = MultiTypedDeclarationElement,
+                                    fields = (member = Optional(reference = VariableDeclaration))
+                                ),
+                                Struct(
+                                    name = UntypedDeclaration,
+                                    enabled = Till("0.5.0"),
+                                    fields = (
+                                        var_keyword = Required(VarKeyword),
+                                        names = Required(UntypedDeclarationNames),
+                                        value = Required(VariableDeclarationValue)
+                                    )
+                                ),
+                                Enum(
+                                    name = UntypedDeclarationNames,
+                                    enabled = Till("0.5.0"),
+                                    variants = [
+                                        EnumVariant(reference = Identifier),
+                                        EnumVariant(reference = UntypedTupleDeclaration)
+                                    ]
+                                ),
+                                Struct(
+                                    name = UntypedTupleDeclaration,
+                                    enabled = Till("0.5.0"),
+                                    error_recovery = FieldsErrorRecovery(
+                                        delimiters =
+                                            FieldDelimiters(open = open_paren, close = close_paren)
+                                    ),
+                                    fields = (
+                                        open_paren = Required(OpenParen),
+                                        elements = Required(UntypedTupleDeclarationElements),
+                                        close_paren = Required(CloseParen)
+                                    )
+                                ),
+                                Separated(
+                                    name = UntypedTupleDeclarationElements,
+                                    reference = UntypedTupleDeclarationElement,
+                                    separator = Comma,
+                                    enabled = Till("0.5.0")
+                                ),
+                                Struct(
+                                    name = UntypedTupleDeclarationElement,
+                                    enabled = Till("0.5.0"),
+                                    fields = (name = Optional(reference = Identifier))
                                 ),
                                 Struct(
                                     name = VariableDeclarationValue,
@@ -3044,7 +3069,6 @@ language_v2_macros::compile!(Language(
                                 Enum(
                                     name = ForStatementInitialization,
                                     variants = [
-                                        EnumVariant(reference = TupleDeconstructionStatement),
                                         EnumVariant(reference = VariableDeclarationStatement),
                                         EnumVariant(reference = ExpressionStatement),
                                         EnumVariant(reference = Semicolon)
@@ -3500,7 +3524,7 @@ language_v2_macros::compile!(Language(
                                                 model = Postfix,
                                                 fields = (
                                                     period = Required(Period),
-                                                    member = Required(Identifier)
+                                                    member = Required(IdentifierPathElement)
                                                 )
                                             )]
                                         ),
@@ -3591,7 +3615,7 @@ language_v2_macros::compile!(Language(
                                     ),
                                     fields = (
                                         open_paren = Required(OpenParen),
-                                        arguments = Optional(reference = NamedArgumentGroup),
+                                        arguments = Required(NamedArgumentGroup),
                                         close_paren = Required(CloseParen)
                                     )
                                 ),
@@ -4014,10 +4038,24 @@ language_v2_macros::compile!(Language(
                         Topic(
                             title = "Identifiers",
                             items = [
+                                // Since an identifier path can include the reserved keyword `address` as parth of the path
+                                // we use `IdentifierPathElement` to represent each element, instead of `Identifier`.
                                 Separated(
                                     name = IdentifierPath,
-                                    reference = Identifier,
+                                    reference = IdentifierPathElement,
                                     separator = Period
+                                ),
+                                Enum(
+                                    // An element of an identifier path can be either an identifier or the reserved `address` keyword
+                                    // Note: This is also used on `MemberAccessExpression`
+                                    name = IdentifierPathElement,
+                                    variants = [
+                                        EnumVariant(reference = Identifier),
+                                        EnumVariant(
+                                            reference = AddressKeyword,
+                                            enabled = From("0.6.0")
+                                        )
+                                    ]
                                 ),
                                 Token(
                                     name = Identifier,
