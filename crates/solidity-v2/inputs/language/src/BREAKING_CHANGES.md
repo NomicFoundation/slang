@@ -58,13 +58,13 @@ Major restructuring to resolve ambiguities with tuple expressions and assignment
 
 - **Before**: Single struct with optional `var_keyword`, `open_paren`, `elements: TupleDeconstructionElements`, `close_paren`, `equal`, `expression`, `semicolon`.
 - **After**: Split into typed and untyped (var) variants:
-  - `TupleDeconstructionStatement`: Contains `target: TupleDeconstructionTarget`, `equal`, `expression`, `semicolon`
-  - `TupleDeconstructionTarget`: Enum with `VarTupleDeconstructionTarget` (till 0.5.0) | `TypedTupleDeconstructionTarget`
-  - `VarTupleDeconstructionTarget`: For `var (a, b) = ...` syntax (till 0.5.0)
-  - `TypedTupleDeconstructionTarget`: For `(uint a, uint b) = ...` syntax
+    - `TupleDeconstructionStatement`: Contains `target: TupleDeconstructionTarget`, `equal`, `expression`, `semicolon`
+    - `TupleDeconstructionTarget`: Enum with `VarTupleDeconstructionTarget` (till 0.5.0) | `TypedTupleDeconstructionTarget`
+    - `VarTupleDeconstructionTarget`: For `var (a, b) = ...` syntax (till 0.5.0)
+    - `TypedTupleDeconstructionTarget`: For `(uint a, uint b) = ...` syntax
 
 This makes certain cases that were allowed before disallowed in V2, in particular having untyped declarations (like `(a, bool b) = ...`)
-or having typed together with `var` (like `var (a, bool b) = ... `).
+or having typed together with `var` (like `var (a, bool b) = ...`).
 The cases where using empty tuples are still ambiguous, `(,,,) = ...` can still be a `TupleDeconstructionStatement` or a
 an `AssignmentExpression` with a `TupleExpression` on the lhs.
 

@@ -4595,7 +4595,7 @@ impl NodeChecker for HexNumberExpression {
     }
 }
 
-/// NodeChecker for IdentifierPath is done by hand, since the V2 representation is a bit different
+/// `NodeChecker` for `IdentifierPath` is done by hand, since the V2 representation is a bit different
 impl NodeChecker for IdentifierPath {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -9243,7 +9243,7 @@ impl NodeChecker for TryStatement {
     }
 }
 
-/// NodeChecker for TupleDeconstructionStatement - v2 has `target` field that wraps v1's direct fields
+/// `NodeChecker` for `TupleDeconstructionStatement` - v2 has `target` field that wraps v1's direct fields
 impl NodeChecker for TupleDeconstructionStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -9583,7 +9583,7 @@ impl NodeChecker for TypeExpression {
     }
 }
 
-/// NodeChecker for TypedTupleDeconstructionElement maps to v1's TupleDeconstructionElement
+/// `NodeChecker` for `TypedTupleDeconstructionElement` maps to v1's `TupleDeconstructionElement`
 impl NodeChecker for TypedTupleDeconstructionElement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -9633,7 +9633,7 @@ impl NodeChecker for TypedTupleDeconstructionElement {
     }
 }
 
-/// NodeChecker for TypedTupleDeconstructionMember maps to v1's TypedTupleMember
+/// `NodeChecker` for `TypedTupleDeconstructionMember` maps to v1's `TypedTupleMember`
 impl NodeChecker for TypedTupleDeconstructionMember {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -9720,7 +9720,7 @@ impl NodeChecker for TypedTupleDeconstructionMember {
     }
 }
 
-/// NodeChecker for TypedTupleDeconstructionTarget - no direct v1 equivalent, check children directly
+/// `NodeChecker` for `TypedTupleDeconstructionTarget` - no direct v1 equivalent, check children directly
 impl NodeChecker for TypedTupleDeconstructionTarget {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -9976,7 +9976,7 @@ impl NodeChecker for UnnamedFunctionDefinition {
     }
 }
 
-/// NodeChecker for UntypedTupleDeconstructionElement maps to v1's TupleDeconstructionElement
+/// `NodeChecker` for `UntypedTupleDeconstructionElement` maps to v1's `TupleDeconstructionElement`
 impl NodeChecker for UntypedTupleDeconstructionElement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -10570,7 +10570,7 @@ impl NodeChecker for UsingDirective {
     }
 }
 
-/// NodeChecker for VarTupleDeconstructionTarget - no direct v1 equivalent, check children directly
+/// `NodeChecker` for `VarTupleDeconstructionTarget` - no direct v1 equivalent, check children directly
 impl NodeChecker for VarTupleDeconstructionTarget {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -14443,7 +14443,7 @@ impl NodeChecker for MappingKeyType {
     }
 }
 
-/// `NodeChecker` for MemberAccessIdentifier is done by hand since it's not present in V1
+/// `NodeChecker` for `MemberAccessIdentifier` is done by hand since it's not present in V1
 impl NodeChecker for MemberAccessIdentifier {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
@@ -15230,7 +15230,7 @@ impl NodeChecker for StringLiteral {
     }
 }
 
-/// `NodeChecker` for TupleDeconstructionTarget - no direct v1 equivalent, delegate to variants
+/// `NodeChecker` for `TupleDeconstructionTarget` - no direct v1 equivalent, delegate to variants
 impl NodeChecker for TupleDeconstructionTarget {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         // TupleDeconstructionTarget doesn't exist in v1, so we skip the kind check
@@ -17600,7 +17600,7 @@ impl NodeChecker for TupleValues {
     }
 }
 
-/// NodeChecker for TypedTupleDeconstructionElements maps to v1's TupleDeconstructionElements
+/// `NodeChecker` for `TypedTupleDeconstructionElements` maps to v1's `TupleDeconstructionElements`
 impl NodeChecker for TypedTupleDeconstructionElements {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -17718,7 +17718,7 @@ impl NodeChecker for UnnamedFunctionAttributes {
     }
 }
 
-/// NodeChecker for UntypedTupleDeconstructionElements maps to v1's TupleDeconstructionElements
+/// `NodeChecker` for `UntypedTupleDeconstructionElements` maps to v1's `TupleDeconstructionElements`
 impl NodeChecker for UntypedTupleDeconstructionElements {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
