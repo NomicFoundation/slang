@@ -51,3 +51,9 @@ impl From<&StateVariableVisibility> for binder::StateVariableVisibility {
         }
     }
 }
+
+impl PartialEq for FunctionKind {
+    fn eq(&self, other: &Self) -> bool {
+        core::mem::discriminant(self) == core::mem::discriminant(other)
+    }
+}

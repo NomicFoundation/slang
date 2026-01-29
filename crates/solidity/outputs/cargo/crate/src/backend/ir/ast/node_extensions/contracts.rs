@@ -127,6 +127,7 @@ impl ContractDefinitionStruct {
                         .any(|linearised_function| linearised_function.overrides(function));
                     !existing
                 })
+                // collect to avoid holding the read-borrow on `functions`
                 .collect::<Vec<_>>();
 
             functions.extend(contract_functions);
@@ -171,8 +172,13 @@ impl ContractMembersStruct {
 
 impl FunctionDefinitionStruct {
     pub(crate) fn overrides(&self, other: &FunctionDefinition) -> bool {
-        let name_matches = match (self.name(), other.name()) {
-            (None, None) => true,
+        let name_matches = match (&self.ir_node.name, &other.ir_node.name) {
+            (None, None) => {
+                // for unnamed functions, we check the kind because `receive`
+                // and `fallback` may have the same parameters but they are
+                // different functions
+                self.ir_node.kind == other.ir_node.kind
+            }
             (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
             _ => false,
         };

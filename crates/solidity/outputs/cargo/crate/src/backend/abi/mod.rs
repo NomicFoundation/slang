@@ -48,7 +48,7 @@ impl ContractDefinitionStruct {
     // be able to obtain it here, but for that we need bi-directional tree
     // navigation
     pub fn compute_abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
-        let name = self.name().unparse();
+        let name = self.ir_node.name.unparse();
         let functions = self.compute_abi_functions()?;
         let storage_layout = self.compute_storage_layout()?;
         Some(ContractAbi {
@@ -66,12 +66,12 @@ impl ContractDefinitionStruct {
             functions.push(constructor.compute_abi()?);
         }
         for function in &self.linearised_functions() {
-            if function.is_public() {
+            if function.is_externally_visible() {
                 functions.push(function.compute_abi()?);
             }
         }
         for state_variable in &self.linearised_state_variables() {
-            if state_variable.is_public() {
+            if state_variable.is_externally_visible() {
                 functions.push(state_variable.compute_abi()?);
             }
         }
@@ -106,7 +106,7 @@ impl ContractDefinitionStruct {
                 ptr += remaining_bytes;
             }
 
-            let label = state_variable.name().unparse();
+            let label = state_variable.ir_node.name.unparse();
             let slot = ptr.div(SemanticAnalysis::SLOT_SIZE);
             let offset = ptr % SemanticAnalysis::SLOT_SIZE;
             let r#type = self.semantic.type_canonical_name(variable_type_id);
@@ -126,7 +126,7 @@ impl ContractDefinitionStruct {
 }
 
 impl FunctionDefinitionStruct {
-    pub fn is_public(&self) -> bool {
+    pub fn is_externally_visible(&self) -> bool {
         matches!(
             self.visibility(),
             FunctionVisibility::Public | FunctionVisibility::External
@@ -134,7 +134,7 @@ impl FunctionDefinitionStruct {
     }
 
     pub fn compute_abi(&self) -> Option<FunctionAbi> {
-        if !self.is_public() {
+        if !self.is_externally_visible() {
             return None;
         }
         let inputs = self.parameters().compute_abi()?;
@@ -146,7 +146,7 @@ impl FunctionDefinitionStruct {
 
         Some(FunctionAbi {
             node_id: self.ir_node.node_id,
-            name: self.name().as_ref().map(|name| name.unparse()),
+            name: self.ir_node.name.as_ref().map(|name| name.unparse()),
             kind: self.kind(),
             inputs,
             outputs,
@@ -155,13 +155,12 @@ impl FunctionDefinitionStruct {
     }
 
     pub fn compute_selector(&self) -> Option<u32> {
-        if !self.is_public() {
+        if !self.is_externally_visible() {
             return None;
         }
-        let name = self.name()?;
+        let name = self.ir_node.name.as_ref()?.unparse();
         let signature = format!(
             "{name}({parameters})",
-            name = name.unparse(),
             parameters = self.parameters().compute_canonical_signature()?,
         );
 
@@ -200,28 +199,33 @@ impl ParametersStruct {
 }
 
 impl StateVariableDefinitionStruct {
-    pub fn is_public(&self) -> bool {
+    pub fn is_externally_visible(&self) -> bool {
         matches!(self.visibility(), StateVariableVisibility::Public)
     }
 
-    pub fn compute_abi(&self) -> Option<FunctionAbi> {
-        if !self.is_public() {
-            return None;
-        }
-        let Some(Definition::StateVariable(definition)) = self
+    fn extract_getter_type_parameters_abi(
+        &self,
+    ) -> Option<(Vec<FunctionParameter>, Vec<FunctionParameter>)> {
+        let Definition::StateVariable(definition) = self
             .semantic
             .binder
-            .find_definition_by_id(self.ir_node.node_id)
+            .find_definition_by_id(self.ir_node.node_id)?
         else {
-            return None;
+            unreachable!("definition is not a state variable");
         };
-        let (inputs, outputs) = self
-            .semantic
-            .extract_function_type_parameters_abi(definition.getter_type_id?)?;
+        self.semantic
+            .extract_function_type_parameters_abi(definition.getter_type_id?)
+    }
+
+    pub fn compute_abi(&self) -> Option<FunctionAbi> {
+        if !self.is_externally_visible() {
+            return None;
+        }
+        let (inputs, outputs) = self.extract_getter_type_parameters_abi()?;
 
         Some(FunctionAbi {
             node_id: self.ir_node.node_id,
-            name: Some(self.name().unparse()),
+            name: Some(self.ir_node.name.unparse()),
             kind: FunctionKind::Regular,
             inputs,
             outputs,
@@ -230,23 +234,14 @@ impl StateVariableDefinitionStruct {
     }
 
     pub fn compute_selector(&self) -> Option<u32> {
-        if !self.is_public() {
+        if !self.is_externally_visible() {
             return None;
         }
-        let Some(Definition::StateVariable(definition)) = self
-            .semantic
-            .binder
-            .find_definition_by_id(self.ir_node.node_id)
-        else {
-            return None;
-        };
-        let (inputs, _) = self
-            .semantic
-            .extract_function_type_parameters_abi(definition.getter_type_id?)?;
+        let (inputs, _) = self.extract_getter_type_parameters_abi()?;
 
         let signature = format!(
             "{name}({parameters})",
-            name = self.name().unparse(),
+            name = self.ir_node.name.unparse(),
             parameters = inputs
                 .into_iter()
                 .map(|parameter| parameter.r#type)
