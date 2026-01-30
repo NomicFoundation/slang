@@ -66,4 +66,16 @@ mod unit_tests {
             assert_eq!(contract_count, super::CONTRACT_COUNT);
         }
     }
+
+    mod v2_parser {
+        // V2 parser only supports 0.8.30; uniswap (0.8.26) is the closest available.
+        // Sources are preprocessed to strip pragma and assembly (not yet supported).
+        const V2_PROJECT: &str = "uniswap_v2";
+
+        #[test]
+        fn parser() {
+            let payload = crate::tests::setup::setup(V2_PROJECT);
+            crate::tests::v2_parser::test(payload);
+        }
+    }
 }

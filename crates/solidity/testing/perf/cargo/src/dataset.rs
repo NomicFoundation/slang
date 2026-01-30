@@ -46,6 +46,25 @@ fn load_projects_internal() -> Result<ProjectMap> {
         map.insert(file.name, single_file_project);
     }
 
+    // Stripped uniswap PoolManager.sol for v2 parser benchmarking.
+    // Pragma and import statements removed (not yet supported by the v2 parser).
+    map.insert("uniswap_v2".to_string(), SolidityProject {
+        name: "PoolManager".to_string(),
+        sources: HashMap::from([(
+            "src/PoolManager.sol".to_string(),
+            include_str!("fixtures/uniswap_pool_manager_stripped.sol").to_string(),
+        )]),
+        entrypoint: "src/PoolManager.sol".to_string(),
+        compiler_version: "0.8.26".to_string(),
+        import_resolver: ImportResolver {
+            import_remaps: vec![],
+            source_maps: vec![SourceMap {
+                source_id: "src/PoolManager.sol".to_string(),
+                virtual_path: "src/PoolManager.sol".to_string(),
+            }],
+        },
+    });
+
     Ok(map)
 }
 

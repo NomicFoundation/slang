@@ -3980,6 +3980,8 @@ dependencies = [
  "serde",
  "serde_json",
  "slang_solidity",
+ "slang_solidity_v2_common",
+ "slang_solidity_v2_parser",
  "solar-compiler",
  "solidity_testing_utils",
  "streaming-iterator",

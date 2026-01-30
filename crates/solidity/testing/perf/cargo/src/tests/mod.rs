@@ -8,3 +8,4 @@ pub mod query;
 pub mod setup;
 pub mod solar_parser;
 pub mod tree_sitter_parser;
+pub mod v2_parser;

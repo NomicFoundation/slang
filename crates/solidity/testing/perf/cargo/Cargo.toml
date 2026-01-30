@@ -14,6 +14,8 @@ semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 slang_solidity = { workspace = true, features = ["__private_backend_api", "__private_testing_utils"] }
+slang_solidity_v2_common = { workspace = true }
+slang_solidity_v2_parser = { workspace = true }
 solar = { workspace = true }
 solidity_testing_utils = { workspace = true }
 streaming-iterator = { workspace = true }

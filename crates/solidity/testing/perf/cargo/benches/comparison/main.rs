@@ -13,8 +13,9 @@ use solidity_testing_perf_cargo::tests;
 mod __dependencies_used_in_lib__ {
     use {
         anyhow as _, infra_utils as _, semver as _, serde as _, serde_json as _,
-        slang_solidity as _, solar as _, solidity_testing_utils as _, streaming_iterator as _,
-        tree_sitter as _, tree_sitter_solidity as _,
+        slang_solidity as _, slang_solidity_v2_common as _, slang_solidity_v2_parser as _,
+        solar as _, solidity_testing_utils as _, streaming_iterator as _, tree_sitter as _,
+        tree_sitter_solidity as _,
     };
 }
 
@@ -54,6 +55,18 @@ macro_rules! tree_sitter_test {
     };
 }
 
+macro_rules! v2_parser_test {
+    ($prj:ident) => {
+        paste! {
+            #[library_benchmark(setup = tests::setup::setup)]
+            #[bench::test(stringify!($prj))]
+            pub fn [<v2_parser_ $prj>](project: &SolidityProject) {
+                black_box(tests::v2_parser::run(project));
+            }
+        }
+    };
+}
+
 // Some projects can't be parsed by tree-sitter, so we test them only in slang and solar.
 // This macro abstracts that logic.
 macro_rules! slang_and_solar_tests {
@@ -87,6 +100,18 @@ macro_rules! comparison_tests {
     (uniswap) => {
         slang_and_solar_tests!(uniswap);
     };
+    (uniswap_v2) => {
+        // Stripped PoolManager.sol for v2 parser comparison (no pragma, no imports).
+        slang_test!(uniswap_v2);
+        solar_test!(uniswap_v2);
+        v2_parser_test!(uniswap_v2);
+        paste! {
+            library_benchmark_group!(
+                name = [< uniswap_v2 _group >];
+                benchmarks = [< slang_ uniswap_v2 >],[< solar_ uniswap_v2 >],[< v2_parser_ uniswap_v2 >],
+            );
+        }
+    };
     (create_x) => {
         slang_and_solar_tests!(create_x);
     };
@@ -110,6 +135,7 @@ macro_rules! comparison_tests {
 comparison_tests!(mooniswap);
 comparison_tests!(weighted_pool);
 comparison_tests!(uniswap);
+comparison_tests!(uniswap_v2);
 comparison_tests!(multicall3);
 comparison_tests!(create_x);
 comparison_tests!(ui_pool_data_provider_v3);
@@ -154,14 +180,15 @@ main!(
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
     library_benchmark_groups =
-        mooniswap_group,
-        weighted_pool_group,
-        uniswap_group,
-        multicall3_group,
-        create_x_group,
-        ui_pool_data_provider_v3_group,
-        cooldogs_group,
-        one_step_leverage_f_group,
-        pointer_libraries_group,
-        merkle_proof_group,
+        // mooniswap_group,
+        // weighted_pool_group,
+        // uniswap_group,
+        uniswap_v2_group,
+        // multicall3_group,
+        // create_x_group,
+        // ui_pool_data_provider_v3_group,
+        // cooldogs_group,
+        // one_step_leverage_f_group,
+        // pointer_libraries_group,
+        // merkle_proof_group,
 );
