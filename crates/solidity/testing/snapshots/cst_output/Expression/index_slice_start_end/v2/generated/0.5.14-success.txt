@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+IndexAccessExpression(
+    IndexAccessExpressionStruct {
+        operand: Identifier(
+            Identifier {
+                range: 0..3,
+            },
+        ),
+        open_bracket: OpenBracket {
+            range: 3..4,
+        },
+        start: Some(
+            Identifier(
+                Identifier {
+                    range: 4..9,
+                },
+            ),
+        ),
+        end: Some(
+            IndexAccessEndStruct {
+                colon: Colon {
+                    range: 9..10,
+                },
+                end: Some(
+                    Identifier(
+                        Identifier {
+                            range: 10..13,
+                        },
+                    ),
+                ),
+            },
+        ),
+        close_bracket: CloseBracket {
+            range: 13..14,
+        },
+    },
+)

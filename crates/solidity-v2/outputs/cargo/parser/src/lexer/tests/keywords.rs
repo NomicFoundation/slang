@@ -27,9 +27,9 @@ fn reserved_keyword() {
 #[test]
 fn partially_reserved_keyword() {
     test(
-        "fallback",
-        &[(L::FallbackKeyword_Unreserved, 0..8)],
-        &[(L::FallbackKeyword_Reserved, 0..8)],
+        "constructor",
+        &[(L::ConstructorKeyword_Unreserved, 0..11)],
+        &[(L::ConstructorKeyword_Reserved, 0..11)],
     );
 }
 

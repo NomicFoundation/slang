@@ -1,0 +1,395 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 0..8,
+                    },
+                    name: Identifier {
+                        range: 9..10,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 11..12,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: FunctionType(
+                                        FunctionTypeStruct {
+                                            function_keyword: FunctionKeyword {
+                                                range: 18..26,
+                                            },
+                                            parameters: ParametersDeclarationStruct {
+                                                open_paren: OpenParen {
+                                                    range: 27..28,
+                                                },
+                                                parameters: Parameters {
+                                                    elements: [
+                                                        ParameterStruct {
+                                                            type_name: ElementaryType(
+                                                                UintKeyword(
+                                                                    UintKeyword {
+                                                                        range: 28..32,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            storage_location: None,
+                                                            name: Some(
+                                                                Identifier {
+                                                                    range: 33..34,
+                                                                },
+                                                            ),
+                                                        },
+                                                    ],
+                                                },
+                                                close_paren: CloseParen {
+                                                    range: 34..35,
+                                                },
+                                            },
+                                            attributes: FunctionTypeAttributes {
+                                                elements: [
+                                                    InternalKeyword(
+                                                        InternalKeyword {
+                                                            range: 36..44,
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            returns: None,
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 45..53,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        range: 54..57,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 57..58,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: FunctionType(
+                                        FunctionTypeStruct {
+                                            function_keyword: FunctionKeyword {
+                                                range: 63..71,
+                                            },
+                                            parameters: ParametersDeclarationStruct {
+                                                open_paren: OpenParen {
+                                                    range: 72..73,
+                                                },
+                                                parameters: Parameters {
+                                                    elements: [
+                                                        ParameterStruct {
+                                                            type_name: ElementaryType(
+                                                                UintKeyword(
+                                                                    UintKeyword {
+                                                                        range: 73..77,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            storage_location: None,
+                                                            name: Some(
+                                                                Identifier {
+                                                                    range: 78..79,
+                                                                },
+                                                            ),
+                                                        },
+                                                    ],
+                                                },
+                                                close_paren: CloseParen {
+                                                    range: 79..80,
+                                                },
+                                            },
+                                            attributes: FunctionTypeAttributes {
+                                                elements: [
+                                                    ConstantKeyword(
+                                                        ConstantKeyword {
+                                                            range: 81..89,
+                                                        },
+                                                    ),
+                                                    ConstantKeyword(
+                                                        ConstantKeyword {
+                                                            range: 90..98,
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            returns: None,
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        range: 99..102,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 102..103,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: FunctionType(
+                                        FunctionTypeStruct {
+                                            function_keyword: FunctionKeyword {
+                                                range: 108..116,
+                                            },
+                                            parameters: ParametersDeclarationStruct {
+                                                open_paren: OpenParen {
+                                                    range: 117..118,
+                                                },
+                                                parameters: Parameters {
+                                                    elements: [
+                                                        ParameterStruct {
+                                                            type_name: ElementaryType(
+                                                                UintKeyword(
+                                                                    UintKeyword {
+                                                                        range: 118..122,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            storage_location: None,
+                                                            name: Some(
+                                                                Identifier {
+                                                                    range: 123..124,
+                                                                },
+                                                            ),
+                                                        },
+                                                    ],
+                                                },
+                                                close_paren: CloseParen {
+                                                    range: 124..125,
+                                                },
+                                            },
+                                            attributes: FunctionTypeAttributes {
+                                                elements: [
+                                                    InternalKeyword(
+                                                        InternalKeyword {
+                                                            range: 126..134,
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            returns: None,
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            ImmutableKeyword(
+                                                ImmutableKeyword {
+                                                    range: 135..144,
+                                                },
+                                            ),
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 145..153,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        range: 154..157,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 157..158,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: ArrayTypeName(
+                                        ArrayTypeNameStruct {
+                                            operand: FunctionType(
+                                                FunctionTypeStruct {
+                                                    function_keyword: FunctionKeyword {
+                                                        range: 163..171,
+                                                    },
+                                                    parameters: ParametersDeclarationStruct {
+                                                        open_paren: OpenParen {
+                                                            range: 172..173,
+                                                        },
+                                                        parameters: Parameters {
+                                                            elements: [
+                                                                ParameterStruct {
+                                                                    type_name: ElementaryType(
+                                                                        UintKeyword(
+                                                                            UintKeyword {
+                                                                                range: 173..177,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                    storage_location: None,
+                                                                    name: Some(
+                                                                        Identifier {
+                                                                            range: 178..179,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ],
+                                                        },
+                                                        close_paren: CloseParen {
+                                                            range: 179..180,
+                                                        },
+                                                    },
+                                                    attributes: FunctionTypeAttributes {
+                                                        elements: [],
+                                                    },
+                                                    returns: None,
+                                                },
+                                            ),
+                                            open_bracket: OpenBracket {
+                                                range: 180..181,
+                                            },
+                                            index: Some(
+                                                DecimalNumberExpression(
+                                                    DecimalNumberExpressionStruct {
+                                                        literal: DecimalLiteral {
+                                                            range: 181..182,
+                                                        },
+                                                        unit: None,
+                                                    },
+                                                ),
+                                            ),
+                                            close_bracket: CloseBracket {
+                                                range: 182..183,
+                                            },
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 184..192,
+                                                },
+                                            ),
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 193..201,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        range: 202..205,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 205..206,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: ArrayTypeName(
+                                        ArrayTypeNameStruct {
+                                            operand: FunctionType(
+                                                FunctionTypeStruct {
+                                                    function_keyword: FunctionKeyword {
+                                                        range: 211..219,
+                                                    },
+                                                    parameters: ParametersDeclarationStruct {
+                                                        open_paren: OpenParen {
+                                                            range: 220..221,
+                                                        },
+                                                        parameters: Parameters {
+                                                            elements: [
+                                                                ParameterStruct {
+                                                                    type_name: ElementaryType(
+                                                                        UintKeyword(
+                                                                            UintKeyword {
+                                                                                range: 221..225,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                    storage_location: None,
+                                                                    name: Some(
+                                                                        Identifier {
+                                                                            range: 226..227,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ],
+                                                        },
+                                                        close_paren: CloseParen {
+                                                            range: 227..228,
+                                                        },
+                                                    },
+                                                    attributes: FunctionTypeAttributes {
+                                                        elements: [
+                                                            InternalKeyword(
+                                                                InternalKeyword {
+                                                                    range: 229..237,
+                                                                },
+                                                            ),
+                                                        ],
+                                                    },
+                                                    returns: None,
+                                                },
+                                            ),
+                                            open_bracket: OpenBracket {
+                                                range: 237..238,
+                                            },
+                                            index: Some(
+                                                DecimalNumberExpression(
+                                                    DecimalNumberExpressionStruct {
+                                                        literal: DecimalLiteral {
+                                                            range: 238..239,
+                                                        },
+                                                        unit: None,
+                                                    },
+                                                ),
+                                            ),
+                                            close_bracket: CloseBracket {
+                                                range: 239..240,
+                                            },
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 241..249,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        range: 250..253,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 253..254,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 255..256,
+                    },
+                },
+            ),
+        ],
+    },
+}

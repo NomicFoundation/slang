@@ -26,8 +26,8 @@ pub struct Parser;
 impl Parser {
     pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, String> {
         assert!(
-            version == LanguageVersion::V0_8_30,
-            "Only 0.8.30 is currently supported by the V2 parser"
+            version >= LanguageVersion::V0_4_11 && version <= LanguageVersion::V0_8_33,
+            "Only versions [0.4.11, 0.9.0) are currently supported by the V2 parser"
         );
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
@@ -40,8 +40,8 @@ impl Parser {
 
     pub fn parse_expression(input: &str, version: LanguageVersion) -> Result<Expression, String> {
         assert!(
-            version == LanguageVersion::V0_8_30,
-            "Only 0.8.30 is currently supported by the V2 parser"
+            version >= LanguageVersion::V0_4_11 && version <= LanguageVersion::V0_8_33,
+            "Only versions [0.4.11, 0.9.0) are currently supported by the V2 parser"
         );
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
@@ -57,8 +57,8 @@ impl Parser {
         version: LanguageVersion,
     ) -> Result<ContractDefinition, String> {
         assert!(
-            version == LanguageVersion::V0_8_30,
-            "Only 0.8.30 is currently supported by the V2 parser"
+            version >= LanguageVersion::V0_4_11 && version <= LanguageVersion::V0_8_33,
+            "Only versions [0.4.11, 0.9.0) are currently supported by the V2 parser"
         );
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);

@@ -9,8 +9,8 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     new_expression_index_access_expression, new_expression_member_access_expression,
     new_function_type, new_function_type_attributes, new_index_access_expression,
     new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
-    new_type_name_identifier_path, CloseBracket, ElementaryType, Expression, FunctionType,
-    FunctionTypeAttribute, FunctionTypeStruct, IdentifierPath, IdentifierPathElement,
+    new_type_name_identifier_path, CloseBracket, ConstantKeyword, ElementaryType, Expression,
+    FunctionType, FunctionTypeAttribute, FunctionTypeStruct, IdentifierPath, IdentifierPathElement,
     IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
 };
 
@@ -159,7 +159,7 @@ pub(crate) fn extract_extra_attributes(
     fun_type: FunctionType,
 ) -> (FunctionType, Vec<StateVariableAttribute>) {
     // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
-    let mut seen_constant = false;
+    // TODO(v2) removed seen_constant - ConstantKeyword variant was disabled due to grammar conflict
     let mut seen_internal = false;
     let mut seen_private = false;
     let mut seen_public = false;
@@ -179,7 +179,7 @@ pub(crate) fn extract_extra_attributes(
             true
         } else {
             let seen = match attr {
-                FunctionTypeAttribute::ConstantKeyword(_) => &mut seen_constant,
+                // TODO(v2) removed ConstantKeyword - variant was disabled due to grammar conflict
                 FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
                 FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
                 FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
@@ -201,9 +201,7 @@ pub(crate) fn extract_extra_attributes(
     let extra_attributes: Vec<StateVariableAttribute> = extracted
         .map(|attr| {
         match attr {
-        FunctionTypeAttribute::ConstantKeyword(terminal) => {
-            StateVariableAttribute::ConstantKeyword(terminal)
-        }
+        // TODO(v2) removed ConstantKeyword - variant was disabled due to grammar conflict
         FunctionTypeAttribute::InternalKeyword(terminal) => {
             StateVariableAttribute::InternalKeyword(terminal)
         }
@@ -212,6 +210,9 @@ pub(crate) fn extract_extra_attributes(
         }
         FunctionTypeAttribute::PublicKeyword(terminal) => {
             StateVariableAttribute::PublicKeyword(terminal)
+        }
+        FunctionTypeAttribute::ConstantKeyword(terminal) => {
+            StateVariableAttribute::ConstantKeyword(terminal)
         }
         _ => panic!("This is wrong, I don't really know what to do for now, but it should fail gracefully (like a parser error)")
         }
@@ -226,4 +227,39 @@ pub(crate) fn extract_extra_attributes(
     );
 
     (new_fun_type, extra_attributes)
+}
+
+/// This function expects `fun_type` to have a `ConstantKeywords` as the last attribute,
+/// and it extracts it and returns it alongside the function type without the `ConstantKeyword` in its attributes.
+///
+/// TODO(v2) fail gracefully if the last attribute is not a `ConstantKeyword`
+pub(crate) fn extract_last_constant_keyword(
+    fun_type: FunctionType,
+) -> (FunctionType, ConstantKeyword) {
+    let FunctionTypeStruct {
+        function_keyword,
+        parameters,
+        attributes,
+        returns,
+    } = Rc::unwrap_or_clone(fun_type);
+
+    let mut vec = attributes.elements;
+
+    let last_attr = vec
+        .pop()
+        .expect("The function should have at least one `ConstantKeyword` attribute.");
+
+    let constant_keyword = match last_attr {
+        FunctionTypeAttribute::ConstantKeyword(terminal) => terminal,
+        _ => panic!("The last attribute of the function type should be a ConstantKeyword, but it was not. This should be a parser error."),
+    };
+
+    let new_fun_type = new_function_type(
+        function_keyword,
+        parameters,
+        new_function_type_attributes(vec),
+        returns,
+    );
+
+    (new_fun_type, constant_keyword)
 }

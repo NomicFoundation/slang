@@ -79,7 +79,9 @@ RepOne<T>: Vec<T> = {
 // but also all the unreserved keywords that are valid Yul identifiers.
 {% for id, lexemes in model.parser.terminals -%}
 {% if id != "Identifier" -%}
+{% if lexemes | length  == 1 or id == "EmitKeyword" -%}
 #[inline]
+{%- endif %}
 {{ id }}: {{ id }} = {
 {% for lexeme in lexemes %}
         <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(l..r, source),

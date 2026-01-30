@@ -662,7 +662,8 @@ PragmaDirective: PragmaDirective = {
                                     name = CallDataKeyword,
                                     enabled = From("0.5.0"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
+                                        // TODO(v2) removing conflict - calldata unreserved conflicts with identifier in Parameter
+                                        // reserved = From("0.5.0"),
                                         value = Atom("calldata")
                                     )]
                                 ),
@@ -768,7 +769,12 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = FallbackKeyword,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.6.0"),
+                                                                        // TODO(v2) removing conflict - fallback unreserved before 0.6.0 conflicts with FunctionName
+                                // Note: Leaving this commented from now, I think this should be enabled from 0.6.0,
+                                // together with the uses of it. Then it'll fall into the category of keywords
+                                // that are only used as keywords while reserved (a lot easier to solve)
+
+                                        // reserved = From("0.6.0"),
                                         value = Atom("fallback")
                                     )]
                                 ),
@@ -888,7 +894,8 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                            reserved = From("0.4.14"),
+                                    // TODO(v2) removing conflict
+                                            // reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("fixed"),
                                                 Choice([
@@ -951,7 +958,8 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                            reserved = From("0.4.14"),
+                                    // TODO(v2) removing conflict
+                                            // reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("fixed"),
                                                 Choice([
@@ -1268,7 +1276,8 @@ PragmaDirective: PragmaDirective = {
                                     name = OverrideKeyword,
                                     enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
+                                // TODO(v2) removing conflict - override unreserved before 0.5.0 conflicts with ModifierInvocation
+                                        // reserved = From("0.5.0"),
                                         value = Atom("override")
                                     )]
                                 ),
@@ -1312,7 +1321,8 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = ReceiveKeyword,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.6.0"),
+                                // TODO(v2) removing conflict - receive unreserved before 0.6.0 conflicts with FunctionName
+                                        // reserved = From("0.6.0"),
                                         value = Atom("receive")
                                     )]
                                 ),
@@ -1385,7 +1395,8 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = SuperKeyword,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.8.0"),
+                                // TODO(v2) this needs manual handling
+                                        // reserved = From("0.8.0"),
                                         value = Atom("super")
                                     )]
                                 ),
@@ -1413,7 +1424,8 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = ThisKeyword,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.8.0"),
+                                // TODO(v2) This needs manual handling
+                                        // reserved = From("0.8.0"),
                                         value = Atom("this")
                                     )]
                                 ),
@@ -1556,7 +1568,8 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                            reserved = From("0.4.14"),
+                                    // TODO(v2) removing conflict
+                                            // reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("ufixed"),
                                                 Choice([
@@ -1619,7 +1632,8 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                            reserved = From("0.4.14"),
+                                    // TODO(v2) removing conflict
+                                            // reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("ufixed"),
                                                 Choice([
@@ -1780,7 +1794,8 @@ PragmaDirective: PragmaDirective = {
                                     name = UncheckedKeyword,
                                     enabled = From("0.8.0"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
+                                // TODO(v2) removing conflict - unchecked unreserved before 0.5.0 conflicts with identifier in UncheckedBlock
+                                        // reserved = From("0.5.0"),
                                         value = Atom("unchecked")
                                     )]
                                 ),
@@ -1802,7 +1817,8 @@ PragmaDirective: PragmaDirective = {
                                     name = VirtualKeyword,
                                     enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.6.0"),
+                                // TODO(v2) removing conflict - virtual unreserved before 0.6.0 conflicts with ModifierInvocation
+                                        // reserved = From("0.6.0"),
                                         value = Atom("virtual")
                                     )]
                                 ),
@@ -2125,10 +2141,11 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                                             reference = FallbackFunctionDefinition,
                                             enabled = From("0.6.0")
                                         ),
-                                        EnumVariant(
-                                            reference = UnnamedFunctionDefinition,
-                                            enabled = Till("0.6.0")
-                                        ),
+                                // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
+                                        // EnumVariant(
+                                        //     reference = UnnamedFunctionDefinition,
+                                        //     enabled = Till("0.6.0")
+                                        // ),
                                         EnumVariant(reference = ModifierDefinition),
                                         EnumVariant(reference = StructDefinition),
                                         EnumVariant(reference = EnumDefinition),
@@ -2266,7 +2283,24 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                                     equal = Required(Equal),
                                     value = Required(Expression),
                                     semicolon = Required(Semicolon)
-                                )
+                                ),
+                                parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// A `ConstantDefinition` conflicts with a function definition since the `ConstantKeyword` can be both a function
+// type attribute or the constant definition marker.
+//
+// We fix it in the same way as `StateVariableDefinition`, by letting the function type capture all the attributes,
+// and then stealing the trailing `ConstantKeyword`. 
+ConstantDefinition: ConstantDefinition = {
+    <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPath>>>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => new_constant_definition(<>),
+
+    // In this case the `FunctionTypeInternalNoReturn` is expected to end with a `ConstantKeyword`
+    <_type_name: FunctionTypeInternalNoReturn> <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => {
+        let (function_type, const_keyword) = extract_last_constant_keyword(_type_name);
+        new_constant_definition(new_type_name_function_type(function_type), const_keyword, _name, _equal, _value, _semicolon)
+    }
+};
+"#)
+
                             )]
                         ),
                         Topic(
@@ -2542,55 +2576,56 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                         )
                                     ]
                                 ),
-                                Struct(
-                                    name = UnnamedFunctionDefinition,
-                                    enabled = Till("0.6.0"),
-                                    fields = (
-                                        function_keyword = Required(FunctionKeyword),
-                                        parameters = Required(ParametersDeclaration),
-                                        attributes = Required(UnnamedFunctionAttributes),
-                                        body = Required(FunctionBody)
-                                    )
-                                ),
-                                Repeated(
-                                    name = UnnamedFunctionAttributes,
-                                    reference = UnnamedFunctionAttribute,
-                                    enabled = Till("0.6.0"),
-                                    allow_empty = true
-                                ),
-                                Enum(
-                                    name = UnnamedFunctionAttribute,
-                                    enabled = Till("0.6.0"),
-                                    variants = [
-                                        EnumVariant(reference = ModifierInvocation),
-                                        EnumVariant(
-                                            reference = ConstantKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(reference = ExternalKeyword),
-                                        EnumVariant(
-                                            reference = InternalKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(reference = PayableKeyword),
-                                        EnumVariant(
-                                            reference = PrivateKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = PublicKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = PureKeyword,
-                                            enabled = Range(from = "0.4.16", till = "0.6.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = ViewKeyword,
-                                            enabled = Range(from = "0.4.16", till = "0.6.0")
-                                        )
-                                    ]
-                                ),
+                        // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
+                                // Struct(
+                                //     name = UnnamedFunctionDefinition,
+                                //     enabled = Till("0.6.0"),
+                                //     fields = (
+                                //         function_keyword = Required(FunctionKeyword),
+                                //         parameters = Required(ParametersDeclaration),
+                                //         attributes = Required(UnnamedFunctionAttributes),
+                                //         body = Required(FunctionBody)
+                                //     )
+                                // ),
+                                // Repeated(
+                                //     name = UnnamedFunctionAttributes,
+                                //     reference = UnnamedFunctionAttribute,
+                                //     enabled = Till("0.6.0"),
+                                //     allow_empty = true
+                                // ),
+                                // Enum(
+                                //     name = UnnamedFunctionAttribute,
+                                //     enabled = Till("0.6.0"),
+                                //     variants = [
+                                //         EnumVariant(reference = ModifierInvocation),
+                                //         EnumVariant(
+                                //             reference = ConstantKeyword,
+                                //             enabled = Till("0.5.0")
+                                //         ),
+                                //         EnumVariant(reference = ExternalKeyword),
+                                //         EnumVariant(
+                                //             reference = InternalKeyword,
+                                //             enabled = Till("0.5.0")
+                                //         ),
+                                //         EnumVariant(reference = PayableKeyword),
+                                //         EnumVariant(
+                                //             reference = PrivateKeyword,
+                                //             enabled = Till("0.5.0")
+                                //         ),
+                                //         EnumVariant(
+                                //             reference = PublicKeyword,
+                                //             enabled = Till("0.5.0")
+                                //         ),
+                                //         EnumVariant(
+                                //             reference = PureKeyword,
+                                //             enabled = Range(from = "0.4.16", till = "0.6.0")
+                                //         ),
+                                //         EnumVariant(
+                                //             reference = ViewKeyword,
+                                //             enabled = Range(from = "0.4.16", till = "0.6.0")
+                                //         )
+                                //     ]
+                                // ),
                                 Struct(
                                     name = FallbackFunctionDefinition,
                                     enabled = From("0.6.0"),
@@ -3063,11 +3098,15 @@ FunctionTypeInternalReturn: FunctionType = {
 //
 // On top of that, the `revert` keyword is unreserved, meaning that a variable declaration like
 // `revert x = ...;` is valid.
-// From the perspective of the parser there's an ambiguity when looking at a statement starting with `revert x ...`
+// From the perspective of the parser there's an ambiguity when looking at a statement starting with `revert x ...`.
+// A Similar situation happens with `emit`
 //
 // To solve it we introduce a special `VariableDeclarationStatement` that handles this case specifically,
-// since both this and `RevertStatement` are inlined, the parser doesn't need to reduce until it has seen the
+// since this, `RevertStatement`, and `EmitStatement` are inlined, the parser doesn't need to reduce until it has seen the
 // entire statement.
+//
+// TODO(v2): We forcely inline `EmitKeyword` at `grammar.lalrpop.jinja2`, we should be able to express inlinining
+// keywords here
 _Statement<TrailingElse>: Statement = {
     <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
     <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
@@ -3082,55 +3121,61 @@ _Statement<TrailingElse>: Statement = {
     <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
     <_Block: Block>  => new_statement_block(<>),
     <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
-    <_VariableDeclarationStatement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
+    <_VariableDeclarationStatement: VariableDeclarationStatementSpecialRevertEmit>  => new_statement_variable_declaration_statement(<>),
     <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
 };
 
 // By default statements allow dangling `else`s
 Statement = _Statement<"True">;
 
-// A VariableDeclarationStatement that has a `revert` type as a special case, this allows
-// to disambiguate between a revert statement and a variable declaration with type `revert`
+// A VariableDeclarationStatement that has `revert` or `emit` types as a special cases, this allows
+// to disambiguate between a revert statement and a variable declaration with those types
 //
 // Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
 #[inline]
-VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
-    <_target: VariableDeclarationOptionSpecialRevert>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+VariableDeclarationStatementSpecialRevertEmit: VariableDeclarationStatement = {
+    <_target: VariableDeclarationOptionSpecialRevertEmit>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
 };
 #[inline]
-VariableDeclarationOptionSpecialRevert: VariableDeclarationOption = {
-    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_option_single_typed_declaration(<>),
+VariableDeclarationOptionSpecialRevertEmit: VariableDeclarationOption = {
+    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevertEmit>  => new_variable_declaration_option_single_typed_declaration(<>),
     <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_option_multi_typed_declaration(<>),
 };
 #[inline]
-SingleTypedDeclarationSpecialRevert: SingleTypedDeclaration = {
-    <_declaration: VariableDeclarationSpecialRevert>  <_value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
+SingleTypedDeclarationSpecialRevertEmit: SingleTypedDeclaration = {
+    <_declaration: VariableDeclarationSpecialRevertEmit>  <_value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
 };
 #[inline]
-VariableDeclarationSpecialRevert: VariableDeclaration = {
+VariableDeclarationSpecialRevertEmit: VariableDeclaration = {
     // A regular type that is not `revert`
     //
     // Note: we're tempted to inline TypeNames, but they are recursive, that's why we extract the special case
-    <_type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
-    // The special `revert` type
-    <l:@L> L_RevertKeyword_Unreserved <r:@R>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => {
-        let identifier = new_identifier(l..r, source);
+    <_type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevertEmit>>>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
+    // The special `revert` or `emit` types
+    <identifier: RevertOrEmitKeyword>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => {
         let iap = new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
         let type_name = new_type_name_index_access_path(iap);
         new_variable_declaration(type_name, _storage_location, _name)
     }
 };
 
-// An IdentifierPath that cannot be `revert`, used to disambiguate from the `revert` type
+// An inlined rule to match `revert` and `emit` as identifiers
 #[inline]
-IdentifierPathNoRevert: IdentifierPath = {
+RevertOrEmitKeyword: Identifier = {
+    <l:@L> L_RevertKeyword_Unreserved <r:@R> => new_identifier(l..r, source),
+    <l:@L> L_EmitKeyword_Unreserved <r:@R> => new_identifier(l..r, source)
+};
+
+// An IdentifierPath that cannot be `revert` or `emit`, used to disambiguate from the `revert` and `emit` types
+#[inline]
+IdentifierPathNoRevertEmit: IdentifierPath = {
     // We either have any identifier with a tail (ie a period)
     <_head: Identifier> <mut _tail: IdentifierPathTail>  => {
         _tail.insert(0, new_identifier_path_element_identifier(_head));
         new_identifier_path(_tail)
     },
-    // or a single identifier that is not `revert`
-    <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    // or a single identifier that is not `revert` or `emit`
+    <_head: SomeIdentifier<"RevertKeyword_Unreserved|EmitKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
 };
 "#)
                                 ),
@@ -4534,18 +4579,20 @@ HexNumberExpression: HexNumberExpression = {
                                 Enum(
                                     name = StringExpression,
                                     variants = [
-                                        EnumVariant(
-                                            reference = StringLiteral,
-                                            enabled = Till("0.5.14")
-                                        ),
+                                // TODO(v2) this conflicts with the one below
+                                        // EnumVariant(
+                                        //     reference = StringLiteral,
+                                        //     enabled = Till("0.5.14")
+                                        // ),
                                         EnumVariant(
                                             reference = StringLiterals,
                                             enabled = From("0.5.14")
                                         ),
-                                        EnumVariant(
-                                            reference = HexStringLiteral,
-                                            enabled = Till("0.5.14")
-                                        ),
+                                // TODO(v2) this conflicts with the one below
+                                        // EnumVariant(
+                                        //     reference = HexStringLiteral,
+                                        //     enabled = Till("0.5.14")
+                                        // ),
                                         EnumVariant(
                                             reference = HexStringLiterals,
                                             enabled = From("0.5.14")

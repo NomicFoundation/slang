@@ -1,3 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-"UnrecognizedEof { location: 28, expected: [\"L_AtKeyword_Unreserved\", \"L_ErrorKeyword_Unreserved\", \"L_FallbackKeyword_Reserved\", \"L_FinneyKeyword_Unreserved\", \"L_FromKeyword_Unreserved\", \"L_GlobalKeyword_Unreserved\", \"L_Identifier\", \"L_LayoutKeyword_Unreserved\", \"L_OpenParen\", \"L_ReceiveKeyword_Reserved\", \"L_RevertKeyword_Unreserved\", \"L_SzaboKeyword_Unreserved\", \"L_TransientKeyword_Unreserved\"] }"

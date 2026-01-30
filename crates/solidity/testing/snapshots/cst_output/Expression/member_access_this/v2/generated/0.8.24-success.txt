@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+MemberAccessExpression(
+    MemberAccessExpressionStruct {
+        operand: ThisKeyword(
+            ThisKeyword {
+                range: 0..4,
+            },
+        ),
+        period: Period {
+            range: 4..5,
+        },
+        member: Identifier(
+            Identifier {
+                range: 5..6,
+            },
+        ),
+    },
+)

@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+IndexAccessExpression(
+    IndexAccessExpressionStruct {
+        operand: MemberAccessExpression(
+            MemberAccessExpressionStruct {
+                operand: Identifier(
+                    Identifier {
+                        range: 0..1,
+                    },
+                ),
+                period: Period {
+                    range: 0..0,
+                },
+                member: Identifier(
+                    Identifier {
+                        range: 2..3,
+                    },
+                ),
+            },
+        ),
+        open_bracket: OpenBracket {
+            range: 3..4,
+        },
+        start: Some(
+            Identifier(
+                Identifier {
+                    range: 4..9,
+                },
+            ),
+        ),
+        end: None,
+        close_bracket: CloseBracket {
+            range: 9..10,
+        },
+    },
+)

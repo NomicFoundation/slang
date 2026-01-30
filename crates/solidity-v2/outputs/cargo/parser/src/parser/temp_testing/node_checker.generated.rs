@@ -9673,119 +9673,6 @@ impl NodeChecker for UncheckedBlock {
     }
 }
 
-/// Generic `NodeChecker` for sequences
-impl NodeChecker for UnnamedFunctionDefinition {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnnamedFunctionDefinition) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::UnnamedFunctionDefinition,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let mut children = children_with_offsets(node, text_offset);
-
-        let mut errors = vec![];
-
-        // function_keyword
-
-        {
-            let function_keyword = &self.function_keyword;
-
-            // Prepare edge label
-
-            if let Some((child, child_offset)) =
-                extract_with_label(&mut children, EdgeLabel::FunctionKeyword)
-            {
-                let child_errors =
-                    function_keyword.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
-            } else {
-                errors.push(NodeCheckerError::new(
-                    "Expected function_keyword to be present in the CST, but it was not"
-                        .to_string(),
-                    node_range.clone(),
-                ));
-            }
-        }
-
-        // parameters
-
-        {
-            let parameters = &self.parameters;
-
-            // Prepare edge label
-
-            if let Some((child, child_offset)) =
-                extract_with_label(&mut children, EdgeLabel::Parameters)
-            {
-                let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
-            } else {
-                errors.push(NodeCheckerError::new(
-                    "Expected parameters to be present in the CST, but it was not".to_string(),
-                    node_range.clone(),
-                ));
-            }
-        }
-
-        // attributes
-
-        {
-            let attributes = &self.attributes;
-
-            // Prepare edge label
-
-            if let Some((child, child_offset)) =
-                extract_with_label(&mut children, EdgeLabel::Attributes)
-            {
-                let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
-            } else {
-                errors.push(NodeCheckerError::new(
-                    "Expected attributes to be present in the CST, but it was not".to_string(),
-                    node_range.clone(),
-                ));
-            }
-        }
-
-        // body
-
-        {
-            let body = &self.body;
-
-            // Prepare edge label
-
-            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
-            {
-                let child_errors = body.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
-            } else {
-                errors.push(NodeCheckerError::new(
-                    "Expected body to be present in the CST, but it was not".to_string(),
-                    node_range.clone(),
-                ));
-            }
-        }
-
-        if !children.is_empty() {
-            errors.push(NodeCheckerError::new(
-                format!("Expected 0 children left, but there's some left {children:#?}"),
-                node_range,
-            ));
-        }
-
-        errors
-    }
-}
-
 /// `NodeChecker` for `UntypedDeclaration` - maps to V1's `VariableDeclarationStatement` with var OR `TupleDeconstructionStatement` with var
 impl NodeChecker for UntypedDeclaration {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
@@ -13082,10 +12969,6 @@ impl NodeChecker for ContractMember {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
 
-            Self::UnnamedFunctionDefinition(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
             Self::ModifierDefinition(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
@@ -15024,15 +14907,7 @@ impl NodeChecker for StringExpression {
         let mut errors = vec![];
 
         match self {
-            Self::StringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
             Self::StringLiterals(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::HexStringLiteral(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
 
@@ -15227,92 +15102,6 @@ impl NodeChecker for UnicodeStringLiteral {
             }
 
             Self::DoubleQuotedUnicodeStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-        }
-
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for choices
-impl NodeChecker for UnnamedFunctionAttribute {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnnamedFunctionAttribute) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::UnnamedFunctionAttribute,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != 1 {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected exactly one child for {}, but got: {children:#?}",
-                    NonterminalKind::UnnamedFunctionAttribute
-                ),
-                node_range,
-            )];
-        }
-
-        let (child, child_offset) = &children[0];
-
-        if child.label != EdgeLabel::Variant {
-            let child_range = *child_offset..(*child_offset + child.node.text_len());
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected child to be of variant type, but it was {}",
-                    child.label
-                ),
-                child_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        match self {
-            Self::ModifierInvocation(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::ConstantKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::ExternalKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::InternalKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::PayableKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::PrivateKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::PublicKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::PureKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::ViewKeyword(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
         }
@@ -17536,46 +17325,6 @@ impl NodeChecker for UnicodeStringLiterals {
                 format!(
                     "Expected node kind to be {}, but it was {}",
                     NonterminalKind::UnicodeStringLiterals,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != self.elements.len() {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected {} elements, but got: {:#?}",
-                    self.elements.len(),
-                    children
-                ),
-                node_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        for (i, (child, child_offset)) in children.iter().enumerate() {
-            let element = &self.elements[i];
-            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for UnnamedFunctionAttributes {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnnamedFunctionAttributes) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::UnnamedFunctionAttributes,
                     node.kind()
                 ),
                 node_range,

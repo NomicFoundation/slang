@@ -52,6 +52,11 @@ fn elementary_type_under_call() -> Result<()> {
 }
 
 #[test]
+fn exponentiation() -> Result<()> {
+    run(T, "exponentiation")
+}
+
+#[test]
 fn function_call() -> Result<()> {
     run(T, "function_call")
 }

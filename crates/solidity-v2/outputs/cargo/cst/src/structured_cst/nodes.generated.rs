@@ -2038,30 +2038,6 @@ pub fn new_unchecked_block(unchecked_keyword: UncheckedKeyword, block: Block) ->
     })
 }
 
-pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
-
-#[derive(Clone, Debug)]
-pub struct UnnamedFunctionDefinitionStruct {
-    pub function_keyword: FunctionKeyword,
-    pub parameters: ParametersDeclaration,
-    pub attributes: UnnamedFunctionAttributes,
-    pub body: FunctionBody,
-}
-
-pub fn new_unnamed_function_definition(
-    function_keyword: FunctionKeyword,
-    parameters: ParametersDeclaration,
-    attributes: UnnamedFunctionAttributes,
-    body: FunctionBody,
-) -> UnnamedFunctionDefinition {
-    Rc::new(UnnamedFunctionDefinitionStruct {
-        function_keyword,
-        parameters,
-        attributes,
-        body,
-    })
-}
-
 pub type UntypedDeclaration = Rc<UntypedDeclarationStruct>;
 
 #[derive(Clone, Debug)]
@@ -2793,7 +2769,6 @@ pub enum ContractMember {
     ConstructorDefinition(ConstructorDefinition),
     ReceiveFunctionDefinition(ReceiveFunctionDefinition),
     FallbackFunctionDefinition(FallbackFunctionDefinition),
-    UnnamedFunctionDefinition(UnnamedFunctionDefinition),
     ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
@@ -2827,12 +2802,6 @@ pub fn new_contract_member_fallback_function_definition(
     element: FallbackFunctionDefinition,
 ) -> ContractMember {
     ContractMember::FallbackFunctionDefinition(element)
-}
-
-pub fn new_contract_member_unnamed_function_definition(
-    element: UnnamedFunctionDefinition,
-) -> ContractMember {
-    ContractMember::UnnamedFunctionDefinition(element)
 }
 
 pub fn new_contract_member_modifier_definition(element: ModifierDefinition) -> ContractMember {
@@ -4087,23 +4056,13 @@ pub fn new_storage_location_call_data_keyword(element: CallDataKeyword) -> Stora
 
 #[derive(Clone, Debug)]
 pub enum StringExpression {
-    StringLiteral(StringLiteral),
     StringLiterals(StringLiterals),
-    HexStringLiteral(HexStringLiteral),
     HexStringLiterals(HexStringLiterals),
     UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
-pub fn new_string_expression_string_literal(element: StringLiteral) -> StringExpression {
-    StringExpression::StringLiteral(element)
-}
-
 pub fn new_string_expression_string_literals(element: StringLiterals) -> StringExpression {
     StringExpression::StringLiterals(element)
-}
-
-pub fn new_string_expression_hex_string_literal(element: HexStringLiteral) -> StringExpression {
-    StringExpression::HexStringLiteral(element)
 }
 
 pub fn new_string_expression_hex_string_literals(element: HexStringLiterals) -> StringExpression {
@@ -4179,73 +4138,6 @@ pub fn new_unicode_string_literal_double_quoted_unicode_string_literal(
     element: DoubleQuotedUnicodeStringLiteral,
 ) -> UnicodeStringLiteral {
     UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(element)
-}
-
-#[derive(Clone, Debug)]
-pub enum UnnamedFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    ConstantKeyword(ConstantKeyword),
-    ExternalKeyword(ExternalKeyword),
-    InternalKeyword(InternalKeyword),
-    PayableKeyword(PayableKeyword),
-    PrivateKeyword(PrivateKeyword),
-    PublicKeyword(PublicKeyword),
-    PureKeyword(PureKeyword),
-    ViewKeyword(ViewKeyword),
-}
-
-pub fn new_unnamed_function_attribute_modifier_invocation(
-    element: ModifierInvocation,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ModifierInvocation(element)
-}
-
-pub fn new_unnamed_function_attribute_constant_keyword(
-    element: ConstantKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ConstantKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_external_keyword(
-    element: ExternalKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ExternalKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_internal_keyword(
-    element: InternalKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::InternalKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_payable_keyword(
-    element: PayableKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PayableKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_private_keyword(
-    element: PrivateKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PrivateKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_public_keyword(
-    element: PublicKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PublicKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_pure_keyword(
-    element: PureKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PureKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_view_keyword(
-    element: ViewKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ViewKeyword(element)
 }
 
 #[derive(Clone, Debug)]
@@ -4971,17 +4863,6 @@ pub struct UnicodeStringLiterals {
 
 pub fn new_unicode_string_literals(elements: Vec<UnicodeStringLiteral>) -> UnicodeStringLiterals {
     UnicodeStringLiterals { elements }
-}
-
-#[derive(Clone, Debug)]
-pub struct UnnamedFunctionAttributes {
-    pub elements: Vec<UnnamedFunctionAttribute>,
-}
-
-pub fn new_unnamed_function_attributes(
-    elements: Vec<UnnamedFunctionAttribute>,
-) -> UnnamedFunctionAttributes {
-    UnnamedFunctionAttributes { elements }
 }
 
 #[derive(Clone, Debug)]

@@ -413,10 +413,23 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
     
 
 // Rules for topic Constants
-    ConstantDefinition: ConstantDefinition = {
-        <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => new_constant_definition(<>),
-        
-    };
+    
+    
+// A `ConstantDefinition` conflicts with a function definition since the `ConstantKeyword` can be both a function
+// type attribute or the constant definition marker.
+//
+// We fix it in the same way as `StateVariableDefinition`, by letting the function type capture all the attributes,
+// and then stealing the trailing `ConstantKeyword`. 
+ConstantDefinition: ConstantDefinition = {
+    <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPath>>>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => new_constant_definition(<>),
+
+    // In this case the `FunctionTypeInternalNoReturn` is expected to end with a `ConstantKeyword`
+    <_type_name: FunctionTypeInternalNoReturn> <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => {
+        let (function_type, const_keyword) = extract_last_constant_keyword(_type_name);
+        new_constant_definition(new_type_name_function_type(function_type), const_keyword, _name, _equal, _value, _semicolon)
+    }
+};
+
     
 
 // Rules for topic State Variables
@@ -536,6 +549,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
     FunctionAttribute: FunctionAttribute = {
         <_ModifierInvocation: ModifierInvocation>  => new_function_attribute_modifier_invocation(<>),
         <_OverrideSpecifier: OverrideSpecifier>  => new_function_attribute_override_specifier(<>),
+        <_ConstantKeyword: ConstantKeyword>  => new_function_attribute_constant_keyword(<>),
         <_ExternalKeyword: ExternalKeyword>  => new_function_attribute_external_keyword(<>),
         <_InternalKeyword: InternalKeyword>  => new_function_attribute_internal_keyword(<>),
         <_PayableKeyword: PayableKeyword>  => new_function_attribute_payable_keyword(<>),
@@ -578,8 +592,10 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
     ConstructorAttribute: ConstructorAttribute = {
         <_ModifierInvocation: ModifierInvocation>  => new_constructor_attribute_modifier_invocation(<>),
         <_InternalKeyword: InternalKeyword>  => new_constructor_attribute_internal_keyword(<>),
+        <_OverrideKeyword: OverrideKeyword>  => new_constructor_attribute_override_keyword(<>),
         <_PayableKeyword: PayableKeyword>  => new_constructor_attribute_payable_keyword(<>),
         <_PublicKeyword: PublicKeyword>  => new_constructor_attribute_public_keyword(<>),
+        <_VirtualKeyword: VirtualKeyword>  => new_constructor_attribute_virtual_keyword(<>),
         
     };
     FallbackFunctionDefinition: FallbackFunctionDefinition = {
@@ -753,6 +769,7 @@ FunctionTypeInternalReturn: FunctionType = {
         <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(<>),
         <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(<>),
         <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(<>),
+        <_ConstantKeyword: ConstantKeyword>  => new_function_type_attribute_constant_keyword(<>),
         <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(<>),
         <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(<>),
         <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(<>),
@@ -780,6 +797,7 @@ FunctionTypeInternalReturn: FunctionType = {
 // Rules for topic Elementary Types
     ElementaryType: ElementaryType = {
         <_BoolKeyword: BoolKeyword>  => new_elementary_type_bool_keyword(<>),
+        <_ByteKeyword: ByteKeyword>  => new_elementary_type_byte_keyword(<>),
         <_StringKeyword: StringKeyword>  => new_elementary_type_string_keyword(<>),
         <_AddressType: AddressType>  => new_elementary_type_address_type(<>),
         <_BytesKeyword: BytesKeyword>  => new_elementary_type_bytes_keyword(<>),
@@ -823,11 +841,15 @@ FunctionTypeInternalReturn: FunctionType = {
 //
 // On top of that, the `revert` keyword is unreserved, meaning that a variable declaration like
 // `revert x = ...;` is valid.
-// From the perspective of the parser there's an ambiguity when looking at a statement starting with `revert x ...`
+// From the perspective of the parser there's an ambiguity when looking at a statement starting with `revert x ...`.
+// A Similar situation happens with `emit`
 //
 // To solve it we introduce a special `VariableDeclarationStatement` that handles this case specifically,
-// since both this and `RevertStatement` are inlined, the parser doesn't need to reduce until it has seen the
+// since this, `RevertStatement`, and `EmitStatement` are inlined, the parser doesn't need to reduce until it has seen the
 // entire statement.
+//
+// TODO(v2): We forcely inline `EmitKeyword` at `grammar.lalrpop.jinja2`, we should be able to express inlinining
+// keywords here
 _Statement<TrailingElse>: Statement = {
     <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
     <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
@@ -842,55 +864,61 @@ _Statement<TrailingElse>: Statement = {
     <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
     <_Block: Block>  => new_statement_block(<>),
     <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
-    <_VariableDeclarationStatement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
+    <_VariableDeclarationStatement: VariableDeclarationStatementSpecialRevertEmit>  => new_statement_variable_declaration_statement(<>),
     <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
 };
 
 // By default statements allow dangling `else`s
 Statement = _Statement<"True">;
 
-// A VariableDeclarationStatement that has a `revert` type as a special case, this allows
-// to disambiguate between a revert statement and a variable declaration with type `revert`
+// A VariableDeclarationStatement that has `revert` or `emit` types as a special cases, this allows
+// to disambiguate between a revert statement and a variable declaration with those types
 //
 // Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
 #[inline]
-VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
-    <_target: VariableDeclarationOptionSpecialRevert>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+VariableDeclarationStatementSpecialRevertEmit: VariableDeclarationStatement = {
+    <_target: VariableDeclarationOptionSpecialRevertEmit>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
 };
 #[inline]
-VariableDeclarationOptionSpecialRevert: VariableDeclarationOption = {
-    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_option_single_typed_declaration(<>),
+VariableDeclarationOptionSpecialRevertEmit: VariableDeclarationOption = {
+    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevertEmit>  => new_variable_declaration_option_single_typed_declaration(<>),
     <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_option_multi_typed_declaration(<>),
 };
 #[inline]
-SingleTypedDeclarationSpecialRevert: SingleTypedDeclaration = {
-    <_declaration: VariableDeclarationSpecialRevert>  <_value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
+SingleTypedDeclarationSpecialRevertEmit: SingleTypedDeclaration = {
+    <_declaration: VariableDeclarationSpecialRevertEmit>  <_value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
 };
 #[inline]
-VariableDeclarationSpecialRevert: VariableDeclaration = {
+VariableDeclarationSpecialRevertEmit: VariableDeclaration = {
     // A regular type that is not `revert`
     //
     // Note: we're tempted to inline TypeNames, but they are recursive, that's why we extract the special case
-    <_type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
-    // The special `revert` type
-    <l:@L> L_RevertKeyword_Unreserved <r:@R>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => {
-        let identifier = new_identifier(l..r, source);
+    <_type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevertEmit>>>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
+    // The special `revert` or `emit` types
+    <identifier: RevertOrEmitKeyword>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => {
         let iap = new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
         let type_name = new_type_name_index_access_path(iap);
         new_variable_declaration(type_name, _storage_location, _name)
     }
 };
 
-// An IdentifierPath that cannot be `revert`, used to disambiguate from the `revert` type
+// An inlined rule to match `revert` and `emit` as identifiers
 #[inline]
-IdentifierPathNoRevert: IdentifierPath = {
+RevertOrEmitKeyword: Identifier = {
+    <l:@L> L_RevertKeyword_Unreserved <r:@R> => new_identifier(l..r, source),
+    <l:@L> L_EmitKeyword_Unreserved <r:@R> => new_identifier(l..r, source)
+};
+
+// An IdentifierPath that cannot be `revert` or `emit`, used to disambiguate from the `revert` and `emit` types
+#[inline]
+IdentifierPathNoRevertEmit: IdentifierPath = {
     // We either have any identifier with a tail (ie a period)
     <_head: Identifier> <mut _tail: IdentifierPathTail>  => {
         _tail.insert(0, new_identifier_path_element_identifier(_head));
         new_identifier_path(_tail)
     },
-    // or a single identifier that is not `revert`
-    <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    // or a single identifier that is not `revert` or `emit`
+    <_head: SomeIdentifier<"RevertKeyword_Unreserved|EmitKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
 };
 
     UncheckedBlock: UncheckedBlock = {
@@ -927,6 +955,7 @@ IdentifierPathNoRevert: IdentifierPath = {
     VariableDeclarationOption: VariableDeclarationOption = {
         <_SingleTypedDeclaration: SingleTypedDeclaration>  => new_variable_declaration_option_single_typed_declaration(<>),
         <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_option_multi_typed_declaration(<>),
+        <_UntypedDeclaration: UntypedDeclaration>  => new_variable_declaration_option_untyped_declaration(<>),
         
     };
     SingleTypedDeclaration: SingleTypedDeclaration = {
@@ -970,6 +999,27 @@ TuplePrefix: usize = {
 
     MultiTypedDeclarationElement: MultiTypedDeclarationElement = {
         <_member: (VariableDeclaration)?>  => new_multi_typed_declaration_element(<>),
+        
+    };
+    UntypedDeclaration: UntypedDeclaration = {
+        <_var_keyword: VarKeyword>  <_names: UntypedDeclarationNames>  <_value: VariableDeclarationValue>  => new_untyped_declaration(<>),
+        
+    };
+    UntypedDeclarationNames: UntypedDeclarationNames = {
+        <_Identifier: Identifier>  => new_untyped_declaration_names_identifier(<>),
+        <_UntypedTupleDeclaration: UntypedTupleDeclaration>  => new_untyped_declaration_names_untyped_tuple_declaration(<>),
+        
+    };
+    UntypedTupleDeclaration: UntypedTupleDeclaration = {
+        <_open_paren: OpenParen>  <_elements: UntypedTupleDeclarationElements>  <_close_paren: CloseParen>  => new_untyped_tuple_declaration(<>),
+        
+    };
+    UntypedTupleDeclarationElements: UntypedTupleDeclarationElements = {
+        <_UntypedTupleDeclarationElement: SepOne<Comma, <UntypedTupleDeclarationElement>>>  => new_untyped_tuple_declaration_elements(<>),
+        
+    };
+    UntypedTupleDeclarationElement: UntypedTupleDeclarationElement = {
+        <_name: (Identifier)?>  => new_untyped_tuple_declaration_element(<>),
         
     };
     VariableDeclarationValue: VariableDeclarationValue = {
@@ -1086,6 +1136,10 @@ ExpressionTrailingBlock: (Expression, Block) = {
     #[inline]
     RevertStatement: RevertStatement = {
         <_revert_keyword: RevertKeyword>  <_error: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_revert_statement(<>),
+        
+    };
+    ThrowStatement: ThrowStatement = {
+        <_throw_keyword: ThrowKeyword>  <_semicolon: Semicolon>  => new_throw_statement(<>),
         
     };
     
@@ -1502,12 +1556,15 @@ HexNumberExpression: HexNumberExpression = {
     NumberUnit: NumberUnit = {
         <_WeiKeyword: WeiKeyword>  => new_number_unit_wei_keyword(<>),
         <_GweiKeyword: GweiKeyword>  => new_number_unit_gwei_keyword(<>),
+        <_SzaboKeyword: SzaboKeyword>  => new_number_unit_szabo_keyword(<>),
+        <_FinneyKeyword: FinneyKeyword>  => new_number_unit_finney_keyword(<>),
         <_EtherKeyword: EtherKeyword>  => new_number_unit_ether_keyword(<>),
         <_SecondsKeyword: SecondsKeyword>  => new_number_unit_seconds_keyword(<>),
         <_MinutesKeyword: MinutesKeyword>  => new_number_unit_minutes_keyword(<>),
         <_HoursKeyword: HoursKeyword>  => new_number_unit_hours_keyword(<>),
         <_DaysKeyword: DaysKeyword>  => new_number_unit_days_keyword(<>),
         <_WeeksKeyword: WeeksKeyword>  => new_number_unit_weeks_keyword(<>),
+        <_YearsKeyword: YearsKeyword>  => new_number_unit_years_keyword(<>),
         
     };
     
@@ -1602,6 +1659,7 @@ YulBlock: YulBlock = {
     YulStatement: YulStatement = {
         <_YulBlock: YulBlock>  => new_yul_statement_yul_block(<>),
         <_YulFunctionDefinition: YulFunctionDefinition>  => new_yul_statement_yul_function_definition(<>),
+        <_YulStackAssignmentStatement: YulStackAssignmentStatement>  => new_yul_statement_yul_stack_assignment_statement(<>),
         <_YulIfStatement: YulIfStatement>  => new_yul_statement_yul_if_statement(<>),
         <_YulForStatement: YulForStatement>  => new_yul_statement_yul_for_statement(<>),
         <_YulSwitchStatement: YulSwitchStatement>  => new_yul_statement_yul_switch_statement(<>),
@@ -1609,6 +1667,7 @@ YulBlock: YulBlock = {
         <_YulBreakStatement: YulBreakStatement>  => new_yul_statement_yul_break_statement(<>),
         <_YulContinueStatement: YulContinueStatement>  => new_yul_statement_yul_continue_statement(<>),
         <_YulVariableAssignmentStatement: YulVariableAssignmentStatement>  => new_yul_statement_yul_variable_assignment_statement(<>),
+        <_YulLabel: YulLabel>  => new_yul_statement_yul_label(<>),
         <_YulVariableDeclarationStatement: YulVariableDeclarationStatement>  => new_yul_statement_yul_variable_declaration_statement(<>),
         <_YulExpression: YulExpression>  => new_yul_statement_yul_expression(<>),
         
@@ -1647,6 +1706,24 @@ YulBlock: YulBlock = {
     };
     YulAssignmentOperator: YulAssignmentOperator = {
         <_ColonEqual: ColonEqual>  => new_yul_assignment_operator_colon_equal(<>),
+        <_YulColonAndEqual: YulColonAndEqual>  => new_yul_assignment_operator_yul_colon_and_equal(<>),
+        
+    };
+    YulColonAndEqual: YulColonAndEqual = {
+        <_colon: Colon>  <_equal: Equal>  => new_yul_colon_and_equal(<>),
+        
+    };
+    YulStackAssignmentStatement: YulStackAssignmentStatement = {
+        <_assignment: YulStackAssignmentOperator>  <_variable: YulIdentifier>  => new_yul_stack_assignment_statement(<>),
+        
+    };
+    YulStackAssignmentOperator: YulStackAssignmentOperator = {
+        <_EqualColon: EqualColon>  => new_yul_stack_assignment_operator_equal_colon(<>),
+        <_YulEqualAndColon: YulEqualAndColon>  => new_yul_stack_assignment_operator_yul_equal_and_colon(<>),
+        
+    };
+    YulEqualAndColon: YulEqualAndColon = {
+        <_equal: Equal>  <_colon: Colon>  => new_yul_equal_and_colon(<>),
         
     };
     YulIfStatement: YulIfStatement = {
@@ -1688,6 +1765,10 @@ YulBlock: YulBlock = {
     };
     YulContinueStatement: YulContinueStatement = {
         <_continue_keyword: YulContinueKeyword>  => new_yul_continue_statement(<>),
+        
+    };
+    YulLabel: YulLabel = {
+        <_label: YulIdentifier>  <_colon: Colon>  => new_yul_label(<>),
         
     };
     
@@ -1792,10 +1873,12 @@ AfterKeyword: AfterKeyword = {
         <l:@L> L_AfterKeyword_Reserved <r:@L> => new_after_keyword(l..r, source),
 
 };
-#[inline]
+
 AliasKeyword: AliasKeyword = {
 
         <l:@L> L_AliasKeyword_Reserved <r:@L> => new_alias_keyword(l..r, source),
+
+        <l:@L> L_AliasKeyword_Unreserved <r:@L> => new_alias_keyword(l..r, source),
 
 };
 #[inline]
@@ -1822,10 +1905,12 @@ AnonymousKeyword: AnonymousKeyword = {
         <l:@L> L_AnonymousKeyword_Reserved <r:@L> => new_anonymous_keyword(l..r, source),
 
 };
-#[inline]
+
 ApplyKeyword: ApplyKeyword = {
 
         <l:@L> L_ApplyKeyword_Reserved <r:@L> => new_apply_keyword(l..r, source),
+
+        <l:@L> L_ApplyKeyword_Unreserved <r:@L> => new_apply_keyword(l..r, source),
 
 };
 #[inline]
@@ -1864,10 +1949,12 @@ AtKeyword: AtKeyword = {
         <l:@L> L_AtKeyword_Unreserved <r:@L> => new_at_keyword(l..r, source),
 
 };
-#[inline]
+
 AutoKeyword: AutoKeyword = {
 
         <l:@L> L_AutoKeyword_Reserved <r:@L> => new_auto_keyword(l..r, source),
+
+        <l:@L> L_AutoKeyword_Unreserved <r:@L> => new_auto_keyword(l..r, source),
 
 };
 #[inline]
@@ -1996,10 +2083,12 @@ ConstantKeyword: ConstantKeyword = {
         <l:@L> L_ConstantKeyword_Reserved <r:@L> => new_constant_keyword(l..r, source),
 
 };
-#[inline]
+
 ConstructorKeyword: ConstructorKeyword = {
 
         <l:@L> L_ConstructorKeyword_Reserved <r:@L> => new_constructor_keyword(l..r, source),
+
+        <l:@L> L_ConstructorKeyword_Unreserved <r:@L> => new_constructor_keyword(l..r, source),
 
 };
 #[inline]
@@ -2014,10 +2103,12 @@ ContractKeyword: ContractKeyword = {
         <l:@L> L_ContractKeyword_Reserved <r:@L> => new_contract_keyword(l..r, source),
 
 };
-#[inline]
+
 CopyOfKeyword: CopyOfKeyword = {
 
         <l:@L> L_CopyOfKeyword_Reserved <r:@L> => new_copy_of_keyword(l..r, source),
+
+        <l:@L> L_CopyOfKeyword_Unreserved <r:@L> => new_copy_of_keyword(l..r, source),
 
 };
 #[inline]
@@ -2038,10 +2129,12 @@ DefaultKeyword: DefaultKeyword = {
         <l:@L> L_DefaultKeyword_Reserved <r:@L> => new_default_keyword(l..r, source),
 
 };
-#[inline]
+
 DefineKeyword: DefineKeyword = {
 
         <l:@L> L_DefineKeyword_Reserved <r:@L> => new_define_keyword(l..r, source),
+
+        <l:@L> L_DefineKeyword_Unreserved <r:@L> => new_define_keyword(l..r, source),
 
 };
 #[inline]
@@ -2090,6 +2183,8 @@ ElseKeyword: ElseKeyword = {
 EmitKeyword: EmitKeyword = {
 
         <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword(l..r, source),
+
+        <l:@L> L_EmitKeyword_Unreserved <r:@L> => new_emit_keyword(l..r, source),
 
 };
 #[inline]
@@ -2176,8 +2271,10 @@ FinalKeyword: FinalKeyword = {
         <l:@L> L_FinalKeyword_Reserved <r:@L> => new_final_keyword(l..r, source),
 
 };
-#[inline]
+
 FinneyKeyword: FinneyKeyword = {
+
+        <l:@L> L_FinneyKeyword_Reserved <r:@L> => new_finney_keyword(l..r, source),
 
         <l:@L> L_FinneyKeyword_Unreserved <r:@L> => new_finney_keyword(l..r, source),
 
@@ -2248,10 +2345,12 @@ GreaterThanGreaterThanGreaterThanEqual: GreaterThanGreaterThanGreaterThanEqual =
         <l:@L> L_GreaterThanGreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_greater_than_equal(l..r, source),
 
 };
-#[inline]
+
 GweiKeyword: GweiKeyword = {
 
         <l:@L> L_GweiKeyword_Reserved <r:@L> => new_gwei_keyword(l..r, source),
+
+        <l:@L> L_GweiKeyword_Unreserved <r:@L> => new_gwei_keyword(l..r, source),
 
 };
 #[inline]
@@ -2283,7 +2382,21 @@ Identifier: Identifier = {
 // this is an easy way to express "Any identifier except `X`" as `SomeIdentifier<"X">`
 SomeIdentifier<Except>: Identifier = {
 
+        <l:@L> L_AliasKeyword_Unreserved <r:@L> if Except !~ "AliasKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_ApplyKeyword_Unreserved <r:@L> if Except !~ "ApplyKeyword_Unreserved" => new_identifier(l..r, source),
+
         <l:@L> L_AtKeyword_Unreserved <r:@L> if Except !~ "AtKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_AutoKeyword_Unreserved <r:@L> if Except !~ "AutoKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_ConstructorKeyword_Unreserved <r:@L> if Except !~ "ConstructorKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_CopyOfKeyword_Unreserved <r:@L> if Except !~ "CopyOfKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_DefineKeyword_Unreserved <r:@L> if Except !~ "DefineKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_EmitKeyword_Unreserved <r:@L> if Except !~ "EmitKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_ErrorKeyword_Unreserved <r:@L> if Except !~ "ErrorKeyword_Unreserved" => new_identifier(l..r, source),
 
@@ -2293,15 +2406,39 @@ SomeIdentifier<Except>: Identifier = {
 
         <l:@L> L_GlobalKeyword_Unreserved <r:@L> if Except !~ "GlobalKeyword_Unreserved" => new_identifier(l..r, source),
 
+        <l:@L> L_GweiKeyword_Unreserved <r:@L> if Except !~ "GweiKeyword_Unreserved" => new_identifier(l..r, source),
+
         <l:@L> L_Identifier <r:@L> if Except !~ "Identifier" => new_identifier(l..r, source),
+
+        <l:@L> L_ImmutableKeyword_Unreserved <r:@L> if Except !~ "ImmutableKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_ImplementsKeyword_Unreserved <r:@L> if Except !~ "ImplementsKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_LayoutKeyword_Unreserved <r:@L> if Except !~ "LayoutKeyword_Unreserved" => new_identifier(l..r, source),
 
+        <l:@L> L_MacroKeyword_Unreserved <r:@L> if Except !~ "MacroKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_MutableKeyword_Unreserved <r:@L> if Except !~ "MutableKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_PartialKeyword_Unreserved <r:@L> if Except !~ "PartialKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_PromiseKeyword_Unreserved <r:@L> if Except !~ "PromiseKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_ReferenceKeyword_Unreserved <r:@L> if Except !~ "ReferenceKeyword_Unreserved" => new_identifier(l..r, source),
+
         <l:@L> L_RevertKeyword_Unreserved <r:@L> if Except !~ "RevertKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_SealedKeyword_Unreserved <r:@L> if Except !~ "SealedKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_SizeOfKeyword_Unreserved <r:@L> if Except !~ "SizeOfKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_SupportsKeyword_Unreserved <r:@L> if Except !~ "SupportsKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_SzaboKeyword_Unreserved <r:@L> if Except !~ "SzaboKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_TransientKeyword_Unreserved <r:@L> if Except !~ "TransientKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_TypeDefKeyword_Unreserved <r:@L> if Except !~ "TypeDefKeyword_Unreserved" => new_identifier(l..r, source),
 
 };
 #[inline]
@@ -2310,16 +2447,20 @@ IfKeyword: IfKeyword = {
         <l:@L> L_IfKeyword_Reserved <r:@L> => new_if_keyword(l..r, source),
 
 };
-#[inline]
+
 ImmutableKeyword: ImmutableKeyword = {
 
         <l:@L> L_ImmutableKeyword_Reserved <r:@L> => new_immutable_keyword(l..r, source),
 
+        <l:@L> L_ImmutableKeyword_Unreserved <r:@L> => new_immutable_keyword(l..r, source),
+
 };
-#[inline]
+
 ImplementsKeyword: ImplementsKeyword = {
 
         <l:@L> L_ImplementsKeyword_Reserved <r:@L> => new_implements_keyword(l..r, source),
+
+        <l:@L> L_ImplementsKeyword_Unreserved <r:@L> => new_implements_keyword(l..r, source),
 
 };
 #[inline]
@@ -2412,10 +2553,12 @@ LibraryKeyword: LibraryKeyword = {
         <l:@L> L_LibraryKeyword_Reserved <r:@L> => new_library_keyword(l..r, source),
 
 };
-#[inline]
+
 MacroKeyword: MacroKeyword = {
 
         <l:@L> L_MacroKeyword_Reserved <r:@L> => new_macro_keyword(l..r, source),
+
+        <l:@L> L_MacroKeyword_Unreserved <r:@L> => new_macro_keyword(l..r, source),
 
 };
 #[inline]
@@ -2484,10 +2627,12 @@ MultiLineNatSpecComment: MultiLineNatSpecComment = {
         <l:@L> L_MultiLineNatSpecComment <r:@L> => new_multi_line_nat_spec_comment(l..r, source),
 
 };
-#[inline]
+
 MutableKeyword: MutableKeyword = {
 
         <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword(l..r, source),
+
+        <l:@L> L_MutableKeyword_Unreserved <r:@L> => new_mutable_keyword(l..r, source),
 
 };
 #[inline]
@@ -2532,10 +2677,12 @@ OverrideKeyword: OverrideKeyword = {
         <l:@L> L_OverrideKeyword_Reserved <r:@L> => new_override_keyword(l..r, source),
 
 };
-#[inline]
+
 PartialKeyword: PartialKeyword = {
 
         <l:@L> L_PartialKeyword_Reserved <r:@L> => new_partial_keyword(l..r, source),
+
+        <l:@L> L_PartialKeyword_Unreserved <r:@L> => new_partial_keyword(l..r, source),
 
 };
 #[inline]
@@ -2592,10 +2739,12 @@ PrivateKeyword: PrivateKeyword = {
         <l:@L> L_PrivateKeyword_Reserved <r:@L> => new_private_keyword(l..r, source),
 
 };
-#[inline]
+
 PromiseKeyword: PromiseKeyword = {
 
         <l:@L> L_PromiseKeyword_Reserved <r:@L> => new_promise_keyword(l..r, source),
+
+        <l:@L> L_PromiseKeyword_Unreserved <r:@L> => new_promise_keyword(l..r, source),
 
 };
 #[inline]
@@ -2622,10 +2771,12 @@ ReceiveKeyword: ReceiveKeyword = {
         <l:@L> L_ReceiveKeyword_Reserved <r:@L> => new_receive_keyword(l..r, source),
 
 };
-#[inline]
+
 ReferenceKeyword: ReferenceKeyword = {
 
         <l:@L> L_ReferenceKeyword_Reserved <r:@L> => new_reference_keyword(l..r, source),
+
+        <l:@L> L_ReferenceKeyword_Unreserved <r:@L> => new_reference_keyword(l..r, source),
 
 };
 #[inline]
@@ -2658,10 +2809,12 @@ SMTCheckerKeyword: SMTCheckerKeyword = {
         <l:@L> L_SMTCheckerKeyword_Reserved <r:@L> => new_smt_checker_keyword(l..r, source),
 
 };
-#[inline]
+
 SealedKeyword: SealedKeyword = {
 
         <l:@L> L_SealedKeyword_Reserved <r:@L> => new_sealed_keyword(l..r, source),
+
+        <l:@L> L_SealedKeyword_Unreserved <r:@L> => new_sealed_keyword(l..r, source),
 
 };
 #[inline]
@@ -2712,10 +2865,12 @@ SingleQuotedVersionLiteral: SingleQuotedVersionLiteral = {
         <l:@L> L_SingleQuotedVersionLiteral <r:@L> => new_single_quoted_version_literal(l..r, source),
 
 };
-#[inline]
+
 SizeOfKeyword: SizeOfKeyword = {
 
         <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(l..r, source),
+
+        <l:@L> L_SizeOfKeyword_Unreserved <r:@L> => new_size_of_keyword(l..r, source),
 
 };
 #[inline]
@@ -2766,10 +2921,12 @@ SuperKeyword: SuperKeyword = {
         <l:@L> L_SuperKeyword_Reserved <r:@L> => new_super_keyword(l..r, source),
 
 };
-#[inline]
+
 SupportsKeyword: SupportsKeyword = {
 
         <l:@L> L_SupportsKeyword_Reserved <r:@L> => new_supports_keyword(l..r, source),
+
+        <l:@L> L_SupportsKeyword_Unreserved <r:@L> => new_supports_keyword(l..r, source),
 
 };
 #[inline]
@@ -2778,8 +2935,10 @@ SwitchKeyword: SwitchKeyword = {
         <l:@L> L_SwitchKeyword_Reserved <r:@L> => new_switch_keyword(l..r, source),
 
 };
-#[inline]
+
 SzaboKeyword: SzaboKeyword = {
+
+        <l:@L> L_SzaboKeyword_Reserved <r:@L> => new_szabo_keyword(l..r, source),
 
         <l:@L> L_SzaboKeyword_Unreserved <r:@L> => new_szabo_keyword(l..r, source),
 
@@ -2820,10 +2979,12 @@ TryKeyword: TryKeyword = {
         <l:@L> L_TryKeyword_Reserved <r:@L> => new_try_keyword(l..r, source),
 
 };
-#[inline]
+
 TypeDefKeyword: TypeDefKeyword = {
 
         <l:@L> L_TypeDefKeyword_Reserved <r:@L> => new_type_def_keyword(l..r, source),
+
+        <l:@L> L_TypeDefKeyword_Unreserved <r:@L> => new_type_def_keyword(l..r, source),
 
 };
 #[inline]
@@ -2916,56 +3077,74 @@ YearsKeyword: YearsKeyword = {
         <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword(l..r, source),
 
 };
-#[inline]
+
 YulAbstractKeyword: YulAbstractKeyword = {
+
+        <l:@L> L_YulAbstractKeyword_Reserved <r:@L> => new_yul_abstract_keyword(l..r, source),
 
         <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_abstract_keyword(l..r, source),
 
 };
-#[inline]
+
 YulAfterKeyword: YulAfterKeyword = {
+
+        <l:@L> L_YulAfterKeyword_Reserved <r:@L> => new_yul_after_keyword(l..r, source),
 
         <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_yul_after_keyword(l..r, source),
 
 };
-#[inline]
+
 YulAliasKeyword: YulAliasKeyword = {
+
+        <l:@L> L_YulAliasKeyword_Reserved <r:@L> => new_yul_alias_keyword(l..r, source),
 
         <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_yul_alias_keyword(l..r, source),
 
 };
-#[inline]
+
 YulAnonymousKeyword: YulAnonymousKeyword = {
+
+        <l:@L> L_YulAnonymousKeyword_Reserved <r:@L> => new_yul_anonymous_keyword(l..r, source),
 
         <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_yul_anonymous_keyword(l..r, source),
 
 };
-#[inline]
+
 YulApplyKeyword: YulApplyKeyword = {
+
+        <l:@L> L_YulApplyKeyword_Reserved <r:@L> => new_yul_apply_keyword(l..r, source),
 
         <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_yul_apply_keyword(l..r, source),
 
 };
-#[inline]
+
 YulAsKeyword: YulAsKeyword = {
+
+        <l:@L> L_YulAsKeyword_Reserved <r:@L> => new_yul_as_keyword(l..r, source),
 
         <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_yul_as_keyword(l..r, source),
 
 };
-#[inline]
+
 YulAssemblyKeyword: YulAssemblyKeyword = {
+
+        <l:@L> L_YulAssemblyKeyword_Reserved <r:@L> => new_yul_assembly_keyword(l..r, source),
 
         <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_yul_assembly_keyword(l..r, source),
 
 };
-#[inline]
+
 YulAutoKeyword: YulAutoKeyword = {
+
+        <l:@L> L_YulAutoKeyword_Reserved <r:@L> => new_yul_auto_keyword(l..r, source),
 
         <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_yul_auto_keyword(l..r, source),
 
 };
-#[inline]
+
 YulBoolKeyword: YulBoolKeyword = {
+
+        <l:@L> L_YulBoolKeyword_Reserved <r:@L> => new_yul_bool_keyword(l..r, source),
 
         <l:@L> L_YulBoolKeyword_Unreserved <r:@L> => new_yul_bool_keyword(l..r, source),
 
@@ -2976,14 +3155,18 @@ YulBreakKeyword: YulBreakKeyword = {
         <l:@L> L_YulBreakKeyword_Reserved <r:@L> => new_yul_break_keyword(l..r, source),
 
 };
-#[inline]
+
 YulBytesKeyword: YulBytesKeyword = {
+
+        <l:@L> L_YulBytesKeyword_Reserved <r:@L> => new_yul_bytes_keyword(l..r, source),
 
         <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_yul_bytes_keyword(l..r, source),
 
 };
-#[inline]
+
 YulCallDataKeyword: YulCallDataKeyword = {
+
+        <l:@L> L_YulCallDataKeyword_Reserved <r:@L> => new_yul_call_data_keyword(l..r, source),
 
         <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_yul_call_data_keyword(l..r, source),
 
@@ -2994,20 +3177,26 @@ YulCaseKeyword: YulCaseKeyword = {
         <l:@L> L_YulCaseKeyword_Reserved <r:@L> => new_yul_case_keyword(l..r, source),
 
 };
-#[inline]
+
 YulCatchKeyword: YulCatchKeyword = {
+
+        <l:@L> L_YulCatchKeyword_Reserved <r:@L> => new_yul_catch_keyword(l..r, source),
 
         <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_yul_catch_keyword(l..r, source),
 
 };
-#[inline]
+
 YulConstantKeyword: YulConstantKeyword = {
+
+        <l:@L> L_YulConstantKeyword_Reserved <r:@L> => new_yul_constant_keyword(l..r, source),
 
         <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_yul_constant_keyword(l..r, source),
 
 };
-#[inline]
+
 YulConstructorKeyword: YulConstructorKeyword = {
+
+        <l:@L> L_YulConstructorKeyword_Reserved <r:@L> => new_yul_constructor_keyword(l..r, source),
 
         <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_yul_constructor_keyword(l..r, source),
 
@@ -3018,20 +3207,26 @@ YulContinueKeyword: YulContinueKeyword = {
         <l:@L> L_YulContinueKeyword_Reserved <r:@L> => new_yul_continue_keyword(l..r, source),
 
 };
-#[inline]
+
 YulContractKeyword: YulContractKeyword = {
+
+        <l:@L> L_YulContractKeyword_Reserved <r:@L> => new_yul_contract_keyword(l..r, source),
 
         <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_yul_contract_keyword(l..r, source),
 
 };
-#[inline]
+
 YulCopyOfKeyword: YulCopyOfKeyword = {
+
+        <l:@L> L_YulCopyOfKeyword_Reserved <r:@L> => new_yul_copy_of_keyword(l..r, source),
 
         <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_yul_copy_of_keyword(l..r, source),
 
 };
-#[inline]
+
 YulDaysKeyword: YulDaysKeyword = {
+
+        <l:@L> L_YulDaysKeyword_Reserved <r:@L> => new_yul_days_keyword(l..r, source),
 
         <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_yul_days_keyword(l..r, source),
 
@@ -3048,62 +3243,82 @@ YulDefaultKeyword: YulDefaultKeyword = {
         <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword(l..r, source),
 
 };
-#[inline]
+
 YulDefineKeyword: YulDefineKeyword = {
+
+        <l:@L> L_YulDefineKeyword_Reserved <r:@L> => new_yul_define_keyword(l..r, source),
 
         <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_yul_define_keyword(l..r, source),
 
 };
-#[inline]
+
 YulDeleteKeyword: YulDeleteKeyword = {
+
+        <l:@L> L_YulDeleteKeyword_Reserved <r:@L> => new_yul_delete_keyword(l..r, source),
 
         <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_yul_delete_keyword(l..r, source),
 
 };
-#[inline]
+
 YulDoKeyword: YulDoKeyword = {
+
+        <l:@L> L_YulDoKeyword_Reserved <r:@L> => new_yul_do_keyword(l..r, source),
 
         <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_yul_do_keyword(l..r, source),
 
 };
-#[inline]
+
 YulElseKeyword: YulElseKeyword = {
+
+        <l:@L> L_YulElseKeyword_Reserved <r:@L> => new_yul_else_keyword(l..r, source),
 
         <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_yul_else_keyword(l..r, source),
 
 };
-#[inline]
+
 YulEmitKeyword: YulEmitKeyword = {
+
+        <l:@L> L_YulEmitKeyword_Reserved <r:@L> => new_yul_emit_keyword(l..r, source),
 
         <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_yul_emit_keyword(l..r, source),
 
 };
-#[inline]
+
 YulEnumKeyword: YulEnumKeyword = {
+
+        <l:@L> L_YulEnumKeyword_Reserved <r:@L> => new_yul_enum_keyword(l..r, source),
 
         <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_yul_enum_keyword(l..r, source),
 
 };
-#[inline]
+
 YulEtherKeyword: YulEtherKeyword = {
+
+        <l:@L> L_YulEtherKeyword_Reserved <r:@L> => new_yul_ether_keyword(l..r, source),
 
         <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_yul_ether_keyword(l..r, source),
 
 };
-#[inline]
+
 YulEventKeyword: YulEventKeyword = {
+
+        <l:@L> L_YulEventKeyword_Reserved <r:@L> => new_yul_event_keyword(l..r, source),
 
         <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_yul_event_keyword(l..r, source),
 
 };
-#[inline]
+
 YulExternalKeyword: YulExternalKeyword = {
+
+        <l:@L> L_YulExternalKeyword_Reserved <r:@L> => new_yul_external_keyword(l..r, source),
 
         <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_yul_external_keyword(l..r, source),
 
 };
-#[inline]
+
 YulFallbackKeyword: YulFallbackKeyword = {
+
+        <l:@L> L_YulFallbackKeyword_Reserved <r:@L> => new_yul_fallback_keyword(l..r, source),
 
         <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_yul_fallback_keyword(l..r, source),
 
@@ -3114,20 +3329,26 @@ YulFalseKeyword: YulFalseKeyword = {
         <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(l..r, source),
 
 };
-#[inline]
+
 YulFinalKeyword: YulFinalKeyword = {
+
+        <l:@L> L_YulFinalKeyword_Reserved <r:@L> => new_yul_final_keyword(l..r, source),
 
         <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_yul_final_keyword(l..r, source),
 
 };
-#[inline]
+
 YulFinneyKeyword: YulFinneyKeyword = {
+
+        <l:@L> L_YulFinneyKeyword_Reserved <r:@L> => new_yul_finney_keyword(l..r, source),
 
         <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_yul_finney_keyword(l..r, source),
 
 };
-#[inline]
+
 YulFixedKeyword: YulFixedKeyword = {
+
+        <l:@L> L_YulFixedKeyword_Reserved <r:@L> => new_yul_fixed_keyword(l..r, source),
 
         <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_yul_fixed_keyword(l..r, source),
 
@@ -3144,8 +3365,10 @@ YulFunctionKeyword: YulFunctionKeyword = {
         <l:@L> L_YulFunctionKeyword_Reserved <r:@L> => new_yul_function_keyword(l..r, source),
 
 };
-#[inline]
+
 YulGweiKeyword: YulGweiKeyword = {
+
+        <l:@L> L_YulGweiKeyword_Reserved <r:@L> => new_yul_gwei_keyword(l..r, source),
 
         <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_yul_gwei_keyword(l..r, source),
 
@@ -3162,13 +3385,15 @@ YulHexLiteral: YulHexLiteral = {
         <l:@L> L_YulHexLiteral <r:@L> => new_yul_hex_literal(l..r, source),
 
 };
-#[inline]
+
 YulHoursKeyword: YulHoursKeyword = {
+
+        <l:@L> L_YulHoursKeyword_Reserved <r:@L> => new_yul_hours_keyword(l..r, source),
 
         <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_hours_keyword(l..r, source),
 
 };
-#[inline]
+
 YulIdentifier: YulIdentifier = {
 
         <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
@@ -3257,6 +3482,8 @@ YulIdentifier: YulIdentifier = {
 
         <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
 
+        <l:@L> L_YulLeaveKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
         <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
 
         <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
@@ -3317,9 +3544,13 @@ YulIdentifier: YulIdentifier = {
 
         <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
 
+        <l:@L> L_YulSuperKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
         <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
 
         <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulThisKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
 
         <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
 
@@ -3360,70 +3591,92 @@ YulIfKeyword: YulIfKeyword = {
         <l:@L> L_YulIfKeyword_Reserved <r:@L> => new_yul_if_keyword(l..r, source),
 
 };
-#[inline]
+
 YulImmutableKeyword: YulImmutableKeyword = {
+
+        <l:@L> L_YulImmutableKeyword_Reserved <r:@L> => new_yul_immutable_keyword(l..r, source),
 
         <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_yul_immutable_keyword(l..r, source),
 
 };
-#[inline]
+
 YulImplementsKeyword: YulImplementsKeyword = {
+
+        <l:@L> L_YulImplementsKeyword_Reserved <r:@L> => new_yul_implements_keyword(l..r, source),
 
         <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_yul_implements_keyword(l..r, source),
 
 };
-#[inline]
+
 YulImportKeyword: YulImportKeyword = {
+
+        <l:@L> L_YulImportKeyword_Reserved <r:@L> => new_yul_import_keyword(l..r, source),
 
         <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_yul_import_keyword(l..r, source),
 
 };
-#[inline]
+
 YulInKeyword: YulInKeyword = {
+
+        <l:@L> L_YulInKeyword_Reserved <r:@L> => new_yul_in_keyword(l..r, source),
 
         <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_yul_in_keyword(l..r, source),
 
 };
-#[inline]
+
 YulIndexedKeyword: YulIndexedKeyword = {
+
+        <l:@L> L_YulIndexedKeyword_Reserved <r:@L> => new_yul_indexed_keyword(l..r, source),
 
         <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_yul_indexed_keyword(l..r, source),
 
 };
-#[inline]
+
 YulInlineKeyword: YulInlineKeyword = {
+
+        <l:@L> L_YulInlineKeyword_Reserved <r:@L> => new_yul_inline_keyword(l..r, source),
 
         <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_yul_inline_keyword(l..r, source),
 
 };
-#[inline]
+
 YulIntKeyword: YulIntKeyword = {
+
+        <l:@L> L_YulIntKeyword_Reserved <r:@L> => new_yul_int_keyword(l..r, source),
 
         <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_yul_int_keyword(l..r, source),
 
 };
-#[inline]
+
 YulInterfaceKeyword: YulInterfaceKeyword = {
+
+        <l:@L> L_YulInterfaceKeyword_Reserved <r:@L> => new_yul_interface_keyword(l..r, source),
 
         <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_yul_interface_keyword(l..r, source),
 
 };
-#[inline]
+
 YulInternalKeyword: YulInternalKeyword = {
+
+        <l:@L> L_YulInternalKeyword_Reserved <r:@L> => new_yul_internal_keyword(l..r, source),
 
         <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_yul_internal_keyword(l..r, source),
 
 };
-#[inline]
+
 YulIsKeyword: YulIsKeyword = {
+
+        <l:@L> L_YulIsKeyword_Reserved <r:@L> => new_yul_is_keyword(l..r, source),
 
         <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_is_keyword(l..r, source),
 
 };
-#[inline]
+
 YulLeaveKeyword: YulLeaveKeyword = {
 
         <l:@L> L_YulLeaveKeyword_Reserved <r:@L> => new_yul_leave_keyword(l..r, source),
+
+        <l:@L> L_YulLeaveKeyword_Unreserved <r:@L> => new_yul_leave_keyword(l..r, source),
 
 };
 #[inline]
@@ -3432,194 +3685,258 @@ YulLetKeyword: YulLetKeyword = {
         <l:@L> L_YulLetKeyword_Reserved <r:@L> => new_yul_let_keyword(l..r, source),
 
 };
-#[inline]
+
 YulLibraryKeyword: YulLibraryKeyword = {
+
+        <l:@L> L_YulLibraryKeyword_Reserved <r:@L> => new_yul_library_keyword(l..r, source),
 
         <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_library_keyword(l..r, source),
 
 };
-#[inline]
+
 YulMacroKeyword: YulMacroKeyword = {
+
+        <l:@L> L_YulMacroKeyword_Reserved <r:@L> => new_yul_macro_keyword(l..r, source),
 
         <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_macro_keyword(l..r, source),
 
 };
-#[inline]
+
 YulMappingKeyword: YulMappingKeyword = {
+
+        <l:@L> L_YulMappingKeyword_Reserved <r:@L> => new_yul_mapping_keyword(l..r, source),
 
         <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_yul_mapping_keyword(l..r, source),
 
 };
-#[inline]
+
 YulMatchKeyword: YulMatchKeyword = {
+
+        <l:@L> L_YulMatchKeyword_Reserved <r:@L> => new_yul_match_keyword(l..r, source),
 
         <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_yul_match_keyword(l..r, source),
 
 };
-#[inline]
+
 YulMemoryKeyword: YulMemoryKeyword = {
+
+        <l:@L> L_YulMemoryKeyword_Reserved <r:@L> => new_yul_memory_keyword(l..r, source),
 
         <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_yul_memory_keyword(l..r, source),
 
 };
-#[inline]
+
 YulMinutesKeyword: YulMinutesKeyword = {
+
+        <l:@L> L_YulMinutesKeyword_Reserved <r:@L> => new_yul_minutes_keyword(l..r, source),
 
         <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_yul_minutes_keyword(l..r, source),
 
 };
-#[inline]
+
 YulModifierKeyword: YulModifierKeyword = {
+
+        <l:@L> L_YulModifierKeyword_Reserved <r:@L> => new_yul_modifier_keyword(l..r, source),
 
         <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_yul_modifier_keyword(l..r, source),
 
 };
-#[inline]
+
 YulMutableKeyword: YulMutableKeyword = {
+
+        <l:@L> L_YulMutableKeyword_Reserved <r:@L> => new_yul_mutable_keyword(l..r, source),
 
         <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_yul_mutable_keyword(l..r, source),
 
 };
-#[inline]
+
 YulNewKeyword: YulNewKeyword = {
+
+        <l:@L> L_YulNewKeyword_Reserved <r:@L> => new_yul_new_keyword(l..r, source),
 
         <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_yul_new_keyword(l..r, source),
 
 };
-#[inline]
+
 YulNullKeyword: YulNullKeyword = {
+
+        <l:@L> L_YulNullKeyword_Reserved <r:@L> => new_yul_null_keyword(l..r, source),
 
         <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_yul_null_keyword(l..r, source),
 
 };
-#[inline]
+
 YulOfKeyword: YulOfKeyword = {
+
+        <l:@L> L_YulOfKeyword_Reserved <r:@L> => new_yul_of_keyword(l..r, source),
 
         <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_yul_of_keyword(l..r, source),
 
 };
-#[inline]
+
 YulOverrideKeyword: YulOverrideKeyword = {
+
+        <l:@L> L_YulOverrideKeyword_Reserved <r:@L> => new_yul_override_keyword(l..r, source),
 
         <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_yul_override_keyword(l..r, source),
 
 };
-#[inline]
+
 YulPartialKeyword: YulPartialKeyword = {
+
+        <l:@L> L_YulPartialKeyword_Reserved <r:@L> => new_yul_partial_keyword(l..r, source),
 
         <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_yul_partial_keyword(l..r, source),
 
 };
-#[inline]
+
 YulPayableKeyword: YulPayableKeyword = {
+
+        <l:@L> L_YulPayableKeyword_Reserved <r:@L> => new_yul_payable_keyword(l..r, source),
 
         <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_yul_payable_keyword(l..r, source),
 
 };
-#[inline]
+
 YulPragmaKeyword: YulPragmaKeyword = {
+
+        <l:@L> L_YulPragmaKeyword_Reserved <r:@L> => new_yul_pragma_keyword(l..r, source),
 
         <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_yul_pragma_keyword(l..r, source),
 
 };
-#[inline]
+
 YulPrivateKeyword: YulPrivateKeyword = {
+
+        <l:@L> L_YulPrivateKeyword_Reserved <r:@L> => new_yul_private_keyword(l..r, source),
 
         <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_yul_private_keyword(l..r, source),
 
 };
-#[inline]
+
 YulPromiseKeyword: YulPromiseKeyword = {
+
+        <l:@L> L_YulPromiseKeyword_Reserved <r:@L> => new_yul_promise_keyword(l..r, source),
 
         <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_yul_promise_keyword(l..r, source),
 
 };
-#[inline]
+
 YulPublicKeyword: YulPublicKeyword = {
+
+        <l:@L> L_YulPublicKeyword_Reserved <r:@L> => new_yul_public_keyword(l..r, source),
 
         <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_yul_public_keyword(l..r, source),
 
 };
-#[inline]
+
 YulPureKeyword: YulPureKeyword = {
+
+        <l:@L> L_YulPureKeyword_Reserved <r:@L> => new_yul_pure_keyword(l..r, source),
 
         <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_yul_pure_keyword(l..r, source),
 
 };
-#[inline]
+
 YulReceiveKeyword: YulReceiveKeyword = {
+
+        <l:@L> L_YulReceiveKeyword_Reserved <r:@L> => new_yul_receive_keyword(l..r, source),
 
         <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_yul_receive_keyword(l..r, source),
 
 };
-#[inline]
+
 YulReferenceKeyword: YulReferenceKeyword = {
+
+        <l:@L> L_YulReferenceKeyword_Reserved <r:@L> => new_yul_reference_keyword(l..r, source),
 
         <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_yul_reference_keyword(l..r, source),
 
 };
-#[inline]
+
 YulRelocatableKeyword: YulRelocatableKeyword = {
+
+        <l:@L> L_YulRelocatableKeyword_Reserved <r:@L> => new_yul_relocatable_keyword(l..r, source),
 
         <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_yul_relocatable_keyword(l..r, source),
 
 };
-#[inline]
+
 YulReturnsKeyword: YulReturnsKeyword = {
+
+        <l:@L> L_YulReturnsKeyword_Reserved <r:@L> => new_yul_returns_keyword(l..r, source),
 
         <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_yul_returns_keyword(l..r, source),
 
 };
-#[inline]
+
 YulSealedKeyword: YulSealedKeyword = {
+
+        <l:@L> L_YulSealedKeyword_Reserved <r:@L> => new_yul_sealed_keyword(l..r, source),
 
         <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_yul_sealed_keyword(l..r, source),
 
 };
-#[inline]
+
 YulSecondsKeyword: YulSecondsKeyword = {
+
+        <l:@L> L_YulSecondsKeyword_Reserved <r:@L> => new_yul_seconds_keyword(l..r, source),
 
         <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_yul_seconds_keyword(l..r, source),
 
 };
-#[inline]
+
 YulSizeOfKeyword: YulSizeOfKeyword = {
+
+        <l:@L> L_YulSizeOfKeyword_Reserved <r:@L> => new_yul_size_of_keyword(l..r, source),
 
         <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_yul_size_of_keyword(l..r, source),
 
 };
-#[inline]
+
 YulStaticKeyword: YulStaticKeyword = {
+
+        <l:@L> L_YulStaticKeyword_Reserved <r:@L> => new_yul_static_keyword(l..r, source),
 
         <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_yul_static_keyword(l..r, source),
 
 };
-#[inline]
+
 YulStorageKeyword: YulStorageKeyword = {
+
+        <l:@L> L_YulStorageKeyword_Reserved <r:@L> => new_yul_storage_keyword(l..r, source),
 
         <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_yul_storage_keyword(l..r, source),
 
 };
-#[inline]
+
 YulStringKeyword: YulStringKeyword = {
+
+        <l:@L> L_YulStringKeyword_Reserved <r:@L> => new_yul_string_keyword(l..r, source),
 
         <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_yul_string_keyword(l..r, source),
 
 };
-#[inline]
+
 YulStructKeyword: YulStructKeyword = {
+
+        <l:@L> L_YulStructKeyword_Reserved <r:@L> => new_yul_struct_keyword(l..r, source),
 
         <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_struct_keyword(l..r, source),
 
 };
-#[inline]
+
 YulSuperKeyword: YulSuperKeyword = {
 
         <l:@L> L_YulSuperKeyword_Reserved <r:@L> => new_yul_super_keyword(l..r, source),
 
+        <l:@L> L_YulSuperKeyword_Unreserved <r:@L> => new_yul_super_keyword(l..r, source),
+
 };
-#[inline]
+
 YulSupportsKeyword: YulSupportsKeyword = {
+
+        <l:@L> L_YulSupportsKeyword_Reserved <r:@L> => new_yul_supports_keyword(l..r, source),
 
         <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_supports_keyword(l..r, source),
 
@@ -3630,20 +3947,26 @@ YulSwitchKeyword: YulSwitchKeyword = {
         <l:@L> L_YulSwitchKeyword_Reserved <r:@L> => new_yul_switch_keyword(l..r, source),
 
 };
-#[inline]
+
 YulSzaboKeyword: YulSzaboKeyword = {
+
+        <l:@L> L_YulSzaboKeyword_Reserved <r:@L> => new_yul_szabo_keyword(l..r, source),
 
         <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_szabo_keyword(l..r, source),
 
 };
-#[inline]
+
 YulThisKeyword: YulThisKeyword = {
 
         <l:@L> L_YulThisKeyword_Reserved <r:@L> => new_yul_this_keyword(l..r, source),
 
+        <l:@L> L_YulThisKeyword_Unreserved <r:@L> => new_yul_this_keyword(l..r, source),
+
 };
-#[inline]
+
 YulThrowKeyword: YulThrowKeyword = {
+
+        <l:@L> L_YulThrowKeyword_Reserved <r:@L> => new_yul_throw_keyword(l..r, source),
 
         <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_throw_keyword(l..r, source),
 
@@ -3654,92 +3977,122 @@ YulTrueKeyword: YulTrueKeyword = {
         <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(l..r, source),
 
 };
-#[inline]
+
 YulTryKeyword: YulTryKeyword = {
+
+        <l:@L> L_YulTryKeyword_Reserved <r:@L> => new_yul_try_keyword(l..r, source),
 
         <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_yul_try_keyword(l..r, source),
 
 };
-#[inline]
+
 YulTypeDefKeyword: YulTypeDefKeyword = {
+
+        <l:@L> L_YulTypeDefKeyword_Reserved <r:@L> => new_yul_type_def_keyword(l..r, source),
 
         <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_yul_type_def_keyword(l..r, source),
 
 };
-#[inline]
+
 YulTypeKeyword: YulTypeKeyword = {
+
+        <l:@L> L_YulTypeKeyword_Reserved <r:@L> => new_yul_type_keyword(l..r, source),
 
         <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_yul_type_keyword(l..r, source),
 
 };
-#[inline]
+
 YulTypeOfKeyword: YulTypeOfKeyword = {
+
+        <l:@L> L_YulTypeOfKeyword_Reserved <r:@L> => new_yul_type_of_keyword(l..r, source),
 
         <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_yul_type_of_keyword(l..r, source),
 
 };
-#[inline]
+
 YulUfixedKeyword: YulUfixedKeyword = {
+
+        <l:@L> L_YulUfixedKeyword_Reserved <r:@L> => new_yul_ufixed_keyword(l..r, source),
 
         <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_yul_ufixed_keyword(l..r, source),
 
 };
-#[inline]
+
 YulUintKeyword: YulUintKeyword = {
+
+        <l:@L> L_YulUintKeyword_Reserved <r:@L> => new_yul_uint_keyword(l..r, source),
 
         <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_yul_uint_keyword(l..r, source),
 
 };
-#[inline]
+
 YulUncheckedKeyword: YulUncheckedKeyword = {
+
+        <l:@L> L_YulUncheckedKeyword_Reserved <r:@L> => new_yul_unchecked_keyword(l..r, source),
 
         <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_yul_unchecked_keyword(l..r, source),
 
 };
-#[inline]
+
 YulUsingKeyword: YulUsingKeyword = {
+
+        <l:@L> L_YulUsingKeyword_Reserved <r:@L> => new_yul_using_keyword(l..r, source),
 
         <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_yul_using_keyword(l..r, source),
 
 };
-#[inline]
+
 YulVarKeyword: YulVarKeyword = {
+
+        <l:@L> L_YulVarKeyword_Reserved <r:@L> => new_yul_var_keyword(l..r, source),
 
         <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_yul_var_keyword(l..r, source),
 
 };
-#[inline]
+
 YulViewKeyword: YulViewKeyword = {
+
+        <l:@L> L_YulViewKeyword_Reserved <r:@L> => new_yul_view_keyword(l..r, source),
 
         <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_yul_view_keyword(l..r, source),
 
 };
-#[inline]
+
 YulVirtualKeyword: YulVirtualKeyword = {
+
+        <l:@L> L_YulVirtualKeyword_Reserved <r:@L> => new_yul_virtual_keyword(l..r, source),
 
         <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_yul_virtual_keyword(l..r, source),
 
 };
-#[inline]
+
 YulWeeksKeyword: YulWeeksKeyword = {
+
+        <l:@L> L_YulWeeksKeyword_Reserved <r:@L> => new_yul_weeks_keyword(l..r, source),
 
         <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_yul_weeks_keyword(l..r, source),
 
 };
-#[inline]
+
 YulWeiKeyword: YulWeiKeyword = {
+
+        <l:@L> L_YulWeiKeyword_Reserved <r:@L> => new_yul_wei_keyword(l..r, source),
 
         <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_yul_wei_keyword(l..r, source),
 
 };
-#[inline]
+
 YulWhileKeyword: YulWhileKeyword = {
+
+        <l:@L> L_YulWhileKeyword_Reserved <r:@L> => new_yul_while_keyword(l..r, source),
 
         <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_yul_while_keyword(l..r, source),
 
 };
-#[inline]
+
 YulYearsKeyword: YulYearsKeyword = {
+
+        <l:@L> L_YulYearsKeyword_Reserved <r:@L> => new_yul_years_keyword(l..r, source),
 
         <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_yul_years_keyword(l..r, source),
 
@@ -3786,7 +4139,6 @@ extern {
         L_ByteKeyword_Reserved => lexemes::LexemeKind::ByteKeyword_Reserved,
         L_BytesKeyword_Reserved => lexemes::LexemeKind::BytesKeyword_Reserved,
         L_CallDataKeyword_Reserved => lexemes::LexemeKind::CallDataKeyword_Reserved,
-        L_CallDataKeyword_Unreserved => lexemes::LexemeKind::CallDataKeyword_Unreserved,
         L_Caret => lexemes::LexemeKind::Caret,
         L_CaretEqual => lexemes::LexemeKind::CaretEqual,
         L_CaseKeyword_Reserved => lexemes::LexemeKind::CaseKeyword_Reserved,
@@ -3830,13 +4182,11 @@ extern {
         L_ExperimentalKeyword_Reserved => lexemes::LexemeKind::ExperimentalKeyword_Reserved,
         L_ExternalKeyword_Reserved => lexemes::LexemeKind::ExternalKeyword_Reserved,
         L_FallbackKeyword_Reserved => lexemes::LexemeKind::FallbackKeyword_Reserved,
-        L_FallbackKeyword_Unreserved => lexemes::LexemeKind::FallbackKeyword_Unreserved,
         L_FalseKeyword_Reserved => lexemes::LexemeKind::FalseKeyword_Reserved,
         L_FinalKeyword_Reserved => lexemes::LexemeKind::FinalKeyword_Reserved,
         L_FinneyKeyword_Reserved => lexemes::LexemeKind::FinneyKeyword_Reserved,
         L_FinneyKeyword_Unreserved => lexemes::LexemeKind::FinneyKeyword_Unreserved,
         L_FixedKeyword_Reserved => lexemes::LexemeKind::FixedKeyword_Reserved,
-        L_FixedKeyword_Unreserved => lexemes::LexemeKind::FixedKeyword_Unreserved,
         L_ForKeyword_Reserved => lexemes::LexemeKind::ForKeyword_Reserved,
         L_FromKeyword_Unreserved => lexemes::LexemeKind::FromKeyword_Unreserved,
         L_FunctionKeyword_Reserved => lexemes::LexemeKind::FunctionKeyword_Reserved,
@@ -3895,7 +4245,6 @@ extern {
         L_OpenBracket => lexemes::LexemeKind::OpenBracket,
         L_OpenParen => lexemes::LexemeKind::OpenParen,
         L_OverrideKeyword_Reserved => lexemes::LexemeKind::OverrideKeyword_Reserved,
-        L_OverrideKeyword_Unreserved => lexemes::LexemeKind::OverrideKeyword_Unreserved,
         L_PartialKeyword_Reserved => lexemes::LexemeKind::PartialKeyword_Reserved,
         L_PartialKeyword_Unreserved => lexemes::LexemeKind::PartialKeyword_Unreserved,
         L_PayableKeyword_Reserved => lexemes::LexemeKind::PayableKeyword_Reserved,
@@ -3913,7 +4262,6 @@ extern {
         L_PureKeyword_Reserved => lexemes::LexemeKind::PureKeyword_Reserved,
         L_QuestionMark => lexemes::LexemeKind::QuestionMark,
         L_ReceiveKeyword_Reserved => lexemes::LexemeKind::ReceiveKeyword_Reserved,
-        L_ReceiveKeyword_Unreserved => lexemes::LexemeKind::ReceiveKeyword_Unreserved,
         L_ReferenceKeyword_Reserved => lexemes::LexemeKind::ReferenceKeyword_Reserved,
         L_ReferenceKeyword_Unreserved => lexemes::LexemeKind::ReferenceKeyword_Unreserved,
         L_RelocatableKeyword_Reserved => lexemes::LexemeKind::RelocatableKeyword_Reserved,
@@ -3941,14 +4289,12 @@ extern {
         L_StringKeyword_Reserved => lexemes::LexemeKind::StringKeyword_Reserved,
         L_StructKeyword_Reserved => lexemes::LexemeKind::StructKeyword_Reserved,
         L_SuperKeyword_Reserved => lexemes::LexemeKind::SuperKeyword_Reserved,
-        L_SuperKeyword_Unreserved => lexemes::LexemeKind::SuperKeyword_Unreserved,
         L_SupportsKeyword_Reserved => lexemes::LexemeKind::SupportsKeyword_Reserved,
         L_SupportsKeyword_Unreserved => lexemes::LexemeKind::SupportsKeyword_Unreserved,
         L_SwitchKeyword_Reserved => lexemes::LexemeKind::SwitchKeyword_Reserved,
         L_SzaboKeyword_Reserved => lexemes::LexemeKind::SzaboKeyword_Reserved,
         L_SzaboKeyword_Unreserved => lexemes::LexemeKind::SzaboKeyword_Unreserved,
         L_ThisKeyword_Reserved => lexemes::LexemeKind::ThisKeyword_Reserved,
-        L_ThisKeyword_Unreserved => lexemes::LexemeKind::ThisKeyword_Unreserved,
         L_ThrowKeyword_Reserved => lexemes::LexemeKind::ThrowKeyword_Reserved,
         L_Tilde => lexemes::LexemeKind::Tilde,
         L_TransientKeyword_Unreserved => lexemes::LexemeKind::TransientKeyword_Unreserved,
@@ -3959,16 +4305,13 @@ extern {
         L_TypeKeyword_Reserved => lexemes::LexemeKind::TypeKeyword_Reserved,
         L_TypeOfKeyword_Reserved => lexemes::LexemeKind::TypeOfKeyword_Reserved,
         L_UfixedKeyword_Reserved => lexemes::LexemeKind::UfixedKeyword_Reserved,
-        L_UfixedKeyword_Unreserved => lexemes::LexemeKind::UfixedKeyword_Unreserved,
         L_UintKeyword_Reserved => lexemes::LexemeKind::UintKeyword_Reserved,
         L_UncheckedKeyword_Reserved => lexemes::LexemeKind::UncheckedKeyword_Reserved,
-        L_UncheckedKeyword_Unreserved => lexemes::LexemeKind::UncheckedKeyword_Unreserved,
         L_UsingKeyword_Reserved => lexemes::LexemeKind::UsingKeyword_Reserved,
         L_VarKeyword_Reserved => lexemes::LexemeKind::VarKeyword_Reserved,
         L_VersionSpecifier => lexemes::LexemeKind::VersionSpecifier,
         L_ViewKeyword_Reserved => lexemes::LexemeKind::ViewKeyword_Reserved,
         L_VirtualKeyword_Reserved => lexemes::LexemeKind::VirtualKeyword_Reserved,
-        L_VirtualKeyword_Unreserved => lexemes::LexemeKind::VirtualKeyword_Unreserved,
         L_WeeksKeyword_Reserved => lexemes::LexemeKind::WeeksKeyword_Reserved,
         L_WeiKeyword_Reserved => lexemes::LexemeKind::WeiKeyword_Reserved,
         L_WhileKeyword_Reserved => lexemes::LexemeKind::WhileKeyword_Reserved,

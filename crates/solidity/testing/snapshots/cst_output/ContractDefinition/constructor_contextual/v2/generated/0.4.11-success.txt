@@ -1,0 +1,128 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 93..101,
+    },
+    name: Identifier {
+        range: 102..110,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 111..112,
+    },
+    members: ContractMembers {
+        elements: [
+            ConstructorDefinition(
+                ConstructorDefinitionStruct {
+                    constructor_keyword: ConstructorKeyword {
+                        range: 114..125,
+                    },
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 125..126,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 126..127,
+                        },
+                    },
+                    attributes: ConstructorAttributes {
+                        elements: [],
+                    },
+                    body: BlockStruct {
+                        open_brace: OpenBrace {
+                            range: 128..129,
+                        },
+                        statements: Statements {
+                            elements: [],
+                        },
+                        close_brace: CloseBrace {
+                            range: 129..130,
+                        },
+                    },
+                },
+            ),
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        range: 135..143,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            range: 144..148,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 148..149,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 149..150,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [
+                            PublicKeyword(
+                                PublicKeyword {
+                                    range: 151..157,
+                                },
+                            ),
+                        ],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 158..159,
+                            },
+                            statements: Statements {
+                                elements: [
+                                    VariableDeclarationStatement(
+                                        VariableDeclarationStatementStruct {
+                                            target: SingleTypedDeclaration(
+                                                SingleTypedDeclarationStruct {
+                                                    declaration: VariableDeclarationStruct {
+                                                        type_name: ElementaryType(
+                                                            UintKeyword(
+                                                                UintKeyword {
+                                                                    range: 162..169,
+                                                                },
+                                                            ),
+                                                        ),
+                                                        storage_location: None,
+                                                        name: Identifier {
+                                                            range: 170..181,
+                                                        },
+                                                    },
+                                                    value: None,
+                                                },
+                                            ),
+                                            semicolon: Semicolon {
+                                                range: 181..182,
+                                            },
+                                        },
+                                    ),
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 187..188,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 189..190,
+    },
+}

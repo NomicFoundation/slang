@@ -30,22 +30,22 @@ pub fn test_v2_output(
     version: &Version,
     v1_output: &ParseOutput,
 ) -> Result<(), anyhow::Error> {
-    // TODO(v2): We only check 0.8.30 for now, we should eventually check all versions
-    if *version != Version::new(0, 8, 30) {
+    // We check versions [0.4.11, 0.9.0)
+    if *version < Version::new(0, 4, 11) || *version >= Version::new(0, 9, 0) {
         return Ok(());
     }
 
     // Get the output for v2
+    let lang_version = LanguageVersion::try_from(version.clone())
+        .unwrap_or_else(|_| panic!("Unsupported version: {version}"));
     let v2_output: Result<Box<dyn NodeCheckerDebug>, _> = match parser_name {
         // For now we only have a few parsers, having all parsers with LALRPOP is expensive
-        "SourceUnit" => ParserV2::parse(source, LanguageVersion::V0_8_30)
+        "SourceUnit" => ParserV2::parse(source, lang_version)
             .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
-        "Expression" => ParserV2::parse_expression(source, LanguageVersion::V0_8_30)
+        "Expression" => ParserV2::parse_expression(source, lang_version)
             .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
-        "ContractDefinition" => {
-            ParserV2::parse_contract_definition(source, LanguageVersion::V0_8_30)
-                .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>)
-        }
+        "ContractDefinition" => ParserV2::parse_contract_definition(source, lang_version)
+            .map(|node| Box::new(node) as Box<dyn NodeCheckerDebug>),
         _ => {
             // Ignore everything else
             return Ok(());
@@ -96,17 +96,27 @@ pub fn test_v2_output(
                     write_errors(&mut s, &checked, source_id, source)?;
 
                     fs.write_file_raw(&diff_path, s)?;
+                    assert!(
+                        false,
+                        "V2 parser produced errors against V1 valid output. See diff at {:?}",
+                        diff_path
+                    );
                 }
             } else {
                 writeln!(s, "V1 Parser: Invalid")?;
                 writeln!(s, "V2 Parser: Valid")?;
                 fs.write_file_raw(&diff_path, s)?;
+                // TODO(v2): This should fail, but for now we really don't care about validatio
             }
         }
         Err(_) if v1_output.is_valid() => {
             writeln!(s, "V1 Parser: Valid")?;
             writeln!(s, "V2 Parser: Invalid")?;
             fs.write_file_raw(&diff_path, s)?;
+            assert!(
+                false,
+                "V2 parser produced invalid output against V1 valid output. "
+            );
         }
         Err(_) => {
             // TODO(v2): Both are invalid, compare the errors
