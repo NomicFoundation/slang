@@ -28,7 +28,7 @@ impl IdentifierStruct {
         self.ir_node.id()
     }
 
-    pub fn unparse(&self) -> String {
+    pub fn name(&self) -> String {
         self.ir_node.unparse()
     }
 
@@ -122,10 +122,10 @@ impl Reference {
         }
     }
 
-    pub fn unparse(&self) -> String {
+    pub fn name(&self) -> String {
         match self {
             Reference::Identifier(identifier) | Reference::YulIdentifier(identifier) => {
-                identifier.unparse()
+                identifier.name()
             }
         }
     }
@@ -155,7 +155,7 @@ impl SemanticAnalysis {
 }
 
 impl IdentifierPathStruct {
-    pub fn unparse(&self) -> String {
+    pub fn name(&self) -> String {
         self.ir_nodes
             .iter()
             .map(|ir_node| ir_node.unparse())

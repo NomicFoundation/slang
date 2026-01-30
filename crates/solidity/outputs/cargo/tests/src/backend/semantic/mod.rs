@@ -32,7 +32,7 @@ fn test_semantic_analysis_and_ast_tree() -> Result<()> {
 
     let main_contracts = main_ir.contracts();
     let counter_contract = main_contracts.first().unwrap();
-    assert_eq!(counter_contract.name().unparse(), "Counter");
+    assert_eq!(counter_contract.name().name(), "Counter");
     assert_eq!(counter_contract.inheritance_types().iter().count(), 2);
 
     let counter_bases = counter_contract
@@ -47,7 +47,7 @@ fn test_semantic_analysis_and_ast_tree() -> Result<()> {
     else {
         panic!("Counter base is a contract");
     };
-    assert_eq!(activatable_contract.name().unparse(), "Ownable");
+    assert_eq!(activatable_contract.name().name(), "Ownable");
 
     let Definition::Contract(ownable_contract) = counter_bases[1]
         .type_name()
@@ -56,7 +56,7 @@ fn test_semantic_analysis_and_ast_tree() -> Result<()> {
     else {
         panic!("Counter base is a contract");
     };
-    assert_eq!(ownable_contract.name().unparse(), "Activatable");
+    assert_eq!(ownable_contract.name().name(), "Activatable");
 
     Ok(())
 }
@@ -86,10 +86,10 @@ fn test_find_contract_by_name() -> Result<()> {
         .find_contract_by_name("Activatable")
         .expect("Activatable contract is found");
 
-    assert_eq!(counter.name().unparse(), "Counter");
-    assert_eq!(ownable.name().unparse(), "Ownable");
+    assert_eq!(counter.name().name(), "Counter");
+    assert_eq!(ownable.name().name(), "Ownable");
     assert!(ownable.abstract_keyword());
-    assert_eq!(activatable.name().unparse(), "Activatable");
+    assert_eq!(activatable.name().name(), "Activatable");
     assert!(activatable.abstract_keyword());
 
     Ok(())
@@ -109,11 +109,11 @@ fn test_get_direct_contract_bases() -> Result<()> {
     let ContractBase::Contract(ownable) = &bases[0] else {
         panic!("Base is not a contract");
     };
-    assert_eq!(ownable.name().unparse(), "Ownable");
+    assert_eq!(ownable.name().name(), "Ownable");
     let ContractBase::Contract(activatable) = &bases[1] else {
         panic!("Base is not a contract");
     };
-    assert_eq!(activatable.name().unparse(), "Activatable");
+    assert_eq!(activatable.name().name(), "Activatable");
 
     Ok(())
 }
@@ -132,15 +132,15 @@ fn test_get_linearised_contract_bases() -> Result<()> {
     let ContractBase::Contract(counter) = &bases[0] else {
         panic!("Base is not a contract");
     };
-    assert_eq!(counter.name().unparse(), "Counter");
+    assert_eq!(counter.name().name(), "Counter");
     let ContractBase::Contract(activatable) = &bases[1] else {
         panic!("Base is not a contract");
     };
-    assert_eq!(activatable.name().unparse(), "Activatable");
+    assert_eq!(activatable.name().name(), "Activatable");
     let ContractBase::Contract(ownable) = &bases[2] else {
         panic!("Base is not a contract");
     };
-    assert_eq!(ownable.name().unparse(), "Ownable");
+    assert_eq!(ownable.name().name(), "Ownable");
 
     Ok(())
 }
@@ -165,7 +165,7 @@ fn test_get_references() -> Result<()> {
             if matches!(function.kind(), FunctionKind::Modifier)
                 && function
                     .name()
-                    .is_some_and(|name| name.unparse() == "onlyOwner")
+                    .is_some_and(|name| name.name() == "onlyOwner")
             {
                 Some(function)
             } else {
@@ -187,7 +187,7 @@ fn test_get_references() -> Result<()> {
         })
         .is_some_and(|modifier| modifier
             .name()
-            .is_some_and(|name| name.unparse() == "onlyOwner"))));
+            .is_some_and(|name| name.name() == "onlyOwner"))));
 
     Ok(())
 }
