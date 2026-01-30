@@ -126,7 +126,7 @@ fn test_get_linearised_contract_bases() -> Result<()> {
     let counter = semantic
         .find_contract_by_name("Counter")
         .expect("can find Counter contract");
-    let bases = counter.linearised_bases();
+    let bases = counter.compute_linearised_bases();
     assert_eq!(bases.len(), 3);
 
     let ContractBase::Contract(counter) = &bases[0] else {
@@ -201,7 +201,7 @@ fn test_get_linearised_state_variables() -> Result<()> {
         .find_contract_by_name("Counter")
         .expect("can find Counter contract");
 
-    let state_variables = counter.linearised_state_variables();
+    let state_variables = counter.compute_linearised_state_variables();
     assert_eq!(state_variables.len(), 4);
 
     assert_eq!(state_variables[0].name().unparse(), "_owner");
@@ -221,7 +221,7 @@ fn test_get_linearised_functions() -> Result<()> {
         .find_contract_by_name("Counter")
         .expect("can find Counter contract");
 
-    let functions = counter.linearised_functions();
+    let functions = counter.compute_linearised_functions();
     assert_eq!(functions.len(), 5);
 
     assert!(functions[0]
@@ -269,7 +269,7 @@ fn test_get_linearised_function_with_overrides() -> Result<()> {
     let inherited = semantic
         .find_contract_by_name("Inherited")
         .expect("can find contract");
-    let functions = inherited.linearised_functions();
+    let functions = inherited.compute_linearised_functions();
     assert_eq!(functions.len(), 3);
     assert!(functions[0]
         .name()

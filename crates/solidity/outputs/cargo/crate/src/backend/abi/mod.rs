@@ -65,12 +65,12 @@ impl ContractDefinitionStruct {
         if let Some(constructor) = self.constructor() {
             functions.push(constructor.compute_abi()?);
         }
-        for function in &self.linearised_functions() {
+        for function in &self.compute_linearised_functions() {
             if function.is_externally_visible() {
                 functions.push(function.compute_abi()?);
             }
         }
-        for state_variable in &self.linearised_state_variables() {
+        for state_variable in &self.compute_linearised_state_variables() {
             if state_variable.is_externally_visible() {
                 functions.push(state_variable.compute_abi()?);
             }
@@ -85,7 +85,7 @@ impl ContractDefinitionStruct {
         // TODO: if the contract has a specific storage layout specifier, we
         // need to compute its value and use it as the base
         let mut ptr: usize = 0;
-        for state_variable in &self.linearised_state_variables() {
+        for state_variable in &self.compute_linearised_state_variables() {
             let node_id = state_variable.ir_node.node_id;
             // skip constants and immutable variables, since they are not placed in storage
             // TODO: also, transient storage is laid out separately and we need

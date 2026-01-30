@@ -36,7 +36,7 @@ impl ContractDefinitionStruct {
     /// Returns the list of contracts/interfaces in the hierarchy (including
     /// self) in the order given by the C3 linearisation, with self contract
     /// always first
-    pub fn linearised_bases(&self) -> Vec<ContractBase> {
+    pub fn compute_linearised_bases(&self) -> Vec<ContractBase> {
         let Some(base_node_ids) = self
             .semantic
             .binder()
@@ -62,9 +62,9 @@ impl ContractDefinitionStruct {
     }
 
     /// Returns the list of state variable definitions in the order laid out in storage
-    pub fn linearised_state_variables(&self) -> Vec<StateVariableDefinition> {
+    pub fn compute_linearised_state_variables(&self) -> Vec<StateVariableDefinition> {
         let mut state_variables = Vec::new();
-        let bases = self.linearised_bases();
+        let bases = self.compute_linearised_bases();
         for base in bases.iter().rev() {
             let ContractBase::Contract(contract) = base else {
                 continue;
@@ -104,9 +104,9 @@ impl ContractDefinitionStruct {
 
     /// Returns the list of functions defined in all the hierarchy of the
     /// contract, in alphabetical order
-    pub fn linearised_functions(&self) -> Vec<FunctionDefinition> {
+    pub fn compute_linearised_functions(&self) -> Vec<FunctionDefinition> {
         let mut functions: Vec<FunctionDefinition> = Vec::new();
-        let bases = self.linearised_bases();
+        let bases = self.compute_linearised_bases();
         for base in &bases {
             // TODO(validation): we don't pick up functions defined in
             // interfaces because they should be implemented in inheriting
