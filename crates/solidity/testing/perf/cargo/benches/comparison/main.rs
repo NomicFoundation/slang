@@ -71,12 +71,12 @@ macro_rules! v2_parser_test {
 // This macro abstracts that logic.
 macro_rules! slang_and_solar_tests {
     ($prj:ident) => {
-        slang_test!($prj);
         solar_test!($prj);
+        slang_test!($prj);
         paste! {
             library_benchmark_group!(
               name = [< $prj _group >];
-              benchmarks = [< slang_ $prj >],[< solar_ $prj >],
+              benchmarks = [< solar_ $prj >],[< slang_ $prj >],
           );
         }
     };
@@ -98,7 +98,15 @@ macro_rules! comparison_tests {
         );
     };
     (uniswap) => {
-        slang_and_solar_tests!(uniswap);
+        slang_test!(uniswap);
+        solar_test!(uniswap);
+        v2_parser_test!(uniswap);
+        paste! {
+            library_benchmark_group!(
+                name = [< uniswap _group >];
+                benchmarks = [< slang_ uniswap >],[< solar_ uniswap >],[< v2_parser_ uniswap >],
+            );
+        }
     };
     (uniswap_v2) => {
         // Stripped PoolManager.sol for v2 parser comparison (no pragma, no imports).
@@ -109,6 +117,30 @@ macro_rules! comparison_tests {
             library_benchmark_group!(
                 name = [< uniswap_v2 _group >];
                 benchmarks = [< slang_ uniswap_v2 >],[< solar_ uniswap_v2 >],[< v2_parser_ uniswap_v2 >],
+            );
+        }
+    };
+    (weighted_pool_v2) => {
+        // Stripped WeightedPool.sol for v2 parser comparison (no pragma, no imports).
+        slang_test!(weighted_pool_v2);
+        solar_test!(weighted_pool_v2);
+        v2_parser_test!(weighted_pool_v2);
+        paste! {
+            library_benchmark_group!(
+                name = [< weighted_pool_v2 _group >];
+                benchmarks = [< slang_ weighted_pool_v2 >],[< solar_ weighted_pool_v2 >],[< v2_parser_ weighted_pool_v2 >],
+            );
+        }
+    };
+    (create_x_v2) => {
+        // Stripped CreateX.sol for v2 parser comparison (no pragma, no assembly).
+        slang_test!(create_x_v2);
+        solar_test!(create_x_v2);
+        v2_parser_test!(create_x_v2);
+        paste! {
+            library_benchmark_group!(
+                name = [< create_x_v2 _group >];
+                benchmarks = [< slang_ create_x_v2 >],[< solar_ create_x_v2 >],[< v2_parser_ create_x_v2 >],
             );
         }
     };
@@ -136,6 +168,8 @@ comparison_tests!(mooniswap);
 comparison_tests!(weighted_pool);
 comparison_tests!(uniswap);
 comparison_tests!(uniswap_v2);
+comparison_tests!(weighted_pool_v2);
+comparison_tests!(create_x_v2);
 comparison_tests!(multicall3);
 comparison_tests!(create_x);
 comparison_tests!(ui_pool_data_provider_v3);
@@ -182,8 +216,10 @@ main!(
     library_benchmark_groups =
         // mooniswap_group,
         // weighted_pool_group,
-        // uniswap_group,
-        uniswap_v2_group,
+        uniswap_group,
+        // uniswap_v2_group,
+        // weighted_pool_v2_group,
+        // create_x_v2_group,
         // multicall3_group,
         // create_x_group,
         // ui_pool_data_provider_v3_group,

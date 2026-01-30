@@ -1,6 +1,6 @@
 {
   "name": "slang-devcontainer",
-  "runArgs": [],
+  "runArgs": ["--privileged"],
   "build": {
     "dockerfile": "Dockerfile"
   },

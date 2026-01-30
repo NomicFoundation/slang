@@ -77,5 +77,17 @@ mod unit_tests {
             let payload = crate::tests::setup::setup(V2_PROJECT);
             crate::tests::v2_parser::test(payload);
         }
+
+        #[test]
+        fn weighted_pool_parser() {
+            let payload = crate::tests::setup::setup("weighted_pool_v2");
+            crate::tests::v2_parser::test(payload);
+        }
+
+        #[test]
+        fn create_x_parser() {
+            let payload = crate::tests::setup::setup("create_x_v2");
+            crate::tests::v2_parser::test(payload);
+        }
     }
 }

@@ -65,6 +65,44 @@ fn load_projects_internal() -> Result<ProjectMap> {
         },
     });
 
+    // Stripped WeightedPool.sol for v2 parser benchmarking.
+    // Pragma and import statements removed (not yet supported by the v2 parser).
+    map.insert("weighted_pool_v2".to_string(), SolidityProject {
+        name: "WeightedPool".to_string(),
+        sources: HashMap::from([(
+            "contracts/pools/weighted/WeightedPool.sol".to_string(),
+            include_str!("fixtures/weighted_pool_stripped.sol").to_string(),
+        )]),
+        entrypoint: "contracts/pools/weighted/WeightedPool.sol".to_string(),
+        compiler_version: "0.7.1".to_string(),
+        import_resolver: ImportResolver {
+            import_remaps: vec![],
+            source_maps: vec![SourceMap {
+                source_id: "contracts/pools/weighted/WeightedPool.sol".to_string(),
+                virtual_path: "contracts/pools/weighted/WeightedPool.sol".to_string(),
+            }],
+        },
+    });
+
+    // Stripped CreateX.sol for v2 parser benchmarking.
+    // Pragma, comments, and assembly blocks removed (not yet supported by the v2 parser).
+    map.insert("create_x_v2".to_string(), SolidityProject {
+        name: "CreateX".to_string(),
+        sources: HashMap::from([(
+            "src/CreateX.sol".to_string(),
+            include_str!("fixtures/create_x_stripped.sol").to_string(),
+        )]),
+        entrypoint: "src/CreateX.sol".to_string(),
+        compiler_version: "0.8.23".to_string(),
+        import_resolver: ImportResolver {
+            import_remaps: vec![],
+            source_maps: vec![SourceMap {
+                source_id: "src/CreateX.sol".to_string(),
+                virtual_path: "src/CreateX.sol".to_string(),
+            }],
+        },
+    });
+
     Ok(map)
 }
 
