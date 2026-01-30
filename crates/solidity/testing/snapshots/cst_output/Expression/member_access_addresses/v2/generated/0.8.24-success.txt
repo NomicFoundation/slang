@@ -1,0 +1,88 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ArrayExpression(
+    ArrayExpressionStruct {
+        open_bracket: OpenBracket {
+            range: 0..1,
+        },
+        items: ArrayValues {
+            elements: [
+                MemberAccessExpression(
+                    MemberAccessExpressionStruct {
+                        operand: IndexAccessExpression(
+                            IndexAccessExpressionStruct {
+                                operand: Identifier(
+                                    Identifier {
+                                        range: 6..7,
+                                    },
+                                ),
+                                open_bracket: OpenBracket {
+                                    range: 7..8,
+                                },
+                                start: Some(
+                                    DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                range: 8..9,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                ),
+                                end: None,
+                                close_bracket: CloseBracket {
+                                    range: 9..10,
+                                },
+                            },
+                        ),
+                        period: Period {
+                            range: 10..11,
+                        },
+                        member: AddressKeyword(
+                            AddressKeyword {
+                                range: 11..18,
+                            },
+                        ),
+                    },
+                ),
+                MemberAccessExpression(
+                    MemberAccessExpressionStruct {
+                        operand: FunctionCallExpression(
+                            FunctionCallExpressionStruct {
+                                operand: Identifier(
+                                    Identifier {
+                                        range: 24..25,
+                                    },
+                                ),
+                                arguments: PositionalArgumentsDeclaration(
+                                    PositionalArgumentsDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 25..26,
+                                        },
+                                        arguments: PositionalArguments {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 26..27,
+                                        },
+                                    },
+                                ),
+                            },
+                        ),
+                        period: Period {
+                            range: 27..28,
+                        },
+                        member: AddressKeyword(
+                            AddressKeyword {
+                                range: 28..35,
+                            },
+                        ),
+                    },
+                ),
+            ],
+        },
+        close_bracket: CloseBracket {
+            range: 36..37,
+        },
+    },
+)

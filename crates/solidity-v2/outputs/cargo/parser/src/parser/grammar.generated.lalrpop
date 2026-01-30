@@ -3176,7 +3176,7 @@ YulHoursKeyword: YulHoursKeyword = {
         <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_hours_keyword(l..r, source),
 
 };
-#[inline]
+
 YulIdentifier: YulIdentifier = {
 
         <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),

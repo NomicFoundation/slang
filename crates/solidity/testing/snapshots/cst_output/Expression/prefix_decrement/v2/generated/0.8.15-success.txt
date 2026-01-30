@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+PrefixExpression(
+    PrefixExpressionStruct {
+        expression_prefix_expression_operator: MinusMinus(
+            MinusMinus {
+                range: 0..2,
+            },
+        ),
+        operand: Identifier(
+            Identifier {
+                range: 2..5,
+            },
+        ),
+    },
+)

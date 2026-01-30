@@ -1,0 +1,58 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            ReceiveFunctionDefinition(
+                ReceiveFunctionDefinitionStruct {
+                    receive_keyword: ReceiveKeyword {
+                        range: 20..27,
+                    },
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 27..28,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 28..29,
+                        },
+                    },
+                    attributes: ReceiveFunctionAttributes {
+                        elements: [],
+                    },
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 30..31,
+                            },
+                            statements: Statements {
+                                elements: [],
+                            },
+                            close_brace: CloseBrace {
+                                range: 34..35,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 36..37,
+    },
+}

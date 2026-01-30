@@ -4,7 +4,6 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use semver::Version;
 use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
 use slang_solidity_v2_parser::temp_testing::test_v2_output;
@@ -84,10 +83,8 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         fs.write_file_raw(snapshot_path, &snapshot)?;
     }
 
-    {
+    for version in VERSION_BREAKS {
         // Finally, test V2 against V1 output
-        // TODO(v2): For now we only test against 0.8.30, enable more versions as they are supported
-        let version = Version::new(0, 8, 30);
 
         let tested_kind = NonterminalKind::from_str(parser_name)
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));

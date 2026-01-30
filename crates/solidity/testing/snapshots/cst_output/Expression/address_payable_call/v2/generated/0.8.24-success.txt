@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: ElementaryType(
+            AddressType(
+                AddressTypeStruct {
+                    address_keyword: AddressKeyword {
+                        range: 0..7,
+                    },
+                    payable_keyword: Some(
+                        PayableKeyword {
+                            range: 8..15,
+                        },
+                    ),
+                },
+            ),
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    range: 15..16,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        Identifier(
+                            Identifier {
+                                range: 16..21,
+                            },
+                        ),
+                    ],
+                },
+                close_paren: CloseParen {
+                    range: 21..22,
+                },
+            },
+        ),
+    },
+)

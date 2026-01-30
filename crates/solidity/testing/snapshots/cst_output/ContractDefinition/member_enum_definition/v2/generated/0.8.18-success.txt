@@ -1,0 +1,53 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            EnumDefinition(
+                EnumDefinitionStruct {
+                    enum_keyword: EnumKeyword {
+                        range: 20..24,
+                    },
+                    name: Identifier {
+                        range: 25..30,
+                    },
+                    open_brace: OpenBrace {
+                        range: 31..32,
+                    },
+                    members: EnumMembers {
+                        elements: [
+                            Identifier {
+                                range: 37..38,
+                            },
+                            Identifier {
+                                range: 44..45,
+                            },
+                            Identifier {
+                                range: 51..52,
+                            },
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 55..56,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 57..58,
+    },
+}

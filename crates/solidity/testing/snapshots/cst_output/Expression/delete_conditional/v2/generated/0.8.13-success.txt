@@ -1,0 +1,81 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ConditionalExpression(
+    ConditionalExpressionStruct {
+        operand: Identifier(
+            Identifier {
+                range: 0..4,
+            },
+        ),
+        question_mark: QuestionMark {
+            range: 5..6,
+        },
+        true_expression: PrefixExpression(
+            PrefixExpressionStruct {
+                expression_prefix_expression_operator: DeleteKeyword(
+                    DeleteKeyword {
+                        range: 7..13,
+                    },
+                ),
+                operand: IndexAccessExpression(
+                    IndexAccessExpressionStruct {
+                        operand: Identifier(
+                            Identifier {
+                                range: 14..17,
+                            },
+                        ),
+                        open_bracket: OpenBracket {
+                            range: 17..18,
+                        },
+                        start: Some(
+                            Identifier(
+                                Identifier {
+                                    range: 18..23,
+                                },
+                            ),
+                        ),
+                        end: None,
+                        close_bracket: CloseBracket {
+                            range: 23..24,
+                        },
+                    },
+                ),
+            },
+        ),
+        colon: Colon {
+            range: 25..26,
+        },
+        false_expression: PrefixExpression(
+            PrefixExpressionStruct {
+                expression_prefix_expression_operator: DeleteKeyword(
+                    DeleteKeyword {
+                        range: 27..33,
+                    },
+                ),
+                operand: IndexAccessExpression(
+                    IndexAccessExpressionStruct {
+                        operand: Identifier(
+                            Identifier {
+                                range: 34..37,
+                            },
+                        ),
+                        open_bracket: OpenBracket {
+                            range: 37..38,
+                        },
+                        start: Some(
+                            Identifier(
+                                Identifier {
+                                    range: 38..43,
+                                },
+                            ),
+                        ),
+                        end: None,
+                        close_bracket: CloseBracket {
+                            range: 43..44,
+                        },
+                    },
+                ),
+            },
+        ),
+    },
+)

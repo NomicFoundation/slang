@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: IndexAccessExpression(
+            IndexAccessExpressionStruct {
+                operand: ElementaryType(
+                    UintKeyword(
+                        UintKeyword {
+                            range: 0..4,
+                        },
+                    ),
+                ),
+                open_bracket: OpenBracket {
+                    range: 4..5,
+                },
+                start: None,
+                end: None,
+                close_bracket: CloseBracket {
+                    range: 5..6,
+                },
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    range: 6..7,
+                },
+                arguments: PositionalArguments {
+                    elements: [
+                        Identifier(
+                            Identifier {
+                                range: 7..10,
+                            },
+                        ),
+                    ],
+                },
+                close_paren: CloseParen {
+                    range: 10..11,
+                },
+            },
+        ),
+    },
+)
