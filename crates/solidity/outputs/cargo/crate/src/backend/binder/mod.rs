@@ -481,11 +481,14 @@ impl Binder {
         }
     }
 
-    fn resolve_in_scope_internal(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+    // This function attempts to lexically resolve `symbol` starting from the
+    // given scope. Certain scopes can delegate to their "parent" scopes if
+    // the symbol is not found there.
+    pub(crate) fn resolve_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
             Scope::Block(block_scope) => block_scope.definitions.get(symbol).copied().map_or_else(
-                || self.resolve_in_scope_internal(block_scope.parent_scope_id, symbol),
+                || self.resolve_in_scope(block_scope.parent_scope_id, symbol),
                 Resolution::Definition,
             ),
             Scope::Contract(contract_scope) => {
@@ -496,7 +499,7 @@ impl Binder {
                 )
                 .or_else(|| {
                     // Otherwise, delegate to the containing file scope.
-                    self.resolve_in_scope_internal(contract_scope.file_scope_id, symbol)
+                    self.resolve_in_scope(contract_scope.file_scope_id, symbol)
                 })
             }
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
@@ -506,16 +509,16 @@ impl Binder {
                 .get(symbol)
                 .copied()
                 .map_or_else(
-                    || self.resolve_in_scope_internal(function_scope.parameters_scope_id, symbol),
+                    || self.resolve_in_scope(function_scope.parameters_scope_id, symbol),
                     Resolution::Definition,
                 )
-                .or_else(|| self.resolve_in_scope_internal(function_scope.parent_scope_id, symbol)),
+                .or_else(|| self.resolve_in_scope(function_scope.parent_scope_id, symbol)),
             Scope::Modifier(modifier_scope) => {
                 if symbol == "_" {
                     Resolution::BuiltIn(BuiltIn::ModifierUnderscore)
                 } else {
                     modifier_scope.definitions.get(symbol).copied().map_or_else(
-                        || self.resolve_in_scope_internal(modifier_scope.parent_scope_id, symbol),
+                        || self.resolve_in_scope(modifier_scope.parent_scope_id, symbol),
                         Resolution::Definition,
                     )
                 }
@@ -534,7 +537,7 @@ impl Binder {
                 .get(symbol)
                 .copied()
                 .map_or_else(
-                    || self.resolve_in_scope_internal(yul_block_scope.parent_scope_id, symbol),
+                    || self.resolve_in_scope(yul_block_scope.parent_scope_id, symbol),
                     Resolution::Definition,
                 ),
             Scope::YulFunction(yul_function_scope) => {
@@ -545,40 +548,33 @@ impl Binder {
                     .get(symbol)
                     .copied()
                     .map_or_else(
-                        || {
-                            self.resolve_in_scope_internal(
-                                yul_function_scope.parent_scope_id,
-                                symbol,
-                            )
-                        },
+                        || self.resolve_in_scope(yul_function_scope.parent_scope_id, symbol),
                         Resolution::Definition,
                     )
             }
         }
     }
 
-    // This will attempt to lexically resolve `symbol` starting from the given
-    // scope. This means that scopes can delegate to their "parent" scopes if
-    // the symbol is not found there, and also that imported symbols are
-    // followed recursively. This function handles the latter (following
-    // imported symbols recursively), while `resolve_in_scope_internal`
-    // delegates to parent or otherwise linked scopes.
-    pub(crate) fn resolve_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+    // If the resolution points to definitions that are symbols aliases (eg.
+    // import deconstruction symbols) this function will recursively follow them
+    // and return an appropriate resulting resolution. Ambiguities and missing
+    // definitions can occur along the followed aliases, so there is no
+    // guarantee that a `Resolved` resolution will yield another `Resolved`
+    // resolution.
+    pub(crate) fn follow_symbol_aliases(&self, resolution: &Resolution) -> Resolution {
+        match resolution {
+            Resolution::Unresolved | Resolution::BuiltIn(_) => return resolution.clone(),
+            _ => {}
+        }
+
         // TODO: since this function uses the results from other resolution
         // functions, we making more allocations than necessary; it may be worth
         // it to try and avoid them by returning iterators from the delegated
         // resolution functions
         let mut found_ids = Vec::new();
-        let mut working_set = Vec::new();
         let mut seen_ids = HashSet::new();
+        let mut working_set = resolution.get_definition_ids();
 
-        let initial_resolution = self.resolve_in_scope_internal(scope_id, symbol);
-        match initial_resolution {
-            Resolution::Unresolved | Resolution::BuiltIn(_) => return initial_resolution,
-            _ => {}
-        }
-
-        working_set.extend(initial_resolution.get_definition_ids().iter().rev());
         while let Some(definition_id) = working_set.pop() {
             if !seen_ids.insert(definition_id) {
                 // we already processed this definition
@@ -597,16 +593,17 @@ impl Binder {
                     continue;
                 };
                 working_set.extend(
-                    self.resolve_in_scope_internal(scope_id, &imported_symbol.symbol)
-                        .get_definition_ids()
-                        .iter()
-                        .rev(),
+                    self.resolve_in_scope(scope_id, &imported_symbol.symbol)
+                        .get_definition_ids(),
                 );
             } else {
                 found_ids.push(definition_id);
             }
         }
 
+        // reverse the result to maintain the original ordering, since we
+        // resolved from last to first in the loop above
+        found_ids.reverse();
         Resolution::from(found_ids)
     }
 
