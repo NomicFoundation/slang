@@ -1,11 +1,11 @@
 use anyhow::Result;
 use slang_solidity::backend::semantic::ast;
 
-use crate::backend::sample::build_compilation_unit;
+use crate::backend::fixtures;
 
 #[test]
 fn test_ast_visitor() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let main_ast = semantic.get_file_ast_root("main.sol").unwrap();
@@ -47,7 +47,7 @@ struct IdentifierCounter {
 
 impl ast::visitor::Visitor for IdentifierCounter {
     fn visit_identifier(&mut self, node: &ast::Identifier) {
-        if node.is_definition() {
+        if node.is_name_of_definition() {
             self.definitions += 1;
         }
         if node.is_reference() {
@@ -59,7 +59,7 @@ impl ast::visitor::Visitor for IdentifierCounter {
 
 #[test]
 fn test_text_offsets() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
@@ -78,21 +78,21 @@ fn test_text_offsets() -> Result<()> {
                 None
             }
         })
-        .find(|function| {
-            function
-                .name()
-                .is_some_and(|name| name.unparse() == "click")
-        })
+        .find(|function| function.name().is_some_and(|name| name.name() == "click"))
         .expect("click method is found");
     assert_eq!(click.text_offset().line, 18);
     assert_eq!(click.text_offset().column, 4);
+
+    let click_identifier = click.name().unwrap();
+    assert_eq!(click_identifier.text_offset().line, 18);
+    assert_eq!(click_identifier.text_offset().column, 13);
 
     Ok(())
 }
 
 #[test]
 fn test_get_type() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let ownable = semantic
@@ -113,7 +113,7 @@ fn test_get_type() -> Result<()> {
 
     assert_eq!(state_variables.len(), 1);
     let owner = &state_variables[0];
-    assert_eq!(owner.name().unparse(), "_owner");
+    assert_eq!(owner.name().name(), "_owner");
 
     let owner_type = owner
         .get_type()
@@ -125,7 +125,7 @@ fn test_get_type() -> Result<()> {
 
 #[test]
 fn test_function_get_type() -> Result<()> {
-    let unit = build_compilation_unit()?;
+    let unit = fixtures::Counter::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let counter = semantic
@@ -139,7 +139,7 @@ fn test_function_get_type() -> Result<()> {
             if let ast::ContractMember::FunctionDefinition(function_definition) = member {
                 if function_definition
                     .name()
-                    .is_some_and(|name| name.unparse() == "increment")
+                    .is_some_and(|name| name.name() == "increment")
                 {
                     Some(function_definition)
                 } else {

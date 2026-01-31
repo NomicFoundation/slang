@@ -170,7 +170,7 @@ impl ContractType {
         let types::Type::Contract { definition_id } = self.internal_type() else {
             unreachable!("invalid contract type");
         };
-        Definition::create(*definition_id, &self.semantic)
+        Definition::try_create(*definition_id, &self.semantic).expect("invalid contract definition")
     }
 }
 
@@ -179,7 +179,7 @@ impl EnumType {
         let types::Type::Enum { definition_id } = self.internal_type() else {
             unreachable!("invalid enum type");
         };
-        Definition::create(*definition_id, &self.semantic)
+        Definition::try_create(*definition_id, &self.semantic).expect("invalid enum definition")
     }
 }
 
@@ -209,9 +209,10 @@ impl FunctionType {
         let types::Type::Function(function_type) = self.internal_type() else {
             unreachable!("invalid function type");
         };
-        function_type
-            .definition_id
-            .map(|definition_id| Definition::create(definition_id, &self.semantic))
+        function_type.definition_id.map(|definition_id| {
+            Definition::try_create(definition_id, &self.semantic)
+                .expect("invalid function definition")
+        })
     }
 
     pub fn implicit_receiver_type(&self) -> Option<Type> {
@@ -276,7 +277,8 @@ impl InterfaceType {
         let types::Type::Interface { definition_id } = self.internal_type() else {
             unreachable!("invalid interface type");
         };
-        Definition::create(*definition_id, &self.semantic)
+        Definition::try_create(*definition_id, &self.semantic)
+            .expect("invalid interface definition")
     }
 }
 
@@ -311,7 +313,7 @@ impl StructType {
         let types::Type::Struct { definition_id, .. } = self.internal_type() else {
             unreachable!("invalid struct type");
         };
-        Definition::create(*definition_id, &self.semantic)
+        Definition::try_create(*definition_id, &self.semantic).expect("invalid struct definition")
     }
     pub fn location(&self) -> DataLocation {
         let types::Type::Struct { location, .. } = self.internal_type() else {
@@ -338,7 +340,8 @@ impl UserDefinedValueType {
         let types::Type::UserDefinedValue { definition_id } = self.internal_type() else {
             unreachable!("invalid user defined value type");
         };
-        Definition::create(*definition_id, &self.semantic)
+        Definition::try_create(*definition_id, &self.semantic)
+            .expect("invalid user defined value definition")
     }
 }
 
