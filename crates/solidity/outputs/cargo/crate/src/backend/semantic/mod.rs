@@ -202,6 +202,13 @@ impl SemanticAnalysis {
         self.text_offsets.get(&node_id).copied()
     }
 
+    pub fn get_type_from_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<ast::Type> {
+        self.binder
+            .node_typing(node_id)
+            .as_type_id()
+            .map(|type_id| ast::Type::create(type_id, self))
+    }
+
     pub fn get_contracts_abi(self: &Rc<Self>) -> Vec<ContractAbi> {
         let mut contracts = Vec::new();
         for file in self.files.values() {

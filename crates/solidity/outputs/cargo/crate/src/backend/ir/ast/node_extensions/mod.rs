@@ -12,6 +12,9 @@ pub use identifiers::{
     Identifier, IdentifierStruct, Reference, YulIdentifier, YulIdentifierStruct,
 };
 
+mod types;
+pub use types::Type;
+
 impl SourceUnitStruct {
     pub fn file_id(&self) -> String {
         self.semantic

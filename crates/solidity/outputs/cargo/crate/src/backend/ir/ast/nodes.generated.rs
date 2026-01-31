@@ -5,11 +5,11 @@ use std::rc::Rc;
 
 use paste::paste;
 
-use super::input as input_ir;
 use super::node_extensions::{
     create_identifier, create_yul_identifier, Identifier, IdentifierStruct, YulIdentifier,
     YulIdentifierStruct,
 };
+use super::{input as input_ir, Type};
 use crate::backend::{binder, SemanticAnalysis};
 use crate::cst::{NodeId, TerminalKind, TerminalNode, TextIndex};
 
@@ -48,6 +48,10 @@ impl SourceUnitStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
@@ -80,6 +84,10 @@ impl PragmaDirectiveStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -114,6 +122,10 @@ impl AbicoderPragmaStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
@@ -147,6 +159,10 @@ impl ExperimentalPragmaStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type VersionPragma = Rc<VersionPragmaStruct>;
@@ -179,6 +195,10 @@ impl VersionPragmaStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -216,6 +236,10 @@ impl VersionRangeStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -257,6 +281,10 @@ impl VersionTermStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type PathImport = Rc<PathImportStruct>;
@@ -297,6 +325,10 @@ impl PathImportStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
@@ -333,6 +365,10 @@ impl ImportDeconstructionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -373,6 +409,10 @@ impl ImportDeconstructionSymbolStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -415,6 +455,10 @@ impl UsingDirectiveStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
@@ -447,6 +491,10 @@ impl UsingDeconstructionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -487,6 +535,10 @@ impl UsingDeconstructionSymbolStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -540,6 +592,10 @@ impl ContractDefinitionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
@@ -579,6 +635,10 @@ impl InheritanceTypeStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -624,6 +684,10 @@ impl InterfaceDefinitionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
@@ -660,6 +724,10 @@ impl LibraryDefinitionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -698,6 +766,10 @@ impl StructDefinitionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type StructMember = Rc<StructMemberStruct>;
@@ -735,6 +807,10 @@ impl StructMemberStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
@@ -771,6 +847,10 @@ impl EnumDefinitionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -822,6 +902,10 @@ impl ConstantDefinitionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -881,6 +965,10 @@ impl StateVariableDefinitionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -963,6 +1051,10 @@ impl FunctionDefinitionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type Parameter = Rc<ParameterStruct>;
@@ -1014,6 +1106,10 @@ impl ParameterStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
@@ -1049,6 +1145,10 @@ impl OverrideSpecifierStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1089,6 +1189,10 @@ impl ModifierInvocationStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1131,6 +1235,10 @@ impl EventDefinitionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
@@ -1168,6 +1276,10 @@ impl UserDefinedValueTypeDefinitionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
@@ -1204,6 +1316,10 @@ impl ErrorDefinitionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1244,6 +1360,10 @@ impl ArrayTypeNameStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1293,6 +1413,10 @@ impl FunctionTypeStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type MappingType = Rc<MappingTypeStruct>;
@@ -1330,6 +1454,10 @@ impl MappingTypeStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type AddressType = Rc<AddressTypeStruct>;
@@ -1363,6 +1491,10 @@ impl AddressTypeStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type Block = Rc<BlockStruct>;
@@ -1392,6 +1524,10 @@ impl BlockStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1426,6 +1562,10 @@ impl UncheckedBlockStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
@@ -1458,6 +1598,10 @@ impl ExpressionStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1500,6 +1644,10 @@ impl AssemblyStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
@@ -1536,6 +1684,10 @@ impl TupleDeconstructionStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1591,6 +1743,10 @@ impl VariableDeclarationStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -1634,6 +1790,10 @@ impl IfStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1683,6 +1843,10 @@ impl ForStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type WhileStatement = Rc<WhileStatementStruct>;
@@ -1719,6 +1883,10 @@ impl WhileStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1757,6 +1925,10 @@ impl DoWhileStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
@@ -1786,6 +1958,10 @@ impl ContinueStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
@@ -1814,6 +1990,10 @@ impl BreakStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1851,6 +2031,10 @@ impl ReturnStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type EmitStatement = Rc<EmitStatementStruct>;
@@ -1887,6 +2071,10 @@ impl EmitStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -1936,6 +2124,10 @@ impl TryStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type CatchClause = Rc<CatchClauseStruct>;
@@ -1975,6 +2167,10 @@ impl CatchClauseStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2016,6 +2212,10 @@ impl CatchClauseErrorStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
@@ -2053,6 +2253,10 @@ impl RevertStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ThrowStatement = Rc<ThrowStatementStruct>;
@@ -2081,6 +2285,10 @@ impl ThrowStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2123,6 +2331,10 @@ impl AssignmentExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
@@ -2164,6 +2376,10 @@ impl ConditionalExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type OrExpression = Rc<OrExpressionStruct>;
@@ -2201,6 +2417,10 @@ impl OrExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type AndExpression = Rc<AndExpressionStruct>;
@@ -2237,6 +2457,10 @@ impl AndExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2279,6 +2503,10 @@ impl EqualityExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
@@ -2320,6 +2548,10 @@ impl InequalityExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
@@ -2356,6 +2588,10 @@ impl BitwiseOrExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2394,6 +2630,10 @@ impl BitwiseXorExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
@@ -2430,6 +2670,10 @@ impl BitwiseAndExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2472,6 +2716,10 @@ impl ShiftExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
@@ -2512,6 +2760,10 @@ impl AdditiveExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2554,6 +2806,10 @@ impl MultiplicativeExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
@@ -2595,6 +2851,10 @@ impl ExponentiationExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type PostfixExpression = Rc<PostfixExpressionStruct>;
@@ -2631,6 +2891,10 @@ impl PostfixExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2669,6 +2933,10 @@ impl PrefixExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
@@ -2705,6 +2973,10 @@ impl FunctionCallExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2743,6 +3015,10 @@ impl CallOptionsExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
@@ -2779,6 +3055,10 @@ impl MemberAccessExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2827,6 +3107,10 @@ impl IndexAccessExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
@@ -2864,6 +3148,10 @@ impl NamedArgumentStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type TypeExpression = Rc<TypeExpressionStruct>;
@@ -2896,6 +3184,10 @@ impl TypeExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2930,6 +3222,10 @@ impl NewExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type TupleExpression = Rc<TupleExpressionStruct>;
@@ -2962,6 +3258,10 @@ impl TupleExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -2999,6 +3299,10 @@ impl TupleValueStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
@@ -3031,6 +3335,10 @@ impl ArrayExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3072,6 +3380,10 @@ impl HexNumberExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
@@ -3112,6 +3424,10 @@ impl DecimalNumberExpressionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulBlock = Rc<YulBlockStruct>;
@@ -3144,6 +3460,10 @@ impl YulBlockStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3193,6 +3513,10 @@ impl YulFunctionDefinitionStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
@@ -3233,6 +3557,10 @@ impl YulVariableDeclarationStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
@@ -3269,6 +3597,10 @@ impl YulVariableDeclarationValueStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3311,6 +3643,10 @@ impl YulVariableAssignmentStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
@@ -3339,6 +3675,10 @@ impl YulColonAndEqualStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3377,6 +3717,10 @@ impl YulStackAssignmentStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
@@ -3405,6 +3749,10 @@ impl YulEqualAndColonStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3442,6 +3790,10 @@ impl YulIfStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3488,6 +3840,10 @@ impl YulForStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
@@ -3525,6 +3881,10 @@ impl YulSwitchStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
@@ -3557,6 +3917,10 @@ impl YulDefaultCaseStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3595,6 +3959,10 @@ impl YulValueCaseStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
@@ -3623,6 +3991,10 @@ impl YulLeaveStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3653,6 +4025,10 @@ impl YulBreakStatementStruct {
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
+    }
 }
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
@@ -3681,6 +4057,10 @@ impl YulContinueStatementStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3714,6 +4094,10 @@ impl YulLabelStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
@@ -3751,6 +4135,10 @@ impl YulFunctionCallExpressionStruct {
         self.semantic
             .get_text_offset_by_node_id(self.ir_node.node_id)
             .unwrap()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        self.semantic.get_type_from_node_id(self.ir_node.node_id)
     }
 }
 
