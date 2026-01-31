@@ -47,7 +47,7 @@ struct IdentifierCounter {
 
 impl ast::visitor::Visitor for IdentifierCounter {
     fn visit_identifier(&mut self, node: &ast::Identifier) {
-        if node.is_definition() {
+        if node.is_name_of_definition() {
             self.definitions += 1;
         }
         if node.is_reference() {
@@ -78,14 +78,14 @@ fn test_text_offsets() -> Result<()> {
                 None
             }
         })
-        .find(|function| {
-            function
-                .name()
-                .is_some_and(|name| name.unparse() == "click")
-        })
+        .find(|function| function.name().is_some_and(|name| name.name() == "click"))
         .expect("click method is found");
     assert_eq!(click.text_offset().line, 18);
     assert_eq!(click.text_offset().column, 4);
+
+    let click_identifier = click.name().unwrap();
+    assert_eq!(click_identifier.text_offset().line, 18);
+    assert_eq!(click_identifier.text_offset().column, 13);
 
     Ok(())
 }
