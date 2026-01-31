@@ -1,9 +1,7 @@
 use anyhow::Result;
 use slang_solidity::backend::semantic::ast;
-use slang_solidity::utils::LanguageFacts;
 
 use crate::backend::fixtures;
-use crate::compilation::compilation_unit::build_compilation_unit_from_multi_part_file;
 
 #[test]
 fn test_ast_visitor() -> Result<()> {
@@ -130,25 +128,9 @@ fn test_resolve_to_immediate_definition() -> Result<()> {
     Ok(())
 }
 
-const CHAINED_SAMPLE: &str = r#"
-// ---- path: first.sol
-import {B2 as B1} from "second.sol";
-interface I1 {}
-contract A1 is I1, B1 {}
-
-// ---- path: second.sol
-import {B3 as B2} from "third.sol";
-
-// ---- path: third.sol
-contract B3 {}
-"#;
-
 #[test]
 fn test_resolve_to_immediate_resolves_to_direct_definition() -> Result<()> {
-    let unit = build_compilation_unit_from_multi_part_file(
-        &LanguageFacts::LATEST_VERSION,
-        CHAINED_SAMPLE,
-    )?;
+    let unit = fixtures::ChainedImports::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let a1 = semantic
@@ -178,10 +160,7 @@ fn test_resolve_to_immediate_resolves_to_direct_definition() -> Result<()> {
 
 #[test]
 fn test_chained_imports_resolution() -> Result<()> {
-    let unit = build_compilation_unit_from_multi_part_file(
-        &LanguageFacts::LATEST_VERSION,
-        CHAINED_SAMPLE,
-    )?;
+    let unit = fixtures::ChainedImports::build_compilation_unit()?;
     let semantic = unit.semantic_analysis();
 
     let a1 = semantic
