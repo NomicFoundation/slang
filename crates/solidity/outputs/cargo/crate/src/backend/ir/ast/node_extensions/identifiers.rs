@@ -3,7 +3,7 @@ use std::rc::Rc;
 use super::super::IdentifierPathStruct;
 use super::Definition;
 use crate::backend::SemanticAnalysis;
-use crate::cst::{NodeId, TerminalKind, TerminalNode};
+use crate::cst::{NodeId, TerminalKind, TerminalNode, TextIndex};
 
 pub type Identifier = Rc<IdentifierStruct>;
 
@@ -24,7 +24,11 @@ pub struct IdentifierStruct {
 }
 
 impl IdentifierStruct {
-    pub fn unparse(&self) -> String {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn name(&self) -> String {
         self.ir_node.unparse()
     }
 
@@ -42,7 +46,7 @@ impl IdentifierStruct {
         let definition_id = self
             .semantic
             .resolve_reference_identifier_to_definition_id(self.ir_node.id())?;
-        Some(Definition::create(definition_id, &self.semantic))
+        Definition::try_create(definition_id, &self.semantic)
     }
 
     /// Attempts to resolve the identifier to an immediate definition, without
@@ -55,11 +59,24 @@ impl IdentifierStruct {
         let definition_id = self
             .semantic
             .resolve_reference_identifier_to_immediate_definition_id(self.ir_node.id())?;
-        Some(Definition::create(definition_id, &self.semantic))
+        Definition::try_create(definition_id, &self.semantic)
     }
 
     /// Returns `true` if the identifier itself is a definition (eg. an enum member)
     pub fn is_definition(&self) -> bool {
+        self.as_definition().is_some()
+    }
+
+    /// Returns the `Definition` corresponding to this identifier. Panics if the
+    /// identifier is not a definition by itself, ie. this can only be called
+    /// safely if `is_definition()` returns `true`.
+    pub fn as_definition(&self) -> Option<Definition> {
+        Definition::try_create(self.ir_node.id(), &self.semantic)
+    }
+
+    /// Returns `true` if the identifier is a definition itself, or is the name
+    /// identifier of a definition
+    pub fn is_name_of_definition(&self) -> bool {
         self.semantic
             .binder()
             .find_definition_by_identifier_node_id(self.ir_node.id())
@@ -69,6 +86,12 @@ impl IdentifierStruct {
     // only makes sense if `is_definition()` is true
     pub fn references(&self) -> Vec<Reference> {
         self.semantic.references_binding_to(self.ir_node.id())
+    }
+
+    pub fn text_offset(&self) -> TextIndex {
+        self.semantic
+            .get_text_offset_by_node_id(self.ir_node.id())
+            .unwrap()
     }
 }
 
@@ -112,10 +135,10 @@ impl Reference {
         }
     }
 
-    pub fn unparse(&self) -> String {
+    pub fn name(&self) -> String {
         match self {
             Reference::Identifier(identifier) | Reference::YulIdentifier(identifier) => {
-                identifier.unparse()
+                identifier.name()
             }
         }
     }
@@ -172,7 +195,7 @@ impl SemanticAnalysis {
 }
 
 impl IdentifierPathStruct {
-    pub fn unparse(&self) -> String {
+    pub fn name(&self) -> String {
         self.ir_nodes
             .iter()
             .map(|ir_node| ir_node.unparse())
@@ -187,7 +210,7 @@ impl IdentifierPathStruct {
         let definition_id = self
             .semantic
             .resolve_reference_identifier_to_definition_id(ir_node.id())?;
-        Some(Definition::create(definition_id, &self.semantic))
+        Definition::try_create(definition_id, &self.semantic)
     }
 
     /// Attempts to resolve the identifier path to an immediate definition,
@@ -199,6 +222,6 @@ impl IdentifierPathStruct {
         let definition_id = self
             .semantic
             .resolve_reference_identifier_to_immediate_definition_id(ir_node.id())?;
-        Some(Definition::create(definition_id, &self.semantic))
+        Definition::try_create(definition_id, &self.semantic)
     }
 }
