@@ -1,5 +1,11 @@
 # changelog
 
+## 1.3.3
+
+### Patch Changes
+
+- [#1502](https://github.com/NomicFoundation/slang/pull/1502) [`6963419`](https://github.com/NomicFoundation/slang/commit/6963419ca8c043718996415d780caf1c047fb75b) Thanks [@teofr](https://github.com/teofr)! - Fixed the old style revert calls (`revert("oops!")`) to be parsed as a `FunctionCallExpression` rather than a `RevertStatement`.
+
 ## 1.3.2
 
 ### Patch Changes
