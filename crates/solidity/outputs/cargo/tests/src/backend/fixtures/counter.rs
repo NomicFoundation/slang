@@ -79,9 +79,19 @@ abstract contract Activatable is Ownable {
 }
 "#;
 
-struct Config {}
+pub(crate) struct Counter {}
 
-impl CompilationBuilderConfig for Config {
+impl Counter {
+    pub(crate) fn build_compilation_unit() -> Result<Rc<CompilationUnit>> {
+        let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, Self {})?;
+
+        builder.add_file(MAIN_ID)?;
+
+        Ok(Rc::new(builder.build()))
+    }
+}
+
+impl CompilationBuilderConfig for Counter {
     type Error = anyhow::Error;
 
     fn read_file(&mut self, file_id: &str) -> Result<Option<String>> {
@@ -104,21 +114,4 @@ impl CompilationBuilderConfig for Config {
             _ => Ok(None),
         }
     }
-}
-
-pub fn build_compilation_unit() -> Result<Rc<CompilationUnit>> {
-    let mut builder = CompilationBuilder::create(LanguageFacts::LATEST_VERSION, Config {})?;
-
-    builder.add_file(MAIN_ID)?;
-
-    Ok(Rc::new(builder.build()))
-}
-
-#[test]
-fn test_backend_pipeline() -> Result<()> {
-    let unit = build_compilation_unit()?;
-    let semantic_analysis = unit.semantic_analysis();
-    assert_eq!(3, semantic_analysis.files().len());
-
-    Ok(())
 }
