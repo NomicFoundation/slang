@@ -204,10 +204,10 @@ fn test_get_linearised_state_variables() -> Result<()> {
     let state_variables = counter.compute_linearised_state_variables();
     assert_eq!(state_variables.len(), 4);
 
-    assert_eq!(state_variables[0].name().unparse(), "_owner");
-    assert_eq!(state_variables[1].name().unparse(), "_state");
-    assert_eq!(state_variables[2].name().unparse(), "count");
-    assert_eq!(state_variables[3].name().unparse(), "_clickers");
+    assert_eq!(state_variables[0].name().name(), "_owner");
+    assert_eq!(state_variables[1].name().name(), "_state");
+    assert_eq!(state_variables[2].name().name(), "count");
+    assert_eq!(state_variables[3].name().name(), "_clickers");
 
     Ok(())
 }
@@ -226,19 +226,19 @@ fn test_get_linearised_functions() -> Result<()> {
 
     assert!(functions[0]
         .name()
-        .is_some_and(|name| name.unparse() == "click"));
+        .is_some_and(|name| name.name() == "click"));
     assert!(functions[1]
         .name()
-        .is_some_and(|name| name.unparse() == "disable"));
+        .is_some_and(|name| name.name() == "disable"));
     assert!(functions[2]
         .name()
-        .is_some_and(|name| name.unparse() == "enable"));
+        .is_some_and(|name| name.name() == "enable"));
     assert!(functions[3]
         .name()
-        .is_some_and(|name| name.unparse() == "increment"));
+        .is_some_and(|name| name.name() == "increment"));
     assert!(functions[4]
         .name()
-        .is_some_and(|name| name.unparse() == "isEnabled"));
+        .is_some_and(|name| name.name() == "isEnabled"));
 
     Ok(())
 }
@@ -273,13 +273,13 @@ fn test_get_linearised_function_with_overrides() -> Result<()> {
     assert_eq!(functions.len(), 3);
     assert!(functions[0]
         .name()
-        .is_some_and(|name| name.unparse() == "in_base"));
+        .is_some_and(|name| name.name() == "in_base"));
     assert!(functions[1]
         .name()
-        .is_some_and(|name| name.unparse() == "in_middle"));
+        .is_some_and(|name| name.name() == "in_middle"));
     assert!(functions[2]
         .name()
-        .is_some_and(|name| name.unparse() == "override_me"));
+        .is_some_and(|name| name.name() == "override_me"));
 
     Ok(())
 }

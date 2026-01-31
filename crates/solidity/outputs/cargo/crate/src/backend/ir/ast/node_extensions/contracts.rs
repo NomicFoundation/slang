@@ -139,7 +139,7 @@ impl ContractDefinitionStruct {
             (None, None) => Ordering::Equal,
             (None, Some(_)) => Ordering::Less,
             (Some(_), None) => Ordering::Greater,
-            (Some(a), Some(b)) => a.unparse().cmp(&b.unparse()),
+            (Some(a), Some(b)) => a.name().cmp(&b.name()),
         });
         functions
     }
