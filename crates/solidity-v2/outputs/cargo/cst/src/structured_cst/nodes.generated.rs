@@ -4087,23 +4087,13 @@ pub fn new_storage_location_call_data_keyword(element: CallDataKeyword) -> Stora
 
 #[derive(Clone, Debug)]
 pub enum StringExpression {
-    StringLiteral(StringLiteral),
     StringLiterals(StringLiterals),
-    HexStringLiteral(HexStringLiteral),
     HexStringLiterals(HexStringLiterals),
     UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
-pub fn new_string_expression_string_literal(element: StringLiteral) -> StringExpression {
-    StringExpression::StringLiteral(element)
-}
-
 pub fn new_string_expression_string_literals(element: StringLiterals) -> StringExpression {
     StringExpression::StringLiterals(element)
-}
-
-pub fn new_string_expression_hex_string_literal(element: HexStringLiteral) -> StringExpression {
-    StringExpression::HexStringLiteral(element)
 }
 
 pub fn new_string_expression_hex_string_literals(element: HexStringLiterals) -> StringExpression {

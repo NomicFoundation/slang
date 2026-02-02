@@ -15024,15 +15024,7 @@ impl NodeChecker for StringExpression {
         let mut errors = vec![];
 
         match self {
-            Self::StringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
             Self::StringLiterals(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::HexStringLiteral(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
 

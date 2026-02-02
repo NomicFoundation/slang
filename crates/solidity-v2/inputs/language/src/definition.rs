@@ -885,7 +885,8 @@ PragmaDirective: PragmaDirective = {
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    reserved = From("0.4.14"),
+                                    // TODO(v2) removing conflict
+                                    // reserved = From("0.4.14"),
                                     value = Sequence([
                                         Atom("fixed"),
                                         Choice([
@@ -948,7 +949,8 @@ PragmaDirective: PragmaDirective = {
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    reserved = From("0.4.14"),
+                                    // TODO(v2) removing conflict
+                                    // reserved = From("0.4.14"),
                                     value = Sequence([
                                         Atom("fixed"),
                                         Choice([
@@ -1446,7 +1448,8 @@ PragmaDirective: PragmaDirective = {
                             name = SuperKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                reserved = From("0.8.0"),
+                                // TODO(v2) this needs manual handling
+                                // reserved = From("0.8.0"),
                                 value = Atom("super")
                             )]
                         ),
@@ -1478,6 +1481,7 @@ PragmaDirective: PragmaDirective = {
                             name = ThisKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
+                                // TODO(v2) This needs manual handling
                                 reserved = From("0.8.0"),
                                 value = Atom("this")
                             )]
@@ -1629,7 +1633,8 @@ PragmaDirective: PragmaDirective = {
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    reserved = From("0.4.14"),
+                                    // TODO(v2) removing conflict
+                                    // reserved = From("0.4.14"),
                                     value = Sequence([
                                         Atom("ufixed"),
                                         Choice([
@@ -1692,7 +1697,8 @@ PragmaDirective: PragmaDirective = {
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    reserved = From("0.4.14"),
+                                    // TODO(v2) removing conflict
+                                    // reserved = From("0.4.14"),
                                     value = Sequence([
                                         Atom("ufixed"),
                                         Choice([
@@ -4517,9 +4523,11 @@ HexNumberExpression: HexNumberExpression = {
                         Enum(
                             name = StringExpression,
                             variants = [
-                                EnumVariant(reference = StringLiteral, enabled = Till("0.5.14")),
+                                // TODO(v2) this conflicts with the one below
+                                // EnumVariant(reference = StringLiteral, enabled = Till("0.5.14")),
                                 EnumVariant(reference = StringLiterals, enabled = From("0.5.14")),
-                                EnumVariant(reference = HexStringLiteral, enabled = Till("0.5.14")),
+                                // TODO(v2) this conflicts with the one below
+                                // EnumVariant(reference = HexStringLiteral, enabled = Till("0.5.14")),
                                 EnumVariant(
                                     reference = HexStringLiterals,
                                     enabled = From("0.5.14")

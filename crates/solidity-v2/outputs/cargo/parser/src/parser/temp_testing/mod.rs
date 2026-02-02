@@ -30,8 +30,8 @@ pub fn test_v2_output(
     version: &Version,
     v1_output: &ParseOutput,
 ) -> Result<(), anyhow::Error> {
-    // We check versions [0.8.0, 0.9.0)
-    if *version < Version::new(0, 8, 0) || *version >= Version::new(0, 9, 0) {
+    // We check versions [0.4.11, 0.9.0)
+    if *version < Version::new(0, 4, 11) || *version >= Version::new(0, 9, 0) {
         return Ok(());
     }
 

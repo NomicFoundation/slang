@@ -11,7 +11,7 @@ struct RustCode(String);
 
 // Version range for filtering: [MIN_VERSION, MAX_VERSION)
 // A VersionSpecifier is enabled if it overlaps with this range
-pub(crate) const MIN_VERSION: Version = Version::new(0, 8, 0);
+pub(crate) const MIN_VERSION: Version = Version::new(0, 4, 11);
 pub(crate) const MAX_VERSION: Version = Version::new(0, 9, 0); // exclusive
 
 /// An `LALRPOPItemInner` represents a single LALRPOP rule, for example:
