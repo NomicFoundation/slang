@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: # 2 total
+  - >
+    Error: Expected node kind to be a terminal, but it was ExponentiationExpression
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/exponentiation/input.sol:1:1]
+       │
+     1 │ a ** b ** c ** d
+       │ ─────┬─────  
+       │      ╰─────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected node kind to be ExponentiationExpression, but it was Identifier
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/exponentiation/input.sol:1:16]
+       │
+     1 │ a ** b ** c ** d
+       │                ┬  
+       │                ╰── Error occurred here.
+    ───╯

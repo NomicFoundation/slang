@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            StructDefinition(
+                StructDefinitionStruct {
+                    struct_keyword: StructKeyword {
+                        range: 20..26,
+                    },
+                    name: Identifier {
+                        range: 27..28,
+                    },
+                    open_brace: OpenBrace {
+                        range: 29..30,
+                    },
+                    members: StructMembers {
+                        elements: [
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            range: 35..39,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    range: 40..41,
+                                },
+                                semicolon: Semicolon {
+                                    range: 41..42,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            range: 47..51,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    range: 52..53,
+                                },
+                                semicolon: Semicolon {
+                                    range: 53..54,
+                                },
+                            },
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 57..58,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 59..60,
+    },
+}

@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+NewExpression(
+    NewExpressionStruct {
+        new_keyword: NewKeyword {
+            range: 0..3,
+        },
+        type_name: IdentifierPath(
+            IdentifierPathStruct {
+                head: Identifier {
+                    range: 4..7,
+                },
+                tail: None,
+            },
+        ),
+    },
+)

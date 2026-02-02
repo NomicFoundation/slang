@@ -1,0 +1,88 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            EventDefinition(
+                EventDefinitionStruct {
+                    event_keyword: EventKeyword {
+                        range: 20..25,
+                    },
+                    name: Identifier {
+                        range: 26..29,
+                    },
+                    parameters: EventParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 29..30,
+                        },
+                        parameters: EventParameters {
+                            elements: [
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 30..37,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: Some(
+                                        IndexedKeyword {
+                                            range: 38..45,
+                                        },
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 46..47,
+                                        },
+                                    ),
+                                },
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 49..56,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: Some(
+                                        IndexedKeyword {
+                                            range: 57..64,
+                                        },
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 65..66,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 66..67,
+                        },
+                    },
+                    anonymous_keyword: None,
+                    semicolon: Semicolon {
+                        range: 67..68,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 69..70,
+    },
+}
