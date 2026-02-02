@@ -628,7 +628,8 @@ PragmaDirective: PragmaDirective = {
                             identifier = Identifier,
                             enabled = From("0.5.0"),
                             definitions = [KeywordDefinition(
-                                reserved = From("0.5.0"),
+                                // TODO(v2) removing conflict - calldata unreserved conflicts with identifier in Parameter
+                                // reserved = From("0.5.0"),
                                 value = Atom("calldata")
                             )]
                         ),
@@ -717,7 +718,8 @@ PragmaDirective: PragmaDirective = {
                             identifier = Identifier,
                             enabled = From("0.4.21"),
                             definitions = [KeywordDefinition(
-                                reserved = From("0.5.0"),
+                                // TODO(v2) removing conflict - emit unreserved before 0.5.0 conflicts with identifier in EmitStatement
+                                // reserved = From("0.5.0"),
                                 value = Atom("emit")
                             )]
                         ),
@@ -761,7 +763,8 @@ PragmaDirective: PragmaDirective = {
                             name = FallbackKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                reserved = From("0.6.0"),
+                                // TODO(v2) removing conflict - fallback unreserved before 0.6.0 conflicts with FunctionName
+                                // reserved = From("0.6.0"),
                                 value = Atom("fallback")
                             )]
                         ),
@@ -1295,7 +1298,8 @@ PragmaDirective: PragmaDirective = {
                             identifier = Identifier,
                             enabled = From("0.6.0"),
                             definitions = [KeywordDefinition(
-                                reserved = From("0.5.0"),
+                                // TODO(v2) removing conflict - override unreserved before 0.5.0 conflicts with ModifierInvocation
+                                // reserved = From("0.5.0"),
                                 value = Atom("override")
                             )]
                         ),
@@ -1347,7 +1351,8 @@ PragmaDirective: PragmaDirective = {
                             name = ReceiveKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                reserved = From("0.6.0"),
+                                // TODO(v2) removing conflict - receive unreserved before 0.6.0 conflicts with FunctionName
+                                // reserved = From("0.6.0"),
                                 value = Atom("receive")
                             )]
                         ),
@@ -1482,7 +1487,7 @@ PragmaDirective: PragmaDirective = {
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
                                 // TODO(v2) This needs manual handling
-                                reserved = From("0.8.0"),
+                                // reserved = From("0.8.0"),
                                 value = Atom("this")
                             )]
                         ),
@@ -1861,7 +1866,8 @@ PragmaDirective: PragmaDirective = {
                             identifier = Identifier,
                             enabled = From("0.8.0"),
                             definitions = [KeywordDefinition(
-                                reserved = From("0.5.0"),
+                                // TODO(v2) removing conflict - unchecked unreserved before 0.5.0 conflicts with identifier in UncheckedBlock
+                                // reserved = From("0.5.0"),
                                 value = Atom("unchecked")
                             )]
                         ),
@@ -1887,7 +1893,8 @@ PragmaDirective: PragmaDirective = {
                             identifier = Identifier,
                             enabled = From("0.6.0"),
                             definitions = [KeywordDefinition(
-                                reserved = From("0.6.0"),
+                                // TODO(v2) removing conflict - virtual unreserved before 0.6.0 conflicts with ModifierInvocation
+                                // reserved = From("0.6.0"),
                                 value = Atom("virtual")
                             )]
                         ),
@@ -2214,10 +2221,11 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                                     reference = FallbackFunctionDefinition,
                                     enabled = From("0.6.0")
                                 ),
-                                EnumVariant(
-                                    reference = UnnamedFunctionDefinition,
-                                    enabled = Till("0.6.0")
-                                ),
+                                // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
+                                // EnumVariant(
+                                //     reference = UnnamedFunctionDefinition,
+                                //     enabled = Till("0.6.0")
+                                // ),
                                 EnumVariant(reference = ModifierDefinition),
                                 EnumVariant(reference = StructDefinition),
                                 EnumVariant(reference = EnumDefinition),
@@ -2610,43 +2618,44 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 )
                             ]
                         ),
-                        Struct(
-                            name = UnnamedFunctionDefinition,
-                            enabled = Till("0.6.0"),
-                            fields = (
-                                function_keyword = Required(FunctionKeyword),
-                                parameters = Required(ParametersDeclaration),
-                                attributes = Required(UnnamedFunctionAttributes),
-                                body = Required(FunctionBody)
-                            )
-                        ),
-                        Repeated(
-                            name = UnnamedFunctionAttributes,
-                            reference = UnnamedFunctionAttribute,
-                            enabled = Till("0.6.0"),
-                            allow_empty = true
-                        ),
-                        Enum(
-                            name = UnnamedFunctionAttribute,
-                            enabled = Till("0.6.0"),
-                            variants = [
-                                EnumVariant(reference = ModifierInvocation),
-                                EnumVariant(reference = ConstantKeyword, enabled = Till("0.5.0")),
-                                EnumVariant(reference = ExternalKeyword),
-                                EnumVariant(reference = InternalKeyword, enabled = Till("0.5.0")),
-                                EnumVariant(reference = PayableKeyword),
-                                EnumVariant(reference = PrivateKeyword, enabled = Till("0.5.0")),
-                                EnumVariant(reference = PublicKeyword, enabled = Till("0.5.0")),
-                                EnumVariant(
-                                    reference = PureKeyword,
-                                    enabled = Range(from = "0.4.16", till = "0.6.0")
-                                ),
-                                EnumVariant(
-                                    reference = ViewKeyword,
-                                    enabled = Range(from = "0.4.16", till = "0.6.0")
-                                )
-                            ]
-                        ),
+                        // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
+                        // Struct(
+                        //     name = UnnamedFunctionDefinition,
+                        //     enabled = Till("0.6.0"),
+                        //     fields = (
+                        //         function_keyword = Required(FunctionKeyword),
+                        //         parameters = Required(ParametersDeclaration),
+                        //         attributes = Required(UnnamedFunctionAttributes),
+                        //         body = Required(FunctionBody)
+                        //     )
+                        // ),
+                        // Repeated(
+                        //     name = UnnamedFunctionAttributes,
+                        //     reference = UnnamedFunctionAttribute,
+                        //     enabled = Till("0.6.0"),
+                        //     allow_empty = true
+                        // ),
+                        // Enum(
+                        //     name = UnnamedFunctionAttribute,
+                        //     enabled = Till("0.6.0"),
+                        //     variants = [
+                        //         EnumVariant(reference = ModifierInvocation),
+                        //         EnumVariant(reference = ConstantKeyword, enabled = Till("0.5.0")),
+                        //         EnumVariant(reference = ExternalKeyword),
+                        //         EnumVariant(reference = InternalKeyword, enabled = Till("0.5.0")),
+                        //         EnumVariant(reference = PayableKeyword),
+                        //         EnumVariant(reference = PrivateKeyword, enabled = Till("0.5.0")),
+                        //         EnumVariant(reference = PublicKeyword, enabled = Till("0.5.0")),
+                        //         EnumVariant(
+                        //             reference = PureKeyword,
+                        //             enabled = Range(from = "0.4.16", till = "0.6.0")
+                        //         ),
+                        //         EnumVariant(
+                        //             reference = ViewKeyword,
+                        //             enabled = Range(from = "0.4.16", till = "0.6.0")
+                        //         )
+                        //     ]
+                        // ),
                         Struct(
                             name = FallbackFunctionDefinition,
                             enabled = From("0.6.0"),
@@ -2954,7 +2963,8 @@ FunctionTypeInternalReturn: FunctionType = {
                                 EnumVariant(reference = ExternalKeyword),
                                 EnumVariant(reference = PrivateKeyword),
                                 EnumVariant(reference = PublicKeyword),
-                                EnumVariant(reference = ConstantKeyword, enabled = Till("0.5.0")),
+                                // TODO(v2) removing conflict - ConstantKeyword as FunctionTypeAttribute conflicts with ConstantDefinition
+                                // EnumVariant(reference = ConstantKeyword, enabled = Till("0.5.0")),
                                 EnumVariant(reference = PureKeyword, enabled = From("0.4.16")),
                                 EnumVariant(reference = ViewKeyword, enabled = From("0.4.16")),
                                 EnumVariant(reference = PayableKeyword)

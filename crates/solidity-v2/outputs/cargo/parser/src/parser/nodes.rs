@@ -159,7 +159,7 @@ pub(crate) fn extract_extra_attributes(
     fun_type: FunctionType,
 ) -> (FunctionType, Vec<StateVariableAttribute>) {
     // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
-    let mut seen_constant = false;
+    // TODO(v2) removed seen_constant - ConstantKeyword variant was disabled due to grammar conflict
     let mut seen_internal = false;
     let mut seen_private = false;
     let mut seen_public = false;
@@ -179,7 +179,7 @@ pub(crate) fn extract_extra_attributes(
             true
         } else {
             let seen = match attr {
-                FunctionTypeAttribute::ConstantKeyword(_) => &mut seen_constant,
+                // TODO(v2) removed ConstantKeyword - variant was disabled due to grammar conflict
                 FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
                 FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
                 FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
@@ -201,9 +201,7 @@ pub(crate) fn extract_extra_attributes(
     let extra_attributes: Vec<StateVariableAttribute> = extracted
         .map(|attr| {
         match attr {
-        FunctionTypeAttribute::ConstantKeyword(terminal) => {
-            StateVariableAttribute::ConstantKeyword(terminal)
-        }
+        // TODO(v2) removed ConstantKeyword - variant was disabled due to grammar conflict
         FunctionTypeAttribute::InternalKeyword(terminal) => {
             StateVariableAttribute::InternalKeyword(terminal)
         }

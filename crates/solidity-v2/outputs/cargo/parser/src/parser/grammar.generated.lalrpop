@@ -345,7 +345,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
         <_ConstructorDefinition: ConstructorDefinition>  => new_contract_member_constructor_definition(<>),
         <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => new_contract_member_receive_function_definition(<>),
         <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => new_contract_member_fallback_function_definition(<>),
-        <_UnnamedFunctionDefinition: UnnamedFunctionDefinition>  => new_contract_member_unnamed_function_definition(<>),
         <_ModifierDefinition: ModifierDefinition>  => new_contract_member_modifier_definition(<>),
         <_StructDefinition: StructDefinition>  => new_contract_member_struct_definition(<>),
         <_EnumDefinition: EnumDefinition>  => new_contract_member_enum_definition(<>),
@@ -578,26 +577,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         <_VirtualKeyword: VirtualKeyword>  => new_constructor_attribute_virtual_keyword(<>),
         
     };
-    UnnamedFunctionDefinition: UnnamedFunctionDefinition = {
-        <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: UnnamedFunctionAttributes>  <_body: FunctionBody>  => new_unnamed_function_definition(<>),
-        
-    };
-    UnnamedFunctionAttributes: UnnamedFunctionAttributes = {
-        <_UnnamedFunctionAttribute: Rep<<UnnamedFunctionAttribute>>>  => new_unnamed_function_attributes(<>),
-        
-    };
-    UnnamedFunctionAttribute: UnnamedFunctionAttribute = {
-        <_ModifierInvocation: ModifierInvocation>  => new_unnamed_function_attribute_modifier_invocation(<>),
-        <_ConstantKeyword: ConstantKeyword>  => new_unnamed_function_attribute_constant_keyword(<>),
-        <_ExternalKeyword: ExternalKeyword>  => new_unnamed_function_attribute_external_keyword(<>),
-        <_InternalKeyword: InternalKeyword>  => new_unnamed_function_attribute_internal_keyword(<>),
-        <_PayableKeyword: PayableKeyword>  => new_unnamed_function_attribute_payable_keyword(<>),
-        <_PrivateKeyword: PrivateKeyword>  => new_unnamed_function_attribute_private_keyword(<>),
-        <_PublicKeyword: PublicKeyword>  => new_unnamed_function_attribute_public_keyword(<>),
-        <_PureKeyword: PureKeyword>  => new_unnamed_function_attribute_pure_keyword(<>),
-        <_ViewKeyword: ViewKeyword>  => new_unnamed_function_attribute_view_keyword(<>),
-        
-    };
     FallbackFunctionDefinition: FallbackFunctionDefinition = {
         <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_fallback_function_definition(<>),
         
@@ -769,7 +748,6 @@ FunctionTypeInternalReturn: FunctionType = {
         <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(<>),
         <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(<>),
         <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(<>),
-        <_ConstantKeyword: ConstantKeyword>  => new_function_type_attribute_constant_keyword(<>),
         <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(<>),
         <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(<>),
         <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(<>),
@@ -2021,12 +1999,10 @@ BytesKeyword: BytesKeyword = {
         <l:@L> L_BytesKeyword_Reserved <r:@L> => new_bytes_keyword(l..r, source),
 
 };
-
+#[inline]
 CallDataKeyword: CallDataKeyword = {
 
         <l:@L> L_CallDataKeyword_Reserved <r:@L> => new_call_data_keyword(l..r, source),
-
-        <l:@L> L_CallDataKeyword_Unreserved <r:@L> => new_call_data_keyword(l..r, source),
 
 };
 #[inline]
@@ -2191,12 +2167,10 @@ ElseKeyword: ElseKeyword = {
         <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword(l..r, source),
 
 };
-
+#[inline]
 EmitKeyword: EmitKeyword = {
 
         <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword(l..r, source),
-
-        <l:@L> L_EmitKeyword_Unreserved <r:@L> => new_emit_keyword(l..r, source),
 
 };
 #[inline]
@@ -2265,12 +2239,10 @@ ExternalKeyword: ExternalKeyword = {
         <l:@L> L_ExternalKeyword_Reserved <r:@L> => new_external_keyword(l..r, source),
 
 };
-
+#[inline]
 FallbackKeyword: FallbackKeyword = {
 
         <l:@L> L_FallbackKeyword_Reserved <r:@L> => new_fallback_keyword(l..r, source),
-
-        <l:@L> L_FallbackKeyword_Unreserved <r:@L> => new_fallback_keyword(l..r, source),
 
 };
 #[inline]
@@ -2412,21 +2384,15 @@ SomeIdentifier<Except>: Identifier = {
 
         <l:@L> L_AutoKeyword_Unreserved <r:@L> if Except !~ "AutoKeyword_Unreserved" => new_identifier(l..r, source),
 
-        <l:@L> L_CallDataKeyword_Unreserved <r:@L> if Except !~ "CallDataKeyword_Unreserved" => new_identifier(l..r, source),
-
         <l:@L> L_ConstructorKeyword_Unreserved <r:@L> if Except !~ "ConstructorKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_CopyOfKeyword_Unreserved <r:@L> if Except !~ "CopyOfKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_DefineKeyword_Unreserved <r:@L> if Except !~ "DefineKeyword_Unreserved" => new_identifier(l..r, source),
 
-        <l:@L> L_EmitKeyword_Unreserved <r:@L> if Except !~ "EmitKeyword_Unreserved" => new_identifier(l..r, source),
-
         <l:@L> L_ErrorKeyword_Unreserved <r:@L> if Except !~ "ErrorKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_ExperimentalKeyword_Unreserved <r:@L> if Except !~ "ExperimentalKeyword_Unreserved" => new_identifier(l..r, source),
-
-        <l:@L> L_FallbackKeyword_Unreserved <r:@L> if Except !~ "FallbackKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_FinneyKeyword_Unreserved <r:@L> if Except !~ "FinneyKeyword_Unreserved" => new_identifier(l..r, source),
 
@@ -2448,13 +2414,9 @@ SomeIdentifier<Except>: Identifier = {
 
         <l:@L> L_MutableKeyword_Unreserved <r:@L> if Except !~ "MutableKeyword_Unreserved" => new_identifier(l..r, source),
 
-        <l:@L> L_OverrideKeyword_Unreserved <r:@L> if Except !~ "OverrideKeyword_Unreserved" => new_identifier(l..r, source),
-
         <l:@L> L_PartialKeyword_Unreserved <r:@L> if Except !~ "PartialKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_PromiseKeyword_Unreserved <r:@L> if Except !~ "PromiseKeyword_Unreserved" => new_identifier(l..r, source),
-
-        <l:@L> L_ReceiveKeyword_Unreserved <r:@L> if Except !~ "ReceiveKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_ReferenceKeyword_Unreserved <r:@L> if Except !~ "ReferenceKeyword_Unreserved" => new_identifier(l..r, source),
 
@@ -2472,15 +2434,9 @@ SomeIdentifier<Except>: Identifier = {
 
         <l:@L> L_SzaboKeyword_Unreserved <r:@L> if Except !~ "SzaboKeyword_Unreserved" => new_identifier(l..r, source),
 
-        <l:@L> L_ThisKeyword_Unreserved <r:@L> if Except !~ "ThisKeyword_Unreserved" => new_identifier(l..r, source),
-
         <l:@L> L_TransientKeyword_Unreserved <r:@L> if Except !~ "TransientKeyword_Unreserved" => new_identifier(l..r, source),
 
         <l:@L> L_TypeDefKeyword_Unreserved <r:@L> if Except !~ "TypeDefKeyword_Unreserved" => new_identifier(l..r, source),
-
-        <l:@L> L_UncheckedKeyword_Unreserved <r:@L> if Except !~ "UncheckedKeyword_Unreserved" => new_identifier(l..r, source),
-
-        <l:@L> L_VirtualKeyword_Unreserved <r:@L> if Except !~ "VirtualKeyword_Unreserved" => new_identifier(l..r, source),
 
 };
 #[inline]
@@ -2713,12 +2669,10 @@ OpenParen: OpenParen = {
         <l:@L> L_OpenParen <r:@L> => new_open_paren(l..r, source),
 
 };
-
+#[inline]
 OverrideKeyword: OverrideKeyword = {
 
         <l:@L> L_OverrideKeyword_Reserved <r:@L> => new_override_keyword(l..r, source),
-
-        <l:@L> L_OverrideKeyword_Unreserved <r:@L> => new_override_keyword(l..r, source),
 
 };
 
@@ -2809,12 +2763,10 @@ QuestionMark: QuestionMark = {
         <l:@L> L_QuestionMark <r:@L> => new_question_mark(l..r, source),
 
 };
-
+#[inline]
 ReceiveKeyword: ReceiveKeyword = {
 
         <l:@L> L_ReceiveKeyword_Reserved <r:@L> => new_receive_keyword(l..r, source),
-
-        <l:@L> L_ReceiveKeyword_Unreserved <r:@L> => new_receive_keyword(l..r, source),
 
 };
 
@@ -2989,12 +2941,10 @@ SzaboKeyword: SzaboKeyword = {
         <l:@L> L_SzaboKeyword_Unreserved <r:@L> => new_szabo_keyword(l..r, source),
 
 };
-
+#[inline]
 ThisKeyword: ThisKeyword = {
 
         <l:@L> L_ThisKeyword_Reserved <r:@L> => new_this_keyword(l..r, source),
-
-        <l:@L> L_ThisKeyword_Unreserved <r:@L> => new_this_keyword(l..r, source),
 
 };
 #[inline]
@@ -3059,12 +3009,10 @@ UintKeyword: UintKeyword = {
         <l:@L> L_UintKeyword_Reserved <r:@L> => new_uint_keyword(l..r, source),
 
 };
-
+#[inline]
 UncheckedKeyword: UncheckedKeyword = {
 
         <l:@L> L_UncheckedKeyword_Reserved <r:@L> => new_unchecked_keyword(l..r, source),
-
-        <l:@L> L_UncheckedKeyword_Unreserved <r:@L> => new_unchecked_keyword(l..r, source),
 
 };
 #[inline]
@@ -3091,12 +3039,10 @@ ViewKeyword: ViewKeyword = {
         <l:@L> L_ViewKeyword_Reserved <r:@L> => new_view_keyword(l..r, source),
 
 };
-
+#[inline]
 VirtualKeyword: VirtualKeyword = {
 
         <l:@L> L_VirtualKeyword_Reserved <r:@L> => new_virtual_keyword(l..r, source),
-
-        <l:@L> L_VirtualKeyword_Unreserved <r:@L> => new_virtual_keyword(l..r, source),
 
 };
 #[inline]
@@ -4191,7 +4137,6 @@ extern {
         L_ByteKeyword_Reserved => lexemes::LexemeKind::ByteKeyword_Reserved,
         L_BytesKeyword_Reserved => lexemes::LexemeKind::BytesKeyword_Reserved,
         L_CallDataKeyword_Reserved => lexemes::LexemeKind::CallDataKeyword_Reserved,
-        L_CallDataKeyword_Unreserved => lexemes::LexemeKind::CallDataKeyword_Unreserved,
         L_Caret => lexemes::LexemeKind::Caret,
         L_CaretEqual => lexemes::LexemeKind::CaretEqual,
         L_CaseKeyword_Reserved => lexemes::LexemeKind::CaseKeyword_Reserved,
@@ -4222,7 +4167,6 @@ extern {
         L_DoubleQuotedVersionLiteral => lexemes::LexemeKind::DoubleQuotedVersionLiteral,
         L_ElseKeyword_Reserved => lexemes::LexemeKind::ElseKeyword_Reserved,
         L_EmitKeyword_Reserved => lexemes::LexemeKind::EmitKeyword_Reserved,
-        L_EmitKeyword_Unreserved => lexemes::LexemeKind::EmitKeyword_Unreserved,
         L_EndOfLine => lexemes::LexemeKind::EndOfLine,
         L_EnumKeyword_Reserved => lexemes::LexemeKind::EnumKeyword_Reserved,
         L_Equal => lexemes::LexemeKind::Equal,
@@ -4235,7 +4179,6 @@ extern {
         L_ExperimentalKeyword_Unreserved => lexemes::LexemeKind::ExperimentalKeyword_Unreserved,
         L_ExternalKeyword_Reserved => lexemes::LexemeKind::ExternalKeyword_Reserved,
         L_FallbackKeyword_Reserved => lexemes::LexemeKind::FallbackKeyword_Reserved,
-        L_FallbackKeyword_Unreserved => lexemes::LexemeKind::FallbackKeyword_Unreserved,
         L_FalseKeyword_Reserved => lexemes::LexemeKind::FalseKeyword_Reserved,
         L_FinalKeyword_Reserved => lexemes::LexemeKind::FinalKeyword_Reserved,
         L_FinneyKeyword_Reserved => lexemes::LexemeKind::FinneyKeyword_Reserved,
@@ -4299,7 +4242,6 @@ extern {
         L_OpenBracket => lexemes::LexemeKind::OpenBracket,
         L_OpenParen => lexemes::LexemeKind::OpenParen,
         L_OverrideKeyword_Reserved => lexemes::LexemeKind::OverrideKeyword_Reserved,
-        L_OverrideKeyword_Unreserved => lexemes::LexemeKind::OverrideKeyword_Unreserved,
         L_PartialKeyword_Reserved => lexemes::LexemeKind::PartialKeyword_Reserved,
         L_PartialKeyword_Unreserved => lexemes::LexemeKind::PartialKeyword_Unreserved,
         L_PayableKeyword_Reserved => lexemes::LexemeKind::PayableKeyword_Reserved,
@@ -4317,7 +4259,6 @@ extern {
         L_PureKeyword_Reserved => lexemes::LexemeKind::PureKeyword_Reserved,
         L_QuestionMark => lexemes::LexemeKind::QuestionMark,
         L_ReceiveKeyword_Reserved => lexemes::LexemeKind::ReceiveKeyword_Reserved,
-        L_ReceiveKeyword_Unreserved => lexemes::LexemeKind::ReceiveKeyword_Unreserved,
         L_ReferenceKeyword_Reserved => lexemes::LexemeKind::ReferenceKeyword_Reserved,
         L_ReferenceKeyword_Unreserved => lexemes::LexemeKind::ReferenceKeyword_Unreserved,
         L_RelocatableKeyword_Reserved => lexemes::LexemeKind::RelocatableKeyword_Reserved,
@@ -4351,7 +4292,6 @@ extern {
         L_SzaboKeyword_Reserved => lexemes::LexemeKind::SzaboKeyword_Reserved,
         L_SzaboKeyword_Unreserved => lexemes::LexemeKind::SzaboKeyword_Unreserved,
         L_ThisKeyword_Reserved => lexemes::LexemeKind::ThisKeyword_Reserved,
-        L_ThisKeyword_Unreserved => lexemes::LexemeKind::ThisKeyword_Unreserved,
         L_ThrowKeyword_Reserved => lexemes::LexemeKind::ThrowKeyword_Reserved,
         L_Tilde => lexemes::LexemeKind::Tilde,
         L_TransientKeyword_Unreserved => lexemes::LexemeKind::TransientKeyword_Unreserved,
@@ -4364,13 +4304,11 @@ extern {
         L_UfixedKeyword_Reserved => lexemes::LexemeKind::UfixedKeyword_Reserved,
         L_UintKeyword_Reserved => lexemes::LexemeKind::UintKeyword_Reserved,
         L_UncheckedKeyword_Reserved => lexemes::LexemeKind::UncheckedKeyword_Reserved,
-        L_UncheckedKeyword_Unreserved => lexemes::LexemeKind::UncheckedKeyword_Unreserved,
         L_UsingKeyword_Reserved => lexemes::LexemeKind::UsingKeyword_Reserved,
         L_VarKeyword_Reserved => lexemes::LexemeKind::VarKeyword_Reserved,
         L_VersionSpecifier => lexemes::LexemeKind::VersionSpecifier,
         L_ViewKeyword_Reserved => lexemes::LexemeKind::ViewKeyword_Reserved,
         L_VirtualKeyword_Reserved => lexemes::LexemeKind::VirtualKeyword_Reserved,
-        L_VirtualKeyword_Unreserved => lexemes::LexemeKind::VirtualKeyword_Unreserved,
         L_WeeksKeyword_Reserved => lexemes::LexemeKind::WeeksKeyword_Reserved,
         L_WeiKeyword_Reserved => lexemes::LexemeKind::WeiKeyword_Reserved,
         L_WhileKeyword_Reserved => lexemes::LexemeKind::WhileKeyword_Reserved,

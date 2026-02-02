@@ -2038,6 +2038,7 @@ pub fn new_unchecked_block(unchecked_keyword: UncheckedKeyword, block: Block) ->
     })
 }
 
+<<<<<<< HEAD
 pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
 
 #[derive(Clone, Debug)]
@@ -2063,6 +2064,9 @@ pub fn new_unnamed_function_definition(
 }
 
 pub type UntypedDeclaration = Rc<UntypedDeclarationStruct>;
+=======
+pub type UntypedTupleDeconstructionElement = Rc<UntypedTupleDeconstructionElementStruct>;
+>>>>>>> 7259dbd9a (Fixed grammar)
 
 #[derive(Clone, Debug)]
 pub struct UntypedDeclarationStruct {
@@ -2793,7 +2797,6 @@ pub enum ContractMember {
     ConstructorDefinition(ConstructorDefinition),
     ReceiveFunctionDefinition(ReceiveFunctionDefinition),
     FallbackFunctionDefinition(FallbackFunctionDefinition),
-    UnnamedFunctionDefinition(UnnamedFunctionDefinition),
     ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
@@ -2827,12 +2830,6 @@ pub fn new_contract_member_fallback_function_definition(
     element: FallbackFunctionDefinition,
 ) -> ContractMember {
     ContractMember::FallbackFunctionDefinition(element)
-}
-
-pub fn new_contract_member_unnamed_function_definition(
-    element: UnnamedFunctionDefinition,
-) -> ContractMember {
-    ContractMember::UnnamedFunctionDefinition(element)
 }
 
 pub fn new_contract_member_modifier_definition(element: ModifierDefinition) -> ContractMember {
@@ -3608,7 +3605,6 @@ pub enum FunctionTypeAttribute {
     ExternalKeyword(ExternalKeyword),
     PrivateKeyword(PrivateKeyword),
     PublicKeyword(PublicKeyword),
-    ConstantKeyword(ConstantKeyword),
     PureKeyword(PureKeyword),
     ViewKeyword(ViewKeyword),
     PayableKeyword(PayableKeyword),
@@ -3634,12 +3630,6 @@ pub fn new_function_type_attribute_private_keyword(
 
 pub fn new_function_type_attribute_public_keyword(element: PublicKeyword) -> FunctionTypeAttribute {
     FunctionTypeAttribute::PublicKeyword(element)
-}
-
-pub fn new_function_type_attribute_constant_keyword(
-    element: ConstantKeyword,
-) -> FunctionTypeAttribute {
-    FunctionTypeAttribute::ConstantKeyword(element)
 }
 
 pub fn new_function_type_attribute_pure_keyword(element: PureKeyword) -> FunctionTypeAttribute {
@@ -4172,6 +4162,7 @@ pub fn new_unicode_string_literal_double_quoted_unicode_string_literal(
 }
 
 #[derive(Clone, Debug)]
+<<<<<<< HEAD
 pub enum UnnamedFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     ConstantKeyword(ConstantKeyword),
@@ -4255,6 +4246,8 @@ pub fn new_untyped_declaration_names_untyped_tuple_declaration(
 }
 
 #[derive(Clone, Debug)]
+=======
+>>>>>>> 7259dbd9a (Fixed grammar)
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
@@ -4964,6 +4957,7 @@ pub fn new_unicode_string_literals(elements: Vec<UnicodeStringLiteral>) -> Unico
 }
 
 #[derive(Clone, Debug)]
+<<<<<<< HEAD
 pub struct UnnamedFunctionAttributes {
     pub elements: Vec<UnnamedFunctionAttribute>,
 }
@@ -4977,6 +4971,10 @@ pub fn new_unnamed_function_attributes(
 #[derive(Clone, Debug)]
 pub struct UntypedTupleDeclarationElements {
     pub elements: Vec<UntypedTupleDeclarationElement>,
+=======
+pub struct UntypedTupleDeconstructionElements {
+    pub elements: Vec<UntypedTupleDeconstructionElement>,
+>>>>>>> 7259dbd9a (Fixed grammar)
 }
 
 pub fn new_untyped_tuple_declaration_elements(

@@ -9673,6 +9673,7 @@ impl NodeChecker for UncheckedBlock {
     }
 }
 
+<<<<<<< HEAD
 /// Generic `NodeChecker` for sequences
 impl NodeChecker for UnnamedFunctionDefinition {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
@@ -9974,6 +9975,10 @@ impl NodeChecker for UntypedTupleDeclaration {
 
 /// `NodeChecker` for `UntypedTupleDeclarationElement` - maps to V1's `TupleDeconstructionElement` (untyped)
 impl NodeChecker for UntypedTupleDeclarationElement {
+=======
+/// `NodeChecker` for `UntypedTupleDeconstructionElement` maps to v1's `TupleDeconstructionElement`
+impl NodeChecker for UntypedTupleDeconstructionElement {
+>>>>>>> 7259dbd9a (Fixed grammar)
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -13082,10 +13087,6 @@ impl NodeChecker for ContractMember {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
 
-            Self::UnnamedFunctionDefinition(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
             Self::ModifierDefinition(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
@@ -14122,10 +14123,6 @@ impl NodeChecker for FunctionTypeAttribute {
             }
 
             Self::PublicKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::ConstantKeyword(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
 
@@ -15228,6 +15225,7 @@ impl NodeChecker for UnicodeStringLiteral {
 }
 
 /// Generic `NodeChecker` for choices
+<<<<<<< HEAD
 impl NodeChecker for UnnamedFunctionAttribute {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -15343,6 +15341,8 @@ impl NodeChecker for UntypedDeclarationNames {
 }
 
 /// Generic `NodeChecker` for choices
+=======
+>>>>>>> 7259dbd9a (Fixed grammar)
 impl NodeChecker for UsingClause {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -17557,6 +17557,7 @@ impl NodeChecker for UnicodeStringLiterals {
     }
 }
 
+<<<<<<< HEAD
 /// Generic `NodeChecker` for repeated and separated
 impl NodeChecker for UnnamedFunctionAttributes {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
@@ -17599,6 +17600,10 @@ impl NodeChecker for UnnamedFunctionAttributes {
 
 /// `NodeChecker` for `UntypedTupleDeclarationElements` maps to V1's `TupleDeconstructionElements`
 impl NodeChecker for UntypedTupleDeclarationElements {
+=======
+/// `NodeChecker` for `UntypedTupleDeconstructionElements` maps to v1's `TupleDeconstructionElements`
+impl NodeChecker for UntypedTupleDeconstructionElements {
+>>>>>>> 7259dbd9a (Fixed grammar)
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
