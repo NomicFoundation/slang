@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use super::evaluator::{evaluate_fixed_array_size, ConstantIdentifierResolver};
 use super::Pass;
 use crate::backend::binder::{Definition, ImportDefinition, Reference, Resolution, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
@@ -81,13 +82,19 @@ impl Pass<'_> {
                 data_location.and_then(|data_location| {
                     self.resolve_type_name(&array_type_name.operand, Some(data_location))
                         .map(|element_type| {
-                            if array_type_name.index.is_some() {
+                            if let Some(size_expression) = &array_type_name.index {
+                                // TODO(validation): if the size of the array
+                                // cannot be evaluated, it's not a compile-time
+                                // constant
+                                let size = evaluate_fixed_array_size(
+                                    size_expression,
+                                    &self.language_version,
+                                    self,
+                                )
+                                .unwrap_or_default();
                                 self.types.register_type(Type::FixedSizeArray {
                                     element_type,
-                                    // FIXME: resolve the size of the array,
-                                    // possibly in a secondary pass after the
-                                    // main pass
-                                    size: 0,
+                                    size,
                                     location: data_location,
                                 })
                             } else {
@@ -165,5 +172,18 @@ impl Pass<'_> {
             return None;
         };
         self.binder.scope_id_for_node_id(definition_id)
+    }
+}
+
+impl ConstantIdentifierResolver for Pass<'_> {
+    fn resolve_identifier(&self, identifier: &str) -> Option<input_ir::Expression> {
+        let scope_id = self.current_contract_or_file_scope_id();
+
+        let resolution = self.binder.resolve_in_scope(scope_id, identifier);
+        let definition_id = resolution.as_definition_id()?;
+        match self.binder.find_definition_by_id(definition_id)? {
+            Definition::Constant(constant_definition) => constant_definition.ir_node.value.clone(),
+            _ => None,
+        }
     }
 }

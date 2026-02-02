@@ -18,6 +18,18 @@ pub fn run_file(language_version: &Version, source_unit: &input::SourceUnit) -> 
     pass.transform_source_unit(source_unit)
 }
 
+// We need this entry point to test the compile-time constant evaluator
+#[cfg(test)]
+pub(crate) fn transform_expression(
+    language_version: &Version,
+    expression: &input::Expression,
+) -> output::Expression {
+    let mut pass = Pass {
+        language_version: language_version.clone(),
+    };
+    pass.transform_expression(expression)
+}
+
 struct Pass {
     language_version: Version,
 }
