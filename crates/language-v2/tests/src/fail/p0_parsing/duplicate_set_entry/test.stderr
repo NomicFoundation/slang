@@ -1,5 +1,5 @@
 error: Set entries must be unique.
- --> src/fail/p0_parsing/duplicate_set_entry/test.rs:9:26
+ --> src/fail/p0_parsing/duplicate_set_entry/test.rs:8:26
   |
-9 |     versions = ["1.0.0", "1.0.0", "3.0.0"],
+8 |     versions = ["1.0.0", "1.0.0", "3.0.0"],
   |                          ^^^^^^^

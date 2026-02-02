@@ -28,6 +28,9 @@ impl VersionSet {
         language: &SpannedLanguage,
     ) {
         match specifier {
+            SpannedVersionSpecifier::Always => {
+                self.add_version_range(&language.versions[0], &MAX_VERSION);
+            }
             SpannedVersionSpecifier::Never => {
                 // Do nothing.
             }

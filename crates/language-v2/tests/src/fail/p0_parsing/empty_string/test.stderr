@@ -1,5 +1,5 @@
 error: Expected a non-empty string.
-  --> src/fail/p0_parsing/empty_string/test.rs:15:76
+  --> src/fail/p0_parsing/empty_string/test.rs:14:76
    |
-15 |             items = [Token(name = Bar, definitions = [TokenDefinition(Atom(""))])]
+14 |             items = [Token(name = Bar, definitions = [TokenDefinition(Atom(""))])]
    |                                                                            ^^
