@@ -1,0 +1,111 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     uint constant BASE_SIZE = 4;
+    │                   ────┬────  
+    │                       ╰────── name: 2
+    │ 
+  5 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 3
+    │                    │   
+    │                    ╰─── ref: 1
+  6 │     uint constant TEST_SIZE = 4;
+    │                   ────┬────  
+    │                       ╰────── name: 4
+    │ 
+  8 │     using Lib for uint[4];
+    │           ─┬─  
+    │            ╰─── ref: 9
+    │ 
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 5
+ 11 │         uint[4] memory a;
+    │                        ┬  
+    │                        ╰── name: 6
+ 12 │         uint[TEST_SIZE] memory b;
+    │              ────┬────         ┬  
+    │                  ╰──────────────── ref: 4
+    │                                │  
+    │                                ╰── name: 7
+ 13 │         uint[BASE_SIZE] memory c;
+    │              ────┬────         ┬  
+    │                  ╰──────────────── ref: 2
+    │                                │  
+    │                                ╰── name: 8
+ 14 │         a.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 6
+    │            │   
+    │            ╰─── ref: 10
+ 15 │         b.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 7
+    │            │   
+    │            ╰─── ref: 10
+ 16 │         c.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 8
+    │            │   
+    │            ╰─── ref: 10
+    │ 
+ 20 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 9
+ 21 │     function nop(uint[4] memory self) internal {}
+    │              ─┬─                ──┬─  
+    │               ╰─────────────────────── name: 10
+    │                                   │   
+    │                                   ╰─── name: 11
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ contract Base {
+  2 │       │       uint constant BASE_SIZE = 4;
+    │       │   ────────────────┬────────────────  
+    │       │                   ╰────────────────── definiens: 2
+  3 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 1
+  4 │ ╭───────▶ 
+    ┆ ┆         
+  6 │ │             uint constant TEST_SIZE = 4;
+    │ │         ────────────────┬────────────────  
+    │ │                         ╰────────────────── definiens: 4
+    ┆ ┆         
+  9 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+ 11 │ │ │               uint[4] memory a;
+    │ │ │       ─────────────┬────────────  
+    │ │ │                    ╰────────────── definiens: 6
+ 12 │ │ │               uint[TEST_SIZE] memory b;
+    │ │ │       ─────────────────┬────────────────  
+    │ │ │                        ╰────────────────── definiens: 7
+ 13 │ │ │               uint[BASE_SIZE] memory c;
+    │ │ │       ─────────────────┬────────────────  
+    │ │ │                        ╰────────────────── definiens: 8
+    ┆ ┆ ┆       
+ 17 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 5
+ 18 │ ├───│ ──▶ }
+    │ │   │         
+    │ ╰───────────── definiens: 3
+ 19 │     ╭───▶ 
+    ┆     ┆     
+ 21 │     │         function nop(uint[4] memory self) internal {}
+    │     │     ─────────────────────────┬┬───────────────────────  
+    │     │                              ╰────────────────────────── definiens: 10
+    │     │                               │                         
+    │     │                               ╰───────────────────────── definiens: 11
+ 22 │     ├───▶ }
+    │     │         
+    │     ╰───────── definiens: 9
+────╯

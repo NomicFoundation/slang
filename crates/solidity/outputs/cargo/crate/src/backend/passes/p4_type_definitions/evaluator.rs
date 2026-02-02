@@ -79,7 +79,6 @@ impl CompileConstantEvaluator<'_> {
             input_ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
                 Self::evaluate_decimal_number_expression(decimal_number_expression)
             }
-            input_ir::Expression::MemberAccessExpression(_member_access_expression) => todo!(),
             input_ir::Expression::Identifier(terminal_node) => {
                 self.evaluate_identifier(terminal_node)
             }
@@ -197,20 +196,27 @@ impl CompileConstantEvaluator<'_> {
         BigInt::from_str(&decimal).ok().map(ConstantValue::Integer)
     }
 
-    const MAX_RESOLUTION_DEPTH: usize = 50;
+    const MAX_RESOLUTION_DEPTH: usize = 10;
 
-    fn evaluate_identifier(&mut self, identifier: &Rc<TerminalNode>) -> Option<ConstantValue> {
-        let target_expression = self
-            .identifier_resolver
-            .resolve_identifier(&identifier.unparse())?;
+    fn evaluate_expression_recursively(
+        &mut self,
+        expression: &input_ir::Expression,
+    ) -> Option<ConstantValue> {
         self.depth += 1;
         if self.depth >= Self::MAX_RESOLUTION_DEPTH {
             // TODO(validation): cyclic dependency in constant resolution or max depth reached
             return None;
         }
-        let result = self.evaluate_expression(&target_expression);
+        let result = self.evaluate_expression(expression);
         self.depth -= 1;
         result
+    }
+
+    fn evaluate_identifier(&mut self, identifier: &Rc<TerminalNode>) -> Option<ConstantValue> {
+        let target_expression = self
+            .identifier_resolver
+            .resolve_identifier(&identifier.unparse())?;
+        self.evaluate_expression_recursively(&target_expression)
     }
 
     fn evaluate_tuple_expression(
@@ -339,6 +345,8 @@ mod tests {
             eval_string_with_context("FOO + 2*BAR", &[("FOO", "1"), ("BAR", "5")])
                 .is_some_and(|value| value == ConstantValue::Integer(11.to_bigint().unwrap()))
         );
+        // undefined symbols
+        assert!(eval_string_with_context("FOO", &[]).is_none());
         // cyclic references
         assert!(eval_string_with_context("FOO", &[("FOO", "BAR"), ("BAR", "FOO")]).is_none());
     }
