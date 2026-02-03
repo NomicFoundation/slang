@@ -57,10 +57,18 @@ struct CompileConstantEvaluator<'a> {
 impl CompileConstantEvaluator<'_> {
     fn evaluate_expression(&mut self, expression: &input_ir::Expression) -> Option<ConstantValue> {
         match expression {
-            input_ir::Expression::BitwiseOrExpression(_bitwise_or_expression) => todo!(),
-            input_ir::Expression::BitwiseXorExpression(_bitwise_xor_expression) => todo!(),
-            input_ir::Expression::BitwiseAndExpression(_bitwise_and_expression) => todo!(),
-            input_ir::Expression::ShiftExpression(_shift_expression) => todo!(),
+            input_ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
+                self.evaluate_bitwise_or_expression(bitwise_or_expression)
+            }
+            input_ir::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
+                self.evaluate_bitwise_xor_expression(bitwise_xor_expression)
+            }
+            input_ir::Expression::BitwiseAndExpression(bitwise_and_expression) => {
+                self.evaluate_bitwise_and_expression(bitwise_and_expression)
+            }
+            input_ir::Expression::ShiftExpression(shift_expression) => {
+                self.evaluate_shift_expression(shift_expression)
+            }
             input_ir::Expression::AdditiveExpression(additive_expression) => {
                 self.evaluate_additive_expression(additive_expression)
             }
@@ -86,9 +94,72 @@ impl CompileConstantEvaluator<'_> {
                 self.evaluate_tuple_expression(tuple_expression)
             }
             _ => {
-                // all other variants of expression cannot be evaluated at compile time
+                // all other variants of expression cannot be evaluated at
+                // compile time, or are not relevant for computing constant
+                // integers (eg. string literals)
                 None
             }
+        }
+    }
+
+    fn evaluate_bitwise_or_expression(
+        &mut self,
+        bitwise_or_expression: &input_ir::BitwiseOrExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&bitwise_or_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&bitwise_or_expression.right_operand)?;
+        match (lhs, rhs) {
+            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                Some(ConstantValue::Integer(lhs | rhs))
+            }
+        }
+    }
+
+    fn evaluate_bitwise_xor_expression(
+        &mut self,
+        bitwise_xor_expression: &input_ir::BitwiseXorExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&bitwise_xor_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&bitwise_xor_expression.right_operand)?;
+        match (lhs, rhs) {
+            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                Some(ConstantValue::Integer(lhs ^ rhs))
+            }
+        }
+    }
+
+    fn evaluate_bitwise_and_expression(
+        &mut self,
+        bitwise_and_expression: &input_ir::BitwiseAndExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&bitwise_and_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&bitwise_and_expression.right_operand)?;
+        match (lhs, rhs) {
+            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                Some(ConstantValue::Integer(lhs & rhs))
+            }
+        }
+    }
+
+    fn evaluate_shift_expression(
+        &mut self,
+        shift_expression: &input_ir::ShiftExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&shift_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&shift_expression.right_operand)?;
+        match &shift_expression.operator.kind {
+            TerminalKind::LessThanLessThan => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs << rhs.to_u32()?))
+                }
+            },
+            TerminalKind::GreaterThanGreaterThan => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs >> rhs.to_u32()?))
+                }
+            },
+            TerminalKind::GreaterThanGreaterThanGreaterThan => None,
+            _ => unreachable!("invalid operator in shift expression"),
         }
     }
 
@@ -327,6 +398,16 @@ mod tests {
             .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
         assert!(eval_string("2 ** 5")
             .is_some_and(|value| value == ConstantValue::Integer(32.to_bigint().unwrap())));
+        assert!(eval_string("32 << 2")
+            .is_some_and(|value| value == ConstantValue::Integer(128.to_bigint().unwrap())));
+        assert!(eval_string("32 >> 2")
+            .is_some_and(|value| value == ConstantValue::Integer(8.to_bigint().unwrap())));
+        assert!(eval_string("32 | 16")
+            .is_some_and(|value| value == ConstantValue::Integer(48.to_bigint().unwrap())));
+        assert!(eval_string("15 ^ 31")
+            .is_some_and(|value| value == ConstantValue::Integer(16.to_bigint().unwrap())));
+        assert!(eval_string("15 & 31")
+            .is_some_and(|value| value == ConstantValue::Integer(15.to_bigint().unwrap())));
     }
 
     #[test]
