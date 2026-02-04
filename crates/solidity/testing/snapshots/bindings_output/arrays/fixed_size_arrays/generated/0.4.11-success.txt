@@ -21,7 +21,7 @@ References and definitions:
     │ 
   8 │     using Lib for uint[4];
     │           ─┬─  
-    │            ╰─── ref: 9
+    │            ╰─── ref: 10
     │ 
  10 │     function test() internal {
     │              ──┬─  
@@ -39,30 +39,42 @@ References and definitions:
     │                  ╰──────────────── ref: 2
     │                                │  
     │                                ╰── name: 8
- 14 │         a.nop();
+ 14 │         uint[(BASE_SIZE + TEST_SIZE) / 2] memory d;
+    │               ────┬────   ────┬────              ┬  
+    │                   ╰───────────────────────────────── ref: 2
+    │                               │                  │  
+    │                               ╰───────────────────── ref: 4
+    │                                                  │  
+    │                                                  ╰── name: 9
+ 15 │         a.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 6
     │            │   
-    │            ╰─── ref: 10
- 15 │         b.nop();
+    │            ╰─── ref: 11
+ 16 │         b.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 7
     │            │   
-    │            ╰─── ref: 10
- 16 │         c.nop();
+    │            ╰─── ref: 11
+ 17 │         c.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 8
     │            │   
-    │            ╰─── ref: 10
+    │            ╰─── ref: 11
+ 18 │         d.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 9
+    │            │   
+    │            ╰─── ref: 11
     │ 
- 20 │ library Lib {
+ 22 │ library Lib {
     │         ─┬─  
-    │          ╰─── name: 9
- 21 │     function nop(uint[4] memory self) internal {}
+    │          ╰─── name: 10
+ 23 │     function nop(uint[4] memory self) internal {}
     │              ─┬─                ──┬─  
-    │               ╰─────────────────────── name: 10
+    │               ╰─────────────────────── name: 11
     │                                   │   
-    │                                   ╰─── name: 11
+    │                                   ╰─── name: 12
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]
@@ -91,21 +103,24 @@ Definiens:
  13 │ │ │               uint[BASE_SIZE] memory c;
     │ │ │       ─────────────────┬────────────────  
     │ │ │                        ╰────────────────── definiens: 8
+ 14 │ │ │               uint[(BASE_SIZE + TEST_SIZE) / 2] memory d;
+    │ │ │       ──────────────────────────┬─────────────────────────  
+    │ │ │                                 ╰─────────────────────────── definiens: 9
     ┆ ┆ ┆       
- 17 │ │ ├─────▶     }
+ 19 │ │ ├─────▶     }
     │ │ │               
     │ │ ╰─────────────── definiens: 5
- 18 │ ├───│ ──▶ }
+ 20 │ ├───│ ──▶ }
     │ │   │         
     │ ╰───────────── definiens: 3
- 19 │     ╭───▶ 
+ 21 │     ╭───▶ 
     ┆     ┆     
- 21 │     │         function nop(uint[4] memory self) internal {}
+ 23 │     │         function nop(uint[4] memory self) internal {}
     │     │     ─────────────────────────┬┬───────────────────────  
-    │     │                              ╰────────────────────────── definiens: 10
+    │     │                              ╰────────────────────────── definiens: 11
     │     │                               │                         
-    │     │                               ╰───────────────────────── definiens: 11
- 22 │     ├───▶ }
+    │     │                               ╰───────────────────────── definiens: 12
+ 24 │     ├───▶ }
     │     │         
-    │     ╰───────── definiens: 9
+    │     ╰───────── definiens: 10
 ────╯
