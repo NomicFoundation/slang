@@ -368,7 +368,11 @@ impl Visitor for Pass<'_> {
                     | Type::FixedSizeArray { element_type, .. } => {
                         // TODO(validation): for fixed-size arrays, if the range
                         // is resolvable at compile time we should check for out
-                        // of bounds accesses
+                        // of bounds accesses.
+                        // TODO(validation): array slices should only be
+                        // implemented for calldata arrays (as of 0.8.33).
+                        // TODO(validation): we should return a new
+                        // (intermediate) type for array slices.
                         if range_access {
                             Typing::Resolved(operand_type_id)
                         } else {
