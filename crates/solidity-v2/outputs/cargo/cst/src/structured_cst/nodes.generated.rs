@@ -12,6 +12,14 @@ use std::rc::Rc;
 // - (perf) don't use terminals that are not needed
 // - (feat) visitor/traversal/serializer
 // - (feat) span information, where applicable
+// - (feat) Use `new` impl methods instead of free functions:
+// ```
+// impl YulUncheckedKeyword {
+//   pub fn new(...) {
+//     ...
+//   }
+// }
+// ```
 
 //
 // Sequences:
