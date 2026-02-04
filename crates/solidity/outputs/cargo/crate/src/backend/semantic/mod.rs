@@ -316,12 +316,12 @@ impl SemanticAnalysis {
             } => {
                 let element_size = self.storage_size_of_type_id(*element_type)?;
                 if element_size > Self::SLOT_SIZE {
-                    let element_size = element_size.div_ceil(Self::SLOT_SIZE);
-                    Some(element_size * size)
+                    let slots_per_element = element_size.div_ceil(Self::SLOT_SIZE);
+                    Some(slots_per_element * size * Self::SLOT_SIZE)
                 } else {
                     let elements_per_slot = Self::SLOT_SIZE / element_size;
                     let num_slots = size.div_ceil(elements_per_slot);
-                    Some(num_slots * size)
+                    Some(num_slots * Self::SLOT_SIZE)
                 }
             }
 
@@ -345,7 +345,7 @@ impl SemanticAnalysis {
                     let member_type_id = self.binder.node_typing(member.node_id).as_type_id()?;
                     let member_size = self.storage_size_of_type_id(member_type_id)?;
                     let remaining_bytes = Self::SLOT_SIZE - (ptr % Self::SLOT_SIZE);
-                    if member_size >= remaining_bytes {
+                    if remaining_bytes < Self::SLOT_SIZE && member_size >= remaining_bytes {
                         ptr += remaining_bytes;
                     }
                     ptr += member_size;

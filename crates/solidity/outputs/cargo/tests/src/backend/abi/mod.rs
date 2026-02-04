@@ -60,38 +60,55 @@ fn test_get_contracts_abi() -> Result<()> {
 
 #[test]
 fn test_storage_layout() -> Result<()> {
-    let compilation_unit = fixtures::Counter::build_compilation_unit()?;
+    let compilation_unit = fixtures::StorageLayout::build_compilation_unit()?;
     let semantic_analysis = compilation_unit.semantic_analysis();
 
     let counter = semantic_analysis
-        .find_contract_by_name("Counter")
+        .find_contract_by_name("C")
         .expect("contract can be found");
     let counter_abi = counter
         .compute_abi_with_file_id("main.sol".to_string())
         .expect("can compute ABI");
     let layout = &counter_abi.storage_layout;
 
-    assert_eq!(layout.len(), 4);
+    // Expected layout:
+    // 00 [aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]
+    // 01 [eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee]
+    // 02 [ffffffffffffffffffffffffffffffff]
+    // 03 [                            hhgg]
+    // 04 [                           sssss] (yxxxx)
+    // 05 [          lllllllllllllllllllllk]
+    // 06 [                      mmmmmmmmmm]
+    // 07 [  nnnnnnnnnnnnnnnnnnnnnnnnnnnnnn]
+    // 08 [                      nnnnnnnnnn]
+    // 09 [tttttttttttttttttttttttttttttttt] (t[0]: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz)
+    // 10 [tttttttttttttttttttttttttttttttt] (t[0]:                             wwww)
+    // 11 [tttttttttttttttttttttttttttttttt] (t[1]: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz)
+    // 12 [tttttttttttttttttttttttttttttttt] (t[1]:                             wwww)
+    // 13 [                           ooooo]
 
-    assert_eq!(layout[0].label, "_owner");
-    assert_eq!(layout[0].r#type, "address");
-    assert_eq!(layout[0].slot, 0);
-    assert_eq!(layout[0].offset, 0);
+    macro_rules! assert_layout_item_eq {
+        ($item:expr, $name:expr, $slot:expr, $offset:expr, $type:expr) => {
+            assert_eq!($item.label, $name);
+            assert_eq!($item.r#type, $type);
+            assert_eq!($item.slot, $slot);
+            assert_eq!($item.offset, $offset);
+        };
+    }
+    assert_eq!(layout.len(), 12);
 
-    assert_eq!(layout[1].label, "_state");
-    assert_eq!(layout[1].r#type, "State");
-    assert_eq!(layout[1].slot, 0);
-    assert_eq!(layout[1].offset, 20);
-
-    assert_eq!(layout[2].label, "count");
-    assert_eq!(layout[2].r#type, "uint256");
-    assert_eq!(layout[2].slot, 1);
-    assert_eq!(layout[2].offset, 0);
-
-    assert_eq!(layout[3].label, "_clickers");
-    assert_eq!(layout[3].r#type, "mapping(address => uint256)");
-    assert_eq!(layout[3].slot, 2);
-    assert_eq!(layout[3].offset, 0);
+    assert_layout_item_eq!(layout[0], "a", 0, 0, "uint256");
+    assert_layout_item_eq!(layout[1], "e", 1, 0, "uint8[]");
+    assert_layout_item_eq!(layout[2], "f", 2, 0, "mapping(uint256 => S)");
+    assert_layout_item_eq!(layout[3], "g", 3, 0, "uint16");
+    assert_layout_item_eq!(layout[4], "h", 3, 2, "uint16");
+    assert_layout_item_eq!(layout[5], "s", 4, 0, "S");
+    assert_layout_item_eq!(layout[6], "k", 5, 0, "int8");
+    assert_layout_item_eq!(layout[7], "l", 5, 1, "bytes21");
+    assert_layout_item_eq!(layout[8], "m", 6, 0, "uint8[10]");
+    assert_layout_item_eq!(layout[9], "n", 7, 0, "bytes5[8]");
+    assert_layout_item_eq!(layout[10], "t", 9, 0, "T[2]");
+    assert_layout_item_eq!(layout[11], "o", 13, 0, "bytes5");
 
     Ok(())
 }

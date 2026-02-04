@@ -102,7 +102,7 @@ impl ContractDefinitionStruct {
 
             // check if we can pack the variable in the previous slot
             let remaining_bytes = SemanticAnalysis::SLOT_SIZE - (ptr % SemanticAnalysis::SLOT_SIZE);
-            if variable_size > remaining_bytes {
+            if remaining_bytes < SemanticAnalysis::SLOT_SIZE && variable_size > remaining_bytes {
                 ptr += remaining_bytes;
             }
 
