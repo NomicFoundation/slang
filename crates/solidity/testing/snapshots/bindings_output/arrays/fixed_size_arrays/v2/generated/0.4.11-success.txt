@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Definitions (11):
+Definitions (12):
 - Def: #1 ["Base" @ input.sol:1:10] (contract)
 - Def: #2 ["BASE_SIZE" @ input.sol:2:19] (constant, type: uint256)
 - Def: #3 ["Test" @ input.sol:5:10] (contract)
@@ -9,23 +9,28 @@ Definitions (11):
 - Def: #6 ["a" @ input.sol:11:24] (variable, type: uint256[4] memory)
 - Def: #7 ["b" @ input.sol:12:32] (variable, type: uint256[4] memory)
 - Def: #8 ["c" @ input.sol:13:32] (variable, type: uint256[4] memory)
-- Def: #9 ["Lib" @ input.sol:20:9] (library)
-- Def: #10 ["nop" @ input.sol:21:14] (function, type: function (uint256[4] memory) returns void)
-- Def: #11 ["self" @ input.sol:21:33] (parameter, type: uint256[4] memory)
+- Def: #9 ["d" @ input.sol:14:50] (variable, type: uint256[4] memory)
+- Def: #10 ["Lib" @ input.sol:22:9] (library)
+- Def: #11 ["nop" @ input.sol:23:14] (function, type: function (uint256[4] memory) returns void)
+- Def: #12 ["self" @ input.sol:23:33] (parameter, type: uint256[4] memory)
 
 ------------------------------------------------------------------------
 
-References (10):
+References (14):
 - Ref: ["Base" @ input.sol:5:18] -> #1
-- Ref: ["Lib" @ input.sol:8:11] -> #9
+- Ref: ["Lib" @ input.sol:8:11] -> #10
 - Ref: ["TEST_SIZE" @ input.sol:12:14] -> #4
 - Ref: ["BASE_SIZE" @ input.sol:13:14] -> #2
-- Ref: ["a" @ input.sol:14:9] -> #6
-- Ref: ["nop" @ input.sol:14:11] -> #10
-- Ref: ["b" @ input.sol:15:9] -> #7
-- Ref: ["nop" @ input.sol:15:11] -> #10
-- Ref: ["c" @ input.sol:16:9] -> #8
-- Ref: ["nop" @ input.sol:16:11] -> #10
+- Ref: ["BASE_SIZE" @ input.sol:14:15] -> #2
+- Ref: ["TEST_SIZE" @ input.sol:14:27] -> #4
+- Ref: ["a" @ input.sol:15:9] -> #6
+- Ref: ["nop" @ input.sol:15:11] -> #11
+- Ref: ["b" @ input.sol:16:9] -> #7
+- Ref: ["nop" @ input.sol:16:11] -> #11
+- Ref: ["c" @ input.sol:17:9] -> #8
+- Ref: ["nop" @ input.sol:17:11] -> #11
+- Ref: ["d" @ input.sol:18:9] -> #9
+- Ref: ["nop" @ input.sol:18:11] -> #11
 
 ------------------------------------------------------------------------
 
@@ -54,7 +59,7 @@ Bindings:
     │ 
   8 │     using Lib for uint[4];
     │           ─┬─  
-    │            ╰─── ref: 9
+    │            ╰─── ref: 10
     │ 
  10 │     function test() internal {
     │              ──┬─  
@@ -72,28 +77,40 @@ Bindings:
     │                  ╰──────────────── ref: 2
     │                                │  
     │                                ╰── name: 8
- 14 │         a.nop();
+ 14 │         uint[(BASE_SIZE + TEST_SIZE) / 2] memory d;
+    │               ────┬────   ────┬────              ┬  
+    │                   ╰───────────────────────────────── ref: 2
+    │                               │                  │  
+    │                               ╰───────────────────── ref: 4
+    │                                                  │  
+    │                                                  ╰── name: 9
+ 15 │         a.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 6
     │            │   
-    │            ╰─── ref: 10
- 15 │         b.nop();
+    │            ╰─── ref: 11
+ 16 │         b.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 7
     │            │   
-    │            ╰─── ref: 10
- 16 │         c.nop();
+    │            ╰─── ref: 11
+ 17 │         c.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 8
     │            │   
-    │            ╰─── ref: 10
+    │            ╰─── ref: 11
+ 18 │         d.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 9
+    │            │   
+    │            ╰─── ref: 11
     │ 
- 20 │ library Lib {
+ 22 │ library Lib {
     │         ─┬─  
-    │          ╰─── name: 9
- 21 │     function nop(uint[4] memory self) internal {}
+    │          ╰─── name: 10
+ 23 │     function nop(uint[4] memory self) internal {}
     │              ─┬─                ──┬─  
-    │               ╰─────────────────────── name: 10
+    │               ╰─────────────────────── name: 11
     │                                   │   
-    │                                   ╰─── name: 11
+    │                                   ╰─── name: 12
 ────╯

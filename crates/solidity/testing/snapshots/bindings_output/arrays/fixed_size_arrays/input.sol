@@ -11,9 +11,11 @@ contract Test is Base {
         uint[4] memory a;
         uint[TEST_SIZE] memory b;
         uint[BASE_SIZE] memory c;
+        uint[(BASE_SIZE + TEST_SIZE) / 2] memory d;
         a.nop();
         b.nop();
         c.nop();
+        d.nop();
     }
 }
 
