@@ -4,28 +4,23 @@ use std::str::FromStr;
 use num_bigint::BigInt;
 use num_traits::cast::ToPrimitive;
 use num_traits::Num;
-use semver::Version;
 
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::cst::{TerminalKind, TerminalNode};
-use crate::utils::versions::VERSION_0_5_0;
 
 pub(crate) fn evaluate_fixed_array_size(
     expression: &input_ir::Expression,
-    language_version: &Version,
     identifier_resolver: &dyn ConstantIdentifierResolver,
 ) -> Option<usize> {
-    evaluate_compile_time_constant(expression, language_version, identifier_resolver)
+    evaluate_compile_time_constant(expression, identifier_resolver)
         .and_then(|value| value.as_usize())
 }
 
 fn evaluate_compile_time_constant(
     expression: &input_ir::Expression,
-    language_version: &Version,
     identifier_resolver: &dyn ConstantIdentifierResolver,
 ) -> Option<ConstantValue> {
     let mut evaluator = CompileConstantEvaluator {
-        language_version,
         identifier_resolver,
         depth: 0,
     };
@@ -49,7 +44,6 @@ pub(crate) trait ConstantIdentifierResolver {
 }
 
 struct CompileConstantEvaluator<'a> {
-    language_version: &'a Version,
     identifier_resolver: &'a dyn ConstantIdentifierResolver,
     depth: usize,
 }
@@ -236,12 +230,10 @@ impl CompileConstantEvaluator<'_> {
                 ConstantValue::Integer(value) => Some(ConstantValue::Integer(BigInt::ZERO - value)),
             },
             TerminalKind::Plus => {
-                if *self.language_version < VERSION_0_5_0 {
-                    match operand {
-                        ConstantValue::Integer(value) => Some(ConstantValue::Integer(value)),
-                    }
-                } else {
-                    None
+                // This is only valid in Solidity < 0.5.0, but the parser should
+                // not generate this variant for later versions.
+                match operand {
+                    ConstantValue::Integer(value) => Some(ConstantValue::Integer(value)),
                 }
             }
             _ => None,
@@ -308,13 +300,14 @@ mod tests {
     use std::collections::HashMap;
 
     use num_bigint::ToBigInt;
+    use semver::Version;
 
     use super::*;
     use crate::backend::ir::ir1_structured_ast::builder::build_expression;
     use crate::backend::passes::p1_flatten_contracts::transform_expression;
     use crate::cst::NonterminalKind;
     use crate::parser;
-    use crate::utils::versions::VERSION_0_4_26;
+    use crate::utils::versions::{VERSION_0_4_26, VERSION_0_5_0};
     use crate::utils::LanguageFacts;
 
     #[derive(Default)]
@@ -335,12 +328,8 @@ mod tests {
     }
 
     fn eval_string_in_version(input: &str, version: &Version) -> Option<ConstantValue> {
-        let parser = parser::Parser::create(version.clone()).expect("parser can be created");
-        let output = parser.parse_nonterminal(NonterminalKind::Expression, input);
-        let ir1 = build_expression(output.tree())?;
-        let ir2 = transform_expression(version, &ir1);
-
-        evaluate_compile_time_constant(&ir2, version, &MapResolver::default())
+        let ir2 = parse_string_in_version(input, version)?;
+        evaluate_compile_time_constant(&ir2, &MapResolver::default())
     }
 
     fn eval_string(input: &str) -> Option<ConstantValue> {
@@ -358,7 +347,7 @@ mod tests {
             .collect();
         let ir2 = parse_string_in_version(input, version)?;
 
-        evaluate_compile_time_constant(&ir2, version, &MapResolver { context })
+        evaluate_compile_time_constant(&ir2, &MapResolver { context })
     }
 
     #[test]

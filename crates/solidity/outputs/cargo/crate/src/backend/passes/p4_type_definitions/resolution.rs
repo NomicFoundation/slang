@@ -86,12 +86,8 @@ impl Pass<'_> {
                                 // TODO(validation): if the size of the array
                                 // cannot be evaluated, it's not a compile-time
                                 // constant
-                                let size = evaluate_fixed_array_size(
-                                    size_expression,
-                                    &self.language_version,
-                                    self,
-                                )
-                                .unwrap_or_default();
+                                let size = evaluate_fixed_array_size(size_expression, self)
+                                    .unwrap_or_default();
                                 self.types.register_type(Type::FixedSizeArray {
                                     element_type,
                                     size,
