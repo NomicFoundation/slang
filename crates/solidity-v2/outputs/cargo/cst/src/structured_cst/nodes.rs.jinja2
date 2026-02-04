@@ -1,0 +1,106 @@
+  {%- set target = model.structured_cst_model -%}
+#![allow(non_camel_case_types)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
+#![allow(clippy::too_many_arguments)]
+
+use std::ops::Range;
+use std::rc::Rc;
+
+
+// TODO(v2):
+// - (perf) don't use terminals that are not needed
+// - (feat) visitor/traversal/serializer
+// - (feat) span information, where applicable
+// - (feat) Use `new` impl methods instead of free functions:
+// ```
+// impl YulUncheckedKeyword {
+//   pub fn new(...) {
+//     ...
+//   }
+// }
+// ```
+
+
+//
+// Sequences:
+//
+// Note: All sequences are wrapped in Rc, this keeps sizes down and avoids recursive types
+{% for parent_type, sequence in target.sequences %}
+  pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+  #[derive(Clone, Debug)]
+  pub struct {{ parent_type }}Struct {
+    {%- for field in sequence.fields %}
+      pub {{ field.label | snake_case }}:
+        {%- if field.is_optional -%}
+          Option<{{ field.type.name }}>,
+        {%- else -%}
+          {{ field.type.name }},
+        {%- endif -%}
+    {% endfor -%}
+  }
+
+  pub fn new_{{ parent_type | snake_case }}({% for field in sequence.fields -%}
+      {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.type.name }}{% if field.is_optional %}>{% endif %},
+    {%- endfor %}) -> {{ parent_type }} {
+      Rc::new({{ parent_type }}Struct {
+        {%- for field in sequence.fields %}
+          {{ field.label | snake_case }},
+        {%- endfor -%}
+      })
+  }
+
+{% endfor %}
+
+//
+// Choices:
+//
+// Note: We create a constructor function for each variant
+{% for parent_type, choice in target.choices %}
+  #[derive(Clone, Debug)]
+  pub enum {{ parent_type }} {
+    {% for variant in choice.variants -%}
+      {{ variant.name }}({{ variant.name }}),
+    {%- endfor -%}
+  }
+
+  {% for variant in choice.variants %}
+    pub fn new_{{ parent_type | snake_case }}_{{ variant.name | snake_case }}(element: {{ variant.name }}) -> {{ parent_type }} {
+      {{ parent_type }}::{{ variant.name }}(element)
+    }
+  {% endfor %}
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+// TODO(v2): consider using a transparent representation
+{% for parent_type, collection in target.collections %}
+  #[derive(Clone, Debug)]
+  pub struct {{ parent_type }} {
+      pub elements: Vec<{{ collection.item_type.name }}>,
+  }
+
+  pub fn new_{{ parent_type | snake_case }}(elements: Vec<{{ collection.item_type.name }}>) -> {{ parent_type }} {
+    {{ parent_type }} { elements }
+  }
+
+{% endfor %}
+
+//
+// Terminals
+//
+// Note: _source is unused on the constructor methods, but kept for uniformity with other constructors
+// and because it may be needed in the future
+{% for parent_type in target.terminals %}
+#[derive(Clone, Debug)]
+  pub struct {{ parent_type }} {
+    pub range: Range<usize>,
+  }
+
+  pub fn new_{{ parent_type | snake_case }}(range: Range<usize>, _source: &str) -> {{ parent_type }} {
+    {{ parent_type }} { range }
+  }
+{% endfor %}
+
