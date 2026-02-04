@@ -56,10 +56,8 @@ pub trait NodeChecker {
 
 /// Extract the first element that satisfies the predicate, and remove it from the vector.
 fn extract_first<T>(v: &mut Vec<T>, finder: impl Fn(&T) -> bool) -> Option<T> {
-    if let Some(idx) = v.iter().position(finder) {
-        return Some(v.remove(idx));
-    }
-    None
+    let idx = v.iter().position(finder)?;
+    Some(v.remove(idx))
 }
 
 /// Extract the first edge with the given label, and remove it from the vector.
