@@ -6,11 +6,14 @@ NewExpression(
             range: 0..3,
         },
         type_name: IdentifierPath(
-            IdentifierPathStruct {
-                head: Identifier {
-                    range: 4..7,
-                },
-                tail: None,
+            IdentifierPath {
+                elements: [
+                    Identifier(
+                        Identifier {
+                            range: 4..7,
+                        },
+                    ),
+                ],
             },
         ),
     },

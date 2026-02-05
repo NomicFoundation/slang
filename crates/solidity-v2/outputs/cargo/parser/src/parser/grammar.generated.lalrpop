@@ -916,7 +916,6 @@ IdentifierPathNoRevert: IdentifierPath = {
         <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
         
     };
-<<<<<<< HEAD
     VariableDeclarationStatement: VariableDeclarationStatement = {
         <_target: VariableDeclarationOption>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
         
@@ -924,6 +923,7 @@ IdentifierPathNoRevert: IdentifierPath = {
     VariableDeclarationOption: VariableDeclarationOption = {
         <_SingleTypedDeclaration: SingleTypedDeclaration>  => new_variable_declaration_option_single_typed_declaration(<>),
         <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_option_multi_typed_declaration(<>),
+        <_UntypedDeclaration: UntypedDeclaration>  => new_variable_declaration_option_untyped_declaration(<>),
         
     };
     SingleTypedDeclaration: SingleTypedDeclaration = {
@@ -932,27 +932,6 @@ IdentifierPathNoRevert: IdentifierPath = {
     };
     MultiTypedDeclaration: MultiTypedDeclaration = {
         <_open_paren: OpenParen>  <_elements: MultiTypedDeclarationElements>  <_close_paren: CloseParen>  <_value: VariableDeclarationValue>  => new_multi_typed_declaration(<>),
-=======
-    TupleDeconstructionTarget: TupleDeconstructionTarget = {
-        <_VarTupleDeconstructionTarget: VarTupleDeconstructionTarget>  => new_tuple_deconstruction_target_var_tuple_deconstruction_target(<>),
-        <_TypedTupleDeconstructionTarget: TypedTupleDeconstructionTarget>  => new_tuple_deconstruction_target_typed_tuple_deconstruction_target(<>),
-        
-    };
-    VarTupleDeconstructionTarget: VarTupleDeconstructionTarget = {
-        <_var_keyword: VarKeyword>  <_open_paren: OpenParen>  <_elements: UntypedTupleDeconstructionElements>  <_close_paren: CloseParen>  => new_var_tuple_deconstruction_target(<>),
-        
-    };
-    UntypedTupleDeconstructionElements: UntypedTupleDeconstructionElements = {
-        <_UntypedTupleDeconstructionElement: SepOne<Comma, <UntypedTupleDeconstructionElement>>>  => new_untyped_tuple_deconstruction_elements(<>),
-        
-    };
-    UntypedTupleDeconstructionElement: UntypedTupleDeconstructionElement = {
-        <_name: (Identifier)?>  => new_untyped_tuple_deconstruction_element(<>),
-        
-    };
-    TypedTupleDeconstructionTarget: TypedTupleDeconstructionTarget = {
-        <_open_paren: OpenParen>  <_elements: TypedTupleDeconstructionElements>  <_close_paren: CloseParen>  => new_typed_tuple_deconstruction_target(<>),
->>>>>>> 3b1bfc048 (Early attempt at supporting all versions)
         
     };
     
@@ -986,26 +965,29 @@ TuplePrefix: usize = {
     => 0,
 };
 
-<<<<<<< HEAD
     MultiTypedDeclarationElement: MultiTypedDeclarationElement = {
         <_member: (VariableDeclaration)?>  => new_multi_typed_declaration_element(<>),
-=======
-    TypedTupleDeconstructionElement: TypedTupleDeconstructionElement = {
-        <_member: (TypedTupleDeconstructionMember)?>  => new_typed_tuple_deconstruction_element(<>),
         
     };
-    TypedTupleDeconstructionMember: TypedTupleDeconstructionMember = {
-        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_typed_tuple_deconstruction_member(<>),
+    UntypedDeclaration: UntypedDeclaration = {
+        <_var_keyword: VarKeyword>  <_names: UntypedDeclarationNames>  <_value: VariableDeclarationValue>  => new_untyped_declaration(<>),
         
     };
-    VariableDeclarationStatement: VariableDeclarationStatement = {
-        <_variable_type: VariableDeclarationType>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  <_value: (VariableDeclarationValue)?>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+    UntypedDeclarationNames: UntypedDeclarationNames = {
+        <_Identifier: Identifier>  => new_untyped_declaration_names_identifier(<>),
+        <_UntypedTupleDeclaration: UntypedTupleDeclaration>  => new_untyped_declaration_names_untyped_tuple_declaration(<>),
         
     };
-    VariableDeclarationType: VariableDeclarationType = {
-        <_TypeName: TypeName>  => new_variable_declaration_type_type_name(<>),
-        <_VarKeyword: VarKeyword>  => new_variable_declaration_type_var_keyword(<>),
->>>>>>> 3b1bfc048 (Early attempt at supporting all versions)
+    UntypedTupleDeclaration: UntypedTupleDeclaration = {
+        <_open_paren: OpenParen>  <_elements: UntypedTupleDeclarationElements>  <_close_paren: CloseParen>  => new_untyped_tuple_declaration(<>),
+        
+    };
+    UntypedTupleDeclarationElements: UntypedTupleDeclarationElements = {
+        <_UntypedTupleDeclarationElement: SepOne<Comma, <UntypedTupleDeclarationElement>>>  => new_untyped_tuple_declaration_elements(<>),
+        
+    };
+    UntypedTupleDeclarationElement: UntypedTupleDeclarationElement = {
+        <_name: (Identifier)?>  => new_untyped_tuple_declaration_element(<>),
         
     };
     VariableDeclarationValue: VariableDeclarationValue = {

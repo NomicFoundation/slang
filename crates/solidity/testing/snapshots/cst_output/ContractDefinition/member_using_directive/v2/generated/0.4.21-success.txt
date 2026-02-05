@@ -22,11 +22,14 @@ ContractDefinitionStruct {
                         range: 20..25,
                     },
                     clause: IdentifierPath(
-                        IdentifierPathStruct {
-                            head: Identifier {
-                                range: 26..27,
-                            },
-                            tail: None,
+                        IdentifierPath {
+                            elements: [
+                                Identifier(
+                                    Identifier {
+                                        range: 26..27,
+                                    },
+                                ),
+                            ],
                         },
                     ),
                     for_keyword: ForKeyword {

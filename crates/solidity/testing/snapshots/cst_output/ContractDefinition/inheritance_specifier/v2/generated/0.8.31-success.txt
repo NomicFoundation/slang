@@ -18,20 +18,26 @@ ContractDefinitionStruct {
                     types: InheritanceTypes {
                         elements: [
                             InheritanceTypeStruct {
-                                type_name: IdentifierPathStruct {
-                                    head: Identifier {
-                                        range: 19..22,
-                                    },
-                                    tail: None,
+                                type_name: IdentifierPath {
+                                    elements: [
+                                        Identifier(
+                                            Identifier {
+                                                range: 19..22,
+                                            },
+                                        ),
+                                    ],
                                 },
                                 arguments: None,
                             },
                             InheritanceTypeStruct {
-                                type_name: IdentifierPathStruct {
-                                    head: Identifier {
-                                        range: 24..27,
-                                    },
-                                    tail: None,
+                                type_name: IdentifierPath {
+                                    elements: [
+                                        Identifier(
+                                            Identifier {
+                                                range: 24..27,
+                                            },
+                                        ),
+                                    ],
                                 },
                                 arguments: Some(
                                     PositionalArgumentsDeclaration(
@@ -67,11 +73,14 @@ ContractDefinitionStruct {
                                 ),
                             },
                             InheritanceTypeStruct {
-                                type_name: IdentifierPathStruct {
-                                    head: Identifier {
-                                        range: 35..38,
-                                    },
-                                    tail: None,
+                                type_name: IdentifierPath {
+                                    elements: [
+                                        Identifier(
+                                            Identifier {
+                                                range: 35..38,
+                                            },
+                                        ),
+                                    ],
                                 },
                                 arguments: None,
                             },

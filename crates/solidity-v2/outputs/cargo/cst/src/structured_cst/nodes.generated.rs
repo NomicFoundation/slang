@@ -2038,35 +2038,7 @@ pub fn new_unchecked_block(unchecked_keyword: UncheckedKeyword, block: Block) ->
     })
 }
 
-<<<<<<< HEAD
-pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
-
-#[derive(Clone, Debug)]
-pub struct UnnamedFunctionDefinitionStruct {
-    pub function_keyword: FunctionKeyword,
-    pub parameters: ParametersDeclaration,
-    pub attributes: UnnamedFunctionAttributes,
-    pub body: FunctionBody,
-}
-
-pub fn new_unnamed_function_definition(
-    function_keyword: FunctionKeyword,
-    parameters: ParametersDeclaration,
-    attributes: UnnamedFunctionAttributes,
-    body: FunctionBody,
-) -> UnnamedFunctionDefinition {
-    Rc::new(UnnamedFunctionDefinitionStruct {
-        function_keyword,
-        parameters,
-        attributes,
-        body,
-    })
-}
-
 pub type UntypedDeclaration = Rc<UntypedDeclarationStruct>;
-=======
-pub type UntypedTupleDeconstructionElement = Rc<UntypedTupleDeconstructionElementStruct>;
->>>>>>> 7259dbd9a (Fixed grammar)
 
 #[derive(Clone, Debug)]
 pub struct UntypedDeclarationStruct {
@@ -4162,74 +4134,6 @@ pub fn new_unicode_string_literal_double_quoted_unicode_string_literal(
 }
 
 #[derive(Clone, Debug)]
-<<<<<<< HEAD
-pub enum UnnamedFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    ConstantKeyword(ConstantKeyword),
-    ExternalKeyword(ExternalKeyword),
-    InternalKeyword(InternalKeyword),
-    PayableKeyword(PayableKeyword),
-    PrivateKeyword(PrivateKeyword),
-    PublicKeyword(PublicKeyword),
-    PureKeyword(PureKeyword),
-    ViewKeyword(ViewKeyword),
-}
-
-pub fn new_unnamed_function_attribute_modifier_invocation(
-    element: ModifierInvocation,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ModifierInvocation(element)
-}
-
-pub fn new_unnamed_function_attribute_constant_keyword(
-    element: ConstantKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ConstantKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_external_keyword(
-    element: ExternalKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ExternalKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_internal_keyword(
-    element: InternalKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::InternalKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_payable_keyword(
-    element: PayableKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PayableKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_private_keyword(
-    element: PrivateKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PrivateKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_public_keyword(
-    element: PublicKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PublicKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_pure_keyword(
-    element: PureKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PureKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_view_keyword(
-    element: ViewKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ViewKeyword(element)
-}
-
-#[derive(Clone, Debug)]
 pub enum UntypedDeclarationNames {
     Identifier(Identifier),
     UntypedTupleDeclaration(UntypedTupleDeclaration),
@@ -4246,8 +4150,6 @@ pub fn new_untyped_declaration_names_untyped_tuple_declaration(
 }
 
 #[derive(Clone, Debug)]
-=======
->>>>>>> 7259dbd9a (Fixed grammar)
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
@@ -4957,24 +4859,8 @@ pub fn new_unicode_string_literals(elements: Vec<UnicodeStringLiteral>) -> Unico
 }
 
 #[derive(Clone, Debug)]
-<<<<<<< HEAD
-pub struct UnnamedFunctionAttributes {
-    pub elements: Vec<UnnamedFunctionAttribute>,
-}
-
-pub fn new_unnamed_function_attributes(
-    elements: Vec<UnnamedFunctionAttribute>,
-) -> UnnamedFunctionAttributes {
-    UnnamedFunctionAttributes { elements }
-}
-
-#[derive(Clone, Debug)]
 pub struct UntypedTupleDeclarationElements {
     pub elements: Vec<UntypedTupleDeclarationElement>,
-=======
-pub struct UntypedTupleDeconstructionElements {
-    pub elements: Vec<UntypedTupleDeconstructionElement>,
->>>>>>> 7259dbd9a (Fixed grammar)
 }
 
 pub fn new_untyped_tuple_declaration_elements(

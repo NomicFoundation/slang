@@ -80,6 +80,7 @@ fn is_enabled(enabled: Option<&VersionSpecifier>) -> bool {
 /// Check if a VersionSpecifier overlaps with [MIN_VERSION, MAX_VERSION)
 pub(crate) fn overlaps_with_version_range(spec: &VersionSpecifier) -> bool {
     match spec {
+        VersionSpecifier::Always => true,
         VersionSpecifier::Never => false,
         // "From X onwards" overlaps with [min, max) if X < max
         VersionSpecifier::From { from } => from < &MAX_VERSION,
@@ -92,6 +93,7 @@ pub(crate) fn overlaps_with_version_range(spec: &VersionSpecifier) -> bool {
 
 pub(crate) fn contains_enabled_versions(spec: &VersionSpecifier) -> bool {
     match spec {
+        VersionSpecifier::Always => true,
         VersionSpecifier::Never => false,
         VersionSpecifier::From { from } => from <= &MIN_VERSION,
         VersionSpecifier::Till { till } => &MAX_VERSION < till,

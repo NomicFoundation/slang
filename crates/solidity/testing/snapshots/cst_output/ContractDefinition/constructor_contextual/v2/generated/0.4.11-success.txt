@@ -88,20 +88,24 @@ ContractDefinitionStruct {
                                 elements: [
                                     VariableDeclarationStatement(
                                         VariableDeclarationStatementStruct {
-                                            variable_type: TypeName(
-                                                ElementaryType(
-                                                    UintKeyword(
-                                                        UintKeyword {
-                                                            range: 162..169,
+                                            target: SingleTypedDeclaration(
+                                                SingleTypedDeclarationStruct {
+                                                    declaration: VariableDeclarationStruct {
+                                                        type_name: ElementaryType(
+                                                            UintKeyword(
+                                                                UintKeyword {
+                                                                    range: 162..169,
+                                                                },
+                                                            ),
+                                                        ),
+                                                        storage_location: None,
+                                                        name: Identifier {
+                                                            range: 170..181,
                                                         },
-                                                    ),
-                                                ),
+                                                    },
+                                                    value: None,
+                                                },
                                             ),
-                                            storage_location: None,
-                                            name: Identifier {
-                                                range: 170..181,
-                                            },
-                                            value: None,
                                             semicolon: Semicolon {
                                                 range: 181..182,
                                             },

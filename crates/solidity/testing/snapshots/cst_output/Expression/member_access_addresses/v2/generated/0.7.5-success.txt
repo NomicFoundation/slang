@@ -13,17 +13,17 @@ ArrayExpression(
                             IndexAccessExpressionStruct {
                                 operand: Identifier(
                                     Identifier {
-                                        range: 6..7,
+                                        range: 76..77,
                                     },
                                 ),
                                 open_bracket: OpenBracket {
-                                    range: 7..8,
+                                    range: 77..78,
                                 },
                                 start: Some(
                                     DecimalNumberExpression(
                                         DecimalNumberExpressionStruct {
                                             literal: DecimalLiteral {
-                                                range: 8..9,
+                                                range: 78..79,
                                             },
                                             unit: None,
                                         },
@@ -31,16 +31,16 @@ ArrayExpression(
                                 ),
                                 end: None,
                                 close_bracket: CloseBracket {
-                                    range: 9..10,
+                                    range: 79..80,
                                 },
                             },
                         ),
                         period: Period {
-                            range: 10..11,
+                            range: 80..81,
                         },
                         member: AddressKeyword(
                             AddressKeyword {
-                                range: 11..18,
+                                range: 81..88,
                             },
                         ),
                     },
@@ -51,30 +51,30 @@ ArrayExpression(
                             FunctionCallExpressionStruct {
                                 operand: Identifier(
                                     Identifier {
-                                        range: 24..25,
+                                        range: 94..95,
                                     },
                                 ),
                                 arguments: PositionalArgumentsDeclaration(
                                     PositionalArgumentsDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 25..26,
+                                            range: 95..96,
                                         },
                                         arguments: PositionalArguments {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 26..27,
+                                            range: 96..97,
                                         },
                                     },
                                 ),
                             },
                         ),
                         period: Period {
-                            range: 27..28,
+                            range: 97..98,
                         },
                         member: AddressKeyword(
                             AddressKeyword {
-                                range: 28..35,
+                                range: 98..105,
                             },
                         ),
                     },
@@ -82,7 +82,7 @@ ArrayExpression(
             ],
         },
         close_bracket: CloseBracket {
-            range: 36..37,
+            range: 106..107,
         },
     },
 )
