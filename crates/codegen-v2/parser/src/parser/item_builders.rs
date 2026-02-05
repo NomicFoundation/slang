@@ -195,7 +195,11 @@ pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPItemInne
         })
         .collect();
 
-    vec![LALRPOPItemInner::new(item.name.clone(), item.name.clone(), options)]
+    vec![LALRPOPItemInner::new(
+        item.name.clone(),
+        item.name.clone(),
+        options,
+    )]
 }
 
 /// A repeated item is converted into a single LALRPOP item with a single option with a single field, that is
